@@ -2,7 +2,7 @@
 name = "apk-audit"
 version = "0.1.0"
 authors = ["Iban Eguia <razican@protonmail.ch>"]
-license = "MIT/Apache-2.0"
+license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/Razican/apk-audit-core"
 documentation = "http://razican.github.io/apk-audit-core"
@@ -14,3 +14,4 @@ keywords = ["Android", "security", "audit"]
 [dependencies]
 clap = "^2.4"
 colored = "^1.2"
+zip = "^0.1"
