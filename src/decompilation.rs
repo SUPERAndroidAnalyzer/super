@@ -233,7 +233,8 @@ pub fn decompile(app_id: &str, verbose: bool, quiet: bool, force: bool) {
         }
 
         if verbose {
-            println!("{}", "The application has been succesfully decompiled!".green());
+            println!("{}",
+                     "The application has been succesfully decompiled!".green());
         } else if !quiet {
             println!("Application decompiled.");
         }

@@ -2,12 +2,16 @@
 extern crate clap;
 extern crate colored;
 extern crate zip;
+extern crate xml;
 
 mod decompilation;
+mod static_analysis;
 
-use std::{fs, io};
+use std::{fs, io, fmt};
 use std::path::Path;
 use std::fmt::Display;
+use std::convert::From;
+use std::error::Error as StdError;
 use std::io::Write;
 use std::ffi::OsStr;
 use std::process::exit;
@@ -15,6 +19,7 @@ use clap::{Arg, App, ArgMatches};
 use colored::Colorize;
 
 use decompilation::*;
+use static_analysis::*;
 
 const DOWNLOAD_FOLDER: &'static str = "downloads";
 const VENDOR_FOLDER: &'static str = "vendor";
@@ -24,8 +29,10 @@ const APKTOOL_FILE: &'static str = "apktool_2.1.1.jar";
 const DEX2JAR_FOLDER: &'static str = "dex2jar-2.0";
 const JD_CLI_FILE: &'static str = "jd-cli.jar";
 
+#[derive(Debug)]
 enum Error {
     AppNotExists,
+    IOError(io::Error),
     Unknown,
 }
 
@@ -33,9 +40,48 @@ impl Into<i32> for Error {
     fn into(self) -> i32 {
         match self {
             Error::AppNotExists => 10,
+            Error::IOError(_) => 100,
             Error::Unknown => 1,
         }
     }
+}
+
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Error {
+        Error::IOError(err)
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.description())
+    }
+}
+
+impl StdError for Error {
+    fn description(&self) -> &str {
+        match *self {
+            Error::AppNotExists => "The application has not been found.",
+            Error::IOError(ref e) => e.description(),
+            Error::Unknown => "An unknown error occurred.",
+        }
+    }
+
+    fn cause(&self) -> Option<&StdError> {
+        match *self {
+            Error::IOError(ref e) => Some(e),
+            _ => None,
+        }
+    }
+}
+
+type Result<T> = std::result::Result<T, Error>;
+
+enum Criticity {
+    Low,
+    Medium,
+    High,
+    Critical,
 }
 
 fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
@@ -50,6 +96,30 @@ fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
         println!("If you need more information, try to run the program again with the {} flag.",
                  "-v".bold());
     }
+}
+
+fn print_warning<S: AsRef<OsStr>>(warning: S, verbose: bool) {
+    io::stderr()
+        .write(&format!("{} {}",
+                        "Warning:".bold().yellow(),
+                        warning.as_ref().to_string_lossy().yellow())
+                    .into_bytes()[..])
+        .unwrap();
+
+    if !verbose {
+        println!("If you need more information, try to run the program again with the {} flag.",
+                 "-v".bold());
+    }
+}
+
+fn print_vulnerability<S: AsRef<OsStr>>(text: S, criticity: Criticity) {
+    let text = text.as_ref().to_string_lossy();
+    let message = match criticity {
+        Criticity::Low => text.cyan(),
+        Criticity::Medium => text.yellow(),
+        Criticity::High | Criticity::Critical => text.red(),
+    };
+    println!("Possible vulnerability found!: {}", text);
 }
 
 fn main() {
@@ -101,14 +171,17 @@ fn main() {
     // Decompiling the app
     decompile(&app_id, verbose, quiet, force);
 
-    // TODO check app
+    // Static application analysis
+    static_analysis(&app_id, verbose, quiet);
+
+    // TODO dynamic analysis
 }
 
 fn check_app_exists(id: &str) -> bool {
     fs::metadata(format!("{}/{}.apk", DOWNLOAD_FOLDER, id)).is_ok()
 }
 
-pub fn check_or_create<P: AsRef<Path> + Display>(path: P, verbose: bool) {
+fn check_or_create<P: AsRef<Path> + Display>(path: P, verbose: bool) {
     if !fs::metadata(&path).is_ok() {
         if verbose {
             println!("Seems the {} folder is not there. Trying to create…",
