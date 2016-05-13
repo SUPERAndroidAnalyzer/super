@@ -6,6 +6,7 @@ extern crate xml;
 
 mod decompilation;
 mod static_analysis;
+mod results;
 
 use std::{fs, io, fmt};
 use std::path::Path;
@@ -13,13 +14,13 @@ use std::fmt::Display;
 use std::convert::From;
 use std::error::Error as StdError;
 use std::io::Write;
-use std::ffi::OsStr;
 use std::process::exit;
 use clap::{Arg, App, ArgMatches};
 use colored::Colorize;
 
 use decompilation::*;
 use static_analysis::*;
+use results::*;
 
 const DOWNLOAD_FOLDER: &'static str = "downloads";
 const VENDOR_FOLDER: &'static str = "vendor";
@@ -30,7 +31,7 @@ const DEX2JAR_FOLDER: &'static str = "dex2jar-2.0";
 const JD_CLI_FILE: &'static str = "jd-cli.jar";
 
 #[derive(Debug)]
-enum Error {
+pub enum Error {
     AppNotExists,
     ParseError,
     IOError(io::Error),
@@ -78,10 +79,10 @@ impl StdError for Error {
     }
 }
 
-type Result<T> = std::result::Result<T, Error>;
+pub type Result<T> = std::result::Result<T, Error>;
 
-#[derive(Debug, PartialEq, PartialOrd, Copy, Clone)]
-enum Criticity {
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
+pub enum Criticity {
     Low,
     Medium,
     High,
@@ -94,12 +95,9 @@ impl Display for Criticity {
     }
 }
 
-fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
+fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     io::stderr()
-        .write(&format!("{} {}\n",
-                        "Error:".bold().red(),
-                        error.as_ref().to_string_lossy().red())
-                    .into_bytes()[..])
+        .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
         .unwrap();
 
     if !verbose {
@@ -108,11 +106,11 @@ fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
     }
 }
 
-fn print_warning<S: AsRef<OsStr>>(warning: S, verbose: bool) {
+fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     io::stderr()
         .write(&format!("{} {}\n",
                         "Warning:".bold().yellow(),
-                        warning.as_ref().to_string_lossy().yellow())
+                        warning.as_ref().yellow())
                     .into_bytes()[..])
         .unwrap();
 
@@ -122,8 +120,8 @@ fn print_warning<S: AsRef<OsStr>>(warning: S, verbose: bool) {
     }
 }
 
-fn print_vulnerability<S: AsRef<OsStr>>(text: S, criticity: Criticity) {
-    let text = text.as_ref().to_string_lossy();
+fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
+    let text = text.as_ref();
     let start = format!("Possible {} vulnerability found!:", criticity);
     let (start, message) = match criticity {
         Criticity::Low => (start.cyan(), text.cyan()),
@@ -182,12 +180,30 @@ fn main() {
     // Decompiling the app
     decompile(&app_id, verbose, quiet, force);
 
-    // TODO setup result files
+    if let Some(mut results) = Results::init(&app_id, verbose, quiet, force) {
+        // Static application analysis
+        static_analysis(&app_id, verbose, quiet, force, &mut results);
 
-    // Static application analysis
-    static_analysis(&app_id, verbose, quiet);
+        // TODO dynamic analysis
 
-    // TODO dynamic analysis
+        match results.generate_report() {
+            Ok(_) => {
+                if verbose {
+                    println!("The results report has been saved. Everything went smoothly, now \
+                              you can check all the results.");
+                } else if !quiet {
+                    println!("Report generated.");
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error generating the results report: {}", e),
+                            verbose);
+                exit(Error::Unknown.into())
+            }
+        }
+    } else if !quiet {
+        println!("Analysis cancelled.");
+    }
 }
 
 fn check_app_exists(id: &str) -> bool {

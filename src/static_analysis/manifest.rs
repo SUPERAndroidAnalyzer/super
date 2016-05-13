@@ -8,6 +8,7 @@ use colored::Colorize;
 
 use {Error, Result, Criticity, DOWNLOAD_FOLDER, DIST_FOLDER, RESULTS_FOLDER, print_error,
      print_warning, print_vulnerability};
+use results::Results;
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
     trim_whitespace: true,
@@ -18,7 +19,11 @@ const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 
-pub fn manifest_analysis(app_id: &str, verbose: bool, quiet: bool) {
+pub fn manifest_analysis(app_id: &str,
+                         verbose: bool,
+                         quiet: bool,
+                         force: bool,
+                         results: &mut Results) {
     if verbose {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
                   analize it.")
@@ -62,46 +67,76 @@ pub fn manifest_analysis(app_id: &str, verbose: bool, quiet: bool) {
         }
     }
 
+    results.set_app_package(manifest.get_package());
+    results.set_app_label(manifest.get_label());
+    results.set_app_description(manifest.get_description());
+    results.set_app_version(manifest.get_version_str());
+
     if manifest.is_debug() {
-        // TODO store result in JSON and text
+        let criticity = Criticity::Medium;
+        let description = "The application is in debug mode. This is a vulnerability since \
+                             the application will filter data to the Android OS to be \
+                             debugged. This option should only be used while in development.";
+
+        results.add_vulnerability("Manifest Debug",
+                                  description,
+                                  Some("AndroidManifest.xml"),
+                                  None,
+                                  criticity);
         if verbose {
-            print_vulnerability("The application is in debug mode. This is a vulnerability since \
-                                 the application will filter data to the Android OS to be \
-                                 debugged. This option should only be used while in development.",
-                                Criticity::Medium);
+            print_vulnerability(description, criticity);
         }
     }
 
     if manifest.needs_large_heap() {
-        // TODO store result in JSON and text
+        let criticity = Criticity::Low;
+        let description = "The application needs a large heap. This is not a vulnerability \
+                             as such, but could be in devices with small heap. Review if the \
+                             large heap is actually needed.";
+
+        results.add_vulnerability("Manifest Debug",
+                                  description,
+                                  Some("AndroidManifest.xml"),
+                                  None,
+                                  criticity);
         if verbose {
-            print_vulnerability("The application needs a large heap. This is not a vulnerability \
-                                 as such, but could be in devices with small heap. Review if the \
-                                 large heap is actually needed.",
-                                Criticity::Low);
+            print_vulnerability(description, criticity);
         }
     }
 
     if manifest.get_permission_checklist().needs_permission(Permission::Internet) {
-        // TODO store result in JSON and text
+        let criticity = Criticity::Low;
+        let description = "The application needs Internet access. This is not a \
+                             vulnerability as such, but it needs aditional security measures \
+                             if it's being connected to the Internet. Check if the \
+                             permission is actually needed.";
+
+        results.add_vulnerability("Manifest Debug",
+                                  description,
+                                  Some("AndroidManifest.xml"),
+                                  None,
+                                  criticity);
+
         if verbose {
-            print_vulnerability("The application needs Internet access. This is not a \
-                                 vulnerability as such, but it needs aditional security measures \
-                                 if it's being connected to the Internet. Check if the \
-                                 permission is actually needed.",
-                                Criticity::Low);
+            print_vulnerability(description, criticity);
         }
     }
 
     if manifest.get_permission_checklist().needs_permission(Permission::WriteExternalStorage) {
-        // TODO store result in JSON and text
+        let criticity = Criticity::Medium;
+        let description = "The application needs external storage access. This could be a \
+                             security issue if those accesses are not controled.";
+
+        results.add_vulnerability("Manifest Debug",
+                                  description,
+                                  Some("AndroidManifest.xml"),
+                                  None,
+                                  criticity);
+
         if verbose {
-            print_vulnerability("The application needs external storage access. This could be a \
-                                 security issue if those accesses are not controled.",
-                                Criticity::Medium);
+            print_vulnerability(description, criticity);
         }
     }
-    // TODO: check permissions
 
     if verbose {
         println!("");
@@ -116,7 +151,8 @@ pub fn manifest_analysis(app_id: &str, verbose: bool, quiet: bool) {
 
 struct Manifest {
     package: String,
-    version: i32,
+    version_number: i32,
+    version_str: String,
     label: String,
     description: String,
     has_code: bool,
@@ -141,7 +177,7 @@ impl Manifest {
                                 match attr.name.local_name.as_str() {
                                     "package" => manifest.set_package(attr.value.as_str()),
                                     "versionCode" => {
-                                        let version: i32 = match attr.value.parse() {
+                                        let version_number: i32 = match attr.value.parse() {
                                             Ok(n) => n,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred when \
@@ -154,8 +190,9 @@ impl Manifest {
                                                 break;
                                             }
                                         };
-                                        manifest.set_version(version);
+                                        manifest.set_version_number(version_number);
                                     }
+                                    "versionName" => manifest.set_version_str(attr.value.as_str()),
                                     "installLocation" => {
                                         let location =
                                             match InstallLocation::from_str(attr.value
@@ -299,12 +336,20 @@ impl Manifest {
         self.package = String::from(package);
     }
 
-    pub fn get_version(&self) -> i32 {
-        self.version
+    pub fn get_version_number(&self) -> i32 {
+        self.version_number
     }
 
-    fn set_version(&mut self, version: i32) {
-        self.version = version;
+    fn set_version_number(&mut self, version_number: i32) {
+        self.version_number = version_number;
+    }
+
+    pub fn get_version_str(&self) -> &str {
+        self.version_str.as_str()
+    }
+
+    fn set_version_str(&mut self, version_str: &str) {
+        self.version_str = String::from(version_str);
     }
 
     pub fn get_label(&self) -> &str {
@@ -368,7 +413,8 @@ impl Default for Manifest {
     fn default() -> Manifest {
         Manifest {
             package: String::new(),
-            version: 0,
+            version_number: 0,
+            version_str: String::new(),
             label: String::new(),
             description: String::new(),
             has_code: false,
