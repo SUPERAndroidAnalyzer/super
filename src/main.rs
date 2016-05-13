@@ -186,7 +186,9 @@ fn main() {
 
         // TODO dynamic analysis
 
-        match results.generate_report() {
+        println!("");
+
+        match results.generate_report(verbose) {
             Ok(_) => {
                 if verbose {
                     println!("The results report has been saved. Everything went smoothly, now \

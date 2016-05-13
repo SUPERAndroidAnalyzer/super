@@ -1,4 +1,6 @@
 use std::fs;
+use std::fs::File;
+use std::io::Write;
 use std::collections::BTreeSet;
 use std::cmp::Ordering;
 use std::path::Path;
@@ -95,9 +97,149 @@ impl Results {
         }
     }
 
-    pub fn generate_report(self) -> Result<()> {
+    pub fn generate_report(&self, verbose: bool) -> Result<()> {
+        if verbose {
+            println!("Starting report generation. First we'll create the results folder.");
+        }
+        try!(fs::create_dir_all(self.path.as_str()));
+        if verbose {
+            println!("Results folder created. Time to create the reports.");
+        }
+
+        try!(self.generate_json_report(verbose));
+
+        if verbose {
+            println!("JSON report generated.");
+        }
+
+        try!(self.generate_txt_report(verbose));
+
+        if verbose {
+            println!("Text report generated.");
+        }
+
+        Ok(())
+    }
+
+    fn generate_json_report(&self, verbose: bool) -> Result<()> {
+        if verbose {
+            println!("Starting JSON report generation. First we create the file.")
+        }
+        let mut f = try!(File::create(format!("{}/results.json", self.path)));
+        if verbose {
+            println!("The report file has been created. Now it's time for the actual report.")
+        }
         // TODO
-        unimplemented!();
+        // unimplemented!();
+        Ok(())
+    }
+
+    fn generate_txt_report(&self, verbose: bool) -> Result<()> {
+        if verbose {
+            println!("Starting text report generation. First we create the file.")
+        }
+        let mut f = try!(File::create(format!("{}/results.txt", self.path)));
+        if verbose {
+            println!("The report file has been created. Now it's time for the actual report.")
+        }
+
+        try!(f.write_all(&format!("This is the vulnerability report for the android \
+                                   application {}\n",
+                                  self.app_package)
+                              .into_bytes()));
+
+        try!(f.write_all(b"Application data:\n"));
+        try!(f.write_all(&format!(" - Name: {}\n", self.app_label).into_bytes()));
+        try!(f.write_all(&format!(" - Description: {}\n", self.app_description).into_bytes()));
+        try!(f.write_all(&format!(" - Package: {}\n", self.app_package).into_bytes()));
+        try!(f.write_all(&format!(" - Version: {}\n", self.app_version).into_bytes()));
+
+        try!(f.write_all(b"\n"));
+
+        let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
+        try!(f.write_all(&format!("Total vulnerabilities found: {}\n", total_vuln).into_bytes()));
+        try!(f.write_all(&format!(" - Critical: {}\n", self.critical.len()).into_bytes()));
+        try!(f.write_all(&format!(" - High criticity: {}\n", self.high.len()).into_bytes()));
+        try!(f.write_all(&format!(" - Medium criticity: {}\n", self.medium.len()).into_bytes()));
+        try!(f.write_all(&format!(" - Low criticity: {}\n", self.low.len()).into_bytes()));
+
+        try!(f.write_all(b"\n"));
+        try!(f.write_all(b"------------------------------------------\n"));
+        try!(f.write_all(b"\n"));
+
+        if self.critical.len() > 0 {
+            try!(f.write_all(b"Critical vulnerabilities:\n"));
+            try!(f.write_all(b"\n"));
+
+            for (i, vuln) in self.critical.iter().enumerate() {
+                try!(f.write_all(&format!("C{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
+                try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
+                                      .into_bytes()));
+                if let Some(s) = vuln.get_file() {
+                    try!(f.write_all(&format!("File: {}\n", s).into_bytes()));
+                }
+                if let Some(s) = vuln.get_line() {
+                    try!(f.write_all(&format!("Line: {}\n", s).into_bytes()));
+                }
+            }
+        }
+
+        if self.high.len() > 0 {
+            try!(f.write_all(b"High criticity vulnerabilities:\n"));
+            try!(f.write_all(b"\n"));
+
+            for (i, vuln) in self.high.iter().enumerate() {
+                try!(f.write_all(&format!("H{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
+                try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
+                                      .into_bytes()));
+                if let Some(s) = vuln.get_file() {
+                    try!(f.write_all(&format!("File: {}\n", s).into_bytes()));
+                }
+                if let Some(s) = vuln.get_line() {
+                    try!(f.write_all(&format!("Line: {}\n", s).into_bytes()));
+                }
+            }
+        }
+
+        if self.medium.len() > 0 {
+            try!(f.write_all(b"Medium criticity vulnerabilities:\n"));
+            try!(f.write_all(b"\n"));
+
+            for (i, vuln) in self.medium.iter().enumerate() {
+                try!(f.write_all(&format!("M{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
+                try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
+                                      .into_bytes()));
+                if let Some(s) = vuln.get_file() {
+                    try!(f.write_all(&format!("File: {}\n", s).into_bytes()));
+                }
+                if let Some(s) = vuln.get_line() {
+                    try!(f.write_all(&format!("Line: {}\n", s).into_bytes()));
+                }
+            }
+        }
+
+        if self.low.len() > 0 {
+            try!(f.write_all(b"Low criticity vulnerabilities:\n"));
+            try!(f.write_all(b"\n"));
+
+            for (i, vuln) in self.low.iter().enumerate() {
+                try!(f.write_all(&format!("L{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
+                try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
+                                      .into_bytes()));
+                if let Some(s) = vuln.get_file() {
+                    try!(f.write_all(&format!("File: {}\n", s).into_bytes()));
+                }
+                if let Some(s) = vuln.get_line() {
+                    try!(f.write_all(&format!("Line: {}\n", s).into_bytes()));
+                }
+            }
+        }
+
+        Ok(())
     }
 }
 
@@ -127,6 +269,25 @@ impl Vulnerability {
             line: line,
             criticity: criticity,
         }
+    }
+
+    pub fn get_name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    pub fn get_description(&self) -> &str {
+        self.description.as_str()
+    }
+
+    pub fn get_file(&self) -> Option<&str> {
+        match self.file.as_ref() {
+            Some(s) => Some(s.as_str()),
+            None => None,
+        }
+    }
+
+    pub fn get_line(&self) -> Option<u32> {
+        self.line
     }
 }
 

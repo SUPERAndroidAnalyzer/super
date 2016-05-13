@@ -1,5 +1,6 @@
 downloads/*
 dist/*
+results/*
 target
 Cargo.lock
 src/*.bk
