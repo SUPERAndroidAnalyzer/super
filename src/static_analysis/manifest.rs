@@ -94,7 +94,7 @@ pub fn manifest_analysis(app_id: &str,
                              as such, but could be in devices with small heap. Review if the \
                              large heap is actually needed.";
 
-        results.add_vulnerability("Manifest Debug",
+        results.add_vulnerability("Large heap",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
@@ -111,7 +111,7 @@ pub fn manifest_analysis(app_id: &str,
                              if it's being connected to the Internet. Check if the \
                              permission is actually needed.";
 
-        results.add_vulnerability("Manifest Debug",
+        results.add_vulnerability("Internet permission",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
@@ -127,7 +127,7 @@ pub fn manifest_analysis(app_id: &str,
         let description = "The application needs external storage access. This could be a \
                              security issue if those accesses are not controled.";
 
-        results.add_vulnerability("Manifest Debug",
+        results.add_vulnerability("External storage write permission",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
