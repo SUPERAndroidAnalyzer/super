@@ -32,6 +32,7 @@ const JD_CLI_FILE: &'static str = "jd-cli.jar";
 #[derive(Debug)]
 enum Error {
     AppNotExists,
+    ParseError,
     IOError(io::Error),
     Unknown,
 }
@@ -40,6 +41,7 @@ impl Into<i32> for Error {
     fn into(self) -> i32 {
         match self {
             Error::AppNotExists => 10,
+            Error::ParseError => 20,
             Error::IOError(_) => 100,
             Error::Unknown => 1,
         }
@@ -52,7 +54,7 @@ impl From<io::Error> for Error {
     }
 }
 
-impl fmt::Display for Error {
+impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.description())
     }
@@ -61,9 +63,10 @@ impl fmt::Display for Error {
 impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
-            Error::AppNotExists => "The application has not been found.",
+            Error::AppNotExists => "the application has not been found",
+            Error::ParseError => "there was an error in some parsing process",
             Error::IOError(ref e) => e.description(),
-            Error::Unknown => "An unknown error occurred.",
+            Error::Unknown => "an unknown error occurred",
         }
     }
 
@@ -77,6 +80,7 @@ impl StdError for Error {
 
 type Result<T> = std::result::Result<T, Error>;
 
+#[derive(Debug, PartialEq, PartialOrd, Copy, Clone)]
 enum Criticity {
     Low,
     Medium,
@@ -84,9 +88,15 @@ enum Criticity {
     Critical,
 }
 
+impl Display for Criticity {
+    fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
+        write!(f, "{}", format!("{:?}", self).to_lowercase())
+    }
+}
+
 fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
     io::stderr()
-        .write(&format!("{} {}",
+        .write(&format!("{} {}\n",
                         "Error:".bold().red(),
                         error.as_ref().to_string_lossy().red())
                     .into_bytes()[..])
@@ -100,7 +110,7 @@ fn print_error<S: AsRef<OsStr>>(error: S, verbose: bool) {
 
 fn print_warning<S: AsRef<OsStr>>(warning: S, verbose: bool) {
     io::stderr()
-        .write(&format!("{} {}",
+        .write(&format!("{} {}\n",
                         "Warning:".bold().yellow(),
                         warning.as_ref().to_string_lossy().yellow())
                     .into_bytes()[..])
@@ -114,12 +124,13 @@ fn print_warning<S: AsRef<OsStr>>(warning: S, verbose: bool) {
 
 fn print_vulnerability<S: AsRef<OsStr>>(text: S, criticity: Criticity) {
     let text = text.as_ref().to_string_lossy();
-    let message = match criticity {
-        Criticity::Low => text.cyan(),
-        Criticity::Medium => text.yellow(),
-        Criticity::High | Criticity::Critical => text.red(),
+    let start = format!("Possible {} vulnerability found!:", criticity);
+    let (start, message) = match criticity {
+        Criticity::Low => (start.cyan(), text.cyan()),
+        Criticity::Medium => (start.yellow(), text.yellow()),
+        Criticity::High | Criticity::Critical => (start.red(), text.red()),
     };
-    println!("Possible vulnerability found!: {}", text);
+    println!("{} {}", start, message);
 }
 
 fn main() {
@@ -170,6 +181,8 @@ fn main() {
 
     // Decompiling the app
     decompile(&app_id, verbose, quiet, force);
+
+    // TODO setup result files
 
     // Static application analysis
     static_analysis(&app_id, verbose, quiet);
@@ -226,7 +239,7 @@ fn get_help_menu() -> ArgMatches<'static> {
                  .help("If you'd like the auditor to talk more than neccesary."))
         .arg(Arg::with_name("force")
                  .long("force")
-                 .help("If you'd like to force the auditor to do evrything from the beginning."))
+                 .help("If you'd like to force the auditor to do everything from the beginning."))
         .arg(Arg::with_name("quiet")
                  .short("q")
                  .long("quiet")

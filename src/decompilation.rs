@@ -240,6 +240,6 @@ pub fn decompile(app_id: &str, verbose: bool, quiet: bool, force: bool) {
         }
     } else if verbose {
         println!("Seems that there is already a source folder for the application. There is no \
-                  need to decompile it again");
+                  need to decompile it again.");
     }
 }
