@@ -93,7 +93,7 @@ pub fn manifest_analysis(app_id: &str, verbose: bool, quiet: bool) {
         }
     }
 
-    if manifest.get_permission_checklist().needs_permission(Permission::WritExternalStorage) {
+    if manifest.get_permission_checklist().needs_permission(Permission::WriteExternalStorage) {
         // TODO store result in JSON and text
         if verbose {
             print_vulnerability("The application needs external storage access. This could be a \
@@ -416,7 +416,7 @@ impl PermissionChecklist {
             Permission::AccessFineLocation => self.access_fine_location,
             Permission::AccessLocationExtraCommands => self.access_location_extra_commands,
             Permission::Internet => self.internet,
-            Permission::WritExternalStorage => self.write_external_storage,
+            Permission::WriteExternalStorage => self.write_external_storage,
         }
     }
 
@@ -427,7 +427,7 @@ impl PermissionChecklist {
             Permission::AccessFineLocation => self.access_fine_location = true,
             Permission::AccessLocationExtraCommands => self.access_location_extra_commands = true,
             Permission::Internet => self.internet = true,
-            Permission::WritExternalStorage => self.write_external_storage = true,
+            Permission::WriteExternalStorage => self.write_external_storage = true,
         }
     }
 }
@@ -451,7 +451,7 @@ enum Permission {
     AccessFineLocation,
     AccessLocationExtraCommands,
     Internet,
-    WritExternalStorage,
+    WriteExternalStorage,
 }
 
 impl FromStr for Permission {
@@ -463,7 +463,7 @@ impl FromStr for Permission {
             "ACCESS_FINE_LOCATION" => Ok(Permission::AccessFineLocation),
             "ACCESS_LOCATION_EXTRA_COMMANDS" => Ok(Permission::AccessLocationExtraCommands),
             "INTERNET" => Ok(Permission::Internet),
-            "WRITE_EXTERNAL_STORAGE" => Ok(Permission::WritExternalStorage),
+            "WRITE_EXTERNAL_STORAGE" => Ok(Permission::WriteExternalStorage),
             _ => Err(Error::ParseError),
         }
     }
