@@ -33,14 +33,14 @@ pub fn decompress(app_id: &str, verbose: bool, quiet: bool, force: bool) {
         }
 
         let output = Command::new("java")
-                         .arg("-jar")
-                         .arg(format!("{}/{}", VENDOR_FOLDER, APKTOOL_FILE))
-                         .arg("d")
-                         .arg("-o")
-                         .arg(format!("{}/{}", DIST_FOLDER, app_id))
-                         .arg("-f")
-                         .arg(format!("{}/{}.apk", DOWNLOAD_FOLDER, &app_id))
-                         .output();
+            .arg("-jar")
+            .arg(format!("{}/{}", VENDOR_FOLDER, APKTOOL_FILE))
+            .arg("d")
+            .arg("-o")
+            .arg(format!("{}/{}", DIST_FOLDER, app_id))
+            .arg("-f")
+            .arg(format!("{}/{}.apk", DOWNLOAD_FOLDER, &app_id))
+            .output();
 
         if output.is_err() {
             print_error(format!("There was an error when executing the decompression command: {}",
@@ -80,19 +80,18 @@ pub fn extract_dex(app_id: &str, verbose: bool, quiet: bool, force: bool) {
                      ".dex".italic());
         }
 
-        let zip = ZipArchive::new(match File::open(format!("{}/{}.apk",
-                                                           DOWNLOAD_FOLDER,
-                                                           &app_id)) {
-            Ok(f) => f,
-            Err(e) => {
-                print_error(format!("There was an error when decompressing the {} file. More \
-                                     info: {}",
-                                    ".apk".italic(),
-                                    e),
-                            verbose);
-                exit(Error::Unknown.into());
-            }
-        });
+        let zip =
+            ZipArchive::new(match File::open(format!("{}/{}.apk", DOWNLOAD_FOLDER, &app_id)) {
+                Ok(f) => f,
+                Err(e) => {
+                    print_error(format!("There was an error when decompressing the {} file. \
+                                         More info: {}",
+                                        ".apk".italic(),
+                                        e),
+                                verbose);
+                    exit(Error::Unknown.into());
+                }
+            });
         if zip.is_err() {
             print_error(format!("There was an error when decompressing the {} file. More info: \
                                  {}",
@@ -169,10 +168,10 @@ pub fn extract_dex(app_id: &str, verbose: bool, quiet: bool, force: bool) {
 
 fn dex_to_jar(app_id: &str, verbose: bool, quiet: bool) {
     let output = Command::new(format!("{}/{}/d2j-dex2jar.sh", VENDOR_FOLDER, DEX2JAR_FOLDER))
-                     .arg(format!("{}/{}/classes.dex", DIST_FOLDER, &app_id))
-                     .arg("-o")
-                     .arg(format!("{}/{}/classes.jar", DIST_FOLDER, &app_id))
-                     .output();
+        .arg(format!("{}/{}/classes.dex", DIST_FOLDER, &app_id))
+        .arg("-o")
+        .arg(format!("{}/{}/classes.jar", DIST_FOLDER, &app_id))
+        .output();
 
     if output.is_err() {
         print_error(format!("There was an error when executing the {} to {} conversion \
@@ -210,12 +209,12 @@ fn dex_to_jar(app_id: &str, verbose: bool, quiet: bool) {
 pub fn decompile(app_id: &str, verbose: bool, quiet: bool, force: bool) {
     if force || !fs::metadata(format!("{}/{}/src", DIST_FOLDER, app_id)).is_ok() {
         let output = Command::new("java")
-                         .arg("-jar")
-                         .arg(format!("{}/{}", VENDOR_FOLDER, JD_CLI_FILE))
-                         .arg(format!("{}/{}/classes.jar", DIST_FOLDER, app_id))
-                         .arg("-od")
-                         .arg(format!("{}/{}/src", DIST_FOLDER, app_id))
-                         .output();
+            .arg("-jar")
+            .arg(format!("{}/{}", VENDOR_FOLDER, JD_CLI_FILE))
+            .arg(format!("{}/{}/classes.jar", DIST_FOLDER, app_id))
+            .arg("-od")
+            .arg(format!("{}/{}/src", DIST_FOLDER, app_id))
+            .output();
 
         if output.is_err() {
             print_error(format!("There was an unknown error decompiling the application: {}",
