@@ -38,6 +38,7 @@ const JD_CLI_FILE: &'static str = "jd-cli.jar";
 pub enum Error {
     AppNotExists,
     ParseError,
+    CodeNotFound,
     IOError(io::Error),
     Unknown,
 }
@@ -47,6 +48,7 @@ impl Into<i32> for Error {
         match self {
             Error::AppNotExists => 10,
             Error::ParseError => 20,
+            Error::CodeNotFound => 30,
             Error::IOError(_) => 100,
             Error::Unknown => 1,
         }
@@ -70,6 +72,7 @@ impl StdError for Error {
         match *self {
             Error::AppNotExists => "the application has not been found",
             Error::ParseError => "there was an error in some parsing process",
+            Error::CodeNotFound => "the code was not found in the file",
             Error::IOError(ref e) => e.description(),
             Error::Unknown => "an unknown error occurred",
         }
@@ -142,6 +145,29 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
         Criticity::High | Criticity::Critical => (start.red(), text.red()),
     };
     println!("{} {}", start, message);
+}
+
+fn get_line(code: &str, haystack: &str) -> Result<usize> {
+    for (i, line) in code.lines().enumerate() {
+        if line.contains(haystack) {
+            return Ok(i+1);
+        }
+    }
+
+    Err(Error::CodeNotFound)
+}
+
+fn get_code(code: &str, line: usize) -> String {
+    let mut result = String::new();
+    for (i, text) in code.lines().enumerate() {
+        if i > (line + 5) {
+            break;
+        } else if (line >= 5 && i > line - 5) || (line < 5 && i < line + 5) {
+            result.push_str(text);
+            result.push_str("\n");
+        }
+    }
+    result
 }
 
 fn main() {

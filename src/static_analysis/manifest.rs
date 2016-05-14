@@ -1,4 +1,5 @@
 use std::fs::File;
+use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 
@@ -7,7 +8,7 @@ use xml::ParserConfig;
 use colored::Colorize;
 
 use {Error, Result, Criticity, DOWNLOAD_FOLDER, DIST_FOLDER, RESULTS_FOLDER, print_error,
-     print_warning, print_vulnerability};
+     print_warning, print_vulnerability, get_line, get_code};
 use results::Results;
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -81,7 +82,7 @@ pub fn manifest_analysis(app_id: &str,
         results.add_vulnerability(criticity,
                                   "Manifest Debug",
                                   description,
-                                  Some("AndroidManifest.xml"),
+                                  "AndroidManifest.xml",
                                   None,
                                   None);
         if verbose {
@@ -98,7 +99,7 @@ pub fn manifest_analysis(app_id: &str,
         results.add_vulnerability(criticity,
                                   "Large heap",
                                   description,
-                                  Some("AndroidManifest.xml"),
+                                  "AndroidManifest.xml",
                                   None,
                                   None);
         if verbose {
@@ -113,12 +114,18 @@ pub fn manifest_analysis(app_id: &str,
                              if it's being connected to the Internet. Check if the \
                              permission is actually needed.";
 
+        let line = get_line(manifest.get_code(), Permission::Internet.as_str()).ok();
+        let code = match line {
+            Some(l) => Some(get_code(manifest.get_code(), l-1)),
+            None => None,
+        };
+
         results.add_vulnerability(criticity,
                                   "Internet permission",
                                   description,
-                                  Some("AndroidManifest.xml"),
-                                  None,
-                                  None);
+                                  "AndroidManifest.xml",
+                                  line,
+                                  code);
 
         if verbose {
             print_vulnerability(description, criticity);
@@ -130,12 +137,20 @@ pub fn manifest_analysis(app_id: &str,
         let description = "The application needs external storage access. This could be a \
                              security issue if those accesses are not controled.";
 
+        let line = get_line(manifest.get_code(),
+                            Permission::WriteExternalStorage.as_str())
+                       .ok();
+        let code = match line {
+            Some(l) => Some(get_code(manifest.get_code(), l-1)),
+            None => None,
+        };
+
         results.add_vulnerability(criticity,
                                   "External storage write permission",
                                   description,
-                                  Some("AndroidManifest.xml"),
-                                  None,
-                                  None);
+                                  "AndroidManifest.xml",
+                                  line,
+                                  code);
 
         if verbose {
             print_vulnerability(description, criticity);
@@ -154,6 +169,7 @@ pub fn manifest_analysis(app_id: &str,
 }
 
 struct Manifest {
+    code: String,
     package: String,
     version_number: i32,
     version_str: String,
@@ -168,9 +184,16 @@ struct Manifest {
 
 impl Manifest {
     pub fn load<P: AsRef<Path>>(path: P, verbose: bool) -> Result<Manifest> {
-        let file = try!(File::open(path));
-        let parser = EventReader::new_with_config(file, PARSER_CONFIG);
+        let mut file = try!(File::open(path));
+
         let mut manifest: Manifest = Default::default();
+
+        let mut code = String::new();
+        try!(file.read_to_string(&mut code));
+        manifest.set_code(code.as_str());
+
+        let bytes = code.into_bytes();
+        let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
 
         for e in parser {
             match e {
@@ -332,6 +355,14 @@ impl Manifest {
         Ok(manifest)
     }
 
+    fn set_code(&mut self, code: &str) {
+        self.code = String::from(code);
+    }
+
+    pub fn get_code(&self) -> &str {
+        self.code.as_str()
+    }
+
     pub fn get_package(&self) -> &str {
         self.package.as_str()
     }
@@ -416,6 +447,7 @@ impl Manifest {
 impl Default for Manifest {
     fn default() -> Manifest {
         Manifest {
+            code: String::new(),
             package: String::new(),
             version_number: 0,
             version_str: String::new(),
@@ -502,6 +534,19 @@ enum Permission {
     AccessLocationExtraCommands,
     Internet,
     WriteExternalStorage,
+}
+
+impl Permission {
+    pub fn as_str(&self) -> &str {
+        match *self {
+            Permission::AccessCheckinProperties => "ACCESS_CHECKIN_PROPERTIES",
+            Permission::AccessCoarseLocation => "ACCESS_COARSE_LOCATION",
+            Permission::AccessFineLocation => "ACCESS_FINE_LOCATION",
+            Permission::AccessLocationExtraCommands => "ACCESS_LOCATION_EXTRA_COMMANDS",
+            Permission::Internet => "INTERNET",
+            Permission::WriteExternalStorage => "WRITE_EXTERNAL_STORAGE",
+        }
+    }
 }
 
 impl FromStr for Permission {
