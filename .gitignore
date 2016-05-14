@@ -4,4 +4,6 @@ results/*
 target
 Cargo.lock
 src/*.bk
+src/static_analysis/*.bk
+src/dynamic_analysis/*.bk
 vendor/*

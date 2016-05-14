@@ -78,11 +78,12 @@ pub fn manifest_analysis(app_id: &str,
                              the application will filter data to the Android OS to be \
                              debugged. This option should only be used while in development.";
 
-        results.add_vulnerability("Manifest Debug",
+        results.add_vulnerability(criticity,
+                                  "Manifest Debug",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
-                                  criticity);
+                                  None);
         if verbose {
             print_vulnerability(description, criticity);
         }
@@ -94,11 +95,12 @@ pub fn manifest_analysis(app_id: &str,
                              as such, but could be in devices with small heap. Review if the \
                              large heap is actually needed.";
 
-        results.add_vulnerability("Large heap",
+        results.add_vulnerability(criticity,
+                                  "Large heap",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
-                                  criticity);
+                                  None);
         if verbose {
             print_vulnerability(description, criticity);
         }
@@ -107,15 +109,16 @@ pub fn manifest_analysis(app_id: &str,
     if manifest.get_permission_checklist().needs_permission(Permission::Internet) {
         let criticity = Criticity::Low;
         let description = "The application needs Internet access. This is not a \
-                             vulnerability as such, but it needs aditional security measures \
+                             vulnerability as such, but it needs additional security measures \
                              if it's being connected to the Internet. Check if the \
                              permission is actually needed.";
 
-        results.add_vulnerability("Internet permission",
+        results.add_vulnerability(criticity,
+                                  "Internet permission",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
-                                  criticity);
+                                  None);
 
         if verbose {
             print_vulnerability(description, criticity);
@@ -127,11 +130,12 @@ pub fn manifest_analysis(app_id: &str,
         let description = "The application needs external storage access. This could be a \
                              security issue if those accesses are not controled.";
 
-        results.add_vulnerability("External storage write permission",
+        results.add_vulnerability(criticity,
+                                  "External storage write permission",
                                   description,
                                   Some("AndroidManifest.xml"),
                                   None,
-                                  criticity);
+                                  None);
 
         if verbose {
             print_vulnerability(description, criticity);

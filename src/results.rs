@@ -1,9 +1,13 @@
-use std::fs;
+use std::{fs, result};
 use std::fs::File;
 use std::io::Write;
 use std::collections::BTreeSet;
 use std::cmp::Ordering;
 use std::path::Path;
+
+
+use serde::ser::{Serialize, Serializer, MapVisitor};
+use serde_json::builder::ObjectBuilder;
 
 use super::{RESULTS_FOLDER, Result, Criticity, print_error};
 
@@ -76,23 +80,27 @@ impl Results {
     }
 
     pub fn add_vulnerability<S: AsRef<str>, P: AsRef<Path>>(&mut self,
+                                                            criticity: Criticity,
                                                             name: S,
                                                             description: S,
                                                             file: Option<P>,
                                                             line: Option<u32>,
-                                                            criticity: Criticity) {
+                                                            code: Option<S>) {
         match criticity {
             Criticity::Low => {
-                self.low.insert(Vulnerability::new(name, description, file, line, criticity));
+                self.low.insert(Vulnerability::new(criticity, name, description, file, line, code));
             }
             Criticity::Medium => {
-                self.medium.insert(Vulnerability::new(name, description, file, line, criticity));
+                self.medium
+                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
             }
             Criticity::High => {
-                self.high.insert(Vulnerability::new(name, description, file, line, criticity));
+                self.high
+                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
             }
             Criticity::Critical => {
-                self.critical.insert(Vulnerability::new(name, description, file, line, criticity));
+                self.critical
+                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
             }
         }
     }
@@ -127,10 +135,46 @@ impl Results {
         }
         let mut f = try!(File::create(format!("{}/results.json", self.path)));
         if verbose {
-            println!("The report file has been created. Now it's time for the actual report.")
+            println!("The report file has been created. Now it's time to fill it.")
         }
-        // TODO
-        // unimplemented!();
+
+        let report = ObjectBuilder::new()
+                         .insert("name", self.app_label.as_str())
+                         .insert("description", self.app_description.as_str())
+                         .insert("package", self.app_package.as_str())
+                         .insert("version", self.app_version.as_str())
+                         .insert_array("low", |builder| {
+                             let mut builder = builder;
+                             for vuln in &self.low {
+                                 builder = builder.push(vuln);
+                             }
+                             builder
+                         })
+                         .insert_array("medium", |builder| {
+                             let mut builder = builder;
+                             for vuln in &self.medium {
+                                 builder = builder.push(vuln);
+                             }
+                             builder
+                         })
+                         .insert_array("high", |builder| {
+                             let mut builder = builder;
+                             for vuln in &self.high {
+                                 builder = builder.push(vuln);
+                             }
+                             builder
+                         })
+                         .insert_array("critical", |builder| {
+                             let mut builder = builder;
+                             for vuln in &self.critical {
+                                 builder = builder.push(vuln);
+                             }
+                             builder
+                         })
+                         .unwrap();
+
+        try!(f.write_all(&format!("{:?}", report).into_bytes()));
+
         Ok(())
     }
 
@@ -172,7 +216,7 @@ impl Results {
             try!(f.write_all(b"\n"));
 
             for (i, vuln) in self.critical.iter().enumerate() {
-                try!(f.write_all(&format!("C{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("C{:03}:\n", i + 1).into_bytes()));
                 try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
                 try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
                                       .into_bytes()));
@@ -190,7 +234,7 @@ impl Results {
             try!(f.write_all(b"\n"));
 
             for (i, vuln) in self.high.iter().enumerate() {
-                try!(f.write_all(&format!("H{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("H{:03}:\n", i + 1).into_bytes()));
                 try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
                 try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
                                       .into_bytes()));
@@ -208,7 +252,7 @@ impl Results {
             try!(f.write_all(b"\n"));
 
             for (i, vuln) in self.medium.iter().enumerate() {
-                try!(f.write_all(&format!("M{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("M{:03}:\n", i + 1).into_bytes()));
                 try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
                 try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
                                       .into_bytes()));
@@ -226,7 +270,7 @@ impl Results {
             try!(f.write_all(b"\n"));
 
             for (i, vuln) in self.low.iter().enumerate() {
-                try!(f.write_all(&format!("L{:03}:\n", i+1).into_bytes()));
+                try!(f.write_all(&format!("L{:03}:\n", i + 1).into_bytes()));
                 try!(f.write_all(&format!("Name: {}\n", vuln.get_name()).into_bytes()));
                 try!(f.write_all(&format!("Description: {}\n", vuln.get_description())
                                       .into_bytes()));
@@ -245,21 +289,24 @@ impl Results {
 
 #[derive(Clone, PartialEq, Eq, Ord)]
 struct Vulnerability {
+    criticity: Criticity,
     name: String,
     description: String,
     file: Option<String>,
     line: Option<u32>,
-    criticity: Criticity,
+    code: Option<String>,
 }
 
 impl Vulnerability {
-    pub fn new<S: AsRef<str>, P: AsRef<Path>>(name: S,
+    pub fn new<S: AsRef<str>, P: AsRef<Path>>(criticity: Criticity,
+                                              name: S,
                                               description: S,
                                               file: Option<P>,
                                               line: Option<u32>,
-                                              criticity: Criticity)
+                                              code: Option<S>)
                                               -> Vulnerability {
         Vulnerability {
+            criticity: criticity,
             name: String::from(name.as_ref()),
             description: String::from(description.as_ref()),
             file: match file {
@@ -267,7 +314,10 @@ impl Vulnerability {
                 None => None,
             },
             line: line,
-            criticity: criticity,
+            code: match code {
+                Some(s) => Some(String::from(s.as_ref())),
+                None => None,
+            },
         }
     }
 
@@ -286,8 +336,41 @@ impl Vulnerability {
         }
     }
 
+    pub fn get_code(&self) -> Option<&str> {
+        match self.code.as_ref() {
+            Some(s) => Some(s.as_str()),
+            None => None,
+        }
+    }
+
     pub fn get_line(&self) -> Option<u32> {
         self.line
+    }
+}
+
+impl Serialize for Vulnerability {
+    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+        where S: Serializer
+    {
+        try!(serializer.serialize_struct("vulnerability", self));
+        Ok(())
+    }
+}
+
+impl<'v> MapVisitor for &'v Vulnerability {
+    fn visit<S>(&mut self, serializer: &mut S) -> result::Result<Option<()>, S::Error>
+        where S: Serializer
+    {
+        try!(serializer.serialize_struct_elt("criticity", self.criticity));
+        try!(serializer.serialize_struct_elt("name", self.name.as_str()));
+        try!(serializer.serialize_struct_elt("description", self.description.as_str()));
+        if self.file.is_some() {
+            try!(serializer.serialize_struct_elt("file", self.file.as_ref()));
+        }
+        if self.line.is_some() {
+            try!(serializer.serialize_struct_elt("line", self.line));
+        }
+        Ok(None)
     }
 }
 

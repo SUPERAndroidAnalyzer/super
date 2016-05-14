@@ -3,18 +3,22 @@ extern crate clap;
 extern crate colored;
 extern crate zip;
 extern crate xml;
+extern crate serde;
+extern crate serde_json;
 
 mod decompilation;
 mod static_analysis;
 mod results;
 
-use std::{fs, io, fmt};
+use std::{fs, io, fmt, result};
 use std::path::Path;
 use std::fmt::Display;
 use std::convert::From;
 use std::error::Error as StdError;
 use std::io::Write;
 use std::process::exit;
+
+use serde::ser::{Serialize, Serializer};
 use clap::{Arg, App, ArgMatches};
 use colored::Colorize;
 
@@ -92,6 +96,15 @@ pub enum Criticity {
 impl Display for Criticity {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
+    }
+}
+
+impl Serialize for Criticity {
+    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+        where S: Serializer
+    {
+        try!(serializer.serialize_str(format!("{}", self).as_str()));
+        Ok(())
     }
 }
 
@@ -193,6 +206,10 @@ fn main() {
                 if verbose {
                     println!("The results report has been saved. Everything went smoothly, now \
                               you can check all the results.");
+                    println!("");
+                    println!("I will now analyse myself for vulnerabilities…");
+                    println!("Nah, just kidding, I've been developed in {}!",
+                             "Rust".bold().green())
                 } else if !quiet {
                     println!("Report generated.");
                 }
