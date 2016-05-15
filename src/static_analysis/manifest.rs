@@ -317,12 +317,13 @@ impl Manifest {
                                         let permission = match Permission::from_str(perm_str) {
                                             Ok(p) => p,
                                             Err(e) => {
-                                                print_warning(format!("An error occurred \
-                                                                       when parsing a \
-                                                                       permission in \
-                                                                       the manifest: \
-                                                                       {}.\nThe process \
-                                                                       will continue, though.",
+                                                print_warning(format!("An error occurred when \
+                                                                       parsing a permission in \
+                                                                       the manifest: {}. \
+                                                                       Manifest's permission: \
+                                                                       {}.\nThe process will \
+                                                                       continue, though.",
+                                                                      attr.value.as_str(),
                                                                       e),
                                                               verbose);
                                                 break;
