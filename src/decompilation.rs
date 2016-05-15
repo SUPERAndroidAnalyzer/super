@@ -29,7 +29,10 @@ pub fn decompress(config: &Config) {
     if !file_exists(&path) || config.is_force() {
         if file_exists(&path) {
             if let Err(e) = fs::remove_dir_all(&path) {
-                print_warning(format!("There was an error when removing the decompression folder: {}", e), config.is_verbose());
+                print_warning(format!("There was an error when removing the decompression \
+                                       folder: {}",
+                                      e),
+                              config.is_verbose());
             }
         }
 

@@ -40,7 +40,8 @@ fn main() {
     let mut config = match Config::new(app_id, verbose, quiet, force) {
         Ok(c) => c,
         Err(e) => {
-            print_warning(format!("There was an error when reading the config.toml file: {}", e),
+            print_warning(format!("There was an error when reading the config.toml file: {}",
+                                  e),
                           verbose);
             let mut c: Config = Default::default();
             c.set_app_id(app_id);
