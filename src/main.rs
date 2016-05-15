@@ -144,198 +144,201 @@ pub struct Config {
 
 impl Config {
     pub fn new(app_id: &str, verbose: bool, quiet: bool, force: bool) -> Result<Config> {
-        let mut f = try!(fs::File::open("config.toml"));
-        let mut toml = String::new();
-        try!(f.read_to_string(&mut toml));
-
-        let mut parser = toml::Parser::new(toml.as_str());
-        let toml = match parser.parse() {
-            Some(t) => t,
-            None => {
-                print_error(format!("There was an error parsing the config.toml file: {:?}",
-                                    parser.errors),
-                            verbose);
-                exit(Error::ParseError.into());
-            }
-        };
-
         let mut config: Config = Default::default();
         config.app_id = String::from(app_id);
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
 
-        // TODO ONLY IF FILE EXISTS
+        if Path::new("config.toml").exists() {
+            let mut f = try!(fs::File::open("config.toml"));
+            let mut toml = String::new();
+            try!(f.read_to_string(&mut toml));
 
-        for (key, value) in toml {
-            match key.as_str() {
-                "threads" => {
-                    // let max_threads =  as i64;
-                    match value {
-                        toml::Value::Integer(1...MAX_THREADS) => {
-                            config.threads = value.as_integer().unwrap() as u8
-                        }
-                        _ => {
-                            print_warning(format!("The 'threads' option in config.toml must be \
-                                                   an integer between 1 and {}. Using default.",
-                                                  MAX_THREADS),
-                                          verbose)
-                        }
-                    }
+            let mut parser = toml::Parser::new(toml.as_str());
+            let toml = match parser.parse() {
+                Some(t) => t,
+                None => {
+                    print_error(format!("There was an error parsing the config.toml file: {:?}",
+                                        parser.errors),
+                                verbose);
+                    exit(Error::ParseError.into());
                 }
-                "downloads_folder" => {
-                    match value {
-                        toml::Value::String(s) => config.downloads_folder = s,
-                        _ => {
-                            print_warning("The 'downloads_folder' option in config.toml must be \
-                                           an string. Using default.",
-                                          verbose)
-                        }
-                    }
-                }
-                "dist_folder" => {
-                    match value {
-                        toml::Value::String(s) => config.dist_folder = s,
-                        _ => {
-                            print_warning("The 'dist_folder' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
-                    }
-                }
-                "results_folder" => {
-                    match value {
-                        toml::Value::String(s) => config.results_folder = s,
-                        _ => {
-                            print_warning("The 'results_folder' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
-                    }
-                }
-                "apktool_file" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "jar" {
-                                config.apktool_file = s.clone();
-                            } else {
-                                print_warning("The APKTool file must be a JAR file. Using default.",
+            };
+
+            for (key, value) in toml {
+                match key.as_str() {
+                    "threads" => {
+                        // let max_threads =  as i64;
+                        match value {
+                            toml::Value::Integer(1...MAX_THREADS) => {
+                                config.threads = value.as_integer().unwrap() as u8
+                            }
+                            _ => {
+                                print_warning(format!("The 'threads' option in config.toml must \
+                                                       be an integer between 1 and {}. Using \
+                                                       default.",
+                                                      MAX_THREADS),
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'apktool_file' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
                     }
-                }
-                "dex2jar_folder" => {
-                    match value {
-                        toml::Value::String(s) => config.dex2jar_folder = s,
-                        _ => {
-                            print_warning("The 'dex2jar_folder' option in config.toml should be \
-                                           an string. Using default.",
-                                          verbose)
-                        }
-                    }
-                }
-                "jd_cli_file" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "jar" {
-                                config.jd_cli_file = s.clone();
-                            } else {
-                                print_warning("The JD-CLI file must be a JAR file. Using default.",
+                    "downloads_folder" => {
+                        match value {
+                            toml::Value::String(s) => config.downloads_folder = s,
+                            _ => {
+                                print_warning("The 'downloads_folder' option in config.toml must \
+                                               be an string. Using default.",
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'jd_cli_file' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
                     }
-                }
-                "highlight_js" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "js" {
-                                config.highlight_js = s.clone();
-                            } else {
-                                print_warning("The highlight.js file must be a JavaScript file. \
-                                               Using default.",
+                    "dist_folder" => {
+                        match value {
+                            toml::Value::String(s) => config.dist_folder = s,
+                            _ => {
+                                print_warning("The 'dist_folder' option in config.toml must be an \
+                                               string. Using default.",
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'highlight_js' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
                     }
-                }
-                "highlight_css" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "css" {
-                                config.highlight_css = s.clone();
-                            } else {
-                                print_warning("The highlight.css file must be a CSS file. Using \
-                                               default.",
+                    "results_folder" => {
+                        match value {
+                            toml::Value::String(s) => config.results_folder = s,
+                            _ => {
+                                print_warning("The 'results_folder' option in config.toml must be \
+                                               an string. Using default.",
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'highlight_css' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
                     }
-                }
-                "results_css" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "css" {
-                                config.results_css = s.clone();
-                            } else {
-                                print_warning("The results.css file must be a CSS file. Using \
-                                               default.",
+                    "apktool_file" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "jar" {
+                                    config.apktool_file = s.clone();
+                                } else {
+                                    print_warning("The APKTool file must be a JAR file. Using \
+                                                   default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'apktool_file' option in config.toml must be \
+                                               an string. Using default.",
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'results_css' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
-                        }
                     }
-                }
-                "rules_json" => {
-                    match value {
-                        toml::Value::String(s) => {
-                            let extension = Path::new(&s).extension();
-                            if extension.is_none() || extension.unwrap() != "json" {
-                                config.rules_json = s.clone();
-                            } else {
-                                print_warning("The rules.json file must be a JSON file. Using \
-                                               default.",
+                    "dex2jar_folder" => {
+                        match value {
+                            toml::Value::String(s) => config.dex2jar_folder = s,
+                            _ => {
+                                print_warning("The 'dex2jar_folder' option in config.toml should \
+                                               be an string. Using default.",
                                               verbose)
                             }
                         }
-                        _ => {
-                            print_warning("The 'rules_json' option in config.toml must be an \
-                                           string. Using default.",
-                                          verbose)
+                    }
+                    "jd_cli_file" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "jar" {
+                                    config.jd_cli_file = s.clone();
+                                } else {
+                                    print_warning("The JD-CLI file must be a JAR file. Using \
+                                                   default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'jd_cli_file' option in config.toml must be an \
+                                               string. Using default.",
+                                              verbose)
+                            }
                         }
                     }
+                    "highlight_js" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "js" {
+                                    config.highlight_js = s.clone();
+                                } else {
+                                    print_warning("The highlight.js file must be a JavaScript \
+                                                   file. Using default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'highlight_js' option in config.toml must be \
+                                               an string. Using default.",
+                                              verbose)
+                            }
+                        }
+                    }
+                    "highlight_css" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "css" {
+                                    config.highlight_css = s.clone();
+                                } else {
+                                    print_warning("The highlight.css file must be a CSS file. \
+                                                   Using default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'highlight_css' option in config.toml must be \
+                                               an string. Using default.",
+                                              verbose)
+                            }
+                        }
+                    }
+                    "results_css" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "css" {
+                                    config.results_css = s.clone();
+                                } else {
+                                    print_warning("The results.css file must be a CSS file. Using \
+                                                   default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'results_css' option in config.toml must be an \
+                                               string. Using default.",
+                                              verbose)
+                            }
+                        }
+                    }
+                    "rules_json" => {
+                        match value {
+                            toml::Value::String(s) => {
+                                let extension = Path::new(&s).extension();
+                                if extension.is_none() || extension.unwrap() != "json" {
+                                    config.rules_json = s.clone();
+                                } else {
+                                    print_warning("The rules.json file must be a JSON file. Using \
+                                                   default.",
+                                                  verbose)
+                                }
+                            }
+                            _ => {
+                                print_warning("The 'rules_json' option in config.toml must be an \
+                                               string. Using default.",
+                                              verbose)
+                            }
+                        }
+                    }
+                    _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
                 }
-                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
             }
         }
 
