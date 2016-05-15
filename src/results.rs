@@ -220,11 +220,10 @@ impl Results {
         let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
         try!(f.write_all(&format!("### Total vulnerabilities found: {} ###\n", total_vuln)
                               .into_bytes()));
-        try!(f.write_all(&format!(" - **Critical:** {}\n", self.critical.len()).into_bytes()));
-        try!(f.write_all(&format!(" - **High criticity:** {}\n", self.high.len()).into_bytes()));
-        try!(f.write_all(&format!(" - **Medium criticity:** {}\n", self.medium.len())
-                              .into_bytes()));
-        try!(f.write_all(&format!(" - **Low criticity:** {}\n", self.low.len()).into_bytes()));
+        try!(f.write_all(&format!(" - Critical: {}\n", self.critical.len()).into_bytes()));
+        try!(f.write_all(&format!(" - High criticity: {}\n", self.high.len()).into_bytes()));
+        try!(f.write_all(&format!(" - Medium criticity: {}\n", self.medium.len()).into_bytes()));
+        try!(f.write_all(&format!(" - Low criticity: {}\n", self.low.len()).into_bytes()));
 
         try!(f.write_all(b"\n"));
         try!(f.write_all(b"* * *\n"));
@@ -665,7 +664,7 @@ impl Vulnerability {
         Path::new(&self.file)
     }
 
-    pub fn get_code(&self) -> Option<&str> {
+    pub fn get_code<'l>(&self) -> Option<&str> {
         match self.code.as_ref() {
             Some(s) => Some(s.as_str()),
             None => None,
