@@ -161,39 +161,39 @@ impl Results {
         }
 
         let report = ObjectBuilder::new()
-                         .insert("label", self.app_label.as_str())
-                         .insert("description", self.app_description.as_str())
-                         .insert("package", self.app_package.as_str())
-                         .insert("version", self.app_version.as_str())
-                         .insert_array("low", |builder| {
-                             let mut builder = builder;
-                             for vuln in &self.low {
-                                 builder = builder.push(vuln);
-                             }
-                             builder
-                         })
-                         .insert_array("medium", |builder| {
-                             let mut builder = builder;
-                             for vuln in &self.medium {
-                                 builder = builder.push(vuln);
-                             }
-                             builder
-                         })
-                         .insert_array("high", |builder| {
-                             let mut builder = builder;
-                             for vuln in &self.high {
-                                 builder = builder.push(vuln);
-                             }
-                             builder
-                         })
-                         .insert_array("critical", |builder| {
-                             let mut builder = builder;
-                             for vuln in &self.critical {
-                                 builder = builder.push(vuln);
-                             }
-                             builder
-                         })
-                         .unwrap();
+            .insert("label", self.app_label.as_str())
+            .insert("description", self.app_description.as_str())
+            .insert("package", self.app_package.as_str())
+            .insert("version", self.app_version.as_str())
+            .insert_array("low", |builder| {
+                let mut builder = builder;
+                for vuln in &self.low {
+                    builder = builder.push(vuln);
+                }
+                builder
+            })
+            .insert_array("medium", |builder| {
+                let mut builder = builder;
+                for vuln in &self.medium {
+                    builder = builder.push(vuln);
+                }
+                builder
+            })
+            .insert_array("high", |builder| {
+                let mut builder = builder;
+                for vuln in &self.high {
+                    builder = builder.push(vuln);
+                }
+                builder
+            })
+            .insert_array("critical", |builder| {
+                let mut builder = builder;
+                for vuln in &self.critical {
+                    builder = builder.push(vuln);
+                }
+                builder
+            })
+            .unwrap();
 
         try!(f.write_all(&format!("{:?}", report).into_bytes()));
 
@@ -218,7 +218,7 @@ impl Results {
                                    application *{}*. Report generated on {}.\n",
                                   self.app_package,
                                   now.to_rfc2822())
-                              .into_bytes()));
+            .into_bytes()));
 
         try!(f.write_all(b"## Application data: ##\n"));
         try!(f.write_all(&format!(" - **Name:** {}\n", self.app_label).into_bytes()));
@@ -230,7 +230,7 @@ impl Results {
 
         let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
         try!(f.write_all(&format!("### Total vulnerabilities found: {} ###\n", total_vuln)
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(&format!(" - Critical: {}\n", self.critical.len()).into_bytes()));
         try!(f.write_all(&format!(" - High criticity: {}\n", self.high.len()).into_bytes()));
         try!(f.write_all(&format!(" - Medium criticity: {}\n", self.medium.len()).into_bytes()));
@@ -268,7 +268,7 @@ impl Results {
                                   } else {
                                       format!("{}", now.year())
                                   })
-                              .into_bytes()));
+            .into_bytes()));
 
         Ok(())
     }
@@ -280,17 +280,17 @@ impl Results {
                          -> Result<()> {
         let criticity = format!("{:?}", criticity);
         try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity)
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(b"\n"));
 
         for (i, vuln) in set.iter().enumerate() {
             try!(f.write_all(&format!("##### {}{:03}: ####\n",
                                       criticity.chars().nth(0).unwrap(),
                                       i + 1)
-                                  .into_bytes()));
+                .into_bytes()));
             try!(f.write_all(&format!(" - **Label:** {}\n", vuln.get_name()).into_bytes()));
             try!(f.write_all(&format!(" - **Description:** {}\n", vuln.get_description())
-                                  .into_bytes()));
+                .into_bytes()));
             try!(f.write_all(&format!(" - **File:** {}\n", vuln.get_file().display())
                                   .into_bytes()));
             if let Some(s) = vuln.get_line() {
@@ -308,7 +308,7 @@ impl Results {
                                           start_line,
                                           lang,
                                           code)
-                                      .into_bytes()));
+                    .into_bytes()));
             }
         }
         Ok(())
@@ -342,7 +342,7 @@ impl Results {
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
                                   now.to_rfc2822())
-                              .into_bytes()));
+            .into_bytes()));
 
         // Application data
         try!(f.write_all(b"<h2>Application data:</h2>"));
@@ -353,63 +353,63 @@ impl Results {
                                   } else {
                                       self.app_label.as_str()
                                   })
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
                                   if self.app_description.is_empty() {
                                       "<em>No description</em>"
                                   } else {
                                       self.app_description.as_str()
                                   })
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(&format!("<li><strong>Package:</strong> {}</li>",
                                   if self.app_package.is_empty() {
                                       "<em>Empty package</em>"
                                   } else {
                                       self.app_package.as_str()
                                   })
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(&format!("<li><strong>Version:</strong> {}</li>",
                                   if self.app_version.is_empty() {
                                       "<em>Unknown version</em>"
                                   } else {
                                       self.app_version.as_str()
                                   })
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(b"<li><a href=\"src/\" title=\"Source code\">Check source code</a></li>"));
         try!(f.write_all(b"</ul>"));
 
         // Vulnerability count
         let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
         try!(f.write_all(&format!("<h3>Total vulnerabilities found: {}</h3>", total_vuln)
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(b"<ul>"));
         if self.critical.len() == 0 {
             try!(f.write_all(b"<li>Critical: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span></li>",
                                       self.critical.len())
-                                  .into_bytes()));
+                .into_bytes()));
         }
         if self.high.len() == 0 {
             try!(f.write_all(b"<li>High: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span></li>",
                                       self.high.len())
-                                  .into_bytes()));
+                .into_bytes()));
         }
         if self.medium.len() == 0 {
             try!(f.write_all(b"<li>Medium: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span></li>",
                                       self.medium.len())
-                                  .into_bytes()));
+                .into_bytes()));
         }
         if self.low.len() == 0 {
             try!(f.write_all(b"<li>Low: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span></li>",
                                       self.low.len())
-                                  .into_bytes()));
+                .into_bytes()));
         }
         try!(f.write_all(b"</ul>"));
 
@@ -439,7 +439,7 @@ impl Results {
                                   } else {
                                       format!("{}", now.year())
                                   })
-                              .into_bytes()));
+            .into_bytes()));
         try!(f.write_all(b"</footer>"));
         try!(f.write_all(b"<script src=\"highlight.js\"></script>"));
         try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
@@ -479,17 +479,17 @@ impl Results {
             try!(f.write_all(&format!("<h4>{}{:03}:</h4>",
                                       criticity.chars().nth(0).unwrap(),
                                       i + 1)
-                                  .into_bytes()));
+                .into_bytes()));
             try!(f.write_all(b"<ul>"));
             try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>", vuln.get_name())
-                                  .into_bytes()));
+                .into_bytes()));
             try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
                                       vuln.get_description())
-                                  .into_bytes()));
+                .into_bytes()));
             try!(f.write_all(&format!("<li><strong>File:</strong> <a \
                                        href=\"src/{0}.html\">{0}</a></li>",
                                       vuln.get_file().display())
-                                  .into_bytes()));
+                .into_bytes()));
             if let Some(s) = vuln.get_line() {
                 try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", s).into_bytes()));
             }
@@ -515,7 +515,7 @@ impl Results {
                                           lines,
                                           lang,
                                           Results::html_escape(code))
-                                      .into_bytes()));
+                    .into_bytes()));
                 try!(f.write_all(b"</ul>"));
                 try!(f.write_all(b"</section>"));
             }
@@ -566,16 +566,15 @@ impl Results {
                             }
                         };
 
-                        let prefix = format!("{}/{}",
-                                             config.get_dist_folder(),
-                                             config.get_app_id());
+                        let prefix =
+                            format!("{}/{}", config.get_dist_folder(), config.get_app_id());
                         // TODO count components and for each ../
                         if extension == "xml" || extension == "java" {
                             menu.push_str(format!("<li><a href=\"{0}.html\" \
                                                    title=\"{1}\">{1}</a></li>",
                                                   path.strip_prefix(&prefix).unwrap().display(),
                                                   file_name)
-                                              .as_str());
+                                .as_str());
                         }
                     } else if path.is_dir() {
                         let dir_name = match path.file_name() {
@@ -597,7 +596,7 @@ impl Results {
                             }
                         };
                         menu.push_str(format!("<li>{}{}</li>", dir_name, submenu.as_str())
-                                          .as_str());
+                            .as_str());
                     }
                 }
                 Err(e) => {

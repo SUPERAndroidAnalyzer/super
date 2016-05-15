@@ -42,16 +42,16 @@ pub fn decompress(config: &Config) {
         }
 
         let output = Command::new("java")
-                         .arg("-jar")
-                         .arg(config.get_apktool_file())
-                         .arg("d")
-                         .arg("-o")
-                         .arg(format!("{}/{}", config.get_dist_folder(), config.get_app_id()))
-                         .arg("-f")
-                         .arg(format!("{}/{}.apk",
-                                      config.get_downloads_folder(),
-                                      config.get_app_id()))
-                         .output();
+            .arg("-jar")
+            .arg(config.get_apktool_file())
+            .arg("d")
+            .arg("-o")
+            .arg(format!("{}/{}", config.get_dist_folder(), config.get_app_id()))
+            .arg("-f")
+            .arg(format!("{}/{}.apk",
+                         config.get_downloads_folder(),
+                         config.get_app_id()))
+            .output();
 
         let output = match output {
             Ok(o) => o,
@@ -188,14 +188,14 @@ pub fn extract_dex(config: &Config) {
 
 fn dex_to_jar(config: &Config) {
     let output = Command::new(format!("{}/d2j-dex2jar.sh", config.get_dex2jar_folder()))
-                     .arg(format!("{}/{}/classes.dex",
-                                  config.get_dist_folder(),
-                                  config.get_app_id()))
-                     .arg("-o")
-                     .arg(format!("{}/{}/classes.jar",
-                                  config.get_dist_folder(),
-                                  config.get_app_id()))
-                     .output();
+        .arg(format!("{}/{}/classes.dex",
+                     config.get_dist_folder(),
+                     config.get_app_id()))
+        .arg("-o")
+        .arg(format!("{}/{}/classes.jar",
+                     config.get_dist_folder(),
+                     config.get_app_id()))
+        .output();
 
     if output.is_err() {
         print_error(format!("There was an error when executing the {} to {} conversion \
@@ -239,14 +239,14 @@ pub fn decompile(config: &Config) {
                            config.get_app_id());
     if config.is_force() || !file_exists(&out_path) {
         let output = Command::new("java")
-                         .arg("-jar")
-                         .arg(config.get_jd_cli_file())
-                         .arg(format!("{}/{}/classes.jar",
-                                      config.get_dist_folder(),
-                                      config.get_app_id()))
-                         .arg("-od")
-                         .arg(&out_path)
-                         .output();
+            .arg("-jar")
+            .arg(config.get_jd_cli_file())
+            .arg(format!("{}/{}/classes.jar",
+                         config.get_dist_folder(),
+                         config.get_app_id()))
+            .arg("-od")
+            .arg(&out_path)
+            .output();
 
         if output.is_err() {
             print_error(format!("There was an unknown error decompiling the application: {}",
