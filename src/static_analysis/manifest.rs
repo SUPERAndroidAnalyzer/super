@@ -7,8 +7,8 @@ use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
 
-use {Error, Result, Criticity, DOWNLOAD_FOLDER, DIST_FOLDER, RESULTS_FOLDER, print_error,
-     print_warning, print_vulnerability, get_line, get_code};
+use {Error, Result, Criticity, DOWNLOAD_FOLDER, DIST_FOLDER, print_error, print_warning,
+     print_vulnerability, get_line, get_code};
 use results::Results;
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -116,7 +116,7 @@ pub fn manifest_analysis(app_id: &str,
 
         let line = get_line(manifest.get_code(), Permission::Internet.as_str()).ok();
         let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l-1)),
+            Some(l) => Some(get_code(manifest.get_code(), l - 1)),
             None => None,
         };
 
@@ -141,7 +141,7 @@ pub fn manifest_analysis(app_id: &str,
                             Permission::WriteExternalStorage.as_str())
                        .ok();
         let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l-1)),
+            Some(l) => Some(get_code(manifest.get_code(), l - 1)),
             None => None,
         };
 
@@ -160,9 +160,6 @@ pub fn manifest_analysis(app_id: &str,
     if verbose {
         println!("");
         println!("{}", "The manifest was analized correctly!".green());
-        println!("The results have been stored in {}/{}/manifest_results.txt",
-                 RESULTS_FOLDER,
-                 app_id);
     } else if !quiet {
         println!("Manifest analyzed.");
     }

@@ -5,6 +5,7 @@ extern crate zip;
 extern crate xml;
 extern crate serde;
 extern crate serde_json;
+extern crate chrono;
 
 mod decompilation;
 mod static_analysis;
@@ -33,6 +34,8 @@ const RESULTS_FOLDER: &'static str = "results";
 const APKTOOL_FILE: &'static str = "apktool_2.1.1.jar";
 const DEX2JAR_FOLDER: &'static str = "dex2jar-2.0";
 const JD_CLI_FILE: &'static str = "jd-cli.jar";
+const HIGHLIGHT_JS: &'static str = "highlight.pack.js";
+const HIGHLIGHT_CSS: &'static str = "highlight.css";
 
 #[derive(Debug)]
 pub enum Error {
@@ -150,7 +153,7 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
 fn get_line(code: &str, haystack: &str) -> Result<usize> {
     for (i, line) in code.lines().enumerate() {
         if line.contains(haystack) {
-            return Ok(i+1);
+            return Ok(i + 1);
         }
     }
 

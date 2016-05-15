@@ -1,18 +1,21 @@
 use std::{fs, result};
 use std::fs::File;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::collections::BTreeSet;
 use std::cmp::Ordering;
 use std::path::Path;
-
+use std::borrow::Borrow;
 
 use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
+use chrono::{Local, Datelike};
 
-use super::{RESULTS_FOLDER, Result, Criticity, print_error};
+use super::{DIST_FOLDER, RESULTS_FOLDER, VENDOR_FOLDER, HIGHLIGHT_JS, HIGHLIGHT_CSS, Result,
+            Criticity, print_error, print_warning};
 
 pub struct Results {
-    path: String,
+    verbose: bool,
+    app_id: String,
     app_package: String,
     app_label: String,
     app_description: String,
@@ -25,7 +28,7 @@ pub struct Results {
 
 impl Results {
     pub fn init(app_id: &str, verbose: bool, quiet: bool, force: bool) -> Option<Results> {
-        let path = format!("{}/{}", RESULTS_FOLDER, app_id);
+        let path = format!("{}/{}", RESULTS_FOLDER, &app_id);
         if !fs::metadata(&path).is_ok() || force {
             if fs::metadata(&path).is_ok() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -44,7 +47,8 @@ impl Results {
                 println!("Results struct created.");
             }
             Some(Results {
-                path: path,
+                verbose: verbose,
+                app_id: String::from(app_id),
                 app_package: String::new(),
                 app_label: String::new(),
                 app_description: String::new(),
@@ -110,7 +114,7 @@ impl Results {
         if verbose {
             println!("Starting report generation. First we'll create the results folder.");
         }
-        try!(fs::create_dir_all(self.path.as_str()));
+        try!(fs::create_dir_all(format!("{}/{}", RESULTS_FOLDER, self.app_id)));
         if verbose {
             println!("Results folder created. Time to create the reports.");
         }
@@ -119,12 +123,20 @@ impl Results {
 
         if verbose {
             println!("JSON report generated.");
+            println!("");
         }
 
-        try!(self.generate_txt_report(verbose));
+        try!(self.generate_markdown_report(verbose));
 
         if verbose {
-            println!("Text report generated.");
+            println!("Markdown report generated.");
+            println!("");
+        }
+
+        try!(self.generate_html_report(verbose));
+
+        if verbose {
+            println!("HTML report generated.");
         }
 
         Ok(())
@@ -134,13 +146,13 @@ impl Results {
         if verbose {
             println!("Starting JSON report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/results.json", self.path)));
+        let mut f = try!(File::create(format!("{}/{}/results.json", RESULTS_FOLDER, self.app_id)));
         if verbose {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
         let report = ObjectBuilder::new()
-                         .insert("name", self.app_label.as_str())
+                         .insert("label", self.app_label.as_str())
                          .insert("description", self.app_description.as_str())
                          .insert("package", self.app_package.as_str())
                          .insert("version", self.app_version.as_str())
@@ -179,19 +191,22 @@ impl Results {
         Ok(())
     }
 
-    fn generate_txt_report(&self, verbose: bool) -> Result<()> {
+    fn generate_markdown_report(&self, verbose: bool) -> Result<()> {
         if verbose {
-            println!("Starting text report generation. First we create the file.")
+            println!("Starting Markdown report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/results.md", self.path)));
+        let mut f = try!(File::create(format!("{}/{}/results.md", RESULTS_FOLDER, self.app_id)));
         if verbose {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        try!(f.write_all(b"# Android Anti-Rebelation project vulnerability report #\n\n"));
+        let now = Local::now();
+
+        try!(f.write_all(b"# Android Anti-Rebelation Project Vulnerability Report #\n\n"));
         try!(f.write_all(&format!("This is the vulnerability report for the android \
-                                   application *{}*.\n",
-                                  self.app_package)
+                                   application *{}*. Report generated on {}.\n",
+                                  self.app_package,
+                                  now.to_rfc2822())
                               .into_bytes()));
 
         try!(f.write_all(b"## Application data: ##\n"));
@@ -205,10 +220,11 @@ impl Results {
         let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
         try!(f.write_all(&format!("### Total vulnerabilities found: {} ###\n", total_vuln)
                               .into_bytes()));
-        try!(f.write_all(&format!(" - Critical: {}\n", self.critical.len()).into_bytes()));
-        try!(f.write_all(&format!(" - High criticity: {}\n", self.high.len()).into_bytes()));
-        try!(f.write_all(&format!(" - Medium criticity: {}\n", self.medium.len()).into_bytes()));
-        try!(f.write_all(&format!(" - Low criticity: {}\n", self.low.len()).into_bytes()));
+        try!(f.write_all(&format!(" - **Critical:** {}\n", self.critical.len()).into_bytes()));
+        try!(f.write_all(&format!(" - **High criticity:** {}\n", self.high.len()).into_bytes()));
+        try!(f.write_all(&format!(" - **Medium criticity:** {}\n", self.medium.len())
+                              .into_bytes()));
+        try!(f.write_all(&format!(" - **Low criticity:** {}\n", self.low.len()).into_bytes()));
 
         try!(f.write_all(b"\n"));
         try!(f.write_all(b"* * *\n"));
@@ -217,32 +233,52 @@ impl Results {
         try!(f.write_all(b"## Vulnerabilities: ##\n"));
 
         if self.critical.len() > 0 {
-            try!(self.print_vuln_set(&mut f, &self.critical, Criticity::Critical))
+            try!(self.print_md_vuln_set(&mut f, &self.critical, Criticity::Critical))
         }
 
         if self.high.len() > 0 {
-            try!(self.print_vuln_set(&mut f, &self.high, Criticity::High))
+            try!(self.print_md_vuln_set(&mut f, &self.high, Criticity::High))
         }
 
         if self.medium.len() > 0 {
-            try!(self.print_vuln_set(&mut f, &self.medium, Criticity::Medium))
+            try!(self.print_md_vuln_set(&mut f, &self.medium, Criticity::Medium))
         }
 
         if self.low.len() > 0 {
-            try!(self.print_vuln_set(&mut f, &self.low, Criticity::Low))
+            try!(self.print_md_vuln_set(&mut f, &self.low, Criticity::Low))
         }
+
+        try!(f.write_all(b"\n"));
+        try!(f.write_all(b"* * *\n"));
+        try!(f.write_all(b"\n"));
+
+        try!(f.write_all(&format!("Copyright © {} - Android Anti-Rebelation Project.",
+                                  if now.year() > 2016 {
+                                      format!("2016 - {}", now.year())
+                                  } else {
+                                      format!("{}", now.year())
+                                  })
+                              .into_bytes()));
 
         Ok(())
     }
 
-    fn print_vuln_set(&self, f: &mut File, set: &BTreeSet<Vulnerability>, criticity: Criticity) -> Result<()>{
+    fn print_md_vuln_set(&self,
+                         f: &mut File,
+                         set: &BTreeSet<Vulnerability>,
+                         criticity: Criticity)
+                         -> Result<()> {
         let criticity = format!("{:?}", criticity);
-        try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity).into_bytes()));
+        try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity)
+                              .into_bytes()));
         try!(f.write_all(b"\n"));
 
         for (i, vuln) in set.iter().enumerate() {
-            try!(f.write_all(&format!("##### {}{:03}: ####\n", criticity.chars().nth(0).unwrap(), i + 1).into_bytes()));
-            try!(f.write_all(&format!(" - **Name:** {}\n", vuln.get_name()).into_bytes()));
+            try!(f.write_all(&format!("##### {}{:03}: ####\n",
+                                      criticity.chars().nth(0).unwrap(),
+                                      i + 1)
+                                  .into_bytes()));
+            try!(f.write_all(&format!(" - **Label:** {}\n", vuln.get_name()).into_bytes()));
             try!(f.write_all(&format!(" - **Description:** {}\n", vuln.get_description())
                                   .into_bytes()));
             try!(f.write_all(&format!(" - **File:** {}\n", vuln.get_file().display())
@@ -251,15 +287,338 @@ impl Results {
                 try!(f.write_all(&format!(" - **Line:** {}\n", s).into_bytes()));
             }
             if let Some(code) = vuln.get_code() {
-                let start_line = if vuln.get_line().unwrap() < 5 {1} else {vuln.get_line().unwrap() - 4};
+                let start_line = if vuln.get_line().unwrap() < 5 {
+                    1
+                } else {
+                    vuln.get_line().unwrap() - 4
+                };
                 let lang = vuln.get_file().extension().unwrap().to_string_lossy();
-                try!(f.write_all(&format!(" - **Affected code:**\nStarting in line {}.\n```{}\n{}\n```\n",
-                                          start_line, lang,
+                try!(f.write_all(&format!(" - **Affected code:**\nStarting in line \
+                                           {}.\n```{}\n{}\n```\n",
+                                          start_line,
+                                          lang,
                                           code)
                                       .into_bytes()));
             }
         }
         Ok(())
+    }
+
+    fn generate_html_report(&self, verbose: bool) -> Result<()> {
+        if verbose {
+            println!("Starting HTML report generation. First we create the file.")
+        }
+        let mut f = try!(File::create(format!("{}/{}/index.html", RESULTS_FOLDER, self.app_id)));
+        if verbose {
+            println!("The report file has been created. Now it's time to fill it.")
+        }
+
+        let now = Local::now();
+
+        // Header
+        try!(f.write_all(b"<!DOCTYPE html>"));
+        try!(f.write_all(b"<html lang=\"en\">"));
+        try!(f.write_all(b"<head>"));
+        try!(f.write_all(b"<title>Vulnerability report</title>"));
+        try!(f.write_all(b"<meta charset=\"UTF-8\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"style.css\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"highlight.css\">"));
+        try!(f.write_all(b"</head>"));
+        try!(f.write_all(b"<body>"));
+        try!(f.write_all(b"<h1>Android Anti-Rebelation Project Vulnerability Report</h1>"));
+        try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
+                                   application <em>{}</em>. Report generated on {}.</p>",
+                                  self.app_package,
+                                  now.to_rfc2822())
+                              .into_bytes()));
+
+        // Application data
+        try!(f.write_all(b"<h2>Application data:</h2>"));
+        try!(f.write_all(b"<ul>"));
+        try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>",
+                                  if self.app_label.is_empty() {
+                                      "<em>No label</em>"
+                                  } else {
+                                      self.app_label.as_str()
+                                  })
+                              .into_bytes()));
+        try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
+                                  if self.app_description.is_empty() {
+                                      "<em>No description</em>"
+                                  } else {
+                                      self.app_description.as_str()
+                                  })
+                              .into_bytes()));
+        try!(f.write_all(&format!("<li><strong>Package:</strong> {}</li>",
+                                  if self.app_package.is_empty() {
+                                      "<em>Empty package</em>"
+                                  } else {
+                                      self.app_package.as_str()
+                                  })
+                              .into_bytes()));
+        try!(f.write_all(&format!("<li><strong>Version:</strong> {}</li>",
+                                  if self.app_version.is_empty() {
+                                      "<em>Unknown version</em>"
+                                  } else {
+                                      self.app_version.as_str()
+                                  })
+                              .into_bytes()));
+        try!(f.write_all(b"<li><a href=\"src/\" title=\"Source code\">Check source code</a></li>"));
+        try!(f.write_all(b"</ul>"));
+
+        // Vulnerability count
+        let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
+        try!(f.write_all(&format!("<h3>Total vulnerabilities found: {}</h3>", total_vuln)
+                              .into_bytes()));
+        try!(f.write_all(b"<ul>"));
+        if self.critical.len() == 0 {
+            try!(f.write_all(b"<li>Critical: 0</li>"));
+        } else {
+            try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span></li>",
+                                      self.critical.len())
+                                  .into_bytes()));
+        }
+        if self.high.len() == 0 {
+            try!(f.write_all(b"<li>High: 0</li>"));
+        } else {
+            try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span></li>",
+                                      self.high.len())
+                                  .into_bytes()));
+        }
+        if self.medium.len() == 0 {
+            try!(f.write_all(b"<li>Medium: 0</li>"));
+        } else {
+            try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span></li>",
+                                      self.medium.len())
+                                  .into_bytes()));
+        }
+        if self.low.len() == 0 {
+            try!(f.write_all(b"<li>Low: 0</li>"));
+        } else {
+            try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span></li>",
+                                      self.low.len())
+                                  .into_bytes()));
+        }
+        try!(f.write_all(b"</ul>"));
+
+        try!(f.write_all(b"<h2>Vulnerabilities:</h2>"));
+
+        if self.critical.len() > 0 {
+            try!(self.print_html_vuln_set(&mut f, &self.critical, Criticity::Critical))
+        }
+
+        if self.high.len() > 0 {
+            try!(self.print_html_vuln_set(&mut f, &self.high, Criticity::High))
+        }
+
+        if self.medium.len() > 0 {
+            try!(self.print_html_vuln_set(&mut f, &self.medium, Criticity::Medium))
+        }
+
+        if self.low.len() > 0 {
+            try!(self.print_html_vuln_set(&mut f, &self.low, Criticity::Low))
+        }
+
+        // Footer
+        try!(f.write_all(b"<footer>"));
+        try!(f.write_all(&format!("<p>Copyright © {} - Android Anti-Rebelation Project.</p>",
+                                  if now.year() > 2016 {
+                                      format!("2016 - {}", now.year())
+                                  } else {
+                                      format!("{}", now.year())
+                                  })
+                              .into_bytes()));
+        try!(f.write_all(b"</footer>"));
+        try!(f.write_all(b"<script src=\"highlight.pack.js\"></script>"));
+        try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
+        try!(f.write_all(b"</body>"));
+        try!(f.write_all(b"</html>"));
+
+        // Copying JS and CSS files
+        try!(fs::copy(format!("{}/{}", VENDOR_FOLDER, HIGHLIGHT_JS),
+                      format!("{}/{}/highlight.pack.js", RESULTS_FOLDER, self.app_id)));
+        try!(fs::copy(format!("{}/{}", VENDOR_FOLDER, HIGHLIGHT_CSS),
+                      format!("{}/{}/highlight.css", RESULTS_FOLDER, self.app_id)));
+        try!(fs::copy("results.css",
+                      format!("{}/{}/style.css", RESULTS_FOLDER, self.app_id)));
+
+        try!(self.generate_code_html_files());
+
+        Ok(())
+    }
+
+    fn print_html_vuln_set(&self,
+                           f: &mut File,
+                           set: &BTreeSet<Vulnerability>,
+                           criticity: Criticity)
+                           -> Result<()> {
+        let criticity = format!("{:?}", criticity);
+        try!(f.write_all(&format!("<h3>{} criticity vulnerabilities:</h3>", criticity)
+                              .into_bytes()));
+
+        for (i, vuln) in set.iter().enumerate() {
+            try!(f.write_all(b"<section class=\"vulnerability\">"));
+            try!(f.write_all(&format!("<h4>{}{:03}:</h4>",
+                                      criticity.chars().nth(0).unwrap(),
+                                      i + 1)
+                                  .into_bytes()));
+            try!(f.write_all(b"<ul>"));
+            try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>", vuln.get_name())
+                                  .into_bytes()));
+            try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
+                                      vuln.get_description())
+                                  .into_bytes()));
+            try!(f.write_all(&format!("<li><strong>File:</strong> <a \
+                                       href=\"src/{0}.html\">{0}</a></li>",
+                                      vuln.get_file().display())
+                                  .into_bytes()));
+            if let Some(s) = vuln.get_line() {
+                try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", s).into_bytes()));
+            }
+            if let Some(code) = vuln.get_code() {
+                let start_line = if vuln.get_line().unwrap() < 5 {
+                    1
+                } else {
+                    vuln.get_line().unwrap() - 4
+                };
+                let mut lines = String::new();
+                for (i, _line) in code.lines().enumerate() {
+                    if i == vuln.get_line().unwrap() - 1 {
+                        lines.push_str(format!("<em>{}</em> &gt;<br>", i + start_line).as_str());
+                    } else {
+                        lines.push_str(format!("{}<br>", i + start_line).as_str());
+                    }
+                }
+                let lang = vuln.get_file().extension().unwrap().to_string_lossy();
+                try!(f.write_all(&format!("<li><p><strong>Affected code:</strong></p><div><div \
+                                           class=\"line_numbers\">{}</div><div class=\"code
+                                           \"><pre><code \
+                                           class=\"{}\">{}</code></pre></div></li>",
+                                          lines,
+                                          lang,
+                                          Results::html_escape(code))
+                                      .into_bytes()));
+                try!(f.write_all(b"</ul>"));
+                try!(f.write_all(b"</section>"));
+            }
+        }
+        Ok(())
+    }
+
+    fn generate_code_html_files(&self) -> Result<()> {
+        let menu = try!(self.generate_html_src_menu(format!("{}/{}", DIST_FOLDER, self.app_id)
+                                                        .as_str()));
+
+        let dir_iter = try!(fs::read_dir(format!("{}/{}", DIST_FOLDER, self.app_id)));
+        for f in dir_iter {
+            // Basically, TODO everything again
+            let f = try!(f); // TODO error handling
+            match f.path().extension() {
+                Some(e) => {
+                    if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
+                        try!(self.generate_code_html_for(f.path(), menu.as_str()));
+                    }
+                }
+                None => {}
+            }
+
+        }
+
+        Ok(())
+    }
+
+    fn generate_html_src_menu(&self, dir_path: &str) -> Result<String> {
+        let iter = try!(fs::read_dir(dir_path));
+        let mut menu = String::new();
+        menu.push_str("<ul>");
+        for entry in iter {
+            match entry {
+                Ok(f) => {
+                    let path = f.path();
+                    match f.file_type() {
+                        Ok(t) => {
+                            if t.is_file() {
+                                let file_name = f.file_name();
+                                menu.push_str(format!("<li>{}</li>",
+                                                      file_name.as_os_str().to_string_lossy())
+                                                  .as_str());
+                            } else if t.is_dir() {
+                                let dir_name = match path.file_name() {
+                                    Some(n) => String::from(n.to_string_lossy().borrow()),
+                                    None => String::new(),
+                                };
+                                let submenu =
+                                    match self.generate_html_src_menu(path.to_string_lossy()
+                                                                          .borrow()) {
+                                        Ok(m) => m,
+                                        Err(e) => {
+                                            let path = path.to_string_lossy();
+                                            print_warning(format!("An error occurred when \
+                                                                   generating the menu for {}. \
+                                                                   The result generation \
+                                                                   process will continue, \
+                                                                   thoug. More info: {}",
+                                                                  path,
+                                                                  e),
+                                                          self.verbose);
+                                            break;
+                                        }
+                                    };
+                                menu.push_str(format!("<li>{}{}</li>", dir_name, submenu.as_str())
+                                                  .as_str());
+                            }
+                        }
+                        Err(e) => {
+                            let path = path.to_string_lossy();
+                            print_warning(format!("An error occurred when generating the menu \
+                                                   for {}. The result generation process will \
+                                                   continue, thoug. More info: {}",
+                                                  path,
+                                                  e),
+                                          self.verbose);
+                            break;
+                        }
+                    }
+                }
+                Err(e) => {
+                    print_warning(format!("An error occurred when generating the menu for {}. \
+                                           The result generation process will continue, thoug. \
+                                           More info: {}",
+                                          dir_path,
+                                          e),
+                                  self.verbose);
+                    break;
+                }
+            }
+        }
+        menu.push_str("</ul>");
+        Ok(menu)
+    }
+
+    fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, menu: &str) -> Result<()> {
+        let mut f = try!(File::open(&path));
+        let mut code = String::new();
+
+        println!("PATH: {}", path.as_ref().display());
+
+        try!(f.read_to_string(&mut code));
+        let code = Results::html_escape(code.as_str());
+
+        // Basically TODO everything again
+        Ok(())
+    }
+
+    fn html_escape(code: &str) -> String {
+        let mut res = String::new();
+        for c in code.chars() {
+            match c {
+                '<' => res.push_str("&lt;"),
+                '>' => res.push_str("&gt;"),
+                '&' => res.push_str("&amp;"),
+                c => res.push(c),
+            };
+        }
+        res
     }
 }
 
@@ -306,7 +665,7 @@ impl Vulnerability {
         Path::new(&self.file)
     }
 
-    pub fn get_code<'l>(&self) -> Option<&str> {
+    pub fn get_code(&self) -> Option<&str> {
         match self.code.as_ref() {
             Some(s) => Some(s.as_str()),
             None => None,
