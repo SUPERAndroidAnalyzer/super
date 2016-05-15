@@ -1,0 +1,11 @@
+threads = 2;
+downloads_folder = "downloads"
+dist_folder = "dist"
+results_folder = "results"
+apktool_file = "vendor/apktool_2.1.1.jar"
+dex2jar_folder = "vendor/dex2jar-2.0"
+jd_cli_file = "vendor/jd-cli.jar"
+highlight_js = "vendor/highlight.pack.js"
+highlight_css = "vendor/androidstudio.css"
+results_css = "results.css"
+rules_json = "rules.json"

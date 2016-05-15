@@ -6,6 +6,7 @@ extern crate xml;
 extern crate serde;
 extern crate serde_json;
 extern crate chrono;
+extern crate toml;
 
 mod decompilation;
 mod static_analysis;
@@ -16,7 +17,7 @@ use std::path::Path;
 use std::fmt::Display;
 use std::convert::From;
 use std::error::Error as StdError;
-use std::io::Write;
+use std::io::{Read, Write};
 use std::process::exit;
 
 use serde::ser::{Serialize, Serializer};
@@ -27,21 +28,444 @@ use decompilation::*;
 use static_analysis::*;
 use results::*;
 
-const DOWNLOAD_FOLDER: &'static str = "downloads";
-const VENDOR_FOLDER: &'static str = "vendor";
-const DIST_FOLDER: &'static str = "dist";
-const RESULTS_FOLDER: &'static str = "results";
-const APKTOOL_FILE: &'static str = "apktool_2.1.1.jar";
-const DEX2JAR_FOLDER: &'static str = "dex2jar-2.0";
-const JD_CLI_FILE: &'static str = "jd-cli.jar";
-const HIGHLIGHT_JS: &'static str = "highlight.pack.js";
-const HIGHLIGHT_CSS: &'static str = "highlight.css";
+const MAX_THREADS: i64 = std::u8::MAX as i64;
+
+fn main() {
+    let matches = get_help_menu();
+
+    let app_id = matches.value_of("id").unwrap();
+    let verbose = matches.is_present("verbose");
+    let quiet = matches.is_present("quiet");
+    let force = matches.is_present("force");
+    let mut config = match Config::new(app_id, verbose, quiet, force) {
+        Ok(c) => c,
+        Err(e) => {
+            print_warning(format!("There was an error when reading the config.toml file: {}", e),
+                          verbose);
+            let mut c: Config = Default::default();
+            c.set_app_id(app_id);
+            c.set_verbose(verbose);
+            c.set_quiet(quiet);
+            c.set_force(force);
+            c
+        }
+    };
+
+    if !config.check() {
+        config = Default::default();
+        config.set_app_id(app_id);
+        config.set_verbose(verbose);
+        config.set_quiet(quiet);
+        config.set_force(force);
+
+        if !config.check() {
+            print_error("There is an error with the configuration.", verbose);
+            exit(Error::Config.into());
+        }
+    }
+
+    if config.is_verbose() {
+        println!("Welcome to the Android Anti-Rebelation project. We will now try to audit the \
+                  given application.");
+        println!("You activated the verbose mode. {}",
+                 "May Tux be with you!".bold());
+        println!("");
+    }
+
+    // APKTool app decompression
+    decompress(&config);
+
+    // Extracting the classes.dex from the .apk file
+    extract_dex(&config);
+
+    if config.is_verbose() {
+        println!("");
+        println!("Now it's time for the actual decompilation of the source code. We'll translate \
+                  Android JVM bytecode to Java, so that we can check the code afterwards.");
+    }
+
+    // Decompiling the app
+    decompile(&config);
+
+    if let Some(mut results) = Results::init(&config) {
+        // Static application analysis
+        static_analysis(&config, &mut results);
+
+        // TODO dynamic analysis
+
+        println!("");
+
+        match results.generate_report(&config) {
+            Ok(_) => {
+                if config.is_verbose() {
+                    println!("The results report has been saved. Everything went smoothly, now \
+                              you can check all the results.");
+                    println!("");
+                    println!("I will now analyse myself for vulnerabilities…");
+                    println!("Nah, just kidding, I've been developed in {}!",
+                             "Rust".bold().green())
+                } else if !config.is_quiet() {
+                    println!("Report generated.");
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error generating the results report: {}", e),
+                            config.is_verbose());
+                exit(Error::Unknown.into())
+            }
+        }
+    } else if !config.is_quiet() {
+        println!("Analysis cancelled.");
+    }
+}
+
+fn file_exists<P: AsRef<Path>>(path: P) -> bool {
+    fs::metadata(path).is_ok()
+}
+
+pub struct Config {
+    app_id: String,
+    verbose: bool,
+    quiet: bool,
+    force: bool,
+    threads: u8,
+    downloads_folder: String,
+    dist_folder: String,
+    results_folder: String,
+    apktool_file: String,
+    dex2jar_folder: String,
+    jd_cli_file: String,
+    highlight_js: String,
+    highlight_css: String,
+    results_css: String,
+    rules_json: String,
+}
+
+impl Config {
+    pub fn new(app_id: &str, verbose: bool, quiet: bool, force: bool) -> Result<Config> {
+        let mut f = try!(fs::File::open("config.toml"));
+        let mut toml = String::new();
+        try!(f.read_to_string(&mut toml));
+
+        let mut parser = toml::Parser::new(toml.as_str());
+        let toml = match parser.parse() {
+            Some(t) => t,
+            None => {
+                print_error(format!("There was an error parsing the config.toml file: {:?}",
+                                    parser.errors),
+                            verbose);
+                exit(Error::ParseError.into());
+            }
+        };
+
+        let mut config: Config = Default::default();
+        config.app_id = String::from(app_id);
+        config.verbose = verbose;
+        config.quiet = quiet;
+        config.force = force;
+
+        // TODO ONLY IF FILE EXISTS
+
+        for (key, value) in toml {
+            match key.as_str() {
+                "threads" => {
+                    // let max_threads =  as i64;
+                    match value {
+                        toml::Value::Integer(1...MAX_THREADS) => {
+                            config.threads = value.as_integer().unwrap() as u8
+                        }
+                        _ => {
+                            print_warning(format!("The 'threads' option in config.toml must be \
+                                                   an integer between 1 and {}. Using default.",
+                                                  MAX_THREADS),
+                                          verbose)
+                        }
+                    }
+                }
+                "downloads_folder" => {
+                    match value {
+                        toml::Value::String(s) => config.downloads_folder = s,
+                        _ => {
+                            print_warning("The 'downloads_folder' option in config.toml must be \
+                                           an string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "dist_folder" => {
+                    match value {
+                        toml::Value::String(s) => config.dist_folder = s,
+                        _ => {
+                            print_warning("The 'dist_folder' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "results_folder" => {
+                    match value {
+                        toml::Value::String(s) => config.results_folder = s,
+                        _ => {
+                            print_warning("The 'results_folder' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "apktool_file" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "jar" {
+                                config.apktool_file = s.clone();
+                            } else {
+                                print_warning("The APKTool file must be a JAR file. Using default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'apktool_file' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "dex2jar_folder" => {
+                    match value {
+                        toml::Value::String(s) => config.dex2jar_folder = s,
+                        _ => {
+                            print_warning("The 'dex2jar_folder' option in config.toml should be \
+                                           an string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "jd_cli_file" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "jar" {
+                                config.jd_cli_file = s.clone();
+                            } else {
+                                print_warning("The JD-CLI file must be a JAR file. Using default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'jd_cli_file' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "highlight_js" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "js" {
+                                config.highlight_js = s.clone();
+                            } else {
+                                print_warning("The highlight.js file must be a JavaScript file. \
+                                               Using default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'highlight_js' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "highlight_css" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "css" {
+                                config.highlight_css = s.clone();
+                            } else {
+                                print_warning("The highlight.css file must be a CSS file. Using \
+                                               default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'highlight_css' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "results_css" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "css" {
+                                config.results_css = s.clone();
+                            } else {
+                                print_warning("The results.css file must be a CSS file. Using \
+                                               default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'results_css' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "rules_json" => {
+                    match value {
+                        toml::Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_none() || extension.unwrap() != "json" {
+                                config.rules_json = s.clone();
+                            } else {
+                                print_warning("The rules.json file must be a JSON file. Using \
+                                               default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'rules_json' option in config.toml must be an \
+                                           string. Using default.",
+                                          verbose)
+                        }
+                    }
+                }
+                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
+            }
+        }
+
+        Ok(config)
+    }
+
+    pub fn check(&self) -> bool {
+        // if !check_app_exists(app_id) {
+        //     if verbose {
+        //         print_error(format!("The application does not exist. It should be named {}.apk
+        // and \
+        //                              be stored in {}",
+        //                             app_id,
+        //                             DOWNLOAD_FOLDER),
+        //                     true);
+        //     } else {
+        //         print_error(String::from("The application does not exist."), false);
+        //     }
+        //     exit(Error::AppNotExists.into());
+        // } else if verbose {
+        //     println!("Seems that {}. The next step is to decompress it.",
+        //              "the app is there".green());
+        // }
+        true // TODO
+    }
+
+    pub fn get_app_id(&self) -> &str {
+        self.app_id.as_str()
+    }
+
+    pub fn set_app_id(&mut self, app_id: &str) {
+        self.app_id = String::from(app_id);
+    }
+
+    pub fn is_verbose(&self) -> bool {
+        self.verbose
+    }
+
+    pub fn set_verbose(&mut self, verbose: bool) {
+        self.verbose = verbose;
+    }
+
+    pub fn is_quiet(&self) -> bool {
+        self.quiet
+    }
+
+    pub fn set_quiet(&mut self, quiet: bool) {
+        self.quiet = quiet;
+    }
+
+    pub fn is_force(&self) -> bool {
+        self.force
+    }
+
+    pub fn set_force(&mut self, force: bool) {
+        self.force = force;
+    }
+
+    pub fn get_threads(&self) -> u8 {
+        self.threads
+    }
+
+    pub fn get_downloads_folder(&self) -> &str {
+        self.downloads_folder.as_str()
+    }
+
+    pub fn get_dist_folder(&self) -> &str {
+        self.dist_folder.as_str()
+    }
+
+    pub fn get_results_folder(&self) -> &str {
+        self.results_folder.as_str()
+    }
+
+    pub fn get_apktool_file(&self) -> &str {
+        self.apktool_file.as_str()
+    }
+
+    pub fn get_dex2jar_folder(&self) -> &str {
+        self.dex2jar_folder.as_str()
+    }
+
+    pub fn get_jd_cli_file(&self) -> &str {
+        self.jd_cli_file.as_str()
+    }
+
+    pub fn get_highlight_js(&self) -> &str {
+        self.highlight_js.as_str()
+    }
+
+    pub fn get_highlight_css(&self) -> &str {
+        self.highlight_css.as_str()
+    }
+
+    pub fn get_results_css(&self) -> &str {
+        self.results_css.as_str()
+    }
+
+    pub fn get_rules_json(&self) -> &str {
+        self.rules_json.as_str()
+    }
+}
+
+impl Default for Config {
+    fn default() -> Config {
+        Config {
+            app_id: String::new(),
+            verbose: false,
+            quiet: false,
+            force: false,
+            threads: 2,
+            downloads_folder: String::from("downloads"),
+            dist_folder: String::from("dist"),
+            results_folder: String::from("results"),
+            apktool_file: String::from("vendor/apktool_2.1.1.jar"),
+            dex2jar_folder: String::from("vendor/dex2jar-2.0"),
+            jd_cli_file: String::from("vendor/jd-cli.jar"),
+            highlight_js: String::from("vendor/highlight.pack.js"),
+            highlight_css: String::from("vendor/highlight.css"),
+            results_css: String::from("results.css"),
+            rules_json: String::from("rules.json"),
+        }
+    }
+}
 
 #[derive(Debug)]
 pub enum Error {
     AppNotExists,
     ParseError,
     CodeNotFound,
+    Config,
     IOError(io::Error),
     Unknown,
 }
@@ -52,6 +476,7 @@ impl Into<i32> for Error {
             Error::AppNotExists => 10,
             Error::ParseError => 20,
             Error::CodeNotFound => 30,
+            Error::Config => 40,
             Error::IOError(_) => 100,
             Error::Unknown => 1,
         }
@@ -76,6 +501,7 @@ impl StdError for Error {
             Error::AppNotExists => "the application has not been found",
             Error::ParseError => "there was an error in some parsing process",
             Error::CodeNotFound => "the code was not found in the file",
+            Error::Config => "there was an error in the configuration",
             Error::IOError(ref e) => e.description(),
             Error::Unknown => "an unknown error occurred",
         }
@@ -173,112 +599,6 @@ fn get_code(code: &str, line: usize) -> String {
     result
 }
 
-fn main() {
-    let matches = get_help_menu();
-
-    let app_id = matches.value_of("id").unwrap();
-    let verbose = matches.is_present("verbose");
-    let quiet = matches.is_present("quiet");
-    let force = matches.is_present("force");
-    // let threads = matches.value_of("threads").unwrap().parse::<u8>().unwrap();
-
-    if verbose {
-        println!("Welcome to the Android Anti-Rebelation project. We will now try to audit the \
-                  given application.");
-        println!("You activated the verbose mode. {}",
-                 "May Tux be with you!".bold());
-        println!("");
-        println!("Let's first check if the application actually exists.");
-    }
-
-    if !check_app_exists(app_id) {
-        if verbose {
-            print_error(format!("The application does not exist. It should be named {}.apk and \
-                                 be stored in {}",
-                                app_id,
-                                DOWNLOAD_FOLDER),
-                        true);
-        } else {
-            print_error(String::from("The application does not exist."), false);
-        }
-        exit(Error::AppNotExists.into());
-    } else if verbose {
-        println!("Seems that {}. The next step is to decompress it.",
-                 "the app is there".green());
-    }
-
-    // APKTool app decompression
-    decompress(app_id, verbose, quiet, force);
-
-    // Extracting the classes.dex from the .apk file
-    extract_dex(app_id, verbose, quiet, force);
-
-    if verbose {
-        println!("");
-        println!("Now it's time for the actual decompilation of the source code. We'll translate \
-                  Android JVM bytecode to Java, so that we can check the code afterwards.");
-    }
-
-    // Decompiling the app
-    decompile(&app_id, verbose, quiet, force);
-
-    if let Some(mut results) = Results::init(&app_id, verbose, quiet, force) {
-        // Static application analysis
-        static_analysis(&app_id, verbose, quiet, force, &mut results);
-
-        // TODO dynamic analysis
-
-        println!("");
-
-        match results.generate_report(verbose) {
-            Ok(_) => {
-                if verbose {
-                    println!("The results report has been saved. Everything went smoothly, now \
-                              you can check all the results.");
-                    println!("");
-                    println!("I will now analyse myself for vulnerabilities…");
-                    println!("Nah, just kidding, I've been developed in {}!",
-                             "Rust".bold().green())
-                } else if !quiet {
-                    println!("Report generated.");
-                }
-            }
-            Err(e) => {
-                print_error(format!("There was an error generating the results report: {}", e),
-                            verbose);
-                exit(Error::Unknown.into())
-            }
-        }
-    } else if !quiet {
-        println!("Analysis cancelled.");
-    }
-}
-
-fn check_app_exists(id: &str) -> bool {
-    fs::metadata(format!("{}/{}.apk", DOWNLOAD_FOLDER, id)).is_ok()
-}
-
-fn check_or_create<P: AsRef<Path> + Display>(path: P, verbose: bool) {
-    if !fs::metadata(&path).is_ok() {
-        if verbose {
-            println!("Seems the {} folder is not there. Trying to create…",
-                     path);
-        }
-
-        if let Err(e) = fs::create_dir(&path) {
-            print_error(format!("There was an error when creating the folder {}: {}",
-                                path,
-                                e),
-                        verbose);
-            exit(Error::Unknown.into());
-        }
-
-        if verbose {
-            println!("{}", format!("{} folder created.", path).green());
-        }
-    }
-}
-
 fn get_help_menu() -> ArgMatches<'static> {
     App::new("Android Anti-Revelation Project")
         .version(crate_version!())
@@ -289,13 +609,6 @@ fn get_help_menu() -> ArgMatches<'static> {
                  .value_name("ID")
                  .required(true)
                  .takes_value(true))
-        // .arg(Arg::with_name("threads")
-        //          .short("t")
-        //          .long("--threads")
-        //          .value_name("THREADS")
-        //          .takes_value(true)
-        //          .default_value("2")
-        //          .help("Sets the number of threads for the application"))
         .arg(Arg::with_name("verbose")
                  .short("v")
                  .long("verbose")

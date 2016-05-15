@@ -10,12 +10,9 @@ use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 
-use super::{DIST_FOLDER, RESULTS_FOLDER, VENDOR_FOLDER, HIGHLIGHT_JS, HIGHLIGHT_CSS, Result,
-            Criticity, print_error, print_warning};
+use {Config, Result, Criticity, print_error, print_warning, file_exists};
 
 pub struct Results {
-    verbose: bool,
-    app_id: String,
     app_package: String,
     app_label: String,
     app_description: String,
@@ -27,28 +24,26 @@ pub struct Results {
 }
 
 impl Results {
-    pub fn init(app_id: &str, verbose: bool, quiet: bool, force: bool) -> Option<Results> {
-        let path = format!("{}/{}", RESULTS_FOLDER, &app_id);
-        if !fs::metadata(&path).is_ok() || force {
+    pub fn init(config: &Config) -> Option<Results> {
+        let path = format!("{}/{}", config.get_results_folder(), config.get_app_id());
+        if !fs::metadata(&path).is_ok() || config.is_force() {
             if fs::metadata(&path).is_ok() {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_error(format!("An unknown error occurred when trying to delete the \
                                          results folder: {}",
                                         e),
-                                verbose);
+                                config.is_verbose());
                     return None;
                 }
             }
-            if verbose {
+            if config.is_verbose() {
                 println!("The results struct has been created. All the vulnerabilitis will now \
                           be recorded and when the analysis ends, they will be written to result \
                           files.");
-            } else if !quiet {
+            } else if !config.is_quiet() {
                 println!("Results struct created.");
             }
             Some(Results {
-                verbose: verbose,
-                app_id: String::from(app_id),
                 app_package: String::new(),
                 app_label: String::new(),
                 app_description: String::new(),
@@ -59,7 +54,7 @@ impl Results {
                 critical: BTreeSet::new(),
             })
         } else {
-            if verbose {
+            if config.is_verbose() {
                 println!("The results for this application have already been generated. No need \
                           to generate them again.");
             }
@@ -110,44 +105,55 @@ impl Results {
         }
     }
 
-    pub fn generate_report(&self, verbose: bool) -> Result<()> {
-        if verbose {
-            println!("Starting report generation. First we'll create the results folder.");
-        }
-        try!(fs::create_dir_all(format!("{}/{}", RESULTS_FOLDER, self.app_id)));
-        if verbose {
-            println!("Results folder created. Time to create the reports.");
-        }
+    pub fn generate_report(&self, config: &Config) -> Result<()> {
+        let path = format!("{}/{}", config.get_results_folder(), config.get_app_id());
+        if !file_exists(&path) || config.is_force() {
+            if file_exists(&path) {
+                if let Err(e) = fs::remove_dir_all(&path) {
+                    print_warning(format!("There was an error when removing the report folder: {}", e), config.is_verbose());
+                }
+            }
 
-        try!(self.generate_json_report(verbose));
+            if config.is_verbose() {
+                println!("Starting report generation. First we'll create the results folder.");
+            }
+            try!(fs::create_dir_all(&path));
+            if config.is_verbose() {
+                println!("Results folder created. Time to create the reports.");
+            }
 
-        if verbose {
-            println!("JSON report generated.");
-            println!("");
-        }
+            try!(self.generate_json_report(config));
 
-        try!(self.generate_markdown_report(verbose));
+            if config.is_verbose() {
+                println!("JSON report generated.");
+                println!("");
+            }
 
-        if verbose {
-            println!("Markdown report generated.");
-            println!("");
-        }
+            try!(self.generate_markdown_report(config));
 
-        try!(self.generate_html_report(verbose));
+            if config.is_verbose() {
+                println!("Markdown report generated.");
+                println!("");
+            }
 
-        if verbose {
-            println!("HTML report generated.");
+            try!(self.generate_html_report(config));
+
+            if config.is_verbose() {
+                println!("HTML report generated.");
+            }
         }
 
         Ok(())
     }
 
-    fn generate_json_report(&self, verbose: bool) -> Result<()> {
-        if verbose {
+    fn generate_json_report(&self, config: &Config) -> Result<()> {
+        if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/{}/results.json", RESULTS_FOLDER, self.app_id)));
-        if verbose {
+        let mut f = try!(File::create(format!("{}/{}/results.json",
+                                              config.get_results_folder(),
+                                              config.get_app_id())));
+        if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
@@ -191,12 +197,14 @@ impl Results {
         Ok(())
     }
 
-    fn generate_markdown_report(&self, verbose: bool) -> Result<()> {
-        if verbose {
+    fn generate_markdown_report(&self, config: &Config) -> Result<()> {
+        if config.is_verbose() {
             println!("Starting Markdown report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/{}/results.md", RESULTS_FOLDER, self.app_id)));
-        if verbose {
+        let mut f = try!(File::create(format!("{}/{}/results.md",
+                                              config.get_results_folder(),
+                                              config.get_app_id())));
+        if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
@@ -303,12 +311,14 @@ impl Results {
         Ok(())
     }
 
-    fn generate_html_report(&self, verbose: bool) -> Result<()> {
-        if verbose {
+    fn generate_html_report(&self, config: &Config) -> Result<()> {
+        if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/{}/index.html", RESULTS_FOLDER, self.app_id)));
-        if verbose {
+        let mut f = try!(File::create(format!("{}/{}/index.html",
+                                              config.get_results_folder(),
+                                              config.get_app_id())));
+        if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
@@ -428,20 +438,26 @@ impl Results {
                                   })
                               .into_bytes()));
         try!(f.write_all(b"</footer>"));
-        try!(f.write_all(b"<script src=\"highlight.pack.js\"></script>"));
+        try!(f.write_all(b"<script src=\"highlight.js\"></script>"));
         try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
         try!(f.write_all(b"</body>"));
         try!(f.write_all(b"</html>"));
 
         // Copying JS and CSS files
-        try!(fs::copy(format!("{}/{}", VENDOR_FOLDER, HIGHLIGHT_JS),
-                      format!("{}/{}/highlight.pack.js", RESULTS_FOLDER, self.app_id)));
-        try!(fs::copy(format!("{}/{}", VENDOR_FOLDER, HIGHLIGHT_CSS),
-                      format!("{}/{}/highlight.css", RESULTS_FOLDER, self.app_id)));
-        try!(fs::copy("results.css",
-                      format!("{}/{}/style.css", RESULTS_FOLDER, self.app_id)));
+        try!(fs::copy(config.get_highlight_js(),
+                      format!("{}/{}/highlight.js",
+                              config.get_results_folder(),
+                              config.get_app_id())));
+        try!(fs::copy(config.get_highlight_js(),
+                      format!("{}/{}/highlight.css",
+                              config.get_results_folder(),
+                              config.get_app_id())));
+        try!(fs::copy(config.get_results_css(),
+                      format!("{}/{}/style.css",
+                              config.get_results_folder(),
+                              config.get_app_id())));
 
-        try!(self.generate_code_html_files());
+        try!(self.generate_code_html_files(config));
 
         Ok(())
     }
@@ -504,11 +520,11 @@ impl Results {
         Ok(())
     }
 
-    fn generate_code_html_files(&self) -> Result<()> {
-        let menu = try!(self.generate_html_src_menu(format!("{}/{}", DIST_FOLDER, self.app_id)
-                                                        .as_str()));
+    fn generate_code_html_files(&self, config: &Config) -> Result<()> {
+        let path = format!("{}/{}", config.get_dist_folder(), config.get_app_id());
+        let menu = try!(self.generate_html_src_menu(&path, config));
+        let dir_iter = try!(fs::read_dir(&path));
 
-        let dir_iter = try!(fs::read_dir(format!("{}/{}", DIST_FOLDER, self.app_id)));
         for f in dir_iter {
             // Basically, TODO everything again
             let f = try!(f); // TODO error handling
@@ -526,66 +542,68 @@ impl Results {
         Ok(())
     }
 
-    fn generate_html_src_menu(&self, dir_path: &str) -> Result<String> {
-        let iter = try!(fs::read_dir(dir_path));
+    fn generate_html_src_menu<P: AsRef<Path>>(&self,
+                                              dir_path: P,
+                                              config: &Config)
+                                              -> Result<String> {
+        let iter = try!(fs::read_dir(&dir_path));
         let mut menu = String::new();
         menu.push_str("<ul>");
         for entry in iter {
             match entry {
                 Ok(f) => {
                     let path = f.path();
-                    match f.file_type() {
-                        Ok(t) => {
-                            if t.is_file() {
-                                let file_name = f.file_name();
-                                menu.push_str(format!("<li>{}</li>",
-                                                      file_name.as_os_str().to_string_lossy())
-                                                  .as_str());
-                            } else if t.is_dir() {
-                                let dir_name = match path.file_name() {
-                                    Some(n) => String::from(n.to_string_lossy().borrow()),
-                                    None => String::new(),
-                                };
-                                let submenu =
-                                    match self.generate_html_src_menu(path.to_string_lossy()
-                                                                          .borrow()) {
-                                        Ok(m) => m,
-                                        Err(e) => {
-                                            let path = path.to_string_lossy();
-                                            print_warning(format!("An error occurred when \
-                                                                   generating the menu for {}. \
-                                                                   The result generation \
-                                                                   process will continue, \
-                                                                   thoug. More info: {}",
-                                                                  path,
-                                                                  e),
-                                                          self.verbose);
-                                            break;
-                                        }
-                                    };
-                                menu.push_str(format!("<li>{}{}</li>", dir_name, submenu.as_str())
-                                                  .as_str());
+                    if path.is_file() {
+                        let file_name = f.file_name();
+                        let file_name = file_name.as_os_str().to_string_lossy();
+                        let extension = match path.extension() {
+                            Some(e) => e.to_string_lossy(),
+                            None => {
+                                break;
                             }
+                        };
+
+                        let prefix = format!("{}/{}",
+                                             config.get_dist_folder(),
+                                             config.get_app_id());
+                        // TODO count components and for each ../
+                        if extension == "xml" || extension == "java" {
+                            menu.push_str(format!("<li><a href=\"{0}.html\" \
+                                                   title=\"{1}\">{1}</a></li>",
+                                                  path.strip_prefix(&prefix).unwrap().display(),
+                                                  file_name)
+                                              .as_str());
                         }
-                        Err(e) => {
-                            let path = path.to_string_lossy();
-                            print_warning(format!("An error occurred when generating the menu \
-                                                   for {}. The result generation process will \
-                                                   continue, thoug. More info: {}",
-                                                  path,
-                                                  e),
-                                          self.verbose);
-                            break;
-                        }
+                    } else if path.is_dir() {
+                        let dir_name = match path.file_name() {
+                            Some(n) => String::from(n.to_string_lossy().borrow()),
+                            None => String::new(),
+                        };
+                        let submenu = match self.generate_html_src_menu(&path, config) {
+                            Ok(m) => m,
+                            Err(e) => {
+                                let path = path.to_string_lossy();
+                                print_warning(format!("An error occurred when generating the \
+                                                       menu for {}. The result generation \
+                                                       process will continue, thoug. More info: \
+                                                       {}",
+                                                      path,
+                                                      e),
+                                              config.is_verbose());
+                                break;
+                            }
+                        };
+                        menu.push_str(format!("<li>{}{}</li>", dir_name, submenu.as_str())
+                                          .as_str());
                     }
                 }
                 Err(e) => {
                     print_warning(format!("An error occurred when generating the menu for {}. \
                                            The result generation process will continue, thoug. \
                                            More info: {}",
-                                          dir_path,
+                                          dir_path.as_ref().display(),
                                           e),
-                                  self.verbose);
+                                  config.is_verbose());
                     break;
                 }
             }

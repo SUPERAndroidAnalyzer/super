@@ -7,8 +7,8 @@ use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
 
-use {Error, Result, Criticity, DOWNLOAD_FOLDER, DIST_FOLDER, print_error, print_warning,
-     print_vulnerability, get_line, get_code};
+use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_line,
+     get_code};
 use results::Results;
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -20,22 +20,18 @@ const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 
-pub fn manifest_analysis(app_id: &str,
-                         verbose: bool,
-                         quiet: bool,
-                         force: bool,
-                         results: &mut Results) {
-    if verbose {
+pub fn manifest_analysis(config: &Config, results: &mut Results) {
+    if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
                   analize it.")
     }
 
     let manifest = match Manifest::load(format!("{}/{}/AndroidManifest.xml",
-                                                DIST_FOLDER,
-                                                app_id),
-                                        verbose) {
+                                                config.get_dist_folder(),
+                                                config.get_app_id()),
+                                        config.is_verbose()) {
         Ok(m) => {
-            if verbose {
+            if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
                 println!("");
             }
@@ -43,8 +39,8 @@ pub fn manifest_analysis(app_id: &str,
         }
         Err(e) => {
             print_error(format!("There was an error when loading the manifest: {}", e),
-                        verbose);
-            if verbose {
+                        config.is_verbose());
+            if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \
                           of the AndroidManifest.xml file.");
             }
@@ -52,19 +48,19 @@ pub fn manifest_analysis(app_id: &str,
         }
     };
 
-    if manifest.get_package() != app_id {
+    if manifest.get_package() != config.get_app_id() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              app_id,
+                              config.get_app_id(),
                               manifest.get_package()),
-                      verbose);
+                      config.is_verbose());
 
-        if verbose {
+        if config.is_verbose() {
             println!("This does not mean that something is bad, but it's supposed to have the \
                       application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     DOWNLOAD_FOLDER);
+                     config.get_downloads_folder());
         }
     }
 
@@ -85,7 +81,7 @@ pub fn manifest_analysis(app_id: &str,
                                   "AndroidManifest.xml",
                                   None,
                                   None);
-        if verbose {
+        if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
     }
@@ -102,7 +98,7 @@ pub fn manifest_analysis(app_id: &str,
                                   "AndroidManifest.xml",
                                   None,
                                   None);
-        if verbose {
+        if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
     }
@@ -127,7 +123,7 @@ pub fn manifest_analysis(app_id: &str,
                                   line,
                                   code);
 
-        if verbose {
+        if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
     }
@@ -153,15 +149,15 @@ pub fn manifest_analysis(app_id: &str,
                                   line,
                                   code);
 
-        if verbose {
+        if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
     }
 
-    if verbose {
+    if config.is_verbose() {
         println!("");
         println!("{}", "The manifest was analized correctly!".green());
-    } else if !quiet {
+    } else if !config.is_quiet() {
         println!("Manifest analyzed.");
     }
 }
