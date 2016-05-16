@@ -240,7 +240,7 @@ pub fn decompile(config: &Config) {
     if config.is_force() || !file_exists(&out_path) {
         let output = Command::new("java")
             .arg("-jar")
-            .arg(config.get_jd_cli_file())
+            .arg(config.get_jd_cmd_file())
             .arg(format!("{}/{}/classes.jar",
                          config.get_dist_folder(),
                          config.get_app_id()))

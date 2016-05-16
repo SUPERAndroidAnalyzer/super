@@ -10,7 +10,7 @@ use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 
-use {Error, Config, Result, Criticity, print_error, print_warning, file_exists};
+use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
 
 pub struct Results {
     app_package: String,
@@ -333,10 +333,11 @@ impl Results {
         try!(f.write_all(b"<head>"));
         try!(f.write_all(b"<title>Vulnerability report</title>"));
         try!(f.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"style.css\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"highlight.css\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/style.css\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/highlight.css\">"));
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
+        try!(f.write_all(b"<section class=\"report\">"));
         try!(f.write_all(b"<h1>Android Anti-Rebelation Project Vulnerability Report</h1>"));
         try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
                                    application <em>{}</em>. Report generated on {}.</p>",
@@ -431,6 +432,7 @@ impl Results {
         if self.low.len() > 0 {
             try!(self.print_html_vuln_set(&mut f, &self.low, Criticity::Low))
         }
+        try!(f.write_all(b"</section>"));
 
         // Footer
         try!(f.write_all(b"<footer>"));
@@ -442,24 +444,14 @@ impl Results {
                                   })
             .into_bytes()));
         try!(f.write_all(b"</footer>"));
-        try!(f.write_all(b"<script src=\"highlight.js\"></script>"));
+        try!(f.write_all(b"<script src=\"js/highlight.js\"></script>"));
         try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
         try!(f.write_all(b"</body>"));
         try!(f.write_all(b"</html>"));
 
         // Copying JS and CSS files
-        try!(fs::copy(config.get_highlight_js(),
-                      format!("{}/{}/highlight.js",
-                              config.get_results_folder(),
-                              config.get_app_id())));
-        try!(fs::copy(config.get_highlight_css(),
-                      format!("{}/{}/highlight.css",
-                              config.get_results_folder(),
-                              config.get_app_id())));
-        try!(fs::copy(config.get_results_css(),
-                      format!("{}/{}/style.css",
-                              config.get_results_folder(),
-                              config.get_app_id())));
+        try!(copy_folder(config.get_results_template(),
+                         &format!("{}/{}", config.get_results_folder(), config.get_app_id())));
 
         try!(self.generate_code_html_files(config));
 
@@ -537,17 +529,19 @@ impl Results {
         try!(f.write_all(b"<head>"));
         try!(f.write_all(b"<title>Source code</title>"));
         try!(f.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"../style.css\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"../css/style.css\">"));
         try!(f.write_all(b"</head>"));
-        try!(f.write_all(b"<body>"));
+        try!(f.write_all(b"<body class=\"src\">"));
         try!(f.write_all(b"<nav>"));
         try!(f.write_all(b"<a href=\"../index.html\" \
-                        title=\"Return to report\"><h2>Return to report</h2></a>"));
+                        title=\"Return to report\"><h2><img \
+                        src=\"../img/report.png\"><br>Return to report</h2></a>"));
         try!(f.write_all(&menu.into_bytes()));
         try!(f.write_all(b"</nav>"));
         try!(f.write_all(b"<iframe name=\"code\" src=\"AndroidManifest.xml.html\">"));
         try!(f.write_all(b"</iframe>"));
-        // TODO JS
+        try!(f.write_all(b"<script src=\"../js/jquery.js\"></script>"));
+        try!(f.write_all(b"<script src=\"../js/src_nav.js\"></script>"));
         try!(f.write_all(b"</body>"));
         try!(f.write_all(b"</html>"));
 
@@ -647,10 +641,12 @@ impl Results {
                         };
 
                         if extension == "xml" || extension == "java" {
-                            menu.push_str(format!("<li><a href=\"{0}{1}.html\" \
-                                                   title=\"{1}\" target=\"code\">{1}</a></li>",
+                            menu.push_str(format!("<li><a href=\"{0}{1}.html\" title=\"{1}\" \
+                                                   target=\"code\"><img \
+                                                   src=\"../img/{2}-icon.png\">{1}</a></li>",
                                                   link_path,
-                                                  &html_file_name[..html_file_name.len() - 5])
+                                                  &html_file_name[..html_file_name.len() - 5],
+                                                  extension.to_string_lossy())
                                 .as_str());
                         }
                     } else if path.is_dir() {
@@ -677,7 +673,8 @@ impl Results {
                                     break;
                                 }
                             };
-                        menu.push_str(format!("<li><a href=\"#\" title=\"{0}\">{0}</a>{1}</li>",
+                        menu.push_str(format!("<li><a href=\"#\" title=\"{0}\"><img \
+                                               src=\"../img/folder-icon.png\">{0}</a>{1}</li>",
                                               dir_name,
                                               submenu.as_str())
                             .as_str());
@@ -728,10 +725,10 @@ impl Results {
         try!(f_out.write_all(&format!("<title>Source - {}</title>", path.as_ref().display())
             .into_bytes()));
         try!(f_out.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}style.css\">",
+        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/style.css\">",
                                       back_path)
             .into_bytes()));
-        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}highlight.css\">",
+        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/highlight.css\">",
                                       back_path)
             .into_bytes()));
         try!(f_out.write_all(b"</head>"));
@@ -741,7 +738,7 @@ impl Results {
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
         try!(f_out.write_all(&code.into_bytes()));
         try!(f_out.write_all(b"</code></pre></div></div>"));
-        try!(f_out.write_all(&format!("<script src=\"{}highlight.js\"></script>", back_path)
+        try!(f_out.write_all(&format!("<script src=\"{}js/highlight.js\"></script>", back_path)
             .into_bytes()));
         try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
         try!(f_out.write_all(b"</body>"));

@@ -60,7 +60,8 @@ fn main() {
         config.set_force(force);
 
         if !config.check() {
-            print_error("There is an error with the configuration.", verbose);
+            print_error(format!("There is an error with the configuration: {:?}", config),
+                        verbose);
             exit(Error::Config.into());
         }
     }
@@ -124,6 +125,7 @@ fn file_exists<P: AsRef<Path>>(path: P) -> bool {
     fs::metadata(path).is_ok()
 }
 
+#[derive(Debug)]
 pub struct Config {
     app_id: String,
     verbose: bool,
@@ -135,10 +137,8 @@ pub struct Config {
     results_folder: String,
     apktool_file: String,
     dex2jar_folder: String,
-    jd_cli_file: String,
-    highlight_js: String,
-    highlight_css: String,
-    results_css: String,
+    jd_cmd_file: String,
+    results_template: String,
     rules_json: String,
 }
 
@@ -217,7 +217,7 @@ impl Config {
                         match value {
                             toml::Value::String(s) => {
                                 let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "jar" {
+                                if extension.is_some() && extension.unwrap() == "jar" {
                                     config.apktool_file = s.clone();
                                 } else {
                                     print_warning("The APKTool file must be a JAR file. Using \
@@ -242,78 +242,31 @@ impl Config {
                             }
                         }
                     }
-                    "jd_cli_file" => {
+                    "jd_cmd_file" => {
                         match value {
                             toml::Value::String(s) => {
                                 let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "jar" {
-                                    config.jd_cli_file = s.clone();
+                                if extension.is_some() && extension.unwrap() == "jar" {
+                                    config.jd_cmd_file = s.clone();
                                 } else {
-                                    print_warning("The JD-CLI file must be a JAR file. Using \
+                                    print_warning("The JD-CMD file must be a JAR file. Using \
                                                    default.",
                                                   verbose)
                                 }
                             }
                             _ => {
-                                print_warning("The 'jd_cli_file' option in config.toml must be an \
+                                print_warning("The 'jd_cmd_file' option in config.toml must be an \
                                                string. Using default.",
                                               verbose)
                             }
                         }
                     }
-                    "highlight_js" => {
+                    "results_template" => {
                         match value {
-                            toml::Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "js" {
-                                    config.highlight_js = s.clone();
-                                } else {
-                                    print_warning("The highlight.js file must be a JavaScript \
-                                                   file. Using default.",
-                                                  verbose)
-                                }
-                            }
+                            toml::Value::String(s) => config.results_template = s,
                             _ => {
-                                print_warning("The 'highlight_js' option in config.toml must be \
-                                               an string. Using default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "highlight_css" => {
-                        match value {
-                            toml::Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "css" {
-                                    config.highlight_css = s.clone();
-                                } else {
-                                    print_warning("The highlight.css file must be a CSS file. \
-                                                   Using default.",
-                                                  verbose)
-                                }
-                            }
-                            _ => {
-                                print_warning("The 'highlight_css' option in config.toml must be \
-                                               an string. Using default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "results_css" => {
-                        match value {
-                            toml::Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "css" {
-                                    config.results_css = s.clone();
-                                } else {
-                                    print_warning("The results.css file must be a CSS file. Using \
-                                                   default.",
-                                                  verbose)
-                                }
-                            }
-                            _ => {
-                                print_warning("The 'results_css' option in config.toml must be an \
-                                               string. Using default.",
+                                print_warning("The 'results_template' option in config.toml \
+                                               should be an string. Using default.",
                                               verbose)
                             }
                         }
@@ -322,7 +275,7 @@ impl Config {
                         match value {
                             toml::Value::String(s) => {
                                 let extension = Path::new(&s).extension();
-                                if extension.is_none() || extension.unwrap() != "json" {
+                                if extension.is_some() && extension.unwrap() == "json" {
                                     config.rules_json = s.clone();
                                 } else {
                                     print_warning("The rules.json file must be a JSON file. Using \
@@ -346,23 +299,10 @@ impl Config {
     }
 
     pub fn check(&self) -> bool {
-        // if !check_app_exists(app_id) {
-        //     if verbose {
-        //         print_error(format!("The application does not exist. It should be named {}.apk
-        // and \
-        //                              be stored in {}",
-        //                             app_id,
-        //                             DOWNLOAD_FOLDER),
-        //                     true);
-        //     } else {
-        //         print_error(String::from("The application does not exist."), false);
-        //     }
-        //     exit(Error::AppNotExists.into());
-        // } else if verbose {
-        //     println!("Seems that {}. The next step is to decompress it.",
-        //              "the app is there".green());
-        // }
-        true // TODO
+        file_exists(self.downloads_folder.as_str()) && file_exists(self.apktool_file.as_str()) &&
+        file_exists(self.dex2jar_folder.as_str()) &&
+        file_exists(self.jd_cmd_file.as_str()) &&
+        file_exists(self.results_template.as_str()) && file_exists(self.rules_json.as_str())
     }
 
     pub fn get_app_id(&self) -> &str {
@@ -421,20 +361,12 @@ impl Config {
         self.dex2jar_folder.as_str()
     }
 
-    pub fn get_jd_cli_file(&self) -> &str {
-        self.jd_cli_file.as_str()
+    pub fn get_jd_cmd_file(&self) -> &str {
+        self.jd_cmd_file.as_str()
     }
 
-    pub fn get_highlight_js(&self) -> &str {
-        self.highlight_js.as_str()
-    }
-
-    pub fn get_highlight_css(&self) -> &str {
-        self.highlight_css.as_str()
-    }
-
-    pub fn get_results_css(&self) -> &str {
-        self.results_css.as_str()
+    pub fn get_results_template(&self) -> &str {
+        self.results_template.as_str()
     }
 
     pub fn get_rules_json(&self) -> &str {
@@ -455,10 +387,8 @@ impl Default for Config {
             results_folder: String::from("results"),
             apktool_file: String::from("vendor/apktool_2.1.1.jar"),
             dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-            jd_cli_file: String::from("vendor/jd-cmd.jar"),
-            highlight_js: String::from("vendor/highlight.pack.js"),
-            highlight_css: String::from("vendor/androidstudio.css"),
-            results_css: String::from("vendor/results.css"),
+            jd_cmd_file: String::from("vendor/jd-cmd.jar"),
+            results_template: String::from("vendor/results_template"),
             rules_json: String::from("rules.json"),
         }
     }
@@ -627,4 +557,25 @@ fn get_help_menu() -> ArgMatches<'static> {
             .conflicts_with("verbose")
             .help("If you'd like a zen auditor that won't talk unless it's 100% neccesary."))
         .get_matches()
+}
+
+/// Copies the contents of `from` to `to`
+///
+/// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
+/// files in the destination folder exist with the same name as in the origin folder, they will be
+/// overwriten.
+pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
+    if !to.as_ref().exists() {
+        try!(fs::create_dir(to.as_ref()));
+    }
+
+    for f in try!(fs::read_dir(from.as_ref())) {
+        let f = try!(f);
+        if f.path().is_dir() {
+            try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+        } else {
+            try!(fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+        }
+    }
+    Ok(())
 }

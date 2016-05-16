@@ -1,7 +1,14 @@
 html, body {
     height: 100%;
     margin: 0;
-    margin-top: -0.2em;
+}
+
+body.src {
+    background-color: #33373C;
+}
+
+section.report {
+    margin: 4em;
 }
 
 footer {
@@ -30,15 +37,34 @@ nav {
     width: 20%;
     height: 100%;
     font-size: 0.8em;
-    background-color: #282b2e;
+    background-color: #33373C;
 }
+
+nav ul {
+    padding-left: 0.5em;
+}
+
 nav > ul {
-    padding-left: 1.5em;
+    height: 70%;
+    overflow: auto;
+}
+
+nav img {
+    height: 1.2em;
+    margin-right: 0.5em;
 }
 
 nav h2 {
     color: #CCCCCC;
-    margin: 2em;
+    margin: 1.5em;
+    font-size: 1.3em;
+    border: 1px solid #CCCCCC;
+    text-align: center;
+    padding: 1em;
+}
+
+nav h2 img {
+    height: 3.5em;
 }
 
 iframe {
@@ -48,6 +74,10 @@ iframe {
     padding: 0;
     border: none;
     overflow: scroll;
+}
+
+body > div > div {
+    margin-top: -0.4em;
 }
 
 section.vulnerability li {
@@ -74,6 +104,10 @@ span.low {
 
 .vulnerability div.code code {
     border-radius: 0 1em 1em 0;
+}
+
+.vulnerability div.line_numbers {
+    text-align: left;
 }
 
 a {
