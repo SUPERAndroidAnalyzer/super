@@ -10,7 +10,7 @@ use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 
-use {Config, Result, Criticity, print_error, print_warning, file_exists};
+use {Error, Config, Result, Criticity, print_error, print_warning, file_exists};
 
 pub struct Results {
     app_package: String,
@@ -375,7 +375,8 @@ impl Results {
                                       self.app_version.as_str()
                                   })
             .into_bytes()));
-        try!(f.write_all(b"<li><a href=\"src/\" title=\"Source code\">Check source code</a></li>"));
+        try!(f.write_all(b"<li><a href=\"src/index.html\" \
+                        title=\"Source code\">Check source code</a></li>"));
         try!(f.write_all(b"</ul>"));
 
         // Vulnerability count
@@ -451,7 +452,7 @@ impl Results {
                       format!("{}/{}/highlight.js",
                               config.get_results_folder(),
                               config.get_app_id())));
-        try!(fs::copy(config.get_highlight_js(),
+        try!(fs::copy(config.get_highlight_css(),
                       format!("{}/{}/highlight.css",
                               config.get_results_folder(),
                               config.get_app_id())));
@@ -509,8 +510,8 @@ impl Results {
                 }
                 let lang = vuln.get_file().extension().unwrap().to_string_lossy();
                 try!(f.write_all(&format!("<li><p><strong>Affected code:</strong></p><div><div \
-                                           class=\"line_numbers\">{}</div><div class=\"code
-                                           \"><pre><code \
+                                           class=\"line_numbers\">{}</div><div \
+                                           class=\"code\"><pre><code \
                                            class=\"{}\">{}</code></pre></div></li>",
                                           lines,
                                           lang,
@@ -524,32 +525,106 @@ impl Results {
     }
 
     fn generate_code_html_files(&self, config: &Config) -> Result<()> {
-        let path = format!("{}/{}", config.get_dist_folder(), config.get_app_id());
-        let menu = try!(self.generate_html_src_menu(&path, config));
-        let dir_iter = try!(fs::read_dir(&path));
+        try!(self.generate_code_html_folder("", config));
+        let menu = try!(self.generate_html_src_menu("", config));
+
+        let mut f = try!(fs::File::create(format!("{}/{}/src/index.html",
+                                                  config.get_results_folder(),
+                                                  config.get_app_id())));
+
+        try!(f.write_all(b"<!DOCTYPE html>"));
+        try!(f.write_all(b"<html lang=\"en\">"));
+        try!(f.write_all(b"<head>"));
+        try!(f.write_all(b"<title>Source code</title>"));
+        try!(f.write_all(b"<meta charset=\"UTF-8\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"../style.css\">"));
+        try!(f.write_all(b"</head>"));
+        try!(f.write_all(b"<body>"));
+        try!(f.write_all(b"<nav>"));
+        try!(f.write_all(b"<a href=\"../index.html\" \
+                        title=\"Return to report\"><h2>Return to report</h2></a>"));
+        try!(f.write_all(&menu.into_bytes()));
+        try!(f.write_all(b"</nav>"));
+        try!(f.write_all(b"<iframe name=\"code\" src=\"AndroidManifest.xml.html\">"));
+        try!(f.write_all(b"</iframe>"));
+        // TODO JS
+        try!(f.write_all(b"</body>"));
+        try!(f.write_all(b"</html>"));
+
+        Ok(())
+    }
+
+    fn generate_code_html_folder<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<usize> {
+        let dir_iter = try!(fs::read_dir(&format!("{}/{}/{}",
+                                                  config.get_dist_folder(),
+                                                  config.get_app_id(),
+                                                  path.as_ref().display())));
+
+        try!(fs::create_dir_all(&format!("{}/{}/src/{}",
+                                         config.get_results_folder(),
+                                         config.get_app_id(),
+                                         path.as_ref().display())));
+        let mut count = 0;
 
         for f in dir_iter {
-            // Basically, TODO everything again
-            let f = try!(f); // TODO error handling
+            let f = match f {
+                Ok(f) => f,
+                Err(e) => {
+                    print_warning(format!("There was an error reading the directory {}/{}/{}: {}",
+                                          config.get_dist_folder(),
+                                          config.get_app_id(),
+                                          path.as_ref().display(),
+                                          e),
+                                  config.is_verbose());
+                    return Err(Error::from(e));
+                }
+            };
+
             match f.path().extension() {
                 Some(e) => {
                     if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
-                        try!(self.generate_code_html_for(f.path(), menu.as_str()));
+                        let prefix =
+                            format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
+                        try!(self.generate_code_html_for(f.path().strip_prefix(&prefix).unwrap(),
+                                                         config));
+                        count += 1;
                     }
                 }
-                None => {}
-            }
+                None => {
+                    let prefix = format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
 
+                    if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
+                        let f_count = try!(self.generate_code_html_folder(f.path()
+                                                           .strip_prefix(&prefix)
+                                                           .unwrap(),
+                                                       config));
+                        if f_count == 0 {
+                            try!(fs::remove_dir(&format!("{}/{}/src/{}",
+                                                         config.get_results_folder(),
+                                                         config.get_app_id(),
+                                                         f.path()
+                                                             .strip_prefix(&prefix)
+                                                             .unwrap()
+                                                             .display())))
+                        } else {
+                            count += 1;
+                        }
+                    }
+                }
+            }
         }
 
-        Ok(())
+        Ok(count)
     }
 
     fn generate_html_src_menu<P: AsRef<Path>>(&self,
                                               dir_path: P,
                                               config: &Config)
                                               -> Result<String> {
-        let iter = try!(fs::read_dir(&dir_path));
+        let iter = try!(fs::read_dir(&format!("{}/{}/src/{}",
+                                              config.get_results_folder(),
+                                              config.get_app_id(),
+                                              dir_path.as_ref().display())));
         let mut menu = String::new();
         menu.push_str("<ul>");
         for entry in iter {
@@ -557,23 +632,25 @@ impl Results {
                 Ok(f) => {
                     let path = f.path();
                     if path.is_file() {
-                        let file_name = f.file_name();
-                        let file_name = file_name.as_os_str().to_string_lossy();
-                        let extension = match path.extension() {
-                            Some(e) => e.to_string_lossy(),
-                            None => {
-                                break;
+                        let html_file_name = f.file_name();
+                        let html_file_name = html_file_name.as_os_str().to_string_lossy();
+                        let extension = Path::new(&html_file_name[..html_file_name.len() - 5])
+                            .extension()
+                            .unwrap();
+                        let link_path = match format!("{}", dir_path.as_ref().display()).as_str() {
+                            "" => String::new(),
+                            p => {
+                                let mut p = String::from(p);
+                                p.push('/');
+                                p
                             }
                         };
 
-                        let prefix =
-                            format!("{}/{}", config.get_dist_folder(), config.get_app_id());
-                        // TODO count components and for each ../
                         if extension == "xml" || extension == "java" {
-                            menu.push_str(format!("<li><a href=\"{0}.html\" \
-                                                   title=\"{1}\">{1}</a></li>",
-                                                  path.strip_prefix(&prefix).unwrap().display(),
-                                                  file_name)
+                            menu.push_str(format!("<li><a href=\"{0}{1}.html\" \
+                                                   title=\"{1}\" target=\"code\">{1}</a></li>",
+                                                  link_path,
+                                                  &html_file_name[..html_file_name.len() - 5])
                                 .as_str());
                         }
                     } else if path.is_dir() {
@@ -581,21 +658,28 @@ impl Results {
                             Some(n) => String::from(n.to_string_lossy().borrow()),
                             None => String::new(),
                         };
-                        let submenu = match self.generate_html_src_menu(&path, config) {
-                            Ok(m) => m,
-                            Err(e) => {
-                                let path = path.to_string_lossy();
-                                print_warning(format!("An error occurred when generating the \
-                                                       menu for {}. The result generation \
-                                                       process will continue, thoug. More info: \
-                                                       {}",
-                                                      path,
-                                                      e),
-                                              config.is_verbose());
-                                break;
-                            }
-                        };
-                        menu.push_str(format!("<li>{}{}</li>", dir_name, submenu.as_str())
+                        let prefix = format!("{}/{}/src/",
+                                             config.get_results_folder(),
+                                             config.get_app_id());
+                        let submenu =
+                            match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
+                                                        config) {
+                                Ok(m) => m,
+                                Err(e) => {
+                                    let path = path.to_string_lossy();
+                                    print_warning(format!("An error occurred when generating \
+                                                           the menu for {}. The result \
+                                                           generation process will continue, \
+                                                           thoug. More info: {}",
+                                                          path,
+                                                          e),
+                                                  config.is_verbose());
+                                    break;
+                                }
+                            };
+                        menu.push_str(format!("<li><a href=\"#\" title=\"{0}\">{0}</a>{1}</li>",
+                                              dir_name,
+                                              submenu.as_str())
                             .as_str());
                     }
                 }
@@ -614,16 +698,55 @@ impl Results {
         Ok(menu)
     }
 
-    fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, menu: &str) -> Result<()> {
-        let mut f = try!(File::open(&path));
+    fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
+        let mut f_in = try!(File::open(format!("{}/{}/{}",
+                                               config.get_dist_folder(),
+                                               config.get_app_id(),
+                                               path.as_ref().display())));
+        let mut f_out = try!(File::create(format!("{}/{}/src/{}.html",
+                                                  config.get_results_folder(),
+                                                  config.get_app_id(),
+                                                  path.as_ref().display())));
+
         let mut code = String::new();
-
-        println!("PATH: {}", path.as_ref().display());
-
-        try!(f.read_to_string(&mut code));
+        try!(f_in.read_to_string(&mut code));
         let code = Results::html_escape(code.as_str());
 
-        // Basically TODO everything again
+        let mut back_path = String::new();
+        for _ in 0..path.as_ref().components().count() {
+            back_path.push_str("../");
+        }
+
+        let mut line_numbers = String::new();
+        for i in 0..code.lines().count() {
+            line_numbers.push_str(format!("{}<br>", i).as_str());
+        }
+
+        try!(f_out.write_all(b"<!DOCTYPE html>"));
+        try!(f_out.write_all(b"<html lang=\"en\">"));
+        try!(f_out.write_all(b"<head>"));
+        try!(f_out.write_all(&format!("<title>Source - {}</title>", path.as_ref().display())
+            .into_bytes()));
+        try!(f_out.write_all(b"<meta charset=\"UTF-8\">"));
+        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}style.css\">",
+                                      back_path)
+            .into_bytes()));
+        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}highlight.css\">",
+                                      back_path)
+            .into_bytes()));
+        try!(f_out.write_all(b"</head>"));
+        try!(f_out.write_all(b"<body>"));
+        try!(f_out.write_all(&format!("<div><div class=\"line_numbers\">{}</div>", line_numbers)
+            .into_bytes()));
+        try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
+        try!(f_out.write_all(&code.into_bytes()));
+        try!(f_out.write_all(b"</code></pre></div></div>"));
+        try!(f_out.write_all(&format!("<script src=\"{}highlight.js\"></script>", back_path)
+            .into_bytes()));
+        try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
+        try!(f_out.write_all(b"</body>"));
+        try!(f_out.write_all(b"</html>"));
+
         Ok(())
     }
 

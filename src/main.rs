@@ -455,10 +455,10 @@ impl Default for Config {
             results_folder: String::from("results"),
             apktool_file: String::from("vendor/apktool_2.1.1.jar"),
             dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-            jd_cli_file: String::from("vendor/jd-cli.jar"),
+            jd_cli_file: String::from("vendor/jd-cmd.jar"),
             highlight_js: String::from("vendor/highlight.pack.js"),
-            highlight_css: String::from("vendor/highlight.css"),
-            results_css: String::from("results.css"),
+            highlight_css: String::from("vendor/androidstudio.css"),
+            results_css: String::from("vendor/results.css"),
             rules_json: String::from("rules.json"),
         }
     }

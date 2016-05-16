@@ -311,8 +311,8 @@ impl Manifest {
                             for attr in attributes {
                                 match attr.name.local_name.as_str() {
                                     "name" => {
-                                        let perm_str = &attr.value.as_str();
-                                        let permission = match Permission::from_str(perm_str) {
+                                        let permission = match Permission::from_str(attr.value
+                                            .as_str()) {
                                             Ok(p) => p,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred when \
