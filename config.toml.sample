@@ -7,3 +7,21 @@ dex2jar_folder = "vendor/dex2jar-2.0" # Dex2Jar folder
 jd_cmd_file = "vendor/jd-cmd.jar" # JD-cmd JAR file
 results_template = "vendor/results_template" # Results template
 rules_json = "rules.json" # Vulnerability rules JSON
+
+# Vulnerable or potentially vulnerable permissions
+[[permissions]]
+name = "unknown" # Unknown permissions
+criticity = "low"
+description = "Even if the application can create its own permissions, it's discouraged, since it can lead to missunderstanding between developers."
+
+# Vulnerable or potentially vulnerable permissions
+[[permissions]]
+name = "android.permission.INTERNET" # Internet access permission
+criticity = "low"
+description = "The application needs Internet access. This is not a vulnerability as such, but it needs additional security measures if it's being connected to the Internet. Check if the permission is actually needed."
+
+# Vulnerable or potentially vulnerable permissions
+[[permissions]]
+name = "android.permission.WRITE_EXTERNAL_STORAGE" # External storage access
+criticity = "medium"
+description = "The application needs external storage access. This could be a security issue if those accesses are not controled."

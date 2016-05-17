@@ -16,9 +16,13 @@ use std::{fs, io, fmt, result};
 use std::path::Path;
 use std::fmt::Display;
 use std::convert::From;
+use std::str::FromStr;
 use std::error::Error as StdError;
 use std::io::{Read, Write};
 use std::process::exit;
+use std::collections::btree_set::Iter;
+use std::collections::BTreeSet;
+use std::cmp::{PartialOrd, Ordering};
 
 use serde::ser::{Serialize, Serializer};
 use clap::{Arg, App, ArgMatches};
@@ -26,6 +30,7 @@ use colored::Colorize;
 
 use decompilation::*;
 use static_analysis::*;
+use static_analysis::manifest::Permission;
 use results::*;
 
 const MAX_THREADS: i64 = std::u8::MAX as i64;
@@ -125,6 +130,53 @@ fn file_exists<P: AsRef<Path>>(path: P) -> bool {
     fs::metadata(path).is_ok()
 }
 
+#[derive(Debug, Ord, Eq)]
+pub struct PermissionConfig {
+    permission: Permission,
+    criticity: Criticity,
+    description: String,
+}
+
+impl PartialEq for PermissionConfig {
+    fn eq(&self, other: &PermissionConfig) -> bool {
+        self.permission == other.permission
+    }
+}
+
+impl PartialOrd for PermissionConfig {
+    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
+        if self.permission < other.permission {
+            Some(Ordering::Less)
+        } else if self.permission > other.permission {
+            Some(Ordering::Greater)
+        } else {
+            Some(Ordering::Equal)
+        }
+    }
+}
+
+impl PermissionConfig {
+    fn new(permission: Permission, criticity: Criticity, description: &str) -> PermissionConfig {
+        PermissionConfig {
+            permission: permission,
+            criticity: criticity,
+            description: String::from(description),
+        }
+    }
+
+    pub fn get_permission(&self) -> Permission {
+        self.permission
+    }
+
+    pub fn get_criticity(&self) -> Criticity {
+        self.criticity
+    }
+
+    pub fn get_description(&self) -> &str {
+        self.description.as_str()
+    }
+}
+
 #[derive(Debug)]
 pub struct Config {
     app_id: String,
@@ -140,6 +192,8 @@ pub struct Config {
     jd_cmd_file: String,
     results_template: String,
     rules_json: String,
+    unknown_permission: (Criticity, String),
+    permissions: BTreeSet<PermissionConfig>,
 }
 
 impl Config {
@@ -176,7 +230,7 @@ impl Config {
                             }
                             _ => {
                                 print_warning(format!("The 'threads' option in config.toml must \
-                                                       be an integer between 1 and {}. Using \
+                                                       be an integer between 1 and {}.\nUsing \
                                                        default.",
                                                       MAX_THREADS),
                                               verbose)
@@ -188,7 +242,7 @@ impl Config {
                             toml::Value::String(s) => config.downloads_folder = s,
                             _ => {
                                 print_warning("The 'downloads_folder' option in config.toml must \
-                                               be an string. Using default.",
+                                               be an string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -198,7 +252,7 @@ impl Config {
                             toml::Value::String(s) => config.dist_folder = s,
                             _ => {
                                 print_warning("The 'dist_folder' option in config.toml must be an \
-                                               string. Using default.",
+                                               string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -208,7 +262,7 @@ impl Config {
                             toml::Value::String(s) => config.results_folder = s,
                             _ => {
                                 print_warning("The 'results_folder' option in config.toml must be \
-                                               an string. Using default.",
+                                               an string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -220,14 +274,14 @@ impl Config {
                                 if extension.is_some() && extension.unwrap() == "jar" {
                                     config.apktool_file = s.clone();
                                 } else {
-                                    print_warning("The APKTool file must be a JAR file. Using \
+                                    print_warning("The APKTool file must be a JAR file.\nUsing \
                                                    default.",
                                                   verbose)
                                 }
                             }
                             _ => {
                                 print_warning("The 'apktool_file' option in config.toml must be \
-                                               an string. Using default.",
+                                               an string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -237,7 +291,7 @@ impl Config {
                             toml::Value::String(s) => config.dex2jar_folder = s,
                             _ => {
                                 print_warning("The 'dex2jar_folder' option in config.toml should \
-                                               be an string. Using default.",
+                                               be an string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -249,14 +303,14 @@ impl Config {
                                 if extension.is_some() && extension.unwrap() == "jar" {
                                     config.jd_cmd_file = s.clone();
                                 } else {
-                                    print_warning("The JD-CMD file must be a JAR file. Using \
+                                    print_warning("The JD-CMD file must be a JAR file.\nUsing \
                                                    default.",
                                                   verbose)
                                 }
                             }
                             _ => {
                                 print_warning("The 'jd_cmd_file' option in config.toml must be an \
-                                               string. Using default.",
+                                               string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -266,7 +320,7 @@ impl Config {
                             toml::Value::String(s) => config.results_template = s,
                             _ => {
                                 print_warning("The 'results_template' option in config.toml \
-                                               should be an string. Using default.",
+                                               should be an string.\nUsing default.",
                                               verbose)
                             }
                         }
@@ -278,14 +332,134 @@ impl Config {
                                 if extension.is_some() && extension.unwrap() == "json" {
                                     config.rules_json = s.clone();
                                 } else {
-                                    print_warning("The rules.json file must be a JSON file. Using \
-                                                   default.",
+                                    print_warning("The rules.json file must be a JSON \
+                                                   file.\nUsing default.",
                                                   verbose)
                                 }
                             }
                             _ => {
                                 print_warning("The 'rules_json' option in config.toml must be an \
-                                               string. Using default.",
+                                               string.\nUsing default.",
+                                              verbose)
+                            }
+                        }
+                    }
+                    "permissions" => {
+                        match value {
+                            toml::Value::Array(p) => {
+                                let format_warning =
+                                    format!("The permission configuration format must be the \
+                                             following: {}\nUsing default.",
+                                            "{ name=\"unknown|permission.name\" criticity = \
+                                             \"low|medium|high|critical\", description = \"Long \
+                                             description to explain the vulnerability\" }"
+                                                .italic());
+
+                                for cfg in p {
+                                    let cfg = match cfg.as_table() {
+                                        Some(t) => t,
+                                        None => {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+                                    };
+
+                                    let name = match cfg.get("name") {
+                                        Some(n) => {
+                                            match n.as_str() {
+                                                Some(n) => n,
+                                                None => {
+                                                    print_warning(format_warning, verbose);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        None => {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+                                    };
+
+                                    let criticity =
+                                        match cfg.get("criticity") {
+                                            Some(c) => {
+                                                match c.as_str() {
+                                                    Some(c) => {
+                                                        match Criticity::from_str(c) {
+                                                            Ok(c) => c,
+                                                            Err(_) => {
+                                                                print_warning(format!("Criticity \
+                                                            must be one of {}, {}, {} or {}.\n\
+                                                            Using default.", "low".italic(),
+                                                            "medium".italic(), "high".italic(),
+                                                            "critical".italic()),
+                                                                              verbose);
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                    None => {
+                                                        print_warning(format_warning, verbose);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            None => {
+                                                print_warning(format_warning, verbose);
+                                                break;
+                                            }
+                                        };
+
+                                    let description = match cfg.get("description") {
+                                        Some(d) => {
+                                            match d.as_str() {
+                                                Some(desc) => String::from(desc),
+                                                None => {
+                                                    print_warning(format_warning, verbose);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        None => {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+                                    };
+                                    if cfg.len() != 3 {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+
+                                    if name == "unknown" {
+                                        config.unknown_permission = (criticity, description);
+                                    } else {
+                                        let permission = match Permission::from_str(name) {
+                                            Ok(p) => p,
+                                            Err(_) => {
+                                                print_warning(format!("Unknown permission: \
+                                                                       {}\nTo set the default \
+                                                                       vulnerability level for \
+                                                                       an unknown permission, \
+                                                                       please, use the {} \
+                                                                       permission name, under \
+                                                                       the {} section.",
+                                                                      name.italic(),
+                                                                      "unknown".italic(),
+                                                                      "[[permissions]]".italic()),
+                                                              verbose);
+                                                break;
+                                            }
+                                        };
+                                        config.permissions
+                                            .insert(PermissionConfig::new(permission,
+                                                                          criticity,
+                                                                          description.as_str()));
+                                    }
+                                }
+                            }
+                            _ => {
+                                print_warning("You must specify the permissions you want to \
+                                               select as vulnerable.",
                                               verbose)
                             }
                         }
@@ -372,6 +546,18 @@ impl Config {
     pub fn get_rules_json(&self) -> &str {
         self.rules_json.as_str()
     }
+
+    pub fn get_unknown_permission_criticity(&self) -> Criticity {
+        self.unknown_permission.0
+    }
+
+    pub fn get_unknown_permission_description(&self) -> &str {
+        self.unknown_permission.1.as_str()
+    }
+
+    pub fn get_permissions(&self) -> Iter<PermissionConfig> {
+        self.permissions.iter()
+    }
 }
 
 impl Default for Config {
@@ -390,6 +576,11 @@ impl Default for Config {
             jd_cmd_file: String::from("vendor/jd-cmd.jar"),
             results_template: String::from("vendor/results_template"),
             rules_json: String::from("rules.json"),
+            unknown_permission: (Criticity::Low,
+                                 String::from("Even if the application can create its own \
+                                               permissions, it's discouraged, since it can lead \
+                                               to missunderstanding between developers.")),
+            permissions: BTreeSet::new(),
         }
     }
 }
@@ -474,6 +665,19 @@ impl Serialize for Criticity {
     }
 }
 
+impl FromStr for Criticity {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Criticity> {
+        match s.to_lowercase().as_str() {
+            "low" => Ok(Criticity::Low),
+            "medium" => Ok(Criticity::Medium),
+            "high" => Ok(Criticity::High),
+            "critical" => Ok(Criticity::Critical),
+            _ => Err(Error::ParseError),
+        }
+    }
+}
+
 fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     io::stderr()
         .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
@@ -501,7 +705,7 @@ fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
 
 fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     let text = text.as_ref();
-    let start = format!("Possible {} vulnerability found!:", criticity);
+    let start = format!("Possible {} criticity vulnerability found!:", criticity);
     let (start, message) = match criticity {
         Criticity::Low => (start.cyan(), text.cyan()),
         Criticity::Medium => (start.yellow(), text.yellow()),

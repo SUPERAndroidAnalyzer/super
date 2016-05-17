@@ -1,5 +1,5 @@
-mod manifest;
-mod code;
+pub mod manifest;
+pub mod code;
 
 use self::manifest::*;
 use self::code::*;

@@ -57,8 +57,8 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                       config.is_verbose());
 
         if config.is_verbose() {
-            println!("This does not mean that something is bad, but it's supposed to have the \
-                      application in the format {{package}}.apk in the {} folder and use the \
+            println!("This does not mean that something went wrong, but it's supposed to have \
+                      the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
                      config.get_downloads_folder());
         }
@@ -103,57 +103,26 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
         }
     }
 
-    if manifest.get_permission_checklist().needs_permission(Permission::AndroidPermissionInternet) {
-        let criticity = Criticity::Low;
-        let description = "The application needs Internet access. This is not a \
-                             vulnerability as such, but it needs additional security measures \
-                             if it's being connected to the Internet. Check if the \
-                             permission is actually needed.";
+    for permission in config.get_permissions() {
+        if manifest.get_permission_checklist().needs_permission(permission.get_permission()) {
+            let line = get_line(manifest.get_code(),
+                                Permission::AndroidPermissionInternet.as_str())
+                .ok();
+            let code = match line {
+                Some(l) => Some(get_code(manifest.get_code(), l - 1)),
+                None => None,
+            };
 
-        let line = get_line(manifest.get_code(),
-                            Permission::AndroidPermissionInternet.as_str())
-            .ok();
-        let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l - 1)),
-            None => None,
-        };
+            results.add_vulnerability(permission.get_criticity(),
+                                      "Internet permission",
+                                      permission.get_description(),
+                                      "AndroidManifest.xml",
+                                      line,
+                                      code);
 
-        results.add_vulnerability(criticity,
-                                  "Internet permission",
-                                  description,
-                                  "AndroidManifest.xml",
-                                  line,
-                                  code);
-
-        if config.is_verbose() {
-            print_vulnerability(description, criticity);
-        }
-    }
-
-    if manifest.get_permission_checklist()
-        .needs_permission(Permission::AndroidPermissionWriteExternalStorage) {
-        let criticity = Criticity::Medium;
-        let description = "The application needs external storage access. This could be a \
-                             security issue if those accesses are not controled.";
-
-        let line = get_line(manifest.get_code(),
-                            Permission::AndroidPermissionWriteExternalStorage.as_str())
-            .ok();
-
-        let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l - 1)),
-            None => None,
-        };
-
-        results.add_vulnerability(criticity,
-                                  "External storage write permission",
-                                  description,
-                                  "AndroidManifest.xml",
-                                  line,
-                                  code);
-
-        if config.is_verbose() {
-            print_vulnerability(description, criticity);
+            if config.is_verbose() {
+                print_vulnerability(permission.get_description(), permission.get_criticity());
+            }
         }
     }
 
@@ -478,6 +447,7 @@ impl FromStr for InstallLocation {
     }
 }
 
+#[derive(Debug)]
 struct PermissionChecklist {
     android_permission_access_all_external_storage: bool,
     android_permission_access_checkin_properties: bool,
@@ -2335,7 +2305,8 @@ impl Default for PermissionChecklist {
     }
 }
 
-enum Permission {
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
+pub enum Permission {
     AndroidPermissionAccessAllExternalStorage,
     AndroidPermissionAccessCheckinProperties,
     AndroidPermissionAccessCoarseLocation,
