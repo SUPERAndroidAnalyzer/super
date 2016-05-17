@@ -1,0 +1,6 @@
+[{
+    "regex": "pa?s??(wo?r?ds?)?\\s*=\\s*\"(.s)*\";",
+    "label": "Passwords",
+    "description": "Passwords should not be written in the source code, since they can be read by code decompilers.",
+    "criticity": "critical"
+}]

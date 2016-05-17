@@ -78,29 +78,19 @@ impl Results {
         self.app_version = String::from(version);
     }
 
-    pub fn add_vulnerability<S: AsRef<str>, P: AsRef<Path>>(&mut self,
-                                                            criticity: Criticity,
-                                                            name: S,
-                                                            description: S,
-                                                            file: P,
-                                                            line: Option<usize>,
-                                                            code: Option<String>) {
-        assert!(file.as_ref().extension().is_some());
-        match criticity {
+    pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
+        match vuln.get_criticity() {
             Criticity::Low => {
-                self.low.insert(Vulnerability::new(criticity, name, description, file, line, code));
+                self.low.insert(vuln);
             }
             Criticity::Medium => {
-                self.medium
-                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
+                self.medium.insert(vuln);
             }
             Criticity::High => {
-                self.high
-                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
+                self.high.insert(vuln);
             }
             Criticity::Critical => {
-                self.critical
-                    .insert(Vulnerability::new(criticity, name, description, file, line, code));
+                self.critical.insert(vuln);
             }
         }
     }
@@ -761,8 +751,8 @@ impl Results {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Ord)]
-struct Vulnerability {
+#[derive(Debug, Clone, PartialEq, Eq, Ord)]
+pub struct Vulnerability {
     criticity: Criticity,
     name: String,
     description: String,
@@ -792,6 +782,10 @@ impl Vulnerability {
         }
     }
 
+    pub fn get_criticity(&self) -> Criticity {
+        self.criticity
+    }
+
     pub fn get_name(&self) -> &str {
         self.name.as_str()
     }
@@ -804,7 +798,7 @@ impl Vulnerability {
         Path::new(&self.file)
     }
 
-    pub fn get_code<'l>(&self) -> Option<&str> {
+    pub fn get_code(&self) -> Option<&str> {
         match self.code.as_ref() {
             Some(s) => Some(s.as_str()),
             None => None,

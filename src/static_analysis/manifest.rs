@@ -9,7 +9,7 @@ use colored::Colorize;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_line,
      get_code};
-use results::Results;
+use results::{Results, Vulnerability};
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
     trim_whitespace: true,
@@ -22,7 +22,7 @@ const PARSER_CONFIG: ParserConfig = ParserConfig {
 pub fn manifest_analysis(config: &Config, results: &mut Results) {
     if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
-                  analyse it.")
+                  analyze it.")
     }
 
     let manifest = match Manifest::load(format!("{}/{}/AndroidManifest.xml",
@@ -75,12 +75,14 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                              the application will filter data to the Android OS to be \
                              debugged. This option should only be used while in development.";
 
-        results.add_vulnerability(criticity,
-                                  "Manifest Debug",
-                                  description,
-                                  "AndroidManifest.xml",
-                                  None,
-                                  None);
+        let vuln = Vulnerability::new(criticity,
+                                      "Manifest Debug",
+                                      description,
+                                      "AndroidManifest.xml",
+                                      None,
+                                      None);
+        results.add_vulnerability(vuln);
+
         if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
@@ -92,12 +94,14 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                              as such, but could be in devices with small heap. Review if the \
                              large heap is actually needed.";
 
-        results.add_vulnerability(criticity,
-                                  "Large heap",
-                                  description,
-                                  "AndroidManifest.xml",
-                                  None,
-                                  None);
+        let vuln = Vulnerability::new(criticity,
+                                      "Large heap",
+                                      description,
+                                      "AndroidManifest.xml",
+                                      None,
+                                      None);
+        results.add_vulnerability(vuln);
+
         if config.is_verbose() {
             print_vulnerability(description, criticity);
         }
@@ -113,12 +117,13 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                 None => None,
             };
 
-            results.add_vulnerability(permission.get_criticity(),
-                                      permission.get_label(),
-                                      permission.get_description(),
-                                      "AndroidManifest.xml",
-                                      line,
-                                      code);
+            let vuln = Vulnerability::new(permission.get_criticity(),
+                                          permission.get_label(),
+                                          permission.get_description(),
+                                          "AndroidManifest.xml",
+                                          line,
+                                          code);
+            results.add_vulnerability(vuln);
 
             if config.is_verbose() {
                 print_vulnerability(permission.get_description(), permission.get_criticity());
@@ -296,11 +301,12 @@ impl Manifest {
                                                     None => None,
                                                 };
 
-                                                results.add_vulnerability(
+                                                let vuln = Vulnerability::new(
                                                     config.get_unknown_permission_criticity(),
                                                     "Unknown permission",
                                                     config.get_unknown_permission_description(),
                                                     "AndroidManifest.xml", line, code);
+                                                results.add_vulnerability(vuln);
 
                                                 if config.is_verbose() {
                                                     print_vulnerability(

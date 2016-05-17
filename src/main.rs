@@ -7,6 +7,7 @@ extern crate serde;
 extern crate serde_json;
 extern crate chrono;
 extern crate toml;
+extern crate regex;
 
 mod decompilation;
 mod static_analysis;
@@ -25,6 +26,7 @@ use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
 
 use serde::ser::{Serialize, Serializer};
+use serde_json::error::ErrorCode as JSONErrorCode;
 use clap::{Arg, App, ArgMatches};
 use colored::Colorize;
 
@@ -108,7 +110,7 @@ fn main() {
                     println!("The results report has been saved. Everything went smoothly, now \
                               you can check all the results.");
                     println!("");
-                    println!("I will now analyse myself for vulnerabilities…");
+                    println!("I will now analyze myself for vulnerabilities…");
                     println!("Nah, just kidding, I've been developed in {}!",
                              "Rust".bold().green())
                 } else if !config.is_quiet() {
@@ -360,10 +362,11 @@ impl Config {
                                 let format_warning =
                                     format!("The permission configuration format must be the \
                                              following:\n{}\nUsing default.",
-                                            "name=\"unknown|permission.name\"\ncriticity = \
-                                             \"low|medium|high|critical\"\nlabel = \"Permission \
-                                             label\"\ndescription = \"Long description to \
-                                             explain the vulnerability\""
+                                            "[[permissions]]\nname=\"unknown|permission.name\"\n\
+                                            criticity = \"low|medium|high|critical\"\n\
+                                            label = \"Permission label\"\n\
+                                            description = \"Long description to explain the \
+                                            vulnerability\""
                                                 .italic());
 
                                 for cfg in p {
@@ -376,115 +379,88 @@ impl Config {
                                     };
 
                                     let name = match cfg.get("name") {
-                                        Some(n) => {
-                                            match n.as_str() {
-                                                Some(n) => n,
-                                                None => {
-                                                    print_warning(format_warning, verbose);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        None => {
+                                        Some(&toml::Value::String(ref n)) => n,
+                                        _ => {
                                             print_warning(format_warning, verbose);
                                             break;
                                         }
                                     };
 
-                                    let criticity =
-                                        match cfg.get("criticity") {
-                                            Some(c) => {
-                                                match c.as_str() {
-                                                    Some(c) => {
-                                                        match Criticity::from_str(c) {
-                                                            Ok(c) => c,
-                                                            Err(_) => {
-                                                                print_warning(format!("Criticity \
-                                                            must be one of {}, {}, {} or {}.\n\
-                                                            Using default.", "low".italic(),
-                                                            "medium".italic(), "high".italic(),
-                                                            "critical".italic()),
-                                                                              verbose);
-                                                                break;
-                                                            }
-                                                        }
-                                                    }
-                                                    None => {
-                                                        print_warning(format_warning, verbose);
-                                                        break;
-                                                    }
+                                    let criticity = match cfg.get("criticity") {
+                                        Some(&toml::Value::String(ref c)) => {
+                                            match Criticity::from_str(c) {
+                                                Ok(c) => c,
+                                                Err(_) => {
+                                                    print_warning(format!("Criticity must be \
+                                                                           one of {}, {}, {} or \
+                                                                           {}.\nUsing default.",
+                                                                          "low".italic(),
+                                                                          "medium".italic(),
+                                                                          "high".italic(),
+                                                                          "critical".italic()),
+                                                                  verbose);
+                                                    break;
                                                 }
                                             }
-                                            None => {
-                                                print_warning(format_warning, verbose);
-                                                break;
-                                            }
-                                        };
+                                        }
+                                        _ => {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+                                    };
 
                                     let description = match cfg.get("description") {
-                                        Some(d) => {
-                                            match d.as_str() {
-                                                Some(desc) => String::from(desc),
-                                                None => {
-                                                    print_warning(format_warning, verbose);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        None => {
+                                        Some(&toml::Value::String(ref d)) => d,
+                                        _ => {
                                             print_warning(format_warning, verbose);
                                             break;
                                         }
                                     };
-
 
                                     if name == "unknown" {
                                         if cfg.len() != 3 {
                                             print_warning(format!("The format for the unknown \
                                             permissions is the following:\n{}\nUsing default.",
-                                            "name = \"unknown\"\ncriticity = \
-                                            \"low|medium|high|criticity\"\ndescription = \"Long \
-                                            description to explain the vulnerability\"".italic()),
+                                            "[[permissions]]\nname = \"unknown\"\n\
+                                            criticity = \"low|medium|high|criticity\"\n\
+                                            description = \"Long description to explain the \
+                                            vulnerability\"".italic()),
                                                           verbose);
                                             break;
                                         }
 
-                                        config.unknown_permission = (criticity, description);
+                                        config.unknown_permission = (criticity,
+                                                                     description.clone());
                                     } else {
                                         if cfg.len() != 4 {
                                             print_warning(format_warning, verbose);
                                             break;
                                         }
 
-                                        let permission = match Permission::from_str(name) {
-                                            Ok(p) => p,
-                                            Err(_) => {
-                                                print_warning(format!("Unknown permission: \
-                                                                       {}\nTo set the default \
-                                                                       vulnerability level for \
-                                                                       an unknown permission, \
-                                                                       please, use the {} \
-                                                                       permission name, under \
-                                                                       the {} section.",
-                                                                      name.italic(),
-                                                                      "unknown".italic(),
-                                                                      "[[permissions]]".italic()),
-                                                              verbose);
-                                                break;
-                                            }
-                                        };
+                                        let permission =
+                                            match Permission::from_str(name.as_str()) {
+                                                Ok(p) => p,
+                                                Err(_) => {
+                                                    print_warning(format!("Unknown permission: \
+                                                                           {}\nTo set the \
+                                                                           default vulnerability \
+                                                                           level for an unknown \
+                                                                           permission, please, \
+                                                                           use the {} \
+                                                                           permission name, \
+                                                                           under the {} section.",
+                                                                          name.italic(),
+                                                                          "unknown".italic(),
+                                                                          "[[permissions]]"
+                                                                              .italic()),
+                                                                  verbose);
+                                                    break;
+                                                }
+                                            };
 
                                         let label = match cfg.get("label") {
-                                            Some(l) => {
-                                                match l.as_str() {
-                                                    Some(l) => l,
-                                                    None => {
-                                                        print_warning(format_warning, verbose);
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            None => {
+                                            Some(&toml::Value::String(ref l)) => l,
+                                            _ => {
                                                 print_warning(format_warning, verbose);
                                                 break;
                                             }
@@ -629,6 +605,7 @@ impl Default for Config {
 pub enum Error {
     AppNotExists,
     ParseError,
+    JSONError(JSONError),
     CodeNotFound,
     Config,
     IOError(io::Error),
@@ -640,8 +617,9 @@ impl Into<i32> for Error {
         match self {
             Error::AppNotExists => 10,
             Error::ParseError => 20,
-            Error::CodeNotFound => 30,
-            Error::Config => 40,
+            Error::JSONError(_) => 30,
+            Error::CodeNotFound => 40,
+            Error::Config => 50,
             Error::IOError(_) => 100,
             Error::Unknown => 1,
         }
@@ -654,6 +632,19 @@ impl From<io::Error> for Error {
     }
 }
 
+impl From<serde_json::error::Error> for Error {
+    fn from(err: serde_json::error::Error) -> Error {
+        match err {
+            serde_json::error::Error::Syntax(code, line, column) => {
+                Error::JSONError(JSONError::new(code, line, column))
+            }
+            serde_json::error::Error::Io(err) => Error::IOError(err),
+            serde_json::error::Error::FromUtf8(_) => Error::ParseError,
+        }
+    }
+}
+
+
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.description())
@@ -665,6 +656,7 @@ impl StdError for Error {
         match *self {
             Error::AppNotExists => "the application has not been found",
             Error::ParseError => "there was an error in some parsing process",
+            Error::JSONError(ref e) => e.description(),
             Error::CodeNotFound => "the code was not found in the file",
             Error::Config => "there was an error in the configuration",
             Error::IOError(ref e) => e.description(),
@@ -677,6 +669,29 @@ impl StdError for Error {
             Error::IOError(ref e) => Some(e),
             _ => None,
         }
+    }
+}
+
+#[derive(Debug)]
+pub struct JSONError {
+    code: JSONErrorCode,
+    description: String,
+    line: usize,
+    column: usize,
+}
+
+impl JSONError {
+    fn new(code: JSONErrorCode, line: usize, column: usize) -> JSONError {
+        let desc = format!("{:?} at line {} column {}", code, line, column);
+        JSONError {
+            code: code,
+            description: desc,
+            line: line,
+            column: column,
+        }
+    }
+    fn description(&self) -> &str {
+        self.description.as_str()
     }
 }
 
