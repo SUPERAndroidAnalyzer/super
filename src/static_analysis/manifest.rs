@@ -19,7 +19,6 @@ const PARSER_CONFIG: ParserConfig = ParserConfig {
     coalesce_characters: true,
 };
 
-
 pub fn manifest_analysis(config: &Config, results: &mut Results) {
     if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
@@ -29,7 +28,8 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
     let manifest = match Manifest::load(format!("{}/{}/AndroidManifest.xml",
                                                 config.get_dist_folder(),
                                                 config.get_app_id()),
-                                        config.is_verbose()) {
+                                        config,
+                                        results) {
         Ok(m) => {
             if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
@@ -114,7 +114,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
             };
 
             results.add_vulnerability(permission.get_criticity(),
-                                      "Internet permission",
+                                      permission.get_label(),
                                       permission.get_description(),
                                       "AndroidManifest.xml",
                                       line,
@@ -149,9 +149,11 @@ struct Manifest {
 }
 
 impl Manifest {
-    pub fn load<P: AsRef<Path>>(path: P, verbose: bool) -> Result<Manifest> {
+    pub fn load<P: AsRef<Path>>(path: P,
+                                config: &Config,
+                                results: &mut Results)
+                                -> Result<Manifest> {
         let mut file = try!(File::open(path));
-
         let mut manifest: Manifest = Default::default();
 
         let mut code = String::new();
@@ -179,7 +181,7 @@ impl Manifest {
                                                                        process will continue, \
                                                                        though.",
                                                                       e),
-                                                              verbose);
+                                                              config.is_verbose());
                                                 break;
                                             }
                                         };
@@ -199,7 +201,7 @@ impl Manifest {
                                                                        process will continue, \
                                                                        though.",
                                                                       e),
-                                                              verbose);
+                                                              config.is_verbose());
                                                 break;
                                             }
                                         };
@@ -223,7 +225,7 @@ impl Manifest {
                                                                        {}.\nThe process \
                                                                        will continue, though.",
                                                                       e),
-                                                              verbose);
+                                                              config.is_verbose());
                                                 break;
                                             }
                                         };
@@ -243,7 +245,7 @@ impl Manifest {
                                                                         {}.\nThe process \
                                                                     will continue, though.",
                                                                       e),
-                                                              verbose);
+                                                              config.is_verbose());
                                                 break;
                                             }
                                         };
@@ -262,7 +264,7 @@ impl Manifest {
                                                                         {}.\nThe process \
                                                                     will continue, though.",
                                                                       e),
-                                                              verbose);
+                                                              config.is_verbose());
                                                 break;
                                             }
                                         };
@@ -283,16 +285,28 @@ impl Manifest {
                                         let permission = match Permission::from_str(attr.value
                                             .as_str()) {
                                             Ok(p) => p,
-                                            Err(e) => {
-                                                print_warning(format!("An error occurred when \
-                                                                       parsing a permission in \
-                                                                       the manifest: {}. \
-                                                                       Manifest's permission: \
-                                                                       {}.\nThe process will \
-                                                                       continue, though.",
-                                                                      attr.value.as_str(),
-                                                                      e),
-                                                              verbose);
+                                            Err(_) => {
+                                                let line = get_line(manifest.get_code(),
+                                                                    attr.value.as_str())
+                                                    .ok();
+                                                let code = match line {
+                                                    Some(l) => {
+                                                        Some(get_code(manifest.get_code(), l - 1))
+                                                    }
+                                                    None => None,
+                                                };
+
+                                                results.add_vulnerability(
+                                                    config.get_unknown_permission_criticity(),
+                                                    "Unknown permission",
+                                                    config.get_unknown_permission_description(),
+                                                    "AndroidManifest.xml", line, code);
+
+                                                if config.is_verbose() {
+                                                    print_vulnerability(
+                                                        config.get_unknown_permission_description(),
+                                                        config.get_unknown_permission_criticity());
+                                                }
                                                 break;
                                             }
                                         };
@@ -313,7 +327,7 @@ impl Manifest {
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
                                           e),
-                                  verbose);
+                                  config.is_verbose());
                 }
             }
         }

@@ -14,5 +14,5 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     }
 
     manifest_analysis(config, results);
-    // TODO Code analysis
+    code_analysis(config, results);
 }

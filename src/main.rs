@@ -134,6 +134,7 @@ fn file_exists<P: AsRef<Path>>(path: P) -> bool {
 pub struct PermissionConfig {
     permission: Permission,
     criticity: Criticity,
+    label: String,
     description: String,
 }
 
@@ -156,10 +157,15 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    fn new(permission: Permission, criticity: Criticity, description: &str) -> PermissionConfig {
+    fn new(permission: Permission,
+           criticity: Criticity,
+           label: &str,
+           description: &str)
+           -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticity: criticity,
+            label: String::from(label),
             description: String::from(description),
         }
     }
@@ -170,6 +176,10 @@ impl PermissionConfig {
 
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
+    }
+
+    pub fn get_label(&self) -> &str {
+        self.label.as_str()
     }
 
     pub fn get_description(&self) -> &str {
@@ -349,10 +359,11 @@ impl Config {
                             toml::Value::Array(p) => {
                                 let format_warning =
                                     format!("The permission configuration format must be the \
-                                             following: {}\nUsing default.",
-                                            "{ name=\"unknown|permission.name\" criticity = \
-                                             \"low|medium|high|critical\", description = \"Long \
-                                             description to explain the vulnerability\" }"
+                                             following:\n{}\nUsing default.",
+                                            "name=\"unknown|permission.name\"\ncriticity = \
+                                             \"low|medium|high|critical\"\nlabel = \"Permission \
+                                             label\"\ndescription = \"Long description to \
+                                             explain the vulnerability\""
                                                 .italic());
 
                                 for cfg in p {
@@ -425,14 +436,26 @@ impl Config {
                                             break;
                                         }
                                     };
-                                    if cfg.len() != 3 {
-                                        print_warning(format_warning, verbose);
-                                        break;
-                                    }
+
 
                                     if name == "unknown" {
+                                        if cfg.len() != 3 {
+                                            print_warning(format!("The format for the unknown \
+                                            permissions is the following:\n{}\nUsing default.",
+                                            "name = \"unknown\"\ncriticity = \
+                                            \"low|medium|high|criticity\"\ndescription = \"Long \
+                                            description to explain the vulnerability\"".italic()),
+                                                          verbose);
+                                            break;
+                                        }
+
                                         config.unknown_permission = (criticity, description);
                                     } else {
+                                        if cfg.len() != 4 {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+
                                         let permission = match Permission::from_str(name) {
                                             Ok(p) => p,
                                             Err(_) => {
@@ -450,9 +473,26 @@ impl Config {
                                                 break;
                                             }
                                         };
+
+                                        let label = match cfg.get("label") {
+                                            Some(l) => {
+                                                match l.as_str() {
+                                                    Some(l) => l,
+                                                    None => {
+                                                        print_warning(format_warning, verbose);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            None => {
+                                                print_warning(format_warning, verbose);
+                                                break;
+                                            }
+                                        };
                                         config.permissions
                                             .insert(PermissionConfig::new(permission,
                                                                           criticity,
+                                                                          label,
                                                                           description.as_str()));
                                     }
                                 }

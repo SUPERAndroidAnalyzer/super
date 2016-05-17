@@ -2,10 +2,12 @@
 [[permissions]]
 name = "android.permission.INTERNET" # Internet access permission
 criticity = "low"
+label = "Internet permission"
 description = "The application needs Internet access. This is not a vulnerability as such, but it needs additional security measures if it's being connected to the Internet. Check if the permission is actually needed."
 
 # Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.WRITE_EXTERNAL_STORAGE" # External storage access
 criticity = "medium"
-description = "The application needs external storage access. This could be a security issue if those accesses are not controled."
+label = "External storage write permission"
+description = "The application needs external storage write access. This could be a security issue if those accesses are not controled."
