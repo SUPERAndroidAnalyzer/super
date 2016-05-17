@@ -769,16 +769,6 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     println!("{} {}", start, message);
 }
 
-fn get_line(code: &str, haystack: &str) -> Result<usize> {
-    for (i, line) in code.lines().enumerate() {
-        if line.contains(haystack) {
-            return Ok(i + 1);
-        }
-    }
-
-    Err(Error::CodeNotFound)
-}
-
 fn get_code(code: &str, line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.lines().enumerate() {

@@ -7,8 +7,7 @@ use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
 
-use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_line,
-     get_code};
+use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 
 const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -465,6 +464,16 @@ impl FromStr for InstallLocation {
             _ => Err(Error::ParseError),
         }
     }
+}
+
+fn get_line(code: &str, haystack: &str) -> Result<usize> {
+    for (i, line) in code.lines().enumerate() {
+        if line.contains(haystack) {
+            return Ok(i + 1);
+        }
+    }
+
+    Err(Error::CodeNotFound)
 }
 
 #[derive(Debug)]

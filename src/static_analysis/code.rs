@@ -3,6 +3,7 @@ use std::fs::{File, DirEntry};
 use std::io::Read;
 use std::str::FromStr;
 use std::path::Path;
+use std::path::PathBuf;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
@@ -12,7 +13,7 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, Result, Error, Criticity, print_warning, print_error};
+use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 
 pub fn code_analysis(config: &Config, results: &mut Results) {
@@ -39,6 +40,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));;
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
+    let dist_folder = Arc::new(format!("{}/{}", config.get_dist_folder(), config.get_app_id()));
 
     if config.is_verbose() {
         println!("Starting analysis of the code with {} threads. {} files to go!",
@@ -51,6 +53,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
             let thread_files = files.clone();
             let thread_rules = rules.clone();
             let thread_vulns = found_vulns.clone();
+            let thread_dist_folder = dist_folder.clone();
 
             thread::spawn(move || {
                 loop {
@@ -60,7 +63,12 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
                     };
                     match f {
                         Some(f) => {
-                            if let Err(e) = analyze_file(f.path(), &thread_rules, &thread_vulns) {
+                            if let Err(e) =
+                                   analyze_file(f.path(),
+                                                PathBuf::from(thread_dist_folder.as_str()),
+                                                &thread_rules,
+                                                &thread_vulns,
+                                                verbose) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
@@ -109,14 +117,45 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
 }
 
 fn analyze_file<P: AsRef<Path>>(path: P,
+                                dist_folder: P,
                                 rules: &Vec<Rule>,
-                                results: &Mutex<Vec<Vulnerability>>)
+                                results: &Mutex<Vec<Vulnerability>>,
+                                verbose: bool)
                                 -> Result<()> {
-    let mut f = try!(File::open(path));
+    let mut f = try!(File::open(&path));
     let mut code = String::new();
     try!(f.read_to_string(&mut code));
 
+    for rule in rules {
+        for (s, _) in rule.get_regex().find_iter(code.as_str()) {
+            let start_line = get_line_for(s, code.as_str());
+            let mut results = results.lock().unwrap();
+            results.push(Vulnerability::new(rule.get_criticity(),
+                                            rule.get_label(),
+                                            rule.get_description(),
+                                            path.as_ref().strip_prefix(&dist_folder).unwrap(),
+                                            Some(start_line),
+                                            Some(get_code(code.as_str(), start_line))));
+
+            if verbose {
+                print_vulnerability(rule.get_description(), rule.get_criticity());
+            }
+        }
+    }
+
     Ok(())
+}
+
+fn get_line_for(index: usize, text: &str) -> usize {
+    let mut line = 0;
+    for (i, c) in text.char_indices() {
+        if c == '\n' {
+            line += 1
+        } else if i == index {
+            break;
+        }
+    }
+    line + 1
 }
 
 fn add_files_to_vec<P: AsRef<Path>>(path: P,
@@ -164,6 +203,24 @@ struct Rule {
     label: String,
     description: String,
     criticity: Criticity,
+}
+
+impl Rule {
+    pub fn get_regex(&self) -> &Regex {
+        &self.regex
+    }
+
+    pub fn get_label(&self) -> &str {
+        self.label.as_str()
+    }
+
+    pub fn get_description(&self) -> &str {
+        self.description.as_str()
+    }
+
+    pub fn get_criticity(&self) -> Criticity {
+        self.criticity
+    }
 }
 
 fn load_rules(config: &Config) -> Result<Vec<Rule>> {
