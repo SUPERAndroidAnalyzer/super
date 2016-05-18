@@ -1,6 +1,31 @@
 [{
-    "regex": "pa?s??(wo?r?ds?)?\\s*=\\s*\"(.s)*\";",
+    "regex": "(?i)p(ass(words?)?|wd?|ass?wd)\\s*=\\s*\".*\"\\s*;",
     "label": "Passwords",
     "description": "Passwords should not be written in the source code, since they can be read by code decompilers.",
     "criticity": "critical"
+}, {
+    "regex": "\"(((ftp|http)s?:)?//)?[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-]*)?\"",
+    "label": "URL Disclosure",
+    "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
+    "criticity": "medium"
+}, {
+    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
+    "label": "Generic Exception in catch",
+    "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion.",
+    "criticity": "low"
+}, {
+    "regex": "throws\\s+(\\w*\\s*,\\s*)*Exception\\s*[,{]",
+    "label": "Generic exception in throws",
+    "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion.",
+    "criticity": "low"
+}, {
+    "regex": "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
+    "label": "IP Disclosure",
+    "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
+    "criticity": "low"
+}, {
+    "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
+    "label": "Insecure random function",
+    "description": "The use of Math.random() is discouraged for criptografic use, since it's not a criptografically secure function. You should check if the function is used for criptografic uses.",
+    "criticity": "high"
 }]

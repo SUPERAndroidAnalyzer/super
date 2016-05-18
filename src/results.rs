@@ -1,10 +1,12 @@
-use std::{fs, result};
+use std::{fs, fmt, result};
 use std::fs::File;
 use std::io::{Read, Write};
 use std::collections::BTreeSet;
 use std::cmp::Ordering;
 use std::path::Path;
 use std::borrow::Borrow;
+use std::time::Duration;
+use std::slice::Iter;
 
 use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
@@ -21,6 +23,7 @@ pub struct Results {
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
     critical: BTreeSet<Vulnerability>,
+    benchmarks: Vec<Benchmark>
 }
 
 impl Results {
@@ -52,6 +55,7 @@ impl Results {
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
                 critical: BTreeSet::new(),
+                benchmarks: if config.is_bench() {Vec::with_capacity(10)} else {Vec::with_capacity(0)},
             })
         } else {
             if config.is_verbose() {
@@ -93,6 +97,14 @@ impl Results {
                 self.critical.insert(vuln);
             }
         }
+    }
+
+    pub fn add_benchmark(&mut self, bench: Benchmark) {
+        self.benchmarks.push(bench);
+    }
+
+    pub fn get_benchmarks(&self) -> Iter<Benchmark> {
+        self.benchmarks.iter()
     }
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
@@ -284,7 +296,7 @@ impl Results {
             try!(f.write_all(&format!(" - **File:** {}\n", vuln.get_file().display())
                                   .into_bytes()));
             if let Some(s) = vuln.get_line() {
-                try!(f.write_all(&format!(" - **Line:** {}\n", s).into_bytes()));
+                try!(f.write_all(&format!(" - **Line:** {}\n", s + 1).into_bytes()));
             }
             if let Some(code) = vuln.get_code() {
                 let start_line = if vuln.get_line().unwrap() < 5 {
@@ -474,20 +486,20 @@ impl Results {
                                       vuln.get_file().display())
                 .into_bytes()));
             if let Some(s) = vuln.get_line() {
-                try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", s).into_bytes()));
+                try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", s+1).into_bytes()));
             }
             if let Some(code) = vuln.get_code() {
                 let start_line = if vuln.get_line().unwrap() < 5 {
-                    1
+                    0
                 } else {
                     vuln.get_line().unwrap() - 4
                 };
                 let mut lines = String::new();
                 for (i, _line) in code.lines().enumerate() {
-                    if i == vuln.get_line().unwrap() - 1 {
-                        lines.push_str(format!("<em>{}</em> &gt;<br>", i + start_line).as_str());
+                    if i + start_line == vuln.get_line().unwrap() {
+                        lines.push_str(format!("-&gt;<em>{}</em><br>", i + start_line+1).as_str());
                     } else {
-                        lines.push_str(format!("{}<br>", i + start_line).as_str());
+                        lines.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     }
                 }
                 let lang = vuln.get_file().extension().unwrap().to_string_lossy();
@@ -575,23 +587,25 @@ impl Results {
                     }
                 }
                 None => {
-                    let prefix = format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
+                    if f.path().is_dir() {
+                        let prefix = format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
 
-                    if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
-                        let f_count = try!(self.generate_code_html_folder(f.path()
-                                                           .strip_prefix(&prefix)
-                                                           .unwrap(),
-                                                       config));
-                        if f_count == 0 {
-                            try!(fs::remove_dir(&format!("{}/{}/src/{}",
-                                                         config.get_results_folder(),
-                                                         config.get_app_id(),
-                                                         f.path()
-                                                             .strip_prefix(&prefix)
-                                                             .unwrap()
-                                                             .display())))
-                        } else {
-                            count += 1;
+                        if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
+                            let f_count = try!(self.generate_code_html_folder(f.path()
+                                                               .strip_prefix(&prefix)
+                                                               .unwrap(),
+                                                           config));
+                            if f_count == 0 {
+                                try!(fs::remove_dir(&format!("{}/{}/src/{}",
+                                                             config.get_results_folder(),
+                                                             config.get_app_id(),
+                                                             f.path()
+                                                                 .strip_prefix(&prefix)
+                                                                 .unwrap()
+                                                                 .display())))
+                            } else {
+                                count += 1;
+                            }
                         }
                     }
                 }
@@ -706,7 +720,7 @@ impl Results {
 
         let mut line_numbers = String::new();
         for i in 0..code.lines().count() {
-            line_numbers.push_str(format!("{}<br>", i).as_str());
+            line_numbers.push_str(format!("{}<br>", i + 1).as_str());
         }
 
         try!(f_out.write_all(b"<!DOCTYPE html>"));
@@ -861,5 +875,22 @@ impl PartialOrd for Vulnerability {
                 }
             }
         }
+    }
+}
+
+pub struct Benchmark {
+    label: String,
+    duration: Duration,
+}
+
+impl Benchmark {
+    pub fn new(label: &str, duration: Duration) -> Benchmark {
+        Benchmark {label: String::from(label), duration: duration}
+    }
+}
+
+impl fmt::Display for Benchmark {
+    fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
+        write!(f, "{}: {}.{}s", self.label, self.duration.as_secs(), self.duration.subsec_nanos())
     }
 }

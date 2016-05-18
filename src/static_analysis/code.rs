@@ -7,6 +7,7 @@ use std::path::PathBuf;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
+use std::time::Instant;
 
 use serde_json;
 use serde_json::value::Value;
@@ -14,9 +15,10 @@ use regex::Regex;
 use colored::Colorize;
 
 use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
-use results::{Results, Vulnerability};
+use results::{Results, Vulnerability, Benchmark};
 
 pub fn code_analysis(config: &Config, results: &mut Results) {
+    let code_start = Instant::now();
     let rules = match load_rules(config) {
         Ok(r) => r,
         Err(e) => {
@@ -26,6 +28,10 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
             return;
         }
     };
+
+    if config.is_bench() {
+        results.add_benchmark(Benchmark::new("Rule loading", code_start.elapsed()));
+    }
 
     let mut files: Vec<DirEntry> = Vec::new();
     if let Err(e) = add_files_to_vec("", &mut files, config) {
@@ -47,6 +53,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
                  format!("{}", config.get_threads()).bold(),
                  format!("{}", total_files).bold());
     }
+    let analysis_start = Instant::now();
 
     let handles: Vec<_> = (0..config.get_threads())
         .map(|_| {
@@ -111,8 +118,16 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
         }
     }
 
+    if config.is_bench() {
+        results.add_benchmark(Benchmark::new("File analysis", analysis_start.elapsed()));
+    }
+
     for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
         results.add_vulnerability(vuln);
+    }
+
+    if config.is_bench() {
+        results.add_benchmark(Benchmark::new("Total code analysis", code_start.elapsed()));
     }
 }
 
@@ -155,7 +170,7 @@ fn get_line_for(index: usize, text: &str) -> usize {
             break;
         }
     }
-    line + 1
+    line
 }
 
 fn add_files_to_vec<P: AsRef<Path>>(path: P,
@@ -189,9 +204,11 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
                                   vec,
                                   config));
         } else if f_ext.is_some() {
-            match f_ext.unwrap().to_string_lossy().borrow() {
-                "xml" | "java" => vec.push(f),
-                _ => {}
+            if f_path.file_name().unwrap().to_string_lossy() != "AndroidManifest.xml" {
+                match f_ext.unwrap().to_string_lossy().borrow() {
+                    "xml" | "java" => vec.push(f),
+                    _ => {}
+                }
             }
         }
     }

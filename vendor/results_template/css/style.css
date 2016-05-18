@@ -106,10 +106,6 @@ span.low {
     border-radius: 0 1em 1em 0;
 }
 
-.vulnerability div.line_numbers {
-    text-align: left;
-}
-
 a {
     text-decoration: none;
     color: #74B1ED;

@@ -24,6 +24,7 @@ use std::process::exit;
 use std::collections::btree_set::Iter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
+use std::time::Instant;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
@@ -44,7 +45,8 @@ fn main() {
     let verbose = matches.is_present("verbose");
     let quiet = matches.is_present("quiet");
     let force = matches.is_present("force");
-    let mut config = match Config::new(app_id, verbose, quiet, force) {
+    let bench = matches.is_present("bench");
+    let config = match Config::new(app_id, verbose, quiet, force, bench) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
@@ -55,22 +57,15 @@ fn main() {
             c.set_verbose(verbose);
             c.set_quiet(quiet);
             c.set_force(force);
+            c.set_bench(bench);
             c
         }
     };
 
     if !config.check() {
-        config = Default::default();
-        config.set_app_id(app_id);
-        config.set_verbose(verbose);
-        config.set_quiet(quiet);
-        config.set_force(force);
-
-        if !config.check() {
-            print_error(format!("There is an error with the configuration: {:?}", config),
-                        verbose);
-            exit(Error::Config.into());
-        }
+        print_error(format!("There is an error with the configuration: {:?}", config),
+                    verbose);
+        exit(Error::Config.into());
     }
 
     if config.is_verbose() {
@@ -81,11 +76,25 @@ fn main() {
         println!("");
     }
 
+    let mut benches = Vec::with_capacity(3);
+
+    let start_time = Instant::now();
+
     // APKTool app decompression
     decompress(&config);
 
+    if config.is_bench() {
+        benches.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+    }
+
+    let dex_start = Instant::now();
+
     // Extracting the classes.dex from the .apk file
     extract_dex(&config);
+
+    if config.is_bench() {
+        benches.push(Benchmark::new("Dex extraction", dex_start.elapsed()));
+    }
 
     if config.is_verbose() {
         println!("");
@@ -93,16 +102,35 @@ fn main() {
                   Android JVM bytecode to Java, so that we can check the code afterwards.");
     }
 
+    let decompile_start = Instant::now();
+
     // Decompiling the app
     decompile(&config);
 
+    if config.is_bench() {
+        benches.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+    }
+
     if let Some(mut results) = Results::init(&config) {
+        if config.is_bench() {
+            while benches.len() > 0 {
+                results.add_benchmark(benches.remove(0));
+            }
+        }
+
+        let static_start = Instant::now();
         // Static application analysis
         static_analysis(&config, &mut results);
+
+        if config.is_bench() {
+            results.add_benchmark(Benchmark::new("Static analysis", static_start.elapsed()));
+        }
 
         // TODO dynamic analysis
 
         println!("");
+
+        let report_start = Instant::now();
 
         match results.generate_report(&config) {
             Ok(_) => {
@@ -121,6 +149,19 @@ fn main() {
                 print_error(format!("There was an error generating the results report: {}", e),
                             config.is_verbose());
                 exit(Error::Unknown.into())
+            }
+        }
+
+        if config.is_bench() {
+            results.add_benchmark(Benchmark::new("Report generation", report_start.elapsed()));
+        }
+
+        if config.is_bench() {
+            results.add_benchmark(Benchmark::new("Total time", start_time.elapsed()));
+            println!("");
+            println!("{}", "Benchmarks:".bold());
+            for bench in results.get_benchmarks() {
+                println!("{}", bench);
             }
         }
     } else if !config.is_quiet() {
@@ -195,6 +236,7 @@ pub struct Config {
     verbose: bool,
     quiet: bool,
     force: bool,
+    bench: bool,
     threads: u8,
     downloads_folder: String,
     dist_folder: String,
@@ -209,12 +251,13 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(app_id: &str, verbose: bool, quiet: bool, force: bool) -> Result<Config> {
+    pub fn new(app_id: &str, verbose: bool, quiet: bool, force: bool, bench: bool) -> Result<Config> {
         let mut config: Config = Default::default();
         config.app_id = String::from(app_id);
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
+        config.bench = bench;
 
         if Path::new("config.toml").exists() {
             let mut f = try!(fs::File::open("config.toml"));
@@ -527,6 +570,14 @@ impl Config {
         self.force = force;
     }
 
+    pub fn is_bench(&self) -> bool {
+        self.bench
+    }
+
+    pub fn set_bench(&mut self, bench: bool) {
+        self.bench = bench;
+    }
+
     pub fn get_threads(&self) -> u8 {
         self.threads
     }
@@ -583,6 +634,7 @@ impl Default for Config {
             verbose: false,
             quiet: false,
             force: false,
+            bench: false,
             threads: 2,
             downloads_folder: String::from("downloads"),
             dist_folder: String::from("dist"),
@@ -800,6 +852,9 @@ fn get_help_menu() -> ArgMatches<'static> {
         .arg(Arg::with_name("force")
             .long("force")
             .help("If you'd like to force the auditor to do everything from the beginning."))
+        .arg(Arg::with_name("bench")
+            .long("bench")
+            .help("Show benchmarks for the analysis."))
         .arg(Arg::with_name("quiet")
             .short("q")
             .long("quiet")

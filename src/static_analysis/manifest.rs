@@ -469,7 +469,7 @@ impl FromStr for InstallLocation {
 fn get_line(code: &str, haystack: &str) -> Result<usize> {
     for (i, line) in code.lines().enumerate() {
         if line.contains(haystack) {
-            return Ok(i + 1);
+            return Ok(i);
         }
     }
 
