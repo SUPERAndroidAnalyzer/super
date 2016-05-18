@@ -76,8 +76,8 @@ iframe {
     overflow: scroll;
 }
 
-body > div > div {
-    margin-top: -0.4em;
+body > div > div.code {
+    margin-top: -0.8em;
 }
 
 section.vulnerability li {
