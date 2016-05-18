@@ -4,28 +4,39 @@
     "description": "Passwords should not be written in the source code, since they can be read by code decompilers.",
     "criticity": "critical"
 }, {
-    "regex": "\"(((ftp|http)s?:)?//)?[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-]*)?\"",
+    "regex": "\"((ftp|http)s?:)?//[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-]*)?\"",
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
-    "criticity": "medium"
+    "criticity": "medium",
+    "whitelist": ["\"http://schemas\\.android\\.com/apk/res/android\"", "\"http://www\\.w3\\.org/2005/Atom\""]
 }, {
     "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
     "label": "Generic Exception in catch",
     "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion.",
-    "criticity": "low"
+    "criticity": "medium"
 }, {
     "regex": "throws\\s+(\\w*\\s*,\\s*)*Exception\\s*[,{]",
-    "label": "Generic exception in throws",
+    "label": "Generic Exception in Throws",
     "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion.",
-    "criticity": "low"
+    "criticity": "medium"
 }, {
     "regex": "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
     "criticity": "low"
 }, {
+    "regex": "(?i)(([:xdigit:]{1,4}:){7,7}[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,7}:|([:xdigit:]{1,4}:){1,6}:[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,5}(:[:xdigit:]{1,4}){1,2}|([:xdigit:]{1,4}:){1,4}(:[:xdigit:]{1,4}){1,3}|([:xdigit:]{1,4}:){1,3}(:[:xdigit:]{1,4}){1,4}|([:xdigit:]{1,4}:){1,2}(:[:xdigit:]{1,4}){1,5}|[:xdigit:]{1,4}:((:[:xdigit:]{1,4}){1,6})|:((:[:xdigit:]{1,4}){1,7}|:)|fe80:(:[:xdigit:]{0,4}){0,4}%[:xdigit:]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))",
+    "label": "IP Disclosure",
+    "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
+    "criticity": "low"
+}, {
     "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
-    "label": "Insecure random function",
+    "label": "Insecure Random Function",
     "description": "The use of Math.random() is discouraged for criptografic use, since it's not a criptografically secure function. You should check if the function is used for criptografic uses.",
     "criticity": "high"
+}, {
+    "regex": "Log\\s*\\.\\s*(d|e|i|println|v|w|wtf)\\s*\\(\\s*(\".*\"\\s*\\+\\s*)*\\w+(\\s*\\+\\s*\".*\"\\s*)*\\s*\\)",
+    "label": "Unchecked output in Logs",
+    "description": "If sensitive data is shown in logs can lead to that information being disclosed.",
+    "criticity": "low"
 }]

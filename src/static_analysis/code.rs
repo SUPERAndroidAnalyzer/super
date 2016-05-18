@@ -2,12 +2,12 @@ use std::fs;
 use std::fs::{File, DirEntry};
 use std::io::Read;
 use std::str::FromStr;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
+use std::slice::Iter;
 
 use serde_json;
 use serde_json::value::Value;
@@ -142,7 +142,12 @@ fn analyze_file<P: AsRef<Path>>(path: P,
     try!(f.read_to_string(&mut code));
 
     for rule in rules {
-        for (s, _) in rule.get_regex().find_iter(code.as_str()) {
+        'rule: for (s, e) in rule.get_regex().find_iter(code.as_str()) {
+            for white in rule.get_whitelist() {
+                if white.is_match(&code[s..e]) {
+                    continue 'rule;
+                }
+            }
             let start_line = get_line_for(s, code.as_str());
             let mut results = results.lock().unwrap();
             results.push(Vulnerability::new(rule.get_criticity(),
@@ -220,6 +225,7 @@ struct Rule {
     label: String,
     description: String,
     criticity: Criticity,
+    whitelist: Vec<Regex>,
 }
 
 impl Rule {
@@ -238,6 +244,10 @@ impl Rule {
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
     }
+
+    pub fn get_whitelist(&self) -> Iter<Regex> {
+        self.whitelist.iter()
+    }
 }
 
 fn load_rules(config: &Config) -> Result<Vec<Rule>> {
@@ -254,12 +264,16 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     };
 
     for rule in rules_json {
-        let format_warning = format!("Rules must be objects with the following structure:\n{}",
-                                     "{ \t\"label\": \"Label for the rule\",\n\t\"description\": \
-                                      \"Long description for this rule\"\n\t\"criticity\": \
-                                      \"low|medium|high|critical\"\n\t\"regex\": \
-                                      \"regex_to_find_vulnerability\"\n}"
-                                         .italic());
+        let format_warning =
+            format!("Rules must be objects with the following structure:\n{}\nAn optional {} \
+                     attribute can be added to the object, an array of regular expressions that \
+                     if matched, the found match will be discarded.",
+                    "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
+                     description for this rule\"\n\t\"criticity\": \
+                     \"low|medium|high|critical\"\n\t\"regex\": \
+                     \"regex_to_find_vulnerability\"\n}"
+                        .italic(),
+                    "whitelist".italic());
         let rule = match rule.as_object() {
             Some(o) => o,
             None => {
@@ -268,7 +282,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
-        if rule.len() != 4 {
+        if rule.len() != 4 && rule.len() != 5 {
             print_warning(format_warning, config.is_verbose());
             return Err(Error::ParseError);
         }
@@ -329,11 +343,44 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
+        let whitelist = match rule.get("whitelist") {
+            Some(&Value::Array(ref v)) => {
+                let mut list = Vec::with_capacity(v.len());
+                for r in v {
+                    list.push(match r {
+                        &Value::String(ref r) => {
+                            match Regex::new(r) {
+                                Ok(r) => r,
+                                Err(e) => {
+                                    print_warning(format!("An error occurred when compiling the \
+                                                           regular expresion: {}",
+                                                          e),
+                                                  config.is_verbose());
+                                    return Err(Error::ParseError);
+                                }
+                            }
+                        }
+                        _ => {
+                            print_warning(format_warning, config.is_verbose());
+                            return Err(Error::ParseError);
+                        }
+                    });
+                }
+                list
+            }
+            Some(_) => {
+                print_warning(format_warning, config.is_verbose());
+                return Err(Error::ParseError);
+            }
+            None => Vec::with_capacity(0),
+        };
+
         rules.push(Rule {
             regex: regex,
             label: label.clone(),
             description: description.clone(),
             criticity: criticity,
+            whitelist: whitelist,
         })
     }
 

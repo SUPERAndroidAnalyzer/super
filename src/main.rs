@@ -128,7 +128,9 @@ fn main() {
 
         // TODO dynamic analysis
 
-        println!("");
+        if !config.is_quiet() {
+            println!("");
+        }
 
         let report_start = Instant::now();
 
@@ -251,7 +253,12 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(app_id: &str, verbose: bool, quiet: bool, force: bool, bench: bool) -> Result<Config> {
+    pub fn new(app_id: &str,
+               verbose: bool,
+               quiet: bool,
+               force: bool,
+               bench: bool)
+               -> Result<Config> {
         let mut config: Config = Default::default();
         config.app_id = String::from(app_id);
         config.verbose = verbose;

@@ -23,7 +23,7 @@ pub struct Results {
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
     critical: BTreeSet<Vulnerability>,
-    benchmarks: Vec<Benchmark>
+    benchmarks: Vec<Benchmark>,
 }
 
 impl Results {
@@ -55,7 +55,11 @@ impl Results {
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
                 critical: BTreeSet::new(),
-                benchmarks: if config.is_bench() {Vec::with_capacity(10)} else {Vec::with_capacity(0)},
+                benchmarks: if config.is_bench() {
+                    Vec::with_capacity(10)
+                } else {
+                    Vec::with_capacity(0)
+                },
             })
         } else {
             if config.is_verbose() {
@@ -588,7 +592,8 @@ impl Results {
                 }
                 None => {
                     if f.path().is_dir() {
-                        let prefix = format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
+                        let prefix =
+                            format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
 
                         if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
                             let f_count = try!(self.generate_code_html_folder(f.path()
@@ -885,12 +890,19 @@ pub struct Benchmark {
 
 impl Benchmark {
     pub fn new(label: &str, duration: Duration) -> Benchmark {
-        Benchmark {label: String::from(label), duration: duration}
+        Benchmark {
+            label: String::from(label),
+            duration: duration,
+        }
     }
 }
 
 impl fmt::Display for Benchmark {
     fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
-        write!(f, "{}: {}.{}s", self.label, self.duration.as_secs(), self.duration.subsec_nanos())
+        write!(f,
+               "{}: {}.{}s",
+               self.label,
+               self.duration.as_secs(),
+               self.duration.subsec_nanos())
     }
 }
