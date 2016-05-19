@@ -20,7 +20,7 @@
     "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion.",
     "criticity": "medium"
 }, {
-    "regex": "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
+    "regex": "(\\D|^)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\D|$)",
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
     "criticity": "low"

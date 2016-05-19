@@ -468,7 +468,7 @@ mod tests {
                              "catch (IOException|Exception|PepeException e) {",
                              "catch (IOException|Exception | PepeException e) {"];
         let should_not_match = &["catch (IOException e) {",
-                                "catch (IOException|PepeException e) {"];
+                                 "catch (IOException|PepeException e) {"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -491,8 +491,34 @@ mod tests {
                              "throws Exception,IOException{",
                              "throws IOException,Exception{",
                              "throws PepeException, Exception, IOException {"];
-        let should_not_match = &["throws IOException {",
-                                "throws PepeException, IOException {"];
+        let should_not_match = &["throws IOException {", "throws PepeException, IOException {"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_ip_disclosure() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(4).unwrap();
+
+        let should_match = &["192.168.1.1", "0.0.0.0", "255.255.255.255", "13.0.130.23.52"];
+        let should_not_match = &["0000.000.000.000",
+                                 "256.140.123.154",
+                                 "135.260.120.0",
+                                 "50.75.300.35",
+                                 "60.35.59.300",
+                                 ".5.6.7",
+                                 "115..35.5",
+                                 "155.232..576",
+                                 "123.132.123.",
+                                 "123.124.123"];
 
         for m in should_match {
             assert!(check_match(m, rule));
