@@ -405,7 +405,7 @@ mod tests {
     }
 
     #[test]
-    fn it_password() {
+    fn it_password_regex() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
