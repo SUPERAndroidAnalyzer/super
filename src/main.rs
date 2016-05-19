@@ -539,7 +539,9 @@ impl Config {
     }
 
     pub fn check(&self) -> bool {
-        file_exists(self.downloads_folder.as_str()) && file_exists(self.apktool_file.as_str()) &&
+        file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
+        file_exists(self.downloads_folder.as_str()) &&
+        file_exists(self.apktool_file.as_str()) &&
         file_exists(self.dex2jar_folder.as_str()) &&
         file_exists(self.jd_cmd_file.as_str()) &&
         file_exists(self.results_template.as_str()) && file_exists(self.rules_json.as_str())
@@ -893,25 +895,26 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::get_code;
+    use super::{get_code, Config, Criticity, file_exists};
+    use std::fs;
+    use std::fs::File;
+    use std::str::FromStr;
 
     #[test]
     fn it_get_code() {
-        let code = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
-                    Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque\n\
-                    Praesent blandit dolor. Sed non quam. In vel mi\n\
-                    Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
-                    Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
-                    Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
-                    Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
-                    Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-                    Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
-                    Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
-                    Vestibulum ante ipsum primis in faucibus orci luctus et ultrices";
+        let code = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nCurabitur tortor. \
+                    Pellentesque nibh. Aenean quam.\nSed lacinia, urna non tincidunt mattis, \
+                    tortor neque\nPraesent blandit dolor. Sed non quam. In vel mi\nSed aliquet \
+                    risus a tortor. Integer id quam. Morbi mi.\nNullam mauris orci, aliquet et, \
+                    iaculis et, viverra vitae, ligula.\nPraesent mauris. Fusce nec tellus sed \
+                    ugue semper porta. Mauris massa.\nProin ut ligula vel nunc egestas porttitor. \
+                    Morbi lectus risus,\nVestibulum sapien. Proin quam. Etiam ultrices. \
+                    Suspendisse in\nVestibulum tincidunt malesuada tellus. Ut ultrices ultrices \
+                    enim.\nAenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\nInteger \
+                    nec odio. Praesent libero. Sed cursus ante dapibus diam.\nPellentesque nibh. \
+                    Aenean quam. In scelerisque sem at dolor.\nSed lacinia, urna non tincidunt \
+                    mattis, tortor neque adipiscing\nVestibulum ante ipsum primis in faucibus \
+                    orci luctus et ultrices";
 
         assert_eq!(get_code(code, 1),
                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
@@ -939,5 +942,127 @@ mod tests {
                     Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n");
+    }
+
+    #[test]
+    fn it_config() {
+        let mut config: Config = Default::default();
+
+        assert_eq!(config.get_app_id(), "");
+        assert!(!config.is_verbose());
+        assert!(!config.is_quiet());
+        assert!(!config.is_force());
+        assert!(!config.is_bench());
+        assert_eq!(config.get_threads(), 2);
+        assert_eq!(config.get_downloads_folder(), "downloads");
+        assert_eq!(config.get_dist_folder(), "dist");
+        assert_eq!(config.get_results_folder(), "results");
+        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.1.1.jar");
+        assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
+        assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
+        assert_eq!(config.get_results_template(), "vendor/results_template");
+        assert_eq!(config.get_rules_json(), "rules.json");
+        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
+        assert_eq!(config.get_unknown_permission_description(),
+                   "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers.");
+        assert_eq!(config.get_permissions().next(), None);
+
+        if !file_exists(config.get_downloads_folder()) {
+            fs::create_dir(config.get_downloads_folder()).unwrap();
+        }
+        if !file_exists(config.get_dist_folder()) {
+            fs::create_dir(config.get_dist_folder()).unwrap();
+        }
+        if !file_exists(config.get_results_folder()) {
+            fs::create_dir(config.get_results_folder()).unwrap();
+        }
+
+        config.set_app_id("test_app");
+        config.set_verbose(true);
+        config.set_quiet(true);
+        config.set_force(true);
+        config.set_bench(true);
+
+        assert_eq!(config.get_app_id(), "test_app");
+        assert!(config.is_verbose());
+        assert!(config.is_quiet());
+        assert!(config.is_force());
+        assert!(config.is_bench());
+
+        if file_exists(format!("{}/{}.apk",
+                               config.get_downloads_folder(),
+                               config.get_app_id())) {
+            fs::remove_file(format!("{}/{}.apk",
+                                    config.get_downloads_folder(),
+                                    config.get_app_id()))
+                .unwrap();
+        }
+        assert!(!config.check());
+
+        File::create(format!("{}/{}.apk",
+                             config.get_downloads_folder(),
+                             config.get_app_id()))
+            .unwrap();
+        assert!(config.check());
+
+        let config = Config::new("test_app", false, false, false, false).unwrap();
+        assert!(config.check());
+
+        fs::remove_file(format!("{}/{}.apk",
+                                config.get_downloads_folder(),
+                                config.get_app_id()))
+            .unwrap();
+    }
+
+    #[test]
+    fn it_file_exists() {
+        if file_exists("test.txt") {
+            fs::remove_file("test.txt").unwrap();
+        }
+        assert!(!file_exists("test.txt"));
+        File::create("test.txt").unwrap();
+        assert!(file_exists("test.txt"));
+        fs::remove_file("test.txt").unwrap();
+        assert!(!file_exists("test.txt"));
+    }
+
+    #[test]
+    fn it_criticity() {
+        assert_eq!(Criticity::from_str("low").unwrap(), Criticity::Low);
+        assert_eq!(Criticity::from_str("Low").unwrap(), Criticity::Low);
+        assert_eq!(Criticity::from_str("LOW").unwrap(), Criticity::Low);
+
+        assert_eq!(Criticity::from_str("medium").unwrap(), Criticity::Medium);
+        assert_eq!(Criticity::from_str("Medium").unwrap(), Criticity::Medium);
+        assert_eq!(Criticity::from_str("MEDIUM").unwrap(), Criticity::Medium);
+
+        assert_eq!(Criticity::from_str("high").unwrap(), Criticity::High);
+        assert_eq!(Criticity::from_str("High").unwrap(), Criticity::High);
+        assert_eq!(Criticity::from_str("HIGH").unwrap(), Criticity::High);
+
+        assert_eq!(Criticity::from_str("critical").unwrap(),
+                   Criticity::Critical);
+        assert_eq!(Criticity::from_str("Critical").unwrap(),
+                   Criticity::Critical);
+        assert_eq!(Criticity::from_str("CRITICAL").unwrap(),
+                   Criticity::Critical);
+
+        assert!(Criticity::Low < Criticity::Medium);
+        assert!(Criticity::Low < Criticity::High);
+        assert!(Criticity::Low < Criticity::Critical);
+        assert!(Criticity::Medium < Criticity::High);
+        assert!(Criticity::Medium < Criticity::Critical);
+        assert!(Criticity::High < Criticity::Critical);
+
+        assert_eq!(format!("{}", Criticity::Low).as_str(), "low");
+        assert_eq!(format!("{}", Criticity::Medium).as_str(), "medium");
+        assert_eq!(format!("{}", Criticity::High).as_str(), "high");
+        assert_eq!(format!("{}", Criticity::Critical).as_str(), "critical");
+
+        assert_eq!(format!("{:?}", Criticity::Low).as_str(), "Low");
+        assert_eq!(format!("{:?}", Criticity::Medium).as_str(), "Medium");
+        assert_eq!(format!("{:?}", Criticity::High).as_str(), "High");
+        assert_eq!(format!("{:?}", Criticity::Critical).as_str(), "Critical");
     }
 }
