@@ -293,7 +293,7 @@ impl Manifest {
                                                     .ok();
                                                 let code = match line {
                                                     Some(l) => {
-                                                        Some(get_code(manifest.get_code(), l - 1))
+                                                        Some(get_code(manifest.get_code(), l))
                                                     }
                                                     None => None,
                                                 };

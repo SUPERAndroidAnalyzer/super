@@ -41,7 +41,7 @@ const MAX_THREADS: i64 = std::u8::MAX as i64;
 fn main() {
     let matches = get_help_menu();
 
-    let app_id = matches.value_of("id").unwrap();
+    let app_id = matches.value_of("package").unwrap();
     let verbose = matches.is_present("verbose");
     let quiet = matches.is_present("quiet");
     let force = matches.is_present("force");
@@ -653,7 +653,7 @@ impl Default for Config {
             jd_cmd_file: String::from("vendor/jd-cmd.jar"),
             results_template: String::from("vendor/results_template"),
             rules_json: String::from("rules.json"),
-            unknown_permission: (Criticity::Low,
+            unknown_permission: (Criticity::Medium,
                                  String::from("Even if the application can create its own \
                                                permissions, it's discouraged, since it can lead \
                                                to missunderstanding between developers.")),
@@ -848,9 +848,9 @@ fn get_help_menu() -> ArgMatches<'static> {
         .version(crate_version!())
         .author("Iban Eguia <razican@protonmail.ch>")
         .about("Audits Android apps for vulnerabilities")
-        .arg(Arg::with_name("id")
-            .help("The ID string of the application to test.")
-            .value_name("ID")
+        .arg(Arg::with_name("package")
+            .help("The package string of the application to test.")
+            .value_name("package")
             .required(true)
             .takes_value(true))
         .arg(Arg::with_name("verbose")
@@ -962,7 +962,7 @@ mod tests {
         assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
         assert_eq!(config.get_results_template(), "vendor/results_template");
         assert_eq!(config.get_rules_json(), "rules.json");
-        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
+        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Medium);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
                     since it can lead to missunderstanding between developers.");
