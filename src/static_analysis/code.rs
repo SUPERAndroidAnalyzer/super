@@ -503,7 +503,7 @@ mod tests {
     }
 
     #[test]
-    fn it_ip_disclosure() {
+    fn it_ipv4_disclosure() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(4).unwrap();
@@ -519,6 +519,32 @@ mod tests {
                                  "155.232..576",
                                  "123.132.123.",
                                  "123.124.123"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_ipv6_disclosure() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(5).unwrap();
+
+        let should_match = &["::1",
+                             "2001:db8::ff00:42:8329",
+                             "::ffff:192.0.2.128",
+                             "3ffe:1900:4545:3:200:f8ff:fe21:67cf",
+                             "3ffe::3:200:f8ff:fe21:67cf",
+                             "3ffe:1900:4545:3:200::"];
+        let should_not_match = &["3ffe:10900:4545:3:200:f8ff:fe21:67cf",
+                                 "3ffe:4545:3:200:f8ff:fe21:67cf",
+                                 "3ffe:1900:4545:d:",
+                                 "3ffe:1900:4545:d:aaa"];
 
         for m in should_match {
             assert!(check_match(m, rule));
