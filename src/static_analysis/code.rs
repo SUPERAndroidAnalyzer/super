@@ -478,4 +478,28 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_throws_exception() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(3).unwrap();
+
+        let should_match = &["throws Exception {",
+                             "throws Exception, IOException {",
+                             "throws IOException, Exception {",
+                             "throws Exception,IOException{",
+                             "throws IOException,Exception{",
+                             "throws PepeException, Exception, IOException {"];
+        let should_not_match = &["throws IOException {",
+                                "throws PepeException, IOException {"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 }
