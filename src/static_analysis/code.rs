@@ -561,14 +561,32 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(6).unwrap();
 
-        let should_match = &["Math.random()",
-                             "Math.random( )",
-                             "Math . random ()"];
-        let should_not_match = &["math.random()",
-                                 "MATH.random()",
-                                 "Math.Random()",
-                                 "Mathrandom()",
-                                 "Math.random"];
+        let should_match = &["Math.random()", "Math.random( )", "Math . random ()"];
+        let should_not_match =
+            &["math.random()", "MATH.random()", "Math.Random()", "Mathrandom()", "Math.random"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_log() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(7).unwrap();
+
+        let should_match = &["Log.e(\"Hello: \" + var)",
+                             "Log.e (\"Hello: \" +var)",
+                             "Log.wtf ( \"Hello: \"+var )",
+                             "Log.i(var)",
+                             "Log . i ( var )",
+                             "Log.println(\"Hello: \" + var + \" goodbye\")"];
+        let should_not_match = &["Log.e(\"Hello!\")", "Log.wtf( \"Hello!\" )"];
 
         for m in should_match {
             assert!(check_match(m, rule));
