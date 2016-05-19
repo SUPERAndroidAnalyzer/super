@@ -108,8 +108,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
 
     for permission in config.get_permissions() {
         if manifest.get_permission_checklist().needs_permission(permission.get_permission()) {
-            let line = get_line(manifest.get_code(), permission.get_permission().as_str())
-                .ok();
+            let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
                 Some(l) => Some(get_code(manifest.get_code(), l)),
                 None => None,

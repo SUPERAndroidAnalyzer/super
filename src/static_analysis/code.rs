@@ -386,3 +386,70 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
     Ok(rules)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Rule, load_rules};
+
+    fn check_match(text: &str, rule: &Rule) -> bool {
+        if rule.get_regex().is_match(text) {
+            for r in rule.get_whitelist() {
+                if r.is_match(text) {
+                    return false;
+                }
+            }
+            true
+        } else {
+            false
+        }
+    }
+
+    #[test]
+    fn it_password() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(0).unwrap();
+
+        let should_match = &["password = \"secret\";",
+                             "pass = \"secret\";",
+                             "pwd = \"secret\";",
+                             "passwd = \"secret\";",
+                             "password = \"\";",
+                             "password=\"    \";",
+                             "PASS = \"secret\";"];
+        let should_not_match = &["p = \"android.intent.extra.EMAIL\";", "pasbook = \"hello!\";"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_url_regex() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(1).unwrap();
+
+        let should_match = &["\"http://www.razican.com\"",
+                             "\"https://razican.com\"",
+                             "\"http://www.razican.com/hello\"",
+                             "\"//www.razican.com/hello\"",
+                             "\"ftp://ftp.razican.com/hello\""];
+        let should_not_match = &["\"android.intent.extra.EMAIL\"",
+                                 "\"hello\"",
+                                 "\"http://schemas.android.com/apk/res/android\"",
+                                 "\"http://www.w3.org/2005/Atom\""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+}
