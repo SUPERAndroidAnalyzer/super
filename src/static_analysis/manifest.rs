@@ -508,9 +508,12 @@ mod tests {
 
     #[test]
     fn it_install_loc_from_str() {
-        assert_eq!(InstallLocation::InternalOnly, InstallLocation::from_str("internalOnly").unwrap());
-        assert_eq!(InstallLocation::Auto, InstallLocation::from_str("auto").unwrap());
-        assert_eq!(InstallLocation::PreferExternal, InstallLocation::from_str("preferExternal").unwrap());
+        assert_eq!(InstallLocation::InternalOnly,
+                   InstallLocation::from_str("internalOnly").unwrap());
+        assert_eq!(InstallLocation::Auto,
+                   InstallLocation::from_str("auto").unwrap());
+        assert_eq!(InstallLocation::PreferExternal,
+                   InstallLocation::from_str("preferExternal").unwrap());
         assert!(InstallLocation::from_str("Razican").is_err());
     }
 
@@ -531,7 +534,8 @@ mod tests {
         assert_eq!(internet, Permission::AndroidPermissionInternet);
         assert_eq!(storage, Permission::AndroidPermissionWriteExternalStorage);
         assert_eq!(internet.as_str(), "android.permission.INTERNET");
-        assert_eq!(storage.as_str(), "android.permission.WRITE_EXTERNAL_STORAGE");
+        assert_eq!(storage.as_str(),
+                   "android.permission.WRITE_EXTERNAL_STORAGE");
         assert!(Permission::from_str("Razican").is_err());
     }
 }
