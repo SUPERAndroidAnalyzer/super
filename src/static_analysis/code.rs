@@ -554,4 +554,28 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_math_random() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(6).unwrap();
+
+        let should_match = &["Math.random()",
+                             "Math.random( )",
+                             "Math . random ()"];
+        let should_not_match = &["math.random()",
+                                 "MATH.random()",
+                                 "Math.Random()",
+                                 "Mathrandom()",
+                                 "Math.random"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 }
