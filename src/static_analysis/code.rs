@@ -452,4 +452,30 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_catch_exception() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(2).unwrap();
+
+        let should_match = &["catch (Exception e) {",
+                             "catch (Exception hello) {",
+                             "catch( Exception e ){",
+                             "catch (IOException|Exception e) {",
+                             "catch (Exception|IOException e) {",
+                             "catch (IOException | Exception e) {",
+                             "catch (IOException|Exception|PepeException e) {",
+                             "catch (IOException|Exception | PepeException e) {"];
+        let should_not_match = &["catch (IOException e) {",
+                                "catch (IOException|PepeException e) {"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 }

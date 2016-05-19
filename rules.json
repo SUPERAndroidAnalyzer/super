@@ -10,7 +10,7 @@
     "criticity": "medium",
     "whitelist": ["\"http://schemas\\.android\\.com/apk/res/android\"", "\"http://www\\.w3\\.org/2005/Atom\""]
 }, {
-    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
+    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+\\s*)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
     "label": "Generic Exception in catch",
     "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion.",
     "criticity": "medium"
