@@ -8,7 +8,7 @@
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
     "criticity": "medium",
-    "whitelist": ["\"http://schemas\\.android\\.com", "\"http://www\\.w3\\.org/2005/Atom\""]
+    "whitelist": ["\"http://schemas\\.android\\.com[\\w/]*\"", "\"http://www\\.w3\\.org/2005/Atom\""]
 }, {
     "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+\\s*)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
     "label": "Generic Exception in catch",
