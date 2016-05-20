@@ -4,7 +4,7 @@
     "description": "Passwords should not be written in the source code, since they can be read by code decompilers.",
     "criticity": "critical"
 }, {
-    "regex": "\"((ftp|http)s?:)?//[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-]*)?\"",
+    "regex": "\"((ftp|http)s?:)?//[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-\\?&]*)?\"",
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
     "criticity": "medium",
