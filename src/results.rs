@@ -19,6 +19,7 @@ pub struct Results {
     app_label: String,
     app_description: String,
     app_version: String,
+    app_version_num: Option<i32>,
     low: BTreeSet<Vulnerability>,
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
@@ -51,6 +52,7 @@ impl Results {
                 app_label: String::new(),
                 app_description: String::new(),
                 app_version: String::new(),
+                app_version_num: None,
                 low: BTreeSet::new(),
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
@@ -84,6 +86,10 @@ impl Results {
 
     pub fn set_app_version(&mut self, version: &str) {
         self.app_version = String::from(version);
+    }
+
+    pub fn set_app_version_num(&mut self, version: i32) {
+        self.app_version_num = Some(version);
     }
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
@@ -227,10 +233,25 @@ impl Results {
             .into_bytes()));
 
         try!(f.write_all(b"## Application data: ##\n"));
-        try!(f.write_all(&format!(" - **Name:** {}\n", self.app_label).into_bytes()));
-        try!(f.write_all(&format!(" - **Description:** {}\n", self.app_description).into_bytes()));
-        try!(f.write_all(&format!(" - **Package:** {}\n", self.app_package).into_bytes()));
-        try!(f.write_all(&format!(" - **Version:** {}\n", self.app_version).into_bytes()));
+        if !self.app_label.is_empty() {
+            try!(f.write_all(&format!(" - **Label:** {}\n", self.app_label.as_str()).into_bytes()));
+        }
+        if !self.app_description.is_empty() {
+            try!(f.write_all(&format!(" - **Description:** {}\n", self.app_description.as_str())
+                .into_bytes()));
+        }
+        if !self.app_package.is_empty() {
+            try!(f.write_all(&format!(" - **Package:** {}\n", self.app_package.as_str())
+                .into_bytes()));
+        }
+        if !self.app_version.is_empty() {
+            try!(f.write_all(&format!(" - **Version:** {}\n", self.app_version.as_str())
+                .into_bytes()));
+        }
+        if self.app_version_num.is_some() {
+            try!(f.write_all(&format!(" - **Version number:** {}\n", self.app_version_num.unwrap())
+                    .into_bytes()));
+        }
 
         try!(f.write_all(b"\n"));
 
@@ -354,34 +375,31 @@ impl Results {
         // Application data
         try!(f.write_all(b"<h2>Application data:</h2>"));
         try!(f.write_all(b"<ul>"));
-        try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>",
-                                  if self.app_label.is_empty() {
-                                      "<em>No label</em>"
-                                  } else {
-                                      self.app_label.as_str()
-                                  })
-            .into_bytes()));
-        try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
-                                  if self.app_description.is_empty() {
-                                      "<em>No description</em>"
-                                  } else {
-                                      self.app_description.as_str()
-                                  })
-            .into_bytes()));
-        try!(f.write_all(&format!("<li><strong>Package:</strong> {}</li>",
-                                  if self.app_package.is_empty() {
-                                      "<em>Empty package</em>"
-                                  } else {
-                                      self.app_package.as_str()
-                                  })
-            .into_bytes()));
-        try!(f.write_all(&format!("<li><strong>Version:</strong> {}</li>",
-                                  if self.app_version.is_empty() {
-                                      "<em>Unknown version</em>"
-                                  } else {
-                                      self.app_version.as_str()
-                                  })
-            .into_bytes()));
+        if !self.app_label.is_empty() {
+            try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>",
+                                      self.app_label.as_str())
+                .into_bytes()));
+        }
+        if !self.app_description.is_empty() {
+            try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
+                                      self.app_description.as_str())
+                .into_bytes()));
+        }
+        if !self.app_package.is_empty() {
+            try!(f.write_all(&format!("<li><strong>Package:</strong> {}</li>",
+                                      self.app_package.as_str())
+                .into_bytes()));
+        }
+        if !self.app_version.is_empty() {
+            try!(f.write_all(&format!("<li><strong>Version:</strong> {}</li>",
+                                      self.app_version.as_str())
+                .into_bytes()));
+        }
+        if self.app_version_num.is_some() {
+            try!(f.write_all(&format!("<li><strong>Version number:</strong> {}</li>",
+                                      self.app_version_num.unwrap())
+                .into_bytes()));
+        }
         try!(f.write_all(b"<li><a href=\"src/index.html\" \
                         title=\"Source code\">Check source code</a></li>"));
         try!(f.write_all(b"</ul>"));

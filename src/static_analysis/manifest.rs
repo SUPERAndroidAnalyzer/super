@@ -67,6 +67,9 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
     results.set_app_label(manifest.get_label());
     results.set_app_description(manifest.get_description());
     results.set_app_version(manifest.get_version_str());
+    if manifest.get_version_number() != 0 {
+        results.set_app_version_num(manifest.get_version_number());
+    }
 
     if manifest.is_debug() {
         let criticity = Criticity::Medium;
