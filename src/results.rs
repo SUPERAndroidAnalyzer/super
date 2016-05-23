@@ -20,6 +20,7 @@ pub struct Results {
     app_description: String,
     app_version: String,
     app_version_num: Option<i32>,
+    warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
@@ -53,6 +54,7 @@ impl Results {
                 app_description: String::new(),
                 app_version: String::new(),
                 app_version_num: None,
+                warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
@@ -94,6 +96,9 @@ impl Results {
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticity() {
+            Criticity::Warning => {
+                self.warnings.insert(vuln);
+            }
             Criticity::Low => {
                 self.low.insert(vuln);
             }
@@ -177,6 +182,13 @@ impl Results {
             .insert("description", self.app_description.as_str())
             .insert("package", self.app_package.as_str())
             .insert("version", self.app_version.as_str())
+            .insert_array("warnings", |builder| {
+                let mut builder = builder;
+                for warn in &self.warnings {
+                    builder = builder.push(warn);
+                }
+                builder
+            })
             .insert_array("low", |builder| {
                 let mut builder = builder;
                 for vuln in &self.low {
@@ -285,6 +297,10 @@ impl Results {
             try!(self.print_md_vuln_set(&mut f, &self.low, Criticity::Low))
         }
 
+        if self.warnings.len() > 0 {
+            try!(self.print_md_vuln_set(&mut f, &self.warnings, Criticity::Warning))
+        }
+
         try!(f.write_all(b"\n"));
         try!(f.write_all(b"* * *\n"));
         try!(f.write_all(b"\n"));
@@ -305,14 +321,18 @@ impl Results {
                          set: &BTreeSet<Vulnerability>,
                          criticity: Criticity)
                          -> Result<()> {
-        let criticity = format!("{:?}", criticity);
-        try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity)
-            .into_bytes()));
+        let criticity_str = format!("{:?}", criticity);
+        if criticity == Criticity::Warning {
+            try!(f.write_all(b"### Warnings: ###\n"));
+        } else {
+            try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity_str)
+                .into_bytes()));
+        }
         try!(f.write_all(b"\n"));
 
         for (i, vuln) in set.iter().enumerate() {
             try!(f.write_all(&format!("##### {}{:03}: ####\n",
-                                      criticity.chars().nth(0).unwrap(),
+                                      criticity_str.chars().nth(0).unwrap(),
                                       i + 1)
                 .into_bytes()));
             try!(f.write_all(&format!(" - **Label:** {}\n", vuln.get_name()).into_bytes()));
@@ -365,7 +385,8 @@ impl Results {
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
         try!(f.write_all(b"<section class=\"report\">"));
-        try!(f.write_all(b"<h1>Android Anti-Rebelation Project Vulnerability Report</h1>"));
+        try!(f.write_all(b"<h1 id=\"title\">Android Anti-Rebelation Project Vulnerability \
+                            Report</h1>"));
         try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
@@ -412,29 +433,41 @@ impl Results {
         if self.critical.len() == 0 {
             try!(f.write_all(b"<li>Critical: 0</li>"));
         } else {
-            try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span></li>",
+            try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span> <a \
+                                       href=\"#critical\" title=\"Critical\">⇒</a></li>",
                                       self.critical.len())
                 .into_bytes()));
         }
         if self.high.len() == 0 {
             try!(f.write_all(b"<li>High: 0</li>"));
         } else {
-            try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span></li>",
+            try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span> <a \
+                                       href=\"#high\" title=\"High\">⇒</a></li>",
                                       self.high.len())
                 .into_bytes()));
         }
         if self.medium.len() == 0 {
             try!(f.write_all(b"<li>Medium: 0</li>"));
         } else {
-            try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span></li>",
+            try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span> <a \
+                                       href=\"#medium\" title=\"Medium\">⇒</a></li>",
                                       self.medium.len())
                 .into_bytes()));
         }
         if self.low.len() == 0 {
             try!(f.write_all(b"<li>Low: 0</li>"));
         } else {
-            try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span></li>",
+            try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span> <a href=\"#low\" \
+                                       title=\"Low\">⇒</a></li>",
                                       self.low.len())
+                .into_bytes()));
+        }
+        if self.warnings.len() == 0 {
+            try!(f.write_all(b"<li>Warnings: 0</li>"));
+        } else {
+            try!(f.write_all(&format!("<li>Warnings: <span class=\"warnings\">{}</span> <a \
+                                       href=\"#warnings\" title=\"Warnings\">⇒</a></li>",
+                                      self.warnings.len())
                 .into_bytes()));
         }
         try!(f.write_all(b"</ul>"));
@@ -455,6 +488,10 @@ impl Results {
 
         if self.low.len() > 0 {
             try!(self.print_html_vuln_set(&mut f, &self.low, Criticity::Low))
+        }
+
+        if self.warnings.len() > 0 {
+            try!(self.print_html_vuln_set(&mut f, &self.warnings, Criticity::Warning))
         }
         try!(f.write_all(b"</section>"));
 
@@ -487,14 +524,24 @@ impl Results {
                            set: &BTreeSet<Vulnerability>,
                            criticity: Criticity)
                            -> Result<()> {
-        let criticity = format!("{:?}", criticity);
-        try!(f.write_all(&format!("<h3>{} criticity vulnerabilities:</h3>", criticity)
-                              .into_bytes()));
+        let criticity_str = format!("{:?}", criticity);
+        if criticity == Criticity::Warning {
+            try!(f.write_all(&String::from("<h3 id=\"warnings\">Warnings: <a href=\"#title\" \
+                                            title=\"Top\">⇮</a></h3>")
+                .into_bytes()));
+
+        } else {
+            try!(f.write_all(&format!("<h3 id=\"{}\">{} criticity vulnerabilities: <a \
+                                       href=\"#title\" title=\"Top\">⇮</a></h3>",
+                                      criticity_str.to_lowercase(),
+                                      criticity_str)
+                .into_bytes()));
+        }
 
         for (i, vuln) in set.iter().enumerate() {
             try!(f.write_all(b"<section class=\"vulnerability\">"));
             try!(f.write_all(&format!("<h4>{}{:03}:</h4>",
-                                      criticity.chars().nth(0).unwrap(),
+                                      criticity_str.chars().nth(0).unwrap(),
                                       i + 1)
                 .into_bytes()));
             try!(f.write_all(b"<ul>"));

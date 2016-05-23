@@ -270,7 +270,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                      if matched, the found match will be discarded.",
                     "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
                      description for this rule\"\n\t\"criticity\": \
-                     \"low|medium|high|critical\"\n\t\"regex\": \
+                     \"warning|low|medium|high|critical\"\n\t\"regex\": \
                      \"regex_to_find_vulnerability\"\n}"
                         .italic(),
                     "whitelist".italic());
@@ -327,7 +327,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 match Criticity::from_str(c) {
                     Ok(c) => c,
                     Err(e) => {
-                        print_warning(format!("Criticity must be  one of {}, {}, {} or {}.",
+                        print_warning(format!("Criticity must be  one of {}, {}, {}, {} or {}.",
+                                              "warning".italic(),
                                               "low".italic(),
                                               "medium".italic(),
                                               "high".italic(),

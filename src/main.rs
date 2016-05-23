@@ -413,7 +413,7 @@ impl Config {
                                     format!("The permission configuration format must be the \
                                              following:\n{}\nUsing default.",
                                             "[[permissions]]\nname=\"unknown|permission.name\"\n\
-                                            criticity = \"low|medium|high|critical\"\n\
+                                            criticity = \"warning|low|medium|high|critical\"\n\
                                             label = \"Permission label\"\n\
                                             description = \"Long description to explain the \
                                             vulnerability\""
@@ -442,8 +442,10 @@ impl Config {
                                                 Ok(c) => c,
                                                 Err(_) => {
                                                     print_warning(format!("Criticity must be \
-                                                                           one of {}, {}, {} or \
-                                                                           {}.\nUsing default.",
+                                                                           one of {}, {}, {}, \
+                                                                           {} or {}.\nUsing \
+                                                                           default.",
+                                                                          "warning".italic(),
                                                                           "low".italic(),
                                                                           "medium".italic(),
                                                                           "high".italic(),
@@ -472,7 +474,7 @@ impl Config {
                                             print_warning(format!("The format for the unknown \
                                             permissions is the following:\n{}\nUsing default.",
                                             "[[permissions]]\nname = \"unknown\"\n\
-                                            criticity = \"low|medium|high|criticity\"\n\
+                                            criticity = \"warning|low|medium|high|criticity\"\n\
                                             description = \"Long description to explain the \
                                             vulnerability\"".italic()),
                                                           verbose);
@@ -760,6 +762,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub enum Criticity {
+    Warning,
     Low,
     Medium,
     High,
@@ -785,10 +788,11 @@ impl FromStr for Criticity {
     type Err = Error;
     fn from_str(s: &str) -> Result<Criticity> {
         match s.to_lowercase().as_str() {
-            "low" => Ok(Criticity::Low),
-            "medium" => Ok(Criticity::Medium),
-            "high" => Ok(Criticity::High),
             "critical" => Ok(Criticity::Critical),
+            "high" => Ok(Criticity::High),
+            "medium" => Ok(Criticity::Medium),
+            "low" => Ok(Criticity::Low),
+            "warning" => Ok(Criticity::Warning),
             _ => Err(Error::ParseError),
         }
     }
@@ -826,6 +830,7 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
         Criticity::Low => (start.cyan(), text.cyan()),
         Criticity::Medium => (start.yellow(), text.yellow()),
         Criticity::High | Criticity::Critical => (start.red(), text.red()),
+        _ => return,
     };
     println!("{} {}", start, message);
 }
@@ -1029,6 +1034,10 @@ mod tests {
 
     #[test]
     fn it_criticity() {
+        assert_eq!(Criticity::from_str("warning").unwrap(), Criticity::Warning);
+        assert_eq!(Criticity::from_str("Warning").unwrap(), Criticity::Warning);
+        assert_eq!(Criticity::from_str("WARNING").unwrap(), Criticity::Warning);
+
         assert_eq!(Criticity::from_str("low").unwrap(), Criticity::Low);
         assert_eq!(Criticity::from_str("Low").unwrap(), Criticity::Low);
         assert_eq!(Criticity::from_str("LOW").unwrap(), Criticity::Low);
@@ -1048,6 +1057,10 @@ mod tests {
         assert_eq!(Criticity::from_str("CRITICAL").unwrap(),
                    Criticity::Critical);
 
+        assert!(Criticity::Warning < Criticity::Low);
+        assert!(Criticity::Warning < Criticity::Medium);
+        assert!(Criticity::Warning < Criticity::High);
+        assert!(Criticity::Warning < Criticity::Critical);
         assert!(Criticity::Low < Criticity::Medium);
         assert!(Criticity::Low < Criticity::High);
         assert!(Criticity::Low < Criticity::Critical);
@@ -1055,11 +1068,13 @@ mod tests {
         assert!(Criticity::Medium < Criticity::Critical);
         assert!(Criticity::High < Criticity::Critical);
 
+        assert_eq!(format!("{}", Criticity::Warning).as_str(), "warning");
         assert_eq!(format!("{}", Criticity::Low).as_str(), "low");
         assert_eq!(format!("{}", Criticity::Medium).as_str(), "medium");
         assert_eq!(format!("{}", Criticity::High).as_str(), "high");
         assert_eq!(format!("{}", Criticity::Critical).as_str(), "critical");
 
+        assert_eq!(format!("{:?}", Criticity::Warning).as_str(), "Warning");
         assert_eq!(format!("{:?}", Criticity::Low).as_str(), "Low");
         assert_eq!(format!("{:?}", Criticity::Medium).as_str(), "Medium");
         assert_eq!(format!("{:?}", Criticity::High).as_str(), "High");
