@@ -413,9 +413,14 @@ impl Results {
 
             if let Some(code) = vuln.get_code() {
                 if vuln.get_start_line().unwrap() != vuln.get_end_line().unwrap() {
-                    try!(f.write_all(&format!("<li><strong>Lines:</strong> {}-{}</li>", vuln.get_start_line().unwrap()+1, vuln.get_end_line().unwrap()+1 ).into_bytes()));
+                    try!(f.write_all(&format!("<li><strong>Lines:</strong> {}-{}</li>",
+                                              vuln.get_start_line().unwrap() + 1,
+                                              vuln.get_end_line().unwrap() + 1)
+                        .into_bytes()));
                 } else {
-                    try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", vuln.get_start_line().unwrap()+1).into_bytes()));
+                    try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>",
+                                              vuln.get_start_line().unwrap() + 1)
+                        .into_bytes()));
                 }
 
                 let start_line = if vuln.get_start_line().unwrap() < 5 {
@@ -426,7 +431,8 @@ impl Results {
 
                 let mut lines = String::new();
                 for (i, _line) in code.lines().enumerate() {
-                    if i + start_line >= vuln.get_start_line().unwrap()  && i + start_line <= vuln.get_end_line().unwrap() {
+                    if i + start_line >= vuln.get_start_line().unwrap() &&
+                       i + start_line <= vuln.get_end_line().unwrap() {
                         lines.push_str(format!("-&gt;<em>{}</em><br>", i + start_line+1).as_str());
                     } else {
                         lines.push_str(format!("{}<br>", i + start_line + 1).as_str());

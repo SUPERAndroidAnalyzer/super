@@ -835,12 +835,12 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     println!("{} {}", start, message);
 }
 
-fn get_code(code: &str, start_line: usize, end_line: usize) -> String {
+fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.lines().enumerate() {
-        if i >= (end_line + 5) {
+        if i >= (e_line + 5) {
             break;
-        } else if (start_line >= 5 && i > start_line - 5) || (start_line < 5 && i < start_line + 5) {
+        } else if (s_line >= 5 && i > s_line - 5) || (s_line < 5 && i < s_line + 5) {
             result.push_str(text);
             result.push_str("\n");
         }

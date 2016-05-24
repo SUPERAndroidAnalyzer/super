@@ -156,15 +156,19 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                     results.push(Vulnerability::new(rule.get_criticity(),
                                                     rule.get_label(),
                                                     rule.get_description(),
-                                                    path.as_ref().strip_prefix(&dist_folder).unwrap(),
+                                                    path.as_ref()
+                                                        .strip_prefix(&dist_folder)
+                                                        .unwrap(),
                                                     Some(start_line),
                                                     Some(end_line),
-                                                    Some(get_code(code.as_str(), start_line, end_line))));
+                                                    Some(get_code(code.as_str(),
+                                                                  start_line,
+                                                                  end_line))));
 
                     if verbose {
                         print_vulnerability(rule.get_description(), rule.get_criticity());
                     }
-                },
+                }
                 Some(checks) => {
                     for c in checks {
                         let caps = rule.get_regex().captures(&code[s..e]).unwrap();
@@ -174,7 +178,7 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                         let mut r = c.replace("{fc1}", fc1);
 
                         if let Some(fc2) = fcheck2 {
-                                r = r.replace("{fc2}", fc2);
+                            r = r.replace("{fc2}", fc2);
                         }
 
                         let regex = Regex::new(r.as_str()).unwrap();
@@ -185,10 +189,14 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                             results.push(Vulnerability::new(rule.get_criticity(),
                                                             rule.get_label(),
                                                             rule.get_description(),
-                                                            path.as_ref().strip_prefix(&dist_folder).unwrap(),
+                                                            path.as_ref()
+                                                                .strip_prefix(&dist_folder)
+                                                                .unwrap(),
                                                             Some(start_line),
                                                             Some(end_line),
-                                                            Some(get_code(code.as_str(), start_line, end_line))));
+                                                            Some(get_code(code.as_str(),
+                                                                          start_line,
+                                                                          end_line))));
 
                             if verbose {
                                 print_vulnerability(rule.get_description(), rule.get_criticity());
@@ -366,7 +374,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     }
                 }
                 Some(vec)
-            },
+            }
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
