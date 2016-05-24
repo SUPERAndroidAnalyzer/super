@@ -487,6 +487,9 @@ impl Results {
     }
 
     fn generate_code_html_folder<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<usize> {
+        if path.as_ref() == Path::new("classes/android") || path.as_ref() == Path::new("smali") {
+            return Ok(0);
+        }
         let dir_iter = try!(fs::read_dir(&format!("{}/{}/{}",
                                                   config.get_dist_folder(),
                                                   config.get_app_id(),
@@ -532,21 +535,19 @@ impl Results {
                                                                .strip_prefix(&prefix)
                                                                .unwrap(),
                                                            config));
-                            if f_count == 0 {
-                                try!(fs::remove_dir(&format!("{}/{}/src/{}",
-                                                             config.get_results_folder(),
-                                                             config.get_app_id(),
-                                                             f.path()
-                                                                 .strip_prefix(&prefix)
-                                                                 .unwrap()
-                                                                 .display())))
-                            } else {
+                            if f_count > 0 {
                                 count += 1;
                             }
                         }
                     }
                 }
             }
+        }
+        if count == 0 {
+            try!(fs::remove_dir(&format!("{}/{}/src/{}",
+                                         config.get_results_folder(),
+                                         config.get_app_id(),
+                                         path.as_ref().display())));
         }
 
         Ok(count)
