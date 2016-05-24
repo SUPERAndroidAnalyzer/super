@@ -82,6 +82,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                                       description,
                                       "AndroidManifest.xml",
                                       None,
+                                      None,
                                       None);
         results.add_vulnerability(vuln);
 
@@ -101,6 +102,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                                       description,
                                       "AndroidManifest.xml",
                                       None,
+                                      None,
                                       None);
         results.add_vulnerability(vuln);
 
@@ -113,7 +115,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
         if manifest.get_permission_checklist().needs_permission(permission.get_permission()) {
             let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l)),
+                Some(l) => Some(get_code(manifest.get_code(), l, l)),
                 None => None,
             };
 
@@ -121,6 +123,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                                           permission.get_label(),
                                           permission.get_description(),
                                           "AndroidManifest.xml",
+                                          line,
                                           line,
                                           code);
             results.add_vulnerability(vuln);
@@ -296,7 +299,7 @@ impl Manifest {
                                                     .ok();
                                                 let code = match line {
                                                     Some(l) => {
-                                                        Some(get_code(manifest.get_code(), l))
+                                                        Some(get_code(manifest.get_code(), l, l))
                                                     }
                                                     None => None,
                                                 };
@@ -305,7 +308,7 @@ impl Manifest {
                                                     config.get_unknown_permission_criticity(),
                                                     "Unknown permission",
                                                     config.get_unknown_permission_description(),
-                                                    "AndroidManifest.xml", line, code);
+                                                    "AndroidManifest.xml", line, line, code);
                                                 results.add_vulnerability(vuln);
 
                                                 if config.is_verbose() {

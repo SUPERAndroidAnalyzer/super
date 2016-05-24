@@ -148,18 +148,56 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                     continue 'rule;
                 }
             }
-            let start_line = get_line_for(s, code.as_str());
-            let mut results = results.lock().unwrap();
-            results.push(Vulnerability::new(rule.get_criticity(),
-                                            rule.get_label(),
-                                            rule.get_description(),
-                                            path.as_ref().strip_prefix(&dist_folder).unwrap(),
-                                            Some(start_line),
-                                            Some(get_code(code.as_str(), start_line))));
+            match rule.get_forward_check() {
+                None => {
+                    let start_line = get_line_for(s, code.as_str());
+                    let end_line = get_line_for(e, code.as_str());
+                    let mut results = results.lock().unwrap();
+                    results.push(Vulnerability::new(rule.get_criticity(),
+                                                    rule.get_label(),
+                                                    rule.get_description(),
+                                                    path.as_ref().strip_prefix(&dist_folder).unwrap(),
+                                                    Some(start_line),
+                                                    Some(end_line),
+                                                    Some(get_code(code.as_str(), start_line, end_line))));
 
-            if verbose {
-                print_vulnerability(rule.get_description(), rule.get_criticity());
+                    if verbose {
+                        print_vulnerability(rule.get_description(), rule.get_criticity());
+                    }
+                },
+                Some(checks) => {
+                    for c in checks {
+                        let caps = rule.get_regex().captures(&code[s..e]).unwrap();
+
+                        let fc1 = caps.name("fc1").unwrap();
+                        let fcheck2 = caps.name("fc2");
+                        let mut r = c.replace("{fc1}", fc1);
+
+                        if let Some(fc2) = fcheck2 {
+                                r = r.replace("{fc2}", fc2);
+                        }
+
+                        let regex = Regex::new(r.as_str()).unwrap();
+                        for (s, e) in regex.find_iter(code.as_str()) {
+                            let start_line = get_line_for(s, code.as_str());
+                            let end_line = get_line_for(e, code.as_str());
+                            let mut results = results.lock().unwrap();
+                            results.push(Vulnerability::new(rule.get_criticity(),
+                                                            rule.get_label(),
+                                                            rule.get_description(),
+                                                            path.as_ref().strip_prefix(&dist_folder).unwrap(),
+                                                            Some(start_line),
+                                                            Some(end_line),
+                                                            Some(get_code(code.as_str(), start_line, end_line))));
+
+                            if verbose {
+                                print_vulnerability(rule.get_description(), rule.get_criticity());
+                            }
+                        }
+                    }
+                }
             }
+
         }
     }
 
@@ -171,7 +209,8 @@ fn get_line_for(index: usize, text: &str) -> usize {
     for (i, c) in text.char_indices() {
         if c == '\n' {
             line += 1
-        } else if i == index {
+        }
+        if i == index {
             break;
         }
     }
@@ -222,6 +261,7 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
 
 struct Rule {
     regex: Regex,
+    forward_check: Option<Vec<String>>,
     label: String,
     description: String,
     criticity: Criticity,
@@ -231,6 +271,13 @@ struct Rule {
 impl Rule {
     pub fn get_regex(&self) -> &Regex {
         &self.regex
+    }
+
+    pub fn get_forward_check(&self) -> Option<Iter<String>> {
+        match self.forward_check {
+            Some(ref v) => Some(v.iter()),
+            None => None,
+        }
     }
 
     pub fn get_label(&self) -> &str {
@@ -300,6 +347,27 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     }
                 }
             }
+            _ => {
+                print_warning(format_warning, config.is_verbose());
+                return Err(Error::ParseError);
+            }
+        };
+
+        let forward_check = match rule.get("forward_check") { // TODO check correctness
+            Some(&Value::Array(ref v)) => {
+                let mut vec = Vec::new();
+                for s in v {
+                    match s {
+                        &Value::String(ref c) => vec.push(c.clone()),
+                        _ => {
+                            print_warning(format_warning, config.is_verbose());
+                            return Err(Error::ParseError);
+                        }
+                    }
+                }
+                Some(vec)
+            },
+            None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
                 return Err(Error::ParseError);
@@ -378,6 +446,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
         rules.push(Rule {
             regex: regex,
+            forward_check: forward_check,
             label: label.clone(),
             description: description.clone(),
             criticity: criticity,

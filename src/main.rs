@@ -835,12 +835,12 @@ fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     println!("{} {}", start, message);
 }
 
-fn get_code(code: &str, line: usize) -> String {
+fn get_code(code: &str, start_line: usize, end_line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.lines().enumerate() {
-        if i >= (line + 5) {
+        if i >= (end_line + 5) {
             break;
-        } else if (line >= 5 && i > line - 5) || (line < 5 && i < line + 5) {
+        } else if (start_line >= 5 && i > start_line - 5) || (start_line < 5 && i < start_line + 5) {
             result.push_str(text);
             result.push_str("\n");
         }
@@ -921,7 +921,7 @@ mod tests {
                     mattis, tortor neque adipiscing\nVestibulum ante ipsum primis in faucibus \
                     orci luctus et ultrices";
 
-        assert_eq!(get_code(code, 1),
+        assert_eq!(get_code(code, 1, 1),
                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
                     Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
                     Sed lacinia, urna non tincidunt mattis, tortor neque\n\
@@ -929,7 +929,7 @@ mod tests {
                     Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
                     Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n");
 
-        assert_eq!(get_code(code, 13),
+        assert_eq!(get_code(code, 13, 13),
                    "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
@@ -937,7 +937,7 @@ mod tests {
                     Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
                     Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n");
 
-        assert_eq!(get_code(code, 7),
+        assert_eq!(get_code(code, 7, 7),
                    "Praesent blandit dolor. Sed non quam. In vel mi\n\
                     Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
                     Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
@@ -947,6 +947,19 @@ mod tests {
                     Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n");
+
+        assert_eq!(get_code(code, 7, 9),
+                   "Praesent blandit dolor. Sed non quam. In vel mi\n\
+                    Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
+                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
+                    Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
+                    Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
+                    Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
+                    Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
+                    Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
+                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
+                    Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
+                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n");
     }
 
     #[test]

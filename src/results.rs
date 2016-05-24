@@ -149,13 +149,6 @@ impl Results {
                 println!("");
             }
 
-            try!(self.generate_markdown_report(config));
-
-            if config.is_verbose() {
-                println!("Markdown report generated.");
-                println!("");
-            }
-
             try!(self.generate_html_report(config));
 
             if config.is_verbose() {
@@ -221,143 +214,6 @@ impl Results {
 
         try!(f.write_all(&format!("{:?}", report).into_bytes()));
 
-        Ok(())
-    }
-
-    fn generate_markdown_report(&self, config: &Config) -> Result<()> {
-        if config.is_verbose() {
-            println!("Starting Markdown report generation. First we create the file.")
-        }
-        let mut f = try!(File::create(format!("{}/{}/results.md",
-                                              config.get_results_folder(),
-                                              config.get_app_id())));
-        if config.is_verbose() {
-            println!("The report file has been created. Now it's time to fill it.")
-        }
-
-        let now = Local::now();
-
-        try!(f.write_all(b"# Android Anti-Rebelation Project Vulnerability Report #\n\n"));
-        try!(f.write_all(&format!("This is the vulnerability report for the android \
-                                   application *{}*. Report generated on {}.\n",
-                                  self.app_package,
-                                  now.to_rfc2822())
-            .into_bytes()));
-
-        try!(f.write_all(b"## Application data: ##\n"));
-        if !self.app_label.is_empty() {
-            try!(f.write_all(&format!(" - **Label:** {}\n", self.app_label.as_str()).into_bytes()));
-        }
-        if !self.app_description.is_empty() {
-            try!(f.write_all(&format!(" - **Description:** {}\n", self.app_description.as_str())
-                .into_bytes()));
-        }
-        if !self.app_package.is_empty() {
-            try!(f.write_all(&format!(" - **Package:** {}\n", self.app_package.as_str())
-                .into_bytes()));
-        }
-        if !self.app_version.is_empty() {
-            try!(f.write_all(&format!(" - **Version:** {}\n", self.app_version.as_str())
-                .into_bytes()));
-        }
-        if self.app_version_num.is_some() {
-            try!(f.write_all(&format!(" - **Version number:** {}\n", self.app_version_num.unwrap())
-                    .into_bytes()));
-        }
-
-        try!(f.write_all(b"\n"));
-
-        let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
-        try!(f.write_all(&format!("### Total vulnerabilities found: {} ###\n", total_vuln)
-            .into_bytes()));
-        try!(f.write_all(&format!(" - Critical: {}\n", self.critical.len()).into_bytes()));
-        try!(f.write_all(&format!(" - High criticity: {}\n", self.high.len()).into_bytes()));
-        try!(f.write_all(&format!(" - Medium criticity: {}\n", self.medium.len()).into_bytes()));
-        try!(f.write_all(&format!(" - Low criticity: {}\n", self.low.len()).into_bytes()));
-
-        try!(f.write_all(b"\n"));
-        try!(f.write_all(b"* * *\n"));
-        try!(f.write_all(b"\n"));
-
-        try!(f.write_all(b"## Vulnerabilities: ##\n"));
-
-        if self.critical.len() > 0 {
-            try!(self.print_md_vuln_set(&mut f, &self.critical, Criticity::Critical))
-        }
-
-        if self.high.len() > 0 {
-            try!(self.print_md_vuln_set(&mut f, &self.high, Criticity::High))
-        }
-
-        if self.medium.len() > 0 {
-            try!(self.print_md_vuln_set(&mut f, &self.medium, Criticity::Medium))
-        }
-
-        if self.low.len() > 0 {
-            try!(self.print_md_vuln_set(&mut f, &self.low, Criticity::Low))
-        }
-
-        if self.warnings.len() > 0 {
-            try!(self.print_md_vuln_set(&mut f, &self.warnings, Criticity::Warning))
-        }
-
-        try!(f.write_all(b"\n"));
-        try!(f.write_all(b"* * *\n"));
-        try!(f.write_all(b"\n"));
-
-        try!(f.write_all(&format!("Copyright © {} - Android Anti-Rebelation Project.",
-                                  if now.year() > 2016 {
-                                      format!("2016 - {}", now.year())
-                                  } else {
-                                      format!("{}", now.year())
-                                  })
-            .into_bytes()));
-
-        Ok(())
-    }
-
-    fn print_md_vuln_set(&self,
-                         f: &mut File,
-                         set: &BTreeSet<Vulnerability>,
-                         criticity: Criticity)
-                         -> Result<()> {
-        let criticity_str = format!("{:?}", criticity);
-        if criticity == Criticity::Warning {
-            try!(f.write_all(b"### Warnings: ###\n"));
-        } else {
-            try!(f.write_all(&format!("### {} criticity vulnerabilities: ###\n", criticity_str)
-                .into_bytes()));
-        }
-        try!(f.write_all(b"\n"));
-
-        for (i, vuln) in set.iter().enumerate() {
-            try!(f.write_all(&format!("##### {}{:03}: ####\n",
-                                      criticity_str.chars().nth(0).unwrap(),
-                                      i + 1)
-                .into_bytes()));
-            try!(f.write_all(&format!(" - **Label:** {}\n", vuln.get_name()).into_bytes()));
-            try!(f.write_all(&format!(" - **Description:** {}\n", vuln.get_description())
-                .into_bytes()));
-            try!(f.write_all(&format!(" - **File:** {}\n", vuln.get_file().display())
-                                  .into_bytes()));
-            if let Some(s) = vuln.get_line() {
-                try!(f.write_all(&format!(" - **Line:** {}\n", s + 1).into_bytes()));
-            }
-            if let Some(code) = vuln.get_code() {
-                let start_line = if vuln.get_line().unwrap() < 5 {
-                    1
-                } else {
-                    vuln.get_line().unwrap() - 4
-                };
-                let lang = vuln.get_file().extension().unwrap().to_string_lossy();
-                try!(f.write_all(&format!(" - **Affected code:**\nStarting in line \
-                                           {}.\n```{}\n{}\n```\n",
-                                          start_line,
-                                          lang,
-                                          code)
-                    .into_bytes()));
-            }
-        }
         Ok(())
     }
 
@@ -554,18 +410,23 @@ impl Results {
                                        href=\"src/{0}.html\">{0}</a></li>",
                                       vuln.get_file().display())
                 .into_bytes()));
-            if let Some(s) = vuln.get_line() {
-                try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", s+1).into_bytes()));
-            }
+
             if let Some(code) = vuln.get_code() {
-                let start_line = if vuln.get_line().unwrap() < 5 {
+                if vuln.get_start_line().unwrap() != vuln.get_end_line().unwrap() {
+                    try!(f.write_all(&format!("<li><strong>Lines:</strong> {}-{}</li>", vuln.get_start_line().unwrap()+1, vuln.get_end_line().unwrap()+1 ).into_bytes()));
+                } else {
+                    try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>", vuln.get_start_line().unwrap()+1).into_bytes()));
+                }
+
+                let start_line = if vuln.get_start_line().unwrap() < 5 {
                     0
                 } else {
-                    vuln.get_line().unwrap() - 4
+                    vuln.get_start_line().unwrap() - 4
                 };
+
                 let mut lines = String::new();
                 for (i, _line) in code.lines().enumerate() {
-                    if i + start_line == vuln.get_line().unwrap() {
+                    if i + start_line >= vuln.get_start_line().unwrap()  && i + start_line <= vuln.get_end_line().unwrap() {
                         lines.push_str(format!("-&gt;<em>{}</em><br>", i + start_line+1).as_str());
                     } else {
                         lines.push_str(format!("{}<br>", i + start_line + 1).as_str());
@@ -841,7 +702,8 @@ pub struct Vulnerability {
     name: String,
     description: String,
     file: String,
-    line: Option<usize>,
+    start_line: Option<usize>,
+    end_line: Option<usize>,
     code: Option<String>,
 }
 
@@ -850,7 +712,8 @@ impl Vulnerability {
                                               name: S,
                                               description: S,
                                               file: P,
-                                              line: Option<usize>,
+                                              start_line: Option<usize>,
+                                              end_line: Option<usize>,
                                               code: Option<String>)
                                               -> Vulnerability {
         Vulnerability {
@@ -858,7 +721,8 @@ impl Vulnerability {
             name: String::from(name.as_ref()),
             description: String::from(description.as_ref()),
             file: String::from(file.as_ref().to_string_lossy().into_owned()),
-            line: line,
+            start_line: start_line,
+            end_line: end_line,
             code: match code {
                 Some(s) => Some(String::from(s.as_ref())),
                 None => None,
@@ -889,8 +753,12 @@ impl Vulnerability {
         }
     }
 
-    pub fn get_line(&self) -> Option<usize> {
-        self.line
+    pub fn get_start_line(&self) -> Option<usize> {
+        self.start_line
+    }
+
+    pub fn get_end_line(&self) -> Option<usize> {
+        self.end_line
     }
 }
 
@@ -911,8 +779,11 @@ impl<'v> MapVisitor for &'v Vulnerability {
         try!(serializer.serialize_struct_elt("name", self.name.as_str()));
         try!(serializer.serialize_struct_elt("description", self.description.as_str()));
         try!(serializer.serialize_struct_elt("file", self.file.as_str()));
-        if self.line.is_some() {
-            try!(serializer.serialize_struct_elt("line", self.line));
+        if self.start_line.is_some() {
+            try!(serializer.serialize_struct_elt("start_line", self.start_line));
+        }
+        if self.end_line.is_some() {
+            try!(serializer.serialize_struct_elt("end_line", self.end_line));
         }
         Ok(None)
     }
@@ -930,9 +801,9 @@ impl PartialOrd for Vulnerability {
             } else if self.file > other.file {
                 Some(Ordering::Greater)
             } else {
-                if self.line < other.line {
+                if self.start_line < other.start_line {
                     Some(Ordering::Less)
-                } else if self.line > other.line {
+                } else if self.start_line > other.start_line {
                     Some(Ordering::Greater)
                 } else {
                     if self.name < other.name {
