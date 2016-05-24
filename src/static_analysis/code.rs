@@ -207,11 +207,11 @@ fn analyze_file<P: AsRef<Path>>(path: P,
 fn get_line_for(index: usize, text: &str) -> usize {
     let mut line = 0;
     for (i, c) in text.char_indices() {
-        if c == '\n' {
-            line += 1
-        }
         if i == index {
             break;
+        }
+        if c == '\n' {
+            line += 1
         }
     }
     line

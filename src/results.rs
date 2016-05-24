@@ -441,9 +441,9 @@ impl Results {
                                           lang,
                                           Results::html_escape(code))
                     .into_bytes()));
-                try!(f.write_all(b"</ul>"));
-                try!(f.write_all(b"</section>"));
             }
+            try!(f.write_all(b"</ul>"));
+            try!(f.write_all(b"</section>"));
         }
         Ok(())
     }
