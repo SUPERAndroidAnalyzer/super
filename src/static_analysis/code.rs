@@ -169,38 +169,36 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                         print_vulnerability(rule.get_description(), rule.get_criticity());
                     }
                 }
-                Some(checks) => {
-                    for c in checks {
-                        let caps = rule.get_regex().captures(&code[s..e]).unwrap();
+                Some(check) => {
+                    let caps = rule.get_regex().captures(&code[s..e]).unwrap();
 
-                        let fc1 = caps.name("fc1").unwrap();
-                        let fcheck2 = caps.name("fc2");
-                        let mut r = c.replace("{fc1}", fc1);
+                    let fc1 = caps.name("fc1").unwrap();
+                    let fcheck2 = caps.name("fc2");
+                    let mut r = check.replace("{fc1}", fc1);
 
-                        if let Some(fc2) = fcheck2 {
-                            r = r.replace("{fc2}", fc2);
-                        }
+                    if let Some(fc2) = fcheck2 {
+                        r = r.replace("{fc2}", fc2);
+                    }
 
-                        let regex = Regex::new(r.as_str()).unwrap();
-                        for (s, e) in regex.find_iter(code.as_str()) {
-                            let start_line = get_line_for(s, code.as_str());
-                            let end_line = get_line_for(e, code.as_str());
-                            let mut results = results.lock().unwrap();
-                            results.push(Vulnerability::new(rule.get_criticity(),
-                                                            rule.get_label(),
-                                                            rule.get_description(),
-                                                            path.as_ref()
-                                                                .strip_prefix(&dist_folder)
-                                                                .unwrap(),
-                                                            Some(start_line),
-                                                            Some(end_line),
-                                                            Some(get_code(code.as_str(),
-                                                                          start_line,
-                                                                          end_line))));
+                    let regex = Regex::new(r.as_str()).unwrap();
+                    for (s, e) in regex.find_iter(code.as_str()) {
+                        let start_line = get_line_for(s, code.as_str());
+                        let end_line = get_line_for(e, code.as_str());
+                        let mut results = results.lock().unwrap();
+                        results.push(Vulnerability::new(rule.get_criticity(),
+                                                        rule.get_label(),
+                                                        rule.get_description(),
+                                                        path.as_ref()
+                                                            .strip_prefix(&dist_folder)
+                                                            .unwrap(),
+                                                        Some(start_line),
+                                                        Some(end_line),
+                                                        Some(get_code(code.as_str(),
+                                                                      start_line,
+                                                                      end_line))));
 
-                            if verbose {
-                                print_vulnerability(rule.get_description(), rule.get_criticity());
-                            }
+                        if verbose {
+                            print_vulnerability(rule.get_description(), rule.get_criticity());
                         }
                     }
                 }
@@ -272,7 +270,7 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
 
 struct Rule {
     regex: Regex,
-    forward_check: Option<Vec<String>>,
+    forward_check: Option<String>,
     label: String,
     description: String,
     criticity: Criticity,
@@ -284,11 +282,8 @@ impl Rule {
         &self.regex
     }
 
-    pub fn get_forward_check(&self) -> Option<Iter<String>> {
-        match self.forward_check {
-            Some(ref v) => Some(v.iter()),
-            None => None,
-        }
+    pub fn get_forward_check(&self) -> Option<&String> {
+        self.forward_check.as_ref()
     }
 
     pub fn get_label(&self) -> &str {
@@ -364,19 +359,57 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
-        let forward_check = match rule.get("forward_check") { // TODO check correctness
-            Some(&Value::Array(ref v)) => {
-                let mut vec = Vec::new();
-                for s in v {
-                    match s {
-                        &Value::String(ref c) => vec.push(c.clone()),
-                        _ => {
-                            print_warning(format_warning, config.is_verbose());
-                            return Err(Error::ParseError);
+        let forward_check = match rule.get("forward_check") {
+            Some(&Value::String(ref s)) => {
+                let capture_names = regex.capture_names();
+                for cap in capture_names {
+                    match cap {
+                        Some("fc1") => {
+                            if !s.contains("{fc1}") {
+                                print_warning("You must provide the '{fc1}' string where you \
+                                               want the 'fc1' capture to be inserted in the \
+                                               forward check.",
+                                              config.is_verbose());
+                                return Err(Error::ParseError);
+                            }
                         }
+                        Some("fc2") => {
+                            if !s.contains("{fc2}") {
+                                print_warning("You must provide the '{fc2}' string where you \
+                                               want the 'fc2' capture to be inserted in the \
+                                               forward check.",
+                                              config.is_verbose());
+                                return Err(Error::ParseError);
+                            }
+                        }
+                        _ => {}
                     }
                 }
-                Some(vec)
+
+                let mut capture_names = regex.capture_names();
+                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc2").is_some() &&
+                   capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
+                    print_warning("You must have a capture group named fc1 to use the capture \
+                                   fc2.",
+                                  config.is_verbose());
+                    return Err(Error::ParseError);
+                }
+
+                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
+                    print_warning("You must provide at least the fc1 capture group in the \
+                                   regular expresion.",
+                                  config.is_verbose());
+                    return Err(Error::ParseError);
+                }
+
+                if !s.contains("{fc1}") {
+                    print_warning("You must provide at least the fc1 capture group replacement \
+                                   in the forward check.",
+                                  config.is_verbose());
+                    return Err(Error::ParseError);
+                }
+
+                Some(s.clone())
             }
             None => None,
             _ => {
