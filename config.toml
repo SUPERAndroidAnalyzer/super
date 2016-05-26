@@ -5,12 +5,14 @@ criticity = "warning"
 label = "Internet permission"
 description = "The application has full access to network sockets. Check if the permission is actually needed."
 
+# Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.READ_EXTERNAL_STORAGE" # External storage access
 criticity = "warning"
-label = "External storage write permission"
+label = "External storage read permission"
 description = "The application has external storage read access. Check if the permission is actually needed."
 
+# Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.WRITE_EXTERNAL_STORAGE" # External storage access
 criticity = "warning"
