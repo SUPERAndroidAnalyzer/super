@@ -1,13 +1,18 @@
 # Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.INTERNET" # Internet access permission
-criticity = "low"
+criticity = "warning"
 label = "Internet permission"
-description = "The application needs Internet access. This is not a vulnerability as such, but it needs additional security measures if it's being connected to the Internet. Check if the permission is actually needed."
+description = "The application has full access to network sockets. Check if the permission is actually needed."
 
-# Vulnerable or potentially vulnerable permissions
+[[permissions]]
+name = "android.permission.READ_EXTERNAL_STORAGE" # External storage access
+criticity = "warning"
+label = "External storage write permission"
+description = "The application has external storage read access. Check if the permission is actually needed."
+
 [[permissions]]
 name = "android.permission.WRITE_EXTERNAL_STORAGE" # External storage access
-criticity = "medium"
+criticity = "warning"
 label = "External storage write permission"
-description = "The application needs external storage write access. This could be a security issue if those accesses are not controled."
+description = "The application has external storage write access. Check if the permission is actually needed."

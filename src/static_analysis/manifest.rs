@@ -72,10 +72,10 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
     }
 
     if manifest.is_debug() {
-        let criticity = Criticity::Medium;
-        let description = "The application is in debug mode. This is a vulnerability since \
-                             the application will filter data to the Android OS to be \
-                             debugged. This option should only be used while in development.";
+        let criticity = Criticity::Critical;
+        let description = "The application is in debug mode. The application is in debug mode. \
+                           This allows any malicious person to inject arbitrary code in the \
+                           application. This option should only be used while in development.";
 
         let vuln = Vulnerability::new(criticity,
                                       "Manifest Debug",
@@ -92,13 +92,33 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
     }
 
     if manifest.needs_large_heap() {
-        let criticity = Criticity::Low;
+        let criticity = Criticity::Warning;
         let description = "The application needs a large heap. This is not a vulnerability \
-                             as such, but could be in devices with small heap. Review if the \
+                             as such, but could be in devices with small heap. Check if the \
                              large heap is actually needed.";
 
         let vuln = Vulnerability::new(criticity,
                                       "Large heap",
+                                      description,
+                                      "AndroidManifest.xml",
+                                      None,
+                                      None,
+                                      None);
+        results.add_vulnerability(vuln);
+
+        if config.is_verbose() {
+            print_vulnerability(description, criticity);
+        }
+    }
+
+    if manifest.allow_backup() {
+        let criticity = Criticity::Warning;
+        let description = "This option allow backups of the application data via adb. Malicious \
+                           people with physical access could use adb to get private data of your \
+                           app into their PC.";
+
+        let vuln = Vulnerability::new(criticity,
+                                      "Manifest Debug",
                                       description,
                                       "AndroidManifest.xml",
                                       None,
@@ -149,6 +169,7 @@ struct Manifest {
     version_str: String,
     label: String,
     description: String,
+    allow_backup: bool,
     has_code: bool,
     large_heap: bool,
     install_location: InstallLocation,
@@ -239,6 +260,25 @@ impl Manifest {
                                         };
                                         if debug {
                                             manifest.set_debug();
+                                        }
+                                    }
+                                    "allowBackup" => {
+                                        let allow_backup = match attr.value.as_str().parse() {
+                                            Ok(b) => b,
+                                            Err(e) => {
+                                                print_warning(format!("An error occurred \
+                                                                       when parsing the \
+                                                                       allowBackup attribute in \
+                                                                       the manifest: \
+                                                                       {}.\nThe process \
+                                                                       will continue, though.",
+                                                                      e),
+                                                              config.is_verbose());
+                                                break;
+                                            }
+                                        };
+                                        if allow_backup {
+                                            manifest.set_allow_backup();
                                         }
                                     }
                                     "description" => manifest.set_description(attr.value.as_str()),
@@ -400,6 +440,14 @@ impl Manifest {
         self.has_code = true;
     }
 
+    pub fn allow_backup(&self) -> bool {
+        self.allow_backup
+    }
+
+    fn set_allow_backup(&mut self) {
+        self.allow_backup = true;
+    }
+
     pub fn needs_large_heap(&self) -> bool {
         self.large_heap
     }
@@ -442,6 +490,7 @@ impl Default for Manifest {
             version_str: String::new(),
             label: String::new(),
             description: String::new(),
+            allow_backup: false,
             has_code: false,
             large_heap: false,
             install_location: InstallLocation::InternalOnly,
