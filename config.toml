@@ -18,3 +18,9 @@ name = "android.permission.WRITE_EXTERNAL_STORAGE" # External storage access
 criticity = "warning"
 label = "External storage write permission"
 description = "The application has external storage write access. Check if the permission is actually needed."
+
+# Vulnerable or potentially vulnerable permissions
+[[permissions]]
+name = "unknown" # Unknown permissions
+criticity = "low"
+description = "Even if the application can create its own permissions, it's discouraged, since it can lead to missunderstanding between developers."

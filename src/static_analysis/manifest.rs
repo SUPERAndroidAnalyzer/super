@@ -111,14 +111,14 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
         }
     }
 
-    if manifest.allow_backup() {
+    if manifest.allows_backup() {
         let criticity = Criticity::Warning;
-        let description = "This option allow backups of the application data via adb. Malicious \
+        let description = "This option allows backups of the application data via adb. Malicious \
                            people with physical access could use adb to get private data of your \
                            app into their PC.";
 
         let vuln = Vulnerability::new(criticity,
-                                      "Manifest Debug",
+                                      "Allows Backup",
                                       description,
                                       "AndroidManifest.xml",
                                       None,
@@ -169,7 +169,7 @@ struct Manifest {
     version_str: String,
     label: String,
     description: String,
-    allow_backup: bool,
+    allows_backup: bool,
     has_code: bool,
     large_heap: bool,
     install_location: InstallLocation,
@@ -263,7 +263,7 @@ impl Manifest {
                                         }
                                     }
                                     "allowBackup" => {
-                                        let allow_backup = match attr.value.as_str().parse() {
+                                        let allows_backup = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -277,8 +277,8 @@ impl Manifest {
                                                 break;
                                             }
                                         };
-                                        if allow_backup {
-                                            manifest.set_allow_backup();
+                                        if allows_backup {
+                                            manifest.set_allows_backup();
                                         }
                                     }
                                     "description" => manifest.set_description(attr.value.as_str()),
@@ -440,12 +440,12 @@ impl Manifest {
         self.has_code = true;
     }
 
-    pub fn allow_backup(&self) -> bool {
-        self.allow_backup
+    pub fn allows_backup(&self) -> bool {
+        self.allows_backup
     }
 
-    fn set_allow_backup(&mut self) {
-        self.allow_backup = true;
+    fn set_allows_backup(&mut self) {
+        self.allows_backup = true;
     }
 
     pub fn needs_large_heap(&self) -> bool {
@@ -490,7 +490,7 @@ impl Default for Manifest {
             version_str: String::new(),
             label: String::new(),
             description: String::new(),
-            allow_backup: false,
+            allows_backup: false,
             has_code: false,
             large_heap: false,
             install_location: InstallLocation::InternalOnly,
