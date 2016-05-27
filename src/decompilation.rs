@@ -45,6 +45,7 @@ pub fn decompress(config: &Config) {
             .arg("-jar")
             .arg(config.get_apktool_file())
             .arg("d")
+            .arg("-s")
             .arg("-o")
             .arg(format!("{}/{}", config.get_dist_folder(), config.get_app_id()))
             .arg("-f")
