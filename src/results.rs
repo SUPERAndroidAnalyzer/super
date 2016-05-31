@@ -1,7 +1,7 @@
 use std::{fs, fmt, result};
 use std::fs::File;
 use std::io::{Read, Write};
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, LinkedList};
 use std::cmp::Ordering;
 use std::path::Path;
 use std::borrow::Borrow;
@@ -12,6 +12,11 @@ use serde::ser::{Serialize, Serializer, MapVisitor};
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 
+use crypto::digest::Digest;
+use crypto::md5::Md5;
+use crypto::sha1::Sha1;
+use crypto::sha2::Sha256;
+
 use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
 
 pub struct Results {
@@ -20,6 +25,7 @@ pub struct Results {
     app_description: String,
     app_version: String,
     app_version_num: Option<i32>,
+    app_fingerprints: LinkedList<String>,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
     medium: BTreeSet<Vulnerability>,
@@ -54,6 +60,7 @@ impl Results {
                 app_description: String::new(),
                 app_version: String::new(),
                 app_version_num: None,
+                app_fingerprints: LinkedList::new(),
                 warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
                 medium: BTreeSet::new(),
@@ -94,6 +101,10 @@ impl Results {
         self.app_version_num = Some(version);
     }
 
+    pub fn set_app_fingerprints(&mut self, fingerprints: LinkedList<String>) {
+        self.app_fingerprints = fingerprints;
+    }
+
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticity() {
             Criticity::Warning => {
@@ -120,6 +131,39 @@ impl Results {
 
     pub fn get_benchmarks(&self) -> Iter<Benchmark> {
         self.benchmarks.iter()
+    }
+
+    pub fn hash(&self, config: &Config) -> Result<()> {
+        let path = format!("{}/{}.apk",config.get_downloads_folder(),config.get_app_id());
+
+        let mut f = try!(File::open(path));
+        let mut buffer = Vec::new();
+        try!(f.read_to_end(&mut buffer));
+
+        let mut md5 = Md5::new();
+        let mut sha1 = Sha1::new();
+        let mut sha256 = Sha256::new();
+
+        md5.input(&buffer);
+        sha1.input(&buffer);
+        sha256.input(&buffer);
+
+        let result_md5 = md5.result_str();
+        let result_sha1 = sha1.result_str();
+        let result_sha256 = sha256.result_str();
+
+        let mut linkedlist = LinkedList::new();
+        linkedlist.push_back(("MD5",&result_md5));
+        linkedlist.push_back(("SHA1",&result_sha1));
+        linkedlist.push_back(("SHA256",&result_sha256));
+
+    //  Testeando que va bien
+        for (a, b) in linkedlist {
+            println!("{}: {}", a, b);
+        }
+
+    //  TODO: Hacer algo con la linkedlist
+        Ok(())
     }
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
@@ -175,6 +219,7 @@ impl Results {
             .insert("description", self.app_description.as_str())
             .insert("package", self.app_package.as_str())
             .insert("version", self.app_version.as_str())
+            .insert("fingerprint", self.app_fingerprints.len())
             .insert_array("warnings", |builder| {
                 let mut builder = builder;
                 for warn in &self.warnings {
@@ -247,7 +292,7 @@ impl Results {
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
                                   now.to_rfc2822())
-            .into_bytes()));
+        .into_bytes()));
 
         // Application data
         try!(f.write_all(b"<h2>Application data:</h2>"));
@@ -277,6 +322,12 @@ impl Results {
                                       self.app_version_num.unwrap())
                 .into_bytes()));
         }
+        if !self.app_fingerprints.is_empty() {
+            try!(f.write_all(&format!("<li><strong>Fingerprints:</strong> {}</li>",
+                                      self.app_fingerprints.len())
+                .into_bytes()));
+        }
+
         try!(f.write_all(b"<li><a href=\"src/index.html\" \
                         title=\"Source code\">Check source code</a></li>"));
         try!(f.write_all(b"</ul>"));

@@ -8,6 +8,7 @@ extern crate serde_json;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
+extern crate crypto;
 
 mod decompilation;
 mod static_analysis;
