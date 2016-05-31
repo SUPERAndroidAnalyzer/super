@@ -134,7 +134,9 @@ impl Results {
     }
 
     pub fn hash(&self, config: &Config) -> Result<()> {
-        let path = format!("{}/{}.apk",config.get_downloads_folder(),config.get_app_id());
+        let path = format!("{}/{}.apk",
+                           config.get_downloads_folder(),
+                           config.get_app_id());
 
         let mut f = try!(File::open(path));
         let mut buffer = Vec::new();
@@ -153,16 +155,16 @@ impl Results {
         let result_sha256 = sha256.result_str();
 
         let mut linkedlist = LinkedList::new();
-        linkedlist.push_back(("MD5",&result_md5));
-        linkedlist.push_back(("SHA1",&result_sha1));
-        linkedlist.push_back(("SHA256",&result_sha256));
+        linkedlist.push_back(("MD5", &result_md5));
+        linkedlist.push_back(("SHA1", &result_sha1));
+        linkedlist.push_back(("SHA256", &result_sha256));
 
-    //  Testeando que va bien
+        //  Testeando que va bien
         for (a, b) in linkedlist {
             println!("{}: {}", a, b);
         }
 
-    //  TODO: Hacer algo con la linkedlist
+        //  TODO: Hacer algo con la linkedlist
         Ok(())
     }
 
@@ -292,7 +294,7 @@ impl Results {
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
                                   now.to_rfc2822())
-        .into_bytes()));
+            .into_bytes()));
 
         // Application data
         try!(f.write_all(b"<h2>Application data:</h2>"));
