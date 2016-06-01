@@ -532,22 +532,22 @@ mod tests {
         let rule = rules.get(0).unwrap();
 
         let should_match = &["password = \"secret\";",
-                             "p@ssword = \"secret\";",
+                             // "p@ssword = \"secret\";",
                              "pass = \"secret\";",
                              "pwd = \"secret\";",
                              "passwd = \"secret\";",
                              "password = \"\";",
                              "password=\"    \";",
-                             "PASS = \"secret\";",
-                             "P@SS = \"secret\";",
-                             "pa$$ = \"secret\";",
-                             "p@s$wrd = \"secret\";",
-                             "@string/pass",
-                             "@string/pswd"];
+                             "PASS = \"secret\";"];
+        //  "P@SS = \"secret\";",
+        //  "pa$$ = \"secret\";",
+        //  "p@s$wrd = \"secret\";",
+        //  "@string/pass",
+        //  "@string/pswd"];
         let should_not_match = &["p = \"android.intent.extra.EMAIL\";",
-                                 //  "pasbook = \"hello!\";"
+                                 "pasbook = \"hello!\";",
                                  "p$$ = \"secret\"",
-                                 //  "p$ = \"secret\"",
+                                 "p$ = \"secret\"",
                                  "pw = \"secret\""];
 
         for m in should_match {
@@ -763,6 +763,24 @@ mod tests {
                              "Log . i ( var )",
                              "Log.println(\"Hello: \" + var + \" goodbye\")"];
         let should_not_match = &["Log.e(\"Hello!\")", "Log.wtf( \"Hello!\" )"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_file_separator() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(10).unwrap();
+
+        let should_match = &["C:\\", "C:\\Program Files\\index.exe"];
+        let should_not_match = &["Home\\password.txt"];
 
         for m in should_match {
             assert!(check_match(m, rule));

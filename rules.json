@@ -51,4 +51,9 @@
     "label": "Unchecked output in Logs",
     "description": "Sensitive information should never be logged since it can lead to that information being disclosed.",
     "criticity": "low"
+}, {
+    "regex": "(([:alpha:]:)?\\[^0 !\\$`&\\*\\(\\)\\+]\\w.+)|([:alpha:]:\\\\)",
+    "label": "Hardcoded file separator",
+    "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS/Windows) and others slashes `/` (Unix).",
+    "criticity": "high"
 }]
