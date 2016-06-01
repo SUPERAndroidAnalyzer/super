@@ -1,21 +1,20 @@
-use std::{fs, fmt, result};
+use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::collections::{BTreeSet, LinkedList};
-use std::cmp::Ordering;
+use std::collections::BTreeSet;
 use std::path::Path;
 use std::borrow::Borrow;
-use std::time::Duration;
 use std::slice::Iter;
 
-use serde::ser::{Serialize, Serializer, MapVisitor};
+use serde::ser::MapVisitor;
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
+use rustc_serialize::hex::ToHex;
 
-use crypto::digest::Digest;
-use crypto::md5::Md5;
-use crypto::sha1::Sha1;
-use crypto::sha2::Sha256;
+mod utils;
+
+pub use self::utils::{Benchmark, Vulnerability};
+use self::utils::FingerPrint;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
 
@@ -25,7 +24,7 @@ pub struct Results {
     app_description: String,
     app_version: String,
     app_version_num: Option<i32>,
-    app_fingerprints: LinkedList<String>,
+    app_fingerprint: FingerPrint,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
     medium: BTreeSet<Vulnerability>,
@@ -47,6 +46,16 @@ impl Results {
                     return None;
                 }
             }
+
+            let fingerprint = match FingerPrint::new(config) {
+                Ok(f) => f,
+                Err(e) => {
+                    print_error(format!("An error occurred when trying to fingerprint the application: {}",
+                                        e),
+                                config.is_verbose());
+                    return None;
+                }
+            };
             if config.is_verbose() {
                 println!("The results struct has been created. All the vulnerabilitis will now \
                           be recorded and when the analysis ends, they will be written to result \
@@ -60,7 +69,7 @@ impl Results {
                 app_description: String::new(),
                 app_version: String::new(),
                 app_version_num: None,
-                app_fingerprints: LinkedList::new(),
+                app_fingerprint: fingerprint,
                 warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
                 medium: BTreeSet::new(),
@@ -101,10 +110,6 @@ impl Results {
         self.app_version_num = Some(version);
     }
 
-    pub fn set_app_fingerprints(&mut self, fingerprints: LinkedList<String>) {
-        self.app_fingerprints = fingerprints;
-    }
-
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticity() {
             Criticity::Warning => {
@@ -131,41 +136,6 @@ impl Results {
 
     pub fn get_benchmarks(&self) -> Iter<Benchmark> {
         self.benchmarks.iter()
-    }
-
-    pub fn hash(&self, config: &Config) -> Result<()> {
-        let path = format!("{}/{}.apk",
-                           config.get_downloads_folder(),
-                           config.get_app_id());
-
-        let mut f = try!(File::open(path));
-        let mut buffer = Vec::new();
-        try!(f.read_to_end(&mut buffer));
-
-        let mut md5 = Md5::new();
-        let mut sha1 = Sha1::new();
-        let mut sha256 = Sha256::new();
-
-        md5.input(&buffer);
-        sha1.input(&buffer);
-        sha256.input(&buffer);
-
-        let result_md5 = md5.result_str();
-        let result_sha1 = sha1.result_str();
-        let result_sha256 = sha256.result_str();
-
-        let mut linkedlist = LinkedList::new();
-        linkedlist.push_back(("MD5", &result_md5));
-        linkedlist.push_back(("SHA1", &result_sha1));
-        linkedlist.push_back(("SHA256", &result_sha256));
-
-        //  Testeando que va bien
-        for (a, b) in linkedlist {
-            println!("{}: {}", a, b);
-        }
-
-        //  TODO: Hacer algo con la linkedlist
-        Ok(())
     }
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
@@ -221,7 +191,7 @@ impl Results {
             .insert("description", self.app_description.as_str())
             .insert("package", self.app_package.as_str())
             .insert("version", self.app_version.as_str())
-            .insert("fingerprint", self.app_fingerprints.len())
+            .insert("fingerprint", &self.app_fingerprint)
             .insert_array("warnings", |builder| {
                 let mut builder = builder;
                 for warn in &self.warnings {
@@ -324,11 +294,11 @@ impl Results {
                                       self.app_version_num.unwrap())
                 .into_bytes()));
         }
-        if !self.app_fingerprints.is_empty() {
-            try!(f.write_all(&format!("<li><strong>Fingerprints:</strong> {}</li>",
-                                      self.app_fingerprints.len())
-                .into_bytes()));
-        }
+        try!(f.write_all(b"<li><strong>Fingerprints:</strong><ul>"));
+        try!(f.write_all(&format!("<li>MD5: {}</li>", self.app_fingerprint.get_md5().to_hex()).into_bytes()));
+        try!(f.write_all(&format!("<li>SHA-1: {}</li>", self.app_fingerprint.get_sha1().to_hex()).into_bytes()));
+        try!(f.write_all(&format!("<li>SHA-256: {}</li>", self.app_fingerprint.get_sha256().to_hex()).into_bytes()));
+        try!(f.write_all(b"</ul></li>"));
 
         try!(f.write_all(b"<li><a href=\"src/index.html\" \
                         title=\"Source code\">Check source code</a></li>"));
@@ -753,152 +723,5 @@ impl Results {
             };
         }
         res
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Ord)]
-pub struct Vulnerability {
-    criticity: Criticity,
-    name: String,
-    description: String,
-    file: String,
-    start_line: Option<usize>,
-    end_line: Option<usize>,
-    code: Option<String>,
-}
-
-impl Vulnerability {
-    pub fn new<S: AsRef<str>, P: AsRef<Path>>(criticity: Criticity,
-                                              name: S,
-                                              description: S,
-                                              file: P,
-                                              start_line: Option<usize>,
-                                              end_line: Option<usize>,
-                                              code: Option<String>)
-                                              -> Vulnerability {
-        Vulnerability {
-            criticity: criticity,
-            name: String::from(name.as_ref()),
-            description: String::from(description.as_ref()),
-            file: String::from(file.as_ref().to_string_lossy().into_owned()),
-            start_line: start_line,
-            end_line: end_line,
-            code: match code {
-                Some(s) => Some(String::from(s.as_ref())),
-                None => None,
-            },
-        }
-    }
-
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
-    }
-
-    pub fn get_name(&self) -> &str {
-        self.name.as_str()
-    }
-
-    pub fn get_description(&self) -> &str {
-        self.description.as_str()
-    }
-
-    pub fn get_file(&self) -> &Path {
-        Path::new(&self.file)
-    }
-
-    pub fn get_code(&self) -> Option<&str> {
-        match self.code.as_ref() {
-            Some(s) => Some(s.as_str()),
-            None => None,
-        }
-    }
-
-    pub fn get_start_line(&self) -> Option<usize> {
-        self.start_line
-    }
-
-    pub fn get_end_line(&self) -> Option<usize> {
-        self.end_line
-    }
-}
-
-impl Serialize for Vulnerability {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
-        where S: Serializer
-    {
-        try!(serializer.serialize_struct("vulnerability", self));
-        Ok(())
-    }
-}
-
-impl<'v> MapVisitor for &'v Vulnerability {
-    fn visit<S>(&mut self, serializer: &mut S) -> result::Result<Option<()>, S::Error>
-        where S: Serializer
-    {
-        try!(serializer.serialize_struct_elt("criticity", self.criticity));
-        try!(serializer.serialize_struct_elt("name", self.name.as_str()));
-        try!(serializer.serialize_struct_elt("description", self.description.as_str()));
-        try!(serializer.serialize_struct_elt("file", self.file.as_str()));
-        if self.start_line.is_some() {
-            try!(serializer.serialize_struct_elt("start_line", self.start_line));
-        }
-        if self.end_line.is_some() {
-            try!(serializer.serialize_struct_elt("end_line", self.end_line));
-        }
-        Ok(None)
-    }
-}
-
-impl PartialOrd for Vulnerability {
-    fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
-        if self.criticity < other.criticity {
-            Some(Ordering::Less)
-        } else if self.criticity > other.criticity {
-            Some(Ordering::Greater)
-        } else {
-            if self.file < other.file {
-                Some(Ordering::Less)
-            } else if self.file > other.file {
-                Some(Ordering::Greater)
-            } else {
-                if self.start_line < other.start_line {
-                    Some(Ordering::Less)
-                } else if self.start_line > other.start_line {
-                    Some(Ordering::Greater)
-                } else {
-                    if self.name < other.name {
-                        Some(Ordering::Less)
-                    } else if self.name > other.name {
-                        Some(Ordering::Greater)
-                    } else {
-                        Some(Ordering::Equal)
-                    }
-                }
-            }
-        }
-    }
-}
-
-pub struct Benchmark {
-    label: String,
-    duration: Duration,
-}
-
-impl Benchmark {
-    pub fn new(label: &str, duration: Duration) -> Benchmark {
-        Benchmark {
-            label: String::from(label),
-            duration: duration,
-        }
-    }
-}
-
-impl fmt::Display for Benchmark {
-    fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
-        write!(f,
-               "{}: {}.{}s",
-               self.label,
-               self.duration.as_secs(),
-               self.duration.subsec_nanos())
     }
 }
