@@ -50,7 +50,8 @@ impl Results {
             let fingerprint = match FingerPrint::new(config) {
                 Ok(f) => f,
                 Err(e) => {
-                    print_error(format!("An error occurred when trying to fingerprint the application: {}",
+                    print_error(format!("An error occurred when trying to fingerprint the \
+                                         application: {}",
                                         e),
                                 config.is_verbose());
                     return None;
@@ -295,9 +296,14 @@ impl Results {
                 .into_bytes()));
         }
         try!(f.write_all(b"<li><strong>Fingerprints:</strong><ul>"));
-        try!(f.write_all(&format!("<li>MD5: {}</li>", self.app_fingerprint.get_md5().to_hex()).into_bytes()));
-        try!(f.write_all(&format!("<li>SHA-1: {}</li>", self.app_fingerprint.get_sha1().to_hex()).into_bytes()));
-        try!(f.write_all(&format!("<li>SHA-256: {}</li>", self.app_fingerprint.get_sha256().to_hex()).into_bytes()));
+        try!(f.write_all(&format!("<li>MD5: {}</li>", self.app_fingerprint.get_md5().to_hex())
+            .into_bytes()));
+        try!(f.write_all(&format!("<li>SHA-1: {}</li>",
+                                  self.app_fingerprint.get_sha1().to_hex())
+            .into_bytes()));
+        try!(f.write_all(&format!("<li>SHA-256: {}</li>",
+                                  self.app_fingerprint.get_sha256().to_hex())
+            .into_bytes()));
         try!(f.write_all(b"</ul></li>"));
 
         try!(f.write_all(b"<li><a href=\"src/index.html\" \

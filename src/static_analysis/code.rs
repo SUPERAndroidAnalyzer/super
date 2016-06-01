@@ -129,6 +129,13 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
     if config.is_bench() {
         results.add_benchmark(Benchmark::new("Total code analysis", code_start.elapsed()));
     }
+
+    if config.is_verbose() {
+        println!("");
+        println!("{}", "The source code was analized correctly!".green());
+    } else if !config.is_quiet() {
+        println!("Source code analyzed.");
+    }
 }
 
 fn analyze_file<P: AsRef<Path>>(path: P,
@@ -525,13 +532,23 @@ mod tests {
         let rule = rules.get(0).unwrap();
 
         let should_match = &["password = \"secret\";",
+                             "p@ssword = \"secret\";",
                              "pass = \"secret\";",
                              "pwd = \"secret\";",
                              "passwd = \"secret\";",
                              "password = \"\";",
                              "password=\"    \";",
-                             "PASS = \"secret\";"];
-        let should_not_match = &["p = \"android.intent.extra.EMAIL\";", "pasbook = \"hello!\";"];
+                             "PASS = \"secret\";",
+                             "P@SS = \"secret\";",
+                             "pa$$ = \"secret\";",
+                             "p@s$wrd = \"secret\";",
+                             "@string/pass",
+                             "@string/pswd"];
+        let should_not_match = &["p = \"android.intent.extra.EMAIL\";",
+                                 //  "pasbook = \"hello!\";"
+                                 "p$$ = \"secret\"",
+                                 //  "p$ = \"secret\"",
+                                 "pw = \"secret\""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -617,10 +634,54 @@ mod tests {
     }
 
     #[test]
-    fn it_ipv4_disclosure() {
+    fn it_hidden_fields() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(4).unwrap();
+
+        let should_match = &["setVisible(View.INVISIBLE)",
+                             "setVisible ( View.invisible )",
+                             "android:visibility = \"invisible\"",
+                             "android:background = \"NULL\"",
+                             "android:background=\"null\"",
+                             "android:background = \"@null\""];
+        let should_not_match = &["android:background = \"@color/red\""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_empty_catch() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(5).unwrap();
+
+        let should_match = &["catch(Ex e){}",
+                             "catch (Ex|HelloEx e) {     }",
+                             "catch (Ex e) {
+                             }"];
+        let should_not_match = &["catch (Ex e) { e.printStackTrace(); }"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_ipv4_disclosure() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(6).unwrap();
 
         let should_match = &["192.168.1.1", "0.0.0.0", "255.255.255.255", "13.0.130.23.52"];
         let should_not_match = &["0000.000.000.000",
@@ -647,7 +708,7 @@ mod tests {
     fn it_ipv6_disclosure() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(5).unwrap();
+        let rule = rules.get(7).unwrap();
 
         let should_match = &["::1",
                              "2001:db8::ff00:42:8329",
@@ -658,7 +719,8 @@ mod tests {
         let should_not_match = &["3ffe:10900:4545:3:200:f8ff:fe21:67cf",
                                  "3ffe:4545:3:200:f8ff:fe21:67cf",
                                  "3ffe:1900:4545:d:",
-                                 "3ffe:1900:4545:d:aaa"];
+                                 "3ffe:1900:4545:d:aaa",
+                                 " ::l"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -673,7 +735,7 @@ mod tests {
     fn it_math_random() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(6).unwrap();
+        let rule = rules.get(8).unwrap();
 
         let should_match = &["Math.random()", "Math.random( )", "Math . random ()"];
         let should_not_match =
@@ -692,7 +754,7 @@ mod tests {
     fn it_log() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(7).unwrap();
+        let rule = rules.get(9).unwrap();
 
         let should_match = &["Log.e(\"Hello: \" + var)",
                              "Log.e (\"Hello: \" +var)",

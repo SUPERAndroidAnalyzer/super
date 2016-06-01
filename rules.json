@@ -1,8 +1,9 @@
 [{
-    "regex": "(?i)p(ass(words?)?|wd?|ass?wd)\\s*=\\s*\".*\"\\s*;",
+    "regex": "(?i)((p((a|@)(s|\\$)(s|\\$)?(w(o|0)rd(s|\\$)?)?|wr?d?|(a|@)(s|\\$)(s|\\$)?wd)|(p(((s|\\$)(s|\\$)?(w(o|0)?r?d(s|\\$)?)?)|rd))))\\s*=\\s*\".*\"\\s*;",
     "label": "Passwords",
     "description": "Passwords should not be written in the source code, since they can be read by code decompilers.",
-    "criticity": "critical"
+    "criticity": "critical",
+    "whitelist": ["(\\W|_|^)p\\$\\$?(\\W|_|$)", "(\\W|_|^)ps(\\W|_|$)", "(\\W|_|^)pw(\\W|_|$)", "(\\W|_|^)prd(\\W|_|$)", "(\\W|_|^)pwr(\\W|_|$)", "(\\W|_|^)pss(\\W|_|$)", "(\\W|_|^)p\\$(\\W|_|$)"]
 }, {
     "regex": "\"((ftp|http)s?:)?//[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-\\?&]*)?\"",
     "label": "URL Disclosure",
@@ -10,7 +11,7 @@
     "criticity": "warning",
     "whitelist": ["\"http://schemas\\.android\\.com[\\w/]*\"", "\"http://www\\.w3\\.org/2005/Atom\""]
 }, {
-    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*[:alnum:]+\\s*)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*[:alnum:]+)*)?\\s+[:alnum:]+\\s*\\)",
+    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+\\s*)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
     "label": "Generic Exception in catch",
     "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion.",
     "criticity": "low"
@@ -20,15 +21,26 @@
     "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion.",
     "criticity": "low"
 }, {
+    "regex": "(setVisible\\s*\\(\\s*View\\s*\\.\\s*(INVISIBLE|invisible)\\s*\\))|(android:visibility\\s*=\\s*\"invisible\")|(android:background\\s*=\\s*\"(?i)(@?null)\")",
+    "label": "Hidden fields",
+    "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosire.",
+    "criticity": "low"
+}, {
+    "regex": "catch\\s*\\((\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
+    "label": "Empty catch",
+    "description": "Empty catches can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities.",
+    "criticity": "low"
+}, {
     "regex": "(\\D|^)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\D|$)",
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
     "criticity": "warning"
 }, {
-    "regex": "([^:xdigit:]|^)([:xdigit:]{1,4}:){7,7}[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,7}:|([:xdigit:]{1,4}:){1,6}:[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,5}(:[:xdigit:]{1,4}){1,2}|([:xdigit:]{1,4}:){1,4}(:[:xdigit:]{1,4}){1,3}|([:xdigit:]{1,4}:){1,3}(:[:xdigit:]{1,4}){1,4}|([:xdigit:]{1,4}:){1,2}(:[:xdigit:]{1,4}){1,5}|[:xdigit:]{1,4}:((:[:xdigit:]{1,4}){1,6})|:((:[:xdigit:]{1,4}){1,7}|:)|fe80:(:[:xdigit:]{0,4}){0,4}%[:xdigit:]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([:xdigit:]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])([^:xdigit:]|$)",
+    "regex": "([:^xdigit:]|^)([:xdigit:]{1,4}:){7,7}[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,7}:|([:xdigit:]{1,4}:){1,6}:[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,5}(:[:xdigit:]{1,4}){1,2}|([:xdigit:]{1,4}:){1,4}(:[:xdigit:]{1,4}){1,3}|([:xdigit:]{1,4}:){1,3}(:[:xdigit:]{1,4}){1,4}|([:xdigit:]{1,4}:){1,2}(:[:xdigit:]{1,4}){1,5}|[:xdigit:]{1,4}:((:[:xdigit:]{1,4}){1,6})|:((:[:xdigit:]{1,4}){1,7}|:)|fe80:(:[:xdigit:]{0,4}){0,4}%[:xdigit:]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([:xdigit:]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])([:^xdigit:]|$)",
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
-    "criticity": "warning"
+    "criticity": "warning",
+    "whitelist": ["[:^xdigit:]::[:^xdigit:]"]
 }, {
     "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
     "label": "Insecure Random Function",
