@@ -18,63 +18,6 @@ use {Error, Result, Criticity, print_error, print_warning, file_exists};
 
 const MAX_THREADS: i64 = u8::MAX as i64;
 
-#[derive(Debug, Ord, Eq)]
-pub struct PermissionConfig {
-    permission: Permission,
-    criticity: Criticity,
-    label: String,
-    description: String,
-}
-
-impl PartialEq for PermissionConfig {
-    fn eq(&self, other: &PermissionConfig) -> bool {
-        self.permission == other.permission
-    }
-}
-
-impl PartialOrd for PermissionConfig {
-    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
-        if self.permission < other.permission {
-            Some(Ordering::Less)
-        } else if self.permission > other.permission {
-            Some(Ordering::Greater)
-        } else {
-            Some(Ordering::Equal)
-        }
-    }
-}
-
-impl PermissionConfig {
-    fn new(permission: Permission,
-           criticity: Criticity,
-           label: &str,
-           description: &str)
-           -> PermissionConfig {
-        PermissionConfig {
-            permission: permission,
-            criticity: criticity,
-            label: String::from(label),
-            description: String::from(description),
-        }
-    }
-
-    pub fn get_permission(&self) -> Permission {
-        self.permission
-    }
-
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
-    }
-
-    pub fn get_label(&self) -> &str {
-        self.label.as_str()
-    }
-
-    pub fn get_description(&self) -> &str {
-        self.description.as_str()
-    }
-}
-
 #[derive(Debug)]
 pub struct Config {
     app_id: String,
@@ -583,5 +526,62 @@ mod tests {
                                 config.get_downloads_folder(),
                                 config.get_app_id()))
             .unwrap();
+    }
+}
+
+#[derive(Debug, Ord, Eq)]
+pub struct PermissionConfig {
+    permission: Permission,
+    criticity: Criticity,
+    label: String,
+    description: String,
+}
+
+impl PartialEq for PermissionConfig {
+    fn eq(&self, other: &PermissionConfig) -> bool {
+        self.permission == other.permission
+    }
+}
+
+impl PartialOrd for PermissionConfig {
+    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
+        if self.permission < other.permission {
+            Some(Ordering::Less)
+        } else if self.permission > other.permission {
+            Some(Ordering::Greater)
+        } else {
+            Some(Ordering::Equal)
+        }
+    }
+}
+
+impl PermissionConfig {
+    fn new(permission: Permission,
+           criticity: Criticity,
+           label: &str,
+           description: &str)
+           -> PermissionConfig {
+        PermissionConfig {
+            permission: permission,
+            criticity: criticity,
+            label: String::from(label),
+            description: String::from(description),
+        }
+    }
+
+    pub fn get_permission(&self) -> Permission {
+        self.permission
+    }
+
+    pub fn get_criticity(&self) -> Criticity {
+        self.criticity
+    }
+
+    pub fn get_label(&self) -> &str {
+        self.label.as_str()
+    }
+
+    pub fn get_description(&self) -> &str {
+        self.description.as_str()
     }
 }
