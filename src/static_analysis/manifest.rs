@@ -77,13 +77,19 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                            This allows any malicious person to inject arbitrary code in the \
                            application. This option should only be used while in development.";
 
+        let line = get_line(manifest.get_code(), "android:debuggable=\"true\"").ok();
+        let code = match line {
+            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+            None => None,
+        };
+
         let vuln = Vulnerability::new(criticity,
                                       "Manifest Debug",
                                       description,
                                       "AndroidManifest.xml",
-                                      None,
-                                      None,
-                                      None);
+                                      line,
+                                      line,
+                                      code);
         results.add_vulnerability(vuln);
 
         if config.is_verbose() {
@@ -97,13 +103,19 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                              as such, but could be in devices with small heap. Check if the \
                              large heap is actually needed.";
 
+        let line = get_line(manifest.get_code(), "android:largeHeap=\"true\"").ok();
+        let code = match line {
+            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+            None => None,
+        };
+
         let vuln = Vulnerability::new(criticity,
                                       "Large heap",
                                       description,
                                       "AndroidManifest.xml",
-                                      None,
-                                      None,
-                                      None);
+                                      line,
+                                      line,
+                                      code);
         results.add_vulnerability(vuln);
 
         if config.is_verbose() {
@@ -117,13 +129,19 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                            people with physical access could use adb to get private data of your \
                            app into their PC.";
 
+        let line = get_line(manifest.get_code(), "android:allowBackup=\"true\"").ok();
+        let code = match line {
+            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+            None => None,
+        };
+
         let vuln = Vulnerability::new(criticity,
                                       "Allows Backup",
                                       description,
                                       "AndroidManifest.xml",
-                                      None,
-                                      None,
-                                      None);
+                                      line,
+                                      line,
+                                      code);
         results.add_vulnerability(vuln);
 
         if config.is_verbose() {
