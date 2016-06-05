@@ -179,9 +179,13 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                 Some(check) => {
                     let caps = rule.get_regex().captures(&code[s..e]).unwrap();
 
-                    let fc1 = caps.name("fc1").unwrap();
+                    let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
-                    let mut r = check.replace("{fc1}", fc1);
+                    let mut r = check.clone();
+
+                    if let Some(fc1) = fcheck1 {
+                        r = r.replace("{fc1}", fc1);
+                    }
 
                     if let Some(fc2) = fcheck2 {
                         r = r.replace("{fc2}", fc2);
@@ -398,20 +402,6 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                    capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
                     print_warning("You must have a capture group named fc1 to use the capture \
                                    fc2.",
-                                  config.is_verbose());
-                    return Err(Error::ParseError);
-                }
-
-                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
-                    print_warning("You must provide at least the fc1 capture group in the \
-                                   regular expresion.",
-                                  config.is_verbose());
-                    return Err(Error::ParseError);
-                }
-
-                if !s.contains("{fc1}") {
-                    print_warning("You must provide at least the fc1 capture group replacement \
-                                   in the forward check.",
                                   config.is_verbose());
                     return Err(Error::ParseError);
                 }
