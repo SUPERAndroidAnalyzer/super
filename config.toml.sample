@@ -17,6 +17,6 @@ description = "Even if the application can create its own permissions, it's disc
 # Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.INTERNET" # Internet access permission
-criticity = "low"
+criticity = "warning"
 label = "Internet permission"
-description = "The application needs Internet access. This is not a vulnerability as such, but it needs additional security measures if it's being connected to the Internet. Check if the permission is actually needed."
+description = "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed."

@@ -450,9 +450,67 @@ impl Default for Config {
     }
 }
 
+#[derive(Debug, Ord, Eq)]
+pub struct PermissionConfig {
+    permission: Permission,
+    criticity: Criticity,
+    label: String,
+    description: String,
+}
+
+impl PartialEq for PermissionConfig {
+    fn eq(&self, other: &PermissionConfig) -> bool {
+        self.permission == other.permission
+    }
+}
+
+impl PartialOrd for PermissionConfig {
+    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
+        if self.permission < other.permission {
+            Some(Ordering::Less)
+        } else if self.permission > other.permission {
+            Some(Ordering::Greater)
+        } else {
+            Some(Ordering::Equal)
+        }
+    }
+}
+
+impl PermissionConfig {
+    fn new(permission: Permission,
+           criticity: Criticity,
+           label: &str,
+           description: &str)
+           -> PermissionConfig {
+        PermissionConfig {
+            permission: permission,
+            criticity: criticity,
+            label: String::from(label),
+            description: String::from(description),
+        }
+    }
+
+    pub fn get_permission(&self) -> Permission {
+        self.permission
+    }
+
+    pub fn get_criticity(&self) -> Criticity {
+        self.criticity
+    }
+
+    pub fn get_label(&self) -> &str {
+        self.label.as_str()
+    }
+
+    pub fn get_description(&self) -> &str {
+        self.description.as_str()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use {Criticity, file_exists};
+    use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
     use std::fs::File;
@@ -527,61 +585,34 @@ mod tests {
                                 config.get_app_id()))
             .unwrap();
     }
-}
 
-#[derive(Debug, Ord, Eq)]
-pub struct PermissionConfig {
-    permission: Permission,
-    criticity: Criticity,
-    label: String,
-    description: String,
-}
+    #[test]
+    fn it_config_sample() {
+        fs::rename("config.toml", "config.toml.bk").unwrap();
+        fs::rename("config.toml.sample", "config.toml").unwrap();
 
-impl PartialEq for PermissionConfig {
-    fn eq(&self, other: &PermissionConfig) -> bool {
-        self.permission == other.permission
-    }
-}
+        let config = Config::new("test_app", false, false, false, false).unwrap();
+        assert_eq!(config.get_threads(), 2);
+        assert_eq!(config.get_downloads_folder(), "downloads");
+        assert_eq!(config.get_dist_folder(), "dist");
+        assert_eq!(config.get_results_folder(), "results");
+        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.1.1.jar");
+        assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
+        assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
+        assert_eq!(config.get_results_template(), "vendor/results_template");
+        assert_eq!(config.get_rules_json(), "rules.json");
+        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
+        assert_eq!(config.get_unknown_permission_description(),
+                   "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers.");
 
-impl PartialOrd for PermissionConfig {
-    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
-        if self.permission < other.permission {
-            Some(Ordering::Less)
-        } else if self.permission > other.permission {
-            Some(Ordering::Greater)
-        } else {
-            Some(Ordering::Equal)
-        }
-    }
-}
+        let permission = config.get_permissions().next().unwrap();
+        assert_eq!(permission.get_permission(), Permission::AndroidPermissionInternet);
+        assert_eq!(permission.get_criticity(), Criticity::Warning);
+        assert_eq!(permission.get_label(), "Internet permission");
+        assert_eq!(permission.get_description(), "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed.");
 
-impl PermissionConfig {
-    fn new(permission: Permission,
-           criticity: Criticity,
-           label: &str,
-           description: &str)
-           -> PermissionConfig {
-        PermissionConfig {
-            permission: permission,
-            criticity: criticity,
-            label: String::from(label),
-            description: String::from(description),
-        }
-    }
-
-    pub fn get_permission(&self) -> Permission {
-        self.permission
-    }
-
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
-    }
-
-    pub fn get_label(&self) -> &str {
-        self.label.as_str()
-    }
-
-    pub fn get_description(&self) -> &str {
-        self.description.as_str()
+        fs::rename("config.toml", "config.toml.sample").unwrap();
+        fs::rename("config.toml.bk", "config.toml").unwrap();
     }
 }
