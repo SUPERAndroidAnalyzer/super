@@ -864,4 +864,55 @@ mod tests {
         }
     }
     
+    #[test]
+    fn it_worldReadablePermissions { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(14).unwrap(); 
+
+        let should_match = &["MODE_WORLD_READABLE",
+                             "openFileOutput(\"file.txt  \", 1) ",
+                             "openFileOutput(\"filename\", 1) ",
+                             "openFileOutput(filepath, 1) ",
+                             "openFileOutput(path_to_file, 1) "];
+
+        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
+                                 "openFileOutput(, 1) ",
+                                 "openFileOutput() ",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+    
+    #[test]
+    fn it_label_regex() { // Note: change the label here to something easier to understand
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(0).unwrap(); //Note: put here the index of the regex in the rules.json file, starting from 0.
+
+        let should_match = &["MODE_WORLD_WRITABLE",
+                             "openFileOutput(\"file.txt  \", 2) ",
+                             "openFileOutput(\"filename\", 2) ",
+                             "openFileOutput(filepath, 2) ",
+                             "openFileOutput(path_to_file, 2) "];
+
+        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
+                                 "openFileOutput(, 2) ",
+                                 "openFileOutput() ",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
     }
