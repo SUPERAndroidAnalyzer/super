@@ -75,4 +75,14 @@
     "criticity": "high",
     "label": "Sleep Method",
     "description": "Sleep Method is used with vars as arguments. If that vars are modifeid it could force the aplication to stop indefinetly."
+},{
+    "regex": "(?:(?:Context\\.)?MODE_WORLD_READABLE)|(?:openFileOutput\\(\\s*\"?.+\"?\\s*,\\s*1\\s*\\))",
+    "criticity": "high",
+    "label": "world readable permissions",
+    "description": "Setting world readable permissions allows to anyone (with access to the target file) to read file content."
+},{
+    "regex": "(?:(?:Context\\.)?MODE_WORLD_WRITABLE)|(?:openFileOutput\\(\\s*\"?.+\"?\\s*,\\s*2\\s*\\))",
+    "criticity": "high",
+    "label": "world writable permissions",
+    "description": "Setting world writable permissions allows to anyone (with access to the target file) to modify file content."
 }]
