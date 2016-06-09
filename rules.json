@@ -5,31 +5,36 @@
     "criticity": "critical",
     "whitelist": ["(\\W|_|^)p\\$\\$?(\\W|_|$)", "(\\W|_|^)ps(\\W|_|$)", "(\\W|_|^)pw(\\W|_|$)", "(\\W|_|^)prd(\\W|_|$)", "(\\W|_|^)pwr(\\W|_|$)", "(\\W|_|^)pss(\\W|_|$)", "(\\W|_|^)p\\$(\\W|_|$)"]
 }, {
-    "regex": "\"((ftp|http)s?:)?//[\\w\\.-]+\\.[a-zA-Z]{2,6}(/[\\w\\./-\\?&]*)?\"",
+    "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)?[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
+    "whitelist": [
+        "\"android.intent.extra.EMAIL\"",
+        "\"http:\/\/schemas.android.com\/apk\/res\/android\"",
+        "\"http:\/\/www.w3.org\/2005\/Atom\""
+    ],
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
-    "criticity": "warning",
-    "whitelist": ["\"http://schemas\\.android\\.com[\\w/]*\"", "\"http://www\\.w3\\.org/2005/Atom\""]
+    "criticity": "warning"
 }, {
-    "regex": "catch\\s*\\(\\s*((\\s*\\|?\\s*\\w+\\s*)*\\|)?\\s*Exception\\s*((\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
+    "regex": "catch\\s*\\(\\s*(?:(?:\\s*\\|?\\s*\\w+)*\\s*\\|)?\\s*Exception\\s*(?:(?:\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
+    "criticity": "low",
     "label": "Generic Exception in catch",
-    "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion.",
-    "criticity": "low"
+    "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion."
 }, {
-    "regex": "throws\\s+([:alnum:]*\\s*,\\s*)*Exception\\s*[,{]",
+    "regex": "throws\\s+(?:\\w*\\s*,\\s*)*Exception\\s*[,{]",
+    "criticity": "low",
     "label": "Generic Exception in Throws",
-    "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion.",
-    "criticity": "low"
+    "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion."
 }, {
-    "regex": "(setVisible\\s*\\(\\s*View\\s*\\.\\s*(INVISIBLE|invisible)\\s*\\))|(android:visibility\\s*=\\s*\"invisible\")|(android:background\\s*=\\s*\"(?i)(@?null)\")",
+    "regex": "(?:setVisible\\s*\\(\\s*View\\s*\\.\\s*(?:INVISIBLE|invisible)\\s*\\))|(?:android:visibility\\s*=\\s*\"invisible\")|(?:android:background\\s*=\\s*\"(?i)(?:@?null)\")",
     "label": "Hidden fields",
     "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosire.",
     "criticity": "low"
+}
 }, {
-    "regex": "catch\\s*\\((\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
+    "regex": "catch\\s*\\((?:\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
+    "criticity": "low",
     "label": "Empty catch",
-    "description": "Empty catches can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities.",
-    "criticity": "low"
+    "description": "Empty catches can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 }, {
     "regex": "(\\D|^)((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\D|$)",
     "label": "IP Disclosure",
