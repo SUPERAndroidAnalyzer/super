@@ -741,18 +741,22 @@ mod tests {
     }
 
     #[test]
-    fn it_log() {
+    fn it_log() { 
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(9).unwrap();
+        let rule = rules.get(9).unwrap(); 
 
-        let should_match = &["Log.e(\"Hello: \" + var)",
-                             "Log.e (\"Hello: \" +var)",
-                             "Log.wtf ( \"Hello: \"+var )",
-                             "Log.i(var)",
-                             "Log . i ( var )",
-                             "Log.println(\"Hello: \" + var + \" goodbye\")"];
-        let should_not_match = &["Log.e(\"Hello!\")", "Log.wtf( \"Hello!\" )"];
+        let should_match = &["Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + mensajeAMostrar);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);"];
+
+        let should_not_match = &["Log.e(\"Hello!\")",
+                                 "Log.e(\"Hello: \" + var)",
+                                 "Log.e(\"Hello: \" +var)",
+                                 "Log.wtf(\"Hello: \"+var)",
+                                 "Log.i(var)",
+                                 "Log.println(\"Hello: \" + var + \" goodbye\")"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -762,7 +766,8 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-
+    
+    
     #[test]
     fn it_file_separator() {
         let config = Default::default();
@@ -780,4 +785,83 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-}
+
+    #[test]
+    fn it_file_separator_unix() { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(11).unwrap(); 
+
+        let should_match = &["= \"/etc/temp/library/lib.txt \"",
+                             "= \"/\"",
+                             "= \"/etc/temp/library/lib\"",
+                             "= \"     /etc/temp/library/lib\""];
+
+        let should_not_match = &["/etc/temp/library/lib.txt",
+                                 "= \"/////\"",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+    
+     #[test]
+    fn it_weak_algs() { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(12).unwrap(); 
+
+        let should_match = &["DESKeySpec",
+                             "getInstance(MD5)",
+                             "getInstance(\"MD5\")",
+                             "getInstance(SHA-1)",
+                             "getInstance(\"SHA-1\")"];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+    
+    #[test]
+    fn it_sleepMethod() { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(13).unwrap(); 
+
+        let should_match = &["Thread.sleep(Usertime+Variable+Variable);",
+                             "Thread.sleep(Usertime+13+123+1+24);",
+                             "Thread . sleep (200+asdad+adasasda );",
+                             "Thread . sleep (200+asdad+adasasda+30 );",
+                             "Thread.sleep(10 + 10 + 10241 + Usertime);",
+                             "SystemClock.sleep(Usertime);"];
+
+        let should_not_match = &["Thread.sleep(2000);",
+                                 "Thread.sleep(“1000” + Usertime);",
+                                 "Thread.sleep();",
+                                 "SystemClock.sleep(1000);"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+    
+    }
