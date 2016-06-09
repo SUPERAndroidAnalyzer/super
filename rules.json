@@ -29,7 +29,6 @@
     "label": "Hidden fields",
     "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosire.",
     "criticity": "low"
-}
 }, {
     "regex": "catch\\s*\\((?:\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
     "criticity": "low",
