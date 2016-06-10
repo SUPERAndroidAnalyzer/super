@@ -741,10 +741,10 @@ mod tests {
     }
 
     #[test]
-    fn it_log() { 
+    fn it_log() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(9).unwrap(); 
+        let rule = rules.get(9).unwrap();
 
         let should_match = &["Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + mensajeAMostrar);",
                              " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
@@ -766,8 +766,8 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    
-    
+
+
     #[test]
     fn it_file_separator() {
         let config = Default::default();
@@ -787,10 +787,10 @@ mod tests {
     }
 
     #[test]
-    fn it_file_separator_unix() { 
+    fn it_file_separator_unix() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(11).unwrap(); 
+        let rule = rules.get(11).unwrap();
 
         let should_match = &["= \"/etc/temp/library/lib.txt \"",
                              "= \"/\"",
@@ -810,12 +810,12 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    
+
      #[test]
-    fn it_weak_algs() { 
+    fn it_weak_algs() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(12).unwrap(); 
+        let rule = rules.get(12).unwrap();
 
         let should_match = &["DESKeySpec",
                              "getInstance(MD5)",
@@ -836,12 +836,12 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    
+
     #[test]
-    fn it_sleepMethod() { 
+    fn it_sleepMethod() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(13).unwrap(); 
+        let rule = rules.get(13).unwrap();
 
         let should_match = &["Thread.sleep(Usertime+Variable+Variable);",
                              "Thread.sleep(Usertime+13+123+1+24);",
@@ -863,12 +863,12 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    
+
     #[test]
-    fn it_worldReadablePermissions { 
+    fn it_world_readable_permissions() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(14).unwrap(); 
+        let rule = rules.get(14).unwrap();
 
         let should_match = &["MODE_WORLD_READABLE",
                              "openFileOutput(\"file.txt  \", 1) ",
@@ -889,12 +889,12 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    
+
     #[test]
-    fn it_label_regex() { // Note: change the label here to something easier to understand
+    fn it_world_writable_permissions() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(0).unwrap(); //Note: put here the index of the regex in the rules.json file, starting from 0.
+        let rule = rules.get(15).unwrap();
 
         let should_match = &["MODE_WORLD_WRITABLE",
                              "openFileOutput(\"file.txt  \", 2) ",
@@ -915,4 +915,4 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-    }
+}
