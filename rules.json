@@ -5,11 +5,10 @@
     "criticity": "critical",
     "whitelist": ["(\\W|_|^)p\\$\\$?(\\W|_|$)", "(\\W|_|^)ps(\\W|_|$)", "(\\W|_|^)pw(\\W|_|$)", "(\\W|_|^)prd(\\W|_|$)", "(\\W|_|^)pwr(\\W|_|$)", "(\\W|_|^)pss(\\W|_|$)", "(\\W|_|^)p\\$(\\W|_|$)"]
 }, {
-    "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)?[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
+    "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
     "whitelist": [
-        "\"android.intent.extra.EMAIL\"",
-        "\"http:\/\/schemas.android.com\/apk\/res\/android\"",
-        "\"http:\/\/www.w3.org\/2005\/Atom\""
+        "schemas.android.com/apk",
+        "www.w3.org/2005/Atom"
     ],
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
