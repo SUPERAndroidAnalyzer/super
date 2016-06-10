@@ -1,10 +1,20 @@
 use std::{fs, io};
 use std::path::Path;
-use std::io::Write;
+use std::io::{Read, Write};
 
+use xml::reader::{EventReader, XmlEvent};
+use xml::ParserConfig;
 use colored::Colorize;
 
-use super::Criticity;
+use super::{Criticity, Result, Config};
+
+pub const PARSER_CONFIG: ParserConfig = ParserConfig {
+    trim_whitespace: true,
+    whitespace_to_characters: false,
+    cdata_to_characters: false,
+    ignore_comments: true,
+    coalesce_characters: true,
+};
 
 pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     io::stderr()
@@ -58,6 +68,52 @@ pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
 
 pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
     fs::metadata(path).is_ok()
+}
+
+pub fn get_string(label: &str, config: &Config) -> Result<String> {
+    let mut file = try!(fs::File::open({
+        let path = format!("{}/{}/res/values-en/strings.xml",
+                           config.get_dist_folder(),
+                           config.get_app_id());
+        if file_exists(&path) {
+            path
+        } else {
+            format!("{}/{}/res/values/strings.xml",
+                    config.get_dist_folder(),
+                    config.get_app_id())
+        }
+    }));
+
+    let mut code = String::new();
+    try!(file.read_to_string(&mut code));
+
+    let bytes = code.into_bytes();
+    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
+
+    let mut found = false;
+    for e in parser {
+        match e {
+            Ok(XmlEvent::StartElement { name, attributes, .. }) => {
+                match name.local_name.as_str() {
+                    "string" => {
+                        for attr in attributes {
+                            if attr.name.local_name == "name" && attr.value == label {
+                                found = true;
+                            }
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            Ok(XmlEvent::Characters(data)) => {
+                if found {
+                    return Ok(data);
+                }
+            }
+            _ => {}
+        }
+    }
+    Ok(String::new())
 }
 
 #[cfg(test)]

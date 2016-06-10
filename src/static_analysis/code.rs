@@ -746,10 +746,14 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(9).unwrap();
 
-        let should_match = &["Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + mensajeAMostrar);",
-                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
-                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
-                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);"];
+        let should_match = &["Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
+                              \" + mensajeAMostrar);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
+                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
+                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
+                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);"];
 
         let should_not_match = &["Log.e(\"Hello!\")",
                                  "Log.e(\"Hello: \" + var)",
@@ -797,10 +801,7 @@ mod tests {
                              "= \"/etc/temp/library/lib\"",
                              "= \"     /etc/temp/library/lib\""];
 
-        let should_not_match = &["/etc/temp/library/lib.txt",
-                                 "= \"/////\"",
-                                 "",
-                                 ""];
+        let should_not_match = &["/etc/temp/library/lib.txt", "= \"/////\"", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -811,7 +812,7 @@ mod tests {
         }
     }
 
-     #[test]
+    #[test]
     fn it_weak_algs() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
@@ -823,10 +824,7 @@ mod tests {
                              "getInstance(SHA-1)",
                              "getInstance(\"SHA-1\")"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -876,10 +874,8 @@ mod tests {
                              "openFileOutput(filepath, 1) ",
                              "openFileOutput(path_to_file, 1) "];
 
-        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
-                                 "openFileOutput(, 1) ",
-                                 "openFileOutput() ",
-                                 ""];
+        let should_not_match =
+            &["openFileOutput(\"file.txt\", 0) ", "openFileOutput(, 1) ", "openFileOutput() ", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -902,10 +898,8 @@ mod tests {
                              "openFileOutput(filepath, 2) ",
                              "openFileOutput(path_to_file, 2) "];
 
-        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
-                                 "openFileOutput(, 2) ",
-                                 "openFileOutput() ",
-                                 ""];
+        let should_not_match =
+            &["openFileOutput(\"file.txt\", 0) ", "openFileOutput(, 2) ", "openFileOutput() ", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));

@@ -607,10 +607,15 @@ mod tests {
                     since it can lead to missunderstanding between developers.");
 
         let permission = config.get_permissions().next().unwrap();
-        assert_eq!(permission.get_permission(), Permission::AndroidPermissionInternet);
+        assert_eq!(permission.get_permission(),
+                   Permission::AndroidPermissionInternet);
         assert_eq!(permission.get_criticity(), Criticity::Warning);
         assert_eq!(permission.get_label(), "Internet permission");
-        assert_eq!(permission.get_description(), "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed.");
+        assert_eq!(permission.get_description(),
+                   "Allows the app to create network sockets and use custom network protocols. \
+                    The browser and other applications provide means to send data to the \
+                    internet, so this permission is not required to send data to the internet. \
+                    Check if the permission is actually needed.");
 
         fs::rename("config.toml", "config.toml.sample").unwrap();
         fs::rename("config.toml.bk", "config.toml").unwrap();

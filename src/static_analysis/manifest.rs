@@ -4,19 +4,11 @@ use std::path::Path;
 use std::str::FromStr;
 
 use xml::reader::{EventReader, XmlEvent};
-use xml::ParserConfig;
 use colored::Colorize;
 
-use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_code};
+use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnerability, get_code,
+     get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
-
-const PARSER_CONFIG: ParserConfig = ParserConfig {
-    trim_whitespace: true,
-    whitespace_to_characters: false,
-    cdata_to_characters: false,
-    ignore_comments: true,
-    coalesce_characters: true,
-};
 
 pub fn manifest_analysis(config: &Config, results: &mut Results) {
     if config.is_verbose() {
@@ -338,12 +330,27 @@ impl Manifest {
                                             manifest.set_large_heap();
                                         }
                                     }
-                                    "label" => manifest.set_label(attr.value.as_str()),
+                                    "label" => manifest.set_label(
+                                        if attr.value.starts_with("@string/") {
+                                            match get_string(&attr.value[8..], config) {
+                                                Ok(s) => s,
+                                                Err(e) => {
+                                                    print_warning(format!("An error occurred when\
+                                                                         trying to get the string\
+                                                                         for the app label in the\
+                                                                       manifest: {}.\nThe process\
+                                                                      will continue, though.", e),
+                                                                      config.is_verbose());
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            attr.value
+                                        }.as_str()),
                                     _ => {}
                                 }
                             }
                         }
-                        "provider" => {}
                         "uses-permission" => {
                             for attr in attributes {
                                 match attr.name.local_name.as_str() {
@@ -386,7 +393,6 @@ impl Manifest {
                         }
                         _ => {}
                     }
-                    // TODO
                 }
                 Ok(_) => {}
                 Err(e) => {
