@@ -8,7 +8,8 @@
     "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
     "whitelist": [
         "schemas.android.com/apk",
-        "www.w3.org/2005/Atom"
+        "www.w3.org/2005/Atom",
+        "www.apache.org/licenses"
     ],
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
