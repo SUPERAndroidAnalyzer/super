@@ -838,7 +838,7 @@ mod tests {
     }
 
     #[test]
-    fn it_sleepMethod() {
+    fn it_sleep_method() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(13).unwrap();
