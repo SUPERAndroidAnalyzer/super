@@ -16,7 +16,9 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
         println!("Reading and analyzing the certificates...")
     }
 
-    let path = format!("{}/{}/original/META-INF/",config.get_dist_folder(), config.get_app_id());
+    let path = format!("{}/{}/original/META-INF/",
+                       config.get_dist_folder(),
+                       config.get_app_id());
 
     //    Why cant I do this???
     //
@@ -31,7 +33,8 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
     for entry in fs::read_dir(&path).unwrap() {
         let dir = entry.unwrap();
 
-        if dir.path().to_str().unwrap().ends_with(".RSA") || dir.path().to_str().unwrap().ends_with(".DSA"){
+        if dir.path().to_str().unwrap().ends_with(".RSA") ||
+           dir.path().to_str().unwrap().ends_with(".DSA") {
 
             let output = Command::new("openssl")
                 .arg("pkcs7")
@@ -47,15 +50,15 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
             if output.is_err() {
                 print_error(format!("There was an error when executing the openssl \
                              command to check the certificate: {}",
-                            output.err().unwrap()),
-                        config.is_verbose());
+                                    output.err().unwrap()),
+                            config.is_verbose());
                 exit(Error::Unknown.into());
             }
 
             let output = output.unwrap();
             if !output.status.success() {
                 print_error(format!("The openssl command returned an error. More info: {}",
-                            String::from_utf8_lossy(&output.stderr[..])),
+                                    String::from_utf8_lossy(&output.stderr[..])),
                             config.is_verbose());
                 exit(Error::Unknown.into());
             };
@@ -63,7 +66,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
             let cmd = output.stdout;
             if config.is_verbose() {
                 println!("The application is signed with the following certificate: {}",
-                    dir.path().file_name().unwrap().to_str().unwrap());
+                         dir.path().file_name().unwrap().to_str().unwrap());
 
                 println!("{}", String::from_utf8_lossy(&cmd));
             }
@@ -106,18 +109,19 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
                 }
             }
             if issuer.nth(1) == subject.nth(1) {
-                //This means it is self signed. Should we do something?
+                // This means it is self signed. Should we do something?
             }
 
             let now = Local::now();
             let year = now.year();
 
             if year > FromStr::from_str(&after.nth(1).unwrap()[16..20]).unwrap() {
-            //TODO: Also check if the certificate expired months or days ago, not only years
-            //need to find a better way to parse the date output of the command
+                // TODO: Also check if the certificate expired months or days ago, not only years
+                // need to find a better way to parse the date output of the command
                 let criticity = Criticity::High;
-                let description = "The certificate of the application has expired. You should not use \
-                                   applications with expired certificates since the app is not secure anymore.";
+                let description = "The certificate of the application has expired. You should not \
+                                   use applications with expired certificates since the app is \
+                                   not secure anymore.";
 
                 let vuln = Vulnerability::new(criticity,
                                               "Expired certificate",
