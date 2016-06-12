@@ -16,10 +16,10 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     }
 
     let manifest_start = Instant::now();
-    manifest_analysis(config, results);
+    let manifest = manifest_analysis(config, results);
     if config.is_bench() {
         results.add_benchmark(Benchmark::new("Manifest analysis", manifest_start.elapsed()));
     }
 
-    code_analysis(config, results);
+    code_analysis(manifest, config, results);
 }

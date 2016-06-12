@@ -10,7 +10,7 @@ use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnera
      get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
-pub fn manifest_analysis(config: &Config, results: &mut Results) {
+pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manifest> {
     if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
                   analyze it.")
@@ -33,9 +33,10 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
                         config.is_verbose());
             if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \
-                          of the AndroidManifest.xml file.");
+                          of the AndroidManifest.xml file, and code analysis rules requiring \
+                          permissions will not run.");
             }
-            return;
+            return None;
         }
     };
 
@@ -170,9 +171,11 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) {
     } else if !config.is_quiet() {
         println!("Manifest analyzed.");
     }
+
+    Some(manifest)
 }
 
-struct Manifest {
+pub struct Manifest {
     code: String,
     package: String,
     version_number: i32,
@@ -525,7 +528,7 @@ impl Default for Manifest {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum InstallLocation {
+pub enum InstallLocation {
     InternalOnly,
     Auto,
     PreferExternal,
@@ -620,7 +623,7 @@ mod tests {
 }
 
 #[derive(Debug)]
-struct PermissionChecklist {
+pub struct PermissionChecklist {
     android_permission_access_all_external_storage: bool,
     android_permission_access_checkin_properties: bool,
     android_permission_access_coarse_location: bool,

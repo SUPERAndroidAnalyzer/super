@@ -16,8 +16,9 @@ use colored::Colorize;
 
 use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
 use results::{Results, Vulnerability, Benchmark};
+use super::manifest::{Permission, Manifest};
 
-pub fn code_analysis(config: &Config, results: &mut Results) {
+pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut Results) {
     let code_start = Instant::now();
     let rules = match load_rules(config) {
         Ok(r) => r,
@@ -43,6 +44,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
     let total_files = files.len();
 
     let rules = Arc::new(rules);
+    let manifest = Arc::new(manifest);
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));;
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
@@ -57,6 +59,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
 
     let handles: Vec<_> = (0..config.get_threads())
         .map(|_| {
+            let thread_manifest = manifest.clone();
             let thread_files = files.clone();
             let thread_rules = rules.clone();
             let thread_vulns = found_vulns.clone();
@@ -74,6 +77,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
                                    analyze_file(f.path(),
                                                 PathBuf::from(thread_dist_folder.as_str()),
                                                 &thread_rules,
+                                                &thread_manifest,
                                                 &thread_vulns,
                                                 verbose) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
@@ -141,6 +145,7 @@ pub fn code_analysis(config: &Config, results: &mut Results) {
 fn analyze_file<P: AsRef<Path>>(path: P,
                                 dist_folder: P,
                                 rules: &Vec<Rule>,
+                                manifest: &Option<Manifest>,
                                 results: &Mutex<Vec<Vulnerability>>,
                                 verbose: bool)
                                 -> Result<()> {
@@ -148,7 +153,16 @@ fn analyze_file<P: AsRef<Path>>(path: P,
     let mut code = String::new();
     try!(f.read_to_string(&mut code));
 
-    for rule in rules {
+    'check: for rule in rules {
+        for permission in rule.get_permissions() {
+            if manifest.is_none() ||
+               !manifest.as_ref()
+                .unwrap()
+                .get_permission_checklist()
+                .needs_permission(*permission) {
+                break 'check;
+            }
+        }
         'rule: for (s, e) in rule.get_regex().find_iter(code.as_str()) {
             for white in rule.get_whitelist() {
                 if white.is_match(&code[s..e]) {
@@ -281,16 +295,21 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
 
 struct Rule {
     regex: Regex,
+    permissions: Vec<Permission>,
     forward_check: Option<String>,
+    whitelist: Vec<Regex>,
     label: String,
     description: String,
     criticity: Criticity,
-    whitelist: Vec<Regex>,
 }
 
 impl Rule {
     pub fn get_regex(&self) -> &Regex {
         &self.regex
+    }
+
+    pub fn get_permissions(&self) -> Iter<Permission> {
+        self.permissions.iter()
     }
 
     pub fn get_forward_check(&self) -> Option<&String> {
@@ -330,14 +349,27 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     for rule in rules_json {
         let format_warning =
             format!("Rules must be objects with the following structure:\n{}\nAn optional {} \
-                     attribute can be added to the object, an array of regular expressions that \
-                     if matched, the found match will be discarded.",
+                     attribute can be added: an array of regular expressions that if matched, \
+                     the found match will be discarded. You can also include an optional {} \
+                     attribute: an array of the permissions needed for this rule to be checked. \
+                     And finally, an optional {} attribute can be added where you can specify a \
+                     second regular expression to check if the one in the {} attribute matches. \
+                     You can add one or two capture groups with name from the match to this \
+                     check, with names {} and {}. To use them you have to include {} or {} in \
+                     the forward check.",
                     "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
                      description for this rule\"\n\t\"criticity\": \
                      \"warning|low|medium|high|critical\"\n\t\"regex\": \
                      \"regex_to_find_vulnerability\"\n}"
                         .italic(),
-                    "whitelist".italic());
+                    "whitelist".italic(),
+                    "permissions".italic(),
+                    "forward_check".italic(),
+                    "regex".italic(),
+                    "fc1".italic(),
+                    "fc2".italic(),
+                    "{fc1}".italic(),
+                    "{fc2}".italic());
         let rule = match rule.as_object() {
             Some(o) => o,
             None => {
@@ -368,6 +400,37 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 print_warning(format_warning, config.is_verbose());
                 return Err(Error::ParseError);
             }
+        };
+
+        let permissions = match rule.get("permissions") {
+            Some(&Value::Array(ref v)) => {
+                let mut list = Vec::with_capacity(v.len());
+                for p in v {
+                    list.push(match p {
+                        &Value::String(ref p) => {
+                            match Permission::from_str(p) {
+                                Ok(p) => p,
+                                Err(_) => {
+                                    print_warning(format!("the permission {} is unknown",
+                                                          p.italic()),
+                                                  config.is_verbose());
+                                    return Err(Error::ParseError);
+                                }
+                            }
+                        }
+                        _ => {
+                            print_warning(format_warning, config.is_verbose());
+                            return Err(Error::ParseError);
+                        }
+                    });
+                }
+                list
+            }
+            Some(_) => {
+                print_warning(format_warning, config.is_verbose());
+                return Err(Error::ParseError);
+            }
+            None => Vec::with_capacity(0),
         };
 
         let forward_check = match rule.get("forward_check") {
@@ -487,6 +550,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
         rules.push(Rule {
             regex: regex,
+            permissions: permissions,
             forward_check: forward_check,
             label: label.clone(),
             description: description.clone(),
