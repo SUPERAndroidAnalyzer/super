@@ -34,7 +34,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
             if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \
                           of the AndroidManifest.xml file, and code analysis rules requiring \
- +                          permissions will not run.");
+                          permissions will not run.");
             }
             return None;
         }
