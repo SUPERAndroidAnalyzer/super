@@ -737,7 +737,7 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(6).unwrap();
 
-        let should_match = &["192.168.1.1", "0.0.0.0", "255.255.255.255", "13.0.130.23.52"];
+        let should_match = &[" 192.168.1.1", " 0.0.0.0", " 255.255.255.255", " 13.0.130.23.52"];
         let should_not_match = &["0000.000.000.000",
                                  "256.140.123.154",
                                  "135.260.120.0",

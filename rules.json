@@ -19,7 +19,7 @@
     "criticity": "low",
     "label": "Generic Exception in catch",
     "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion"
-}, {{
+}, {
     "regex": "throws\\s+(?:\\w*\\s*,\\s*)*Exception\\s*[,{]",
     "criticity": "low",
     "label": "Generic Exception in Throws",
