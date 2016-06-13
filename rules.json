@@ -48,8 +48,8 @@
 },{
     "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
     "criticity": "high",
-    "label": "Short label for the vulnerability",
-    "description": "A longer description for the vulnerability, where you explain why this is an issue."
+    "label": "Math Random method",
+    "description": "This method is not as random as it is supossed to be. It should not be use to generate OTP codes."
 }, {
     "regex": "Log\\s*\\.\\s*(?:w(?:tf)?|e|d|i|v)+\\s*\\((?:\\s*\"?(?:[A-Za-z0-9])*(?:.)*\"?\\s*),(?:\\s*\"(?:[A-Za-z0-9])*(?:.)*\"\\s*\\+)?\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*(?:(?:\\+\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*)*)?\\)\\s*;",
     "criticity": "low",
@@ -90,6 +90,98 @@
     "criticity": "medium",
     "label": "Hardcoded file separator Windows",
     "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS\\\/Windows) and others slashes `\/` (Unix)."
+},{
+    "regex": "\\.getExternal(?:Storage|FilesDir)(?:\\(.*\\))?",
+    "permissions": [
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+    ],
+    "criticity": "high",
+    "label": "Write-Read in external storage",
+    "description": "Application can read\/write in external storage. Any app can read data written in external storage."
+},{
+    "regex": "\\.createTempFile\\(.*\\)",
+    "permissions": [
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+    ],
+    "criticity": "high",
+    "label": "Temp File Use",
+    "description": "Applications is creating temp files. Sensitive information should never be written in temp files."
+},{
+    "regex": "setJavaScriptEnabled\\(true\\)",
+    "forward_check": "\\.addJavascriptInterface\\(.*\\)",
+    "criticity": "critical",
+    "label": "Web View XSS",
+    "description": "Web view insecure implementation. This issue could allow to a remote attacker to code execution in Web View and performing Cross Site Scripting attacks."
+},{
+    "regex": "onReceivedSslError\\s*\\(\\s*WebView\\s*.*\\)",
+    "forward_check": "\\.\\s*proceed\\(\\s*\\)\\s*;",
+    "criticity": "critical",
+    "label": "Web View ignores ssl errors",
+    "description": "Web View is ignoring SSL errors and it accepts any SSL certificate. This application could be affected by Man in the Middle attacks."
+},{
+    "regex": "android\\.database\\.sqlite",
+    "forward_check": "rawQuery\\(.*\\)|execSQL\\(.*\\)",
+    "criticity": "critical",
+    "label": "SQL injection",
+    "description": "This application is vulnerable to SQL injection. Any data stored in database can be exposed as any attacker is able to retrive, modify and delete the stored information."
+},{
+    "regex": "javax.net.ssl",
+    "forward_check": "(?:(?:Trust)?All(?:Trust)?SSLSocket(?:-)?Factory|NonValidatingSSLSocketFactory|ALLOW_ALL_HOSTNAME_VERIFIER|\\.setDefaultHostnameVerifier\\(.*\\)|NullHostnameVerifier\\(.*\\))",
+    "criticity": "critical",
+    "label": "Accepting all SSL certificates",
+    "description": "Insecure application SSL implementation. This application accepts all certificates, including self signed by default. This is a critical issue as Man in the Middle attacks may be performed."
+},{
+    "regex": "telephony.SmsManager",
+    "forward_check": "send(?:Multipart)?TextMessage|vnd\\.android-dir\/mms-sms",
+    "criticity": "warning",
+    "label": "Sending sms-mms",
+    "description": "This application is sending sms or mms and it might be without the user's knowledge "
+},{
+    "regex": "com\\.noshufou\\.android\\.su|com\\.thirdparty\\.superuser|eu\\.chainfire\\.supersu|com\\.koushikdutta\\.superuser|eu\\.chainfire\\.",
+    "criticity": "warning",
+    "label": "Super user privileges.",
+    "description": "This applications may require super user privileges."
+},{
+    "regex": ".contains\\(\"test-keys\"\\)|\/system\/app\/Superuser.apk|isDeviceRooted\\(\\)|\/system\/bin\/failsafe\/su|\/system\/sd\/xbin\/su|RootTools.isAccessGiven\\(\\)",
+    "criticity": "high",
+    "label": "Rooted device detection",
+    "description": "This applications is performing checks for rooted device. This could be use to execute specific code if the device is rooted to take control of it."
+},{
+    "regex": "telephony\\.TelephonyManager",
+    "forward_check": "getCellLocation",
+    "criticity": "warning",
+    "label": "Cell Location (Base Stations)",
+    "description": "This app is using cell location by Base Station method. This process might be performed without the user's knowledge."
+},{
+    "regex": "telephony\\.TelephonyManager ",
+    "forward_check": "getDeviceId",
+    "criticity": "warning",
+    "label": "Get Device ID",
+    "description": "The application is recording the device ID (IMEI). This process might be performed without the user's knowledge."
+},{
+    "regex": "telephony\\.TelephonyManager",
+    "forward_check": "getSimSerialNumber",
+    "criticity": "warning",
+    "label": "Get SIM Serial",
+    "description": "The application is recording the SIM serial. This process might be performed without the user's knowledge."
+},{
+    "regex": "android\\.location ",
+    "forward_check": "getLastKnownLocation\\s*\\(|requestLocationUpdates\\s*\\(|getLatitude\\s*\\(|getLongitude\\s*\\(",
+    "criticity": "warning",
+    "label": "GPS location",
+    "description": "This app is using cell location by GPS method. This process might be performed without the user's knowledge."
+},{
+    "regex": "android\\.util\\.Base64",
+    "forward_check": "\\.encode(?:ToString)?",
+    "criticity": "high",
+    "label": "Base64 Encode",
+    "description": "This application is using Base64 encoding. This is not a secure method to encode data."
+},{
+    "regex": "android\\.util\\.Base64",
+    "forward_check": "\\.decode",
+    "criticity": "warning",
+    "label": "Base64 decode",
+    "description": "This application is using Base64 decoding."
 }
 
 ]

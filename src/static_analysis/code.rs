@@ -973,4 +973,370 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_external_storage_write_read() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(16).unwrap();
+
+        let should_match = &[".getExternalStorage",
+                             ".getExternalFilesDir()"
+                             ];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_temp_file() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(17).unwrap();
+
+        let should_match = &[".createTempFile()",
+                             ".createTempFile()"
+                             ];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_webview_xss() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(18).unwrap();
+
+        let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"
+                             ];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_webview_ssl_errors() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(19).unwrap();
+
+        let should_match = &["onReceivedSslError(WebView view, SslErrorHandler handler, SslError error)             .proceed();"
+                             ];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_sqlinjection() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(20).unwrap();
+
+        let should_match = &["android.database.sqlite     rawQuery()",
+                             "android.database.sqlite     execSQL()"];
+
+        let should_not_match = &["execSQL() rawQuery()",
+                                 "rawQuery()",
+                                 "android.database.sqlite",
+                                 " execSQL()"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_ssl_accepting_all_certificates() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(21).unwrap();
+
+        let should_match = &["javax.net.ssl   TrustAllSSLSocket-Factory",
+                             "javax.net.ssl   AllTrustSSLSocketFactory",
+                             "javax.net.ssl   NonValidatingSSLSocketFactory",
+                             "javax.net.ssl   ALLOW_ALL_HOSTNAME_VERIFIER",
+                             "javax.net.ssl   .setDefaultHostnameVerifier()",
+                             "javax.net.ssl   NullHostnameVerifier(')"];
+
+        let should_not_match = &["NullHostnameVerifier(')",
+                                 "javax.net.ssl",
+                                 "AllTrustSSLSocketFactory",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_sms_mms_sending() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(22).unwrap();
+
+        let should_match = &["telephony.SmsManager     sendMultipartTextMessage(String destinationAddress, String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+                             "telephony.SmsManager     sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
+                             "telephony.SmsManager     vnd.android-dir/mms-sms",
+                             "telephony.SmsManager     vnd.android-dir/mms-sms"];
+
+        let should_not_match = &["vnd.android-dir/mms-sms",
+                                 "sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
+                                 " sendMultipartTextMessage(String destinationAddress, String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+                                 "telephony.SmsManager "];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_superuser_privileges() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(23).unwrap();
+
+        let should_match = &["com.noshufou.android.su",
+                             "com.thirdparty.superuser",
+                             "eu.chainfire.supersu",
+                             "com.koushikdutta.superuser",
+                             "eu.chainfire."];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_superuser_device_detection() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(24).unwrap();
+
+        let should_match = &[".contains(\"test-keys\")",
+                             "/system/app/Superuser.apk",
+                             "isDeviceRooted()",
+                             "/system/bin/failsafe/su",
+                             "/system/sd/xbin/su",
+                             "RootTools.isAccessGiven()",
+                             "RootTools.isAccessGiven()"];
+
+        let should_not_match = &["",
+                                 "",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_base_station_location() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(25).unwrap();
+
+        let should_match = &["telephony.TelephonyManager    getCellLocation"
+                             ];
+
+        let should_not_match = &["telephony.TelephonyManager ",
+                                 " getCellLocation",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_get_device_id() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(26).unwrap();
+
+        let should_match = &["telephony.TelephonyManager      getDeviceId"
+                             ];
+
+        let should_not_match = &["getDeviceId",
+                                 "telephony.TelephonyManager",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_get_sim_serial() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(27).unwrap();
+
+        let should_match = &["telephony.TelephonyManager      getSimSerialNumber"
+                             ];
+
+        let should_not_match = &["getSimSerialNumber",
+                                 "telephony.TelephonyManager",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+
+
+    }
+
+    #[test]
+    fn it_gps_location() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(28).unwrap();
+
+        let should_match = &["android.location   getLastKnownLocation()",
+                             "android.location   requestLocationUpdates()",
+                             "android.location   getLatitude()",
+                             "android.location   getLongitude()"];
+
+        let should_not_match = &["getLastKnownLocation()",
+                                 "requestLocationUpdates()",
+                                 "getLatitude()",
+                                 "getLongitude()",
+                                 "android.location"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_base64_encode() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(29).unwrap();
+
+        let should_match = &["android.util.Base64 .encodeToString",
+                             "android.util.Base64    .encode"];
+
+        let should_not_match = &[".encodeToString",
+                                 ".encodeToString",
+                                 "android.util.Base64",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_base64_decoding() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(30).unwrap();
+
+        let should_match = &["android.util.Base64   .decode"
+                             ];
+
+        let should_not_match = &["android.util.Base64",
+                                 ".decode",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 }
