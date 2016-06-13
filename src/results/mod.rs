@@ -437,7 +437,7 @@ impl Results {
                 .into_bytes()));
             try!(f.write_all(&format!("<li><strong>File:</strong> <a \
                                        href=\"src/{0}.html\">{0}</a></li>",
-                                      vuln.get_file().display())
+                                      vuln.get_file().unwrap().display())
                 .into_bytes()));
 
             if let Some(code) = vuln.get_code() {
@@ -467,7 +467,7 @@ impl Results {
                         lines.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     }
                 }
-                let lang = vuln.get_file().extension().unwrap().to_string_lossy();
+                let lang = vuln.get_file().unwrap().extension().unwrap().to_string_lossy();
                 try!(f.write_all(&format!("<li><p><strong>Affected code:</strong></p><div><div \
                                            class=\"line_numbers\">{}</div><div \
                                            class=\"code\"><pre><code \

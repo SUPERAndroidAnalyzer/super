@@ -79,7 +79,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
         let vuln = Vulnerability::new(criticity,
                                       "Manifest Debug",
                                       description,
-                                      "AndroidManifest.xml",
+                                      Some("AndroidManifest.xml"),
                                       line,
                                       line,
                                       code);
@@ -105,7 +105,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
         let vuln = Vulnerability::new(criticity,
                                       "Large heap",
                                       description,
-                                      "AndroidManifest.xml",
+                                      Some("AndroidManifest.xml"),
                                       line,
                                       line,
                                       code);
@@ -131,7 +131,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
         let vuln = Vulnerability::new(criticity,
                                       "Allows Backup",
                                       description,
-                                      "AndroidManifest.xml",
+                                      Some("AndroidManifest.xml"),
                                       line,
                                       line,
                                       code);
@@ -153,7 +153,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
             let vuln = Vulnerability::new(permission.get_criticity(),
                                           permission.get_label(),
                                           permission.get_description(),
-                                          "AndroidManifest.xml",
+                                          Some("AndroidManifest.xml"),
                                           line,
                                           line,
                                           code);
@@ -377,7 +377,7 @@ impl Manifest {
                                                     config.get_unknown_permission_criticity(),
                                                     "Unknown permission",
                                                     config.get_unknown_permission_description(),
-                                                    "AndroidManifest.xml", line, line, code);
+                                                    Some("AndroidManifest.xml"), line, line, code);
                                                 results.add_vulnerability(vuln);
 
                                                 if config.is_verbose() {

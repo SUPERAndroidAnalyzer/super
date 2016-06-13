@@ -20,7 +20,7 @@ pub struct Vulnerability {
     criticity: Criticity,
     name: String,
     description: String,
-    file: String,
+    file: Option<String>,
     start_line: Option<usize>,
     end_line: Option<usize>,
     code: Option<String>,
@@ -31,7 +31,7 @@ impl Vulnerability {
     pub fn new<S: AsRef<str>, P: AsRef<Path>>(criticity: Criticity,
                                               name: S,
                                               description: S,
-                                              file: P,
+                                              file: Option<P>,
                                               start_line: Option<usize>,
                                               end_line: Option<usize>,
                                               code: Option<String>)
@@ -40,7 +40,10 @@ impl Vulnerability {
             criticity: criticity,
             name: String::from(name.as_ref()),
             description: String::from(description.as_ref()),
-            file: String::from(file.as_ref().to_string_lossy().into_owned()),
+            file: match file {
+                Some(s) => Some(String::from(s.as_ref().to_string_lossy().into_owned())),
+                None => None,
+            },
             start_line: start_line,
             end_line: end_line,
             code: match code {
@@ -66,8 +69,11 @@ impl Vulnerability {
     }
 
     /// Gets the file where the vulnerability was found
-    pub fn get_file(&self) -> &Path {
-        Path::new(&self.file)
+    pub fn get_file(&self) -> Option<&Path> {
+        match self.file.as_ref() {
+            Some(s) => Some(Path::new(s)),
+            None => None,
+        }
     }
 
     /// Gets the code related to the vulnerability
@@ -105,7 +111,9 @@ impl<'v> MapVisitor for &'v Vulnerability {
         try!(serializer.serialize_struct_elt("criticity", self.criticity));
         try!(serializer.serialize_struct_elt("name", self.name.as_str()));
         try!(serializer.serialize_struct_elt("description", self.description.as_str()));
-        try!(serializer.serialize_struct_elt("file", self.file.as_str()));
+        if let Some(ref f) = self.file {
+            try!(serializer.serialize_struct_elt("file", f.as_str()));
+        }
         if self.start_line.is_some() {
             try!(serializer.serialize_struct_elt("start_line", self.start_line));
         }

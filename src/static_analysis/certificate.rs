@@ -93,12 +93,12 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
             if issuer.nth(1).unwrap().contains("Android Debug") {
                 let criticity = Criticity::Critical;
                 let description = "The application is signed with the Android Debug Certificate. \
-                                   This certificate should never use for publishing an app.";
+                                   This certificate should never be used for publishing an app.";
 
                 let vuln = Vulnerability::new(criticity,
                                               "Android Debug Certificate",
                                               description,
-                                              dir.path().file_name().unwrap().to_str().unwrap(),
+                                              Some("tmp"),
                                               None,
                                               None,
                                               None);
@@ -126,7 +126,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
                 let vuln = Vulnerability::new(criticity,
                                               "Expired certificate",
                                               description,
-                                              dir.path().file_name().unwrap().to_str().unwrap(),
+                                              Some("tmp"),
                                               None,
                                               None,
                                               None);
