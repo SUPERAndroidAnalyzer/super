@@ -120,7 +120,7 @@
     "description": "Web View is ignoring SSL errors and it accepts any SSL certificate. This application could be affected by Man in the Middle attacks."
 }, {
     "regex": "android\\.database\\.sqlite",
-    "forward_check": "rawQuery\\(.*\\)|execSQL\\(.*\\)",
+    "forward_check": "(?:rawQuery|execSQL)\\(.*\"\\s*\\+\\s*.*\\)",
     "criticity": "critical",
     "label": "SQL injection",
     "description": "This application is vulnerable to SQL injection. Any data stored in database can be exposed as any attacker is able to retrive, modify and delete the stored information."

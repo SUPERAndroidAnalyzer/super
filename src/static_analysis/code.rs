@@ -1101,17 +1101,19 @@ mod tests {
         }
     }
 
-    #[test]
-    fn it_sqlinjection() {
+     #[test]
+    fn it_sql_injection() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(21).unwrap();
 
-        let should_match = &["android.database.sqlite     rawQuery()",
-                             "android.database.sqlite     execSQL()"];
+        let should_match = &["android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");",
+                             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");"];
 
-        let should_not_match =
-            &["execSQL() rawQuery()", "rawQuery()", "android.database.sqlite", " execSQL()"];
+        let should_not_match = &[".execSQL(\"INSERT INTO myuser VALUES\"';\");",
+                                 "rawQuery(\"INSERT INTO myuser VALUES\";\");",
+                                 "",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
