@@ -628,29 +628,59 @@ mod tests {
     }
 
     #[test]
-    fn it_password_regex() {
+    fn it_harcoded_password() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
 
-        let should_match = &["password = \"secret\";",
-                             // "p@ssword = \"secret\";",
-                             "pass = \"secret\";",
-                             "pwd = \"secret\";",
-                             "passwd = \"secret\";",
-                             "password = \"\";",
-                             "password=\"    \";",
-                             "PASS = \"secret\";"];
-        //  "P@SS = \"secret\";",
-        //  "pa$$ = \"secret\";",
-        //  "p@s$wrd = \"secret\";",
-        //  "@string/pass",
-        //  "@string/pswd"];
-        let should_not_match = &["p = \"android.intent.extra.EMAIL\";",
-                                 "pasbook = \"hello!\";",
-                                 "p$$ = \"secret\"",
-                                 "p$ = \"secret\"",
-                                 "pw = \"secret\""];
+        let should_match = &["password =",
+                             "\"passwords\"",
+                             "'p@ssword'",
+                             "\" p@sswords  \"",
+                             "' p$$wd '",
+                             "psswrd =",
+                             "= pssword",
+                             "\" psword \"",
+                             "'pasword'",
+                             "'p@ssword'",
+                             " \"  p@sswords    \"",
+                             "'   p@sword'",
+                             "'  password '",
+                             "' passwords '",
+                             "' psswd '",
+                             "psswrd =",
+                             "=pssword",
+                             "psword =",
+                             "= pasword",
+                             "passwd =",
+                             "= Password",
+                             "p@ss =",
+                             "@string/password",
+                             "p@$$ =",
+                             "= password"];
+
+        let should_not_match = &["pss",
+                                 "pa",
+                                 "pww",
+                                 "p$$",
+                                 "p$",
+                                 "prdd",
+                                 "pas",
+                                 "p",
+                                 "pswd",
+                                 "pwd",
+                                 "pwrd",
+                                 "pswd",
+                                 "pass",
+                                 "pswd",
+                                 "pwd",
+                                 "pwrd",
+                                 "pswd",
+                                 "pass",
+                                 "ps",
+                                 "pw",
+                                 "pd",
+                                 "' password \""];
 
         for m in should_match {
             assert!(check_match(m, rule));
