@@ -181,4 +181,9 @@
     "criticity": "warning",
     "label": "Base64 decode",
     "description": "This application is using Base64 decoding."
+},{
+    "regex": "for\\s*\\(\\s*;\\s*;\\s*\\)|while\\s*\\(\\s*true\\s*\\)",
+    "criticity": "warning",
+    "label": "Infinite Loop",
+    "description": "The application contains infinite loops. It is not a good practice to use infinite loops inside a program."
 }]

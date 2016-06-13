@@ -1381,4 +1381,27 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_infinite_loop() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(32).unwrap();
+
+        let should_match = &["for (;;)",
+                             "while(true)"];
+
+        let should_not_match = &["for(i=0;i<10;i++)",
+                                 "while(i<10)",
+                                 "",
+                                 ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 }
