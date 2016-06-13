@@ -564,17 +564,62 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
 #[cfg(test)]
 mod tests {
+    use regex::Regex;
     use super::{Rule, load_rules};
 
     fn check_match(text: &str, rule: &Rule) -> bool {
         if rule.get_regex().is_match(text) {
-            for r in rule.get_whitelist() {
-                if r.is_match(text) {
+            for white in rule.get_whitelist() {
+                if white.is_match(text) {
+                    let (s, e) = white.find(text).unwrap();
+                    println!("Whitelist '{}' matches the text '{}' in '{}'",
+                             white.as_str(),
+                             text,
+                             &text[s..e]);
                     return false;
                 }
             }
-            true
+            match rule.get_forward_check() {
+                None => {
+                    let (s, e) = rule.get_regex().find(text).unwrap();
+                    println!("The regular expression matches the text '{}' in '{}'",
+                             text,
+                             &text[s..e]);
+                    true
+                }
+                Some(check) => {
+                    let caps = rule.get_regex().captures(text).unwrap();
+
+                    let fcheck1 = caps.name("fc1");
+                    let fcheck2 = caps.name("fc2");
+                    let mut r = check.clone();
+
+                    if let Some(fc1) = fcheck1 {
+                        r = r.replace("{fc1}", fc1);
+                    }
+
+                    if let Some(fc2) = fcheck2 {
+                        r = r.replace("{fc2}", fc2);
+                    }
+
+                    let regex = Regex::new(r.as_str()).unwrap();
+                    if regex.is_match(text) {
+                        let (s, e) = regex.find(text).unwrap();
+                        println!("The forward check '{}'  matches the text '{}' in '{}'",
+                                 regex.as_str(),
+                                 text,
+                                 &text[s..e]);
+                        true
+                    } else {
+                        println!("The forward check '{}' does not match the text '{}'",
+                                 regex.as_str(),
+                                 text);
+                        false
+                    }
+                }
+            }
         } else {
+            println!("The regular expression does not match the text '{}'", text);
             false
         }
     }
@@ -811,13 +856,13 @@ mod tests {
         let rule = rules.get(9).unwrap();
 
         let should_match = &["Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
-                              \" + mensajeAMostrar);",
+                              \" + messageToShow);",
                              " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
                              " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);",
+                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
                              " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + MensajeAMostrar + msg1 +  msg2 + msg3);"];
+                              database: \" + messageToShow + msg1 +  msg2 + msg3);"];
 
         let should_not_match = &["Log.e(\"Hello!\")",
                                  "Log.e(\"Hello: \" + var)",
@@ -980,14 +1025,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(16).unwrap();
 
-        let should_match = &[".getExternalStorage",
-                             ".getExternalFilesDir()"
-                             ];
+        let should_match = &[".getExternalStorage", ".getExternalFilesDir()"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1004,14 +1044,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(17).unwrap();
 
-        let should_match = &[".createTempFile()",
-                             ".createTempFile()"
-                             ];
+        let should_match = &[".createTempFile()", ".createTempFile()"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1028,13 +1063,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"
-                             ];
+        let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1051,13 +1082,10 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(19).unwrap();
 
-        let should_match = &["onReceivedSslError(WebView view, SslErrorHandler handler, SslError error)             .proceed();"
-                             ];
+        let should_match = &["onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
+                              error)             .proceed();"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1077,10 +1105,8 @@ mod tests {
         let should_match = &["android.database.sqlite     rawQuery()",
                              "android.database.sqlite     execSQL()"];
 
-        let should_not_match = &["execSQL() rawQuery()",
-                                 "rawQuery()",
-                                 "android.database.sqlite",
-                                 " execSQL()"];
+        let should_not_match =
+            &["execSQL() rawQuery()", "rawQuery()", "android.database.sqlite", " execSQL()"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1104,10 +1130,8 @@ mod tests {
                              "javax.net.ssl   .setDefaultHostnameVerifier()",
                              "javax.net.ssl   NullHostnameVerifier(')"];
 
-        let should_not_match = &["NullHostnameVerifier(')",
-                                 "javax.net.ssl",
-                                 "AllTrustSSLSocketFactory",
-                                 ""];
+        let should_not_match =
+            &["NullHostnameVerifier(')", "javax.net.ssl", "AllTrustSSLSocketFactory", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1124,14 +1148,22 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(22).unwrap();
 
-        let should_match = &["telephony.SmsManager     sendMultipartTextMessage(String destinationAddress, String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> deliveryIntents)",
-                             "telephony.SmsManager     sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-                             "telephony.SmsManager     vnd.android-dir/mms-sms",
-                             "telephony.SmsManager     vnd.android-dir/mms-sms"];
+        let should_match =
+            &["telephony.SmsManager     sendMultipartTextMessage(String destinationAddress, \
+               String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
+               ArrayList<PendingIntent> deliveryIntents)",
+              "telephony.SmsManager     sendTextMessage(String destinationAddress, String \
+               scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
+              "telephony.SmsManager     vnd.android-dir/mms-sms",
+              "telephony.SmsManager     vnd.android-dir/mms-sms"];
 
         let should_not_match = &["vnd.android-dir/mms-sms",
-                                 "sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-                                 " sendMultipartTextMessage(String destinationAddress, String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+                                 "sendTextMessage(String destinationAddress, String scAddress, \
+                                  String text, PendingIntent sentIntent, PendingIntent \
+                                  deliveryIntent)",
+                                 " sendMultipartTextMessage(String destinationAddress, String \
+                                  scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
+                                  sentIntents, ArrayList<PendingIntent> deliveryIntents)",
                                  "telephony.SmsManager "];
 
         for m in should_match {
@@ -1155,10 +1187,7 @@ mod tests {
                              "com.koushikdutta.superuser",
                              "eu.chainfire."];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1183,10 +1212,7 @@ mod tests {
                              "RootTools.isAccessGiven()",
                              "RootTools.isAccessGiven()"];
 
-        let should_not_match = &["",
-                                 "",
-                                 "",
-                                 ""];
+        let should_not_match = &["", "", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1203,13 +1229,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(25).unwrap();
 
-        let should_match = &["telephony.TelephonyManager    getCellLocation"
-                             ];
+        let should_match = &["telephony.TelephonyManager    getCellLocation"];
 
-        let should_not_match = &["telephony.TelephonyManager ",
-                                 " getCellLocation",
-                                 "",
-                                 ""];
+        let should_not_match = &["telephony.TelephonyManager ", " getCellLocation", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1226,13 +1248,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(26).unwrap();
 
-        let should_match = &["telephony.TelephonyManager      getDeviceId"
-                             ];
+        let should_match = &["telephony.TelephonyManager      getDeviceId"];
 
-        let should_not_match = &["getDeviceId",
-                                 "telephony.TelephonyManager",
-                                 "",
-                                 ""];
+        let should_not_match = &["getDeviceId", "telephony.TelephonyManager", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1249,13 +1267,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(27).unwrap();
 
-        let should_match = &["telephony.TelephonyManager      getSimSerialNumber"
-                             ];
+        let should_match = &["telephony.TelephonyManager      getSimSerialNumber"];
 
-        let should_not_match = &["getSimSerialNumber",
-                                 "telephony.TelephonyManager",
-                                 "",
-                                 ""];
+        let should_not_match = &["getSimSerialNumber", "telephony.TelephonyManager", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1264,8 +1278,6 @@ mod tests {
         for m in should_not_match {
             assert!(!check_match(m, rule));
         }
-
-
     }
 
     #[test]
@@ -1303,10 +1315,7 @@ mod tests {
         let should_match = &["android.util.Base64 .encodeToString",
                              "android.util.Base64    .encode"];
 
-        let should_not_match = &[".encodeToString",
-                                 ".encodeToString",
-                                 "android.util.Base64",
-                                 ""];
+        let should_not_match = &[".encodeToString", ".encodeToString", "android.util.Base64", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1323,13 +1332,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(30).unwrap();
 
-        let should_match = &["android.util.Base64   .decode"
-                             ];
+        let should_match = &["android.util.Base64   .decode"];
 
-        let should_not_match = &["android.util.Base64",
-                                 ".decode",
-                                 "",
-                                 ""];
+        let should_not_match = &["android.util.Base64", ".decode", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
