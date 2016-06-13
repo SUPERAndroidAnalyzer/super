@@ -177,9 +177,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                     results.push(Vulnerability::new(rule.get_criticity(),
                                                     rule.get_label(),
                                                     rule.get_description(),
-                                                    path.as_ref()
+                                                    Some(path.as_ref()
                                                         .strip_prefix(&dist_folder)
-                                                        .unwrap(),
+                                                        .unwrap()),
                                                     Some(start_line),
                                                     Some(end_line),
                                                     Some(get_code(code.as_str(),
@@ -213,9 +213,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                         results.push(Vulnerability::new(rule.get_criticity(),
                                                         rule.get_label(),
                                                         rule.get_description(),
-                                                        path.as_ref()
+                                                        Some(path.as_ref()
                                                             .strip_prefix(&dist_folder)
-                                                            .unwrap(),
+                                                            .unwrap()),
                                                         Some(start_line),
                                                         Some(end_line),
                                                         Some(get_code(code.as_str(),
