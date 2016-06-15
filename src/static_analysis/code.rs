@@ -177,9 +177,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                     results.push(Vulnerability::new(rule.get_criticity(),
                                                     rule.get_label(),
                                                     rule.get_description(),
-                                                    path.as_ref()
+                                                    Some(path.as_ref()
                                                         .strip_prefix(&dist_folder)
-                                                        .unwrap(),
+                                                        .unwrap()),
                                                     Some(start_line),
                                                     Some(end_line),
                                                     Some(get_code(code.as_str(),
@@ -220,9 +220,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                         results.push(Vulnerability::new(rule.get_criticity(),
                                                         rule.get_label(),
                                                         rule.get_description(),
-                                                        path.as_ref()
+                                                        Some(path.as_ref()
                                                             .strip_prefix(&dist_folder)
-                                                            .unwrap(),
+                                                            .unwrap()),
                                                         Some(start_line),
                                                         Some(end_line),
                                                         Some(get_code(code.as_str(),
@@ -635,29 +635,59 @@ mod tests {
     }
 
     #[test]
-    fn it_password_regex() {
+    fn it_harcoded_password() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
 
-        let should_match = &["password = \"secret\";",
-                             // "p@ssword = \"secret\";",
-                             "pass = \"secret\";",
-                             "pwd = \"secret\";",
-                             "passwd = \"secret\";",
-                             "password = \"\";",
-                             "password=\"    \";",
-                             "PASS = \"secret\";"];
-        //  "P@SS = \"secret\";",
-        //  "pa$$ = \"secret\";",
-        //  "p@s$wrd = \"secret\";",
-        //  "@string/pass",
-        //  "@string/pswd"];
-        let should_not_match = &["p = \"android.intent.extra.EMAIL\";",
-                                 "pasbook = \"hello!\";",
-                                 "p$$ = \"secret\"",
-                                 "p$ = \"secret\"",
-                                 "pw = \"secret\""];
+        let should_match = &["password =",
+                             "\"passwords\"",
+                             "'p@ssword'",
+                             "\" p@sswords  \"",
+                             "' p$$wd '",
+                             "psswrd =",
+                             "= pssword",
+                             "\" psword \"",
+                             "'pasword'",
+                             "'p@ssword'",
+                             " \"  p@sswords    \"",
+                             "'   p@sword'",
+                             "'  password '",
+                             "' passwords '",
+                             "' psswd '",
+                             "psswrd =",
+                             "=pssword",
+                             "psword =",
+                             "= pasword",
+                             "passwd =",
+                             "= Password",
+                             "p@ss =",
+                             "@string/password",
+                             "p@$$ =",
+                             "= password"];
+
+        let should_not_match = &["pss",
+                                 "pa",
+                                 "pww",
+                                 "p$$",
+                                 "p$",
+                                 "prdd",
+                                 "pas",
+                                 "p",
+                                 "pswd",
+                                 "pwd",
+                                 "pwrd",
+                                 "pswd",
+                                 "pass",
+                                 "pswd",
+                                 "pwd",
+                                 "pwrd",
+                                 "pswd",
+                                 "pass",
+                                 "ps",
+                                 "pw",
+                                 "pd",
+                                 "' password \""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1108,17 +1138,19 @@ mod tests {
         }
     }
 
-    #[test]
-    fn it_sqlinjection() {
+     #[test]
+    fn it_sql_injection() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(21).unwrap();
 
-        let should_match = &["android.database.sqlite     rawQuery()",
-                             "android.database.sqlite     execSQL()"];
+        let should_match = &["android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");",
+                             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");"];
 
-        let should_not_match =
-            &["execSQL() rawQuery()", "rawQuery()", "android.database.sqlite", " execSQL()"];
+        let should_not_match = &[".execSQL(\"INSERT INTO myuser VALUES\"';\");",
+                                 "rawQuery(\"INSERT INTO myuser VALUES\";\");",
+                                 "",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1347,6 +1379,29 @@ mod tests {
         let should_match = &["android.util.Base64   .decode"];
 
         let should_not_match = &["android.util.Base64", ".decode", "", ""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_infinite_loop() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(32).unwrap();
+
+        let should_match = &["for (;;)",
+                             "while(true)"];
+
+        let should_not_match = &["for(i=0;i<10;i++)",
+                                 "while(i<10)",
+                                 "",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
