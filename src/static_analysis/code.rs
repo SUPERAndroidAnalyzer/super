@@ -205,7 +205,14 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                         r = r.replace("{fc2}", fc2);
                     }
 
-                    let regex = Regex::new(r.as_str()).unwrap();
+                    let regex = match Regex::new(r.as_str()) {
+                        Ok(r) => r,
+                        Err(e) => {
+                            print_warning(format!("There was an error creating the forward_check '{}'. The rule will be skipped. {}", r, e),config.is_verbose());
+                            break 'rule;
+                        }
+                    };
+
                     for (s, e) in regex.find_iter(code.as_str()) {
                         let start_line = get_line_for(s, code.as_str());
                         let end_line = get_line_for(e, code.as_str());
