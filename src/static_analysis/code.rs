@@ -208,7 +208,12 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                     let regex = match Regex::new(r.as_str()) {
                         Ok(r) => r,
                         Err(e) => {
-                            print_warning(format!("There was an error creating the forward_check '{}'. The rule will be skipped. {}", r, e),config.is_verbose());
+                            print_warning(format!("There was an error creating the \
+                                                   forward_check '{}'. The rule will be \
+                                                   skipped. {}",
+                                                  r,
+                                                  e),
+                                          verbose);
                             break 'rule;
                         }
                     };
@@ -1138,14 +1143,18 @@ mod tests {
         }
     }
 
-     #[test]
+    #[test]
     fn it_sql_injection() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(21).unwrap();
 
-        let should_match = &["android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");",
-                             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES ('\" + paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \"');\");"];
+        let should_match = &["android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
+                              ('\" + paramView.getText().toString() + \"', '\" + \
+                              localEditText.getText().toString() + \"');\");",
+                             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES \
+                              ('\" + paramView.getText().toString() + \"', '\" + \
+                              localEditText.getText().toString() + \"');\");"];
 
         let should_not_match = &[".execSQL(\"INSERT INTO myuser VALUES\"';\");",
                                  "rawQuery(\"INSERT INTO myuser VALUES\";\");",
@@ -1395,13 +1404,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(32).unwrap();
 
-        let should_match = &["for (;;)",
-                             "while(true)"];
+        let should_match = &["for (;;)", "while(true)"];
 
-        let should_not_match = &["for(i=0;i<10;i++)",
-                                 "while(i<10)",
-                                 "",
-                                 ""];
+        let should_not_match = &["for(i=0;i<10;i++)", "while(i<10)", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
