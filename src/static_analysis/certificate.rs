@@ -20,16 +20,6 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
                        config.get_dist_folder(),
                        config.get_app_id());
 
-    //    Why cant I do this???
-    //
-    //    for entry in fs::read_dir(&certs_dir).unwrap() {
-    //        let dir = entry.unwrap();
-    //        let dir = dir.path().to_str().unwrap();
-    //        if dir.ends_with(".RSA") || dir.ends_with(".DSA"){
-    //              ...
-    //        }
-    //    }
-
     for entry in fs::read_dir(&path).unwrap() {
         let dir = entry.unwrap();
 

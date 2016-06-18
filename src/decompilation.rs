@@ -1,11 +1,13 @@
 use std::fs;
 use std::fs::File;
+use std::time::Instant;
 use std::io::{Read, Write};
 use std::process::{Command, exit};
 use colored::Colorize;
 use zip::ZipArchive;
 
 use {Error, Config, print_error, print_warning, file_exists};
+use results::Benchmark;
 
 pub fn decompress(config: &Config) {
     if config.is_force() &&
@@ -87,7 +89,7 @@ pub fn decompress(config: &Config) {
     }
 }
 
-pub fn extract_dex(config: &Config) {
+pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
     if config.is_force() ||
        !file_exists(format!("{}/{}/classes.jar",
                             config.get_dist_folder(),
@@ -97,6 +99,8 @@ pub fn extract_dex(config: &Config) {
             println!("To decompile the app, first we need to extract the {} file.",
                      ".dex".italic());
         }
+
+        let start_time = Instant::now();
 
         let zip = ZipArchive::new(match File::open(format!("{}/{}.apk",
                                                            config.get_downloads_folder(),
@@ -164,6 +168,8 @@ pub fn extract_dex(config: &Config) {
             exit(Error::Unknown.into());
         }
 
+        benchmarks.push(Benchmark::new("Dex extraction", start_time.elapsed()));
+
         if config.is_verbose() {
             println!("{}",
                      format!("The {} {}",
@@ -177,9 +183,11 @@ pub fn extract_dex(config: &Config) {
             println!("Dex file extracted.");
         }
 
+        let start_time = Instant::now();
         // Converting the dex to jar
         dex_to_jar(config);
 
+        benchmarks.push(Benchmark::new("Dex to Jar decompilation", start_time.elapsed()));
     } else if config.is_verbose() {
         println!("Seems that there is already a {} file for the application. There is no need to \
                   create it again.",

@@ -75,7 +75,7 @@ fn main() {
         println!("");
     }
 
-    let mut benches = Vec::with_capacity(3);
+    let mut benchmarks = Vec::with_capacity(4);
 
     let start_time = Instant::now();
 
@@ -83,17 +83,11 @@ fn main() {
     decompress(&config);
 
     if config.is_bench() {
-        benches.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+        benchmarks.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
     }
-
-    let dex_start = Instant::now();
 
     // Extracting the classes.dex from the .apk file
-    extract_dex(&config);
-
-    if config.is_bench() {
-        benches.push(Benchmark::new("Dex extraction", dex_start.elapsed()));
-    }
+    extract_dex(&config, &mut benchmarks);
 
     if config.is_verbose() {
         println!("");
@@ -107,13 +101,13 @@ fn main() {
     decompile(&config);
 
     if config.is_bench() {
-        benches.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+        benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
     }
 
     if let Some(mut results) = Results::init(&config) {
         if config.is_bench() {
-            while benches.len() > 0 {
-                results.add_benchmark(benches.remove(0));
+            while benchmarks.len() > 0 {
+                results.add_benchmark(benchmarks.remove(0));
             }
         }
 
