@@ -435,11 +435,12 @@ impl Results {
             try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
                                       vuln.get_description())
                 .into_bytes()));
-            try!(f.write_all(&format!("<li><strong>File:</strong> <a \
-                                       href=\"src/{0}.html\">{0}</a></li>",
-                                      vuln.get_file().unwrap().display())
-                .into_bytes()));
-
+            if let Some(file) = vuln.get_file() {
+                try!(f.write_all(&format!("<li><strong>File:</strong> <a \
+                                           href=\"src/{0}.html\">{0}</a></li>",
+                                          file.display())
+                    .into_bytes()));
+            }
             if let Some(code) = vuln.get_code() {
                 if vuln.get_start_line().unwrap() != vuln.get_end_line().unwrap() {
                     try!(f.write_all(&format!("<li><strong>Lines:</strong> {}-{}</li>",
