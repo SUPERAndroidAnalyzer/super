@@ -25,9 +25,9 @@
     "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion."
 }, {
     "regex": "(?:setVisible\\s*\\(\\s*View\\s*\\.\\s*(?:INVISIBLE|invisible)\\s*\\))|(?:android:visibility\\s*=\\s*\"invisible\")|(?:android:background\\s*=\\s*\"(?i)(?:@?null)\")",
-    "criticity": "low",
+    "criticity": "warning",
     "label": "Hidden fields",
-    "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosire."
+    "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosure."
 }, {
     "regex": "catch\\s*\\((?:\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
     "criticity": "low",

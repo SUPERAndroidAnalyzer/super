@@ -68,7 +68,7 @@ fn main() {
     }
 
     if config.is_verbose() {
-        println!("Welcome to the Android Anti-Rebelation project. We will now try to audit the \
+        println!("Welcome to the S.U.P.E.R Android Analyzer. We will now try to audit the \
                   given application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
@@ -299,7 +299,7 @@ impl FromStr for Criticity {
 }
 
 fn get_help_menu() -> ArgMatches<'static> {
-    App::new("Android Anti-Revelation Project")
+    App::new("S.U.P.E.R. Android Analyzer")
         .version(crate_version!())
         .author("Iban Eguia <razican@protonmail.ch>")
         .about("Audits Android apps for vulnerabilities")

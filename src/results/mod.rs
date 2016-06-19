@@ -259,7 +259,7 @@ impl Results {
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
         try!(f.write_all(b"<section class=\"report\">"));
-        try!(f.write_all(b"<h1 id=\"title\">Android Anti-Rebelation Project Vulnerability \
+        try!(f.write_all(b"<h1 id=\"title\">S.U.P.E.R. Android Analyzer \
                             Report</h1>"));
         try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
                                    application <em>{}</em>. Report generated on {}.</p>",
@@ -382,7 +382,7 @@ impl Results {
 
         // Footer
         try!(f.write_all(b"<footer>"));
-        try!(f.write_all(&format!("<p>Copyright © {} - Android Anti-Rebelation Project.</p>",
+        try!(f.write_all(&format!("<p>Copyright © {} - S.U.P.E.R. Android Analyzer</p>",
                                   if now.year() > 2016 {
                                       format!("2016 - {}", now.year())
                                   } else {
