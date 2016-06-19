@@ -4,14 +4,15 @@ use std::fs;
 use std::process::{Command, exit};
 use std::io::prelude::*;
 use std::str::FromStr;
+use std::borrow::Borrow;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
 
-use {Error, Config, Criticity, print_error, print_vulnerability};
+use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 
-pub fn certificate_analysis(config: &Config, results: &mut Results) {
+pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()> {
     if config.is_verbose() {
         println!("Reading and analyzing the certificates...")
     }
@@ -19,27 +20,53 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
     let path = format!("{}/{}/original/META-INF/",
                        config.get_dist_folder(),
                        config.get_app_id());
+    let dir_iter = try!(fs::read_dir(&path));
 
-    for entry in fs::read_dir(&path).unwrap() {
-        let dir = entry.unwrap();
+    for f in dir_iter {
+        let f = match f {
+            Ok(f) => f,
+            Err(e) => {
+                print_warning(format!("An error occurred when reading the \
+                                       {}/{}/original/META-INF/ dir searching certificates. \
+                                       Certificate analysis will be skipped. More info: {}",
+                                      config.get_dist_folder(),
+                                      config.get_app_id(),
+                                      e),
+                              config.is_verbose());
+                break;
+            }
+        };
 
-        if dir.path().to_str().unwrap().ends_with(".RSA") ||
-           dir.path().to_str().unwrap().ends_with(".DSA") {
+        let path_file = match f.path().file_name() {
+            Some(n) => String::from(n.to_string_lossy().borrow()),
+            None => String::new(),
+        };
 
+        let mut is_cert = false;
+        match f.path().extension() {
+            None => {}
+            Some(e) => {
+                if e.to_string_lossy() == "RSA" || e.to_string_lossy() == "DSA" {
+                    is_cert = true;
+                }
+            }
+        }
+
+        if is_cert {
             let output = Command::new("openssl")
                 .arg("pkcs7")
                 .arg("-inform")
                 .arg("DER")
                 .arg("-in")
-                .arg(dir.path().to_str().unwrap())
+                .arg(f.path().to_str().unwrap())
                 .arg("-noout")
                 .arg("-print_certs")
                 .arg("-text")
                 .output();
 
             if output.is_err() {
-                print_error(format!("There was an error when executing the openssl \
-                             command to check the certificate: {}",
+                print_error(format!("There was an error when executing the openssl command to \
+                                     check the certificate: {}",
                                     output.err().unwrap()),
                             config.is_verbose());
                 exit(Error::Unknown.into());
@@ -56,7 +83,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
             let cmd = output.stdout;
             if config.is_verbose() {
                 println!("The application is signed with the following certificate: {}",
-                         dir.path().file_name().unwrap().to_str().unwrap());
+                         path_file.bold());
 
                 println!("{}", String::from_utf8_lossy(&cmd));
             }
@@ -138,4 +165,5 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) {
     } else if !config.is_quiet() {
         println!("Certificates analyzed");
     }
+    Ok(())
 }

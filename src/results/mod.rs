@@ -638,7 +638,7 @@ impl Results {
                                     print_warning(format!("An error occurred when generating \
                                                            the menu for {}. The result \
                                                            generation process will continue, \
-                                                           thoug. More info: {}",
+                                                           though. More info: {}",
                                                           path,
                                                           e),
                                                   config.is_verbose());
@@ -654,7 +654,7 @@ impl Results {
                 }
                 Err(e) => {
                     print_warning(format!("An error occurred when generating the menu for {}. \
-                                           The result generation process will continue, thoug. \
+                                           The result generation process will continue, though. \
                                            More info: {}",
                                           dir_path.as_ref().display(),
                                           e),

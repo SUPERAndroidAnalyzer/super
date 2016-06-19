@@ -24,7 +24,7 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     }
 
     let certificate_start = Instant::now();
-    certificate_analysis(config, results);
+    let certificate = certificate_analysis(config, results);
     if config.is_bench() {
         results.add_benchmark(Benchmark::new("Certificate analysis", certificate_start.elapsed()));
     }
