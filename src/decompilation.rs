@@ -10,26 +10,13 @@ use {Error, Config, print_error, print_warning, file_exists};
 use results::Benchmark;
 
 pub fn decompress(config: &Config) {
-    if config.is_force() &&
-       fs::metadata(format!("{}/{}", config.get_dist_folder(), config.get_app_id())).is_ok() {
-        if config.is_verbose() {
-            println!("The application decompression folder exists. But no more…");
-        }
-
-        if let Err(e) = fs::remove_dir_all(format!("{}/{}",
-                                                   config.get_dist_folder(),
-                                                   config.get_app_id())) {
-            print_error(format!("An unknown error occurred when trying to delete the \
-                                 decompression folder: {}",
-                                e),
-                        config.is_verbose());
-            exit(Error::Unknown.into());
-        }
-    }
-
     let path = format!("{}/{}", config.get_dist_folder(), config.get_app_id());
     if !file_exists(&path) || config.is_force() {
         if file_exists(&path) {
+            if config.is_verbose() {
+                println!("The application decompression folder exists. But no more…");
+            }
+
             if let Err(e) = fs::remove_dir_all(&path) {
                 print_warning(format!("There was an error when removing the decompression \
                                        folder: {}",

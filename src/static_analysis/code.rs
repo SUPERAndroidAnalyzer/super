@@ -264,7 +264,9 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
                                     vec: &mut Vec<DirEntry>,
                                     config: &Config)
                                     -> Result<()> {
-    if path.as_ref() == Path::new("classes/android") || path.as_ref() == Path::new("smali") {
+    if path.as_ref() == Path::new("classes/android") ||
+       path.as_ref() == Path::new("classes/com/google/android") ||
+       path.as_ref() == Path::new("smali") {
         return Ok(());
     }
     let real_path = format!("{}/{}/{}",
