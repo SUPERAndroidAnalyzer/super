@@ -68,14 +68,18 @@ fn main() {
     }
 
     if config.is_verbose() {
-        println!("Welcome to the S.U.P.E.R Android Analyzer. We will now try to audit the \
-                  given application.");
+        println!("Welcome to the S.U.P.E.R. Android Analyzer. We will now try to audit the given \
+                  application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
         println!("");
     }
 
-    let mut benchmarks = Vec::with_capacity(4);
+    let mut benchmarks = if config.is_bench() {
+        Vec::with_capacity(4)
+    } else {
+        Vec::with_capacity(0)
+    };
 
     let start_time = Instant::now();
 
@@ -116,7 +120,7 @@ fn main() {
         static_analysis(&config, &mut results);
 
         if config.is_bench() {
-            results.add_benchmark(Benchmark::new("Static analysis", static_start.elapsed()));
+            results.add_benchmark(Benchmark::new("Total static analysis", static_start.elapsed()));
         }
 
         // TODO dynamic analysis

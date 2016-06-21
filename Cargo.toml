@@ -1,18 +1,18 @@
 [package]
-name = "apk-audit"
+name = "super"
 version = "0.1.0"
 authors = ["Iban Eguia <razican@protonmail.ch>"]
 license = "GPL-3.0"
 readme = "README.md"
-repository = "https://github.com/Razican/apk-audit-core"
-documentation = "http://razican.github.io/apk-audit-core"
+repository = "https://github.com/Razican/super"
 description = """
-Android apk auditor. Core software with CLI.
+Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software
+with CLI.
 """
-keywords = ["Android", "security", "audit"]
+keywords = ["Android", "security", "audit", "super", "analyzer"]
 
 [dependencies]
-clap = "^2.5"
+clap = "^2.6"
 colored = "^1.2"
 zip = "^0.1"
 xml-rs = "^0.3"

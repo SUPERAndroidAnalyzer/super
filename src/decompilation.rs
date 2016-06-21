@@ -183,11 +183,11 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
             println!("Dex file extracted.");
         }
 
-        let start_time = Instant::now();
+        let dex_jar_time = Instant::now();
         // Converting the dex to jar
         dex_to_jar(config);
 
-        benchmarks.push(Benchmark::new("Dex to Jar decompilation", start_time.elapsed()));
+        benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
     } else if config.is_verbose() {
         println!("Seems that there is already a {} file for the application. There is no need to \
                   create it again.",
