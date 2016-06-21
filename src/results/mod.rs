@@ -517,7 +517,9 @@ impl Results {
     }
 
     fn generate_code_html_folder<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<usize> {
-        if path.as_ref() == Path::new("classes/android") || path.as_ref() == Path::new("smali") {
+        if path.as_ref() == Path::new("classes/android") ||
+           path.as_ref() == Path::new("classes/com/google/android/gms") ||
+           path.as_ref() == Path::new("smali") {
             return Ok(0);
         }
         let dir_iter = try!(fs::read_dir(&format!("{}/{}/{}",

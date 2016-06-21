@@ -265,7 +265,7 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
                                     config: &Config)
                                     -> Result<()> {
     if path.as_ref() == Path::new("classes/android") ||
-       path.as_ref() == Path::new("classes/com/google/android") ||
+       path.as_ref() == Path::new("classes/com/google/android/gms") ||
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
@@ -296,7 +296,9 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
                                   vec,
                                   config));
         } else if f_ext.is_some() {
-            if f_path.file_name().unwrap().to_string_lossy() != "AndroidManifest.xml" {
+            let filename = f_path.file_name().unwrap().to_string_lossy();
+            if filename != "AndroidManifest.xml" && filename != "R.java" &&
+               !filename.starts_with("R$") {
                 match f_ext.unwrap().to_string_lossy().borrow() {
                     "xml" | "java" => vec.push(f),
                     _ => {}
