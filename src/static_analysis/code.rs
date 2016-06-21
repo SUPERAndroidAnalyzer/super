@@ -45,7 +45,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
 
     let rules = Arc::new(rules);
     let manifest = Arc::new(manifest);
-    let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));;
+    let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
     let dist_folder = Arc::new(format!("{}/{}", config.get_dist_folder(), config.get_app_id()));
@@ -160,7 +160,7 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                 .unwrap()
                 .get_permission_checklist()
                 .needs_permission(*permission) {
-                break 'check;
+                continue 'check;
             }
         }
         'rule: for (s, e) in rule.get_regex().find_iter(code.as_str()) {
