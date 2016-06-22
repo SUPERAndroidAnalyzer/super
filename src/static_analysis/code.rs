@@ -1281,9 +1281,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(26).unwrap();
 
-        let should_match = &["telephony.TelephonyManager      getDeviceId"];
+        let should_match = &["telephony.TelephonyManager      getDeviceId()"];
 
-        let should_not_match = &["getDeviceId", "telephony.TelephonyManager", "", ""];
+        let should_not_match = &["getDeviceId()", "telephony.TelephonyManager", "", ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1300,9 +1300,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(27).unwrap();
 
-        let should_match = &["telephony.TelephonyManager      getSimSerialNumber"];
+        let should_match = &["telephony.TelephonyManager      getSimSerialNumber()"];
 
-        let should_not_match = &["getSimSerialNumber", "telephony.TelephonyManager", "", ""];
+        let should_not_match = &["getSimSerialNumber()", "telephony.TelephonyManager"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1345,10 +1345,10 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(29).unwrap();
 
-        let should_match = &["android.util.Base64 .encodeToString",
-                             "android.util.Base64    .encode"];
+        let should_match = &["android.util.Base64 .encodeToString()",
+                             "android.util.Base64    .encode()"];
 
-        let should_not_match = &[".encodeToString", ".encodeToString", "android.util.Base64", ""];
+        let should_not_match = &[".encodeToString()", ".encode()", "android.util.Base64"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1365,9 +1365,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(30).unwrap();
 
-        let should_match = &["android.util.Base64   .decode"];
+        let should_match = &["android.util.Base64   .decode()"];
 
-        let should_not_match = &["android.util.Base64", ".decode", "", ""];
+        let should_not_match = &["android.util.Base64", ".decode()"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1386,7 +1386,7 @@ mod tests {
 
         let should_match = &["for (;;)", "while(true)"];
 
-        let should_not_match = &["for(i=0;i<10;i++)", "while(i<10)", "", ""];
+        let should_not_match = &["for(i=0;i<10;i++)", "while(i<10)"];
 
         for m in should_match {
             assert!(check_match(m, rule));
