@@ -117,7 +117,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
     }
 
     if manifest.allows_backup() {
-        let criticity = Criticity::Warning;
+        let criticity = Criticity::Medium;
         let description = "This option allows backups of the application data via adb. Malicious \
                            people with physical access could use adb to get private data of your \
                            app into their PC.";

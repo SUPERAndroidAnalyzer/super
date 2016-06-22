@@ -6,9 +6,17 @@
 }, {
     "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
     "whitelist": [
-        "schemas.android.com/apk",
-        "www.w3.org/2005/Atom",
-        "www.apache.org/licenses"
+        "schemas.android.com",
+        "www.w3.org",
+        "www.apache.org/licenses",
+        "play.google.com/store/apps",
+        "dev.twitter.com/docs",
+        "api.twitter.com",
+        "crashlytics.com/spi/v\\d",
+        "com.android.calendar/events",
+        "www.googleapis.com/auth",
+        "market://details",
+        "developers.facebook.com/docs"
     ],
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
@@ -35,7 +43,7 @@
     "description": "Empty catches can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 }, {
     "regex": "[^0-9a-zA-Z\\n.](?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
-    "criticity": "high",
+    "criticity": "warning",
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs."
 }, {
@@ -46,7 +54,7 @@
     "whitelist": ["[:^xdigit:]::[:^xdigit:]"]
 },{
     "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
-    "criticity": "high",
+    "criticity": "low",
     "label": "Math Random method",
     "description": "This method is not as random as it is supossed to be. It should not be use to generate OTP codes."
 }, {
@@ -58,20 +66,20 @@
     "regex": "(([:alpha:]:)?\\[^0 !\\$`&\\*\\(\\)\\+]\\w.+)|([:alpha:]:\\\\)",
     "label": "Hardcoded file separator",
     "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS/Windows) and others slashes `/` (Unix).",
-    "criticity": "high"
+    "criticity": "warning"
 }, {
-    "regex": "=(?:\\s*)\"(?:\\s*)\/(?:(?:\\s*)[^\\0\/ !$&(?:)+](?:.+)?\\s*)?\"",
-    "criticity": "high",
-    "label": "Hardcoded file separator Unix",
-    "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix)."
+    "regex": "(?:[alpha]:|\\\\)\\\\((?:\\s*)[^\\0 !$`&*(?:)+]\\w.+)?",
+    "criticity": "warning",
+    "label": "Hardcoded file separator Windows",
+    "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS\\\/Windows) and others slashes `\/` (Unix)."
 }, {
     "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))",
     "criticity": "low",
     "label": "Weak Algorithms",
     "description": "Using weak algorithms allows an attacker to break the cyphered communications gaining access to plain text content."
 }, {
-    "regex": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*(?:(?:\\d+(?:\\s*\\+\\s*\\d*\\s*)*\\s*\\+\\s*[A-za-z]+(?:(?:\\s*\\+\\s*(?:\\d|[A-za-z])*)*)?)|(?:[A-za-z]+\\s*(?:\\+\\s*(?:\\d|[A-za-z])*(?:\\s*\\+\\s*(?:\\d|[A-za-z])*)*)?))\\s*\\)\\s*;",
-    "criticity": "high",
+    "regex": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*(?:(?:\\d+(?:\\s*\\+\\s*\\d*\\s*)*\\s*\\+\\s*[:alpha:]+(?:(?:\\s*\\+\\s*(?:\\d|[:alpha:])*)*)?)|(?:[:alpha:]+\\s*(?:\\+\\s*(?:\\d|[:alpha:])*(?:\\s*\\+\\s*(?:\\d|[:alpha:])*)*)?))\\s*\\)\\s*;",
+    "criticity": "low",
     "label": "Sleep Method",
     "description": "Sleep Method is used with vars as arguments. If that vars are modifeid it could force the aplication to stop indefinetly."
 }, {
@@ -84,11 +92,6 @@
     "criticity": "high",
     "label": "world writable permissions",
     "description": "Setting world writable permissions allows to anyone (with access to the target file) to modify file content."
-}, {
-    "regex": "(?:[a-zA-Z]:|\\\\)\\\\((?:\\s*)[^\\0 !$`&*(?:)+]\\w.+)?",
-    "criticity": "medium",
-    "label": "Hardcoded file separator Windows",
-    "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS\\\/Windows) and others slashes `\/` (Unix)."
 }, {
     "regex": "\\.getExternal(?:Storage|FilesDir)(?:\\(.*\\))?",
     "permissions": [
@@ -137,11 +140,11 @@
     "description": "This application is sending sms or mms and it might be without the user's knowledge "
 }, {
     "regex": "com\\.noshufou\\.android\\.su|com\\.thirdparty\\.superuser|eu\\.chainfire\\.supersu|com\\.koushikdutta\\.superuser|eu\\.chainfire\\.",
-    "criticity": "warning",
+    "criticity": "medium",
     "label": "Super user privileges.",
     "description": "This applications may require super user privileges."
 }, {
-    "regex": ".contains\\(\"test-keys\"\\)|\/system\/app\/Superuser.apk|isDeviceRooted\\(\\)|\/system\/bin\/failsafe\/su|\/system\/sd\/xbin\/su|RootTools.isAccessGiven\\(\\)",
+    "regex": ".\\s*contains\\s*\\(\\s*\"test-keys\"\\s*\\)|\/system\/app\/Superuser.apk|isDeviceRooted\\s*\\(\\s*\\)|\/system\/bin\/failsafe\/su|\/system\/sd\/xbin\/su|RootTools.isAccessGiven\\s*\\(\\s*\\)",
     "criticity": "high",
     "label": "Rooted device detection",
     "description": "This applications is performing checks for rooted device. This could be use to execute specific code if the device is rooted to take control of it."
@@ -153,13 +156,13 @@
     "description": "This app is using cell location by Base Station method. This process might be performed without the user's knowledge."
 }, {
     "regex": "telephony\\.TelephonyManager ",
-    "forward_check": "getDeviceId",
+    "forward_check": "getDeviceId\\s*\\(",
     "criticity": "warning",
     "label": "Get Device ID",
     "description": "The application is recording the device ID (IMEI). This process might be performed without the user's knowledge."
 }, {
     "regex": "telephony\\.TelephonyManager",
-    "forward_check": "getSimSerialNumber",
+    "forward_check": "getSimSerialNumber\\s*\\(",
     "criticity": "warning",
     "label": "Get SIM Serial",
     "description": "The application is recording the SIM serial. This process might be performed without the user's knowledge."
@@ -172,12 +175,12 @@
 }, {
     "regex": "android\\.util\\.Base64",
     "forward_check": "\\.encode(?:ToString)?",
-    "criticity": "high",
+    "criticity": "warning",
     "label": "Base64 Encode",
     "description": "This application is using Base64 encoding. This is not a secure method to encode data."
 }, {
     "regex": "android\\.util\\.Base64",
-    "forward_check": "\\.decode",
+    "forward_check": "\\.decode\\s*\\(",
     "criticity": "warning",
     "label": "Base64 decode",
     "description": "This application is using Base64 decoding."
