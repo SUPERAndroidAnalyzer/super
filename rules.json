@@ -68,7 +68,7 @@
     "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS/Windows) and others slashes `/` (Unix).",
     "criticity": "warning"
 }, {
-    "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5|md4|MD4)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:rc2|RC2|rc4|RC4)\\s*\"?\\s*\\))",
+    "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5|md4|MD4)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:rc2|RC2|rc4|RC4|AES\\s*\/\\s*ECB|(rsa|RSA)\/.+\/nopadding)\\s*\"?\\s*\\))",
     "criticity": "high",
     "label": "Weak Algorithms",
     "description": "Using weak algorithms allows an attacker to break the cyphered communications gaining access to plain text content."
@@ -195,4 +195,27 @@
     "criticity": "warning",
     "label": "Certificate or Keystore disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore ."
+},{
+    "regex": "telephony\\.TelephonyManager ",
+    "forward_check": "getSimOperator\\s*\\(",
+    "criticity": "warning",
+    "label": "Get SIM Operator",
+    "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
+},{
+    "regex": "telephony\\.TelephonyManager ",
+    "forward_check": "getSimOperator\\s*\\(",
+    "criticity": "warning",
+    "label": "Get SIM Operator",
+    "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
+},{
+    "regex": "utils\\s*\\.\\s*AESObfuscator",
+    "forward_check": "getObfuscator",
+    "criticity": "warning",
+    "label": "Obfuscated code",
+    "description": "The code of this application could be obfuscated."
+},{
+    "regex": "getRuntime\\s*\\(\\s*\\)\\s*\\.\\s*exec\\s*\\(",
+    "criticity": "high",
+    "label": "System command execution",
+    "description": "The application could execute system command."
 }]

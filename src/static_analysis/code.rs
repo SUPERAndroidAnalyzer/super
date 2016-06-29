@@ -964,7 +964,10 @@ mod tests {
                              "getInstance(\"md4\")",
                              "getInstance(\"rc2\")",
                              "getInstance(\"rc4\")",
-                             "getInstance(\"RC4\")"];
+                             "getInstance(\"RC4\")",
+                             "getInstance(\"AES/ECB\")",
+                             "getInstance(\"RSA/ECB/nopadding\")",
+                             "getInstance(\"rsa/ECB/nopadding\")"];
 
         let should_not_match = &["", "", "", ""];
 
@@ -1452,4 +1455,24 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_get_sim_operator() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(33).unwrap();
+
+        let should_match = &["telephony.TelephonyManager      getSimOperator()"];
+
+        let should_not_match = &["getSimOperator()", "telephony.TelephonyManager"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
 }
