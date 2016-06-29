@@ -4,3 +4,4 @@ results/*
 target
 Cargo.lock
 *.bk
+*.apk

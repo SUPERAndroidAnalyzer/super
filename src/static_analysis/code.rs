@@ -952,7 +952,7 @@ mod tests {
     fn it_weak_algs() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(12).unwrap();
+        let rule = rules.get(11).unwrap();
 
         let should_match = &["DESKeySpec",
                              "getInstance(MD5)",
@@ -975,7 +975,7 @@ mod tests {
     fn it_sleep_method() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(13).unwrap();
+        let rule = rules.get(12).unwrap();
 
         let should_match = &["Thread.sleep(Usertime+Variable+Variable);",
                              "Thread.sleep(Usertime+13+123+1+24);",
@@ -1002,7 +1002,7 @@ mod tests {
     fn it_world_readable_permissions() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(14).unwrap();
+        let rule = rules.get(13).unwrap();
 
         let should_match = &["MODE_WORLD_READABLE",
                              "openFileOutput(\"file.txt  \", 1) ",
@@ -1026,7 +1026,7 @@ mod tests {
     fn it_world_writable_permissions() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(15).unwrap();
+        let rule = rules.get(14).unwrap();
 
         let should_match = &["MODE_WORLD_WRITABLE",
                              "openFileOutput(\"file.txt  \", 2) ",
@@ -1050,7 +1050,7 @@ mod tests {
     fn it_external_storage_write_read() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(16).unwrap();
+        let rule = rules.get(15).unwrap();
 
         let should_match = &[".getExternalStorage", ".getExternalFilesDir()"];
 
@@ -1069,7 +1069,7 @@ mod tests {
     fn it_temp_file() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(17).unwrap();
+        let rule = rules.get(16).unwrap();
 
         let should_match = &[".createTempFile()", ".createTempFile()"];
 
@@ -1088,7 +1088,7 @@ mod tests {
     fn it_webview_xss() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(18).unwrap();
+        let rule = rules.get(17).unwrap();
 
         let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"];
 
@@ -1107,7 +1107,7 @@ mod tests {
     fn it_webview_ssl_errors() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(19).unwrap();
+        let rule = rules.get(18).unwrap();
 
         let should_match = &["onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
                               error)             .proceed();"];
@@ -1127,7 +1127,7 @@ mod tests {
     fn it_sql_injection() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(20).unwrap();
+        let rule = rules.get(19).unwrap();
 
         let should_match = &["android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
                               ('\" + paramView.getText().toString() + \"', '\" + \
@@ -1154,7 +1154,7 @@ mod tests {
     fn it_ssl_accepting_all_certificates() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(21).unwrap();
+        let rule = rules.get(20).unwrap();
 
         let should_match = &["javax.net.ssl   TrustAllSSLSocket-Factory",
                              "javax.net.ssl   AllTrustSSLSocketFactory",
@@ -1179,7 +1179,7 @@ mod tests {
     fn it_sms_mms_sending() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(22).unwrap();
+        let rule = rules.get(21).unwrap();
 
         let should_match =
             &["telephony.SmsManager     sendMultipartTextMessage(String destinationAddress, \
@@ -1212,7 +1212,7 @@ mod tests {
     fn it_superuser_privileges() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(23).unwrap();
+        let rule = rules.get(22).unwrap();
 
         let should_match = &["com.noshufou.android.su",
                              "com.thirdparty.superuser",
@@ -1235,7 +1235,7 @@ mod tests {
     fn it_superuser_device_detection() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(24).unwrap();
+        let rule = rules.get(23).unwrap();
 
         let should_match = &[".contains(\"test-keys\")",
                              "/system/app/Superuser.apk",
@@ -1260,7 +1260,7 @@ mod tests {
     fn it_base_station_location() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(25).unwrap();
+        let rule = rules.get(24).unwrap();
 
         let should_match = &["telephony.TelephonyManager    getCellLocation"];
 
@@ -1279,7 +1279,7 @@ mod tests {
     fn it_get_device_id() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(26).unwrap();
+        let rule = rules.get(25).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getDeviceId()"];
 
@@ -1298,7 +1298,7 @@ mod tests {
     fn it_get_sim_serial() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(27).unwrap();
+        let rule = rules.get(26).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getSimSerialNumber()"];
 
@@ -1317,7 +1317,7 @@ mod tests {
     fn it_gps_location() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(28).unwrap();
+        let rule = rules.get(27).unwrap();
 
         let should_match = &["android.location   getLastKnownLocation()",
                              "android.location   requestLocationUpdates()",
@@ -1343,7 +1343,7 @@ mod tests {
     fn it_base64_encode() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(29).unwrap();
+        let rule = rules.get(28).unwrap();
 
         let should_match = &["android.util.Base64 .encodeToString()",
                              "android.util.Base64    .encode()"];
@@ -1363,7 +1363,7 @@ mod tests {
     fn it_base64_decoding() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(30).unwrap();
+        let rule = rules.get(29).unwrap();
 
         let should_match = &["android.util.Base64   .decode()"];
 
@@ -1382,7 +1382,7 @@ mod tests {
     fn it_infinite_loop() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(31).unwrap();
+        let rule = rules.get(30).unwrap();
 
         let should_match = &["for (;;)", "while(true)"];
 

@@ -68,11 +68,6 @@
     "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS/Windows) and others slashes `/` (Unix).",
     "criticity": "warning"
 }, {
-    "regex": "(?:[alpha]:|\\\\)\\\\((?:\\s*)[^\\0 !$`&*(?:)+]\\w.+)?",
-    "criticity": "warning",
-    "label": "Hardcoded file separator Windows",
-    "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS\\\/Windows) and others slashes `\/` (Unix)."
-}, {
     "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))",
     "criticity": "low",
     "label": "Weak Algorithms",
@@ -189,4 +184,8 @@
     "criticity": "warning",
     "label": "Infinite Loop",
     "description": "The application contains infinite loops. It is not a good practice to use infinite loops inside a program."
-}]
+}
+
+
+
+]
