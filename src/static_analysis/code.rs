@@ -958,7 +958,13 @@ mod tests {
                              "getInstance(MD5)",
                              "getInstance(\"MD5\")",
                              "getInstance(SHA-1)",
-                             "getInstance(\"SHA-1\")"];
+                             "getInstance(\"SHA-1\")",
+                             "getInstance(\"MD4\")",
+                             "getInstance(\"RC2\")",
+                             "getInstance(\"md4\")",
+                             "getInstance(\"rc2\")",
+                             "getInstance(\"rc4\")",
+                             "getInstance(\"RC4\")"];
 
         let should_not_match = &["", "", "", ""];
 
@@ -1387,6 +1393,56 @@ mod tests {
         let should_match = &["for (;;)", "while(true)"];
 
         let should_not_match = &["for(i=0;i<10;i++)", "while(i<10)"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_email_disclosure() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(31).unwrap();
+
+        let should_match = &["super@super.es",
+                             "android_analizer@dem.co.uk",
+                             "foo@unadepatatas.com",
+                             "android-rust69@tux.rox"];
+
+        let should_not_match = &["@",
+                                 "@strings/",
+                                 "@id/user.id",
+                                 "android:id=\"@id/userid\""];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_hardcoded_certificate() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(32).unwrap();
+
+        let should_match = &["key.key",
+                             "cert.cert",
+                             "cert.pem",
+                             "certificate.cer"];
+
+        let should_not_match = &["key",
+                                 "cer",
+                                 "pem",
+                                 "certificate"];
 
         for m in should_match {
             assert!(check_match(m, rule));
