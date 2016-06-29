@@ -62,8 +62,17 @@ fn main() {
     };
 
     if !config.check() {
-        print_error(format!("There is an error with the configuration: {:?}", config),
-                    verbose);
+        if (!file_exists(format!("{}/{}.apk",
+                                 config.get_downloads_folder(),
+                                 config.get_app_id()))) {
+            print_error(format!("The {}/{}.apk file does not exist.",
+                                config.get_downloads_folder(),
+                                config.get_app_id()),
+                        verbose);
+        } else {
+            print_error(format!("There is an error with the configuration: {:?}", config),
+                        verbose);
+        }
         exit(Error::Config.into());
     }
 

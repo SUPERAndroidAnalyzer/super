@@ -327,8 +327,8 @@ impl Config {
     }
 
     pub fn check(&self) -> bool {
-        file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
         file_exists(self.downloads_folder.as_str()) &&
+        file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
         file_exists(self.apktool_file.as_str()) &&
         file_exists(self.dex2jar_folder.as_str()) &&
         file_exists(self.jd_cmd_file.as_str()) &&
