@@ -3,7 +3,6 @@ extern crate colored;
 use std::fs;
 use std::process::{Command, exit};
 use std::io::prelude::*;
-use std::str::FromStr;
 use std::borrow::Borrow;
 
 use colored::Colorize;
@@ -11,6 +10,26 @@ use chrono::{Local, Datelike};
 
 use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
+
+fn parse_month(month_str: &str) -> u32 {
+    let month_number = match month_str {
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mar" => 3,
+        "Apr" => 4,
+        "May" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Oct" => 10,
+        "Nov" => 11,
+        "Dec" => 12,
+        _ => 0
+    };
+
+    month_number
+}
 
 pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()> {
     if config.is_verbose() {
@@ -126,15 +145,23 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 }
             }
             if issuer.nth(1) == subject.nth(1) {
-                // This means it is self signed. Should we do something?
+                //TODO: This means it is self signed. Should we do something?
             }
 
             let now = Local::now();
             let year = now.year();
+            let month = now.month();
+            let day = now.day();
 
-            if year > FromStr::from_str(&after.nth(1).unwrap()[16..20]).unwrap() {
-                // TODO: Also check if the certificate expired months or days ago, not only years
-                // need to find a better way to parse the date output of the command
+            let after = after.nth(1).unwrap();
+            let cert_year = after[16..20].parse::<i32>().unwrap();
+            let cert_month = parse_month(&after[0..3]);
+            let cert_day = match after[4..6].parse::<u32>(){ //when day<10 we must parse only 1 number
+            	Ok(n) => n,
+            	Err(_) => after[5..6].parse::<u32>().unwrap()
+            };
+
+            if year > cert_year || (year == cert_year && month > cert_month) || (year == cert_year && month == cert_month && day > cert_day) {
                 let criticity = Criticity::High;
                 let description = "The certificate of the application has expired. You should not \
                                    use applications with expired certificates since the app is \
