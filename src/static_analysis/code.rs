@@ -1417,10 +1417,7 @@ mod tests {
                              "foo@unadepatatas.com",
                              "android-rust69@tux.rox"];
 
-        let should_not_match = &["@",
-                                 "@strings/",
-                                 "@id/user.id",
-                                 "android:id=\"@id/userid\""];
+        let should_not_match = &["@", "@strings/", "@id/user.id", "android:id=\"@id/userid\""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1437,15 +1434,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(32).unwrap();
 
-        let should_match = &["key.key",
-                             "cert.cert",
-                             "cert.pem",
-                             "certificate.cer"];
+        let should_match = &["key.key", "cert.cert", "cert.pem", "certificate.cer"];
 
-        let should_not_match = &["key",
-                                 "cer",
-                                 "pem",
-                                 "certificate"];
+        let should_not_match = &["key", "cer", "pem", "certificate"];
 
         for m in should_match {
             assert!(check_match(m, rule));

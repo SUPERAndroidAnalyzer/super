@@ -63,8 +63,8 @@ fn main() {
 
     if !config.check() {
         if !file_exists(format!("{}/{}.apk",
-                                 config.get_downloads_folder(),
-                                 config.get_app_id())) {
+                                config.get_downloads_folder(),
+                                config.get_app_id())) {
             print_error(format!("The {}/{}.apk file does not exist.",
                                 config.get_downloads_folder(),
                                 config.get_app_id()),

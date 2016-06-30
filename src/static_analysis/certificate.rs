@@ -25,7 +25,7 @@ fn parse_month(month_str: &str) -> u32 {
         "Oct" => 10,
         "Nov" => 11,
         "Dec" => 12,
-        _ => 0
+        _ => 0,
     };
 
     month_number
@@ -145,7 +145,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 }
             }
             if issuer.nth(1) == subject.nth(1) {
-                //TODO: This means it is self signed. Should we do something?
+                // TODO: This means it is self signed. Should we do something?
             }
 
             let now = Local::now();
@@ -156,12 +156,13 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
             let after = after.nth(1).unwrap();
             let cert_year = after[16..20].parse::<i32>().unwrap();
             let cert_month = parse_month(&after[0..3]);
-            let cert_day = match after[4..6].parse::<u32>(){ //when day<10 we must parse only 1 number
-            	Ok(n) => n,
-            	Err(_) => after[5..6].parse::<u32>().unwrap()
+            let cert_day = match after[4..6].parse::<u32>() { //if day<10 parse 1 number
+                Ok(n) => n,
+                Err(_) => after[5..6].parse::<u32>().unwrap(),
             };
 
-            if year > cert_year || (year == cert_year && month > cert_month) || (year == cert_year && month == cert_month && day > cert_day) {
+            if year > cert_year || (year == cert_year && month > cert_month) ||
+               (year == cert_year && month == cert_month && day > cert_day) {
                 let criticity = Criticity::High;
                 let description = "The certificate of the application has expired. You should not \
                                    use applications with expired certificates since the app is \
