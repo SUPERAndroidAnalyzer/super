@@ -203,10 +203,10 @@
     "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
 },{
     "regex": "telephony\\.TelephonyManager ",
-    "forward_check": "getSimOperator\\s*\\(",
+    "forward_check": "getSimOperatorName\\s*\\(",
     "criticity": "warning",
-    "label": "Get SIM Operator",
-    "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
+    "label": "Get SIM OperatorName",
+    "description": "The application is recording the device network operator name. This process might be performed without the user's knowledge."
 },{
     "regex": "utils\\s*\\.\\s*AESObfuscator",
     "forward_check": "getObfuscator",

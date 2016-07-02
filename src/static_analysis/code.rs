@@ -1466,4 +1466,23 @@ mod tests {
         }
     }
 
+    #[test]
+    fn it_get_sim_operatorname() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(34).unwrap();
+
+        let should_match = &["telephony.TelephonyManager      getSimOperatorName()"];
+
+        let should_not_match = &["getSimOperatorName()", "telephony.TelephonyManager"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
 }
