@@ -12,7 +12,7 @@ with CLI.
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 
 [dependencies]
-clap = "^2.6"
+clap = "^2.9"
 colored = "^1.2"
 zip = "^0.1"
 xml-rs = "^0.3"
