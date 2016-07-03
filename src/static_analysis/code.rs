@@ -745,6 +745,7 @@ mod tests {
                              "catch (Exception|IOException e) {",
                              "catch (IOException | Exception e) {",
                              "catch (IOException|Exception|PepeException e) {",
+                             "catch (SystemException|ApplicationException|PepeException e) {",
                              "catch (IOException|Exception | PepeException e) {"];
         let should_not_match = &["catch (IOException e) {",
                                  "catch (IOException|PepeException e) {"];
@@ -769,6 +770,8 @@ mod tests {
                              "throws IOException, Exception {",
                              "throws Exception,IOException{",
                              "throws IOException,Exception{",
+                             "throws SystemException,Exception{",
+                             "throws ApplicationException,Exception{",
                              "throws PepeException, Exception, IOException {"];
         let should_not_match = &["throws IOException {", "throws PepeException, IOException {"];
 
@@ -1486,10 +1489,10 @@ mod tests {
     }
 
     #[test]
-    fn it_obfuscation() { 
+    fn it_obfuscation() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
-        let rule = rules.get(35).unwrap(); 
+        let rule = rules.get(35).unwrap();
 
         let should_match = &["android.utils.AESObfuscator getObfuscator();",
                              "android.utils.AESObfuscator   obfuscation.getObfuscator();",
@@ -1512,7 +1515,7 @@ mod tests {
 
 
     #[test]
-    fn it_command_exec() { 
+    fn it_command_exec() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(36).unwrap();
@@ -1561,5 +1564,48 @@ mod tests {
         }
     }
 
+    #[test]
+    fn it_ssl_getinsecure_method() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(38).unwrap();
+
+        let should_match = &[" javax.net.ssl.SSLSocketFactory                 SSLSocketFactory.getInsecure()"];
+
+        let should_not_match = &["getInsecure()",
+                                 "javax.net.ssl.SSL  getInsecure();",
+                                 "javax.net.ssl.SSLSocketFactory",
+                                 "net.ssl.SSL getSecure();"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_finally_with_return() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(39).unwrap();
+
+        let should_match = &["finally {                      return;",
+                             "finally {                      return;}"];
+
+        let should_not_match = &["finally{}",
+                                 "finally{ var;}",
+                                 "finally { Printf (“Hello”); return true; }"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
 
 }

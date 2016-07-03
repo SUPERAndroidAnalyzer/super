@@ -22,12 +22,12 @@
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
     "criticity": "warning"
 }, {
-    "regex": "catch\\s*\\(\\s*(?:(?:\\s*\\|?\\s*\\w+)*\\s*\\|)?\\s*Exception\\s*(?:(?:\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
+    "regex": "catch\\s*\\(\\s*(?:(?:\\s*\\|?\\s*\\w+)*\\s*\\|)?\\s*Exception|SystemException|ApplicationException\\s*(?:(?:\\s*\\|\\s*\\w+)*)?\\s+\\w+\\s*\\)",
     "criticity": "low",
     "label": "Generic Exception in catch",
     "description": "Exception catching should be specific. Generic Exception type could not be safe and lead to silent error suppresion"
 }, {
-    "regex": "throws\\s+(?:\\w*\\s*,\\s*)*Exception\\s*[,{]",
+    "regex": "throws\\s+(?:\\w*\\s*,\\s*)*Exception|SystemException|ApplicationException\\s*[,{]",
     "criticity": "low",
     "label": "Generic Exception in Throws",
     "description": "The exceptions thrown by a method should be specific. Generic Exception type could could not be safe and lead to silent error suppresion."
@@ -223,4 +223,15 @@
     "criticity": "low",
     "label": "Empty try-catch",
     "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
+},{
+    "regex": "javax.net.ssl.SSLSocketFactory",
+    "forward_check": ".getInsecure\\s*\\(",
+    "criticity": "warning",
+    "label": "ssl getInsecure method",
+    "description": "Insecure application SSL implementation. This applications in using the getInsecure Method which returns a new instance of a socketFactory with all SSL security checks disabled"
+},{
+    "regex": "finally\\s*\\{\\s*[\\w.(?:);-_ ]*\\s*return",
+    "criticity": "low",
+    "label": "finally with return",
+    "description": "Finally structure with return statement inside will bypass any error thrown."
 }]
