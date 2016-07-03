@@ -1396,9 +1396,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(30).unwrap();
 
-        let should_match = &["for (;;)", "while(true)"];
+        let should_match = &["while(true)"];
 
-        let should_not_match = &["for(i=0;i<10;i++)", "while(i<10)"];
+        let should_not_match = &["while(i<10)"];
 
         for m in should_match {
             assert!(check_match(m, rule));
