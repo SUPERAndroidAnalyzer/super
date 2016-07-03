@@ -53,7 +53,7 @@
     "criticity": "warning",
     "whitelist": ["[:^xdigit:]::[:^xdigit:]"]
 }, {
-    "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)",
+    "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)|Random\\s*\\(\\s*\\)",
     "criticity": "low",
     "label": "Math Random method",
     "description": "This method is not as random as it is supossed to be. It should not be use to generate OTP codes."
@@ -218,4 +218,9 @@
     "criticity": "high",
     "label": "System command execution",
     "description": "The application could execute system command."
+},{
+    "regex": "try\\s*\\{\\s*\\}\\s*catch\\s*\\((?:\\w|\\s*)+\\)\\s*\\{\\s*\\}",
+    "criticity": "low",
+    "label": "Empty try-catch",
+    "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 }]

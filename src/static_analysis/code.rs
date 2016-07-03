@@ -885,9 +885,9 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(8).unwrap();
 
-        let should_match = &["Math.random()", "Math.random( )", "Math . random ()"];
+        let should_match = &["Math.random()", "Random()", "Math . random ()"];
         let should_not_match =
-            &["math.random()", "MATH.random()", "Math.Random()", "Mathrandom()", "Math.random"];
+            &["math.random()", "MATH.random()", "Math.Randomize()", "Mathrandom()", "Math.random"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1484,5 +1484,82 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
+
+    #[test]
+    fn it_obfuscation() { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(35).unwrap(); 
+
+        let should_match = &["android.utils.AESObfuscator getObfuscator();",
+                             "android.utils.AESObfuscator   obfuscation.getObfuscator();",
+                             "utils.AESObfuscator getObfuscator();",
+                             "utils.AESObfuscator   obfuscation.getObfuscator();"];
+
+        let should_not_match = &["AESObfuscator  getObfuscator();",
+                                 "android.utils.AESObfuscator   obfuscation",
+                                 "getObfuscator();",
+                                 "android.utils.AESObfuscator"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+
+    #[test]
+    fn it_command_exec() { 
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(36).unwrap();
+
+        let should_match = &["Runtime.getRuntime().exec(\"command\", options);",
+                             "getRuntime().exec(\"ls -la\", options);",
+                             "Runtime.getRuntime().exec(\"ls -la\", options);",
+                             "getRuntime().exec(\"ps -l\", options);"];
+
+        let should_not_match = &["Runtime.getRuntime()(\"\", options);",
+                                 "getRuntime()(\"\", options);",
+                                 "Runtime.getRuntime()(\"\", options);",
+                                 "getRuntime()(\"\", options);"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_empty_try_catch() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(37).unwrap();
+
+        let should_match = &["try { }  catch  (  OutOfMemoryError e1  ) { }",
+                             "try { }  catch  () { }",
+                             "try {}  catch (Exception e) {}",
+                             "try{} catch (RuntimeException e) {}"];
+
+        let should_not_match = &["try { } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  }",
+                                 "try {  print(\"Hello\"); } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  }",
+                                 "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { }",
+                                 "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { Log.e(\"Error\"); }"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
 
 }
