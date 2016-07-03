@@ -223,11 +223,11 @@
     "label": "Empty try-catch",
     "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 },{
-    "regex": "javax.net.ssl.SSLSocketFactory",
-    "forward_check": ".getInsecure\\s*\\(",
-    "criticity": "warning",
+    "regex": "javax\\.net\\.ssl\\.SSLSocketFactory",
+    "forward_check": "getInsecure\\s*\\(",
+    "criticity": "high",
     "label": "SSL getInsecure method",
-    "description": "Insecure application SSL implementation. This applications in using the getInsecure Method which returns a new instance of a socketFactory with all SSL security checks disabled"
+    "description": "Insecure application SSL implementation. This applications in using the getInsecure Method which returns a new instance of a socketFactory with all SSL security checks disabled. These sockets are vulnerable to MITM attacks."
 },{
     "regex": "finally\\s*\\{\\s*[\\w.(?:);-_ ]*\\s*return",
     "criticity": "low",
