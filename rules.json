@@ -47,11 +47,13 @@
     "label": "IP Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private IPs."
 }, {
-    "regex": "([:^xdigit:]|^)([:xdigit:]{1,4}:){7,7}[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,7}:|([:xdigit:]{1,4}:){1,6}:[:xdigit:]{1,4}|([:xdigit:]{1,4}:){1,5}(:[:xdigit:]{1,4}){1,2}|([:xdigit:]{1,4}:){1,4}(:[:xdigit:]{1,4}){1,3}|([:xdigit:]{1,4}:){1,3}(:[:xdigit:]{1,4}){1,4}|([:xdigit:]{1,4}:){1,2}(:[:xdigit:]{1,4}){1,5}|[:xdigit:]{1,4}:((:[:xdigit:]{1,4}){1,6})|:((:[:xdigit:]{1,4}){1,7}|:)|fe80:(:[:xdigit:]{0,4}){0,4}%[:xdigit:]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([:xdigit:]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])([:^xdigit:]|$)",
-    "label": "IP Disclosure",
-    "description": "The decompilation of the source code could lead to the disclosure of private IPs.",
+    "regex": "(?:[:^xdigit:]|^)(?:[:xdigit:]{1,4}:){7,7}[:xdigit:]{1,4}|(?:[:xdigit:]{1,4}:){1,7}:|(?:[:xdigit:]{1,4}:){1,6}:[:xdigit:]{1,4}|(?:[:xdigit:]{1,4}:){1,5}(?::[:xdigit:]{1,4}){1,2}|(?:[:xdigit:]{1,4}:){1,4}(?::[:xdigit:]{1,4}){1,3}|(?:[:xdigit:]{1,4}:){1,3}(?::[:xdigit:]{1,4}){1,4}|(?:[:xdigit:]{1,4}:){1,2}(?::[:xdigit:]{1,4}){1,5}|[:xdigit:]{1,4}:(?:(?::[:xdigit:]{1,4}){1,6})|:(?:(?::[:xdigit:]{1,4}){1,7}|:)|fe80:(?::[:xdigit:]{0,4}){0,4}[:xdigit:]{1,}|::(?:ffff(?::0{1,4}){0,1}:){0,1}(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])|(?:[:xdigit:]{1,4}:){1,4}:(?:(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(?:25[0-5]|(?:2[0-4]|1{0,1}[0-9]){0,1}[0-9])(?:[:^xdigit:]|$)",
+    "whitelist": [
+        "[:^xdigit:]::[:^xdigit:]"
+    ],
     "criticity": "warning",
-    "whitelist": ["[:^xdigit:]::[:^xdigit:]"]
+    "label": "IP Disclosure",
+    "description": "The decompilation of the source code could lead to the disclosure of private IPs."
 }, {
     "regex": "Math\\s*\\.\\s*random\\s*\\(\\s*\\)|Random\\s*\\(\\s*\\)",
     "criticity": "low",
@@ -63,10 +65,10 @@
     "label": "Unchecked output in Logs",
     "description": "Sensitive information should never be logged since it can lead to that information being disclosed."
 }, {
-    "regex": "(([:alpha:]:)?\\[^0 !\\$`&\\*\\(\\)\\+]\\w.+)|([:alpha:]:\\\\)",
+    "regex": "(?:(?:\\b[A-Z]{1}:)\\\\\\s*[^\\0 !$&*(?:)+]\\w.+)|(?:(?:\\b[A-Z]{1}:)\\\\)",
+    "criticity": "warning",
     "label": "Hardcoded file separator",
-    "description": "Paths like C:\\Program Files\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\` (DOS/Windows) and others slashes `/` (Unix).",
-    "criticity": "warning"
+    "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix)."
 }, {
     "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5|md4|MD4)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:rc2|RC2|rc4|RC4|AES\\s*\/\\s*ECB|(rsa|RSA)\/.+\/nopadding)\\s*\"?\\s*\\))",
     "criticity": "high",
@@ -80,12 +82,12 @@
 }, {
     "regex": "(?:(?:Context\\.)?MODE_WORLD_READABLE)|(?:openFileOutput\\(\\s*\"?.+\"?\\s*,\\s*1\\s*\\))",
     "criticity": "high",
-    "label": "world readable permissions",
+    "label": "World readable permissions",
     "description": "Setting world readable permissions allows to anyone (with access to the target file) to read file content."
 }, {
     "regex": "(?:(?:Context\\.)?MODE_WORLD_WRITABLE)|(?:openFileOutput\\(\\s*\"?.+\"?\\s*,\\s*2\\s*\\))",
     "criticity": "high",
-    "label": "world writable permissions",
+    "label": "World writable permissions",
     "description": "Setting world writable permissions allows to anyone (with access to the target file) to modify file content."
 }, {
     "regex": "\\.getExternal(?:Storage|FilesDir)(?:\\(.*\\))?",
@@ -108,7 +110,7 @@
     "forward_check": "\\.addJavascriptInterface\\(.*\\)",
     "criticity": "critical",
     "label": "WebView XSS",
-    "description": "Webview insecure implementation. This issue could allow to a remote attacker to code execution in Web View and performing Cross Site Scripting attacks."
+    "description": "Webview insecure implementation. This issue could allow to a remote attacker to code execution in WebView and performing Cross Site Scripting attacks."
 }, {
     "regex": "onReceivedSslError\\s*\\(\\s*WebView\\s*.*\\)",
     "forward_check": "\\.\\s*proceed\\(\\s*\\)\\s*;",
@@ -233,4 +235,10 @@
     "criticity": "low",
     "label": "Finally with return statement",
     "description": "Finally structure with return statement inside will bypass any error thrown."
+},{
+    "regex": "(?P<fc1>\\w+)\\s*=.*\\.getText.*;",
+    "forward_check": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*[A-Za-z0-9_\".(?:)]*\\s*\\+?\\s*{fc1}\\s*\\+?\\s*[A-Za-z0-9_\".(?:)]*\\s*\\)\\s*;",
+    "criticity": "high",
+    "label": "Sleep Method",
+    "description": "Sleep Method is used with vars as arguments. If those vars are modified it could force the aplication to stop indefinitely."
 }]

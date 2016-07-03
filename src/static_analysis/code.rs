@@ -861,17 +861,17 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(7).unwrap();
 
-        let should_match = &["::1",
-                             "2001:db8::ff00:42:8329",
+        let should_match = &["2001:db8::ff00:42:8329",
                              "::ffff:192.0.2.128",
                              "3ffe:1900:4545:3:200:f8ff:fe21:67cf",
-                             "3ffe::3:200:f8ff:fe21:67cf",
-                             "3ffe:1900:4545:3:200::"];
-        let should_not_match = &["3ffe:10900:4545:3:200:f8ff:fe21:67cf",
-                                 "3ffe:4545:3:200:f8ff:fe21:67cf",
-                                 "3ffe:1900:4545:d:",
-                                 "3ffe:1900:4545:d:aaa",
-                                 " ::l"];
+                             "::ffff:192.0.2.128"];
+
+        let should_not_match = &[" :: ",
+                                 "SUBMIT:::::::",
+                                 ":",
+                                 "::::",
+                                 "Log.d(DEBUG_TAG, \" SMS::::::: \");",
+                                 "\"AppWallActivity::onDestroy\""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -932,15 +932,21 @@ mod tests {
         }
     }
 
-
     #[test]
     fn it_file_separator() {
         let config = Default::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(10).unwrap();
 
-        let should_match = &["C:\\", "C:\\Program Files\\index.exe"];
-        let should_not_match = &["Home\\password.txt"];
+        let should_match = &["C:\\",
+                             "C:\\Programs\\password.txt",
+                             "D:\\",
+                             "H:\\P\\o\\password.txt"];
+
+        let should_not_match = &["ome\\password.txt",
+                                 "at:\\",
+                                 "\\\\home\\sharedfile",
+                                 "\\n"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1605,6 +1611,29 @@ mod tests {
         let should_not_match = &["finally{}",
                                  "finally{ var;}",
                                  "finally { Printf (“Hello”); return true; }"];
+
+        for m in should_match {
+            assert!(check_match(m, rule));
+        }
+
+        for m in should_not_match {
+            assert!(!check_match(m, rule));
+        }
+    }
+
+    #[test]
+    fn it_sleep_method_notvalidated() {
+        let config = Default::default();
+        let rules = load_rules(&config).unwrap();
+        let rule = rules.get(40).unwrap();
+
+        let should_match = &["int var = EditText.getText  Thread.sleep(100 + var);",
+                             "var = .getText  Thread.sleep(100 + var);"];
+
+        let should_not_match = &["int var4 = EditText.getText  Thread.sleep(100 + var);",
+                                 "var = .getText  Thread.sleep(100 + hola);",
+                                 "",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
