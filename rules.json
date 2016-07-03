@@ -1,7 +1,7 @@
 [{
-    "regex": "(?i)(?:(?:\")\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword|p@(?:s|\\$)(?:s|\\$))\\s*(?:\"))\\d*|(?:(?:')\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\s*(?:'))|(?:=\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$)))|(?:(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\d*\\s*=)|@string\/(?:(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\s*)\\d*",
+    "regex": "(?i)(?:(?:\")\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword|p@(?:s|\\$)(?:s|\\$))\\s*(?:\"))\\d*|(?:(?:')\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\s*(?:'))|(?:=\\s*(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$)))|(?:(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\d*\\s*=\\s*\")|@string\/(?:(?:p(?:a|@)(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:s|\\$)(?:s|\\$)w(?:(?:(?:o|0)?r?ds?)?)\\d*|p(?:a|@)(?:s|\\$)(?:(?:s|\\$)?w(?:(?:o|0)?r?ds?)?)\\d*|psword\\d*|p@(?:s|\\$)(?:s|\\$))\\s*)\\d*|key\\s*=\\s*\"|secret\\s*=\\s*\"",
     "criticity": "critical",
-    "label": "Passwords",
+    "label": "Hardcoded Passwords",
     "description": "Passwords should not be written in the source code, since they can be read by code decompilers."
 }, {
     "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
@@ -107,14 +107,14 @@
     "regex": "setJavaScriptEnabled\\(true\\)",
     "forward_check": "\\.addJavascriptInterface\\(.*\\)",
     "criticity": "critical",
-    "label": "Web View XSS",
-    "description": "Web view insecure implementation. This issue could allow to a remote attacker to code execution in Web View and performing Cross Site Scripting attacks."
+    "label": "WebView XSS",
+    "description": "Webview insecure implementation. This issue could allow to a remote attacker to code execution in Web View and performing Cross Site Scripting attacks."
 }, {
     "regex": "onReceivedSslError\\s*\\(\\s*WebView\\s*.*\\)",
     "forward_check": "\\.\\s*proceed\\(\\s*\\)\\s*;",
     "criticity": "critical",
-    "label": "Web View ignores ssl errors",
-    "description": "Web View is ignoring SSL errors and it accepts any SSL certificate. This application could be affected by Man in the Middle attacks."
+    "label": "WebView ignores SSL errors",
+    "description": "WebView is ignoring SSL errors and it accepts any SSL certificate. This application could be affected by Man in the Middle attacks."
 }, {
     "regex": "android\\.database\\.sqlite",
     "forward_check": "(?:rawQuery|execSQL)\\(.*\"\\s*\\+\\s*.*\\)",
@@ -190,8 +190,7 @@
     "label": "Email disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private email information."
 },{
-    "regex": ".(?:p12|key|pub|crt|cert|pem|cer)",
-    "forward_check": "\\.(?:p12|key|pub|crt|cert|pem|cer|jks|bks)",
+    "regex": "\"\\s*\\w*.\\s*(?:p12|key|pub|crt|cert|pem|cer|jks|bks)(?:\\s*|\")",
     "criticity": "warning",
     "label": "Certificate or Keystore disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore ."
@@ -227,11 +226,11 @@
     "regex": "javax.net.ssl.SSLSocketFactory",
     "forward_check": ".getInsecure\\s*\\(",
     "criticity": "warning",
-    "label": "ssl getInsecure method",
+    "label": "SSL getInsecure method",
     "description": "Insecure application SSL implementation. This applications in using the getInsecure Method which returns a new instance of a socketFactory with all SSL security checks disabled"
 },{
     "regex": "finally\\s*\\{\\s*[\\w.(?:);-_ ]*\\s*return",
     "criticity": "low",
-    "label": "finally with return",
+    "label": "Finally with return statement",
     "description": "Finally structure with return statement inside will bypass any error thrown."
 }]

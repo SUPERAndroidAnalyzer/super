@@ -649,12 +649,12 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
 
-        let should_match = &["password =",
+        let should_match = &["password = \"",
                              "\"passwords\"",
                              "'p@ssword'",
                              "\" p@sswords  \"",
                              "' p$$wd '",
-                             "psswrd =",
+                             "psswrd = \"",
                              "= pssword",
                              "\" psword \"",
                              "'pasword'",
@@ -664,15 +664,17 @@ mod tests {
                              "'  password '",
                              "' passwords '",
                              "' psswd '",
-                             "psswrd =",
+                             "psswrd = \"",
                              "=pssword",
-                             "psword =",
+                             "psword = \"",
                              "= pasword",
-                             "passwd =",
+                             "passwd = \"",
                              "= Password",
-                             "p@ss =",
+                             "p@ss = \"",
                              "@string/password",
-                             "p@$$ =",
+                             "p@$$ = \"",
+                             "key = \"12345",
+                             "secret = \"44556\"",
                              "= password"];
 
         let should_not_match = &["pss",
@@ -1437,9 +1439,16 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(32).unwrap();
 
-        let should_match = &["key.key", "cert.cert", "cert.pem", "certificate.cer"];
+        let should_match = &["\"key.key              ",
+                             "\"cert.cert\"",
+                             "\"    key.pub    ",
+                             "\"    cert.pub   ",
+                             "     throw new IllegalArgumentException(\"translateAPI.key is not specified\");"];
 
-        let should_not_match = &["key", "cer", "pem", "certificate"];
+        let should_not_match = &["Iterator localIterator = paramBundle.keySet().iterator();",
+                                 "import java.security.cert.X509Certificate;",
+                                 "",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
