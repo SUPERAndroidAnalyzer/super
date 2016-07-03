@@ -223,7 +223,7 @@
     "label": "Empty try-catch",
     "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 },{
-    "regex": "net\\.ssl\\.SSLSocketFactory",
+    "regex": "net\\.ssl\\.SSLSocketFactory|net\\.SSLCertificateSocketFactory",
     "forward_check": "getInsecure\\s*\\(",
     "criticity": "high",
     "label": "SSL getInsecure method",
