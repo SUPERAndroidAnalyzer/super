@@ -122,7 +122,7 @@
     "label": "SQL injection",
     "description": "This application is vulnerable to SQL injection. Any data stored in database can be exposed as any attacker is able to retrive, modify and delete the stored information."
 }, {
-    "regex": "javax.net.ssl",
+    "regex": "net\\.ssl",
     "forward_check": "(?:(?:Trust)?All(?:Trust)?SSLSocket(?:-)?Factory|NonValidatingSSLSocketFactory|ALLOW_ALL_HOSTNAME_VERIFIER|\\.setDefaultHostnameVerifier\\(.*\\)|NullHostnameVerifier\\(.*\\))",
     "criticity": "critical",
     "label": "Accepting all SSL certificates",
@@ -223,7 +223,7 @@
     "label": "Empty try-catch",
     "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
 },{
-    "regex": "javax\\.net\\.ssl\\.SSLSocketFactory",
+    "regex": "net\\.ssl\\.SSLSocketFactory",
     "forward_check": "getInsecure\\s*\\(",
     "criticity": "high",
     "label": "SSL getInsecure method",
