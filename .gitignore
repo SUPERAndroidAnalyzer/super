@@ -5,3 +5,5 @@ target
 Cargo.lock
 *.bk
 *.apk
+.DS_Store
+*.zip
