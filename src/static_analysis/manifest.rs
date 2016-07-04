@@ -2,7 +2,10 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
+use std::collections::BTreeMap;
 
+use serde_yaml;
+use serde_yaml::value::Value as Yaml;
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
 
@@ -16,29 +19,28 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
                   analyze it.")
     }
 
-    let manifest = match Manifest::load(format!("{}/{}/AndroidManifest.xml",
-                                                config.get_dist_folder(),
-                                                config.get_app_id()),
-                                        config,
-                                        results) {
-        Ok(m) => {
-            if config.is_verbose() {
-                println!("{}", "The manifest was loaded successfully!".green());
-                println!("");
+    let manifest =
+        match Manifest::load(format!("{}/{}/", config.get_dist_folder(), config.get_app_id()),
+                             config,
+                             results) {
+            Ok(m) => {
+                if config.is_verbose() {
+                    println!("{}", "The manifest was loaded successfully!".green());
+                    println!("");
+                }
+                m
             }
-            m
-        }
-        Err(e) => {
-            print_error(format!("There was an error when loading the manifest: {}", e),
-                        config.is_verbose());
-            if config.is_verbose() {
-                println!("The rest of the analysis will continue, but there will be no analysis \
-                          of the AndroidManifest.xml file, and code analysis rules requiring \
-                          permissions will not run.");
+            Err(e) => {
+                print_error(format!("There was an error when loading the manifest: {}", e),
+                            config.is_verbose());
+                if config.is_verbose() {
+                    println!("The rest of the analysis will continue, but there will be no \
+                              analysis of the AndroidManifest.xml file, and code analysis rules \
+                              requiring permissions will not run.");
+                }
+                return None;
             }
-            return None;
-        }
-    };
+        };
 
     if manifest.get_package() != config.get_app_id() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
@@ -183,6 +185,8 @@ pub struct Manifest {
     version_str: String,
     label: String,
     description: String,
+    min_sdk: i32,
+    target_sdk: i32,
     allows_backup: bool,
     has_code: bool,
     large_heap: bool,
@@ -196,7 +200,7 @@ impl Manifest {
                                 config: &Config,
                                 results: &mut Results)
                                 -> Result<Manifest> {
-        let mut file = try!(File::open(path));
+        let mut file = try!(File::open(format!("{}/AndroidManifest.xml", path.as_ref().display())));
         let mut manifest: Manifest = Default::default();
 
         let mut code = String::new();
@@ -409,7 +413,62 @@ impl Manifest {
             }
         }
 
-        // TODO parse YAML
+        let yaml_warning = "An error occurred when parsing the apktool.yml file.";
+        let mut file = try!(File::open(format!("{}/apktool.yml", path.as_ref().display())));
+        let mut code = String::new();
+        try!(file.read_to_string(&mut code));
+        let apktool_info = Yaml::from_str(&code);
+        match apktool_info {
+            Yaml::Hash(info) => {
+                match info.get(&Yaml::String(String::from("sdkInfo"))) {
+                    Some(&Yaml::Hash(ref sdk_info)) => {
+                        match sdk_info.get(&Yaml::String(String::from("minSdkVersion"))) {
+                            Some(&Yaml::String(ref min_sdk_str)) => {
+                                match min_sdk_str.parse() {
+                                    Ok(min_sdk) => manifest.set_min_sdk(min_sdk),
+                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+                                }
+                            },
+                            _ => print_warning(yaml_warning, config.is_verbose()),
+                        }
+
+                        match sdk_info.get(&Yaml::String(String::from("targetSdkVersion"))) {
+                            Some(&Yaml::String(ref target_sdk_str)) => {
+                                match target_sdk_str.parse() {
+                                    Ok(target_sdk) => manifest.set_target_sdk(target_sdk),
+                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+                                }
+                            },
+                            _ => print_warning(yaml_warning, config.is_verbose()),
+                        }
+                    },
+                    _ => print_warning(yaml_warning, config.is_verbose()),
+                }
+
+                match info.get(&Yaml::String(String::from("versionInfo"))) {
+                    Some(&Yaml::Hash(ref version_info)) => {
+                        match version_info.get(&Yaml::String(String::from("versionCode"))) {
+                            Some(&Yaml::String(ref version_code)) => {
+                                match version_code.parse() {
+                                    Ok(version_code) => manifest.set_version_number(version_code),
+                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+                                }
+                            },
+                            _ => print_warning(yaml_warning, config.is_verbose()),
+                        }
+
+                        match version_info.get(&Yaml::String(String::from("versionName"))) {
+                            Some(&Yaml::String(ref version_name)) => {
+                                manifest.set_version_str(version_name);
+                            },
+                            _ => print_warning(yaml_warning, config.is_verbose()),
+                        }
+                    },
+                    _ => print_warning(yaml_warning, config.is_verbose()),
+                }
+            }
+            _ => print_warning(yaml_warning, config.is_verbose()),
+        }
 
         Ok(manifest)
     }
@@ -460,6 +519,22 @@ impl Manifest {
 
     fn set_description(&mut self, description: &str) {
         self.description = String::from(description);
+    }
+
+    pub fn get_min_sdk(&self) -> i32 {
+        self.min_sdk
+    }
+
+    fn set_min_sdk(&mut self, min_sdk: i32) {
+        self.min_sdk = min_sdk;
+    }
+
+    pub fn get_target_sdk(&self) -> i32 {
+        self.target_sdk
+    }
+
+    fn set_target_sdk(&mut self, target_sdk: i32) {
+        self.target_sdk = target_sdk;
     }
 
     pub fn has_code(&self) -> bool {
@@ -520,6 +595,8 @@ impl Default for Manifest {
             version_str: String::new(),
             label: String::new(),
             description: String::new(),
+            min_sdk: 0,
+            target_sdk: 0,
             allows_backup: false,
             has_code: false,
             large_heap: false,
