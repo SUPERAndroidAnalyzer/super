@@ -409,6 +409,8 @@ impl Manifest {
             }
         }
 
+        // TODO parse YAML
+
         Ok(manifest)
     }
 
