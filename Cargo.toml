@@ -1,7 +1,11 @@
 [package]
 name = "super"
 version = "0.1.0"
-authors = ["Iban Eguia <razican@protonmail.ch>"]
+authors = [
+    "Iban Eguia <razican@protonmail.ch>",
+    "Jaime Salas <jaimesr@protonmail.ch>",
+    "Bruno Pin <brunoop@protonmail.ch>",
+    "Sergio de los Dolores <sergiodlo@protonmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/Razican/super"
@@ -18,6 +22,7 @@ zip = "^0.1"
 xml-rs = "^0.3"
 serde = "^0.7"
 serde_json = "^0.7"
+serde_yaml = "^0.2"
 chrono = "^0.2"
 toml = "^0.1"
 regex = "^0.1"

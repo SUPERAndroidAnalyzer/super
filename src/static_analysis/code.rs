@@ -938,15 +938,10 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(10).unwrap();
 
-        let should_match = &["C:\\",
-                             "C:\\Programs\\password.txt",
-                             "D:\\",
-                             "H:\\P\\o\\password.txt"];
+        let should_match =
+            &["C:\\", "C:\\Programs\\password.txt", "D:\\", "H:\\P\\o\\password.txt"];
 
-        let should_not_match = &["ome\\password.txt",
-                                 "at:\\",
-                                 "\\\\home\\sharedfile",
-                                 "\\n"];
+        let should_not_match = &["ome\\password.txt", "at:\\", "\\\\home\\sharedfile", "\\n"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1447,7 +1442,8 @@ mod tests {
                              "\"cert.cert\"",
                              "\"    key.pub    ",
                              "\"    cert.pub   ",
-                             "     throw new IllegalArgumentException(\"translateAPI.key is not specified\");"];
+                             "     throw new IllegalArgumentException(\"translateAPI.key is not \
+                              specified\");"];
 
         let should_not_match = &["Iterator localIterator = paramBundle.keySet().iterator();",
                                  "import java.security.cert.X509Certificate;",
@@ -1563,10 +1559,12 @@ mod tests {
                              "try {}  catch (Exception e) {}",
                              "try{} catch (RuntimeException e) {}"];
 
-        let should_not_match = &["try { } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  }",
-                                 "try {  print(\"Hello\"); } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  }",
-                                 "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { }",
-                                 "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { Log.e(\"Error\"); }"];
+        let should_not_match =
+            &["try { } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  }",
+              "try {  print(\"Hello\"); } catch(OutOfMemoryError e1)  {    e1.printStackTrace();  \
+               }",
+              "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { }",
+              "try {  Log.e(\"Error\"); } catch(OutOfMemoryError e1)  { Log.e(\"Error\"); }"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1583,7 +1581,8 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(38).unwrap();
 
-        let should_match = &[" javax.net.ssl.SSLSocketFactory                 SSLSocketFactory.getInsecure()"];
+        let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
+                              SSLSocketFactory.getInsecure()"];
 
         let should_not_match = &["getInsecure()",
                                  "javax.net.ssl.SSL  getInsecure();",
@@ -1608,9 +1607,8 @@ mod tests {
         let should_match = &["finally {                      return;",
                              "finally {                      return;}"];
 
-        let should_not_match = &["finally{}",
-                                 "finally{ var;}",
-                                 "finally { Printf (“Hello”); return true; }"];
+        let should_not_match =
+            &["finally{}", "finally{ var;}", "finally { Printf (“Hello”); return true; }"];
 
         for m in should_match {
             assert!(check_match(m, rule));

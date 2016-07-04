@@ -11,6 +11,13 @@ section.report {
     margin: 4em;
 }
 
+a img {
+    text-decoration: none;
+    max-height: 17em;
+    float: left;
+    margin-right: 1em;
+}
+
 footer {
     margin: 2em;
 }

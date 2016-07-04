@@ -259,6 +259,9 @@ impl Results {
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
         try!(f.write_all(b"<section class=\"report\">"));
+        try!(f.write_all(b"<a href=\"http://superanalyzer.rocks\" \
+                                title=\"S.U.P.E.R. Android Analyzer\">\
+                            <img src=\"img/logo.png\" alt=\"S.U.P.E.R. Android Analyzer\"></a>"));
         try!(f.write_all(b"<h1 id=\"title\">S.U.P.E.R. Android Analyzer \
                             Report</h1>"));
         try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
