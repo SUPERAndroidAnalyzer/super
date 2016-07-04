@@ -2,9 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
-use std::collections::BTreeMap;
 
-use serde_yaml;
 use serde_yaml::value::Value as Yaml;
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
