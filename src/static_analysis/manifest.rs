@@ -447,6 +447,7 @@ impl Manifest {
                                             }
                                         }
                                     },
+                                    None => {},
                                     _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
                             }
