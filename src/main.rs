@@ -5,7 +5,7 @@ extern crate zip;
 extern crate xml;
 extern crate serde;
 extern crate serde_json;
-extern crate serde_yaml;
+extern crate yaml_rust;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
@@ -37,6 +37,8 @@ use static_analysis::*;
 use results::*;
 pub use config::Config;
 pub use utils::*;
+
+static BANNER: &'static str = include_str!("banner.txt");
 
 fn main() {
     let matches = get_help_menu();
@@ -78,6 +80,7 @@ fn main() {
     }
 
     if config.is_verbose() {
+        println!("{}", BANNER);
         println!("Welcome to the S.U.P.E.R. Android Analyzer. We will now try to audit the given \
                   application.");
         println!("You activated the verbose mode. {}",

@@ -3,7 +3,7 @@ use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 
-use serde_yaml::value::Value as Yaml;
+use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
 
@@ -415,57 +415,73 @@ impl Manifest {
         let mut file = try!(File::open(format!("{}/apktool.yml", path.as_ref().display())));
         let mut code = String::new();
         try!(file.read_to_string(&mut code));
-        let apktool_info = Yaml::from_str(&code);
-        match apktool_info {
-            Yaml::Hash(info) => {
-                match info.get(&Yaml::String(String::from("sdkInfo"))) {
-                    Some(&Yaml::Hash(ref sdk_info)) => {
-                        match sdk_info.get(&Yaml::String(String::from("minSdkVersion"))) {
-                            Some(&Yaml::String(ref min_sdk_str)) => {
-                                match min_sdk_str.parse() {
-                                    Ok(min_sdk) => manifest.set_min_sdk(min_sdk),
-                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+        match YamlLoader::load_from_str(&code) {
+            Ok(mut apktool_info) => {
+                match apktool_info.pop() {
+                    Some(Yaml::Hash(info)) => {
+                        match info.get(&Yaml::String(String::from("sdkInfo"))) {
+                            Some(&Yaml::Hash(ref sdk_info)) => {
+                                match sdk_info.get(&Yaml::String(String::from("minSdkVersion"))) {
+                                    Some(&Yaml::String(ref min_sdk_str)) => {
+                                        match min_sdk_str.parse() {
+                                            Ok(min_sdk) => manifest.set_min_sdk(min_sdk),
+                                            Err(e) => {
+                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                              config.is_verbose());
+                                            }
+                                        }
+                                    }
+                                    _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
-                            },
+
+                                match sdk_info.get(
+                                    &Yaml::String(String::from("targetSdkVersion"))) {
+                                    Some(&Yaml::String(ref target_sdk_str)) => {
+                                        match target_sdk_str.parse() {
+                                            Ok(target_sdk) => manifest.set_target_sdk(target_sdk),
+                                            Err(e) => {
+                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                                config.is_verbose());
+                                            }
+                                        }
+                                    },
+                                    _ => print_warning(yaml_warning, config.is_verbose()),
+                                }
+                            }
                             _ => print_warning(yaml_warning, config.is_verbose()),
                         }
 
-                        match sdk_info.get(&Yaml::String(String::from("targetSdkVersion"))) {
-                            Some(&Yaml::String(ref target_sdk_str)) => {
-                                match target_sdk_str.parse() {
-                                    Ok(target_sdk) => manifest.set_target_sdk(target_sdk),
-                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+                        match info.get(&Yaml::String(String::from("versionInfo"))) {
+                            Some(&Yaml::Hash(ref version_info)) => {
+                                match version_info.get(&Yaml::String(String::from("versionCode"))) {
+                                    Some(&Yaml::String(ref version_code_str)) => {
+                                        match version_code_str.parse() {
+                                            Ok(version_code) => {
+                                                manifest.set_version_number(version_code)
+                                            }
+                                            Err(e) => {
+                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                              config.is_verbose());
+                                            }
+                                        }
+                                    }
+                                    _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
-                            },
-                            _ => print_warning(yaml_warning, config.is_verbose()),
-                        }
-                    },
-                    _ => print_warning(yaml_warning, config.is_verbose()),
-                }
 
-                match info.get(&Yaml::String(String::from("versionInfo"))) {
-                    Some(&Yaml::Hash(ref version_info)) => {
-                        match version_info.get(&Yaml::String(String::from("versionCode"))) {
-                            Some(&Yaml::String(ref version_code)) => {
-                                match version_code.parse() {
-                                    Ok(version_code) => manifest.set_version_number(version_code),
-                                    Err(_) => print_warning(yaml_warning, config.is_verbose()),
+                                match version_info.get(&Yaml::String(String::from("versionName"))) {
+                                    Some(&Yaml::String(ref version_name)) => {
+                                        manifest.set_version_str(version_name);
+                                    }
+                                    _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
-                            },
+                            }
                             _ => print_warning(yaml_warning, config.is_verbose()),
                         }
-
-                        match version_info.get(&Yaml::String(String::from("versionName"))) {
-                            Some(&Yaml::String(ref version_name)) => {
-                                manifest.set_version_str(version_name);
-                            },
-                            _ => print_warning(yaml_warning, config.is_verbose()),
-                        }
-                    },
+                    }
                     _ => print_warning(yaml_warning, config.is_verbose()),
                 }
             }
-            _ => print_warning(yaml_warning, config.is_verbose()),
+            Err(e) => print_warning(format!("{} {}", yaml_warning, e), config.is_verbose()),
         }
 
         Ok(manifest)
