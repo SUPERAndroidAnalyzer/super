@@ -142,3 +142,9 @@ name = "android.permission.WRITE_EXTERNAL_STORAGE"
 criticity = "warning"
 label = "Write external storage permission"
 description = "Allows the app to write to the SD card. Check if the permission is actually needed."
+
+[[permissions]]
+name = "android.permission.WRITE_SECURE_SETTINGS"
+criticity = "warning"
+label = "Write secure settings"
+description = "Allows the app to change system configuration of the device. Check if the permission is actually needed."
