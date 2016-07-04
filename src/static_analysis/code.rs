@@ -154,6 +154,12 @@ fn analyze_file<P: AsRef<Path>>(path: P,
     try!(f.read_to_string(&mut code));
 
     'check: for rule in rules {
+        if manifest.is_some() && rule.get_max_sdk().is_some() {
+            if rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
+                continue 'check;
+            }
+        }
+
         for permission in rule.get_permissions() {
             if manifest.is_none() ||
                !manifest.as_ref()
@@ -163,6 +169,7 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                 continue 'check;
             }
         }
+
         'rule: for (s, e) in rule.get_regex().find_iter(code.as_str()) {
             for white in rule.get_whitelist() {
                 if white.is_match(&code[s..e]) {
@@ -313,6 +320,7 @@ struct Rule {
     regex: Regex,
     permissions: Vec<Permission>,
     forward_check: Option<String>,
+    max_sdk: Option<i32>,
     whitelist: Vec<Regex>,
     label: String,
     description: String,
@@ -330,6 +338,10 @@ impl Rule {
 
     pub fn get_forward_check(&self) -> Option<&String> {
         self.forward_check.as_ref()
+    }
+
+    pub fn get_max_sdk(&self) -> Option<i32> {
+        self.max_sdk
     }
 
     pub fn get_label(&self) -> &str {
@@ -394,7 +406,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
-        if rule.len() < 4 || rule.len() > 7 {
+        if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning, config.is_verbose());
             return Err(Error::ParseError);
         }
@@ -412,6 +424,15 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     }
                 }
             }
+            _ => {
+                print_warning(format_warning, config.is_verbose());
+                return Err(Error::ParseError);
+            }
+        };
+
+        let max_sdk = match rule.get("max_sdk") {
+            Some(&Value::U64(sdk)) => Some(sdk as i32),
+            None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
                 return Err(Error::ParseError);
@@ -568,6 +589,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             regex: regex,
             permissions: permissions,
             forward_check: forward_check,
+            max_sdk: max_sdk,
             label: label.clone(),
             description: description.clone(),
             criticity: criticity,

@@ -23,7 +23,9 @@ pub struct Results {
     app_label: String,
     app_description: String,
     app_version: String,
-    app_version_num: Option<i32>,
+    app_version_num: i32,
+    app_min_sdk: i32,
+    app_target_sdk: i32,
     app_fingerprint: FingerPrint,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
@@ -69,7 +71,9 @@ impl Results {
                 app_label: String::new(),
                 app_description: String::new(),
                 app_version: String::new(),
-                app_version_num: None,
+                app_version_num: 0,
+                app_min_sdk: 0,
+                app_target_sdk: 0,
                 app_fingerprint: fingerprint,
                 warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
@@ -108,7 +112,15 @@ impl Results {
     }
 
     pub fn set_app_version_num(&mut self, version: i32) {
-        self.app_version_num = Some(version);
+        self.app_version_num = version;
+    }
+
+    pub fn set_app_min_sdk(&mut self, sdk: i32) {
+        self.app_min_sdk = sdk;
+    }
+
+    pub fn set_app_target_sdk(&mut self, sdk: i32) {
+        self.app_target_sdk = sdk;
     }
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
@@ -293,9 +305,19 @@ impl Results {
                                       self.app_version.as_str())
                 .into_bytes()));
         }
-        if self.app_version_num.is_some() {
+        if self.app_version_num > 0 {
             try!(f.write_all(&format!("<li><strong>Version number:</strong> {}</li>",
-                                      self.app_version_num.unwrap())
+                                      self.app_version_num)
+                .into_bytes()));
+        }
+        if self.app_min_sdk > 0 {
+            try!(f.write_all(&format!("<li><strong>Minimum SDK version:</strong> {}</li>",
+                                      self.app_min_sdk)
+                .into_bytes()));
+        }
+        if self.app_target_sdk > 0 {
+            try!(f.write_all(&format!("<li><strong>Target SDK:</strong> {}</li>",
+                                      self.app_target_sdk)
                 .into_bytes()));
         }
         try!(f.write_all(b"<li><strong>Fingerprints:</strong><ul>"));
