@@ -134,7 +134,7 @@
     "forward_check": "send(?:Multipart)?TextMessage|vnd\\.android-dir\/mms-sms",
     "criticity": "warning",
     "label": "Sending sms-mms",
-    "description": "This application is sending sms or mms and it might be without the user's knowledge "
+    "description": "This application is sending sms or mms and it might be without the user's knowledge."
 }, {
     "regex": "com\\.noshufou\\.android\\.su|com\\.thirdparty\\.superuser|eu\\.chainfire\\.supersu|com\\.koushikdutta\\.superuser|eu\\.chainfire\\.",
     "criticity": "medium",
@@ -195,15 +195,15 @@
     "regex": "\"\\s*\\w*\\.\\s*(?:p12|key|pub|crt|cert|pem|cer|jks|bks)(?:\\s*|\")",
     "criticity": "warning",
     "label": "Certificate or Keystore disclosure",
-    "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore ."
+    "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore."
 },{
-    "regex": "telephony\\.TelephonyManager ",
+    "regex": "telephony\\.TelephonyManager",
     "forward_check": "getSimOperator\\s*\\(",
     "criticity": "warning",
     "label": "Get SIM Operator",
     "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
 },{
-    "regex": "telephony\\.TelephonyManager ",
+    "regex": "telephony\\.TelephonyManager",
     "forward_check": "getSimOperatorName\\s*\\(",
     "criticity": "warning",
     "label": "Get SIM OperatorName",
