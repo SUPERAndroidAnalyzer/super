@@ -62,7 +62,9 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
     results.set_app_version(manifest.get_version_str());
     results.set_app_version_num(manifest.get_version_number());
     results.set_app_min_sdk(manifest.get_min_sdk());
-    results.set_app_target_sdk(manifest.get_target_sdk());
+    if manifest.get_target_sdk().is_some() {
+        results.set_app_target_sdk(manifest.get_target_sdk().unwrap());
+    }
 
     if manifest.is_debug() {
         let criticity = Criticity::Critical;
@@ -184,7 +186,7 @@ pub struct Manifest {
     label: String,
     description: String,
     min_sdk: i32,
-    target_sdk: i32,
+    target_sdk: Option<i32>,
     allows_backup: bool,
     has_code: bool,
     large_heap: bool,
@@ -543,12 +545,12 @@ impl Manifest {
         self.min_sdk = min_sdk;
     }
 
-    pub fn get_target_sdk(&self) -> i32 {
+    pub fn get_target_sdk(&self) -> Option<i32> {
         self.target_sdk
     }
 
     fn set_target_sdk(&mut self, target_sdk: i32) {
-        self.target_sdk = target_sdk;
+        self.target_sdk = Some(target_sdk);
     }
 
     pub fn has_code(&self) -> bool {
@@ -610,7 +612,7 @@ impl Default for Manifest {
             label: String::new(),
             description: String::new(),
             min_sdk: 0,
-            target_sdk: 0,
+            target_sdk: None,
             allows_backup: false,
             has_code: false,
             large_heap: false,

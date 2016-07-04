@@ -25,7 +25,7 @@ pub struct Results {
     app_version: String,
     app_version_num: i32,
     app_min_sdk: i32,
-    app_target_sdk: i32,
+    app_target_sdk: Option<i32>,
     app_fingerprint: FingerPrint,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
@@ -73,7 +73,7 @@ impl Results {
                 app_version: String::new(),
                 app_version_num: 0,
                 app_min_sdk: 0,
-                app_target_sdk: 0,
+                app_target_sdk: None,
                 app_fingerprint: fingerprint,
                 warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
@@ -120,7 +120,7 @@ impl Results {
     }
 
     pub fn set_app_target_sdk(&mut self, sdk: i32) {
-        self.app_target_sdk = sdk;
+        self.app_target_sdk = Some(sdk);
     }
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
@@ -315,9 +315,9 @@ impl Results {
                                       self.app_min_sdk)
                 .into_bytes()));
         }
-        if self.app_target_sdk > 0 {
+        if self.app_target_sdk.is_some() {
             try!(f.write_all(&format!("<li><strong>Target SDK:</strong> {}</li>",
-                                      self.app_target_sdk)
+                                      self.app_target_sdk.unwrap())
                 .into_bytes()));
         }
         try!(f.write_all(b"<li><strong>Fingerprints:</strong><ul>"));
