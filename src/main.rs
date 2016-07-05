@@ -25,7 +25,8 @@ use std::str::FromStr;
 use std::error::Error as StdError;
 use std::io::Write;
 use std::process::exit;
-use std::time::Instant;
+use std::time::{Instant, Duration};
+use std::thread::sleep;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
@@ -80,12 +81,17 @@ fn main() {
     }
 
     if config.is_verbose() {
-        println!("{}", BANNER);
+        for c in BANNER.chars() {
+            print!("{}", c);
+            io::stdout().flush().unwrap();
+            sleep(Duration::from_millis(3));
+        }
         println!("Welcome to the S.U.P.E.R. Android Analyzer. We will now try to audit the given \
                   application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
         println!("");
+        sleep(Duration::from_millis(1250));
     }
 
     let mut benchmarks = if config.is_bench() {
@@ -151,6 +157,7 @@ fn main() {
                               you can check all the results.");
                     println!("");
                     println!("I will now analyze myself for vulnerabilities…");
+                    sleep(Duration::from_millis(1500));
                     println!("Nah, just kidding, I've been developed in {}!",
                              "Rust".bold().green())
                 } else if !config.is_quiet() {

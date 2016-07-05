@@ -1,6 +1,8 @@
 use std::{fs, io};
 use std::path::Path;
 use std::io::{Read, Write};
+use std::time::Duration;
+use std::thread::sleep;
 
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
@@ -24,6 +26,8 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     if !verbose {
         println!("If you need more information, try to run the program again with the {} flag.",
                  "-v".bold());
+    } else {
+        sleep(Duration::from_millis(200));
     }
 }
 
@@ -38,6 +42,8 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     if !verbose {
         println!("If you need more information, try to run the program again with the {} flag.",
                  "-v".bold());
+    } else {
+        sleep(Duration::from_millis(200));
     }
 }
 
@@ -51,6 +57,7 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
         _ => return,
     };
     println!("{} {}", start, message);
+    sleep(Duration::from_millis(200));
 }
 
 pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
