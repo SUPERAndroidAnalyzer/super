@@ -526,7 +526,7 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.1.1.jar");
+        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
         assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
         assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
         assert_eq!(config.get_results_template(), "vendor/results_template");
@@ -594,7 +594,7 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.1.1.jar");
+        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
         assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
         assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
         assert_eq!(config.get_results_template(), "vendor/results_template");
