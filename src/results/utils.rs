@@ -47,7 +47,7 @@ impl Vulnerability {
             start_line: start_line,
             end_line: end_line,
             code: match code {
-                Some(s) => Some(String::from(s.as_ref())),
+                Some(s) => Some(String::from(s.as_ref() as &str)),
                 None => None,
             },
         }

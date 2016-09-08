@@ -2,7 +2,6 @@ extern crate colored;
 
 use std::fs;
 use std::process::{Command, exit};
-use std::borrow::Borrow;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
@@ -56,7 +55,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
         };
 
         let path_file = match f.path().file_name() {
-            Some(n) => String::from(n.to_string_lossy().borrow()),
+            Some(n) => n.to_os_string().into_string().unwrap(),
             None => String::new(),
         };
 

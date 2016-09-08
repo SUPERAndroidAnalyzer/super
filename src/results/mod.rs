@@ -649,7 +649,7 @@ impl Results {
                         }
                     } else if path.is_dir() {
                         let dir_name = match path.file_name() {
-                            Some(n) => String::from(n.to_string_lossy().borrow()),
+                            Some(n) => String::from(n.to_string_lossy().borrow() as &str),
                             None => String::new(),
                         };
                         let prefix = format!("{}/{}/src/",
