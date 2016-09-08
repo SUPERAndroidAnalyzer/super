@@ -434,7 +434,7 @@ impl Default for Config {
             downloads_folder: String::from("downloads"),
             dist_folder: String::from("dist"),
             results_folder: String::from("results"),
-            apktool_file: String::from("vendor/apktool_2.1.1.jar"),
+            apktool_file: String::from("vendor/apktool_2.2.0.jar"),
             dex2jar_folder: String::from("vendor/dex2jar-2.0"),
             jd_cmd_file: String::from("vendor/jd-cmd.jar"),
             results_template: String::from("vendor/results_template"),
