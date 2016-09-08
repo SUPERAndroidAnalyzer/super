@@ -2,7 +2,6 @@ extern crate colored;
 
 use std::fs;
 use std::process::{Command, exit};
-use std::io::prelude::*;
 use std::borrow::Borrow;
 
 use colored::Colorize;

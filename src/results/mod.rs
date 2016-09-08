@@ -6,7 +6,6 @@ use std::path::Path;
 use std::borrow::Borrow;
 use std::slice::Iter;
 
-use serde::ser::MapVisitor;
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 use rustc_serialize::hex::ToHex;
@@ -240,7 +239,7 @@ impl Results {
                 }
                 builder
             })
-            .unwrap();
+            .build();
 
         try!(f.write_all(&format!("{:?}", report).into_bytes()));
 

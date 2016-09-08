@@ -8,7 +8,7 @@ authors = [
     "Sergio de los Dolores <sergiodlo@protonmail.com>"]
 license = "GPL-3.0"
 readme = "README.md"
-repository = "https://github.com/Razican/super"
+repository = "https://github.com/SUPERAndroidAnalyzer/super"
 description = """
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software
 with CLI.
@@ -16,15 +16,15 @@ with CLI.
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 
 [dependencies]
-clap = "^2.9"
-colored = "^1.2"
+clap = "^2.11"
+colored = "^1.3"
 zip = "^0.1"
 xml-rs = "^0.3"
-serde = "^0.7"
-serde_json = "^0.7"
+serde = "^0.8"
+serde_json = "^0.8"
 yaml-rust = "0.3"
 chrono = "^0.2"
-toml = "^0.1"
+toml = "^0.2"
 regex = "^0.1"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"

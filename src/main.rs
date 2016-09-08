@@ -226,7 +226,6 @@ impl From<serde_json::error::Error> for Error {
                 Error::JSONError(JSONError::new(code, line, column))
             }
             serde_json::error::Error::Io(err) => Error::IOError(err),
-            serde_json::error::Error::FromUtf8(_) => Error::ParseError,
         }
     }
 }

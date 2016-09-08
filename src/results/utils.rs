@@ -1,11 +1,11 @@
 use std::{fmt, result};
 use std::fs::File;
-use std::io::{Read, Write};
+use std::io::Read;
 use std::cmp::Ordering;
 use std::path::Path;
 use std::time::Duration;
 
-use serde::ser::{Serialize, Serializer, MapVisitor};
+use serde::ser::{Serialize, Serializer};
 use crypto::digest::Digest;
 use crypto::md5::Md5;
 use crypto::sha1::Sha1;
@@ -99,28 +99,15 @@ impl Serialize for Vulnerability {
     fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
         where S: Serializer
     {
-        try!(serializer.serialize_struct("vulnerability", self));
+        let mut state = try!(serializer.serialize_struct("Vulnerability", 7));
+        try!(serializer.serialize_struct_elt(&mut state, "criticity", self.criticity));
+        try!(serializer.serialize_struct_elt(&mut state, "name", self.name.as_str()));
+        try!(serializer.serialize_struct_elt(&mut state, "description", self.description.as_str()));
+        try!(serializer.serialize_struct_elt(&mut state, "file", &self.file));
+        try!(serializer.serialize_struct_elt(&mut state, "start_line", self.start_line));
+        try!(serializer.serialize_struct_elt(&mut state, "end_line", self.end_line));
+        try!(serializer.serialize_struct_end(state));
         Ok(())
-    }
-}
-
-impl<'v> MapVisitor for &'v Vulnerability {
-    fn visit<S>(&mut self, serializer: &mut S) -> result::Result<Option<()>, S::Error>
-        where S: Serializer
-    {
-        try!(serializer.serialize_struct_elt("criticity", self.criticity));
-        try!(serializer.serialize_struct_elt("name", self.name.as_str()));
-        try!(serializer.serialize_struct_elt("description", self.description.as_str()));
-        if let Some(ref f) = self.file {
-            try!(serializer.serialize_struct_elt("file", f.as_str()));
-        }
-        if self.start_line.is_some() {
-            try!(serializer.serialize_struct_elt("start_line", self.start_line));
-        }
-        if self.end_line.is_some() {
-            try!(serializer.serialize_struct_elt("end_line", self.end_line));
-        }
-        Ok(None)
     }
 }
 
@@ -212,20 +199,12 @@ impl Serialize for FingerPrint {
     fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
         where S: Serializer
     {
-        try!(serializer.serialize_struct("fingerprint", self));
+        let mut state = try!(serializer.serialize_struct("fingerprint", 3));
+        try!(serializer.serialize_struct_elt(&mut state, "md5", self.md5.to_hex()));
+        try!(serializer.serialize_struct_elt(&mut state, "sha1", self.sha1.to_hex()));
+        try!(serializer.serialize_struct_elt(&mut state, "sha256", self.sha256.to_hex()));
+        try!(serializer.serialize_struct_end(state));
         Ok(())
-    }
-}
-
-impl<'f> MapVisitor for &'f FingerPrint {
-    fn visit<S>(&mut self, serializer: &mut S) -> result::Result<Option<()>, S::Error>
-        where S: Serializer
-    {
-        try!(serializer.serialize_struct_elt("md5", self.md5.to_hex()));
-        try!(serializer.serialize_struct_elt("sha1", self.sha1.to_hex()));
-        try!(serializer.serialize_struct_elt("sha256", self.sha256.to_hex()));
-
-        Ok(None)
     }
 }
 

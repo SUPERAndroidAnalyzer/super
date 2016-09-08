@@ -2,7 +2,6 @@ use std::{u8, fs};
 use std::path::Path;
 use std::convert::From;
 use std::str::FromStr;
-use std::error::Error as StdError;
 use std::io::Read;
 use std::process::exit;
 use std::collections::btree_set::Iter;
@@ -71,7 +70,6 @@ impl Config {
             for (key, value) in toml {
                 match key.as_str() {
                     "threads" => {
-                        // let max_threads =  as i64;
                         match value {
                             Value::Integer(1...MAX_THREADS) => {
                                 config.threads = value.as_integer().unwrap() as u8
