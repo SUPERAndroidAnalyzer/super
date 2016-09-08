@@ -42,11 +42,17 @@ script:
       cargo bench;
       fi
 
-# Send coverage reports
+# Send coverage reports and upload docs
 after_success:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      travis-cargo --only stable doc &&
+      travis-cargo --only stable doc-upload;
+      fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       travis-cargo --only stable coveralls --no-sudo --verify;
+      ./kcov/build/src/kcov --verify --coveralls-id=$TRAVIS_JOB_ID --exclude-pattern=/.cargo target/kcov target/debug/vsop87-*;
       fi
 
 env:

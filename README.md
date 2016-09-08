@@ -1,4 +1,4 @@
-# S.U.P.E.R. Android Analyzer #
+# SUPER Android Analyzer #
 
 [![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=develop)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
 [![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e?svg=true)](https://ci.appveyor.com/project/Razican/super)
