@@ -33,11 +33,6 @@
     "label": "Hidden fields",
     "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosure."
 }, {
-    "regex": "catch\\s*\\((?:\\w|\\s|\\|)+\\)\\s*\\{\\s*\\}",
-    "criticity": "low",
-    "label": "Empty catch",
-    "description": "Empty catches can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
-}, {
     "regex": "[^0-9a-zA-Z\\n.](?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
     "criticity": "warning",
     "label": "IP Disclosure",
@@ -174,56 +169,51 @@
     "criticity": "warning",
     "label": "Infinite Loop",
     "description": "The application contains infinite loops. It is not a good practice to use infinite loops inside a program."
-},{
+}, {
     "regex": "[.-_\\w]+@[-_\\w]+\\.[\\w.]+",
     "criticity": "warning",
     "label": "Email disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private email information."
-},{
+}, {
     "regex": "\"\\s*\\w*\\.\\s*(?:p12|key|pub|crt|cert|pem|cer|jks|bks)(?:\\s*|\")",
     "criticity": "warning",
     "label": "Certificate or Keystore disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore."
-},{
+}, {
     "regex": "telephony\\.TelephonyManager",
     "forward_check": "getSimOperator\\s*\\(",
     "criticity": "warning",
     "label": "Get SIM Operator",
     "description": "The application is recording the device network operator. This process might be performed without the user's knowledge."
-},{
+}, {
     "regex": "telephony\\.TelephonyManager",
     "forward_check": "getSimOperatorName\\s*\\(",
     "criticity": "warning",
     "label": "Get SIM OperatorName",
     "description": "The application is recording the device network operator name. This process might be performed without the user's knowledge."
-},{
+}, {
     "regex": "utils\\s*\\.\\s*AESObfuscator",
     "forward_check": "getObfuscator",
     "criticity": "warning",
     "label": "Obfuscated code",
     "description": "The code of this application could be obfuscated."
-},{
+}, {
     "regex": "getRuntime\\s*\\(\\s*\\)\\s*\\.\\s*exec\\s*\\(",
     "criticity": "high",
     "label": "System command execution",
     "description": "The application could execute system command."
-},{
-    "regex": "try\\s*\\{\\s*\\}\\s*catch\\s*\\((?:\\w|\\s*)+\\)\\s*\\{\\s*\\}",
-    "criticity": "low",
-    "label": "Empty try-catch",
-    "description": "Empty try-catch block can lead to silent error suppresion, which could make the application unstable and even lead to security vulnerabilities."
-},{
+}, {
     "regex": "net\\.ssl\\.SSLSocketFactory|net\\.SSLCertificateSocketFactory",
     "forward_check": "getInsecure\\s*\\(",
     "criticity": "high",
     "label": "SSL getInsecure method",
     "description": "Insecure application SSL implementation. This applications in using the getInsecure Method which returns a new instance of a socketFactory with all SSL security checks disabled. These sockets are vulnerable to MITM attacks."
-},{
+}, {
     "regex": "finally\\s*\\{\\s*[\\w.(?:);-_ ]*\\s*return",
     "criticity": "low",
     "label": "Finally with return statement",
     "description": "Finally structure with return statement inside will bypass any error thrown."
-},{
+}, {
     "regex": "(?P<fc1>\\w+)\\s*=.*\\.getText.*;",
     "forward_check": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*[A-Za-z0-9_\".(?:)]*\\s*\\+?\\s*{fc1}\\s*\\+?\\s*[A-Za-z0-9_\".(?:)]*\\s*\\)\\s*;",
     "criticity": "high",
