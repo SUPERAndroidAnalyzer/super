@@ -8,11 +8,11 @@ are made in the form of Issues or
 Issues are a quick way to point out a bug. If you find a bug or documentation error in SUPER then
 please check a few things first:
 
-1. It is not already an open issue
-2. The issue has already been fixed (check the develop branch, or look for closed issues)
+1. It is not already an open issue.
+2. The issue has already been fixed (check the develop branch, or look for closed issues).
 3. Can you solve the issue yourself?
 
-Reporting issues is helpful but an even better approach is to send a pull Request, which is done by
+Reporting issues is helpful but an even better approach is to send a pull request, which is done by
 *forking* the main repository and committing to your own copy. This will require you to use the
 version control system called Git.
 
@@ -21,7 +21,7 @@ Please post your issues there.
 
 ## Guidelines ##
 
-Before we look into how, here are the guidelines. If your Pull Requests fail to pass these
+Before we look into how, here are the guidelines. If your pull Requests fail to pass these
 guidelines it will be declined and you will need to re-submit when you've made the changes. This
 might sound a bit tough, but it is required for us to maintain quality of the code-base.
 
@@ -90,7 +90,9 @@ Hard way the best way to contribute is to *clone* your fork of SUPER to your dev
 sounds like some jargon, but *forking* on GitHub means "making a copy of that repo to your account"
 and *cloning* means "copying that code to your environment so you can work on it".
 
-1. Set up Git (Windows, Mac & Linux)
+1. Set up Git ([Windows](https://help.github.com/articles/set-up-git/#platform-windows),
+[Mac](https://help.github.com/articles/set-up-git/#platform-mac) &
+[Linux](https://help.github.com/articles/set-up-git/#platform-linux)).
 2. Go to the SUPER repo you want to contribute to.
 3. Fork it.
 4. Clone your SUPER repo.
@@ -105,8 +107,8 @@ The core developers will now be alerted about the change and at least one of the
 If your change fails to meet the guidelines it will be bounced, or feedback will be provided to
 help you improve it.
 
-Once the core developer handling your pull request is happy with it they will merge it into develop
-and your patch will be part of the next release.
+Once the core developer handling your pull request is happy with it they will merge it into
+*develop* and your patch will be part of the next release.
 
 ### Keeping your fork up-to-date ###
 
