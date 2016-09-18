@@ -9,9 +9,9 @@ authors = [
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/SUPERAndroidAnalyzer/super"
-description = """
+description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
-with CLI.
+with CLI.\
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 
