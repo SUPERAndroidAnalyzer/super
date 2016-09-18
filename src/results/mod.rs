@@ -266,7 +266,7 @@ impl Results {
         try!(f.write_all(b"<title>Vulnerability report</title>"));
         try!(f.write_all(b"<meta charset=\"UTF-8\">"));
         try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/style.css\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/highlight.css\">"));
+        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/androidstudio.css\">"));
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
         try!(f.write_all(b"<section class=\"report\">"));
@@ -414,8 +414,21 @@ impl Results {
                                   })
             .into_bytes()));
         try!(f.write_all(b"</footer>"));
-        try!(f.write_all(b"<script src=\"js/highlight.js\"></script>"));
+        try!(f.write_all(b"<script src=\"js/highlight.pack.js\"></script>"));
         try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
+        try!(f.write_all(b"<script src=\"js/jquery-3.1.0.slim.min.js\"></script>"));
+        try!(f.write_all(b"<script>$('.vulnerability h4 a.collapse').click(function(event) {\
+            event.preventDefault();\
+            $(this).parents('section.vulnerability').find('ul div').hide('slow');\
+            $(this).hide('fast');\
+            $(this).prev('a').show('fast');\
+        });\
+        $('.vulnerability h4 a.show').click(function(event) {\
+            event.preventDefault();\
+            $(this).parents('section.vulnerability').find('ul div').show('slow');\
+            $(this).hide('fast');\
+            $(this).next('a').show('fast');\
+        });</script>"));
         try!(f.write_all(b"</body>"));
         try!(f.write_all(b"</html>"));
 
@@ -449,13 +462,17 @@ impl Results {
 
         for (i, vuln) in set.iter().enumerate() {
             try!(f.write_all(b"<section class=\"vulnerability\">"));
-            try!(f.write_all(&format!("<h4>{}{:03}:</h4>",
+            try!(f.write_all(&format!("<h4>{}{:03}: <a href=\"#\" title=\"Display \
+                                       vulnerability\" class=\"show\">+</a><a href=\"#\" \
+                                       style=\"display: none\" class=\"collapse\" \
+                                       title=\"Collapse vulnerability\">-</a></h4>",
                                       criticity_str.chars().nth(0).unwrap(),
                                       i + 1)
                 .into_bytes()));
             try!(f.write_all(b"<ul>"));
             try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>", vuln.get_name())
                 .into_bytes()));
+            try!(f.write_all(b"<div style=\"display: none\">"));
             try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
                                       vuln.get_description())
                 .into_bytes()));
@@ -502,6 +519,7 @@ impl Results {
                                           Results::html_escape(code))
                     .into_bytes()));
             }
+            try!(f.write_all(b"</div>"));
             try!(f.write_all(b"</ul>"));
             try!(f.write_all(b"</section>"));
         }
@@ -532,7 +550,7 @@ impl Results {
         try!(f.write_all(b"</nav>"));
         try!(f.write_all(b"<iframe name=\"code\" src=\"AndroidManifest.xml.html\">"));
         try!(f.write_all(b"</iframe>"));
-        try!(f.write_all(b"<script src=\"../js/jquery.js\"></script>"));
+        try!(f.write_all(b"<script src=\"../js/jquery-3.1.0.slim.min.js\"></script>"));
         try!(f.write_all(b"<script src=\"../js/src_nav.js\"></script>"));
         try!(f.write_all(b"</body>"));
         try!(f.write_all(b"</html>"));
@@ -726,9 +744,9 @@ impl Results {
         try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/style.css\">",
                                       back_path)
             .into_bytes()));
-        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/highlight.css\">",
-                                      back_path)
-            .into_bytes()));
+        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/androidstudio.css\">",
+                                back_path)
+                .into_bytes()));
         try!(f_out.write_all(b"</head>"));
         try!(f_out.write_all(b"<body>"));
         try!(f_out.write_all(&format!("<div><div class=\"line_numbers\">{}</div>", line_numbers)
@@ -736,7 +754,8 @@ impl Results {
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
         try!(f_out.write_all(&code.into_bytes()));
         try!(f_out.write_all(b"</code></pre></div></div>"));
-        try!(f_out.write_all(&format!("<script src=\"{}js/highlight.js\"></script>", back_path)
+        try!(f_out.write_all(&format!("<script src=\"{}js/highlight.pack.js\"></script>",
+                                      back_path)
             .into_bytes()));
         try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
         try!(f_out.write_all(b"</body>"));
