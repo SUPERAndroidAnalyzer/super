@@ -27,6 +27,9 @@ section = "devel"
 priority = "optional"
 assets = [
     ["target/release/super", "usr/bin/", "755"],
+    ["vendor", "var/lib/super/", "644"],
+    ["config.toml", "etc/super/", "644"],
+    ["config.toml.sample", "etc/super/", "644"],
     ["README.md", "usr/share/doc/super/README", "644"],
 ]
 
