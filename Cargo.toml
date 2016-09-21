@@ -22,7 +22,7 @@ license_file = ["LICENSE", "0"]
 extended_description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI."""
-depends = "$auto"
+depends = "libc6 (>= 2.19), libgcc1 (>= 1:4.9.2), default-jre-headless (>= 2:1.7)"
 section = "devel"
 priority = "optional"
 assets = [
