@@ -26,10 +26,38 @@ depends = "$auto"
 section = "devel"
 priority = "optional"
 assets = [
+    # Executable
     ["target/release/super", "usr/bin/", "755"],
-    ["vendor", "var/lib/super/", "644"],
+    # JD-CMD
+    ["vendor/jd-cmd.jar", "var/lib/super/vendor/", "755"],
+    ["vendor/jd-cmd.LICENSE.txt", "var/lib/super/vendor/", "644"],
+    # APKTool
+    ["vendor/apktool_2.2.0.jar", "var/lib/super/vendor/", "755"],
+    ["vendor/apktool.LICENSE.txt", "var/lib/super/vendor/", "644"],
+    # Dex2Jar
+    ["vendor/dex2jar-2.0/LICENSE.txt", "var/lib/super/vendor/dex2jar-2.0/", "644"],
+    ["vendor/dex2jar-2.0/d2j-dex2jar.sh", "var/lib/super/vendor/dex2jar-2.0/", "755"],
+    ["vendor/dex2jar-2.0/d2j_invoke.sh", "var/lib/super/vendor/dex2jar-2.0/", "755"],
+    ["vendor/dex2jar-2.0/lib/", "var/lib/super/vendor/dex2jar-2.0/lib/", "755"],
+    #CSS
+    ["vendor/results_template/css/androidstudio.css", "var/lib/super/vendor/results_template/css/", "644"],
+    ["vendor/results_template/css/style.css", "var/lib/super/vendor/results_template/css/", "644"],
+    # Images
+    ["vendor/results_template/img/folder-icon.png", "var/lib/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/java-icon.png", "var/lib/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/xml-icon.png", "var/lib/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/report.png", "var/lib/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/logo.png", "var/lib/super/vendor/results_template/img/", "644"],
+    # JavaScript
+    ["vendor/results_template/js/highlight.js.LICENSE", "var/lib/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/highlight.pack.js", "var/lib/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/jquery-3.1.0.slim.min.js", "var/lib/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/src_nav.js", "var/lib/super/vendor/results_template/js/", "644"],
+    # Config
+    ["rules.json", "etc/super/", "644"],
     ["config.toml", "etc/super/", "644"],
     ["config.toml.sample", "etc/super/", "644"],
+    # README
     ["README.md", "usr/share/doc/super/README", "644"],
 ]
 
