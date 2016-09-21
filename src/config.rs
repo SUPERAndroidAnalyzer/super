@@ -38,6 +38,31 @@ pub struct Config {
 }
 
 impl Config {
+    #[cfg(target_family = "unix")]
+    pub fn new(app_id: &str,
+               verbose: bool,
+               quiet: bool,
+               force: bool,
+               bench: bool)
+               -> Result<Config> {
+        let mut config: Config = Default::default();
+        config.app_id = String::from(app_id);
+        config.verbose = verbose;
+        config.quiet = quiet;
+        config.force = force;
+        config.bench = bench;
+
+        if Path::new("/etc/config.toml").exists() {
+            try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
+        }
+        if Path::new("config.toml").exists() {
+            try!(Config::load_from_file(&mut config, "config.toml", verbose));
+        }
+
+        Ok(config)
+    }
+
+    #[cfg(target_family = "windows")]
     pub fn new(app_id: &str,
                verbose: bool,
                quiet: bool,
@@ -52,273 +77,7 @@ impl Config {
         config.bench = bench;
 
         if Path::new("config.toml").exists() {
-            let mut f = try!(fs::File::open("config.toml"));
-            let mut toml = String::new();
-            try!(f.read_to_string(&mut toml));
-
-            let mut parser = Parser::new(toml.as_str());
-            let toml = match parser.parse() {
-                Some(t) => t,
-                None => {
-                    print_error(format!("There was an error parsing the config.toml file: {:?}",
-                                        parser.errors),
-                                verbose);
-                    exit(Error::ParseError.into());
-                }
-            };
-
-            for (key, value) in toml {
-                match key.as_str() {
-                    "threads" => {
-                        match value {
-                            Value::Integer(1...MAX_THREADS) => {
-                                config.threads = value.as_integer().unwrap() as u8
-                            }
-                            _ => {
-                                print_warning(format!("The 'threads' option in config.toml must \
-                                                       be an integer between 1 and {}.\nUsing \
-                                                       default.",
-                                                      MAX_THREADS),
-                                              verbose)
-                            }
-                        }
-                    }
-                    "downloads_folder" => {
-                        match value {
-                            Value::String(s) => config.downloads_folder = s,
-                            _ => {
-                                print_warning("The 'downloads_folder' option in config.toml must \
-                                               be an string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "dist_folder" => {
-                        match value {
-                            Value::String(s) => config.dist_folder = s,
-                            _ => {
-                                print_warning("The 'dist_folder' option in config.toml must be an \
-                                               string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "results_folder" => {
-                        match value {
-                            Value::String(s) => config.results_folder = s,
-                            _ => {
-                                print_warning("The 'results_folder' option in config.toml must be \
-                                               an string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "apktool_file" => {
-                        match value {
-                            Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_some() && extension.unwrap() == "jar" {
-                                    config.apktool_file = s.clone();
-                                } else {
-                                    print_warning("The APKTool file must be a JAR file.\nUsing \
-                                                   default.",
-                                                  verbose)
-                                }
-                            }
-                            _ => {
-                                print_warning("The 'apktool_file' option in config.toml must be \
-                                               an string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "dex2jar_folder" => {
-                        match value {
-                            Value::String(s) => config.dex2jar_folder = s,
-                            _ => {
-                                print_warning("The 'dex2jar_folder' option in config.toml should \
-                                               be an string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "jd_cmd_file" => {
-                        match value {
-                            Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_some() && extension.unwrap() == "jar" {
-                                    config.jd_cmd_file = s.clone();
-                                } else {
-                                    print_warning("The JD-CMD file must be a JAR file.\nUsing \
-                                                   default.",
-                                                  verbose)
-                                }
-                            }
-                            _ => {
-                                print_warning("The 'jd_cmd_file' option in config.toml must be an \
-                                               string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "results_template" => {
-                        match value {
-                            Value::String(s) => config.results_template = s,
-                            _ => {
-                                print_warning("The 'results_template' option in config.toml \
-                                               should be an string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "rules_json" => {
-                        match value {
-                            Value::String(s) => {
-                                let extension = Path::new(&s).extension();
-                                if extension.is_some() && extension.unwrap() == "json" {
-                                    config.rules_json = s.clone();
-                                } else {
-                                    print_warning("The rules.json file must be a JSON \
-                                                   file.\nUsing default.",
-                                                  verbose)
-                                }
-                            }
-                            _ => {
-                                print_warning("The 'rules_json' option in config.toml must be an \
-                                               string.\nUsing default.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    "permissions" => {
-                        match value {
-                            Value::Array(p) => {
-                                let format_warning =
-                                    format!("The permission configuration format must be the \
-                                             following:\n{}\nUsing default.",
-                                            "[[permissions]]\nname=\"unknown|permission.name\"\n\
-                                            criticity = \"warning|low|medium|high|critical\"\n\
-                                            label = \"Permission label\"\n\
-                                            description = \"Long description to explain the \
-                                            vulnerability\""
-                                                .italic());
-
-                                for cfg in p {
-                                    let cfg = match cfg.as_table() {
-                                        Some(t) => t,
-                                        None => {
-                                            print_warning(format_warning, verbose);
-                                            break;
-                                        }
-                                    };
-
-                                    let name = match cfg.get("name") {
-                                        Some(&Value::String(ref n)) => n,
-                                        _ => {
-                                            print_warning(format_warning, verbose);
-                                            break;
-                                        }
-                                    };
-
-                                    let criticity = match cfg.get("criticity") {
-                                        Some(&Value::String(ref c)) => {
-                                            match Criticity::from_str(c) {
-                                                Ok(c) => c,
-                                                Err(_) => {
-                                                    print_warning(format!("Criticity must be \
-                                                                           one of {}, {}, {}, \
-                                                                           {} or {}.\nUsing \
-                                                                           default.",
-                                                                          "warning".italic(),
-                                                                          "low".italic(),
-                                                                          "medium".italic(),
-                                                                          "high".italic(),
-                                                                          "critical".italic()),
-                                                                  verbose);
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        _ => {
-                                            print_warning(format_warning, verbose);
-                                            break;
-                                        }
-                                    };
-
-                                    let description = match cfg.get("description") {
-                                        Some(&Value::String(ref d)) => d,
-                                        _ => {
-                                            print_warning(format_warning, verbose);
-                                            break;
-                                        }
-                                    };
-
-                                    if name == "unknown" {
-                                        if cfg.len() != 3 {
-                                            print_warning(format!("The format for the unknown \
-                                            permissions is the following:\n{}\nUsing default.",
-                                            "[[permissions]]\nname = \"unknown\"\n\
-                                            criticity = \"warning|low|medium|high|criticity\"\n\
-                                            description = \"Long description to explain the \
-                                            vulnerability\"".italic()),
-                                                          verbose);
-                                            break;
-                                        }
-
-                                        config.unknown_permission = (criticity,
-                                                                     description.clone());
-                                    } else {
-                                        if cfg.len() != 4 {
-                                            print_warning(format_warning, verbose);
-                                            break;
-                                        }
-
-                                        let permission =
-                                            match Permission::from_str(name.as_str()) {
-                                                Ok(p) => p,
-                                                Err(_) => {
-                                                    print_warning(format!("Unknown permission: \
-                                                                           {}\nTo set the \
-                                                                           default vulnerability \
-                                                                           level for an unknown \
-                                                                           permission, please, \
-                                                                           use the {} \
-                                                                           permission name, \
-                                                                           under the {} section.",
-                                                                          name.italic(),
-                                                                          "unknown".italic(),
-                                                                          "[[permissions]]"
-                                                                              .italic()),
-                                                                  verbose);
-                                                    break;
-                                                }
-                                            };
-
-                                        let label = match cfg.get("label") {
-                                            Some(&Value::String(ref l)) => l,
-                                            _ => {
-                                                print_warning(format_warning, verbose);
-                                                break;
-                                            }
-                                        };
-                                        config.permissions
-                                            .insert(PermissionConfig::new(permission,
-                                                                          criticity,
-                                                                          label,
-                                                                          description.as_str()));
-                                    }
-                                }
-                            }
-                            _ => {
-                                print_warning("You must specify the permissions you want to \
-                                               select as vulnerable.",
-                                              verbose)
-                            }
-                        }
-                    }
-                    _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
-                }
-            }
+            try!(Config::load_from_file(&mut config, "config.toml", verbose));
         }
 
         Ok(config)
@@ -420,9 +179,301 @@ impl Config {
     pub fn get_permissions(&self) -> Iter<PermissionConfig> {
         self.permissions.iter()
     }
+
+    fn load_from_file<P: AsRef<Path>>(config: &mut Config, path: P, verbose: bool) -> Result<()> {
+        let mut f = try!(fs::File::open(path));
+        let mut toml = String::new();
+        try!(f.read_to_string(&mut toml));
+
+        let mut parser = Parser::new(toml.as_str());
+        let toml = match parser.parse() {
+            Some(t) => t,
+            None => {
+                print_error(format!("There was an error parsing the config.toml file: {:?}",
+                                    parser.errors),
+                            verbose);
+                exit(Error::ParseError.into());
+            }
+        };
+
+        for (key, value) in toml {
+            match key.as_str() {
+                "threads" => {
+                    match value {
+                        Value::Integer(1...MAX_THREADS) => {
+                            config.threads = value.as_integer().unwrap() as u8
+                        }
+                        _ => {
+                            print_warning(format!("The 'threads' option in config.toml must \
+                                                   be an integer between 1 and {}.\nUsing \
+                                                   default.",
+                                                  MAX_THREADS),
+                                          verbose)
+                        }
+                    }
+                }
+                "downloads_folder" => {
+                    match value {
+                        Value::String(s) => config.downloads_folder = s,
+                        _ => {
+                            print_warning("The 'downloads_folder' option in config.toml must \
+                                           be an string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "dist_folder" => {
+                    match value {
+                        Value::String(s) => config.dist_folder = s,
+                        _ => {
+                            print_warning("The 'dist_folder' option in config.toml must be an \
+                                           string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "results_folder" => {
+                    match value {
+                        Value::String(s) => config.results_folder = s,
+                        _ => {
+                            print_warning("The 'results_folder' option in config.toml must be \
+                                           an string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "apktool_file" => {
+                    match value {
+                        Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_some() && extension.unwrap() == "jar" {
+                                config.apktool_file = s.clone();
+                            } else {
+                                print_warning("The APKTool file must be a JAR file.\nUsing \
+                                               default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'apktool_file' option in config.toml must be \
+                                           an string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "dex2jar_folder" => {
+                    match value {
+                        Value::String(s) => config.dex2jar_folder = s,
+                        _ => {
+                            print_warning("The 'dex2jar_folder' option in config.toml should \
+                                           be an string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "jd_cmd_file" => {
+                    match value {
+                        Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_some() && extension.unwrap() == "jar" {
+                                config.jd_cmd_file = s.clone();
+                            } else {
+                                print_warning("The JD-CMD file must be a JAR file.\nUsing \
+                                               default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'jd_cmd_file' option in config.toml must be an \
+                                           string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "results_template" => {
+                    match value {
+                        Value::String(s) => config.results_template = s,
+                        _ => {
+                            print_warning("The 'results_template' option in config.toml \
+                                           should be an string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "rules_json" => {
+                    match value {
+                        Value::String(s) => {
+                            let extension = Path::new(&s).extension();
+                            if extension.is_some() && extension.unwrap() == "json" {
+                                config.rules_json = s.clone();
+                            } else {
+                                print_warning("The rules.json file must be a JSON \
+                                               file.\nUsing default.",
+                                              verbose)
+                            }
+                        }
+                        _ => {
+                            print_warning("The 'rules_json' option in config.toml must be an \
+                                           string.\nUsing default.",
+                                          verbose)
+                        }
+                    }
+                }
+                "permissions" => {
+                    match value {
+                        Value::Array(p) => {
+                            let format_warning =
+                                format!("The permission configuration format must be the \
+                                         following:\n{}\nUsing default.",
+                                        "[[permissions]]\nname=\"unknown|permission.name\"\n\
+                                        criticity = \"warning|low|medium|high|critical\"\n\
+                                        label = \"Permission label\"\n\
+                                        description = \"Long description to explain the \
+                                        vulnerability\""
+                                            .italic());
+
+                            for cfg in p {
+                                let cfg = match cfg.as_table() {
+                                    Some(t) => t,
+                                    None => {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+                                };
+
+                                let name = match cfg.get("name") {
+                                    Some(&Value::String(ref n)) => n,
+                                    _ => {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+                                };
+
+                                let criticity = match cfg.get("criticity") {
+                                    Some(&Value::String(ref c)) => {
+                                        match Criticity::from_str(c) {
+                                            Ok(c) => c,
+                                            Err(_) => {
+                                                print_warning(format!("Criticity must be \
+                                                                       one of {}, {}, {}, \
+                                                                       {} or {}.\nUsing \
+                                                                       default.",
+                                                                      "warning".italic(),
+                                                                      "low".italic(),
+                                                                      "medium".italic(),
+                                                                      "high".italic(),
+                                                                      "critical".italic()),
+                                                              verbose);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    _ => {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+                                };
+
+                                let description = match cfg.get("description") {
+                                    Some(&Value::String(ref d)) => d,
+                                    _ => {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+                                };
+
+                                if name == "unknown" {
+                                    if cfg.len() != 3 {
+                                        print_warning(format!("The format for the unknown \
+                                        permissions is the following:\n{}\nUsing default.",
+                                        "[[permissions]]\nname = \"unknown\"\n\
+                                        criticity = \"warning|low|medium|high|criticity\"\n\
+                                        description = \"Long description to explain the \
+                                        vulnerability\"".italic()),
+                                                      verbose);
+                                        break;
+                                    }
+
+                                    config.unknown_permission = (criticity, description.clone());
+                                } else {
+                                    if cfg.len() != 4 {
+                                        print_warning(format_warning, verbose);
+                                        break;
+                                    }
+
+                                    let permission = match Permission::from_str(name.as_str()) {
+                                        Ok(p) => p,
+                                        Err(_) => {
+                                            print_warning(format!("Unknown permission: {}\nTo \
+                                                                   set the default \
+                                                                   vulnerability level for an \
+                                                                   unknown permission, please, \
+                                                                   use the {} permission name, \
+                                                                   under the {} section.",
+                                                                  name.italic(),
+                                                                  "unknown".italic(),
+                                                                  "[[permissions]]".italic()),
+                                                          verbose);
+                                            break;
+                                        }
+                                    };
+
+                                    let label = match cfg.get("label") {
+                                        Some(&Value::String(ref l)) => l,
+                                        _ => {
+                                            print_warning(format_warning, verbose);
+                                            break;
+                                        }
+                                    };
+                                    config.permissions
+                                        .insert(PermissionConfig::new(permission,
+                                                                      criticity,
+                                                                      label,
+                                                                      description.as_str()));
+                                }
+                            }
+                        }
+                        _ => {
+                            print_warning("You must specify the permissions you want to \
+                                           select as vulnerable.",
+                                          verbose)
+                        }
+                    }
+                }
+                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
+            }
+        }
+        Ok(())
+    }
 }
 
 impl Default for Config {
+    #[cfg(target_family = "unix")]
+    fn default() -> Config {
+        Config {
+            app_id: String::new(),
+            verbose: false,
+            quiet: false,
+            force: false,
+            bench: false,
+            threads: 2,
+            downloads_folder: String::from("downloads"),
+            dist_folder: String::from("dist"),
+            results_folder: String::from("results"),
+            apktool_file: String::from("/var/lib/super/vendor/apktool_2.2.0.jar"),
+            dex2jar_folder: String::from("/var/lib/super/vendor/dex2jar-2.0"),
+            jd_cmd_file: String::from("/var/lib/super/vendor/jd-cmd.jar"),
+            results_template: String::from("/var/lib/super/vendor/results_template"),
+            rules_json: String::from("/etc/super/rules.json"),
+            unknown_permission: (Criticity::Low,
+                                 String::from("Even if the application can create its own \
+                                               permissions, it's discouraged, since it can lead \
+                                               to missunderstanding between developers.")),
+            permissions: BTreeSet::new(),
+        }
+    }
+
+    #[cfg(target_family = "windows")]
     fn default() -> Config {
         Config {
             app_id: String::new(),
@@ -526,11 +577,22 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
-        assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
-        assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
-        assert_eq!(config.get_results_template(), "vendor/results_template");
-        assert_eq!(config.get_rules_json(), "rules.json");
+        if cfg!(target_family = "unix") {
+            assert_eq!(config.get_apktool_file(),
+                       "/var/lib/super/vendor/apktool_2.2.0.jar");
+            assert_eq!(config.get_dex2jar_folder(),
+                       "/var/lib/super/vendor/dex2jar-2.0");
+            assert_eq!(config.get_jd_cmd_file(), "/var/lib/super/vendor/jd-cmd.jar");
+            assert_eq!(config.get_results_template(),
+                       "/var/lib/super/vendor/results_template");
+            assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+        } else if cfg!(target_family = "windows") {
+            assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
+            assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
+            assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
+            assert_eq!(config.get_results_template(), "vendor/results_template");
+            assert_eq!(config.get_rules_json(), "rules.json");
+        }
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
@@ -594,11 +656,14 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
-        assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
-        assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
-        assert_eq!(config.get_results_template(), "vendor/results_template");
-        assert_eq!(config.get_rules_json(), "rules.json");
+        assert_eq!(config.get_apktool_file(),
+                   "/var/lib/super/vendor/apktool_2.2.0.jar");
+        assert_eq!(config.get_dex2jar_folder(),
+                   "/var/lib/super/vendor/dex2jar-2.0");
+        assert_eq!(config.get_jd_cmd_file(), "/var/lib/super/vendor/jd-cmd.jar");
+        assert_eq!(config.get_results_template(),
+                   "/var/lib/super/vendor/results_template");
+        assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
