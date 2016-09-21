@@ -59,7 +59,7 @@ branches for both of these features and send two requests.
 
 You must sign your work, certifying that you either wrote the work or otherwise have the right to
 pass it on to an open source project. Git makes this trivial as you merely have to use `--signoff`
-on your commits to your OpenStratos fork.
+on your commits to your SUPER fork.
 
 `git commit --signoff`
 

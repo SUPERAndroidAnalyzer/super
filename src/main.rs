@@ -335,7 +335,7 @@ fn get_help_menu() -> ArgMatches<'static> {
             .short("v")
             .long("verbose")
             .conflicts_with("quiet")
-            .help("If you'd like the auditor to talk more than neccesary."))
+            .help("If you'd like the auditor to talk more than necessary."))
         .arg(Arg::with_name("force")
             .long("force")
             .help("If you'd like to force the auditor to do everything from the beginning."))
@@ -346,7 +346,7 @@ fn get_help_menu() -> ArgMatches<'static> {
             .short("q")
             .long("quiet")
             .conflicts_with("verbose")
-            .help("If you'd like a zen auditor that won't talk unless it's 100% neccesary."))
+            .help("If you'd like a zen auditor that won't talk unless it's 100% necessary."))
         .get_matches()
 }
 
