@@ -24,7 +24,7 @@ We are planning on releasing binaries for the application so it is easier to use
 
 2. Clone the repository.
 
-  `git clone https://github.com/SUPERANDROIDANALYZER/super`
+  `git clone https://github.com/SUPERAndroidAnalyzer/super.git`
 
 3. Build dependencies. Inside the repository, execute the following command. It should download and compile all program dependencies.
 
