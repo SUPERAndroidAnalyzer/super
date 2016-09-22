@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e?svg=true)](https://ci.appveyor.com/project/Razican/super)
 [![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=develop)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=develop)
 
-<img src="src/super.jpg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" style="width: 10em;">
+<img src="src/super.jpg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
 Secure, Unified, Powerful and Extensible Rust Android Analyzer
 
