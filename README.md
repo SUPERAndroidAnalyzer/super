@@ -36,7 +36,7 @@ If everything went right up until this point, you're ready to go!
 
 ## Usage ##
 
-SUPER is very easy to use. Just download the desired *.apk* into the *downloads* folder and use the name as an argument when running the program. After the execution, a detailed report will appear in the *results* folder with that application name. There are a few usage options available:
+SUPER is very easy to use. Just download the desired *.apk* into the *downloads* folder (create that folder if necessary) and use the name as an argument when running the program. After the execution, a detailed report will appear in the *results* folder with that application name. There are a few usage options available:
 
 ```
 USAGE:
