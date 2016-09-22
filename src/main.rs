@@ -324,7 +324,7 @@ impl FromStr for Criticity {
 fn get_help_menu() -> ArgMatches<'static> {
     App::new("S.U.P.E.R. Android Analyzer")
         .version(crate_version!())
-        .author("Iban Eguia <razican@protonmail.ch>")
+        .author("SUPER Android Analyzer Team <razican@protonmail.ch>")
         .about("Audits Android apps for vulnerabilities")
         .arg(Arg::with_name("package")
             .help("The package string of the application to test.")
