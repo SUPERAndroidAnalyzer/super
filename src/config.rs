@@ -450,26 +450,58 @@ impl Config {
 impl Default for Config {
     #[cfg(target_family = "unix")]
     fn default() -> Config {
-        Config {
-            app_id: String::new(),
-            verbose: false,
-            quiet: false,
-            force: false,
-            bench: false,
-            threads: 2,
-            downloads_folder: String::from("downloads"),
-            dist_folder: String::from("dist"),
-            results_folder: String::from("results"),
-            apktool_file: String::from("/var/lib/super/vendor/apktool_2.2.0.jar"),
-            dex2jar_folder: String::from("/var/lib/super/vendor/dex2jar-2.0"),
-            jd_cmd_file: String::from("/var/lib/super/vendor/jd-cmd.jar"),
-            results_template: String::from("/var/lib/super/vendor/results_template"),
-            rules_json: String::from("/etc/super/rules.json"),
-            unknown_permission: (Criticity::Low,
-                                 String::from("Even if the application can create its own \
-                                               permissions, it's discouraged, since it can lead \
-                                               to missunderstanding between developers.")),
-            permissions: BTreeSet::new(),
+        if Path::new("/var/lib/super").exists() {
+            Config {
+                app_id: String::new(),
+                verbose: false,
+                quiet: false,
+                force: false,
+                bench: false,
+                threads: 2,
+                downloads_folder: String::from("downloads"),
+                dist_folder: String::from("dist"),
+                results_folder: String::from("results"),
+                apktool_file: String::from("/var/lib/super/vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: String::from("/var/lib/super/vendor/dex2jar-2.0"),
+                jd_cmd_file: String::from("/var/lib/super/vendor/jd-cmd.jar"),
+                results_template: String::from("/var/lib/super/vendor/results_template"),
+                rules_json: if Path::new("/etc/super").exists() {
+                    String::from("/etc/super/rules.json")
+                } else {
+                    String::from("rules.json")
+                },
+                unknown_permission: (Criticity::Low,
+                                     String::from("Even if the application can create its own \
+                                                   permissions, it's discouraged, since it can \
+                                                   lead to missunderstanding between developers.")),
+                permissions: BTreeSet::new(),
+            }
+        } else {
+            Config {
+                app_id: String::new(),
+                verbose: false,
+                quiet: false,
+                force: false,
+                bench: false,
+                threads: 2,
+                downloads_folder: String::from("downloads"),
+                dist_folder: String::from("dist"),
+                results_folder: String::from("results"),
+                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
+                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
+                results_template: String::from("vendor/results_template"),
+                rules_json: if Path::new("/etc/super").exists() {
+                    String::from("/etc/super/rules.json")
+                } else {
+                    String::from("rules.json")
+                },
+                unknown_permission: (Criticity::Low,
+                                     String::from("Even if the application can create its own \
+                                                   permissions, it's discouraged, since it can \
+                                                   lead to missunderstanding between developers.")),
+                permissions: BTreeSet::new(),
+            }
         }
     }
 
@@ -562,7 +594,7 @@ mod tests {
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
-    use std::fs::File;
+    use std::path::Path;
 
     #[test]
     fn it_config() {
@@ -577,7 +609,7 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        if cfg!(target_family = "unix") {
+        if cfg!(target_family = "unix") && Path::new("/var/lib/super").exists() {
             assert_eq!(config.get_apktool_file(),
                        "/var/lib/super/vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(),
@@ -585,12 +617,15 @@ mod tests {
             assert_eq!(config.get_jd_cmd_file(), "/var/lib/super/vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(),
                        "/var/lib/super/vendor/results_template");
-            assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
-        } else if cfg!(target_family = "windows") {
+        } else {
             assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
             assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(), "vendor/results_template");
+        }
+        if cfg!(target_family = "unix") && Path::new("/etc/super").exists() {
+            assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+        } else {
             assert_eq!(config.get_rules_json(), "rules.json");
         }
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
@@ -631,9 +666,9 @@ mod tests {
         }
         assert!(!config.check());
 
-        File::create(format!("{}/{}.apk",
-                             config.get_downloads_folder(),
-                             config.get_app_id()))
+        fs::File::create(format!("{}/{}.apk",
+                                 config.get_downloads_folder(),
+                                 config.get_app_id()))
             .unwrap();
         assert!(config.check());
 
