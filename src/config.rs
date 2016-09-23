@@ -52,10 +52,10 @@ impl Config {
         config.force = force;
         config.bench = bench;
 
-        if Path::new("/etc/config.toml").exists() {
+        if file_exists("/etc/config.toml") {
             try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
         }
-        if Path::new("config.toml").exists() {
+        if file_exists("config.toml") {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
         }
 
@@ -76,7 +76,7 @@ impl Config {
         config.force = force;
         config.bench = bench;
 
-        if Path::new("config.toml").exists() {
+        if file_exists("config.toml") {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
         }
 
@@ -84,12 +84,11 @@ impl Config {
     }
 
     pub fn check(&self) -> bool {
-        file_exists(self.downloads_folder.as_str()) &&
+        file_exists(&self.downloads_folder) &&
         file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
-        file_exists(self.apktool_file.as_str()) &&
-        file_exists(self.dex2jar_folder.as_str()) &&
-        file_exists(self.jd_cmd_file.as_str()) &&
-        file_exists(self.results_template.as_str()) && file_exists(self.rules_json.as_str())
+        file_exists(&self.apktool_file) && file_exists(&self.dex2jar_folder) &&
+        file_exists(&self.jd_cmd_file) && file_exists(&self.results_template) &&
+        file_exists(&self.rules_json)
     }
 
     pub fn get_app_id(&self) -> &str {
@@ -450,7 +449,7 @@ impl Config {
 impl Default for Config {
     #[cfg(target_family = "unix")]
     fn default() -> Config {
-        if Path::new("/var/lib/super").exists() {
+        if file_exists("/var/lib/super") {
             Config {
                 app_id: String::new(),
                 verbose: false,
@@ -491,7 +490,7 @@ impl Default for Config {
                 dex2jar_folder: String::from("vendor/dex2jar-2.0"),
                 jd_cmd_file: String::from("vendor/jd-cmd.jar"),
                 results_template: String::from("vendor/results_template"),
-                rules_json: if Path::new("/etc/super").exists() {
+                rules_json: if file_exists("/etc/super") {
                     String::from("/etc/super/rules.json")
                 } else {
                     String::from("rules.json")
@@ -595,6 +594,8 @@ mod tests {
     use super::Config;
     use std::fs;
     use std::path::Path;
+    use std::thread;
+    use std::time::Duration;
 
     #[test]
     fn it_config() {
@@ -670,41 +671,12 @@ mod tests {
                                  config.get_downloads_folder(),
                                  config.get_app_id()))
             .unwrap();
-        println!("Exists downloads folder: {}",
-                 file_exists(config.get_downloads_folder()));
-        println!("Exists APK: {}",
-                 file_exists(format!("{}/{}.apk",
-                                     config.get_downloads_folder(),
-                                     config.get_app_id())));
-        println!("Exists APKTool file: {}",
-                 file_exists(config.get_apktool_file()));
-        println!("Exists dex2jar folder: {}",
-                 file_exists(config.get_dex2jar_folder()));
-        println!("Exists JD-CMD file: {}",
-                 file_exists(config.get_jd_cmd_file()));
-        println!("Exists results template: {}",
-                 file_exists(config.get_results_template()));
-        println!("Exists rules JSON: {}",
-                 file_exists(config.get_rules_json()));
         assert!(config.check());
 
+        while !file_exists("config.toml.sample") {
+            thread::sleep(Duration::from_millis(50));
+        }
         let config = Config::new("test_app", false, false, false, false).unwrap();
-        println!("Exists downloads folder: {}",
-                 file_exists(config.get_downloads_folder()));
-        println!("Exists APK: {}",
-                 file_exists(format!("{}/{}.apk",
-                                     config.get_downloads_folder(),
-                                     config.get_app_id())));
-        println!("Exists APKTool file: {}",
-                 file_exists(config.get_apktool_file()));
-        println!("Exists dex2jar folder: {}",
-                 file_exists(config.get_dex2jar_folder()));
-        println!("Exists JD-CMD file: {}",
-                 file_exists(config.get_jd_cmd_file()));
-        println!("Exists results template: {}",
-                 file_exists(config.get_results_template()));
-        println!("Exists rules JSON: {}",
-                 file_exists(config.get_rules_json()));
         assert!(config.check());
 
         fs::remove_file(format!("{}/{}.apk",

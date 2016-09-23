@@ -74,7 +74,7 @@ pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
 }
 
 pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
-    fs::metadata(path).is_ok()
+    path.as_ref().exists()
 }
 
 pub fn get_string(label: &str, config: &Config) -> Result<String> {
