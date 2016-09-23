@@ -2,6 +2,8 @@ downloads/*
 dist/*
 results/*
 target
+rpmbuild/*
+!rpmbuild/super.spec
 Cargo.lock
 *.bk
 *.apk

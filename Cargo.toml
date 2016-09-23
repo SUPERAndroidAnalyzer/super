@@ -9,6 +9,7 @@ authors = [
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/SUPERAndroidAnalyzer/super"
+homepage = "http://superanalyzer.rocks"
 description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI.\
