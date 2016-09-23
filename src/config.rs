@@ -670,7 +670,40 @@ mod tests {
                                  config.get_downloads_folder(),
                                  config.get_app_id()))
             .unwrap();
+        println!("Exists downloads folder: {}",
+                 file_exists(config.get_downloads_folder()));
+        println!("Exists APK: {}",
+                 file_exists(format!("{}/{}.apk",
+                                     config.get_downloads_folder(),
+                                     config.get_app_id())));
+        println!("Exists APKTool file: {}",
+                 file_exists(config.get_apktool_file()));
+        println!("Exists dex2jar folder: {}",
+                 file_exists(config.get_dex2jar_folder()));
+        println!("Exists JD-CMD file: {}",
+                 file_exists(config.get_jd_cmd_file()));
+        println!("Exists results template: {}",
+                 file_exists(config.get_results_template()));
+        println!("Exists rules JSON: {}",
+                 file_exists(config.get_rules_json()));
         assert!(config.check());
+
+        println!("Exists downloads folder: {}",
+                 file_exists(config.get_downloads_folder()));
+        println!("Exists APK: {}",
+                 file_exists(format!("{}/{}.apk",
+                                     config.get_downloads_folder(),
+                                     config.get_app_id())));
+        println!("Exists APKTool file: {}",
+                 file_exists(config.get_apktool_file()));
+        println!("Exists dex2jar folder: {}",
+                 file_exists(config.get_dex2jar_folder()));
+        println!("Exists JD-CMD file: {}",
+                 file_exists(config.get_jd_cmd_file()));
+        println!("Exists results template: {}",
+                 file_exists(config.get_results_template()));
+        println!("Exists rules JSON: {}",
+                 file_exists(config.get_rules_json()));
 
         let config = Config::new("test_app", false, false, false, false).unwrap();
         assert!(config.check());
