@@ -688,6 +688,7 @@ mod tests {
                  file_exists(config.get_rules_json()));
         assert!(config.check());
 
+        let config = Config::new("test_app", false, false, false, false).unwrap();
         println!("Exists downloads folder: {}",
                  file_exists(config.get_downloads_folder()));
         println!("Exists APK: {}",
@@ -704,8 +705,6 @@ mod tests {
                  file_exists(config.get_results_template()));
         println!("Exists rules JSON: {}",
                  file_exists(config.get_rules_json()));
-
-        let config = Config::new("test_app", false, false, false, false).unwrap();
         assert!(config.check());
 
         fs::remove_file(format!("{}/{}.apk",
