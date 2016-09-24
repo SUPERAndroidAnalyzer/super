@@ -115,16 +115,14 @@ impl Config {
                                 self.dex2jar_folder));
         }
         if !file_exists(&self.jd_cmd_file) {
-            errors.push(format!("the jd-cmd file `{}` does not exist",
-                                self.jd_cmd_file));
+            errors.push(format!("the jd-cmd file `{}` does not exist", self.jd_cmd_file));
         }
         if !file_exists(&self.results_template) {
             errors.push(format!("the results template `{}` does not exist",
                                 self.results_template));
         }
         if !file_exists(&self.rules_json) {
-            errors.push(format!("the `{}` rule file does not exist",
-                                self.rules_json);
+            errors.push(format!("the `{}` rule file does not exist", self.rules_json));
         }
         errors
     }
