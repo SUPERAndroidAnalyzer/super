@@ -531,7 +531,7 @@ impl Default for Config {
                 dex2jar_folder: String::from("vendor/dex2jar-2.0"),
                 jd_cmd_file: String::from("vendor/jd-cmd.jar"),
                 results_template: String::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super") {
+                rules_json: if file_exists("/etc/super/rules.json") {
                     String::from("/etc/super/rules.json")
                 } else {
                     String::from("rules.json")
@@ -667,7 +667,7 @@ mod tests {
             assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(), "vendor/results_template");
         }
-        if cfg!(target_family = "unix") && Path::new("/etc/super").exists() {
+        if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
             assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
         } else {
             assert_eq!(config.get_rules_json(), "rules.json");
@@ -720,6 +720,17 @@ mod tests {
             thread::sleep(Duration::from_millis(50));
         }
         let config = Config::new("test_app", false, false, false, false).unwrap();
+        let mut error_string = String::from("Configuration errors were found:\n");
+        for error in config.get_errors() {
+            error_string.push_str(&error);
+            error_string.push('\n');
+        }
+        error_string.push_str("The configuration was loaded, in order, from the following \
+                               files:\n\t- Default built-in configuration");
+        for file in config.get_loaded_config_files() {
+            error_string.push_str(&format!("\t- {}", file));
+        }
+        println!("{}", error_string);
         assert!(config.check());
 
         fs::remove_file(format!("{}/{}.apk",

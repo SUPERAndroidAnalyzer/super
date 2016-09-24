@@ -46,6 +46,6 @@ install -p -m 644 README.md %{buildroot}%{_defaultdocdir}/%{name}/
 %license LICENSE
 %{_bindir}/*
 %{_datadir}/*
-%config(noreplace) %{_sysconfdir}/%{name}/*
+%config(noreplace) %{_sysconfdir}/*
 
 %changelog
