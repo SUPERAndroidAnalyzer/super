@@ -449,7 +449,7 @@ impl Config {
 impl Default for Config {
     #[cfg(target_family = "unix")]
     fn default() -> Config {
-        if file_exists("/var/lib/super") {
+        if file_exists("/usr/share/super") {
             Config {
                 app_id: String::new(),
                 verbose: false,
@@ -460,10 +460,10 @@ impl Default for Config {
                 downloads_folder: String::from("downloads"),
                 dist_folder: String::from("dist"),
                 results_folder: String::from("results"),
-                apktool_file: String::from("/var/lib/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("/var/lib/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("/var/lib/super/vendor/jd-cmd.jar"),
-                results_template: String::from("/var/lib/super/vendor/results_template"),
+                apktool_file: String::from("/usr/share/super/vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: String::from("/usr/share/super/vendor/dex2jar-2.0"),
+                jd_cmd_file: String::from("/usr/share/super/vendor/jd-cmd.jar"),
+                results_template: String::from("/usr/share/super/vendor/results_template"),
                 rules_json: if Path::new("/etc/super").exists() {
                     String::from("/etc/super/rules.json")
                 } else {
@@ -610,14 +610,15 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        if cfg!(target_family = "unix") && Path::new("/var/lib/super").exists() {
+        if cfg!(target_family = "unix") && Path::new("/usr/share/super").exists() {
             assert_eq!(config.get_apktool_file(),
-                       "/var/lib/super/vendor/apktool_2.2.0.jar");
+                       "/usr/share/super/vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(),
-                       "/var/lib/super/vendor/dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(), "/var/lib/super/vendor/jd-cmd.jar");
+                       "/usr/share/super/vendor/dex2jar-2.0");
+            assert_eq!(config.get_jd_cmd_file(),
+                       "/usr/share/super/vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(),
-                       "/var/lib/super/vendor/results_template");
+                       "/usr/share/super/vendor/results_template");
         } else {
             assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
@@ -696,12 +697,13 @@ mod tests {
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
         assert_eq!(config.get_apktool_file(),
-                   "/var/lib/super/vendor/apktool_2.2.0.jar");
+                   "/usr/share/super/vendor/apktool_2.2.0.jar");
         assert_eq!(config.get_dex2jar_folder(),
-                   "/var/lib/super/vendor/dex2jar-2.0");
-        assert_eq!(config.get_jd_cmd_file(), "/var/lib/super/vendor/jd-cmd.jar");
+                   "/usr/share/super/vendor/dex2jar-2.0");
+        assert_eq!(config.get_jd_cmd_file(),
+                   "/usr/share/super/vendor/jd-cmd.jar");
         assert_eq!(config.get_results_template(),
-                   "/var/lib/super/vendor/results_template");
+                   "/usr/share/super/vendor/results_template");
         assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
