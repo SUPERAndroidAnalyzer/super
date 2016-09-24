@@ -66,17 +66,17 @@ fn main() {
     };
 
     if !config.check() {
-        if !file_exists(format!("{}/{}.apk",
-                                config.get_downloads_folder(),
-                                config.get_app_id())) {
-            print_error(format!("The {}/{}.apk file does not exist.",
-                                config.get_downloads_folder(),
-                                config.get_app_id()),
-                        verbose);
-        } else {
-            print_error(format!("There is an error with the configuration: {:?}", config),
-                        verbose);
+        let mut error_string = String::from("Configuration errors were found:\n");
+        for error in config.get_errors() {
+            error_string.push_str(&error);
+            error_string.push('\n');
         }
+        error_string.push_str("The configuration was loaded, in order, from the following \
+                               files:\n\t- Default built-in configuration");
+        for file in config.get_loaded_config_files() {
+            error_string.push_str(&format!("\t- {}", file));
+        }
+        print_error(error_string, verbose);
         exit(Error::Config.into());
     }
 

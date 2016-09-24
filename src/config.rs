@@ -5,6 +5,7 @@ use std::str::FromStr;
 use std::io::Read;
 use std::process::exit;
 use std::collections::btree_set::Iter;
+use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
 
@@ -35,6 +36,7 @@ pub struct Config {
     rules_json: String,
     unknown_permission: (Criticity, String),
     permissions: BTreeSet<PermissionConfig>,
+    loaded_files: Vec<String>,
 }
 
 impl Config {
@@ -54,9 +56,11 @@ impl Config {
 
         if file_exists("/etc/config.toml") {
             try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
+            config.loaded_files.push(String::from("/etc/config.toml"));
         }
-        if file_exists("config.toml") {
-            try!(Config::load_from_file(&mut config, "config.toml", verbose));
+        if file_exists("./config.toml") {
+            try!(Config::load_from_file(&mut config, "./config.toml", verbose));
+            config.loaded_files.push(String::from("./config.toml"));
         }
 
         Ok(config)
@@ -78,6 +82,7 @@ impl Config {
 
         if file_exists("config.toml") {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
+            config.loaded_files.push(String::from("config.toml"));
         }
 
         Ok(config)
@@ -89,6 +94,43 @@ impl Config {
         file_exists(&self.apktool_file) && file_exists(&self.dex2jar_folder) &&
         file_exists(&self.jd_cmd_file) && file_exists(&self.results_template) &&
         file_exists(&self.rules_json)
+    }
+
+    pub fn get_errors(&self) -> Vec<String> {
+        let mut errors = Vec::new();
+        if !file_exists(&self.downloads_folder) {
+            errors.push(format!("the downloads folder `{}` does not exist",
+                                self.downloads_folder));
+        }
+        if !file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) {
+            errors.push(format!("the APK file `{}` does not exist",
+                                format!("{}/{}.apk", self.downloads_folder, self.app_id)));
+        }
+        if !file_exists(&self.apktool_file) {
+            errors.push(format!("the APKTool JAR file `{}` does not exist",
+                                self.apktool_file));
+        }
+        if !file_exists(&self.dex2jar_folder) {
+            errors.push(format!("the Dex2Jar folder `{}` does not exist",
+                                self.dex2jar_folder));
+        }
+        if !file_exists(&self.jd_cmd_file) {
+            errors.push(format!("the jd-cmd file `{}` does not exist",
+                                self.jd_cmd_file));
+        }
+        if !file_exists(&self.results_template) {
+            errors.push(format!("the results template `{}` does not exist",
+                                self.results_template));
+        }
+        if !file_exists(&self.rules_json) {
+            errors.push(format!("the `{}` rule file does not exist",
+                                self.rules_json);
+        }
+        errors
+    }
+
+    pub fn get_loaded_config_files(&self) -> VecIter<String> {
+        self.loaded_files.iter()
     }
 
     pub fn get_app_id(&self) -> &str {
@@ -474,6 +516,7 @@ impl Default for Config {
                                                    permissions, it's discouraged, since it can \
                                                    lead to missunderstanding between developers.")),
                 permissions: BTreeSet::new(),
+                loaded_files: Vec::new(),
             }
         } else {
             Config {
@@ -500,6 +543,7 @@ impl Default for Config {
                                                    permissions, it's discouraged, since it can \
                                                    lead to missunderstanding between developers.")),
                 permissions: BTreeSet::new(),
+                loaded_files: Vec::new(),
             }
         }
     }
