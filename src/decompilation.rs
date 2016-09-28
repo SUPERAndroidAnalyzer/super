@@ -185,12 +185,12 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 fn dex_to_jar(config: &Config) {
     let output;
     if cfg!(target_family="windows") {
-        output = Command::new(format!("{}/d2j-dex2jar.bat", config.get_dex2jar_folder()))
-            .arg(format!("{}/{}/classes.dex",
+        output = Command::new(format!("{}\\d2j-dex2jar.bat", config.get_dex2jar_folder()))
+            .arg(format!("{}\\{}\\classes.dex",
                          config.get_dist_folder(),
                          config.get_app_id()))
             .arg("-o")
-            .arg(format!("{}/{}/classes.jar",
+            .arg(format!("{}\\{}\\classes.jar",
                          config.get_dist_folder(),
                          config.get_app_id()))
             .output();
