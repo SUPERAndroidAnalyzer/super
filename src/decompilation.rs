@@ -183,15 +183,28 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 }
 
 fn dex_to_jar(config: &Config) {
-    let output = Command::new(format!("{}/d2j-dex2jar.sh", config.get_dex2jar_folder()))
-        .arg(format!("{}/{}/classes.dex",
-                     config.get_dist_folder(),
-                     config.get_app_id()))
-        .arg("-o")
-        .arg(format!("{}/{}/classes.jar",
-                     config.get_dist_folder(),
-                     config.get_app_id()))
-        .output();
+    let output;
+    if cfg!(target_family="windows") {
+        output = Command::new(format!("{}/d2j-dex2jar.bat", config.get_dex2jar_folder()))
+            .arg(format!("{}/{}/classes.dex",
+                         config.get_dist_folder(),
+                         config.get_app_id()))
+            .arg("-o")
+            .arg(format!("{}/{}/classes.jar",
+                         config.get_dist_folder(),
+                         config.get_app_id()))
+            .output();
+    } else {
+        output = Command::new(format!("{}/d2j-dex2jar.sh", config.get_dex2jar_folder()))
+            .arg(format!("{}/{}/classes.dex",
+                         config.get_dist_folder(),
+                         config.get_app_id()))
+            .arg("-o")
+            .arg(format!("{}/{}/classes.jar",
+                         config.get_dist_folder(),
+                         config.get_app_id()))
+            .output();
+    }
 
     if output.is_err() {
         print_error(format!("There was an error when executing the {} to {} conversion \

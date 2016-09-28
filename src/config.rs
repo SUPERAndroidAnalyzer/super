@@ -568,6 +568,7 @@ impl Default for Config {
                                                permissions, it's discouraged, since it can lead \
                                                to missunderstanding between developers.")),
             permissions: BTreeSet::new(),
+            loaded_files: Vec::new(),
         }
     }
 }
