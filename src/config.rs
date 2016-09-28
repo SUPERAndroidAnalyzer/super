@@ -727,9 +727,9 @@ mod tests {
             error_string.push('\n');
         }
         error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration");
+                               files:\n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}", file));
+            error_string.push_str(&format!("\t- {}\n", file));
         }
         println!("{}", error_string);
         assert!(config.check());
