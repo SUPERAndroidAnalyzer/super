@@ -37,7 +37,7 @@ license_file = ["LICENSE", "0"]
 extended_description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI."""
-depends = "libc6, libgcc1, default-jre-headless, openssl"
+depends = "libc6, libgcc1, default-jre-headless, openssl, bash"
 section = "devel"
 priority = "optional"
 assets = [
