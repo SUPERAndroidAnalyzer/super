@@ -72,9 +72,9 @@ fn main() {
             error_string.push('\n');
         }
         error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration");
+                               files:\n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}", file));
+            error_string.push_str(&format!("\t- {}\n", file));
         }
         print_error(error_string, verbose);
         exit(Error::Config.into());
@@ -322,9 +322,9 @@ impl FromStr for Criticity {
 }
 
 fn get_help_menu() -> ArgMatches<'static> {
-    App::new("S.U.P.E.R. Android Analyzer")
+    App::new("SUPER Android Analyzer")
         .version(crate_version!())
-        .author("SUPER Android Analyzer Team <razican@protonmail.ch>")
+        .author("SUPER Team <contact@superanalyzer.rocks>")
         .about("Audits Android apps for vulnerabilities")
         .arg(Arg::with_name("package")
             .help("The package string of the application to test.")

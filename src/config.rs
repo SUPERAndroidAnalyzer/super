@@ -487,7 +487,7 @@ impl Config {
 }
 
 impl Default for Config {
-    #[cfg(target_family = "unix")]
+    #[cfg(target_os = "linux")]
     fn default() -> Config {
         if file_exists("/usr/share/super") {
             Config {
@@ -531,7 +531,66 @@ impl Default for Config {
                 dex2jar_folder: String::from("vendor/dex2jar-2.0"),
                 jd_cmd_file: String::from("vendor/jd-cmd.jar"),
                 results_template: String::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super") {
+                rules_json: if file_exists("/etc/super/rules.json") {
+                    String::from("/etc/super/rules.json")
+                } else {
+                    String::from("rules.json")
+                },
+                unknown_permission: (Criticity::Low,
+                                     String::from("Even if the application can create its own \
+                                                   permissions, it's discouraged, since it can \
+                                                   lead to missunderstanding between developers.")),
+                permissions: BTreeSet::new(),
+                loaded_files: Vec::new(),
+            }
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    fn default() -> Config {
+        if file_exists("/usr/local/super") {
+            Config {
+                app_id: String::new(),
+                verbose: false,
+                quiet: false,
+                force: false,
+                bench: false,
+                threads: 2,
+                downloads_folder: String::from("downloads"),
+                dist_folder: String::from("dist"),
+                results_folder: String::from("results"),
+                apktool_file: String::from("/usr/local/super/vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: String::from("/usr/local/super/vendor/dex2jar-2.0"),
+                jd_cmd_file: String::from("/usr/local/super/vendor/jd-cmd.jar"),
+                results_template: String::from("/usr/local/super/vendor/results_template"),
+                rules_json: if Path::new("/etc/super").exists() {
+                    String::from("/etc/super/rules.json")
+                } else {
+                    String::from("rules.json")
+                },
+                unknown_permission: (Criticity::Low,
+                                     String::from("Even if the application can create its own \
+                                                   permissions, it's discouraged, since it can \
+                                                   lead to missunderstanding between developers.")),
+                permissions: BTreeSet::new(),
+                loaded_files: Vec::new(),
+            }
+        } else {
+            Config {
+                app_id: String::new(),
+                verbose: false,
+                quiet: false,
+                force: false,
+                bench: false,
+                threads: 2,
+                downloads_folder: String::from("downloads"),
+                dist_folder: String::from("dist"),
+                results_folder: String::from("results"),
+                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
+                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
+                results_template: String::from("vendor/results_template"),
+                rules_json: if file_exists("/etc/super/rules.json") {
                     String::from("/etc/super/rules.json")
                 } else {
                     String::from("rules.json")
@@ -558,16 +617,17 @@ impl Default for Config {
             downloads_folder: String::from("downloads"),
             dist_folder: String::from("dist"),
             results_folder: String::from("results"),
-            apktool_file: String::from("vendor/apktool_2.2.0.jar"),
-            dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-            jd_cmd_file: String::from("vendor/jd-cmd.jar"),
-            results_template: String::from("vendor/results_template"),
+            apktool_file: String::from("vendor\\apktool_2.2.0.jar"),
+            dex2jar_folder: String::from("vendor\\dex2jar-2.0"),
+            jd_cmd_file: String::from("vendor\\jd-cmd.jar"),
+            results_template: String::from("vendor\\results_template"),
             rules_json: String::from("rules.json"),
             unknown_permission: (Criticity::Low,
                                  String::from("Even if the application can create its own \
                                                permissions, it's discouraged, since it can lead \
                                                to missunderstanding between developers.")),
             permissions: BTreeSet::new(),
+            loaded_files: Vec::new(),
         }
     }
 }
@@ -652,7 +712,7 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), "downloads");
         assert_eq!(config.get_dist_folder(), "dist");
         assert_eq!(config.get_results_folder(), "results");
-        if cfg!(target_family = "unix") && Path::new("/usr/share/super").exists() {
+        if cfg!(target_os = "linux") && Path::new("/usr/share/super").exists() {
             assert_eq!(config.get_apktool_file(),
                        "/usr/share/super/vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(),
@@ -661,13 +721,22 @@ mod tests {
                        "/usr/share/super/vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(),
                        "/usr/share/super/vendor/results_template");
+        } else if cfg!(target_os = "macos") && Path::new("/usr/local/super").exists() {
+            assert_eq!(config.get_apktool_file(),
+                       "/usr/local/super/vendor/apktool_2.2.0.jar");
+            assert_eq!(config.get_dex2jar_folder(),
+                       "/usr/local/super/vendor/dex2jar-2.0");
+            assert_eq!(config.get_jd_cmd_file(),
+                       "/usr/local/super/vendor/jd-cmd.jar");
+            assert_eq!(config.get_results_template(),
+                       "/usr/local/super/vendor/results_template");
         } else {
             assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
             assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(), "vendor/results_template");
         }
-        if cfg!(target_family = "unix") && Path::new("/etc/super").exists() {
+        if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
             assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
         } else {
             assert_eq!(config.get_rules_json(), "rules.json");
@@ -720,6 +789,17 @@ mod tests {
             thread::sleep(Duration::from_millis(50));
         }
         let config = Config::new("test_app", false, false, false, false).unwrap();
+        let mut error_string = String::from("Configuration errors were found:\n");
+        for error in config.get_errors() {
+            error_string.push_str(&error);
+            error_string.push('\n');
+        }
+        error_string.push_str("The configuration was loaded, in order, from the following \
+                               files:\n\t- Default built-in configuration\n");
+        for file in config.get_loaded_config_files() {
+            error_string.push_str(&format!("\t- {}\n", file));
+        }
+        println!("{}", error_string);
         assert!(config.check());
 
         fs::remove_file(format!("{}/{}.apk",

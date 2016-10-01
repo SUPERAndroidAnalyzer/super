@@ -1,22 +1,33 @@
 # SUPER Android Analyzer #
 
-[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=develop)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
-[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e?svg=true)](https://ci.appveyor.com/project/Razican/super)
-[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=develop)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=develop)
+[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
+[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true)](https://ci.appveyor.com/project/Razican/super/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master)
 
 <img src="src/super.jpg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
 Secure, Unified, Powerful and Extensible Rust Android Analyzer
 
-This project aims to create an automatic system capable of analyzing **Android** applications to search for security vulnerabilities. In the process of creating such tool the current market will be analyzed to look into the existent solutions and find out what can be improved. Also, a vulnerability analysis process will be researched, choosing the one that best matches with the original objectives to design our tool later.
+This project aims to create an automatic system capable of analyzing **Android** applications to
+search for security vulnerabilities. In the process of creating such tool the current market will
+be analyzed to look into the existent solutions and find out what can be improved. Also, a
+vulnerability analysis process will be researched, choosing the one that best matches with the
+original objectives to design our tool later.
 
-The second objective of the project will be to implement the developed tool in a way that it will be capable of analyzing a significant amount of applications. During this process new knowledge will be acquired both in technology and security, with will provide us with the bases for new developments.
+The second objective of the project will be to implement the developed tool in a way that it will
+be capable of analyzing a significant amount of applications. During this process new knowledge
+will be acquired both in technology and security, with will provide us with the bases for new
+developments.
 
-The main objective of the project will be to analyze a big amount of **Android** applications from the **Google Play** market carrying out a global analysis of the current state of the security in **Android** applications. Furthermore, our applications could be used in the future to make an analysis of the evolution of said state.
+The main objective of the project will be to analyze a big amount of **Android** applications from
+the **Google Play** market carrying out a global analysis of the current state of the security in
+**Android** applications. Furthermore, our applications could be used in the future to make an
+analysis of the evolution of said state.
 
 ## Installation ##
 
-We are planning on releasing binaries for the application so it is easier to use. Until then, installing **Rust** is needed to use it. These are the steps before using the program:
+We are planning on releasing binaries for the application so it is easier to use. Until then,
+installing **Rust** is needed to use it. These are the steps before using the program:
 
 1. Download and install **Rust**. This is easily done through the following link:
 
@@ -26,7 +37,8 @@ We are planning on releasing binaries for the application so it is easier to use
 
   `git clone https://github.com/SUPERAndroidAnalyzer/super.git`
 
-3. Build dependencies. Inside the repository, execute the following command. It should download and compile all program dependencies.
+3. Build dependencies. Inside the repository, execute the following command. It should download and
+   compile all program dependencies.
 
   `cargo build`
 
@@ -36,7 +48,10 @@ If everything went right up until this point, you're ready to go!
 
 ## Usage ##
 
-SUPER is very easy to use. Just download the desired *.apk* into the *downloads* folder (create that folder if necessary) and use the name as an argument when running the program. After the execution, a detailed report will appear in the *results* folder with that application name. There are a few usage options available:
+SUPER is very easy to use. Just download the desired *.apk* into the *downloads* folder (create
+that folder if necessary) and use the name as an argument when running the program. After the
+execution, a detailed report will appear in the *results* folder with that application name. There
+are a few usage options available:
 
 ```
 USAGE:
@@ -61,4 +76,6 @@ for instructions about how to proceed.
 
 ## License ##
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.

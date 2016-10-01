@@ -6,7 +6,7 @@ URL:     http://superanalyzer.rocks/
 License: GPLv3+
 
 Source0: https://github.com/SUPERAndroidAnalyzer/super/archive/%{version}.tar.gz
-Requires: java-1.8.0-openjdk-headless, openssl
+Requires: java-1.8.0-openjdk-headless, openssl, bash
 
 %description
 Secure, Unified, Powerful and Extensible Rust Android Analyzer.
@@ -46,6 +46,6 @@ install -p -m 644 README.md %{buildroot}%{_defaultdocdir}/%{name}/
 %license LICENSE
 %{_bindir}/*
 %{_datadir}/*
-%config(noreplace) %{_sysconfdir}/%{name}/*
+%config(noreplace) %{_sysconfdir}/*
 
 %changelog
