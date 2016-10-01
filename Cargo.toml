@@ -1,16 +1,107 @@
 [package]
-name = "apk-audit"
+name = "super"
 version = "0.1.0"
-authors = ["Iban Eguia <razican@protonmail.ch>"]
-license = "MIT/Apache-2.0"
+authors = [
+    "Iban Eguia <razican@protonmail.ch>",
+    "Jaime Salas <jaimesr@protonmail.ch>",
+    "Bruno Pin <brunoop@protonmail.ch>",
+    "Sergio de los Dolores <sergiodlo@protonmail.com>"]
+license = "GPL-3.0"
 readme = "README.md"
-repository = "https://github.com/Razican/apk-audit-core"
-documentation = "http://razican.github.io/apk-audit-core"
-description = """
-Android apk auditor. Core software with CLI.
+repository = "https://github.com/SUPERAndroidAnalyzer/super"
+homepage = "http://superanalyzer.rocks"
+description = """\
+Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
+with CLI.\
 """
-keywords = ["Android", "security", "audit"]
+keywords = ["Android", "security", "audit", "super", "analyzer"]
 
 [dependencies]
-clap = "^2.4"
-colored = "^1.2"
+clap = "^2.13"
+colored = "^1.3"
+zip = "^0.1"
+xml-rs = "^0.3"
+serde = "^0.8"
+serde_json = "^0.8"
+yaml-rust = "0.3"
+chrono = "^0.2"
+toml = "^0.2"
+regex = "^0.1"
+rust-crypto = "^0.2"
+rustc-serialize = "^0.3"
+
+[package.metadata.deb]
+maintainer = "Iban Eguia <razican@protonmail.ch>"
+copyright = "2016, Iban Eguia <razican@protonmail.ch>"
+license_file = ["LICENSE", "0"]
+extended_description = """\
+Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
+with CLI."""
+depends = "libc6, libgcc1, default-jre-headless, openssl, bash"
+section = "devel"
+priority = "optional"
+assets = [
+    # Executable
+    ["target/release/super", "usr/bin/", "755"],
+    # JD-CMD
+    ["vendor/jd-cmd.jar", "usr/share/super/vendor/", "755"],
+    ["vendor/jd-cmd.LICENSE.txt", "usr/share/super/vendor/", "644"],
+    # APKTool
+    ["vendor/apktool_2.2.0.jar", "usr/share/super/vendor/", "755"],
+    ["vendor/apktool.LICENSE.txt", "usr/share/super/vendor/", "644"],
+    # Dex2Jar
+    ["vendor/dex2jar-2.0/LICENSE.txt", "usr/share/super/vendor/dex2jar-2.0/", "644"],
+    ["vendor/dex2jar-2.0/d2j-dex2jar.sh", "usr/share/super/vendor/dex2jar-2.0/", "755"],
+    ["vendor/dex2jar-2.0/d2j_invoke.sh", "usr/share/super/vendor/dex2jar-2.0/", "755"],
+    ["vendor/dex2jar-2.0/lib/antlr-runtime-3.5.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/asm-debug-all-4.1.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/d2j-base-cmd-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/d2j-jasmin-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/d2j-smali-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-ir-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-reader-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-reader-api-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-tools-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-translator-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dex-writer-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.0/lib/dx-1.7.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    #CSS
+    ["vendor/results_template/css/androidstudio.css", "usr/share/super/vendor/results_template/css/", "644"],
+    ["vendor/results_template/css/style.css", "usr/share/super/vendor/results_template/css/", "644"],
+    # Images
+    ["vendor/results_template/img/folder-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/java-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/xml-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/report.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["vendor/results_template/img/logo.png", "usr/share/super/vendor/results_template/img/", "644"],
+    # JavaScript
+    ["vendor/results_template/js/highlight.js.LICENSE", "usr/share/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/highlight.pack.js", "usr/share/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/jquery-3.1.0.slim.min.js", "usr/share/super/vendor/results_template/js/", "644"],
+    ["vendor/results_template/js/src_nav.js", "usr/share/super/vendor/results_template/js/", "644"],
+    # Config
+    ["rules.json", "etc/super/", "644"],
+    ["config.toml", "etc/super/", "644"],
+    ["config.toml.sample", "etc/super/", "644"],
+    # README
+    ["README.md", "usr/share/doc/super/README.md", "644"],
+]
+
+# The release profile, used for `cargo build`.
+[profile.dev]
+opt-level = 0
+debug = true
+rpath = false
+lto = false
+debug-assertions = true
+codegen-units = 1
+panic = 'unwind'
+
+# The release profile, used for `cargo build --release`.
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+panic = 'unwind'

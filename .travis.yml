@@ -1,0 +1,71 @@
+language: rust
+cache: cargo
+dist: trusty
+sudo: false
+os:
+  - linux
+  - osx
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev
+
+# Run builds for all the supported trains
+rust:
+  - nightly
+  - beta
+  - stable
+  - 1.12.0
+  - 1.11.0
+
+# Load travis-cargo
+before_script:
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      pip install git+https://github.com/SUPERAndroidAnalyzer/travis-cargo.git@fix-coveralls --user &&
+      export PATH=$HOME/.local/bin:$PATH
+      fi
+
+# The main build
+script:
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      travis-cargo build &&
+      travis-cargo test &&
+      travis-cargo bench;
+      fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      cargo build &&
+      cargo test &&
+      cargo bench;
+      fi
+
+# Send coverage reports and upload docs
+after_success:
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      travis-cargo --only stable doc &&
+      travis-cargo --only stable doc-upload;
+      fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      travis-cargo --only stable coveralls --no-sudo --verify;
+      fi
+
+env:
+  global:
+    - TRAVIS_CARGO_NIGHTLY_FEATURE=""
+
+notifications:
+  email:
+    recipients:
+      - razican@protonmail.ch
+      - brunoop@protonmail.ch
+      - sergiodlo@protonmail.com
+      - jaimesr@protonmail.ch
+    on_success: change
+on_failure: always
