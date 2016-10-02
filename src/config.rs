@@ -730,11 +730,16 @@ mod tests {
                        "/usr/local/super/vendor/jd-cmd.jar");
             assert_eq!(config.get_results_template(),
                        "/usr/local/super/vendor/results_template");
-        } else {
+        } else if cfg!(target_family = "windows") {
             assert_eq!(config.get_apktool_file(), "vendor\\apktool_2.2.0.jar");
             assert_eq!(config.get_dex2jar_folder(), "vendor\\dex2jar-2.0");
             assert_eq!(config.get_jd_cmd_file(), "vendor\\jd-cmd.jar");
             assert_eq!(config.get_results_template(), "vendor\\results_template");
+        } else {
+            assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
+            assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
+            assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
+            assert_eq!(config.get_results_template(), "vendor/results_template");
         }
         if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
             assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
