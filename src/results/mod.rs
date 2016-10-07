@@ -12,7 +12,7 @@ use rustc_serialize::hex::ToHex;
 
 mod utils;
 
-pub use self::utils::{Benchmark, Vulnerability};
+pub use self::utils::{Benchmark, Vulnerability, split_indent};
 use self::utils::FingerPrint;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
@@ -478,8 +478,11 @@ impl Results {
                 .into_bytes()));
             if let Some(file) = vuln.get_file() {
                 try!(f.write_all(&format!("<li><strong>File:</strong> <a \
-                                           href=\"src/{0}.html\">{0}</a></li>",
-                                          file.display())
+                                           href=\"src/{0}.html?start_line={1}&end_line={2}&vulnerability_type={3}#code-line-{1}\">{0}</a></li>",
+                                          file.display(),
+                                          vuln.get_start_line().unwrap() + 1,
+                                          vuln.get_end_line().unwrap() + 1,
+                                          criticity_str.to_lowercase())
                     .into_bytes()));
             }
             if let Some(code) = vuln.get_code() {
@@ -500,13 +503,19 @@ impl Results {
                     vuln.get_start_line().unwrap() - 4
                 };
 
-                let mut lines = String::new();
-                for (i, _line) in code.lines().enumerate() {
+                let mut line_numbers = String::new();
+                let mut codes = String::new();
+                for (i, line) in Results::html_escape(code).lines().enumerate() {
+                    line_numbers.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     if i + start_line >= vuln.get_start_line().unwrap() &&
                        i + start_line <= vuln.get_end_line().unwrap() {
-                        lines.push_str(format!("-&gt;<em>{}</em><br>", i + start_line+1).as_str());
+                        let (indent, body) = split_indent(line);
+                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}<span class=\"line_body\">{}</span></code><br>",
+                                                criticity_str.to_lowercase(),
+                                                indent,
+                                                body).as_str());
                     } else {
-                        lines.push_str(format!("{}<br>", i + start_line + 1).as_str());
+                        codes.push_str(format!("{}<br>", line).as_str());
                     }
                 }
                 let lang = vuln.get_file().unwrap().extension().unwrap().to_string_lossy();
@@ -514,9 +523,9 @@ impl Results {
                                            class=\"line_numbers\">{}</div><div \
                                            class=\"code\"><pre><code \
                                            class=\"{}\">{}</code></pre></div></li>",
-                                          lines,
+                                          line_numbers,
                                           lang,
-                                          Results::html_escape(code))
+                                          codes.as_str())
                     .into_bytes()));
             }
             try!(f.write_all(b"</div>"));
@@ -752,12 +761,43 @@ impl Results {
         try!(f_out.write_all(&format!("<div><div class=\"line_numbers\">{}</div>", line_numbers)
             .into_bytes()));
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
-        try!(f_out.write_all(&code.into_bytes()));
+        for (i, line) in code.lines().enumerate() {
+            let (indent, body) = split_indent(line);
+            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}<span class=\"line_body\">{}</span></code><br>",
+                                            i + 1,
+                                            indent,
+                                            body)
+             .into_bytes()));
+        }
         try!(f_out.write_all(b"</code></pre></div></div>"));
+        try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.0.slim.min.js\"></script>",
+                                      back_path)
+            .into_bytes()));
         try!(f_out.write_all(&format!("<script src=\"{}js/highlight.pack.js\"></script>",
                                       back_path)
             .into_bytes()));
         try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
+        try!(f_out.write_all(b"<script>
+        var query_params = decodeURIComponent(window.location.search.substring(1)),
+            variables = query_params.split('&'),
+            start_line,
+            end_line,
+            vulnerability_type;
+        for(var i = 0; i < variables.length; i++) {
+          var pair = variables[i].split('=');
+          if (pair[0] == \"start_line\") {
+            start_line = pair[1];
+          }
+          if (pair[0] == \"end_line\") {
+              end_line = pair[1];
+          }
+          if (pair[0] == \"vulnerability_type\") {
+              vulnerability_type = pair[1];
+          }
+        }
+        for (var i = start_line; i <= end_line; i++) {
+            $(\"#code-line-\" + i).addClass(\"vulnerable_line \" + vulnerability_type);
+        }</script>"));
         try!(f_out.write_all(b"</body>"));
         try!(f_out.write_all(b"</html>"));
 

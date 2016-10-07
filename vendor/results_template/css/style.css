@@ -113,6 +113,10 @@ span.low {
     border-radius: 0 1em 1em 0;
 }
 
+.vulnerability div.code code code {
+    border-radius: 0;
+}
+
 a {
     text-decoration: none;
     color: #74B1ED;
@@ -133,4 +137,28 @@ div.line_numbers em {
     font-weight: bolder;
     text-decoration: underline;
     font-style: normal;
+}
+
+code.vulnerable_line > span.line_body {
+  border-bottom: 1px dotted;
+}
+
+code.vulnerable_line.warning > span.line_body {
+  border-bottom-color: #FFF;
+}
+
+code.vulnerable_line.critical > span.line_body {
+  border-bottom-color: #F93A3A;
+}
+
+code.vulnerable_line.high > span.line_body {
+  border-bottom-color: #F93A3A;
+}
+
+code.vulnerable_line.medium > span.line_body {
+  border-bottom-color: #F9AD3A;
+}
+
+code.vulnerable_line.low > span.line_body {
+  border-bottom-color: #3A9BF9;
 }
