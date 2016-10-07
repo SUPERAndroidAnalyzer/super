@@ -134,3 +134,8 @@ div.line_numbers em {
     text-decoration: underline;
     font-style: normal;
 }
+
+code.error_line {
+  border-bottom: 1px dotted;
+  border-color: red;
+}
