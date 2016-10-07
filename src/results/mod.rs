@@ -478,10 +478,11 @@ impl Results {
                 .into_bytes()));
             if let Some(file) = vuln.get_file() {
                 try!(f.write_all(&format!("<li><strong>File:</strong> <a \
-                                           href=\"src/{0}.html?start_line={1}&end_line={2}#code-line-{1}\">{0}</a></li>",
+                                           href=\"src/{0}.html?start_line={1}&end_line={2}&vulnerability_type={3}#code-line-{1}\">{0}</a></li>",
                                           file.display(),
                                           vuln.get_start_line().unwrap() + 1,
-                                          vuln.get_end_line().unwrap() + 1)
+                                          vuln.get_end_line().unwrap() + 1,
+                                          criticity_str.to_lowercase())
                     .into_bytes()));
             }
             if let Some(code) = vuln.get_code() {
@@ -769,7 +770,8 @@ impl Results {
         var query_params = decodeURIComponent(window.location.search.substring(1)),
             variables = query_params.split('&'),
             start_line,
-            end_line;
+            end_line,
+            vulnerability_type;
         for(var i = 0; i < variables.length; i++) {
           var pair = variables[i].split('=');
           if (pair[0] == \"start_line\") {
@@ -778,9 +780,12 @@ impl Results {
           if (pair[0] == \"end_line\") {
               end_line = pair[1];
           }
+          if (pair[0] == \"vulnerability_type\") {
+              vulnerability_type = pair[1];
+          }
         }
         for (var i = start_line; i <= end_line; i++) {
-            $(\"#code-line-\" + i).addClass(\"error_line\");
+            $(\"#code-line-\" + i).addClass(\"vulnerable_line \" + vulnerability_type);
         }</script>"));
         try!(f_out.write_all(b"</body>"));
         try!(f_out.write_all(b"</html>"));

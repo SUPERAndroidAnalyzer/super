@@ -147,6 +147,10 @@ code.vulnerable_line.critical {
   border-bottom-color: #F93A3A;
 }
 
+code.vulnerable_line.high {
+  border-bottom-color: #F93A3A;
+}
+
 code.vulnerable_line.medium {
   border-bottom-color: #F9AD3A;
 }
