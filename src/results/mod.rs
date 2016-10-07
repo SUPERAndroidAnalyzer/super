@@ -752,12 +752,23 @@ impl Results {
         try!(f_out.write_all(&format!("<div><div class=\"line_numbers\">{}</div>", line_numbers)
             .into_bytes()));
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
-        try!(f_out.write_all(&code.into_bytes()));
+        for (i, line) in code.lines().enumerate() {
+            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}</code><br>", i + 1, line).into_bytes()));
+        }
         try!(f_out.write_all(b"</code></pre></div></div>"));
+        try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.0.slim.min.js\"></script>",
+                                      back_path)
+            .into_bytes()));
         try!(f_out.write_all(&format!("<script src=\"{}js/highlight.pack.js\"></script>",
                                       back_path)
             .into_bytes()));
         try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
+        try!(f_out.write_all(b"<script>
+        var start_line = $(location).attr('start_line');
+        var end_line = $(location).attr('end_line');
+        for (var i = start_line; i <= end_line; i++) {
+            $(\"#code-line-\" + i).css('background', 'Red');
+        }</script>"));
         try!(f_out.write_all(b"</body>"));
         try!(f_out.write_all(b"</html>"));
 
