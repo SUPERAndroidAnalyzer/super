@@ -12,7 +12,7 @@ use rustc_serialize::hex::ToHex;
 
 mod utils;
 
-pub use self::utils::{Benchmark, Vulnerability};
+pub use self::utils::{Benchmark, Vulnerability, split_indent};
 use self::utils::FingerPrint;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
@@ -758,7 +758,12 @@ impl Results {
             .into_bytes()));
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
         for (i, line) in code.lines().enumerate() {
-            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}</code><br>", i + 1, line).into_bytes()));
+            let (indent, body) = split_indent(line);
+            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}<span class=\"line_body\">{}</span></code><br>",
+                                            i + 1,
+                                            indent,
+                                            body)
+             .into_bytes()));
         }
         try!(f_out.write_all(b"</code></pre></div></div>"));
         try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.0.slim.min.js\"></script>",

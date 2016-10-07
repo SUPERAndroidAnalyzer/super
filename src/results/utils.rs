@@ -208,6 +208,21 @@ impl Serialize for FingerPrint {
     }
 }
 
+/// Split string into indent and rest texts.
+pub fn split_indent<'a>(line: &'a str) -> (&'a str, &'a str) {
+    match line.find(|c: char| !c.is_whitespace()) {
+        Some(p) => {
+            let pair = unsafe {
+                (line.slice_unchecked(0, p), line.slice_unchecked(p, line.len()))
+            };
+            return pair
+        },
+        None => {
+            return ("", line);
+        }
+    }
+}
+
 /// Structure to store a benchmark information
 pub struct Benchmark {
     label: String,
