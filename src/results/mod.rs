@@ -503,13 +503,15 @@ impl Results {
                     vuln.get_start_line().unwrap() - 4
                 };
 
-                let mut lines = String::new();
-                for (i, _line) in code.lines().enumerate() {
+                let mut line_numbers = String::new();
+                let mut codes = String::new();
+                for (i, line) in Results::html_escape(code).lines().enumerate() {
+                    line_numbers.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     if i + start_line >= vuln.get_start_line().unwrap() &&
                        i + start_line <= vuln.get_end_line().unwrap() {
-                        lines.push_str(format!("-&gt;<em>{}</em><br>", i + start_line+1).as_str());
+                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}</code><br>", criticity_str.to_lowercase(), line).as_str());
                     } else {
-                        lines.push_str(format!("{}<br>", i + start_line + 1).as_str());
+                        codes.push_str(format!("{}<br>", line).as_str());
                     }
                 }
                 let lang = vuln.get_file().unwrap().extension().unwrap().to_string_lossy();
@@ -517,9 +519,9 @@ impl Results {
                                            class=\"line_numbers\">{}</div><div \
                                            class=\"code\"><pre><code \
                                            class=\"{}\">{}</code></pre></div></li>",
-                                          lines,
+                                          line_numbers,
                                           lang,
-                                          Results::html_escape(code))
+                                          codes.as_str())
                     .into_bytes()));
             }
             try!(f.write_all(b"</div>"));
