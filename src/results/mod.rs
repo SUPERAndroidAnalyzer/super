@@ -509,7 +509,11 @@ impl Results {
                     line_numbers.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     if i + start_line >= vuln.get_start_line().unwrap() &&
                        i + start_line <= vuln.get_end_line().unwrap() {
-                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}</code><br>", criticity_str.to_lowercase(), line).as_str());
+                        let (indent, body) = split_indent(line);
+                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}<span class=\"line_body\">{}</span></code><br>",
+                                                criticity_str.to_lowercase(),
+                                                indent,
+                                                body).as_str());
                     } else {
                         codes.push_str(format!("{}<br>", line).as_str());
                     }
