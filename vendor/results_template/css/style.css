@@ -135,7 +135,22 @@ div.line_numbers em {
     font-style: normal;
 }
 
-code.error_line {
+code.vulnerable_line {
   border-bottom: 1px dotted;
-  border-color: red;
+}
+
+code.vulnerable_line.warning {
+  border-bottom-color: #FFF;
+}
+
+code.vulnerable_line.critical {
+  border-bottom-color: #F93A3A;
+}
+
+code.vulnerable_line.medium {
+  border-bottom-color: #F9AD3A;
+}
+
+code.vulnerable_line.low {
+  border-bottom-color: #3A9BF9;
 }
