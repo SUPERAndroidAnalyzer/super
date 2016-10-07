@@ -208,7 +208,7 @@ impl Serialize for FingerPrint {
     }
 }
 
-/// Split string into indent and rest texts.
+/// Split line into indentation and the rest of the line.
 pub fn split_indent<'a>(line: &'a str) -> (&'a str, &'a str) {
     match line.find(|c: char| !c.is_whitespace()) {
         Some(p) => line.split_at(p),
