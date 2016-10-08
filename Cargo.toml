@@ -1,6 +1,6 @@
 [package]
 name = "super"
-version = "0.1.0"
+version = "0.2.0-dev"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
@@ -29,6 +29,7 @@ toml = "^0.2"
 regex = "^0.1"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
+handlebars = "0.21"
 
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"
