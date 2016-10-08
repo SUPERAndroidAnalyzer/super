@@ -32,11 +32,18 @@ rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
 open = "^1.1"
 
+[dependencies.handlebars]
+version = "^0.21"
+default-features = false
+features = ["serde_type"]
+optional = true
+
 [features]
 default = ["beta"]
 beta = []
-unstable = ["beta", "certificate"]
+unstable = ["beta", "certificate", "templates"]
 certificate = []
+templates = ["handlebars"]
 
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"

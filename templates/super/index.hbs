@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Vulnerability report</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/androidstudio.css">
+    </head>
+    <body>
+        <a href="http://superanalyzer.rocks" title="SUPER Android Analyzer">
+            <img src="img/logo.png" alt="SUPER Android Analyzer logo">
+        </a>
+        <section class="report">
+            <h1 id="title">SUPER Android Analyzer Report</h1>
+            <p>This is the vulnerability report for the android application <em>{{ package }}</em>. Report generated on {{ date }}.</p>
+            <h2>Application data:</h2>
+            <ul>
+                <li><strong>Package:</strong> {{ package }}</li>
+                <li><strong>Version:</strong> {{ version }}</li>
+                <li><strong>Version number:</strong> {{ version_number }}</li>
+                <li><strong>Minimum SDK version:</strong> {{ min_sdk_version }}</li>
+                <li><strong>Target SDK:</strong> {{ target_sdk_version }}</li>
+                <li><strong>Fingerprints:</strong>
+                    <ul>
+                        <li>MD5: {{ md5_fingerprint }}</li>
+                        <li>SHA-1: {{ sha1_fingerprint }}</li>
+                        <li>SHA-256: {{ sha256_fingerprint }}</li>
+                    </ul>
+                </li>
+                <li><a href="src/index.html" title="Source code">Check source code</a></li>
+            </ul>
+            <h3>Total vulnerabilities found: {{ total_vulnerabilities }}</h3>
+            <ul>
+                <li>Critical: {{#if criticals }}<span class="critical">{{ criticals.length }}</span> <a href="#critical" title="Critical">⇒</a>{{else}}0{{/if}}</li>
+                <li>High: {{#if highs }}<span class="high">{{ highs.length }}</span> <a href="#high" title="High">⇒</a>{{else}}0{{/if}}</li>
+                <li>Medium: {{#if mediums }}<span class="medium">{{ mediums.length }}</span> <a href="#medium" title="Medium">⇒</a>{{else}}0{{/if}}</li>
+                <li>Low: {{#if lows }}<span class="low">{{ lows.length }}</span> <a href="#low" title="Low">⇒</a>{{else}}0{{/if}}</li>
+                <li>Warnings: {{#if warnings }}<span class="warning">{{ warnings.length }}</span> <a href="#warnings" title="Warnings">⇒</a>{{else}}0{{/if}}</li>
+            </ul>
+            <h2>Vulnerabilities:</h2>
+            {{#if criticals }}
+            <h3 id="critical">Critical vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            {{#each criticals }}
+            {{> vulnerability vulnerability=this criticity="C" }}
+            {{/each}}
+            {{/if}}
+            {{#if highs }}
+            <h3 id="high">High criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            {{#each highs }}
+            {{> vulnerability v=this criticity="C" }}
+            {{/each}}
+            {{/if}}
+            {{#if mediums }}
+            <h3 id="medium">Medium criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            {{#each mediums }}
+            {{> vulnerability v=this criticity="C" }}
+            {{/each}}
+            {{/if}}
+            {{#if lows }}
+            <h3 id="low">Low criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            {{#each lows }}
+            {{> vulnerability v=this criticity="C" }}
+            {{/each}}
+            {{/if}}
+            {{#if warnings }}
+            <h3 id="warning">Warnings: <a href="#title" title="Top">⇮</a></h3>
+            {{#each warnings }}
+            {{> vulnerability v=this criticity="C" }}
+            {{/each}}
+            {{/if}}
+        </section>
+        <footer><p>Copyright © 2016 - SUPER Android Analyzer</p></footer>
+        <script src="js/highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script src="js/jquery-3.1.0.slim.min.js"></script>
+        <script>
+            $('.vulnerability h4 a.collapse').click(function(event) {
+                event.preventDefault();
+                $(this).parents('section.vulnerability').find('ul div').hide('slow');
+                $(this).hide('fast');
+                $(this).prev('a').show('fast');
+            });
+            $('.vulnerability h4 a.show').click(function(event) {
+                event.preventDefault();
+                $(this).parents('section.vulnerability').find('ul div').show('slow');
+                $(this).hide('fast');
+                $(this).next('a').show('fast');
+            });
+        </script>
+    </body>
+</html>
