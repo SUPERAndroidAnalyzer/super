@@ -325,7 +325,7 @@ fn get_help_menu() -> ArgMatches<'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())
         .author("SUPER Team <contact@superanalyzer.rocks>")
-        .about("Audits Android apps for vulnerabilities")
+        .about("Audits Android apps (.apk files) for vulnerabilities.")
         .arg(Arg::with_name("package")
             .help("The package string of the application to test.")
             .value_name("package")
