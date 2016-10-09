@@ -259,6 +259,9 @@ impl Results {
 
         let now = Local::now();
 
+        const VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
+        let now = Local::now();
+
         // Header
         try!(f.write_all(b"<!DOCTYPE html>"));
         try!(f.write_all(b"<html lang=\"en\">"));
@@ -279,6 +282,9 @@ impl Results {
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
                                   now.to_rfc2822())
+            .into_bytes()));
+        try!(f.write_all(&format!("<p>SUPER Android Analyzer version: {}</p>",
+                                  VERSION.unwrap_or("unknown"))
             .into_bytes()));
 
         // Application data
