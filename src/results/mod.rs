@@ -280,6 +280,9 @@ impl Results {
                                   self.app_package,
                                   now.to_rfc2822())
             .into_bytes()));
+        try!(f.write_all(&format!("<p>SUPER Android Analyzer version: {}</p>",
+                                  crate_version!())
+            .into_bytes()));
 
         // Application data
         try!(f.write_all(b"<h2>Application data:</h2>"));
