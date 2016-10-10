@@ -30,6 +30,7 @@ regex = "^0.1"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
 handlebars = "0.21"
+open = "^1.1"
 
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"
