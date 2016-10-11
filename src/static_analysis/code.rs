@@ -1432,7 +1432,6 @@ mod tests {
         }
     }
 
-
     #[test]
     fn it_command_exec() {
         let config = Default::default();
@@ -1524,5 +1523,4 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-
 }
