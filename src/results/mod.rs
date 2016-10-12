@@ -94,20 +94,20 @@ impl Results {
         }
     }
 
-    pub fn set_app_package(&mut self, package: &str) {
-        self.app_package = String::from(package);
+    pub fn set_app_package<S: AsRef<str>>(&mut self, package: S) {
+        self.app_package = String::from(package.as_ref());
     }
 
-    pub fn set_app_label(&mut self, label: &str) {
-        self.app_label = String::from(label);
+    pub fn set_app_label<S: AsRef<str>>(&mut self, label: S) {
+        self.app_label = String::from(label.as_ref());
     }
 
-    pub fn set_app_description(&mut self, description: &str) {
-        self.app_description = String::from(description);
+    pub fn set_app_description<S: AsRef<str>>(&mut self, description: S) {
+        self.app_description = String::from(description.as_ref());
     }
 
-    pub fn set_app_version(&mut self, version: &str) {
-        self.app_version = String::from(version);
+    pub fn set_app_version<S: AsRef<str>>(&mut self, version: S) {
+        self.app_version = String::from(version.as_ref());
     }
 
     pub fn set_app_version_num(&mut self, version: i32) {
@@ -807,9 +807,9 @@ impl Results {
         Ok(())
     }
 
-    fn html_escape(code: &str) -> String {
+    fn html_escape<S: AsRef<str>>(code: S) -> String {
         let mut res = String::new();
-        for c in code.chars() {
+        for c in code.as_ref().chars() {
             match c {
                 '<' => res.push_str("&lt;"),
                 '>' => res.push_str("&gt;"),

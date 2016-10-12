@@ -254,9 +254,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
     Ok(())
 }
 
-fn get_line_for(index: usize, text: &str) -> usize {
+fn get_line_for<S: AsRef<str>>(index: usize, text: S) -> usize {
     let mut line = 0;
-    for (i, c) in text.char_indices() {
+    for (i, c) in text.as_ref().char_indices() {
         if i == index {
             break;
         }
@@ -605,29 +605,29 @@ mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
 
-    fn check_match(text: &str, rule: &Rule) -> bool {
-        if rule.get_regex().is_match(text) {
+    fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
+        if rule.get_regex().is_match(text.as_ref()) {
             for white in rule.get_whitelist() {
-                if white.is_match(text) {
-                    let (s, e) = white.find(text).unwrap();
+                if white.is_match(text.as_ref()) {
+                    let (s, e) = white.find(text.as_ref()).unwrap();
                     println!("Whitelist '{}' matches the text '{}' in '{}'",
                              white.as_str(),
-                             text,
-                             &text[s..e]);
+                             text.as_ref(),
+                             &text.as_ref()[s..e]);
                     return false;
                 }
             }
             match rule.get_forward_check() {
                 None => {
-                    let (s, e) = rule.get_regex().find(text).unwrap();
+                    let (s, e) = rule.get_regex().find(text.as_ref()).unwrap();
                     println!("The regular expression '{}' matches the text '{}' in '{}'",
                              rule.get_regex(),
-                             text,
-                             &text[s..e]);
+                             text.as_ref(),
+                             &text.as_ref()[s..e]);
                     true
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(text).unwrap();
+                    let caps = rule.get_regex().captures(text.as_ref()).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -642,17 +642,17 @@ mod tests {
                     }
 
                     let regex = Regex::new(r.as_str()).unwrap();
-                    if regex.is_match(text) {
-                        let (s, e) = regex.find(text).unwrap();
+                    if regex.is_match(text.as_ref()) {
+                        let (s, e) = regex.find(text.as_ref()).unwrap();
                         println!("The forward check '{}'  matches the text '{}' in '{}'",
                                  regex.as_str(),
-                                 text,
-                                 &text[s..e]);
+                                 text.as_ref(),
+                                 &text.as_ref()[s..e]);
                         true
                     } else {
                         println!("The forward check '{}' does not match the text '{}'",
                                  regex.as_str(),
-                                 text);
+                                 text.as_ref());
                         false
                     }
                 }
@@ -660,7 +660,7 @@ mod tests {
         } else {
             println!("The regular expression '{}' does not match the text '{}'",
                      rule.get_regex(),
-                     text);
+                     text.as_ref());
             false
         }
     }

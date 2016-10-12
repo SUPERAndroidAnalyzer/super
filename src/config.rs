@@ -42,15 +42,16 @@ pub struct Config {
 
 impl Config {
     #[cfg(target_family = "unix")]
-    pub fn new(app_id: &str,
-               verbose: bool,
-               quiet: bool,
-               force: bool,
-               bench: bool,
-               open: bool)
-               -> Result<Config> {
+    pub fn new<S: AsRef<str>>(
+                app_id: S,
+                verbose: bool,
+                quiet: bool,
+                force: bool,
+                bench: bool,
+                open: bool)
+                -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_id = String::from(app_id);
+        config.app_id = String::from(app_id.as_ref());
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -70,15 +71,16 @@ impl Config {
     }
 
     #[cfg(target_family = "windows")]
-    pub fn new(app_id: &str,
-               verbose: bool,
-               quiet: bool,
-               force: bool,
-               bench: bool,
-               open: bool)
-               -> Result<Config> {
+    pub fn new<S: AsRef<str>>(
+                app_id: S,
+                verbose: bool,
+                quiet: bool,
+                force: bool,
+                bench: bool,
+                open: bool)
+                -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_id = String::from(app_id);
+        config.app_id = String::from(app_id.as_ref());
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -140,8 +142,8 @@ impl Config {
         self.app_id.as_str()
     }
 
-    pub fn set_app_id(&mut self, app_id: &str) {
-        self.app_id = String::from(app_id);
+    pub fn set_app_id<S: AsRef<str>>(&mut self, app_id: S) {
+        self.app_id = String::from(app_id.as_ref());
     }
 
     pub fn is_verbose(&self) -> bool {
@@ -481,7 +483,7 @@ impl Config {
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
-                                                                      description.as_str()));
+                                                                      &String::from(description.as_ref())));
                                 }
                             }
                         }
@@ -677,16 +679,17 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    fn new(permission: Permission,
-           criticity: Criticity,
-           label: &str,
-           description: &str)
-           -> PermissionConfig {
+    fn new<S: AsRef<str>>(
+            permission: Permission,
+            criticity: Criticity,
+            label: S,
+            description: S)
+            -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticity: criticity,
-            label: String::from(label),
-            description: String::from(description),
+            label: String::from(label.as_ref()),
+            description: String::from(description.as_ref()),
         }
     }
 

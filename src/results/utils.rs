@@ -224,9 +224,9 @@ pub struct Benchmark {
 
 impl Benchmark {
     /// Creates a new benchmark
-    pub fn new(label: &str, duration: Duration) -> Benchmark {
+    pub fn new<S: AsRef<str>>(label: S, duration: Duration) -> Benchmark {
         Benchmark {
-            label: String::from(label),
+            label: String::from(label.as_ref()),
             duration: duration,
         }
     }

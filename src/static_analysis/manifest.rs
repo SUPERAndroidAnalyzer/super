@@ -490,8 +490,8 @@ impl Manifest {
         Ok(manifest)
     }
 
-    fn set_code(&mut self, code: &str) {
-        self.code = String::from(code);
+    fn set_code<S: AsRef<str>>(&mut self, code: S) {
+        self.code = String::from(code.as_ref());
     }
 
     pub fn get_code(&self) -> &str {
@@ -502,8 +502,8 @@ impl Manifest {
         self.package.as_str()
     }
 
-    fn set_package(&mut self, package: &str) {
-        self.package = String::from(package);
+    fn set_package<S: AsRef<str>>(&mut self, package: S) {
+        self.package = String::from(package.as_ref());
     }
 
     pub fn get_version_number(&self) -> i32 {
@@ -518,24 +518,24 @@ impl Manifest {
         self.version_str.as_str()
     }
 
-    fn set_version_str(&mut self, version_str: &str) {
-        self.version_str = String::from(version_str);
+    fn set_version_str<S: AsRef<str>>(&mut self, version_str: S) {
+        self.version_str = String::from(version_str.as_ref());
     }
 
     pub fn get_label(&self) -> &str {
         self.label.as_str()
     }
 
-    fn set_label(&mut self, label: &str) {
-        self.label = String::from(label);
+    fn set_label<S: AsRef<str>>(&mut self, label: S) {
+        self.label = String::from(label.as_ref());
     }
 
     pub fn get_description(&self) -> &str {
         self.description.as_str()
     }
 
-    fn set_description(&mut self, description: &str) {
-        self.description = String::from(description);
+    fn set_description<S: AsRef<str>>(&mut self, description: S) {
+        self.description = String::from(description.as_ref());
     }
 
     pub fn get_min_sdk(&self) -> i32 {
@@ -643,9 +643,9 @@ impl FromStr for InstallLocation {
     }
 }
 
-fn get_line(code: &str, haystack: &str) -> Result<usize> {
-    for (i, line) in code.lines().enumerate() {
-        if line.contains(haystack) {
+fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
+    for (i, line) in code.as_ref().lines().enumerate() {
+        if line.contains(haystack.as_ref()) {
             return Ok(i);
         }
     }
