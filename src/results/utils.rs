@@ -150,11 +150,7 @@ pub struct FingerPrint {
 
 impl FingerPrint {
     pub fn new(config: &Config) -> Result<FingerPrint> {
-        let path = format!("{}/{}.apk",
-                           config.get_downloads_folder(),
-                           config.get_app_id());
-
-        let mut f = try!(File::open(path));
+        let mut f = try!(File::open(config.get_apk_file()));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
         try!(f.read_to_end(&mut buffer));
 
