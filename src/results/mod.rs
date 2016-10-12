@@ -481,7 +481,8 @@ impl Results {
                 .into_bytes()));
             if let Some(file) = vuln.get_file() {
                 try!(f.write_all(&format!("<li><strong>File:</strong> <a \
-                                           href=\"src/{0}.html?start_line={1}&end_line={2}&vulnerability_type={3}#code-line-{1}\">{0}</a></li>",
+                                           href=\"src/{0}.html?start_line={1}&end_line={2}\
+                                           &vulnerability_type={3}#code-line-{1}\">{0}</a></li>",
                                           file.display(),
                                           vuln.get_start_line().unwrap() + 1,
                                           vuln.get_end_line().unwrap() + 1,
@@ -513,10 +514,12 @@ impl Results {
                     if i + start_line >= vuln.get_start_line().unwrap() &&
                        i + start_line <= vuln.get_end_line().unwrap() {
                         let (indent, body) = split_indent(line);
-                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}<span class=\"line_body\">{}</span></code><br>",
-                                                criticity_str.to_lowercase(),
-                                                indent,
-                                                body).as_str());
+                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}<span \
+                                                class=\"line_body\">{}</span></code><br>",
+                                               criticity_str.to_lowercase(),
+                                               indent,
+                                               body)
+                            .as_str());
                     } else {
                         codes.push_str(format!("{}<br>", line).as_str());
                     }
@@ -766,11 +769,12 @@ impl Results {
         try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
         for (i, line) in code.lines().enumerate() {
             let (indent, body) = split_indent(line);
-            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}<span class=\"line_body\">{}</span></code><br>",
-                                            i + 1,
-                                            indent,
-                                            body)
-             .into_bytes()));
+            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}<span \
+                                           class=\"line_body\">{}</span></code><br>",
+                                          i + 1,
+                                          indent,
+                                          body)
+                .into_bytes()));
         }
         try!(f_out.write_all(b"</code></pre></div></div>"));
         try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.0.slim.min.js\"></script>",

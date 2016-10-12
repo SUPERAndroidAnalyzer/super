@@ -200,7 +200,7 @@ fn main() {
                                       config.get_results_folder(),
                                       config.get_app_id());
             match open::that(report_path) {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(e) => {
                     print_error(format!("Report could not be opened automatically: {}", e),
                                 config.is_verbose());
@@ -372,8 +372,8 @@ fn get_help_menu() -> ArgMatches<'static> {
             .conflicts_with("verbose")
             .help("If you'd like a zen auditor that won't talk unless it's 100% necessary."))
         .arg(Arg::with_name("open")
-             .long("open")
-             .help("Open the report in a browser once it is complete."))
+            .long("open")
+            .help("Open the report in a browser once it is complete."))
         .get_matches()
 }
 
