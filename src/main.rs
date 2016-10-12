@@ -199,12 +199,9 @@ fn main() {
             let report_path = format!("{}/{}/index.html",
                                       config.get_results_folder(),
                                       config.get_app_id());
-            match open::that(report_path) {
-                Ok(_) => {}
-                Err(e) => {
-                    print_error(format!("Report could not be opened automatically: {}", e),
-                                config.is_verbose());
-                }
+            if let Err(e) = open::that(report_path) {
+                print_error(format!("Report could not be opened automatically: {}", e),
+                            config.is_verbose());
             }
         }
     } else if !config.is_quiet() {
