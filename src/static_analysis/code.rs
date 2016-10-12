@@ -2,7 +2,7 @@ use std::fs;
 use std::fs::{File, DirEntry};
 use std::io::Read;
 use std::str::FromStr;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
@@ -48,7 +48,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
-    let dist_folder = Arc::new(format!("{}/{}", config.get_dist_folder(), config.get_app_id()));
+    let dist_folder = Arc::new(config.get_dist_folder().join(config.get_app_id()));
 
     if config.is_verbose() {
         println!("Starting analysis of the code with {} threads. {} files to go!",
@@ -75,7 +75,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
                         Some(f) => {
                             if let Err(e) =
                                    analyze_file(f.path(),
-                                                PathBuf::from(thread_dist_folder.as_str()),
+                                                (*thread_dist_folder).clone(),
                                                 &thread_rules,
                                                 &thread_manifest,
                                                 &thread_vulns,
@@ -276,17 +276,15 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
-    let real_path = format!("{}/{}/{}",
-                            config.get_dist_folder(),
-                            config.get_app_id(),
-                            path.as_ref().display());
+    let real_path = config.get_dist_folder()
+                          .join(config.get_app_id())
+                          .join(path);
     for f in try!(fs::read_dir(&real_path)) {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
-                                      &real_path,
-                                      e),
+                                      real_path.display(), e),
                               config.is_verbose());
                 return Err(Error::from(e));
             }
@@ -294,11 +292,10 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
         let f_type = try!(f.file_type());
         let f_path = f.path();
         let f_ext = f_path.extension();
-        if f_type.is_dir() && f_path != Path::new(&format!("{}/original", real_path)) {
+        if f_type.is_dir() && f_path != real_path.join("original") {
             try!(add_files_to_vec(f.path()
-                                      .strip_prefix(&format!("{}/{}",
-                                                             config.get_dist_folder(),
-                                                             config.get_app_id()))
+                                      .strip_prefix(&config.get_dist_folder()
+                                                           .join(config.get_app_id()))
                                       .unwrap(),
                                   vec,
                                   config));

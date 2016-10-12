@@ -18,7 +18,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
     }
 
     let manifest =
-        match Manifest::load(format!("{}/{}/", config.get_dist_folder(), config.get_app_id()),
+        match Manifest::load(config.get_dist_folder().join(config.get_app_id()),
                              config,
                              results) {
             Ok(m) => {
@@ -52,7 +52,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
             println!("This does not mean that something went wrong, but it's supposed to have \
                       the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     config.get_downloads_folder());
+                     config.get_downloads_folder().display());
         }
     }
 

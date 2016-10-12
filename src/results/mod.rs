@@ -36,7 +36,7 @@ pub struct Results {
 
 impl Results {
     pub fn init(config: &Config) -> Option<Results> {
-        let path = format!("{}/{}", config.get_results_folder(), config.get_app_id());
+        let path = config.get_results_folder().join(config.get_app_id());
         if !fs::metadata(&path).is_ok() || config.is_force() {
             if fs::metadata(&path).is_ok() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -151,7 +151,7 @@ impl Results {
     }
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
-        let path = format!("{}/{}", config.get_results_folder(), config.get_app_id());
+        let path = config.get_results_folder().join(config.get_app_id());
         if !file_exists(&path) || config.is_force() {
             if file_exists(&path) {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -191,9 +191,9 @@ impl Results {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/{}/results.json",
-                                              config.get_results_folder(),
-                                              config.get_app_id())));
+        let mut f = try!(File::create(config.get_results_folder()
+                                            .join(config.get_app_id())
+                                            .join("results.json")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -250,9 +250,9 @@ impl Results {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = try!(File::create(format!("{}/{}/index.html",
-                                              config.get_results_folder(),
-                                              config.get_app_id())));
+        let mut f = try!(File::create(config.get_results_folder()
+                                            .join(config.get_app_id())
+                                            .join("index.html")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -434,7 +434,7 @@ impl Results {
 
         // Copying JS and CSS files
         try!(copy_folder(config.get_results_template(),
-                         &format!("{}/{}", config.get_results_folder(), config.get_app_id())));
+                         &config.get_results_folder().join(config.get_app_id())));
 
         try!(self.generate_code_html_files(config));
 
@@ -530,9 +530,10 @@ impl Results {
         try!(self.generate_code_html_folder("", config));
         let menu = try!(self.generate_html_src_menu("", config));
 
-        let mut f = try!(fs::File::create(format!("{}/{}/src/index.html",
-                                                  config.get_results_folder(),
-                                                  config.get_app_id())));
+        let mut f = try!(fs::File::create(config.get_results_folder()
+                                                .join(config.get_app_id())
+                                                .join("src")
+                                                .join("index.html")));
 
         try!(f.write_all(b"<!DOCTYPE html>"));
         try!(f.write_all(b"<html lang=\"en\">"));
@@ -564,25 +565,25 @@ impl Results {
            path.as_ref() == Path::new("smali") {
             return Ok(0);
         }
-        let dir_iter = try!(fs::read_dir(&format!("{}/{}/{}",
-                                                  config.get_dist_folder(),
-                                                  config.get_app_id(),
-                                                  path.as_ref().display())));
+        let dir_iter = try!(fs::read_dir(config.get_dist_folder()
+                                               .join(config.get_app_id())
+                                               .join(path.as_ref())));
 
-        try!(fs::create_dir_all(&format!("{}/{}/src/{}",
-                                         config.get_results_folder(),
-                                         config.get_app_id(),
-                                         path.as_ref().display())));
+        try!(fs::create_dir_all(config.get_results_folder()
+                                      .join(config.get_app_id())
+                                      .join("src")
+                                      .join(path.as_ref())));
         let mut count = 0;
 
         for f in dir_iter {
             let f = match f {
                 Ok(f) => f,
                 Err(e) => {
-                    print_warning(format!("There was an error reading the directory {}/{}/{}: {}",
-                                          config.get_dist_folder(),
-                                          config.get_app_id(),
-                                          path.as_ref().display(),
+                    print_warning(format!("There was an error reading the directory {}: {}",
+                                          config.get_dist_folder()
+                                                .join(config.get_app_id())
+                                                .join(path.as_ref())
+                                                .display(),
                                           e),
                                   config.is_verbose());
                     return Err(Error::from(e));
@@ -592,8 +593,7 @@ impl Results {
             match f.path().extension() {
                 Some(e) => {
                     if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
-                        let prefix =
-                            format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
+                        let prefix = config.get_dist_folder().join(config.get_app_id());
                         try!(self.generate_code_html_for(f.path().strip_prefix(&prefix).unwrap(),
                                                          config));
                         count += 1;
@@ -601,8 +601,7 @@ impl Results {
                 }
                 None => {
                     if f.path().is_dir() {
-                        let prefix =
-                            format!("{}/{}/", config.get_dist_folder(), config.get_app_id());
+                        let prefix = config.get_dist_folder().join(config.get_app_id());
 
                         if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
                             let f_count = try!(self.generate_code_html_folder(f.path()
@@ -618,10 +617,10 @@ impl Results {
             }
         }
         if count == 0 {
-            try!(fs::remove_dir(&format!("{}/{}/src/{}",
-                                         config.get_results_folder(),
-                                         config.get_app_id(),
-                                         path.as_ref().display())));
+            try!(fs::remove_dir(config.get_results_folder()
+                                               .join(config.get_app_id())
+                                               .join("src")
+                                               .join(path)));
         }
 
         Ok(count)
@@ -631,10 +630,10 @@ impl Results {
                                               dir_path: P,
                                               config: &Config)
                                               -> Result<String> {
-        let iter = try!(fs::read_dir(&format!("{}/{}/src/{}",
-                                              config.get_results_folder(),
-                                              config.get_app_id(),
-                                              dir_path.as_ref().display())));
+        let iter = try!(fs::read_dir(config.get_results_folder()
+                                           .join(config.get_app_id())
+                                           .join("src")
+                                           .join(dir_path.as_ref())));
         let mut menu = String::new();
         menu.push_str("<ul>");
         for entry in iter {
@@ -670,9 +669,9 @@ impl Results {
                             Some(n) => String::from(n.to_string_lossy().borrow() as &str),
                             None => String::new(),
                         };
-                        let prefix = format!("{}/{}/src/",
-                                             config.get_results_folder(),
-                                             config.get_app_id());
+                        let prefix = config.get_results_folder()
+                                           .join(config.get_app_id())
+                                           .join("src");
                         let submenu =
                             match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
                                                         config) {
@@ -712,14 +711,13 @@ impl Results {
     }
 
     fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
-        let mut f_in = try!(File::open(format!("{}/{}/{}",
-                                               config.get_dist_folder(),
-                                               config.get_app_id(),
-                                               path.as_ref().display())));
-        let mut f_out = try!(File::create(format!("{}/{}/src/{}.html",
-                                                  config.get_results_folder(),
-                                                  config.get_app_id(),
-                                                  path.as_ref().display())));
+        let mut f_in = try!(File::open(config.get_results_folder()
+                                                .join(config.get_app_id())
+                                                .join(path.as_ref())));
+        let mut f_out = try!(File::create(config.get_results_folder()
+                                                .join(config.get_app_id())
+                                                .join("src")
+                                                .join(path.as_ref())));
 
         let mut code = String::new();
         try!(f_in.read_to_string(&mut code));

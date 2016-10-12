@@ -74,7 +74,7 @@ fn main() {
         error_string.push_str("The configuration was loaded, in order, from the following \
                                files:\n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file));
+            error_string.push_str(&format!("\t- {}\n", file.display()));
         }
         print_error(error_string, verbose);
         exit(Error::Config.into());
