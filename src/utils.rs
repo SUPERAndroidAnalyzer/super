@@ -60,9 +60,9 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     sleep(Duration::from_millis(200));
 }
 
-pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
+pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
-    for (i, text) in code.lines().enumerate() {
+    for (i, text) in code.as_ref().lines().enumerate() {
         if i >= (e_line + 5) {
             break;
         } else if (s_line >= 5 && i > s_line - 5) || (s_line < 5 && i < s_line + 5) {
@@ -77,7 +77,7 @@ pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
     path.as_ref().exists()
 }
 
-pub fn get_string(label: &str, config: &Config) -> Result<String> {
+pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
     let mut file = try!(fs::File::open({
         let path = format!("{}/{}/res/values-en/strings.xml",
                            config.get_dist_folder(),
@@ -104,7 +104,7 @@ pub fn get_string(label: &str, config: &Config) -> Result<String> {
                 match name.local_name.as_str() {
                     "string" => {
                         for attr in attributes {
-                            if attr.name.local_name == "name" && attr.value == label {
+                            if attr.name.local_name == "name" && attr.value == label.as_ref() {
                                 found = true;
                             }
                         }

@@ -9,8 +9,8 @@ use chrono::{Local, Datelike};
 use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 
-fn parse_month(month_str: &str) -> u32 {
-    let month_number = match month_str {
+fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
+    let month_number = match month_str.as_ref() {
         "Jan" => 1,
         "Feb" => 2,
         "Mar" => 3,
