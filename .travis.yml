@@ -26,19 +26,28 @@ before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       pip install git+https://github.com/SUPERAndroidAnalyzer/travis-cargo.git@fix-coveralls --user &&
-      export PATH=$HOME/.local/bin:$PATH
+      export PATH=$HOME/.local/bin:$PATH &&
+      (travis-cargo install rustfmt || true) &&
+      export PATH=$PATH:~/.cargo/bin &&
+      fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      (cargo install rustfmt || true) &&
+      export PATH=$PATH:~/.cargo/bin
       fi
 
 # The main build
 script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      travis-cargo fmt -- --write-mode=diff &&
       travis-cargo build &&
       travis-cargo test &&
       travis-cargo bench;
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      cargo fmt -- --write-mode=diff &&
       cargo build &&
       cargo test &&
       cargo bench;
