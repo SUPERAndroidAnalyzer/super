@@ -81,14 +81,18 @@ pub fn get_string(label: &str, config: &Config) -> Result<String> {
     let mut file = try!(fs::File::open({
         let path = config.get_dist_folder()
             .join(config.get_app_id())
-            .join("res/values-en/strings.xml");
+            .join("res")
+            .join("values-en")
+            .join("strings.xml");
 
         if path.exists() {
             path
         } else {
             config.get_dist_folder()
                 .join(config.get_app_id())
-                .join("res/values/strings.xml")
+                .join("res")
+                .join("values")
+                .join("strings.xml")
         }
     }));
 
