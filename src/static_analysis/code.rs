@@ -75,7 +75,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
                         Some(f) => {
                             if let Err(e) =
                                    analyze_file(f.path(),
-                                                (*thread_dist_folder).clone(),
+                                                &*thread_dist_folder,
                                                 &thread_rules,
                                                 &thread_manifest,
                                                 &thread_vulns,
@@ -142,8 +142,8 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
     }
 }
 
-fn analyze_file<P: AsRef<Path>>(path: P,
-                                dist_folder: P,
+fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
+                                dist_folder: T,
                                 rules: &Vec<Rule>,
                                 manifest: &Option<Manifest>,
                                 results: &Mutex<Vec<Vulnerability>>,
