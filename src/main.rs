@@ -17,6 +17,8 @@ extern crate yaml_rust;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
+#[macro_use]
+extern crate lazy_static;
 extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
@@ -197,8 +199,8 @@ fn main() {
 
         if config.is_open() {
             let report_path = config.get_results_folder()
-			            .join(config.get_app_id())
-				    .join("index.html");
+                .join(config.get_app_id())
+                .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}", e),
                             config.is_verbose());

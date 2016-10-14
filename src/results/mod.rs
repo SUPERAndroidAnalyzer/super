@@ -3,12 +3,13 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::collections::BTreeSet;
 use std::path::Path;
-use std::borrow::Borrow;
+use std::borrow::{Borrow, Cow};
 use std::slice::Iter;
 
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 use rustc_serialize::hex::ToHex;
+use regex::Regex;
 
 mod utils;
 
@@ -192,8 +193,8 @@ impl Results {
             println!("Starting JSON report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-                                            .join(config.get_app_id())
-                                            .join("results.json")));
+            .join(config.get_app_id())
+            .join("results.json")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -251,8 +252,8 @@ impl Results {
             println!("Starting HTML report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-                                            .join(config.get_app_id())
-                                            .join("index.html")));
+            .join(config.get_app_id())
+            .join("index.html")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -546,9 +547,9 @@ impl Results {
         let menu = try!(self.generate_html_src_menu("", config));
 
         let mut f = try!(fs::File::create(config.get_results_folder()
-                                                .join(config.get_app_id())
-                                                .join("src")
-                                                .join("index.html")));
+            .join(config.get_app_id())
+            .join("src")
+            .join("index.html")));
 
         try!(f.write_all(b"<!DOCTYPE html>"));
         try!(f.write_all(b"<html lang=\"en\">"));
@@ -581,13 +582,13 @@ impl Results {
             return Ok(0);
         }
         let dir_iter = try!(fs::read_dir(config.get_dist_folder()
-                                               .join(config.get_app_id())
-                                               .join(path.as_ref())));
+            .join(config.get_app_id())
+            .join(path.as_ref())));
 
         try!(fs::create_dir_all(config.get_results_folder()
-                                      .join(config.get_app_id())
-                                      .join("src")
-                                      .join(path.as_ref())));
+            .join(config.get_app_id())
+            .join("src")
+            .join(path.as_ref())));
         let mut count = 0;
 
         for f in dir_iter {
@@ -596,9 +597,9 @@ impl Results {
                 Err(e) => {
                     print_warning(format!("There was an error reading the directory {}: {}",
                                           config.get_dist_folder()
-                                                .join(config.get_app_id())
-                                                .join(path.as_ref())
-                                                .display(),
+                                              .join(config.get_app_id())
+                                              .join(path.as_ref())
+                                              .display(),
                                           e),
                                   config.is_verbose());
                     return Err(Error::from(e));
@@ -633,9 +634,9 @@ impl Results {
         }
         if count == 0 {
             try!(fs::remove_dir(config.get_results_folder()
-                                               .join(config.get_app_id())
-                                               .join("src")
-                                               .join(path)));
+                .join(config.get_app_id())
+                .join("src")
+                .join(path)));
         }
 
         Ok(count)
@@ -646,9 +647,9 @@ impl Results {
                                               config: &Config)
                                               -> Result<String> {
         let iter = try!(fs::read_dir(config.get_results_folder()
-                                           .join(config.get_app_id())
-                                           .join("src")
-                                           .join(dir_path.as_ref())));
+            .join(config.get_app_id())
+            .join("src")
+            .join(dir_path.as_ref())));
         let mut menu = String::new();
         menu.push_str("<ul>");
         for entry in iter {
@@ -685,8 +686,8 @@ impl Results {
                             None => String::new(),
                         };
                         let prefix = config.get_results_folder()
-                                           .join(config.get_app_id())
-                                           .join("src");
+                            .join(config.get_app_id())
+                            .join("src");
                         let submenu =
                             match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
                                                         config) {
@@ -727,12 +728,12 @@ impl Results {
 
     fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
         let mut f_in = try!(File::open(config.get_results_folder()
-                                                .join(config.get_app_id())
-                                                .join(path.as_ref())));
+            .join(config.get_app_id())
+            .join(path.as_ref())));
         let mut f_out = try!(File::create(config.get_results_folder()
-                                                .join(config.get_app_id())
-                                                .join("src")
-                                                .join(path.as_ref())));
+            .join(config.get_app_id())
+            .join("src")
+            .join(path.as_ref())));
 
         let mut code = String::new();
         try!(f_in.read_to_string(&mut code));
@@ -809,16 +810,30 @@ impl Results {
         Ok(())
     }
 
-    fn html_escape<S: AsRef<str>>(code: S) -> String {
-        let mut res = String::new();
-        for c in code.as_ref().chars() {
-            match c {
-                '<' => res.push_str("&lt;"),
-                '>' => res.push_str("&gt;"),
-                '&' => res.push_str("&amp;"),
-                c => res.push(c),
-            };
+    fn html_escape<'a, S: Into<Cow<'a, str>>>(code: S) -> Cow<'a, str> {
+        lazy_static! {
+            static ref REGEX: Regex = Regex::new("[<>&]").unwrap();
         }
-        res
+        let input = code.into();
+        let mut last_match = 0;
+
+        if REGEX.is_match(&input) {
+            let matches = REGEX.find_iter(&input);
+            let mut output = String::with_capacity(input.len());
+            for (begin, end) in matches {
+                output.push_str(&input[last_match..begin]);
+                match &input[begin..end] {
+                    "<" => output.push_str("&lt;"),
+                    ">" => output.push_str("&gt;"),
+                    "&" => output.push_str("&amp;"),
+                    _ => unreachable!(),
+                }
+                last_match = end;
+            }
+            output.push_str(&input[last_match..]);
+            Cow::Owned(output)
+        } else {
+            input
+        }
     }
 }
