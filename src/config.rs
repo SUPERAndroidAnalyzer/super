@@ -14,7 +14,7 @@ use toml::{Parser, Value};
 
 use static_analysis::manifest::Permission;
 
-use {Error, Result, Criticity, print_error, print_warning, file_exists};
+use {Error, Result, Criticity, print_error, print_warning};
 
 const MAX_THREADS: i64 = u8::MAX as i64;
 
@@ -42,14 +42,13 @@ pub struct Config {
 
 impl Config {
     #[cfg(target_family = "unix")]
-    pub fn new<S: AsRef<str>>(
-                app_id: S,
-                verbose: bool,
-                quiet: bool,
-                force: bool,
-                bench: bool,
-                open: bool)
-                -> Result<Config> {
+    pub fn new<S: AsRef<str>>(app_id: S,
+                              verbose: bool,
+                              quiet: bool,
+                              force: bool,
+                              bench: bool,
+                              open: bool)
+                              -> Result<Config> {
         let mut config: Config = Default::default();
         config.app_id = String::from(app_id.as_ref());
         config.verbose = verbose;
@@ -58,11 +57,11 @@ impl Config {
         config.bench = bench;
         config.open = open;
 
-        if file_exists("/etc/config.toml") {
+        if Path::new("/etc/config.toml").exists() {
             try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
             config.loaded_files.push(PathBuf::from("/etc/config.toml"));
         }
-        if file_exists("./config.toml") {
+        if Path::new("./config.toml").exists() {
             try!(Config::load_from_file(&mut config, "./config.toml", verbose));
             config.loaded_files.push(PathBuf::from("./config.toml"));
         }
@@ -71,14 +70,13 @@ impl Config {
     }
 
     #[cfg(target_family = "windows")]
-    pub fn new<S: AsRef<str>>(
-                app_id: S,
-                verbose: bool,
-                quiet: bool,
-                force: bool,
-                bench: bool,
-                open: bool)
-                -> Result<Config> {
+    pub fn new<S: AsRef<str>>(app_id: S,
+                              verbose: bool,
+                              quiet: bool,
+                              force: bool,
+                              bench: bool,
+                              open: bool)
+                              -> Result<Config> {
         let mut config: Config = Default::default();
         config.app_id = String::from(app_id.as_ref());
         config.verbose = verbose;
@@ -87,7 +85,7 @@ impl Config {
         config.bench = bench;
         config.open = open;
 
-        if file_exists("config.toml") {
+        if Path::from("config.toml").exists() {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
             config.loaded_files.push(PathBuf::from("config.toml"));
         }
@@ -96,8 +94,7 @@ impl Config {
     }
 
     pub fn check(&self) -> bool {
-        self.downloads_folder.exists() &&
-        self.get_apk_file().exists() &&
+        self.downloads_folder.exists() && self.get_apk_file().exists() &&
         self.apktool_file.exists() && self.dex2jar_folder.exists() &&
         self.jd_cmd_file.exists() && self.results_template.exists() &&
         self.rules_json.exists()
@@ -130,7 +127,8 @@ impl Config {
                                 self.results_template.display()));
         }
         if !self.rules_json.exists() {
-            errors.push(format!("the `{}` rule file does not exist", self.rules_json.display()));
+            errors.push(format!("the `{}` rule file does not exist",
+                                self.rules_json.display()));
         }
         errors
     }
@@ -242,7 +240,7 @@ impl Config {
     fn load_from_file<P: AsRef<Path>>(config: &mut Config, path: P, verbose: bool) -> Result<()> {
         let mut f = try!(fs::File::open(path));
         let mut toml = String::new();
-        try!(f.read_to_string(&mut toml));
+        let _ = try!(f.read_to_string(&mut toml));
 
         let mut parser = Parser::new(toml.as_str());
         let toml = match parser.parse() {
@@ -488,7 +486,8 @@ impl Config {
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
-                                                                      &String::from(description.as_ref())));
+                                                                      &String::from(
+                                                                          description.as_ref())));
                                 }
                             }
                         }
@@ -509,7 +508,7 @@ impl Config {
 impl Default for Config {
     #[cfg(target_os = "linux")]
     fn default() -> Config {
-        if file_exists("/usr/share/super") {
+        if Path::new("/usr/share/super").exists() {
             Config {
                 app_id: String::new(),
                 verbose: false,
@@ -553,7 +552,7 @@ impl Default for Config {
                 dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
                 jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
                 results_template: PathBuf::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super/rules.json") {
+                rules_json: if Path::new("/etc/super/rules.json").exists() {
                     PathBuf::from("/etc/super/rules.json")
                 } else {
                     PathBuf::from("rules.json")
@@ -570,7 +569,7 @@ impl Default for Config {
 
     #[cfg(target_os = "macos")]
     fn default() -> Config {
-        if file_exists("/usr/local/super") {
+        if Path::new("/usr/local/super").exists() {
             Config {
                 app_id: String::new(),
                 verbose: false,
@@ -614,7 +613,7 @@ impl Default for Config {
                 dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
                 jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
                 results_template: PathBuf::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super/rules.json") {
+                rules_json: if Path::new("/etc/super/rules.json").exists() {
                     PathBuf::from("/etc/super/rules.json")
                 } else {
                     PathBuf::from("rules.json")
@@ -684,12 +683,11 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    fn new<S: AsRef<str>>(
-            permission: Permission,
-            criticity: Criticity,
-            label: S,
-            description: S)
-            -> PermissionConfig {
+    fn new<S: AsRef<str>>(permission: Permission,
+                          criticity: Criticity,
+                          label: S,
+                          description: S)
+                          -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticity: criticity,
@@ -717,7 +715,7 @@ impl PermissionConfig {
 
 #[cfg(test)]
 mod tests {
-    use {Criticity, file_exists};
+    use Criticity;
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
@@ -758,18 +756,26 @@ mod tests {
             assert_eq!(config.get_results_template(),
                        PathBuf::from("/usr/local/super/vendor/results_template"));
         } else if cfg!(target_family = "windows") {
-            assert_eq!(config.get_apktool_file(), PathBuf::from("vendor\\apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(), PathBuf::from("vendor\\dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(), PathBuf::from("vendor\\jd-cmd.jar"));
-            assert_eq!(config.get_results_template(), PathBuf::from("vendor\\results_template"));
+            assert_eq!(config.get_apktool_file(),
+                       PathBuf::from("vendor\\apktool_2.2.0.jar"));
+            assert_eq!(config.get_dex2jar_folder(),
+                       PathBuf::from("vendor\\dex2jar-2.0"));
+            assert_eq!(config.get_jd_cmd_file(),
+                       PathBuf::from("vendor\\jd-cmd.jar"));
+            assert_eq!(config.get_results_template(),
+                       PathBuf::from("vendor\\results_template"));
         } else {
-            assert_eq!(config.get_apktool_file(), PathBuf::from("vendor/apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(), PathBuf::from("vendor/dex2jar-2.0"));
+            assert_eq!(config.get_apktool_file(),
+                       PathBuf::from("vendor/apktool_2.2.0.jar"));
+            assert_eq!(config.get_dex2jar_folder(),
+                       PathBuf::from("vendor/dex2jar-2.0"));
             assert_eq!(config.get_jd_cmd_file(), PathBuf::from("vendor/jd-cmd.jar"));
-            assert_eq!(config.get_results_template(), PathBuf::from("vendor/results_template"));
+            assert_eq!(config.get_results_template(),
+                       PathBuf::from("vendor/results_template"));
         }
-        if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
-            assert_eq!(config.get_rules_json(), PathBuf::from("/etc/super/rules.json"));
+        if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
+            assert_eq!(config.get_rules_json(),
+                       PathBuf::from("/etc/super/rules.json"));
         } else {
             assert_eq!(config.get_rules_json(), PathBuf::from("rules.json"));
         }
@@ -779,13 +785,13 @@ mod tests {
                     since it can lead to missunderstanding between developers.");
         assert_eq!(config.get_permissions().next(), None);
 
-        if !file_exists(config.get_downloads_folder()) {
+        if !config.get_downloads_folder().exists() {
             fs::create_dir(config.get_downloads_folder()).unwrap();
         }
-        if !file_exists(config.get_dist_folder()) {
+        if !config.get_dist_folder().exists() {
             fs::create_dir(config.get_dist_folder()).unwrap();
         }
-        if !file_exists(config.get_results_folder()) {
+        if !config.get_results_folder().exists() {
             fs::create_dir(config.get_results_folder()).unwrap();
         }
 
@@ -811,7 +817,7 @@ mod tests {
         fs::File::create(config.get_apk_file()).unwrap();
         assert!(config.check());
 
-        while !file_exists("config.toml.sample") {
+        while !Path::new("config.toml.sample").exists() {
             thread::sleep(Duration::from_millis(50));
         }
         let config = Config::new("test_app", false, false, false, false, false).unwrap();
@@ -849,7 +855,8 @@ mod tests {
                    PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"));
         assert_eq!(config.get_results_template(),
                    PathBuf::from("/usr/share/super/vendor/results_template"));
-        assert_eq!(config.get_rules_json(), PathBuf::from("/etc/super/rules.json"));
+        assert_eq!(config.get_rules_json(),
+                   PathBuf::from("/etc/super/rules.json"));
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \

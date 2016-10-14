@@ -47,7 +47,7 @@ impl Vulnerability {
             start_line: start_line,
             end_line: end_line,
             code: match code {
-                Some(s) => Some(String::from(s.as_ref() as &str)),
+                Some(s) => Some(String::from(s.as_ref())),
                 None => None,
             },
         }
@@ -152,7 +152,7 @@ impl FingerPrint {
     pub fn new(config: &Config) -> Result<FingerPrint> {
         let mut f = try!(File::open(config.get_apk_file()));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
-        try!(f.read_to_end(&mut buffer));
+        let _ = try!(f.read_to_end(&mut buffer));
 
         let mut md5 = Md5::new();
         let mut sha1 = Sha1::new();

@@ -35,13 +35,19 @@ script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       travis-cargo build &&
       travis-cargo test &&
-      travis-cargo bench;
+      travis-cargo build --features beta &&
+      travis-cargo test --features beta &&
+      travis-cargo build --features unstable &&
+      travis-cargo test --features unstable &&
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       cargo build &&
       cargo test &&
-      cargo bench;
+      cargo build --features beta &&
+      cargo test --features beta &&
+      cargo build --features unstable &&
+      cargo test --features unstable &&
       fi
 
 # Send coverage reports and upload docs

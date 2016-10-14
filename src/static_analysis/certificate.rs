@@ -35,9 +35,9 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
     }
 
     let path = config.get_dist_folder()
-                     .join(config.get_app_id())
-                     .join("original")
-                     .join("META-INF");
+        .join(config.get_app_id())
+        .join("original")
+        .join("META-INF");
     let dir_iter = try!(fs::read_dir(&path));
 
     for f in dir_iter {
@@ -47,7 +47,8 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 print_warning(format!("An error occurred when reading the \
                                        {} dir searching certificates. \
                                        Certificate analysis will be skipped. More info: {}",
-                                      path.display(), e),
+                                      path.display(),
+                                      e),
                               config.is_verbose());
                 break;
             }

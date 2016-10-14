@@ -1,10 +1,12 @@
 pub mod manifest;
+#[cfg(feature = "certificate")]
 pub mod certificate;
 pub mod code;
 
 use std::time::Instant;
 
 use self::manifest::*;
+#[cfg(feature = "certificate")]
 use self::certificate::*;
 use self::code::*;
 use results::{Results, Benchmark};
@@ -23,11 +25,17 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
         results.add_benchmark(Benchmark::new("Manifest analysis", manifest_start.elapsed()));
     }
 
-    let certificate_start = Instant::now();
-    let certificate = certificate_analysis(config, results);
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Certificate analysis", certificate_start.elapsed()));
+    if cfg!(feature = "certificate") {
+        let certificate_start = Instant::now();
+        let _certificate = certificate_analysis(config, results);
+        if config.is_bench() {
+            results.add_benchmark(Benchmark::new("Certificate analysis",
+                                                 certificate_start.elapsed()));
+        }
     }
 
     code_analysis(manifest, config, results);
 }
+
+#[cfg(not(feature = "certificate"))]
+fn certificate_analysis(_config: &Config, _results: &mut Results) {}

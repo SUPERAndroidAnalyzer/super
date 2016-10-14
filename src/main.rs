@@ -391,7 +391,7 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
         if f.path().is_dir() {
             try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
         } else {
-            try!(fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+            let _ = try!(fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
         }
     }
     Ok(())

@@ -2,7 +2,7 @@ use std::fs;
 use std::fs::{File, DirEntry};
 use std::io::Read;
 use std::str::FromStr;
-use std::path::{Path};
+use std::path::Path;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
@@ -73,13 +73,12 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
                     };
                     match f {
                         Some(f) => {
-                            if let Err(e) =
-                                   analyze_file(f.path(),
-                                                &*thread_dist_folder,
-                                                &thread_rules,
-                                                &thread_manifest,
-                                                &thread_vulns,
-                                                verbose) {
+                            if let Err(e) = analyze_file(f.path(),
+                                                         &*thread_dist_folder,
+                                                         &thread_rules,
+                                                         &thread_manifest,
+                                                         &thread_vulns,
+                                                         verbose) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
@@ -143,15 +142,15 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
 }
 
 fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
-                                dist_folder: T,
-                                rules: &Vec<Rule>,
-                                manifest: &Option<Manifest>,
-                                results: &Mutex<Vec<Vulnerability>>,
-                                verbose: bool)
-                                -> Result<()> {
+                                                dist_folder: T,
+                                                rules: &Vec<Rule>,
+                                                manifest: &Option<Manifest>,
+                                                results: &Mutex<Vec<Vulnerability>>,
+                                                verbose: bool)
+                                                -> Result<()> {
     let mut f = try!(File::open(&path));
     let mut code = String::new();
-    try!(f.read_to_string(&mut code));
+    let _ = try!(f.read_to_string(&mut code));
 
     'check: for rule in rules {
         if manifest.is_some() && rule.get_max_sdk().is_some() {
@@ -277,14 +276,15 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
         return Ok(());
     }
     let real_path = config.get_dist_folder()
-                          .join(config.get_app_id())
-                          .join(path);
+        .join(config.get_app_id())
+        .join(path);
     for f in try!(fs::read_dir(&real_path)) {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
-                                      real_path.display(), e),
+                                      real_path.display(),
+                                      e),
                               config.is_verbose());
                 return Err(Error::from(e));
             }
@@ -295,7 +295,7 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
         if f_type.is_dir() && f_path != real_path.join("original") {
             try!(add_files_to_vec(f.path()
                                       .strip_prefix(&config.get_dist_folder()
-                                                           .join(config.get_app_id()))
+                                          .join(config.get_app_id()))
                                       .unwrap(),
                                   vec,
                                   config));

@@ -1,5 +1,4 @@
 use std::{fs, io};
-use std::path::Path;
 use std::io::{Read, Write};
 use std::time::Duration;
 use std::thread::sleep;
@@ -19,7 +18,7 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
-    io::stderr()
+    let _ = io::stderr()
         .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
         .unwrap();
 
@@ -32,7 +31,7 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
 }
 
 pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
-    io::stderr()
+    let _ = io::stderr()
         .write(&format!("{} {}\n",
                         "Warning:".bold().yellow(),
                         warning.as_ref().yellow())
@@ -48,15 +47,16 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
 }
 
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
-    let text = text.as_ref();
-    let start = format!("Possible {} criticity vulnerability found!:", criticity);
-    let (start, message) = match criticity {
-        Criticity::Low => (start.cyan(), text.cyan()),
-        Criticity::Medium => (start.yellow(), text.yellow()),
-        Criticity::High | Criticity::Critical => (start.red(), text.red()),
-        _ => return,
-    };
-    println!("{} {}", start, message);
+    let message = format!("Possible {} criticity vulnerability found!: {}",
+                          criticity,
+                          text.as_ref());
+    println!("{}",
+             match criticity {
+                 Criticity::Low => message.cyan(),
+                 Criticity::Medium => message.yellow(),
+                 Criticity::High | Criticity::Critical => message.red(),
+                 _ => return,
+             });
     sleep(Duration::from_millis(200));
 }
 
@@ -71,10 +71,6 @@ pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String 
         }
     }
     result
-}
-
-pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
-    path.as_ref().exists()
 }
 
 pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
@@ -97,7 +93,7 @@ pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
     }));
 
     let mut code = String::new();
-    try!(file.read_to_string(&mut code));
+    let _ = try!(file.read_to_string(&mut code));
 
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
@@ -130,7 +126,7 @@ pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
 
 #[cfg(test)]
 mod test {
-    use {get_code, file_exists};
+    use get_code;
     use std::fs;
     use std::fs::File;
 
@@ -189,17 +185,5 @@ mod test {
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
                     Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
                     Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n");
-    }
-
-    #[test]
-    fn it_file_exists() {
-        if file_exists("test.txt") {
-            fs::remove_file("test.txt").unwrap();
-        }
-        assert!(!file_exists("test.txt"));
-        File::create("test.txt").unwrap();
-        assert!(file_exists("test.txt"));
-        fs::remove_file("test.txt").unwrap();
-        assert!(!file_exists("test.txt"));
     }
 }

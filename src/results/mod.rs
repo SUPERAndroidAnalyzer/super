@@ -16,7 +16,7 @@ mod utils;
 pub use self::utils::{Benchmark, Vulnerability, split_indent};
 use self::utils::FingerPrint;
 
-use {Error, Config, Result, Criticity, print_error, print_warning, file_exists, copy_folder};
+use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder};
 
 pub struct Results {
     app_package: String,
@@ -153,8 +153,8 @@ impl Results {
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
         let path = config.get_results_folder().join(config.get_app_id());
-        if !file_exists(&path) || config.is_force() {
-            if file_exists(&path) {
+        if !path.exists() || config.is_force() {
+            if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_warning(format!("There was an error when removing the report folder: \
                                            {}",
@@ -543,10 +543,10 @@ impl Results {
     }
 
     fn generate_code_html_files(&self, config: &Config) -> Result<()> {
-        try!(self.generate_code_html_folder("", config));
+        let _ = try!(self.generate_code_html_folder("", config));
         let menu = try!(self.generate_html_src_menu("", config));
 
-        let mut f = try!(fs::File::create(config.get_results_folder()
+        let mut f = try!(File::create(config.get_results_folder()
             .join(config.get_app_id())
             .join("src")
             .join("index.html")));
@@ -682,7 +682,7 @@ impl Results {
                         }
                     } else if path.is_dir() {
                         let dir_name = match path.file_name() {
-                            Some(n) => String::from(n.to_string_lossy().borrow() as &str),
+                            Some(n) => String::from(n.to_string_lossy().borrow()),
                             None => String::new(),
                         };
                         let prefix = config.get_results_folder()
@@ -736,7 +736,7 @@ impl Results {
             .join(path.as_ref())));
 
         let mut code = String::new();
-        try!(f_in.read_to_string(&mut code));
+        let _ = try!(f_in.read_to_string(&mut code));
         let code = Results::html_escape(code.as_str());
 
         let mut back_path = String::new();

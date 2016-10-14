@@ -17,28 +17,27 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
                   analyze it.")
     }
 
-    let manifest =
-        match Manifest::load(config.get_dist_folder().join(config.get_app_id()),
-                             config,
-                             results) {
-            Ok(m) => {
-                if config.is_verbose() {
-                    println!("{}", "The manifest was loaded successfully!".green());
-                    println!("");
-                }
-                m
+    let manifest = match Manifest::load(config.get_dist_folder().join(config.get_app_id()),
+                                        config,
+                                        results) {
+        Ok(m) => {
+            if config.is_verbose() {
+                println!("{}", "The manifest was loaded successfully!".green());
+                println!("");
             }
-            Err(e) => {
-                print_error(format!("There was an error when loading the manifest: {}", e),
-                            config.is_verbose());
-                if config.is_verbose() {
-                    println!("The rest of the analysis will continue, but there will be no \
-                              analysis of the AndroidManifest.xml file, and code analysis rules \
-                              requiring permissions will not run.");
-                }
-                return None;
+            m
+        }
+        Err(e) => {
+            print_error(format!("There was an error when loading the manifest: {}", e),
+                        config.is_verbose());
+            if config.is_verbose() {
+                println!("The rest of the analysis will continue, but there will be no analysis \
+                          of the AndroidManifest.xml file, and code analysis rules requiring \
+                          permissions will not run.");
             }
-        };
+            return None;
+        }
+    };
 
     if manifest.get_package() != config.get_app_id() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
@@ -204,7 +203,7 @@ impl Manifest {
         let mut manifest: Manifest = Default::default();
 
         let mut code = String::new();
-        try!(file.read_to_string(&mut code));
+        let _ = try!(file.read_to_string(&mut code));
         manifest.set_code(code.as_str());
 
         let bytes = code.into_bytes();
@@ -416,7 +415,7 @@ impl Manifest {
         let yaml_warning = "An error occurred when parsing the apktool.yml file.";
         let mut file = try!(File::open(format!("{}/apktool.yml", path.as_ref().display())));
         let mut code = String::new();
-        try!(file.read_to_string(&mut code));
+        let _ = try!(file.read_to_string(&mut code));
         match YamlLoader::load_from_str(&code) {
             Ok(mut apktool_info) => {
                 match apktool_info.pop() {
@@ -554,9 +553,9 @@ impl Manifest {
         self.target_sdk = Some(target_sdk);
     }
 
-    pub fn has_code(&self) -> bool {
-        self.has_code
-    }
+    // pub fn has_code(&self) -> bool {
+    //     self.has_code
+    // }
 
     fn set_has_code(&mut self) {
         self.has_code = true;
@@ -578,9 +577,9 @@ impl Manifest {
         self.large_heap = true;
     }
 
-    pub fn get_install_location(&self) -> InstallLocation {
-        self.install_location
-    }
+    // pub fn get_install_location(&self) -> InstallLocation {
+    //     self.install_location
+    // }
 
     fn set_install_location(&mut self, install_location: InstallLocation) {
         self.install_location = install_location;
