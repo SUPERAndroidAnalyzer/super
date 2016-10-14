@@ -79,15 +79,20 @@ pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
 
 pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
     let mut file = try!(fs::File::open({
-        let path = format!("{}/{}/res/values-en/strings.xml",
-                           config.get_dist_folder(),
-                           config.get_app_id());
-        if file_exists(&path) {
+        let path = config.get_dist_folder()
+            .join(config.get_app_id())
+            .join("res")
+            .join("values-en")
+            .join("strings.xml");
+
+        if path.exists() {
             path
         } else {
-            format!("{}/{}/res/values/strings.xml",
-                    config.get_dist_folder(),
-                    config.get_app_id())
+            config.get_dist_folder()
+                .join(config.get_app_id())
+                .join("res")
+                .join("values")
+                .join("strings.xml")
         }
     }));
 

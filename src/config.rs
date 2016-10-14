@@ -1,5 +1,5 @@
 use std::{u8, fs};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::convert::From;
 use std::str::FromStr;
 use std::io::Read;
@@ -27,17 +27,17 @@ pub struct Config {
     bench: bool,
     open: bool,
     threads: u8,
-    downloads_folder: String,
-    dist_folder: String,
-    results_folder: String,
-    apktool_file: String,
-    dex2jar_folder: String,
-    jd_cmd_file: String,
-    results_template: String,
-    rules_json: String,
+    downloads_folder: PathBuf,
+    dist_folder: PathBuf,
+    results_folder: PathBuf,
+    apktool_file: PathBuf,
+    dex2jar_folder: PathBuf,
+    jd_cmd_file: PathBuf,
+    results_template: PathBuf,
+    rules_json: PathBuf,
     unknown_permission: (Criticity, String),
     permissions: BTreeSet<PermissionConfig>,
-    loaded_files: Vec<String>,
+    loaded_files: Vec<PathBuf>,
 }
 
 impl Config {
@@ -60,11 +60,11 @@ impl Config {
 
         if file_exists("/etc/config.toml") {
             try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
-            config.loaded_files.push(String::from("/etc/config.toml"));
+            config.loaded_files.push(PathBuf::from("/etc/config.toml"));
         }
         if file_exists("./config.toml") {
             try!(Config::load_from_file(&mut config, "./config.toml", verbose));
-            config.loaded_files.push(String::from("./config.toml"));
+            config.loaded_files.push(PathBuf::from("./config.toml"));
         }
 
         Ok(config)
@@ -89,52 +89,53 @@ impl Config {
 
         if file_exists("config.toml") {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
-            config.loaded_files.push(String::from("config.toml"));
+            config.loaded_files.push(PathBuf::from("config.toml"));
         }
 
         Ok(config)
     }
 
     pub fn check(&self) -> bool {
-        file_exists(&self.downloads_folder) &&
-        file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
-        file_exists(&self.apktool_file) && file_exists(&self.dex2jar_folder) &&
-        file_exists(&self.jd_cmd_file) && file_exists(&self.results_template) &&
-        file_exists(&self.rules_json)
+        self.downloads_folder.exists() &&
+        self.get_apk_file().exists() &&
+        self.apktool_file.exists() && self.dex2jar_folder.exists() &&
+        self.jd_cmd_file.exists() && self.results_template.exists() &&
+        self.rules_json.exists()
     }
 
     pub fn get_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
-        if !file_exists(&self.downloads_folder) {
+        if !self.downloads_folder.exists() {
             errors.push(format!("the downloads folder `{}` does not exist",
-                                self.downloads_folder));
+                                self.downloads_folder.display()));
         }
-        if !file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) {
+        if !self.get_apk_file().exists() {
             errors.push(format!("the APK file `{}` does not exist",
-                                format!("{}/{}.apk", self.downloads_folder, self.app_id)));
+                                self.get_apk_file().display()));
         }
-        if !file_exists(&self.apktool_file) {
+        if !self.apktool_file.exists() {
             errors.push(format!("the APKTool JAR file `{}` does not exist",
-                                self.apktool_file));
+                                self.apktool_file.display()));
         }
-        if !file_exists(&self.dex2jar_folder) {
+        if !self.dex2jar_folder.exists() {
             errors.push(format!("the Dex2Jar folder `{}` does not exist",
-                                self.dex2jar_folder));
+                                self.dex2jar_folder.display()));
         }
-        if !file_exists(&self.jd_cmd_file) {
-            errors.push(format!("the jd-cmd file `{}` does not exist", self.jd_cmd_file));
+        if !self.jd_cmd_file.exists() {
+            errors.push(format!("the jd-cmd file `{}` does not exist",
+                                self.jd_cmd_file.display()));
         }
-        if !file_exists(&self.results_template) {
+        if !self.results_template.exists() {
             errors.push(format!("the results template `{}` does not exist",
-                                self.results_template));
+                                self.results_template.display()));
         }
-        if !file_exists(&self.rules_json) {
-            errors.push(format!("the `{}` rule file does not exist", self.rules_json));
+        if !self.rules_json.exists() {
+            errors.push(format!("the `{}` rule file does not exist", self.rules_json.display()));
         }
         errors
     }
 
-    pub fn get_loaded_config_files(&self) -> VecIter<String> {
+    pub fn get_loaded_config_files(&self) -> VecIter<PathBuf> {
         self.loaded_files.iter()
     }
 
@@ -144,6 +145,10 @@ impl Config {
 
     pub fn set_app_id<S: AsRef<str>>(&mut self, app_id: S) {
         self.app_id = String::from(app_id.as_ref());
+    }
+
+    pub fn get_apk_file(&self) -> PathBuf {
+        self.downloads_folder.join(format!("{}.apk", self.app_id))
     }
 
     pub fn is_verbose(&self) -> bool {
@@ -190,36 +195,36 @@ impl Config {
         self.threads
     }
 
-    pub fn get_downloads_folder(&self) -> &str {
-        self.downloads_folder.as_str()
+    pub fn get_downloads_folder(&self) -> &Path {
+        &self.downloads_folder
     }
 
-    pub fn get_dist_folder(&self) -> &str {
-        self.dist_folder.as_str()
+    pub fn get_dist_folder(&self) -> &Path {
+        &self.dist_folder
     }
 
-    pub fn get_results_folder(&self) -> &str {
-        self.results_folder.as_str()
+    pub fn get_results_folder(&self) -> &Path {
+        &self.results_folder
     }
 
-    pub fn get_apktool_file(&self) -> &str {
-        self.apktool_file.as_str()
+    pub fn get_apktool_file(&self) -> &Path {
+        &self.apktool_file
     }
 
-    pub fn get_dex2jar_folder(&self) -> &str {
-        self.dex2jar_folder.as_str()
+    pub fn get_dex2jar_folder(&self) -> &Path {
+        &self.dex2jar_folder
     }
 
-    pub fn get_jd_cmd_file(&self) -> &str {
-        self.jd_cmd_file.as_str()
+    pub fn get_jd_cmd_file(&self) -> &Path {
+        &self.jd_cmd_file
     }
 
-    pub fn get_results_template(&self) -> &str {
-        self.results_template.as_str()
+    pub fn get_results_template(&self) -> &Path {
+        &self.results_template
     }
 
-    pub fn get_rules_json(&self) -> &str {
-        self.rules_json.as_str()
+    pub fn get_rules_json(&self) -> &Path {
+        &self.rules_json
     }
 
     pub fn get_unknown_permission_criticity(&self) -> Criticity {
@@ -268,7 +273,7 @@ impl Config {
                 }
                 "downloads_folder" => {
                     match value {
-                        Value::String(s) => config.downloads_folder = s,
+                        Value::String(s) => config.downloads_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'downloads_folder' option in config.toml must \
                                            be an string.\nUsing default.",
@@ -278,7 +283,7 @@ impl Config {
                 }
                 "dist_folder" => {
                     match value {
-                        Value::String(s) => config.dist_folder = s,
+                        Value::String(s) => config.dist_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dist_folder' option in config.toml must be an \
                                            string.\nUsing default.",
@@ -288,7 +293,7 @@ impl Config {
                 }
                 "results_folder" => {
                     match value {
-                        Value::String(s) => config.results_folder = s,
+                        Value::String(s) => config.results_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_folder' option in config.toml must be \
                                            an string.\nUsing default.",
@@ -301,7 +306,7 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.apktool_file = s.clone();
+                                config.apktool_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The APKTool file must be a JAR file.\nUsing \
                                                default.",
@@ -317,7 +322,7 @@ impl Config {
                 }
                 "dex2jar_folder" => {
                     match value {
-                        Value::String(s) => config.dex2jar_folder = s,
+                        Value::String(s) => config.dex2jar_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dex2jar_folder' option in config.toml should \
                                            be an string.\nUsing default.",
@@ -330,7 +335,7 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.jd_cmd_file = s.clone();
+                                config.jd_cmd_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The JD-CMD file must be a JAR file.\nUsing \
                                                default.",
@@ -346,7 +351,7 @@ impl Config {
                 }
                 "results_template" => {
                     match value {
-                        Value::String(s) => config.results_template = s,
+                        Value::String(s) => config.results_template = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_template' option in config.toml \
                                            should be an string.\nUsing default.",
@@ -359,7 +364,7 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "json" {
-                                config.rules_json = s.clone();
+                                config.rules_json = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The rules.json file must be a JSON \
                                                file.\nUsing default.",
@@ -513,17 +518,17 @@ impl Default for Config {
                 bench: false,
                 open: false,
                 threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("/usr/share/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("/usr/share/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("/usr/share/super/vendor/jd-cmd.jar"),
-                results_template: String::from("/usr/share/super/vendor/results_template"),
+                downloads_folder: PathBuf::from("downloads"),
+                dist_folder: PathBuf::from("dist"),
+                results_folder: PathBuf::from("results"),
+                apktool_file: PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"),
+                jd_cmd_file: PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"),
+                results_template: PathBuf::from("/usr/share/super/vendor/results_template"),
                 rules_json: if Path::new("/etc/super").exists() {
-                    String::from("/etc/super/rules.json")
+                    PathBuf::from("/etc/super/rules.json")
                 } else {
-                    String::from("rules.json")
+                    PathBuf::from("rules.json")
                 },
                 unknown_permission: (Criticity::Low,
                                      String::from("Even if the application can create its own \
@@ -541,17 +546,17 @@ impl Default for Config {
                 bench: false,
                 open: false,
                 threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
-                results_template: String::from("vendor/results_template"),
+                downloads_folder: PathBuf::from("downloads"),
+                dist_folder: PathBuf::from("dist"),
+                results_folder: PathBuf::from("results"),
+                apktool_file: PathBuf::from("vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
+                jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
+                results_template: PathBuf::from("vendor/results_template"),
                 rules_json: if file_exists("/etc/super/rules.json") {
-                    String::from("/etc/super/rules.json")
+                    PathBuf::from("/etc/super/rules.json")
                 } else {
-                    String::from("rules.json")
+                    PathBuf::from("rules.json")
                 },
                 unknown_permission: (Criticity::Low,
                                      String::from("Even if the application can create its own \
@@ -574,17 +579,17 @@ impl Default for Config {
                 bench: false,
                 open: false,
                 threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("/usr/local/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("/usr/local/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("/usr/local/super/vendor/jd-cmd.jar"),
-                results_template: String::from("/usr/local/super/vendor/results_template"),
+                downloads_folder: PathBuf::from("downloads"),
+                dist_folder: PathBuf::from("dist"),
+                results_folder: PathBuf::from("results"),
+                apktool_file: PathBuf::from("/usr/local/super/vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: PathBuf::from("/usr/local/super/vendor/dex2jar-2.0"),
+                jd_cmd_file: PathBuf::from("/usr/local/super/vendor/jd-cmd.jar"),
+                results_template: PathBuf::from("/usr/local/super/vendor/results_template"),
                 rules_json: if Path::new("/etc/super").exists() {
-                    String::from("/etc/super/rules.json")
+                    PathBuf::from("/etc/super/rules.json")
                 } else {
-                    String::from("rules.json")
+                    PathBuf::from("rules.json")
                 },
                 unknown_permission: (Criticity::Low,
                                      String::from("Even if the application can create its own \
@@ -602,17 +607,17 @@ impl Default for Config {
                 bench: false,
                 open: false,
                 threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
-                results_template: String::from("vendor/results_template"),
+                downloads_folder: PathBuf::from("downloads"),
+                dist_folder: PathBuf::from("dist"),
+                results_folder: PathBuf::from("results"),
+                apktool_file: PathBuf::from("vendor/apktool_2.2.0.jar"),
+                dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
+                jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
+                results_template: PathBuf::from("vendor/results_template"),
                 rules_json: if file_exists("/etc/super/rules.json") {
-                    String::from("/etc/super/rules.json")
+                    PathBuf::from("/etc/super/rules.json")
                 } else {
-                    String::from("rules.json")
+                    PathBuf::from("rules.json")
                 },
                 unknown_permission: (Criticity::Low,
                                      String::from("Even if the application can create its own \
@@ -634,14 +639,14 @@ impl Default for Config {
             bench: false,
             open: false,
             threads: 2,
-            downloads_folder: String::from("downloads"),
-            dist_folder: String::from("dist"),
-            results_folder: String::from("results"),
-            apktool_file: String::from("vendor\\apktool_2.2.0.jar"),
-            dex2jar_folder: String::from("vendor\\dex2jar-2.0"),
-            jd_cmd_file: String::from("vendor\\jd-cmd.jar"),
-            results_template: String::from("vendor\\results_template"),
-            rules_json: String::from("rules.json"),
+            downloads_folder: PathBuf::from("downloads"),
+            dist_folder: PathBuf::from("dist"),
+            results_folder: PathBuf::from("results"),
+            apktool_file: PathBuf::from("vendor\\apktool_2.2.0.jar"),
+            dex2jar_folder: PathBuf::from("vendor\\dex2jar-2.0"),
+            jd_cmd_file: PathBuf::from("vendor\\jd-cmd.jar"),
+            results_template: PathBuf::from("vendor\\results_template"),
+            rules_json: PathBuf::from("rules.json"),
             unknown_permission: (Criticity::Low,
                                  String::from("Even if the application can create its own \
                                                permissions, it's discouraged, since it can lead \
@@ -716,7 +721,7 @@ mod tests {
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
-    use std::path::Path;
+    use std::path::{Path, PathBuf};
     use std::thread;
     use std::time::Duration;
 
@@ -731,42 +736,42 @@ mod tests {
         assert!(!config.is_bench());
         assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), "downloads");
-        assert_eq!(config.get_dist_folder(), "dist");
-        assert_eq!(config.get_results_folder(), "results");
+        assert_eq!(config.get_downloads_folder(), PathBuf::from("downloads"));
+        assert_eq!(config.get_dist_folder(), PathBuf::from("dist"));
+        assert_eq!(config.get_results_folder(), PathBuf::from("results"));
         if cfg!(target_os = "linux") && Path::new("/usr/share/super").exists() {
             assert_eq!(config.get_apktool_file(),
-                       "/usr/share/super/vendor/apktool_2.2.0.jar");
+                       PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"));
             assert_eq!(config.get_dex2jar_folder(),
-                       "/usr/share/super/vendor/dex2jar-2.0");
+                       PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"));
             assert_eq!(config.get_jd_cmd_file(),
-                       "/usr/share/super/vendor/jd-cmd.jar");
+                       PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"));
             assert_eq!(config.get_results_template(),
-                       "/usr/share/super/vendor/results_template");
+                       PathBuf::from("/usr/share/super/vendor/results_template"));
         } else if cfg!(target_os = "macos") && Path::new("/usr/local/super").exists() {
             assert_eq!(config.get_apktool_file(),
-                       "/usr/local/super/vendor/apktool_2.2.0.jar");
+                       PathBuf::from("/usr/local/super/vendor/apktool_2.2.0.jar"));
             assert_eq!(config.get_dex2jar_folder(),
-                       "/usr/local/super/vendor/dex2jar-2.0");
+                       PathBuf::from("/usr/local/super/vendor/dex2jar-2.0"));
             assert_eq!(config.get_jd_cmd_file(),
-                       "/usr/local/super/vendor/jd-cmd.jar");
+                       PathBuf::from("/usr/local/super/vendor/jd-cmd.jar"));
             assert_eq!(config.get_results_template(),
-                       "/usr/local/super/vendor/results_template");
+                       PathBuf::from("/usr/local/super/vendor/results_template"));
         } else if cfg!(target_family = "windows") {
-            assert_eq!(config.get_apktool_file(), "vendor\\apktool_2.2.0.jar");
-            assert_eq!(config.get_dex2jar_folder(), "vendor\\dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(), "vendor\\jd-cmd.jar");
-            assert_eq!(config.get_results_template(), "vendor\\results_template");
+            assert_eq!(config.get_apktool_file(), PathBuf::from("vendor\\apktool_2.2.0.jar"));
+            assert_eq!(config.get_dex2jar_folder(), PathBuf::from("vendor\\dex2jar-2.0"));
+            assert_eq!(config.get_jd_cmd_file(), PathBuf::from("vendor\\jd-cmd.jar"));
+            assert_eq!(config.get_results_template(), PathBuf::from("vendor\\results_template"));
         } else {
-            assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
-            assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
-            assert_eq!(config.get_results_template(), "vendor/results_template");
+            assert_eq!(config.get_apktool_file(), PathBuf::from("vendor/apktool_2.2.0.jar"));
+            assert_eq!(config.get_dex2jar_folder(), PathBuf::from("vendor/dex2jar-2.0"));
+            assert_eq!(config.get_jd_cmd_file(), PathBuf::from("vendor/jd-cmd.jar"));
+            assert_eq!(config.get_results_template(), PathBuf::from("vendor/results_template"));
         }
         if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
-            assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+            assert_eq!(config.get_rules_json(), PathBuf::from("/etc/super/rules.json"));
         } else {
-            assert_eq!(config.get_rules_json(), "rules.json");
+            assert_eq!(config.get_rules_json(), PathBuf::from("rules.json"));
         }
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
@@ -798,20 +803,12 @@ mod tests {
         assert!(config.is_bench());
         assert!(config.is_open());
 
-        if file_exists(format!("{}/{}.apk",
-                               config.get_downloads_folder(),
-                               config.get_app_id())) {
-            fs::remove_file(format!("{}/{}.apk",
-                                    config.get_downloads_folder(),
-                                    config.get_app_id()))
-                .unwrap();
+        if config.get_apk_file().exists() {
+            fs::remove_file(config.get_apk_file()).unwrap();
         }
         assert!(!config.check());
 
-        fs::File::create(format!("{}/{}.apk",
-                                 config.get_downloads_folder(),
-                                 config.get_app_id()))
-            .unwrap();
+        fs::File::create(config.get_apk_file()).unwrap();
         assert!(config.check());
 
         while !file_exists("config.toml.sample") {
@@ -826,15 +823,12 @@ mod tests {
         error_string.push_str("The configuration was loaded, in order, from the following \
                                files:\n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file));
+            error_string.push_str(&format!("\t- {}\n", file.display()));
         }
         println!("{}", error_string);
         assert!(config.check());
 
-        fs::remove_file(format!("{}/{}.apk",
-                                config.get_downloads_folder(),
-                                config.get_app_id()))
-            .unwrap();
+        fs::remove_file(config.get_apk_file()).unwrap();
     }
 
     #[test]
@@ -844,18 +838,18 @@ mod tests {
 
         let config = Config::new("test_app", false, false, false, false, false).unwrap();
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), "downloads");
-        assert_eq!(config.get_dist_folder(), "dist");
-        assert_eq!(config.get_results_folder(), "results");
+        assert_eq!(config.get_downloads_folder(), PathBuf::from("downloads"));
+        assert_eq!(config.get_dist_folder(), PathBuf::from("dist"));
+        assert_eq!(config.get_results_folder(), PathBuf::from("results"));
         assert_eq!(config.get_apktool_file(),
-                   "/usr/share/super/vendor/apktool_2.2.0.jar");
+                   PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
-                   "/usr/share/super/vendor/dex2jar-2.0");
+                   PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"));
         assert_eq!(config.get_jd_cmd_file(),
-                   "/usr/share/super/vendor/jd-cmd.jar");
+                   PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"));
         assert_eq!(config.get_results_template(),
-                   "/usr/share/super/vendor/results_template");
-        assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+                   PathBuf::from("/usr/share/super/vendor/results_template"));
+        assert_eq!(config.get_rules_json(), PathBuf::from("/etc/super/rules.json"));
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \

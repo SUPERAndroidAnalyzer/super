@@ -85,7 +85,7 @@ fn main() {
         error_string.push_str("The configuration was loaded, in order, from the following \
                                files:\n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file));
+            error_string.push_str(&format!("\t- {}\n", file.display()));
         }
         print_error(error_string, verbose);
         exit(Error::Config.into());
@@ -196,9 +196,9 @@ fn main() {
         }
 
         if config.is_open() {
-            let report_path = format!("{}/{}/index.html",
-                                      config.get_results_folder(),
-                                      config.get_app_id());
+            let report_path = config.get_results_folder()
+			            .join(config.get_app_id())
+				    .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}", e),
                             config.is_verbose());
