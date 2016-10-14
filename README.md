@@ -60,6 +60,7 @@ USAGE:
 FLAGS:
         --bench      Show benchmarks for the analysis.
         --force      If you'd like to force the auditor to do everything from the beginning.
+        --open       Open the report in a browser once it is complete.
     -h, --help       Prints help information
     -q, --quiet      If you'd like a zen auditor that won't talk unless it's 100% necessary.
     -V, --version    Prints version information
