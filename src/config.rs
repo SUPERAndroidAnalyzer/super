@@ -638,34 +638,26 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
-        if cfg!(target_os = "linux") && Path::new("/usr/share/super").exists() {
-            assert_eq!(config.get_apktool_file(),
-                       Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(),
-                       Path::new("/usr/share/super/vendor/dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(),
-                       Path::new("/usr/share/super/vendor/jd-cmd.jar"));
-            assert_eq!(config.get_results_template(),
-                       Path::new("/usr/share/super/vendor/results_template"));
-        } else if cfg!(target_os = "macos") && Path::new("/usr/local/super").exists() {
-            assert_eq!(config.get_apktool_file(),
-                       Path::new("/usr/local/super/vendor/apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(),
-                       Path::new("/usr/local/super/vendor/dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(),
-                       Path::new("/usr/local/super/vendor/jd-cmd.jar"));
-            assert_eq!(config.get_results_template(),
-                       Path::new("/usr/local/super/vendor/results_template"));
+        let share_path = Path::new(if cfg!(target_os = "macos") {
+            "/usr/local/super"
+        } else if cfg!(target_family = "windows") {
+            ""
         } else {
-            assert_eq!(config.get_apktool_file(),
-                       Path::new("vendor").join("apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(),
-                       Path::new("vendor").join("dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(),
-                       Path::new("vendor").join("jd-cmd.jar"));
-            assert_eq!(config.get_results_template(),
-                       Path::new("vendor").join("results_template"));
-        }
+            "/usr/share/super"
+        });
+        let share_path = if share_path.exists() {
+            share_path
+        } else {
+            Path::new("")
+        };
+        assert_eq!(config.get_apktool_file(),
+                   share_path.join("vendor").join("apktool_2.2.0.jar"));
+        assert_eq!(config.get_dex2jar_folder(),
+                   share_path.join("vendor").join("dex2jar-2.0"));
+        assert_eq!(config.get_jd_cmd_file(),
+                   share_path.join("vendor").join("jd-cmd.jar"));
+        assert_eq!(config.get_results_template(),
+                   share_path.join("vendor").join("results_template"));
         if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
             assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         } else {
