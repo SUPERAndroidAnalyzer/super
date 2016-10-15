@@ -85,7 +85,7 @@ impl Config {
         config.bench = bench;
         config.open = open;
 
-        if Path::from("config.toml").exists() {
+        if Path::new("config.toml").exists() {
             try!(Config::load_from_file(&mut config, "config.toml", verbose));
             config.loaded_files.push(PathBuf::from("config.toml"));
         }
