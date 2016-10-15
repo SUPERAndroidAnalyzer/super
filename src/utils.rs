@@ -127,8 +127,6 @@ pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
 #[cfg(test)]
 mod test {
     use get_code;
-    use std::fs;
-    use std::fs::File;
 
     #[test]
     fn it_get_code() {

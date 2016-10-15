@@ -503,133 +503,8 @@ impl Config {
         }
         Ok(())
     }
-}
 
-impl Default for Config {
-    #[cfg(target_os = "linux")]
-    fn default() -> Config {
-        if Path::new("/usr/share/super").exists() {
-            Config {
-                app_package: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                open: false,
-                threads: 2,
-                downloads_folder: PathBuf::from("downloads"),
-                dist_folder: PathBuf::from("dist"),
-                results_folder: PathBuf::from("results"),
-                apktool_file: PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"),
-                results_template: PathBuf::from("/usr/share/super/vendor/results_template"),
-                rules_json: if Path::new("/etc/super").exists() {
-                    PathBuf::from("/etc/super/rules.json")
-                } else {
-                    PathBuf::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        } else {
-            Config {
-                app_package: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                open: false,
-                threads: 2,
-                downloads_folder: PathBuf::from("downloads"),
-                dist_folder: PathBuf::from("dist"),
-                results_folder: PathBuf::from("results"),
-                apktool_file: PathBuf::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
-                results_template: PathBuf::from("vendor/results_template"),
-                rules_json: if Path::new("/etc/super/rules.json").exists() {
-                    PathBuf::from("/etc/super/rules.json")
-                } else {
-                    PathBuf::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        }
-    }
-
-    #[cfg(target_os = "macos")]
-    fn default() -> Config {
-        if Path::new("/usr/local/super").exists() {
-            Config {
-                app_package: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                open: false,
-                threads: 2,
-                downloads_folder: PathBuf::from("downloads"),
-                dist_folder: PathBuf::from("dist"),
-                results_folder: PathBuf::from("results"),
-                apktool_file: PathBuf::from("/usr/local/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: PathBuf::from("/usr/local/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: PathBuf::from("/usr/local/super/vendor/jd-cmd.jar"),
-                results_template: PathBuf::from("/usr/local/super/vendor/results_template"),
-                rules_json: if Path::new("/etc/super").exists() {
-                    PathBuf::from("/etc/super/rules.json")
-                } else {
-                    PathBuf::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        } else {
-            Config {
-                app_package: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                open: false,
-                threads: 2,
-                downloads_folder: PathBuf::from("downloads"),
-                dist_folder: PathBuf::from("dist"),
-                results_folder: PathBuf::from("results"),
-                apktool_file: PathBuf::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: PathBuf::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: PathBuf::from("vendor/jd-cmd.jar"),
-                results_template: PathBuf::from("vendor/results_template"),
-                rules_json: if Path::new("/etc/super/rules.json").exists() {
-                    PathBuf::from("/etc/super/rules.json")
-                } else {
-                    PathBuf::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        }
-    }
-
-    #[cfg(target_family = "windows")]
-    fn default() -> Config {
+    fn local_default() -> Config {
         Config {
             app_package: String::new(),
             verbose: false,
@@ -641,18 +516,46 @@ impl Default for Config {
             downloads_folder: PathBuf::from("downloads"),
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
-            apktool_file: PathBuf::from("vendor\\apktool_2.2.0.jar"),
-            dex2jar_folder: PathBuf::from("vendor\\dex2jar-2.0"),
-            jd_cmd_file: PathBuf::from("vendor\\jd-cmd.jar"),
-            results_template: PathBuf::from("vendor\\results_template"),
+            apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
+            dex2jar_folder: Path::new("vendor").join("dex2jar-2.0"),
+            jd_cmd_file: Path::new("vendor").join("jd-cmd.jar"),
+            results_template: Path::new("vendor").join("results_template"),
             rules_json: PathBuf::from("rules.json"),
             unknown_permission: (Criticity::Low,
                                  String::from("Even if the application can create its own \
-                                               permissions, it's discouraged, since it can lead \
-                                               to missunderstanding between developers.")),
+                                               permissions, it's discouraged, since it can \
+                                               lead to missunderstanding between developers.")),
             permissions: BTreeSet::new(),
             loaded_files: Vec::new(),
         }
+    }
+}
+
+impl Default for Config {
+    #[cfg(target_family = "unix")]
+    fn default() -> Config {
+        let mut config = Config::local_default();
+        let etc_rules = PathBuf::from("/etc/super/rules.json");
+        if etc_rules.exists() {
+            config.rules_json = etc_rules;
+        }
+        let share_path = Path::new(if cfg!(target_os = "macos") {
+            "/usr/local/super"
+        } else {
+            "/usr/share/super"
+        });
+        if share_path.exists() {
+            config.apktool_file = share_path.join("vendor/apktool_2.2.0.jar");
+            config.dex2jar_folder = share_path.join("vendor/dex2jar-2.0");
+            config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
+            config.results_template = share_path.join("vendor/results_template");
+        }
+        config
+    }
+
+    #[cfg(target_family = "windows")]
+    fn default() -> Config {
+        Config::local_default()
     }
 }
 
@@ -719,9 +622,7 @@ mod tests {
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
-    use std::path::{Path, PathBuf};
-    use std::thread;
-    use std::time::Duration;
+    use std::path::Path;
 
     #[test]
     fn it_config() {
@@ -734,50 +635,41 @@ mod tests {
         assert!(!config.is_bench());
         assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), PathBuf::from("downloads"));
-        assert_eq!(config.get_dist_folder(), PathBuf::from("dist"));
-        assert_eq!(config.get_results_folder(), PathBuf::from("results"));
+        assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
+        assert_eq!(config.get_dist_folder(), Path::new("dist"));
+        assert_eq!(config.get_results_folder(), Path::new("results"));
         if cfg!(target_os = "linux") && Path::new("/usr/share/super").exists() {
             assert_eq!(config.get_apktool_file(),
-                       PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"));
+                       Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
             assert_eq!(config.get_dex2jar_folder(),
-                       PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"));
+                       Path::new("/usr/share/super/vendor/dex2jar-2.0"));
             assert_eq!(config.get_jd_cmd_file(),
-                       PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"));
+                       Path::new("/usr/share/super/vendor/jd-cmd.jar"));
             assert_eq!(config.get_results_template(),
-                       PathBuf::from("/usr/share/super/vendor/results_template"));
+                       Path::new("/usr/share/super/vendor/results_template"));
         } else if cfg!(target_os = "macos") && Path::new("/usr/local/super").exists() {
             assert_eq!(config.get_apktool_file(),
-                       PathBuf::from("/usr/local/super/vendor/apktool_2.2.0.jar"));
+                       Path::new("/usr/local/super/vendor/apktool_2.2.0.jar"));
             assert_eq!(config.get_dex2jar_folder(),
-                       PathBuf::from("/usr/local/super/vendor/dex2jar-2.0"));
+                       Path::new("/usr/local/super/vendor/dex2jar-2.0"));
             assert_eq!(config.get_jd_cmd_file(),
-                       PathBuf::from("/usr/local/super/vendor/jd-cmd.jar"));
+                       Path::new("/usr/local/super/vendor/jd-cmd.jar"));
             assert_eq!(config.get_results_template(),
-                       PathBuf::from("/usr/local/super/vendor/results_template"));
-        } else if cfg!(target_family = "windows") {
-            assert_eq!(config.get_apktool_file(),
-                       PathBuf::from("vendor\\apktool_2.2.0.jar"));
-            assert_eq!(config.get_dex2jar_folder(),
-                       PathBuf::from("vendor\\dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(),
-                       PathBuf::from("vendor\\jd-cmd.jar"));
-            assert_eq!(config.get_results_template(),
-                       PathBuf::from("vendor\\results_template"));
+                       Path::new("/usr/local/super/vendor/results_template"));
         } else {
             assert_eq!(config.get_apktool_file(),
-                       PathBuf::from("vendor/apktool_2.2.0.jar"));
+                       Path::new("vendor").join("apktool_2.2.0.jar"));
             assert_eq!(config.get_dex2jar_folder(),
-                       PathBuf::from("vendor/dex2jar-2.0"));
-            assert_eq!(config.get_jd_cmd_file(), PathBuf::from("vendor/jd-cmd.jar"));
+                       Path::new("vendor").join("dex2jar-2.0"));
+            assert_eq!(config.get_jd_cmd_file(),
+                       Path::new("vendor").join("jd-cmd.jar"));
             assert_eq!(config.get_results_template(),
-                       PathBuf::from("vendor/results_template"));
+                       Path::new("vendor").join("results_template"));
         }
         if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
-            assert_eq!(config.get_rules_json(),
-                       PathBuf::from("/etc/super/rules.json"));
+            assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         } else {
-            assert_eq!(config.get_rules_json(), PathBuf::from("rules.json"));
+            assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
@@ -814,12 +706,9 @@ mod tests {
         }
         assert!(!config.check());
 
-        fs::File::create(config.get_apk_file()).unwrap();
+        let _ = fs::File::create(config.get_apk_file()).unwrap();
         assert!(config.check());
 
-        while !Path::new("config.toml.sample").exists() {
-            thread::sleep(Duration::from_millis(50));
-        }
         let config = Config::new("test_app", false, false, false, false, false).unwrap();
         let mut error_string = String::from("Configuration errors were found:\n");
         for error in config.get_errors() {
@@ -839,24 +728,23 @@ mod tests {
 
     #[test]
     fn it_config_sample() {
-        fs::rename("config.toml", "config.toml.bk").unwrap();
-        fs::rename("config.toml.sample", "config.toml").unwrap();
+        let mut config = Config::default();
+        Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
+        config.set_app_package("test_app");
 
-        let config = Config::new("test_app", false, false, false, false, false).unwrap();
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), PathBuf::from("downloads"));
-        assert_eq!(config.get_dist_folder(), PathBuf::from("dist"));
-        assert_eq!(config.get_results_folder(), PathBuf::from("results"));
+        assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
+        assert_eq!(config.get_dist_folder(), Path::new("dist"));
+        assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_apktool_file(),
-                   PathBuf::from("/usr/share/super/vendor/apktool_2.2.0.jar"));
+                   Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
-                   PathBuf::from("/usr/share/super/vendor/dex2jar-2.0"));
+                   Path::new("/usr/share/super/vendor/dex2jar-2.0"));
         assert_eq!(config.get_jd_cmd_file(),
-                   PathBuf::from("/usr/share/super/vendor/jd-cmd.jar"));
+                   Path::new("/usr/share/super/vendor/jd-cmd.jar"));
         assert_eq!(config.get_results_template(),
-                   PathBuf::from("/usr/share/super/vendor/results_template"));
-        assert_eq!(config.get_rules_json(),
-                   PathBuf::from("/etc/super/rules.json"));
+                   Path::new("/usr/share/super/vendor/results_template"));
+        assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
@@ -872,8 +760,5 @@ mod tests {
                     The browser and other applications provide means to send data to the \
                     internet, so this permission is not required to send data to the internet. \
                     Check if the permission is actually needed.");
-
-        fs::rename("config.toml", "config.toml.sample").unwrap();
-        fs::rename("config.toml.bk", "config.toml").unwrap();
     }
 }

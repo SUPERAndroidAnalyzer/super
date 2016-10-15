@@ -1,5 +1,3 @@
-extern crate colored;
-
 use std::fs;
 use std::process::{Command, exit};
 
@@ -35,7 +33,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
     }
 
     let path = config.get_dist_folder()
-        .join(config.get_app_id())
+        .join(config.get_app_package())
         .join("original")
         .join("META-INF");
     let dir_iter = try!(fs::read_dir(&path));
@@ -132,7 +130,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 let vuln = Vulnerability::new(criticity,
                                               "Android Debug Certificate",
                                               description,
-                                              None as Option<&str>,
+                                              None::<&str>,
                                               None,
                                               None,
                                               None);
@@ -169,7 +167,7 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 let vuln = Vulnerability::new(criticity,
                                               "Expired certificate",
                                               description,
-                                              None as Option<&str>,
+                                              None::<&str>,
                                               None,
                                               None,
                                               None);
