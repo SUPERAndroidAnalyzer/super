@@ -17,7 +17,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
                   analyze it.")
     }
 
-    let manifest = match Manifest::load(config.get_dist_folder().join(config.get_app_id()),
+    let manifest = match Manifest::load(config.get_dist_folder().join(config.get_app_package()),
                                         config,
                                         results) {
         Ok(m) => {
@@ -39,11 +39,11 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
         }
     };
 
-    if manifest.get_package() != config.get_app_id() {
+    if manifest.get_package() != config.get_app_package() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              config.get_app_id(),
+                              config.get_app_package(),
                               manifest.get_package()),
                       config.is_verbose());
 

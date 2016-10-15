@@ -10,7 +10,7 @@ use {Error, Config, print_error, print_warning};
 use results::Benchmark;
 
 pub fn decompress(config: &Config) {
-    let path = config.get_dist_folder().join(config.get_app_id());
+    let path = config.get_dist_folder().join(config.get_app_package());
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
@@ -74,7 +74,7 @@ pub fn decompress(config: &Config) {
 }
 
 pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
-    if config.is_force() || !config.get_dist_folder().join(config.get_app_id()).exists() {
+    if config.is_force() || !config.get_dist_folder().join(config.get_app_package()).exists() {
         if config.is_verbose() {
             println!("");
             println!("To decompile the app, first we need to extract the {} file.",
@@ -117,7 +117,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
         };
 
         let mut out_file = match File::create(config.get_dist_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("classes.dex")) {
             Ok(f) => f,
             Err(e) => {
@@ -176,7 +176,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 
 fn dex_to_jar(config: &Config) {
     let classes = config.get_dist_folder()
-        .join(config.get_app_id())
+        .join(config.get_app_package())
         .join("classes.jar");
     let output = Command::new(config.get_dex2jar_folder()
             .join(if cfg!(target_family = "windows") {
@@ -185,7 +185,7 @@ fn dex_to_jar(config: &Config) {
                 "d2j-dex2jar.sh"
             }))
         .arg(config.get_dist_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("classes.dex"))
         .arg("-o")
         .arg(&classes)
@@ -226,14 +226,14 @@ fn dex_to_jar(config: &Config) {
 
 pub fn decompile(config: &Config) {
     let out_path = config.get_dist_folder()
-        .join(config.get_app_id())
+        .join(config.get_app_package())
         .join("classes");
     if config.is_force() || !out_path.exists() {
         let output = Command::new("java")
             .arg("-jar")
             .arg(config.get_jd_cmd_file())
             .arg(config.get_dist_folder()
-                .join(config.get_app_id())
+                .join(config.get_app_package())
                 .join("classes.jar"))
             .arg("-od")
             .arg(&out_path)

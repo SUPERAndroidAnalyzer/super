@@ -37,7 +37,7 @@ pub struct Results {
 
 impl Results {
     pub fn init(config: &Config) -> Option<Results> {
-        let path = config.get_results_folder().join(config.get_app_id());
+        let path = config.get_results_folder().join(config.get_app_package());
         if !fs::metadata(&path).is_ok() || config.is_force() {
             if fs::metadata(&path).is_ok() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -152,7 +152,7 @@ impl Results {
     }
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
-        let path = config.get_results_folder().join(config.get_app_id());
+        let path = config.get_results_folder().join(config.get_app_package());
         if !path.exists() || config.is_force() {
             if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -193,7 +193,7 @@ impl Results {
             println!("Starting JSON report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("results.json")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
@@ -252,7 +252,7 @@ impl Results {
             println!("Starting HTML report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("index.html")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
@@ -438,7 +438,7 @@ impl Results {
 
         // Copying JS and CSS files
         try!(copy_folder(config.get_results_template(),
-                         &config.get_results_folder().join(config.get_app_id())));
+                         &config.get_results_folder().join(config.get_app_package())));
 
         try!(self.generate_code_html_files(config));
 
@@ -547,7 +547,7 @@ impl Results {
         let menu = try!(self.generate_html_src_menu("", config));
 
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("src")
             .join("index.html")));
 
@@ -582,11 +582,11 @@ impl Results {
             return Ok(0);
         }
         let dir_iter = try!(fs::read_dir(config.get_dist_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join(path.as_ref())));
 
         try!(fs::create_dir_all(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("src")
             .join(path.as_ref())));
         let mut count = 0;
@@ -597,7 +597,7 @@ impl Results {
                 Err(e) => {
                     print_warning(format!("There was an error reading the directory {}: {}",
                                           config.get_dist_folder()
-                                              .join(config.get_app_id())
+                                              .join(config.get_app_package())
                                               .join(path.as_ref())
                                               .display(),
                                           e),
@@ -609,7 +609,7 @@ impl Results {
             match f.path().extension() {
                 Some(e) => {
                     if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
-                        let prefix = config.get_dist_folder().join(config.get_app_id());
+                        let prefix = config.get_dist_folder().join(config.get_app_package());
                         try!(self.generate_code_html_for(f.path().strip_prefix(&prefix).unwrap(),
                                                          config));
                         count += 1;
@@ -617,7 +617,7 @@ impl Results {
                 }
                 None => {
                     if f.path().is_dir() {
-                        let prefix = config.get_dist_folder().join(config.get_app_id());
+                        let prefix = config.get_dist_folder().join(config.get_app_package());
 
                         if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
                             let f_count = try!(self.generate_code_html_folder(f.path()
@@ -634,7 +634,7 @@ impl Results {
         }
         if count == 0 {
             try!(fs::remove_dir(config.get_results_folder()
-                .join(config.get_app_id())
+                .join(config.get_app_package())
                 .join("src")
                 .join(path)));
         }
@@ -647,7 +647,7 @@ impl Results {
                                               config: &Config)
                                               -> Result<String> {
         let iter = try!(fs::read_dir(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("src")
             .join(dir_path.as_ref())));
         let mut menu = String::new();
@@ -686,7 +686,7 @@ impl Results {
                             None => String::new(),
                         };
                         let prefix = config.get_results_folder()
-                            .join(config.get_app_id())
+                            .join(config.get_app_package())
                             .join("src");
                         let submenu =
                             match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
@@ -728,10 +728,10 @@ impl Results {
 
     fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
         let mut f_in = try!(File::open(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join(path.as_ref())));
         let mut f_out = try!(File::create(config.get_results_folder()
-            .join(config.get_app_id())
+            .join(config.get_app_package())
             .join("src")
             .join(path.as_ref())));
 

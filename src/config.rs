@@ -20,7 +20,7 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 
 #[derive(Debug)]
 pub struct Config {
-    app_id: String,
+    app_package: String,
     verbose: bool,
     quiet: bool,
     force: bool,
@@ -42,7 +42,7 @@ pub struct Config {
 
 impl Config {
     #[cfg(target_family = "unix")]
-    pub fn new<S: AsRef<str>>(app_id: S,
+    pub fn new<S: AsRef<str>>(app_package: S,
                               verbose: bool,
                               quiet: bool,
                               force: bool,
@@ -50,7 +50,7 @@ impl Config {
                               open: bool)
                               -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_id = String::from(app_id.as_ref());
+        config.app_package = String::from(app_package.as_ref());
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -70,7 +70,7 @@ impl Config {
     }
 
     #[cfg(target_family = "windows")]
-    pub fn new<S: AsRef<str>>(app_id: S,
+    pub fn new<S: AsRef<str>>(app_package: S,
                               verbose: bool,
                               quiet: bool,
                               force: bool,
@@ -78,7 +78,7 @@ impl Config {
                               open: bool)
                               -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_id = String::from(app_id.as_ref());
+        config.app_package = String::from(app_package.as_ref());
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -137,16 +137,16 @@ impl Config {
         self.loaded_files.iter()
     }
 
-    pub fn get_app_id(&self) -> &str {
-        self.app_id.as_str()
+    pub fn get_app_package(&self) -> &str {
+        &self.app_package
     }
 
-    pub fn set_app_id<S: AsRef<str>>(&mut self, app_id: S) {
-        self.app_id = String::from(app_id.as_ref());
+    pub fn set_app_package<S: AsRef<str>>(&mut self, app_package: S) {
+        self.app_package = app_package.as_ref().to_owned();
     }
 
     pub fn get_apk_file(&self) -> PathBuf {
-        self.downloads_folder.join(format!("{}.apk", self.app_id))
+        self.downloads_folder.join(format!("{}.apk", self.app_package))
     }
 
     pub fn is_verbose(&self) -> bool {
@@ -510,7 +510,7 @@ impl Default for Config {
     fn default() -> Config {
         if Path::new("/usr/share/super").exists() {
             Config {
-                app_id: String::new(),
+                app_package: String::new(),
                 verbose: false,
                 quiet: false,
                 force: false,
@@ -538,7 +538,7 @@ impl Default for Config {
             }
         } else {
             Config {
-                app_id: String::new(),
+                app_package: String::new(),
                 verbose: false,
                 quiet: false,
                 force: false,
@@ -571,7 +571,7 @@ impl Default for Config {
     fn default() -> Config {
         if Path::new("/usr/local/super").exists() {
             Config {
-                app_id: String::new(),
+                app_package: String::new(),
                 verbose: false,
                 quiet: false,
                 force: false,
@@ -599,7 +599,7 @@ impl Default for Config {
             }
         } else {
             Config {
-                app_id: String::new(),
+                app_package: String::new(),
                 verbose: false,
                 quiet: false,
                 force: false,
@@ -631,7 +631,7 @@ impl Default for Config {
     #[cfg(target_family = "windows")]
     fn default() -> Config {
         Config {
-            app_id: String::new(),
+            app_package: String::new(),
             verbose: false,
             quiet: false,
             force: false,
@@ -727,7 +727,7 @@ mod tests {
     fn it_config() {
         let mut config: Config = Default::default();
 
-        assert_eq!(config.get_app_id(), "");
+        assert_eq!(config.get_app_package(), "");
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
         assert!(!config.is_force());
@@ -795,14 +795,14 @@ mod tests {
             fs::create_dir(config.get_results_folder()).unwrap();
         }
 
-        config.set_app_id("test_app");
+        config.set_app_package("test_app");
         config.set_verbose(true);
         config.set_quiet(true);
         config.set_force(true);
         config.set_bench(true);
         config.set_open(true);
 
-        assert_eq!(config.get_app_id(), "test_app");
+        assert_eq!(config.get_app_package(), "test_app");
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());

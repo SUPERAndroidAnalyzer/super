@@ -55,20 +55,20 @@ static BANNER: &'static str = include_str!("banner.txt");
 fn main() {
     let matches = get_help_menu();
 
-    let app_id = matches.value_of("package").unwrap();
+    let app_package = matches.value_of("package").unwrap();
     let verbose = matches.is_present("verbose");
     let quiet = matches.is_present("quiet");
     let force = matches.is_present("force");
     let bench = matches.is_present("bench");
     let open = matches.is_present("open");
-    let config = match Config::new(app_id, verbose, quiet, force, bench, open) {
+    let config = match Config::new(app_package, verbose, quiet, force, bench, open) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
                                   e),
                           verbose);
             let mut c: Config = Default::default();
-            c.set_app_id(app_id);
+            c.set_app_package(app_package);
             c.set_verbose(verbose);
             c.set_quiet(quiet);
             c.set_force(force);
@@ -199,7 +199,7 @@ fn main() {
 
         if config.is_open() {
             let report_path = config.get_results_folder()
-                .join(config.get_app_id())
+                .join(config.get_app_package())
                 .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}", e),
