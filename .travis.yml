@@ -38,7 +38,7 @@ script:
       travis-cargo build --features beta &&
       travis-cargo test --features beta &&
       travis-cargo build --features unstable &&
-      travis-cargo test --features unstable &&
+      travis-cargo test --features unstable
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
@@ -47,7 +47,7 @@ script:
       cargo build --features beta &&
       cargo test --features beta &&
       cargo build --features unstable &&
-      cargo test --features unstable &&
+      cargo test --features unstable
       fi
 
 # Send coverage reports and upload docs
