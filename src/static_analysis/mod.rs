@@ -1,3 +1,8 @@
+//! Static analysis for manifest, certificate and code files.
+//!
+//! The static analysis of the application's source files is used to search for vulnearable
+//! code, settings and any other form of implementation that might be used as an exploit.
+
 pub mod manifest;
 #[cfg(feature = "certificate")]
 pub mod certificate;
@@ -12,6 +17,9 @@ use self::code::*;
 use results::{Results, Benchmark};
 use Config;
 
+/// Runs the analysis for manifest, certificate and code files.
+///
+/// * Benchmarking support.
 pub fn static_analysis(config: &Config, results: &mut Results) {
     if config.is_verbose() {
         println!("It's time to analyze the application. First, a static analysis will be \
@@ -20,6 +28,7 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     }
 
     let manifest_start = Instant::now();
+    // Run analysis for manifest file.
     let manifest = manifest_analysis(config, results);
     if config.is_bench() {
         results.add_benchmark(Benchmark::new("Manifest analysis", manifest_start.elapsed()));
@@ -27,6 +36,7 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
 
     if cfg!(feature = "certificate") {
         let certificate_start = Instant::now();
+        // Run analysis for cerificate file.
         let _certificate = certificate_analysis(config, results);
         if config.is_bench() {
             results.add_benchmark(Benchmark::new("Certificate analysis",
@@ -34,6 +44,7 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
         }
     }
 
+    // Run analysis for source code files.
     code_analysis(manifest, config, results);
 }
 
