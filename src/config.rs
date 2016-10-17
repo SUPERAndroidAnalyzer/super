@@ -1,6 +1,6 @@
-//! # SUPER config module
+//! Configuration module.
 //!
-//! Handles and configures the initial settings and parameters for SUPER.
+//! Handles and configures the initial settings and variables needed to run the program.
 
 use std::{u8, fs};
 use std::path::{Path, PathBuf};
@@ -49,15 +49,15 @@ pub struct Config {
     dist_folder: PathBuf,
     /// Folder to store the results of analysis.
     results_folder: PathBuf,
-    /// Path to the Apktool binary.
+    /// Path to the _Apktool_ binary.
     apktool_file: PathBuf,
-    /// Path to the Dex2jar binaries.
+    /// Path to the _Dex2jar_ binaries.
     dex2jar_folder: PathBuf,
-    /// Path to the JD_CMD binary.
+    /// Path to the _JD\_CMD_ binary.
     jd_cmd_file: PathBuf,
     /// Path to the results template file.
     results_template: PathBuf,
-    /// Path to the rules.json file.
+    /// Path to the `rules.json` file.
     rules_json: PathBuf,
     /// Represents an unknow permission.
     unknown_permission: (Criticity, String),
@@ -157,7 +157,7 @@ impl Config {
         self.app_package = app_package.as_ref().to_owned();
     }
 
-    /// Returns the path to the `.apk`.
+    /// Returns the path to the _.apk_.
     pub fn get_apk_file(&self) -> PathBuf {
         self.downloads_folder.join(format!("{}.apk", self.app_package))
     }
@@ -217,32 +217,32 @@ impl Config {
         self.threads
     }
 
-    /// Returns the `downloads_folder` field.
+    /// Returns the path to the `downloads_folder`.
     pub fn get_downloads_folder(&self) -> &Path {
         &self.downloads_folder
     }
 
-    /// Returns the `dist_folder` field.
+    /// Returns the path to the `dist_folder`.
     pub fn get_dist_folder(&self) -> &Path {
         &self.dist_folder
     }
 
-    /// Returns the `results_folder` field.
+    /// Returns the path to the `results_folder`.
     pub fn get_results_folder(&self) -> &Path {
         &self.results_folder
     }
 
-    /// Returns the `apktool_file` field.
+    /// Returns the path to the`apktool_file`.
     pub fn get_apktool_file(&self) -> &Path {
         &self.apktool_file
     }
 
-    /// Returns the `dex2jar_folder` field.
+    /// Returns the path to the `dex2jar_folder`.
     pub fn get_dex2jar_folder(&self) -> &Path {
         &self.dex2jar_folder
     }
 
-    /// Returns the `jd_cmd_file` field.
+    /// Returns the path to the `jd_cmd_file`.
     pub fn get_jd_cmd_file(&self) -> &Path {
         &self.jd_cmd_file
     }
@@ -252,7 +252,7 @@ impl Config {
         &self.results_template
     }
 
-    /// Returns the `rules_json` field.
+    /// Returns the path to the `rules_json`.
     pub fn get_rules_json(&self) -> &Path {
         &self.rules_json
     }
@@ -267,7 +267,7 @@ impl Config {
         self.unknown_permission.1.as_str()
     }
 
-    /// Returns the `permissions` field.
+    /// Returns the loaded `permissions`.
     pub fn get_permissions(&self) -> Iter<PermissionConfig> {
         self.permissions.iter()
     }
@@ -278,7 +278,7 @@ impl Config {
         let mut toml = String::new();
         let _ = try!(f.read_to_string(&mut toml));
 
-        // Parse the configuration file
+        // Parse the configuration file.
         let mut parser = Parser::new(toml.as_str());
         let toml = match parser.parse() {
             Some(t) => t,
@@ -290,7 +290,7 @@ impl Config {
             }
         };
 
-        // Read the values from the configuration file
+        // Read the values from the configuration file.
         for (key, value) in toml {
             match key.as_str() {
                 "threads" => {
@@ -649,22 +649,22 @@ impl PermissionConfig {
         }
     }
 
-    /// Returns the `permission` field.
+    /// Returns the enum that represents the `permission`.
     pub fn get_permission(&self) -> Permission {
         self.permission
     }
 
-    /// Returns the `criticity` field.
+    /// Returns the permission's `criticity`.
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
     }
 
-    /// Returns the `label` field.
+    /// Returns the permission's `label`.
     pub fn get_label(&self) -> &str {
         self.label.as_str()
     }
 
-    /// Returns the `description` field.
+    /// Returns the permission's `description`.
     pub fn get_description(&self) -> &str {
         self.description.as_str()
     }
@@ -678,13 +678,13 @@ mod tests {
     use std::fs;
     use std::path::Path;
 
-    /// Test for the default configuration function
+    /// Test for the default configuration function.
     #[test]
     fn it_config() {
-        // Create config object
+        // Create config object.
         let mut config: Config = Default::default();
 
-        // Check that the properties of the config object are correct
+        // Check that the properties of the config object are correct.
         assert_eq!(config.get_app_package(), "");
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
@@ -736,7 +736,7 @@ mod tests {
             fs::create_dir(config.get_results_folder()).unwrap();
         }
 
-        // Change properties
+        // Change properties.
         config.set_app_package("test_app");
         config.set_verbose(true);
         config.set_quiet(true);
@@ -744,7 +744,7 @@ mod tests {
         config.set_bench(true);
         config.set_open(true);
 
-        // Check that the new properties are correct
+        // Check that the new properties are correct.
         assert_eq!(config.get_app_package(), "test_app");
         assert!(config.is_verbose());
         assert!(config.is_quiet());
@@ -777,15 +777,15 @@ mod tests {
         fs::remove_file(config.get_apk_file()).unwrap();
     }
 
-    /// Test for the `config.toml.sample` sample configuration file
+    /// Test for the `config.toml.sample` sample configuration file.
     #[test]
     fn it_config_sample() {
-        // Create config object
+        // Create config object.
         let mut config = Config::default();
         Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
         config.set_app_package("test_app");
 
-        // Check that the properties of the config object are correct
+        // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);
         assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
