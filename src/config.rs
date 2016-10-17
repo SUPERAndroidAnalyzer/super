@@ -68,8 +68,7 @@ pub struct Config {
 }
 
 impl Config {
-    /// Creates a new `Config` in Unix systems.
-    #[cfg(target_family = "unix")]
+    /// Creates a new `Config` struct.
     pub fn new<S: AsRef<str>>(app_package: S,
                               verbose: bool,
                               quiet: bool,
@@ -78,45 +77,24 @@ impl Config {
                               open: bool)
                               -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_package = String::from(app_package.as_ref());
+        config.app_package = app_package.as_ref().to_owned();
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
         config.bench = bench;
         config.open = open;
 
-        if Path::new("/etc/config.toml").exists() {
-            try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
-            config.loaded_files.push(PathBuf::from("/etc/config.toml"));
+        if cfg!(target_family = "unix") {
+            let config_path = PathBuf::from("/etc/config.toml");
+            if config_path.exists() {
+                try!(Config::load_from_file(&mut config, &config_path, verbose));
+                config.loaded_files.push(config_path);
+            }
         }
-        if Path::new("./config.toml").exists() {
-            try!(Config::load_from_file(&mut config, "./config.toml", verbose));
-            config.loaded_files.push(PathBuf::from("./config.toml"));
-        }
-
-        Ok(config)
-    }
-
-    /// Creates a new `Config` in Windows systems.
-    #[cfg(target_family = "windows")]
-    pub fn new<S: AsRef<str>>(app_package: S,
-                              verbose: bool,
-                              quiet: bool,
-                              force: bool,
-                              bench: bool,
-                              open: bool)
-                              -> Result<Config> {
-        let mut config: Config = Default::default();
-        config.app_package = String::from(app_package.as_ref());
-        config.verbose = verbose;
-        config.quiet = quiet;
-        config.force = force;
-        config.bench = bench;
-        config.open = open;
-
-        if Path::new("config.toml").exists() {
-            try!(Config::load_from_file(&mut config, "config.toml", verbose));
-            config.loaded_files.push(PathBuf::from("config.toml"));
+        let config_path = PathBuf::from("config.toml");
+        if config_path.exists() {
+            try!(Config::load_from_file(&mut config, &config_path, verbose));
+            config.loaded_files.push(config_path);
         }
 
         Ok(config)
@@ -706,7 +684,7 @@ mod tests {
         // Create config object
         let mut config: Config = Default::default();
 
-        //Check that the properties of the config object are correct
+        // Check that the properties of the config object are correct
         assert_eq!(config.get_app_package(), "");
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
@@ -802,12 +780,12 @@ mod tests {
     /// Test for the `config.toml.sample` sample configuration file
     #[test]
     fn it_config_sample() {
-        //Create config object
+        // Create config object
         let mut config = Config::default();
         Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
         config.set_app_package("test_app");
 
-        //Check that the properties of the config object are correct
+        // Check that the properties of the config object are correct
         assert_eq!(config.get_threads(), 2);
         assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
