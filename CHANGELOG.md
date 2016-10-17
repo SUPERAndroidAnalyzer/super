@@ -9,19 +9,19 @@
  - Certificate analysis (Certificate validity checks)
 
  - Code analysis (37 rules for checking the source code)
-   - SQLi
-   - XSS
-   - URL Disclosure
-   - Weak algorithms
-   - Insecure WebViews
-   - Generic exceptions
-   - Root detection
-   - ...
+    - SQLi
+    - XSS
+    - URL Disclosure
+    - Weak algorithms
+    - Insecure WebViews
+    - Generic exceptions
+    - Root detection
+    - ...
 
  - HTML and JSON report generation
 
  - Classification of vulnerabilities (Critical, High, Medium, Low, Info)
 
- - Application related info 
+ - Application related info
 
  - File hashing
