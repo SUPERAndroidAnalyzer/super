@@ -339,7 +339,7 @@ impl Results {
         try!(f.write_all(&format!("<h3>Total vulnerabilities found: {}</h3>", total_vuln)
             .into_bytes()));
         try!(f.write_all(b"<ul>"));
-        if self.critical.len() == 0 {
+        if self.critical.is_empty() {
             try!(f.write_all(b"<li>Critical: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span> <a \
@@ -347,7 +347,7 @@ impl Results {
                                       self.critical.len())
                 .into_bytes()));
         }
-        if self.high.len() == 0 {
+        if self.high.is_empty() {
             try!(f.write_all(b"<li>High: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span> <a \
@@ -355,7 +355,7 @@ impl Results {
                                       self.high.len())
                 .into_bytes()));
         }
-        if self.medium.len() == 0 {
+        if self.medium.is_empty() {
             try!(f.write_all(b"<li>Medium: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span> <a \
@@ -363,7 +363,7 @@ impl Results {
                                       self.medium.len())
                 .into_bytes()));
         }
-        if self.low.len() == 0 {
+        if self.low.is_empty() {
             try!(f.write_all(b"<li>Low: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span> <a href=\"#low\" \
@@ -371,7 +371,7 @@ impl Results {
                                       self.low.len())
                 .into_bytes()));
         }
-        if self.warnings.len() == 0 {
+        if self.warnings.is_empty() {
             try!(f.write_all(b"<li>Warnings: 0</li>"));
         } else {
             try!(f.write_all(&format!("<li>Warnings: <span class=\"warnings\">{}</span> <a \
@@ -383,23 +383,23 @@ impl Results {
 
         try!(f.write_all(b"<h2>Vulnerabilities:</h2>"));
 
-        if self.critical.len() > 0 {
+        if !self.critical.is_empty() {
             try!(self.print_html_vuln_set(&mut f, &self.critical, Criticity::Critical))
         }
 
-        if self.high.len() > 0 {
+        if !self.high.is_empty() {
             try!(self.print_html_vuln_set(&mut f, &self.high, Criticity::High))
         }
 
-        if self.medium.len() > 0 {
+        if !self.medium.is_empty() {
             try!(self.print_html_vuln_set(&mut f, &self.medium, Criticity::Medium))
         }
 
-        if self.low.len() > 0 {
+        if !self.low.is_empty() {
             try!(self.print_html_vuln_set(&mut f, &self.low, Criticity::Low))
         }
 
-        if self.warnings.len() > 0 {
+        if !self.warnings.is_empty() {
             try!(self.print_html_vuln_set(&mut f, &self.warnings, Criticity::Warning))
         }
         try!(f.write_all(b"</section>"));

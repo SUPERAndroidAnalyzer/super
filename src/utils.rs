@@ -101,15 +101,9 @@ pub fn get_string(label: &str, config: &Config) -> Result<String> {
     for e in parser {
         match e {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                match name.local_name.as_str() {
-                    "string" => {
-                        for attr in attributes {
-                            if attr.name.local_name == "name" && attr.value == label {
-                                found = true;
-                            }
-                        }
-                    }
-                    _ => {}
+                if let "string" = name.local_name.as_str() {
+                    found |= attributes.iter().any(|attr|
+                        attr.name.local_name == "name" && attr.value == label);
                 }
             }
             Ok(XmlEvent::Characters(data)) => {

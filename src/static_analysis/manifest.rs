@@ -361,41 +361,38 @@ impl Manifest {
                         }
                         "uses-permission" => {
                             for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "name" => {
-                                        let permission = match Permission::from_str(attr.value
-                                            .as_str()) {
-                                            Ok(p) => p,
-                                            Err(_) => {
-                                                let line = get_line(manifest.get_code(),
-                                                                    attr.value.as_str())
-                                                    .ok();
-                                                let code = match line {
-                                                    Some(l) => {
-                                                        Some(get_code(manifest.get_code(), l, l))
-                                                    }
-                                                    None => None,
-                                                };
-
-                                                let vuln = Vulnerability::new(
-                                                    config.get_unknown_permission_criticity(),
-                                                    "Unknown permission",
-                                                    config.get_unknown_permission_description(),
-                                                    Some("AndroidManifest.xml"), line, line, code);
-                                                results.add_vulnerability(vuln);
-
-                                                if config.is_verbose() {
-                                                    print_vulnerability(
-                                                        config.get_unknown_permission_description(),
-                                                        config.get_unknown_permission_criticity());
+                                if let "name" = attr.name.local_name.as_str() {
+                                    let permission = match Permission::from_str(attr.value
+                                        .as_str()) {
+                                        Ok(p) => p,
+                                        Err(_) => {
+                                            let line = get_line(manifest.get_code(),
+                                                                attr.value.as_str())
+                                                .ok();
+                                            let code = match line {
+                                                Some(l) => {
+                                                    Some(get_code(manifest.get_code(), l, l))
                                                 }
-                                                break;
+                                                None => None,
+                                            };
+
+                                            let vuln = Vulnerability::new(
+                                                config.get_unknown_permission_criticity(),
+                                                "Unknown permission",
+                                                config.get_unknown_permission_description(),
+                                                Some("AndroidManifest.xml"), line, line, code);
+                                            results.add_vulnerability(vuln);
+
+                                            if config.is_verbose() {
+                                                print_vulnerability(
+                                                    config.get_unknown_permission_description(),
+                                                    config.get_unknown_permission_criticity());
                                             }
-                                        };
-                                        manifest.get_mut_permission_checklist()
-                                            .set_needs_permission(permission);
-                                    }
-                                    _ => {}
+                                            break;
+                                        }
+                                    };
+                                    manifest.get_mut_permission_checklist()
+                                        .set_needs_permission(permission);
                                 }
                             }
                         }
