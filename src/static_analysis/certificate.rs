@@ -10,7 +10,7 @@ use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_w
 use results::{Results, Vulnerability};
 
 fn parse_month(month_str: &str) -> u32 {
-    let month_number = match month_str {
+    match month_str {
         "Jan" => 1,
         "Feb" => 2,
         "Mar" => 3,
@@ -24,9 +24,7 @@ fn parse_month(month_str: &str) -> u32 {
         "Nov" => 11,
         "Dec" => 12,
         _ => 0,
-    };
-
-    month_number
+    }
 }
 
 pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()> {
@@ -110,13 +108,13 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
             let mut after = String::new();
             for line in String::from_utf8_lossy(&cmd).lines() {
                 if line.contains("Issuer:") {
-                    issuer = String::from(line.clone());
+                    issuer = String::from(line);
                 }
                 if line.contains("Subject:") {
-                    subject = String::from(line.clone());
+                    subject = String::from(line);
                 }
                 if line.contains("Not After :") {
-                    after = String::from(line.clone());
+                    after = String::from(line);
                 }
             }
 

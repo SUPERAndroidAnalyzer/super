@@ -144,7 +144,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
 
 fn analyze_file<P: AsRef<Path>>(path: P,
                                 dist_folder: P,
-                                rules: &Vec<Rule>,
+                                rules: &[Rule],
                                 manifest: &Option<Manifest>,
                                 results: &Mutex<Vec<Vulnerability>>,
                                 verbose: bool)
@@ -443,8 +443,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
-                    list.push(match p {
-                        &Value::String(ref p) => {
+                    list.push(match *p {
+                        Value::String(ref p) => {
                             match Permission::from_str(p) {
                                 Ok(p) => p,
                                 Err(_) => {
@@ -498,8 +498,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
 
                 let mut capture_names = regex.capture_names();
-                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc2").is_some() &&
-                   capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
+                if capture_names.any(|c| c.map_or(false, |r| r == "rc2")) &&
+                   !capture_names.any(|c| c.map_or(false, |r| r == "fc1")) {
                     print_warning("You must have a capture group named fc1 to use the capture \
                                    fc2.",
                                   config.is_verbose());
@@ -557,8 +557,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for r in v {
-                    list.push(match r {
-                        &Value::String(ref r) => {
+                    list.push(match *r {
+                        Value::String(ref r) => {
                             match Regex::new(r) {
                                 Ok(r) => r,
                                 Err(e) => {

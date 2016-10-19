@@ -117,26 +117,20 @@ impl PartialOrd for Vulnerability {
             Some(Ordering::Less)
         } else if self.criticity > other.criticity {
             Some(Ordering::Greater)
+        } else if self.file < other.file {
+            Some(Ordering::Less)
+        } else if self.file > other.file {
+            Some(Ordering::Greater)
+        } else if self.start_line < other.start_line {
+            Some(Ordering::Less)
+        } else if self.start_line > other.start_line {
+            Some(Ordering::Greater)
+        } else if self.name < other.name {
+            Some(Ordering::Less)
+        } else if self.name > other.name {
+            Some(Ordering::Greater)
         } else {
-            if self.file < other.file {
-                Some(Ordering::Less)
-            } else if self.file > other.file {
-                Some(Ordering::Greater)
-            } else {
-                if self.start_line < other.start_line {
-                    Some(Ordering::Less)
-                } else if self.start_line > other.start_line {
-                    Some(Ordering::Greater)
-                } else {
-                    if self.name < other.name {
-                        Some(Ordering::Less)
-                    } else if self.name > other.name {
-                        Some(Ordering::Greater)
-                    } else {
-                        Some(Ordering::Equal)
-                    }
-                }
-            }
+            Some(Ordering::Equal)
         }
     }
 }

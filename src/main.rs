@@ -129,8 +129,8 @@ fn main() {
 
     if let Some(mut results) = Results::init(&config) {
         if config.is_bench() {
-            while benchmarks.len() > 0 {
-                results.add_benchmark(benchmarks.remove(0));
+            for benchmark in benchmarks {
+                results.add_benchmark(benchmark);
             }
         }
 
