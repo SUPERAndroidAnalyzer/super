@@ -1,5 +1,5 @@
 [{
-    "regex": "(?:(?:(?:ftp|http)s?:)?\/\/)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
+    "regex": "(?:(?:ftp|http)s?:\/\/|www\\.)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
     "whitelist": [
         "schemas.android.com",
         "www.w3.org",
@@ -12,7 +12,7 @@
         "www.googleapis.com/auth",
         "market://details",
         "developers.facebook.com/docs",
-        "content://"
+        "content://.*"
     ],
     "label": "URL Disclosure",
     "description": "The decompilation of the source code could lead to the disclosure of private URLs.",
