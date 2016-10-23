@@ -315,22 +315,14 @@ impl StdError for Error {
 
 #[derive(Debug)]
 pub struct JSONError {
-    code: JSONErrorCode,
     description: String,
-    line: usize,
-    column: usize,
 }
 
 impl JSONError {
     fn new(code: JSONErrorCode, line: usize, column: usize) -> JSONError {
-        let desc = format!("{:?} at line {} column {}", code, line, column);
-        JSONError {
-            code: code,
-            description: desc,
-            line: line,
-            column: column,
-        }
+        JSONError { description: format!("{:?} at line {} column {}", code, line, column) }
     }
+
     fn description(&self) -> &str {
         self.description.as_str()
     }

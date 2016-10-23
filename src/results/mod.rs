@@ -727,13 +727,15 @@ impl Results {
     }
 
     fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
-        let mut f_in = try!(File::open(config.get_results_folder()
+        let mut f_in = try!(File::open(config.get_dist_folder()
             .join(config.get_app_package())
             .join(path.as_ref())));
-        let mut f_out = try!(File::create(config.get_results_folder()
-            .join(config.get_app_package())
-            .join("src")
-            .join(path.as_ref())));
+        let mut f_out = try!(File::create(format!("{}.html",
+                                                  config.get_results_folder()
+                                                      .join(config.get_app_package())
+                                                      .join("src")
+                                                      .join(path.as_ref())
+                                                      .display())));
 
         let mut code = String::new();
         let _ = try!(f_in.read_to_string(&mut code));

@@ -1,3 +1,7 @@
+//! Decompilation module.
+//!
+//! Handles the extraction, decompression and  decompilation of _.apks_
+
 use std::fs;
 use std::fs::File;
 use std::time::Instant;
@@ -9,6 +13,7 @@ use zip::ZipArchive;
 use {Error, Config, print_error, print_warning};
 use results::Benchmark;
 
+/// Decompresses the application using _Apktool_.
 pub fn decompress(config: &Config) {
     let path = config.get_dist_folder().join(config.get_app_package());
     if !path.exists() || config.is_force() {
@@ -30,6 +35,11 @@ pub fn decompress(config: &Config) {
             println!("Decompressing the application…");
         }
 
+        // Command to decompress the .apk.
+        // d to decode
+        // -s to skip the disassembly of .dex files
+        // "-o path" to specify an output directory
+        // -f to force overwritting existing files
         let output = Command::new("java")
             .arg("-jar")
             .arg(config.get_apktool_file())
@@ -73,6 +83,7 @@ pub fn decompress(config: &Config) {
     }
 }
 
+/// Extracts the _.dex_ files.
 pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
     if config.is_force() || !config.get_dist_folder().join(config.get_app_package()).exists() {
         if config.is_verbose() {
@@ -83,6 +94,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 
         let start_time = Instant::now();
 
+        // Command to extract the .dex files.
         let zip = ZipArchive::new(match File::open(config.get_apk_file()) {
             Ok(f) => f,
             Err(e) => {
@@ -103,6 +115,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
             exit(Error::Unknown.into());
         }
 
+        // Obtaining the clases.dex file.
         let mut zip = zip.unwrap();
         let mut dex_file = match zip.by_name("classes.dex") {
             Ok(f) => f,
@@ -116,6 +129,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
             }
         };
 
+        // Placing the classes.dex file into the dist_folder.
         let mut out_file = match File::create(config.get_dist_folder()
             .join(config.get_app_package())
             .join("classes.dex")) {
@@ -129,6 +143,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
             }
         };
 
+        // Reading the classes.dex file.
         let mut bytes = Vec::with_capacity(dex_file.size() as usize);
         if let Err(e) = dex_file.read_to_end(&mut bytes) {
             print_error(format!("There was an error while reading classes.dex file from the {}. \
@@ -163,7 +178,8 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
         }
 
         let dex_jar_time = Instant::now();
-        // Converting the dex to jar
+
+        // Converting the .dex to .jar.
         dex_to_jar(config);
 
         benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
@@ -174,10 +190,14 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
     }
 }
 
+/// Converts _.dex_ files to _.jar_ using _Dex2jar_.
 fn dex_to_jar(config: &Config) {
     let classes = config.get_dist_folder()
         .join(config.get_app_package())
         .join("classes.jar");
+
+    // Command to convert .dex to .jar. using dex2jar.
+    // "-o path" to specify an output file
     let output = Command::new(config.get_dex2jar_folder()
             .join(if cfg!(target_family = "windows") {
                 "d2j-dex2jar.bat"
@@ -224,11 +244,14 @@ fn dex_to_jar(config: &Config) {
     }
 }
 
+/// Decompiles the application using _jd\_cmd_.
 pub fn decompile(config: &Config) {
     let out_path = config.get_dist_folder()
         .join(config.get_app_package())
         .join("classes");
     if config.is_force() || !out_path.exists() {
+        // Command to decompile the application using jd_cmd.
+        // "-od path" to specify an output directory
         let output = Command::new("java")
             .arg("-jar")
             .arg(config.get_jd_cmd_file())
