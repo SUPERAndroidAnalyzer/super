@@ -1,3 +1,31 @@
+# SUPER 0.2.0
+
+- Features
+
+ - Installation package for Mac OS
+
+ - Line highlighting in found vulnerabilities
+
+ - Reports now show the version of SUPER used to generate them
+
+ - Added `--open` option to automatically open reports
+
+- Bug Fixes
+
+ - Changed paths for better multiplatform support
+
+ - Regular Expressions
+    - URL Disclosure no longer detects content providers ("content://...")
+
+- Contributions
+
+ - pocket7878
+ - VoltBit
+ - b52
+ - nxnfufunezn
+ - atk
+
+
 # SUPER 0.1.0
 
 - Features
