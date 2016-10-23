@@ -61,22 +61,54 @@ fn main() {
     let force = matches.is_present("force");
     let bench = matches.is_present("bench");
     let open = matches.is_present("open");
-    let config = match Config::new(app_package, verbose, quiet, force, bench, open) {
+
+    let mut config = match Config::new(app_package, verbose, quiet, force, bench, open) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
                                   e),
                           verbose);
-            let mut c: Config = Default::default();
-            c.set_app_package(app_package);
-            c.set_verbose(verbose);
-            c.set_quiet(quiet);
-            c.set_force(force);
-            c.set_bench(bench);
-            c.set_open(open);
-            c
+            Config::default()
         }
     };
+
+    config.set_app_package(app_package);
+    config.set_verbose(verbose);
+    config.set_quiet(quiet);
+    config.set_force(force);
+    config.set_bench(bench);
+    config.set_open(open);
+
+    if let Some(threads) = matches.value_of("threads") {
+        config.set_threads(threads.parse().expect("An integer"));
+    }
+    if let Some(downloads_folder) = matches.value_of("downloads-folder") {
+        config.set_downloads_folder(downloads_folder);
+    }
+    if let Some(dist_folder) = matches.value_of("dist-folder") {
+        config.set_dist_folder(dist_folder);
+    }
+    if let Some(results_folder) = matches.value_of("results-folder") {
+        config.set_results_folder(results_folder);
+    }
+    if let Some(apktool_file) = matches.value_of("apktool-file") {
+        config.set_apktool_file(apktool_file);
+    }
+    if let Some(dex2jar_folder) = matches.value_of("dex2jar-folder") {
+        config.set_dex2jar_folder(dex2jar_folder);
+    }
+    if let Some(jd_cmd_file) = matches.value_of("jd-cmd-file") {
+        config.set_jd_cmd_file(jd_cmd_file);
+    }
+    if let Some(results_template) = matches.value_of("results-template") {
+        config.set_results_template(results_template);
+    }
+    if let Some(rules_json) = matches.value_of("rules-json") {
+        config.set_rules_json(rules_json);
+    }
+    if let Some(disable_permissions) = matches.values_of("disable-permissions") {
+
+    }
 
     if !config.check() {
         let mut error_string = String::from("Configuration errors were found:\n");
@@ -373,6 +405,57 @@ fn get_help_menu() -> ArgMatches<'static> {
         .arg(Arg::with_name("open")
             .long("open")
             .help("Open the report in a browser once it is complete."))
+        .arg(Arg::with_name("threads")
+            .short("t")
+            .long("threads")
+            .help("Number of threads to use.")
+            .takes_value(true))
+        .arg(Arg::with_name("downloads-folder")
+            .short("d")
+            .long("downloads-folder")
+            .help("Folder where the downloads are stored.")
+            .takes_value(true))
+        .arg(Arg::with_name("dist-folder")
+            .short("D")
+            .long("dist-folder")
+            .help("Distribution folder.")
+            .takes_value(true))
+        .arg(Arg::with_name("results-folder")
+            .short("r")
+            .long("results-folder")
+            .help("Folder where to store the results.")
+            .takes_value(true))
+        .arg(Arg::with_name("apktool-file")
+            .short("a")
+            .long("apktool-file")
+            .help("Path to the apktool file.")
+            .takes_value(true))
+        .arg(Arg::with_name("dex2jar-folder")
+            .short("j")
+            .long("dex2jar-folder")
+            .help("Where to store the jar files.")
+            .takes_value(true))
+        .arg(Arg::with_name("jd-cmd-file")
+            .short("J")
+            .long("jd-cmd-file")
+            .help("Path to the jd-cmd file.")
+            .takes_value(true))
+        .arg(Arg::with_name("results-template")
+            .short("T")
+            .long("results-template")
+            .help("Path to a results template file.")
+            .takes_value(true))
+        .arg(Arg::with_name("rules-json")
+            .short("R")
+            .long("rules-json")
+            .help("Path to a JSON rules file.")
+            .takes_value(true))
+        .arg(Arg::with_name("disable-permissions")
+            .short("p")
+            .long("disable-permissions")
+            .help("List of permissinos to disable.")
+            .takes_value(true)
+            .use_delimiter(true))
         .get_matches()
 }
 
