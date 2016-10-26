@@ -102,15 +102,12 @@ pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
     for e in parser {
         match e {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                match name.local_name.as_str() {
-                    "string" => {
-                        for attr in attributes {
-                            if attr.name.local_name == "name" && attr.value == label.as_ref() {
-                                found = true;
-                            }
+                if let "string" = name.local_name.as_str() {
+                    for attr in attributes {
+                        if attr.name.local_name == "name" && attr.value == label.as_ref() {
+                            found = true;
                         }
                     }
-                    _ => {}
                 }
             }
             Ok(XmlEvent::Characters(data)) => {

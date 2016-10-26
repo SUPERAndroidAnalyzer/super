@@ -113,31 +113,8 @@ impl Serialize for Vulnerability {
 
 impl PartialOrd for Vulnerability {
     fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
-        if self.criticity < other.criticity {
-            Some(Ordering::Less)
-        } else if self.criticity > other.criticity {
-            Some(Ordering::Greater)
-        } else {
-            if self.file < other.file {
-                Some(Ordering::Less)
-            } else if self.file > other.file {
-                Some(Ordering::Greater)
-            } else {
-                if self.start_line < other.start_line {
-                    Some(Ordering::Less)
-                } else if self.start_line > other.start_line {
-                    Some(Ordering::Greater)
-                } else {
-                    if self.name < other.name {
-                        Some(Ordering::Less)
-                    } else if self.name > other.name {
-                        Some(Ordering::Greater)
-                    } else {
-                        Some(Ordering::Equal)
-                    }
-                }
-            }
-        }
+        Some((&self.criticity, &self.file, &self.start_line, &self.end_line, &self.name)
+            .cmp(&(&other.criticity, &other.file, &other.start_line, &other.end_line, &other.name)))
     }
 }
 
@@ -205,7 +182,7 @@ impl Serialize for FingerPrint {
 }
 
 /// Split line into indentation and the rest of the line.
-pub fn split_indent<'a>(line: &'a str) -> (&'a str, &'a str) {
+pub fn split_indent(line: &str) -> (&str, &str) {
     match line.find(|c: char| !c.is_whitespace()) {
         Some(p) => line.split_at(p),
         None => ("", line),

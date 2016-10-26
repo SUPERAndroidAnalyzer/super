@@ -143,7 +143,7 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
 
 fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                 dist_folder: T,
-                                                rules: &Vec<Rule>,
+                                                rules: &[Rule],
                                                 manifest: &Option<Manifest>,
                                                 results: &Mutex<Vec<Vulnerability>>,
                                                 verbose: bool)
@@ -153,10 +153,9 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
     let _ = try!(f.read_to_string(&mut code));
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.get_max_sdk().is_some() {
-            if rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
-                continue 'check;
-            }
+        if manifest.is_some() && rule.get_max_sdk().is_some() &&
+           rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
+            continue 'check;
         }
 
         for permission in rule.get_permissions() {
@@ -367,7 +366,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         Some(a) => a,
         None => {
             print_warning("Rules must be a JSON array.", config.is_verbose());
-            return Err(Error::ParseError);
+            return Err(Error::Parse);
         }
     };
 
@@ -399,13 +398,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(o) => o,
             None => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning, config.is_verbose());
-            return Err(Error::ParseError);
+            return Err(Error::Parse);
         }
 
         let regex = match rule.get("regex") {
@@ -417,13 +416,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                expresion: {}",
                                               e),
                                       config.is_verbose());
-                        return Err(Error::ParseError);
+                        return Err(Error::Parse);
                     }
                 }
             }
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -432,7 +431,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -440,21 +439,21 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
-                    list.push(match p {
-                        &Value::String(ref p) => {
+                    list.push(match *p {
+                        Value::String(ref p) => {
                             match Permission::from_str(p) {
                                 Ok(p) => p,
                                 Err(_) => {
                                     print_warning(format!("the permission {} is unknown",
                                                           p.italic()),
                                                   config.is_verbose());
-                                    return Err(Error::ParseError);
+                                    return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning, config.is_verbose());
-                            return Err(Error::ParseError);
+                            return Err(Error::Parse);
                         }
                     });
                 }
@@ -462,7 +461,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),
         };
@@ -478,7 +477,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                want the 'fc1' capture to be inserted in the \
                                                forward check.",
                                               config.is_verbose());
-                                return Err(Error::ParseError);
+                                return Err(Error::Parse);
                             }
                         }
                         Some("fc2") => {
@@ -487,7 +486,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                want the 'fc2' capture to be inserted in the \
                                                forward check.",
                                               config.is_verbose());
-                                return Err(Error::ParseError);
+                                return Err(Error::Parse);
                             }
                         }
                         _ => {}
@@ -495,12 +494,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
 
                 let mut capture_names = regex.capture_names();
-                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc2").is_some() &&
-                   capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
+                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2") &&
+                   !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1") {
                     print_warning("You must have a capture group named fc1 to use the capture \
                                    fc2.",
                                   config.is_verbose());
-                    return Err(Error::ParseError);
+                    return Err(Error::Parse);
                 }
 
                 Some(s.clone())
@@ -508,7 +507,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -516,7 +515,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref l)) => l,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -524,7 +523,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref d)) => d,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -546,7 +545,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -554,8 +553,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for r in v {
-                    list.push(match r {
-                        &Value::String(ref r) => {
+                    list.push(match *r {
+                        Value::String(ref r) => {
                             match Regex::new(r) {
                                 Ok(r) => r,
                                 Err(e) => {
@@ -563,13 +562,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                            regular expresion: {}",
                                                           e),
                                                   config.is_verbose());
-                                    return Err(Error::ParseError);
+                                    return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning, config.is_verbose());
-                            return Err(Error::ParseError);
+                            return Err(Error::Parse);
                         }
                     });
                 }
@@ -577,7 +576,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),
         };

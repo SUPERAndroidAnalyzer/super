@@ -286,7 +286,7 @@ impl Config {
                 print_error(format!("There was an error parsing the config.toml file: {:?}",
                                     parser.errors),
                             verbose);
-                exit(Error::ParseError.into());
+                exit(Error::Parse.into());
             }
         };
 
@@ -600,7 +600,7 @@ impl Default for Config {
     }
 }
 
-/// PermissionConfig struct
+/// Vulnerable permission configuration information.
 ///
 /// Represents a Permission with all its fields. Implements the `PartialEq` and `PartialOrd`
 /// traits.

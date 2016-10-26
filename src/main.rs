@@ -142,7 +142,7 @@ fn main() {
 
     if let Some(mut results) = Results::init(&config) {
         if config.is_bench() {
-            while benchmarks.len() > 0 {
+            while !benchmarks.is_empty() {
                 results.add_benchmark(benchmarks.remove(0));
             }
         }
@@ -214,11 +214,11 @@ fn main() {
 #[derive(Debug)]
 pub enum Error {
     AppNotExists,
-    ParseError,
-    JSONError(JSONError),
+    Parse,
+    JSON(JSONError),
     CodeNotFound,
     Config,
-    IOError(io::Error),
+    IO(io::Error),
     Unknown,
 }
 
@@ -226,11 +226,11 @@ impl Into<i32> for Error {
     fn into(self) -> i32 {
         match self {
             Error::AppNotExists => 10,
-            Error::ParseError => 20,
-            Error::JSONError(_) => 30,
+            Error::Parse => 20,
+            Error::JSON(_) => 30,
             Error::CodeNotFound => 40,
             Error::Config => 50,
-            Error::IOError(_) => 100,
+            Error::IO(_) => 100,
             Error::Unknown => 1,
         }
     }
@@ -238,7 +238,7 @@ impl Into<i32> for Error {
 
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Error {
-        Error::IOError(err)
+        Error::IO(err)
     }
 }
 
@@ -246,13 +246,12 @@ impl From<serde_json::error::Error> for Error {
     fn from(err: serde_json::error::Error) -> Error {
         match err {
             serde_json::error::Error::Syntax(code, line, column) => {
-                Error::JSONError(JSONError::new(code, line, column))
+                Error::JSON(JSONError::new(code, line, column))
             }
-            serde_json::error::Error::Io(err) => Error::IOError(err),
+            serde_json::error::Error::Io(err) => Error::IO(err),
         }
     }
 }
-
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -264,18 +263,18 @@ impl StdError for Error {
     fn description(&self) -> &str {
         match *self {
             Error::AppNotExists => "the application has not been found",
-            Error::ParseError => "there was an error in some parsing process",
-            Error::JSONError(ref e) => e.description(),
+            Error::Parse => "there was an error in some parsing process",
+            Error::JSON(ref e) => e.description(),
             Error::CodeNotFound => "the code was not found in the file",
             Error::Config => "there was an error in the configuration",
-            Error::IOError(ref e) => e.description(),
+            Error::IO(ref e) => e.description(),
             Error::Unknown => "an unknown error occurred",
         }
     }
 
     fn cause(&self) -> Option<&StdError> {
         match *self {
-            Error::IOError(ref e) => Some(e),
+            Error::IO(ref e) => Some(e),
             _ => None,
         }
     }
@@ -331,7 +330,7 @@ impl FromStr for Criticity {
             "medium" => Ok(Criticity::Medium),
             "low" => Ok(Criticity::Low),
             "warning" => Ok(Criticity::Warning),
-            _ => Err(Error::ParseError),
+            _ => Err(Error::Parse),
         }
     }
 }

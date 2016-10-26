@@ -37,7 +37,7 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     if cfg!(feature = "certificate") {
         let certificate_start = Instant::now();
         // Run analysis for cerificate file.
-        let _certificate = certificate_analysis(config, results);
+        certificate_analysis(config, results);
         if config.is_bench() {
             results.add_benchmark(Benchmark::new("Certificate analysis",
                                                  certificate_start.elapsed()));
@@ -49,4 +49,4 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
 }
 
 #[cfg(not(feature = "certificate"))]
-fn certificate_analysis(_config: &Config, _results: &mut Results) {}
+fn certificate_analysis(_: &Config, _: &mut Results) {}
