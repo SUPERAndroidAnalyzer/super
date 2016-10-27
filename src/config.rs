@@ -217,6 +217,7 @@ impl Config {
         self.threads
     }
 
+    /// Sets the `threads` field.
     pub fn set_threads(&mut self, threads: u8) {
         self.threads = threads;
     }
@@ -226,6 +227,7 @@ impl Config {
         &self.downloads_folder
     }
 
+    /// Sets the path to the `downloads_folder`.
     pub fn set_downloads_folder<P: Into<PathBuf>>(&mut self, downloads_folder: P) {
         self.downloads_folder = downloads_folder.into()
     }
@@ -235,6 +237,7 @@ impl Config {
         &self.dist_folder
     }
 
+    /// Sets the path to the `dist_folder`.
     pub fn set_dist_folder<P: Into<PathBuf>>(&mut self, dist_folder: P) {
         self.dist_folder = dist_folder.into()
     }
@@ -244,6 +247,7 @@ impl Config {
         &self.results_folder
     }
 
+    /// Sets the path to the `results_folder`.
     pub fn set_results_folder<P: Into<PathBuf>>(&mut self, results_folder: P) {
         self.results_folder = results_folder.into()
     }
@@ -253,6 +257,7 @@ impl Config {
         &self.apktool_file
     }
 
+    /// Sets the path to the `apktool_file`.
     pub fn set_apktool_file<P: Into<PathBuf>>(&mut self, apktool_file: P) {
         self.apktool_file = apktool_file.into()
     }
@@ -262,6 +267,7 @@ impl Config {
         &self.dex2jar_folder
     }
 
+    /// Sets the path to the `dex2jar_folder`.
     pub fn set_dex2jar_folder<P: Into<PathBuf>>(&mut self, dex2jar_folder: P) {
         self.dex2jar_folder = dex2jar_folder.into()
     }
@@ -271,6 +277,7 @@ impl Config {
         &self.jd_cmd_file
     }
 
+    /// Sets the path to the `jd_cmd_file`.
     pub fn set_jd_cmd_file<P: Into<PathBuf>>(&mut self, jd_cmd_file: P) {
         self.jd_cmd_file = jd_cmd_file.into()
     }
@@ -280,6 +287,7 @@ impl Config {
         &self.results_template
     }
 
+    /// Sets the path to the `results_template`.
     pub fn set_results_template<P: Into<PathBuf>>(&mut self, results_template: P) {
         self.results_template = results_template.into()
     }
@@ -289,6 +297,7 @@ impl Config {
         &self.rules_json
     }
 
+    /// Sets the path to the `rules_json`.
     pub fn set_rules_json<P: Into<PathBuf>>(&mut self, rules_json: P) {
         self.rules_json = rules_json.into()
     }
