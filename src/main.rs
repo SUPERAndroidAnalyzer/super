@@ -38,6 +38,7 @@ use std::io::Write;
 use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
+use std::u8;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
@@ -80,7 +81,15 @@ fn main() {
     config.set_open(open);
 
     if let Some(threads) = matches.value_of("threads") {
-        config.set_threads(threads.parse().expect("An integer"));
+        match threads.parse() {
+            Ok(t) if t > 0 => {
+                config.set_threads(t);
+            },
+            Ok(_) | Err(_) => {
+                print_warning(format!("The threads options must be an integer between 1 and {}",
+                                      u8::MAX), verbose);
+            }
+        }
     }
     if let Some(downloads_folder) = matches.value_of("downloads") {
         config.set_downloads_folder(downloads_folder);
