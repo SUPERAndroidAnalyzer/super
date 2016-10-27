@@ -1,3 +1,5 @@
+//! SUPER Android Analyzer
+
 // #![forbid(missing_docs, warnings)]
 #![deny(deprecated, improper_ctypes, non_shorthand_field_patterns, overflowing_literals,
     plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
@@ -56,14 +58,14 @@ static BANNER: &'static str = include_str!("banner.txt");
 fn main() {
     let matches = get_help_menu();
 
-    let app_package = matches.value_of("package").unwrap();
+    let app_package = matches.value_of("package").unwrap().replace(".apk", "");
     let verbose = matches.is_present("verbose");
     let quiet = matches.is_present("quiet");
     let force = matches.is_present("force");
     let bench = matches.is_present("bench");
     let open = matches.is_present("open");
 
-    let mut config = match Config::new(app_package, verbose, quiet, force, bench, open) {
+    let mut config = match Config::new(app_package.as_str(), verbose, quiet, force, bench, open) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",

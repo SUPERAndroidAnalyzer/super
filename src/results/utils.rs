@@ -14,7 +14,7 @@ use rustc_serialize::hex::ToHex;
 
 use {Config, Result, Criticity};
 
-/// Structure to store information about a vulnerability
+/// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
 pub struct Vulnerability {
     criticity: Criticity,
@@ -27,48 +27,49 @@ pub struct Vulnerability {
 }
 
 impl Vulnerability {
-    /// Creates a new vulnerability
-    pub fn new<S: AsRef<str>, P: AsRef<Path>>(criticity: Criticity,
-                                              name: S,
-                                              description: S,
-                                              file: Option<P>,
-                                              start_line: Option<usize>,
-                                              end_line: Option<usize>,
-                                              code: Option<String>)
-                                              -> Vulnerability {
+    /// Creates a new vulnerability.
+    pub fn new<N: Into<String>, D: Into<String>, P: AsRef<Path>, C: Into<String>>
+        (criticity: Criticity,
+         name: N,
+         description: D,
+         file: Option<P>,
+         start_line: Option<usize>,
+         end_line: Option<usize>,
+         code: Option<C>)
+         -> Vulnerability {
         Vulnerability {
             criticity: criticity,
-            name: String::from(name.as_ref()),
-            description: String::from(description.as_ref()),
+            name: name.into(),
+            description: description.into(),
             file: match file {
-                Some(s) => Some(String::from(s.as_ref().to_string_lossy().into_owned())),
+                Some(f) => Some(f.as_ref().to_string_lossy().into_owned()),
                 None => None,
             },
             start_line: start_line,
             end_line: end_line,
             code: match code {
-                Some(s) => Some(String::from(s.as_ref())),
+                Some(c) => Some(c.into()),
                 None => None,
             },
         }
     }
 
-    /// Gets the criticity of the vulnerability
+    /// Gets the criticity of the vulnerability.
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
     }
 
-    /// Gets the name of the vulnerability
+    /// Gets the name of the vulnerability.
     pub fn get_name(&self) -> &str {
         self.name.as_str()
     }
 
-    /// Get the description of the vulnerability
+    /// Get the description of the vulnerability.
     pub fn get_description(&self) -> &str {
         self.description.as_str()
     }
 
-    /// Gets the file where the vulnerability was found
+    /// Gets the file where the vulnerability was found.
     pub fn get_file(&self) -> Option<&Path> {
         match self.file.as_ref() {
             Some(s) => Some(Path::new(s)),
@@ -76,7 +77,7 @@ impl Vulnerability {
         }
     }
 
-    /// Gets the code related to the vulnerability
+    /// Gets the code related to the vulnerability.
     pub fn get_code(&self) -> Option<&str> {
         match self.code.as_ref() {
             Some(s) => Some(s.as_str()),
@@ -84,12 +85,12 @@ impl Vulnerability {
         }
     }
 
-    /// Gets the start line of the vulnerability
+    /// Gets the start line of the vulnerability.
     pub fn get_start_line(&self) -> Option<usize> {
         self.start_line
     }
 
-    /// Gets the end line of the vulnerability
+    /// Gets the end line of the vulnerability.
     pub fn get_end_line(&self) -> Option<usize> {
         self.end_line
     }
@@ -118,7 +119,7 @@ impl PartialOrd for Vulnerability {
     }
 }
 
-/// Structure to store
+/// Structure to store.
 pub struct FingerPrint {
     md5: [u8; 16],
     sha1: [u8; 20],
@@ -126,6 +127,7 @@ pub struct FingerPrint {
 }
 
 impl FingerPrint {
+    /// Creates a new fingerprint.
     pub fn new(config: &Config) -> Result<FingerPrint> {
         let mut f = try!(File::open(config.get_apk_file()));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
@@ -152,17 +154,17 @@ impl FingerPrint {
         Ok(fingerprint)
     }
 
-    /// Gets the MD5 hash
+    /// Gets the MD5 hash.
     pub fn get_md5(&self) -> &[u8] {
         &self.md5
     }
 
-    /// Gets the SHA-1 hash
+    /// Gets the SHA-1 hash.
     pub fn get_sha1(&self) -> &[u8] {
         &self.sha1
     }
 
-    /// Gets the SHA-256 hash
+    /// Gets the SHA-256 hash.
     pub fn get_sha256(&self) -> &[u8] {
         &self.sha256
     }
@@ -189,17 +191,17 @@ pub fn split_indent(line: &str) -> (&str, &str) {
     }
 }
 
-/// Structure to store a benchmark information
+/// Structure to store a benchmark information.
 pub struct Benchmark {
     label: String,
     duration: Duration,
 }
 
 impl Benchmark {
-    /// Creates a new benchmark
-    pub fn new<S: AsRef<str>>(label: S, duration: Duration) -> Benchmark {
+    /// Creates a new benchmark.
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
         Benchmark {
-            label: String::from(label.as_ref()),
+            label: label.into(),
             duration: duration,
         }
     }

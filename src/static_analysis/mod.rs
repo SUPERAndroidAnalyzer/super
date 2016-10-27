@@ -15,7 +15,9 @@ use self::manifest::*;
 use self::certificate::*;
 use self::code::*;
 use results::{Results, Benchmark};
-use Config;
+use {Config, print_warning};
+#[cfg(not(feature = "certificate"))]
+use Result;
 
 /// Runs the analysis for manifest, certificate and code files.
 ///
@@ -37,8 +39,10 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
     if cfg!(feature = "certificate") {
         let certificate_start = Instant::now();
         // Run analysis for cerificate file.
-        certificate_analysis(config, results);
-        if config.is_bench() {
+        if let Err(e) = certificate_analysis(config, results) {
+            print_warning(format!("There was an error analysing the certificate: {:?}", e),
+                          config.is_verbose())
+        } else if config.is_bench() {
             results.add_benchmark(Benchmark::new("Certificate analysis",
                                                  certificate_start.elapsed()));
         }
@@ -49,4 +53,6 @@ pub fn static_analysis(config: &Config, results: &mut Results) {
 }
 
 #[cfg(not(feature = "certificate"))]
-fn certificate_analysis(_: &Config, _: &mut Results) {}
+fn certificate_analysis(_: &Config, _: &mut Results) -> Result<()> {
+    Ok(())
+}

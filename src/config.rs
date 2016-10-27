@@ -69,15 +69,15 @@ pub struct Config {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn new<S: AsRef<str>>(app_package: S,
-                              verbose: bool,
-                              quiet: bool,
-                              force: bool,
-                              bench: bool,
-                              open: bool)
-                              -> Result<Config> {
+    pub fn new<S: Into<String>>(app_package: S,
+                                verbose: bool,
+                                quiet: bool,
+                                force: bool,
+                                bench: bool,
+                                open: bool)
+                                -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_package = app_package.as_ref().to_owned();
+        config.app_package = app_package.into();
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -153,8 +153,8 @@ impl Config {
     }
 
     /// Changes the app package.
-    pub fn set_app_package<S: AsRef<str>>(&mut self, app_package: S) {
-        self.app_package = app_package.as_ref().to_owned();
+    pub fn set_app_package<S: Into<String>>(&mut self, app_package: S) {
+        self.app_package = app_package.into();
     }
 
     /// Returns the path to the _.apk_.
@@ -515,7 +515,7 @@ impl Config {
                                 };
 
                                 let description = match cfg.get("description") {
-                                    Some(&Value::String(ref d)) => d,
+                                    Some(&Value::String(ref d)) => d.to_owned(),
                                     _ => {
                                         print_warning(format_warning, verbose);
                                         break;
@@ -541,7 +541,7 @@ impl Config {
                                         break;
                                     }
 
-                                    let permission = match Permission::from_str(name.as_str()) {
+                                    let permission = match Permission::from_str(name) {
                                         Ok(p) => p,
                                         Err(_) => {
                                             print_warning(format!("Unknown permission: {}\nTo \
@@ -559,7 +559,7 @@ impl Config {
                                     };
 
                                     let label = match cfg.get("label") {
-                                        Some(&Value::String(ref l)) => l,
+                                        Some(&Value::String(ref l)) => l.to_owned(),
                                         _ => {
                                             print_warning(format_warning, verbose);
                                             break;
@@ -569,8 +569,7 @@ impl Config {
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
-                                                                      &String::from(
-                                                                          description.as_ref())));
+                                                                      description));
                                 }
                             }
                         }
@@ -681,16 +680,16 @@ impl PartialOrd for PermissionConfig {
 
 impl PermissionConfig {
     /// Creates a new `PermissionConfig`.
-    fn new<S: AsRef<str>>(permission: Permission,
-                          criticity: Criticity,
-                          label: S,
-                          description: S)
-                          -> PermissionConfig {
+    fn new<L: Into<String>, D: Into<String>>(permission: Permission,
+                                             criticity: Criticity,
+                                             label: L,
+                                             description: D)
+                                             -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticity: criticity,
-            label: String::from(label.as_ref()),
-            description: String::from(description.as_ref()),
+            label: label.into(),
+            description: description.into(),
         }
     }
 

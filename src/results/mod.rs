@@ -95,20 +95,20 @@ impl Results {
         }
     }
 
-    pub fn set_app_package<S: AsRef<str>>(&mut self, package: S) {
-        self.app_package = String::from(package.as_ref());
+    pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
+        self.app_package = package.into();
     }
 
-    pub fn set_app_label<S: AsRef<str>>(&mut self, label: S) {
-        self.app_label = String::from(label.as_ref());
+    pub fn set_app_label<S: Into<String>>(&mut self, label: S) {
+        self.app_label = label.into();
     }
 
-    pub fn set_app_description<S: AsRef<str>>(&mut self, description: S) {
-        self.app_description = String::from(description.as_ref());
+    pub fn set_app_description<S: Into<String>>(&mut self, description: S) {
+        self.app_description = description.into();
     }
 
-    pub fn set_app_version<S: AsRef<str>>(&mut self, version: S) {
-        self.app_version = String::from(version.as_ref());
+    pub fn set_app_version<S: Into<String>>(&mut self, version: S) {
+        self.app_version = version.into();
     }
 
     pub fn set_app_version_num(&mut self, version: i32) {

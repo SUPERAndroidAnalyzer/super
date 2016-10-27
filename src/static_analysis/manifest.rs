@@ -469,7 +469,7 @@ impl Manifest {
 
                                 match version_info.get(&Yaml::String(String::from("versionName"))) {
                                     Some(&Yaml::String(ref version_name)) => {
-                                        manifest.set_version_str(version_name);
+                                        manifest.set_version_str(version_name.as_str());
                                     }
                                     _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
@@ -486,20 +486,20 @@ impl Manifest {
         Ok(manifest)
     }
 
-    fn set_code<S: AsRef<str>>(&mut self, code: S) {
-        self.code = String::from(code.as_ref());
+    fn set_code<S: Into<String>>(&mut self, code: S) {
+        self.code = code.into();
     }
 
     pub fn get_code(&self) -> &str {
-        self.code.as_str()
+        &self.code
     }
 
     pub fn get_package(&self) -> &str {
-        self.package.as_str()
+        &self.package
     }
 
-    fn set_package<S: AsRef<str>>(&mut self, package: S) {
-        self.package = String::from(package.as_ref());
+    fn set_package<S: Into<String>>(&mut self, package: S) {
+        self.package = package.into();
     }
 
     pub fn get_version_number(&self) -> i32 {
@@ -511,27 +511,27 @@ impl Manifest {
     }
 
     pub fn get_version_str(&self) -> &str {
-        self.version_str.as_str()
+        &self.version_str
     }
 
-    fn set_version_str<S: AsRef<str>>(&mut self, version_str: S) {
-        self.version_str = String::from(version_str.as_ref());
+    fn set_version_str<S: Into<String>>(&mut self, version_str: S) {
+        self.version_str = version_str.into();
     }
 
     pub fn get_label(&self) -> &str {
-        self.label.as_str()
+        &self.label
     }
 
-    fn set_label<S: AsRef<str>>(&mut self, label: S) {
-        self.label = String::from(label.as_ref());
+    fn set_label<S: Into<String>>(&mut self, label: S) {
+        self.label = label.into();
     }
 
     pub fn get_description(&self) -> &str {
-        self.description.as_str()
+        &self.description
     }
 
-    fn set_description<S: AsRef<str>>(&mut self, description: S) {
-        self.description = String::from(description.as_ref());
+    fn set_description<S: Into<String>>(&mut self, description: S) {
+        self.description = description.into();
     }
 
     pub fn get_min_sdk(&self) -> i32 {
