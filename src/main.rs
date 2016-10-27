@@ -38,6 +38,7 @@ use std::io::Write;
 use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
+use std::u8;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
@@ -61,22 +62,59 @@ fn main() {
     let force = matches.is_present("force");
     let bench = matches.is_present("bench");
     let open = matches.is_present("open");
-    let config = match Config::new(app_package, verbose, quiet, force, bench, open) {
+
+    let mut config = match Config::new(app_package, verbose, quiet, force, bench, open) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
                                   e),
                           verbose);
-            let mut c: Config = Default::default();
-            c.set_app_package(app_package);
-            c.set_verbose(verbose);
-            c.set_quiet(quiet);
-            c.set_force(force);
-            c.set_bench(bench);
-            c.set_open(open);
-            c
+            Config::default()
         }
     };
+
+    config.set_app_package(app_package);
+    config.set_verbose(verbose);
+    config.set_quiet(quiet);
+    config.set_force(force);
+    config.set_bench(bench);
+    config.set_open(open);
+
+    if let Some(threads) = matches.value_of("threads") {
+        match threads.parse() {
+            Ok(t) if t > 0 => {
+                config.set_threads(t);
+            },
+            Ok(_) | Err(_) => {
+                print_warning(format!("The threads options must be an integer between 1 and {}",
+                                      u8::MAX), verbose);
+            }
+        }
+    }
+    if let Some(downloads_folder) = matches.value_of("downloads") {
+        config.set_downloads_folder(downloads_folder);
+    }
+    if let Some(dist_folder) = matches.value_of("dist") {
+        config.set_dist_folder(dist_folder);
+    }
+    if let Some(results_folder) = matches.value_of("results") {
+        config.set_results_folder(results_folder);
+    }
+    if let Some(apktool_file) = matches.value_of("apktool") {
+        config.set_apktool_file(apktool_file);
+    }
+    if let Some(dex2jar_folder) = matches.value_of("dex2jar") {
+        config.set_dex2jar_folder(dex2jar_folder);
+    }
+    if let Some(jd_cmd_file) = matches.value_of("jd-cmd") {
+        config.set_jd_cmd_file(jd_cmd_file);
+    }
+    if let Some(results_template) = matches.value_of("template") {
+        config.set_results_template(results_template);
+    }
+    if let Some(rules_json) = matches.value_of("rules") {
+        config.set_rules_json(rules_json);
+    }
 
     if !config.check() {
         let mut error_string = String::from("Configuration errors were found:\n");
@@ -364,6 +402,43 @@ fn get_help_menu() -> ArgMatches<'static> {
         .arg(Arg::with_name("open")
             .long("open")
             .help("Open the report in a browser once it is complete."))
+        .arg(Arg::with_name("threads")
+            .short("t")
+            .long("threads")
+            .help("Number of threads to use.")
+            .takes_value(true))
+        .arg(Arg::with_name("downloads")
+            .long("downloads")
+            .help("Folder where the downloads are stored.")
+            .takes_value(true))
+        .arg(Arg::with_name("dist")
+            .long("dist")
+            .help("Folder where distribution files will be extracted.")
+            .takes_value(true))
+        .arg(Arg::with_name("results")
+            .long("results")
+            .help("Folder where to store the results.")
+            .takes_value(true))
+        .arg(Arg::with_name("apktool")
+            .long("apktool")
+            .help("Path to the apktool file.")
+            .takes_value(true))
+        .arg(Arg::with_name("dex2jar")
+            .long("dex2jar")
+            .help("Where to store the jar files.")
+            .takes_value(true))
+        .arg(Arg::with_name("jd-cmd")
+            .long("jd-cmd")
+            .help("Path to the jd-cmd file.")
+            .takes_value(true))
+        .arg(Arg::with_name("template")
+            .long("template")
+            .help("Path to a results template file.")
+            .takes_value(true))
+        .arg(Arg::with_name("rules")
+            .long("rules")
+            .help("Path to a JSON rules file.")
+            .takes_value(true))
         .get_matches()
 }
 
