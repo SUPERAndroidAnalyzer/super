@@ -82,12 +82,13 @@ fn main() {
 
     if let Some(threads) = matches.value_of("threads") {
         match threads.parse() {
-            Ok(t) if t > 0 => {
+            Ok(t) if t > 0u8 => {
                 config.set_threads(t);
-            },
-            Ok(_) | Err(_) => {
+            }
+            _ => {
                 print_warning(format!("The threads options must be an integer between 1 and {}",
-                                      u8::MAX), verbose);
+                                      u8::MAX),
+                              verbose);
             }
         }
     }
@@ -137,7 +138,7 @@ fn main() {
             io::stdout().flush().unwrap();
             sleep(Duration::from_millis(3));
         }
-        println!("Welcome to the S.U.P.E.R. Android Analyzer. We will now try to audit the given \
+        println!("Welcome to the SUPER Android Analyzer. We will now try to audit the given \
                   application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
