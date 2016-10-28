@@ -401,7 +401,7 @@ fn get_help_menu() -> ArgMatches<'static> {
             .short("q")
             .long("quiet")
             .conflicts_with("verbose")
-            .help("If you'd like a zen auditor that won't talk unless it's 100% necessary."))
+            .help("If you'd like a zen auditor that won't output anything in stdout."))
         .arg(Arg::with_name("open")
             .long("open")
             .help("Open the report in a browser once it is complete."))
