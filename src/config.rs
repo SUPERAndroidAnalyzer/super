@@ -112,31 +112,31 @@ impl Config {
     pub fn get_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
         if !self.downloads_folder.exists() {
-            errors.push(format!("the downloads folder `{}` does not exist",
+            errors.push(format!("The downloads folder `{}` does not exist",
                                 self.downloads_folder.display()));
         }
         if !self.get_apk_file().exists() {
-            errors.push(format!("the APK file `{}` does not exist",
+            errors.push(format!("The APK file `{}` does not exist",
                                 self.get_apk_file().display()));
         }
         if !self.apktool_file.exists() {
-            errors.push(format!("the APKTool JAR file `{}` does not exist",
+            errors.push(format!("The APKTool JAR file `{}` does not exist",
                                 self.apktool_file.display()));
         }
         if !self.dex2jar_folder.exists() {
-            errors.push(format!("the Dex2Jar folder `{}` does not exist",
+            errors.push(format!("The Dex2Jar folder `{}` does not exist",
                                 self.dex2jar_folder.display()));
         }
         if !self.jd_cmd_file.exists() {
-            errors.push(format!("the jd-cmd file `{}` does not exist",
+            errors.push(format!("The jd-cmd file `{}` does not exist",
                                 self.jd_cmd_file.display()));
         }
         if !self.results_template.exists() {
-            errors.push(format!("the results template `{}` does not exist",
+            errors.push(format!("The results template `{}` does not exist",
                                 self.results_template.display()));
         }
         if !self.rules_json.exists() {
-            errors.push(format!("the `{}` rule file does not exist",
+            errors.push(format!("The `{}` rule file does not exist",
                                 self.rules_json.display()));
         }
         errors
@@ -596,7 +596,7 @@ impl Config {
             bench: false,
             open: false,
             threads: 2,
-            downloads_folder: PathBuf::from("downloads"),
+            downloads_folder: PathBuf::from("."),
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
             apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
@@ -736,7 +736,7 @@ mod tests {
         assert!(!config.is_bench());
         assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
+        assert_eq!(config.get_downloads_folder(), Path::new("."));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         let share_path = Path::new(if cfg!(target_os = "macos") {
