@@ -600,7 +600,7 @@ impl Config {
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
             apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
-            dex2jar_folder: Path::new("vendor").join("dex2jar-2.0"),
+            dex2jar_folder: Path::new("vendor").join("dex2jar-2.1-SNAPSHOT"),
             jd_cmd_file: Path::new("vendor").join("jd-cmd.jar"),
             results_template: Path::new("vendor").join("results_template"),
             rules_json: PathBuf::from("rules.json"),
@@ -630,7 +630,7 @@ impl Default for Config {
         });
         if share_path.exists() {
             config.apktool_file = share_path.join("vendor/apktool_2.2.0.jar");
-            config.dex2jar_folder = share_path.join("vendor/dex2jar-2.0");
+            config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
             config.results_template = share_path.join("vendor/results_template");
         }
@@ -754,7 +754,7 @@ mod tests {
         assert_eq!(config.get_apktool_file(),
                    share_path.join("vendor").join("apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
-                   share_path.join("vendor").join("dex2jar-2.0"));
+                   share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
                    share_path.join("vendor").join("jd-cmd.jar"));
         assert_eq!(config.get_results_template(),
@@ -837,7 +837,7 @@ mod tests {
         assert_eq!(config.get_apktool_file(),
                    Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
-                   Path::new("/usr/share/super/vendor/dex2jar-2.0"));
+                   Path::new("/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
                    Path::new("/usr/share/super/vendor/jd-cmd.jar"));
         assert_eq!(config.get_results_template(),
