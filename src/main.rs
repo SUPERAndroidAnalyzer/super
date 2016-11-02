@@ -212,16 +212,27 @@ fn main() {
 }
 
 #[derive(Debug)]
+/// Enum representing all error types of SUPER.
 pub enum Error {
+    /// The *.apk* file does not exist.
     AppNotExists,
+    /// Parsing error.
     Parse,
+    /// JSON error.
     JSON(JSONError),
+    /// The code was not found.
     CodeNotFound,
+    /// Configuration error.
     Config,
+    /// I/O error.
     IO(io::Error),
+    /// Template name error.
     TemplateName(String),
+    /// Template error.
     Template(Box<handlebars::TemplateError>),
+    /// Template rendering error.
     Render(Box<handlebars::RenderError>),
+    /// Unknown error.
     Unknown,
 }
 
@@ -312,6 +323,7 @@ impl StdError for Error {
     }
 }
 
+/// JSON error structure.
 #[derive(Debug)]
 pub struct JSONError {
     description: String,
@@ -327,14 +339,21 @@ impl JSONError {
     }
 }
 
+/// SUPER result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
+/// Vulnerability criticity
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
 pub enum Criticity {
+    /// Warning.
     Warning,
+    /// Low criticity vulnerability.
     Low,
+    /// Medium criticity vulnerability.
     Medium,
+    /// High criticity vulnerability.
     High,
+    /// Critical vulnerability.
     Critical,
 }
 
