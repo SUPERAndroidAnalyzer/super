@@ -1,5 +1,6 @@
 use std::fs;
 use std::process::{Command, exit};
+use std::borrow::Borrow;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
@@ -96,18 +97,19 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 exit(Error::Unknown.into());
             };
 
-            let cmd = output.stdout;
+            let cmd = String::from_utf8_lossy(&output.stdout);
             if config.is_verbose() {
                 println!("The application is signed with the following certificate: {}",
                          path_file.bold());
 
-                println!("{}", String::from_utf8_lossy(&cmd));
+                println!("{}", cmd);
             }
+            results.set_certificate(cmd.borrow());
 
             let mut issuer = String::new();
             let mut subject = String::new();
             let mut after = String::new();
-            for line in String::from_utf8_lossy(&cmd).lines() {
+            for line in cmd.lines() {
                 if line.contains("Issuer:") {
                     issuer = line.to_owned();
                 }

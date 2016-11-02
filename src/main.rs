@@ -24,6 +24,8 @@ extern crate lazy_static;
 extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
+extern crate bytecount;
+extern crate handlebars;
 
 mod cli;
 mod decompilation;
@@ -212,6 +214,9 @@ pub enum Error {
     CodeNotFound,
     Config,
     IO(io::Error),
+    TemplateName(String),
+    Template(Box<handlebars::TemplateError>),
+    Render(Box<handlebars::RenderError>),
     Unknown,
 }
 
@@ -224,6 +229,9 @@ impl Into<i32> for Error {
             Error::CodeNotFound => 40,
             Error::Config => 50,
             Error::IO(_) => 100,
+            Error::TemplateName(_) => 125,
+            Error::Template(_) => 150,
+            Error::Render(_) => 175,
             Error::Unknown => 1,
         }
     }
@@ -232,6 +240,27 @@ impl Into<i32> for Error {
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Error {
         Error::IO(err)
+    }
+}
+
+impl From<handlebars::TemplateFileError> for Error {
+    fn from(err: handlebars::TemplateFileError) -> Error {
+        match err {
+            handlebars::TemplateFileError::TemplateError(e) => e.into(),
+            handlebars::TemplateFileError::IOError(e, _) => e.into(),
+        }
+    }
+}
+
+impl From<handlebars::TemplateError> for Error {
+    fn from(err: handlebars::TemplateError) -> Error {
+        Error::Template(Box::new(err))
+    }
+}
+
+impl From<handlebars::RenderError> for Error {
+    fn from(err: handlebars::RenderError) -> Error {
+        Error::Render(Box::new(err))
     }
 }
 
@@ -261,6 +290,9 @@ impl StdError for Error {
             Error::CodeNotFound => "the code was not found in the file",
             Error::Config => "there was an error in the configuration",
             Error::IO(ref e) => e.description(),
+            Error::TemplateName(ref e) => e,
+            Error::Template(ref e) => e.description(),
+            Error::Render(ref e) => e.description(),
             Error::Unknown => "an unknown error occurred",
         }
     }
@@ -268,6 +300,8 @@ impl StdError for Error {
     fn cause(&self) -> Option<&StdError> {
         match *self {
             Error::IO(ref e) => Some(e),
+            Error::Template(ref e) => Some(e),
+            Error::Render(ref e) => Some(e),
             _ => None,
         }
     }
@@ -284,7 +318,7 @@ impl JSONError {
     }
 
     fn description(&self) -> &str {
-        self.description.as_str()
+        &self.description
     }
 }
 
@@ -338,7 +372,7 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
         try!(fs::create_dir(to.as_ref()));
     }
 
-    for f in try!(fs::read_dir(from.as_ref())) {
+    for f in try!(fs::read_dir(from)) {
         let f = try!(f);
         if f.path().is_dir() {
             try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));

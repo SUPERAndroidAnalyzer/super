@@ -9,6 +9,7 @@ use colored::Colorize;
 
 use super::{Criticity, Result, Config};
 
+/// Configuration for the XML parser.
 pub const PARSER_CONFIG: ParserConfig = ParserConfig {
     trim_whitespace: true,
     whitespace_to_characters: false,
@@ -17,6 +18,7 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
     coalesce_characters: true,
 };
 
+/// Prints an error to `stderr` in red.
 pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     let _ = io::stderr()
         .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
@@ -30,6 +32,7 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     }
 }
 
+/// Prints a warning to `stderr` in yellow.
 pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     let _ = io::stderr()
         .write(&format!("{} {}\n",
@@ -46,6 +49,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     }
 }
 
+/// Prints a vulnerability to `stdout` in a color depending on the criticity.
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     let message = format!("Possible {} criticity vulnerability found!: {}",
                           criticity,
@@ -60,6 +64,9 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
     sleep(Duration::from_millis(200));
 }
 
+/// Gets the code snippet near the start and end lines.
+///
+/// It will return 5 lines above and 5 lines below the vulnerability.
 pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.as_ref().lines().enumerate() {
@@ -73,6 +80,7 @@ pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String 
     result
 }
 
+/// Gets a string from the strings XML file.
 pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                                                 config: &Config,
                                                 package: P)

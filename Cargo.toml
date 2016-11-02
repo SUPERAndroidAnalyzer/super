@@ -24,13 +24,19 @@ xml-rs = "^0.3"
 serde = "^0.8"
 serde_json = "^0.8"
 yaml-rust = "0.3"
-chrono = "^0.2"
+chrono = { version = "^0.2", features = ["serde"] }
 toml = "^0.2"
 regex = "^0.1"
 lazy_static = "^0.2"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
 open = "^1.1"
+bytecount = "0.1"
+
+[dependencies.handlebars]
+version = "^0.22"
+default-features = false
+features = ["serde_type"]
 
 [features]
 default = ["beta"]

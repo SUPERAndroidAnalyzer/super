@@ -56,10 +56,10 @@ pub struct Config {
     dex2jar_folder: PathBuf,
     /// Path to the _JD\_CMD_ binary.
     jd_cmd_file: PathBuf,
-    /// Path to the results template file.
-    results_template: PathBuf,
     /// Path to the `rules.json` file.
     rules_json: PathBuf,
+    templates_folder: PathBuf,
+    template: String,
     /// Represents an unknow permission.
     unknown_permission: (Criticity, String),
     /// List of permissions to analyze.
@@ -136,8 +136,8 @@ impl Config {
         if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
             self.set_jd_cmd_file(jd_cmd_file);
         }
-        if let Some(results_template) = cli.value_of("template") {
-            self.set_results_template(results_template);
+        if let Some(template_name) = cli.value_of("template") {
+            self.template = template_name.to_owned();
         }
         if let Some(rules_json) = cli.value_of("rules") {
             self.set_rules_json(rules_json);
@@ -183,7 +183,8 @@ impl Config {
     pub fn check(&self) -> bool {
         let check = self.downloads_folder.exists() && self.apktool_file.exists() &&
                     self.dex2jar_folder.exists() && self.jd_cmd_file.exists() &&
-                    self.results_template.exists() && self.rules_json.exists();
+                    self.get_template_path().exists() &&
+                    self.rules_json.exists();
         if check {
             for package in &self.app_packages {
                 if !self.get_apk_file(package).exists() {
@@ -221,9 +222,14 @@ impl Config {
             errors.push(format!("The jd-cmd file `{}` does not exist",
                                 self.jd_cmd_file.display()));
         }
-        if !self.results_template.exists() {
-            errors.push(format!("The results template `{}` does not exist",
-                                self.results_template.display()));
+        if !self.templates_folder.exists() {
+            errors.push(format!("the templates folder `{}` does not exist",
+                                self.templates_folder.display()));
+        }
+        if !self.get_template_path().exists() {
+            errors.push(format!("the template `{}` does not exist in `{}`",
+                                self.template,
+                                self.templates_folder.display()));
         }
         if !self.rules_json.exists() {
             errors.push(format!("The `{}` rule file does not exist",
@@ -372,14 +378,24 @@ impl Config {
         self.jd_cmd_file = jd_cmd_file.into()
     }
 
-    /// Returns the `results_template` field.
-    pub fn get_results_template(&self) -> &Path {
-        &self.results_template
+    /// Gets the path to the template.
+    pub fn get_template_path(&self) -> PathBuf {
+        self.templates_folder.join(&self.template)
     }
 
-    /// Sets the path to the `results_template`.
-    pub fn set_results_template<P: Into<PathBuf>>(&mut self, results_template: P) {
-        self.results_template = results_template.into()
+    /// Gets the path to the templates folder.
+    pub fn get_templates_folder(&self) -> &Path {
+        &self.templates_folder
+    }
+
+    /// Gets the name of the template.
+    pub fn get_template_name(&self) -> &str {
+        &self.template
+    }
+
+    /// Sets the template to use, by name.
+    pub fn set_template_name<S: Into<String>>(&mut self, template_name: S) {
+        self.template = template_name.into();
     }
 
     /// Returns the path to the `rules_json`.
@@ -520,11 +536,21 @@ impl Config {
                         }
                     }
                 }
-                "results_template" => {
+                "templates_folder" => {
                     match value {
-                        Value::String(s) => self.results_template = PathBuf::from(s),
+                        Value::String(s) => self.templates_folder = PathBuf::from(s),
                         _ => {
-                            print_warning("The 'results_template' option in config.toml \
+                            print_warning("The 'templates_folder' option in config.toml \
+                                           should be an string.\nUsing default.",
+                                          self.verbose)
+                        }
+                    }
+                }
+                "template" => {
+                    match value {
+                        Value::String(s) => self.template = s,
+                        _ => {
+                            print_warning("The 'template' option in config.toml \
                                            should be an string.\nUsing default.",
                                           self.verbose)
                         }
@@ -695,7 +721,8 @@ impl Config {
             apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
             dex2jar_folder: Path::new("vendor").join("dex2jar-2.1-SNAPSHOT"),
             jd_cmd_file: Path::new("vendor").join("jd-cmd.jar"),
-            results_template: Path::new("vendor").join("results_template"),
+            templates_folder: PathBuf::from("templates"),
+            template: String::from("super"),
             rules_json: PathBuf::from("rules.json"),
             unknown_permission: (Criticity::Low,
                                  String::from("Even if the application can create its own \
@@ -725,7 +752,7 @@ impl Default for Config {
             config.apktool_file = share_path.join("vendor/apktool_2.2.0.jar");
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
-            config.results_template = share_path.join("vendor/results_template");
+            config.templates_folder = share_path.join("templates");
         }
         config
     }
@@ -832,6 +859,7 @@ mod tests {
         assert_eq!(config.get_downloads_folder(), Path::new("."));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
+        assert_eq!(config.get_template_name(), "super");
         let share_path = Path::new(if cfg!(target_os = "macos") {
             "/usr/local/super"
         } else if cfg!(target_family = "windows") {
@@ -850,8 +878,9 @@ mod tests {
                    share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
                    share_path.join("vendor").join("jd-cmd.jar"));
-        assert_eq!(config.get_results_template(),
-                   share_path.join("vendor").join("results_template"));
+        assert_eq!(config.get_templates_folder(), share_path.join("templates"));
+        assert_eq!(config.get_template_path(),
+                   share_path.join("templates").join("super"));
         if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
             assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         } else {
@@ -922,8 +951,11 @@ mod tests {
                    Path::new("/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
                    Path::new("/usr/share/super/vendor/jd-cmd.jar"));
-        assert_eq!(config.get_results_template(),
-                   Path::new("/usr/share/super/vendor/results_template"));
+        assert_eq!(config.get_templates_folder(),
+                   Path::new("/usr/share/super/templates"));
+        assert_eq!(config.get_template_path(),
+                   Path::new("/usr/share/super/templates/super"));
+        assert_eq!(config.get_template_name(), "super");
         assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
