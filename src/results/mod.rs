@@ -3,8 +3,6 @@ use std::fs::File;
 use std::io::{Read, Write};
 use std::collections::{BTreeSet, BTreeMap};
 use std::path::Path;
-use std::borrow::{Borrow, Cow};
-use std::slice::Iter;
 use std::result::Result as StdResult;
 
 use serde_json::builder::ObjectBuilder;
@@ -12,6 +10,7 @@ use serde::ser::{Serialize, Serializer};
 use chrono::Local;
 use handlebars::Handlebars;
 use colored::Colorize;
+use serde_json::value::Value;
 
 mod utils;
 mod handlebars_helpers;
@@ -328,8 +327,7 @@ impl Results {
     }
 
     fn generate_code_html_files<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
-        let _ = try!(self.generate_code_html_folder("", config, package.as_ref()));
-        let menu = try!(self.generate_html_src_menu("", config, package.as_ref()));
+        let menu = Value::Array(try!(self.generate_code_html_folder("", config, package.as_ref())));
 
         let mut f = try!(File::create(config.get_results_folder()
             .join(package.as_ref())
@@ -347,11 +345,11 @@ impl Results {
                                                                 path: P,
                                                                 config: &Config,
                                                                 package: S)
-                                                                -> Result<usize> {
+                                                                -> Result<Vec<Value>> {
         if path.as_ref() == Path::new("classes/android") ||
            path.as_ref() == Path::new("classes/com/google/android/gms") ||
            path.as_ref() == Path::new("smali") {
-            return Ok(0);
+            return Ok(Vec::new());
         }
         let dir_iter = try!(fs::read_dir(config.get_dist_folder()
             .join(package.as_ref())
@@ -361,146 +359,129 @@ impl Results {
             .join(package.as_ref())
             .join("src")
             .join(path.as_ref())));
-        let mut count = 0;
 
-        for f in dir_iter {
-            let f = match f {
-                Ok(f) => f,
-                Err(e) => {
-                    print_warning(format!("There was an error reading the directory {}: {}",
-                                          config.get_dist_folder()
-                                              .join(package.as_ref())
-                                              .join(path.as_ref())
-                                              .display(),
-                                          e),
-                                  config.is_verbose());
-                    return Err(Error::from(e));
-                }
-            };
+        let mut menu = Vec::new();
+        for entry in dir_iter {
+            let entry = try!(entry);
+            let path = entry.path();
 
-            match f.path().extension() {
-                Some(e) => {
-                    if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
-                        let prefix = config.get_dist_folder().join(package.as_ref());
-                        try!(self.generate_code_html_for(f.path().strip_prefix(&prefix).unwrap(),
-                                                         config,
-                                                         package.as_ref()));
-                        count += 1;
-                    }
-                }
-                None => {
-                    if f.path().is_dir() {
-                        let prefix = config.get_dist_folder().join(package.as_ref());
+            if path.is_dir() {
+                let prefix = config.get_dist_folder().join(package.as_ref());
+                let stripped = path.strip_prefix(&prefix).unwrap();
 
-                        if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
-                            let f_count = try!(self.generate_code_html_folder(f.path()
-                                                               .strip_prefix(&prefix)
-                                                               .unwrap(),
-                                                           config,
-                                                           package.as_ref()));
-                            if f_count > 0 {
-                                count += 1;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if count == 0 {
-            try!(fs::remove_dir(config.get_results_folder()
-                .join(package.as_ref())
-                .join("src")
-                .join(path)));
-        }
+                if stripped != Path::new("original") {
+                    let inner_menu =
+                        try!(self.generate_code_html_folder(stripped, config, package.as_ref()));
+                    if !inner_menu.is_empty() {
+                        let mut object = BTreeMap::new();
+                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
 
-        Ok(count)
-    }
-
-    fn generate_html_src_menu<P: AsRef<Path>, S: AsRef<str>>(&self,
-                                                             dir_path: P,
-                                                             config: &Config,
-                                                             package: S)
-                                                             -> Result<String> {
-        let iter = try!(fs::read_dir(config.get_results_folder()
-            .join(package.as_ref())
-            .join("src")
-            .join(dir_path.as_ref())));
-        let mut menu = String::new();
-        menu.push_str("<ul>");
-        for entry in iter {
-            match entry {
-                Ok(f) => {
-                    let path = f.path();
-                    if path.is_file() {
-                        let html_file_name = f.file_name();
-                        let html_file_name = html_file_name.as_os_str().to_string_lossy();
-                        let extension = Path::new(&html_file_name[..html_file_name.len() - 5])
-                            .extension()
-                            .unwrap();
-                        let link_path = match format!("{}", dir_path.as_ref().display()).as_str() {
-                            "" => String::new(),
-                            p => {
-                                let mut p = String::from(p);
-                                p.push('/');
-                                p
-                            }
-                        };
-
-                        if extension == "xml" || extension == "java" {
-                            menu.push_str(format!("<li><a href=\"{0}{1}.html\" title=\"{1}\" \
-                                                   target=\"code\"><img \
-                                                   src=\"../img/{2}-icon.png\">{1}</a></li>",
-                                                  link_path,
-                                                  &html_file_name[..html_file_name.len() - 5],
-                                                  extension.to_string_lossy())
-                                .as_str());
-                        }
-                    } else if path.is_dir() {
-                        let dir_name = match path.file_name() {
-                            Some(n) => String::from(n.to_string_lossy().borrow()),
-                            None => String::new(),
-                        };
-                        let prefix = config.get_results_folder()
+                        let _ = object.insert(String::from("name"), Value::String(name));
+                        let _ = object.insert(String::from("menu"), Value::Array(inner_menu));
+                        menu.push(Value::Object(object));
+                    } else {
+                        let path = config.get_results_folder()
                             .join(package.as_ref())
-                            .join("src");
-                        let submenu =
-                            match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
-                                                        config,
-                                                        package.as_ref()) {
-                                Ok(m) => m,
-                                Err(e) => {
-                                    let path = path.to_string_lossy();
-                                    print_warning(format!("An error occurred when generating \
-                                                           the menu for {}. The result \
-                                                           generation process will continue, \
-                                                           though. More info: {}",
-                                                          path,
-                                                          e),
-                                                  config.is_verbose());
-                                    break;
-                                }
-                            };
-                        menu.push_str(format!("<li><a href=\"#\" title=\"{0}\"><img \
-                                               src=\"../img/folder-icon.png\">{0}</a>{1}</li>",
-                                              dir_name,
-                                              submenu.as_str())
-                            .as_str());
+                            .join("src")
+                            .join(stripped);
+                        if path.exists() {
+                            try!(fs::remove_dir_all(path));
+                        }
                     }
                 }
-                Err(e) => {
-                    print_warning(format!("An error occurred when generating the menu for {}. \
-                                           The result generation process will continue, though. \
-                                           More info: {}",
-                                          dir_path.as_ref().display(),
-                                          e),
-                                  config.is_verbose());
-                    break;
+            } else {
+                match path.extension() {
+                    Some(e) if e == "xml" || e == "java" => {
+                        let prefix = config.get_dist_folder().join(package.as_ref());
+                        let path = path.strip_prefix(&prefix).unwrap();
+                        try!(self.generate_code_html_for(&path, config, package.as_ref()));
+                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
+                        let mut data = BTreeMap::new();
+                        let _ = data.insert(String::from("name"), Value::String(name));
+                        let _ = data.insert(String::from("path"),
+                                            Value::String(format!("{}", path.display())));
+                        let _ = data.insert(String::from("type"),
+                                            Value::String(e.to_string_lossy().into_owned()));
+                        menu.push(Value::Object(data));
+                    }
+                    _ => {}
                 }
             }
         }
-        menu.push_str("</ul>");
+
         Ok(menu)
     }
+
+    // fn generate_html_src_menu<P: AsRef<Path>>(&self,
+    //                                           dir_path: P,
+    //                                           config: &Config)
+    //                                           -> Result<Value> {
+    //     let iter = try!(fs::read_dir(config.get_results_folder()
+    //         .join(config.get_app_package())
+    //         .join("src")
+    //         .join(dir_path.as_ref())));
+    //     let mut menu = BTreeMap::new();
+    //     for entry in iter {
+    //         let entry = try!(entry);
+    //         let path = entry.path();
+    //         if path.is_file() {
+    //             let html_file_name = entry.file_name();
+    //             let html_file_name = html_file_name.as_os_str().to_string_lossy();
+    //             let extension = Path::new(&html_file_name[..html_file_name.len() - 5])
+    //                 .extension()
+    //                 .unwrap();
+    //             let link_path = match format!("{}", dir_path.as_ref().display()).as_str() {
+    //                 "" => String::new(),
+    //                 p => {
+    //                     let mut p = String::from(p);
+    //                     p.push('/');
+    //                     p
+    //                 }
+    //             };
+    //
+    //             if extension == "xml" || extension == "java" {
+    //                 menu.push_str(format!("<li><a href=\"{0}{1}.html\" title=\"{1}\" \
+    //                                        target=\"code\"><img \
+    //                                        src=\"../img/{2}-icon.png\">{1}</a></li>",
+    //                                       link_path,
+    //                                       &html_file_name[..html_file_name.len() - 5],
+    //                                       extension.to_string_lossy())
+    //                     .as_str());
+    //             }
+    //         } else if path.is_dir() {
+    //             let dir_name = match path.file_name() {
+    //                 Some(n) => String::from(n.to_string_lossy().borrow()),
+    //                 None => String::new(),
+    //             };
+    //             let prefix = config.get_results_folder()
+    //                 .join(config.get_app_package())
+    //                 .join("src");
+    //             let submenu =
+    //                         match
+    // self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
+    //                                                     config) {
+    //                             Ok(m) => m,
+    //                             Err(e) => {
+    //                                 let path = path.to_string_lossy();
+    //                                 print_warning(format!("An error occurred when generating \
+    //                                                        the menu for {}. The result \
+    //                                                        generation process will continue, \
+    //                                                        though. More info: {}",
+    //                                                       path,
+    //                                                       e),
+    //                                               config.is_verbose());
+    //                                 break;
+    //                             }
+    //                         };
+    //             menu.push_str(format!("<li><a href=\"#\" title=\"{0}\"><img \
+    //                                    src=\"../img/folder-icon.png\">{0}</a>{1}</li>",
+    //                                   dir_name,
+    //                                   submenu.as_str())
+    //                 .as_str());
+    //         }
+    //     }
+    //     Ok(menu)
+    // }
 
     fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self,
                                                              path: P,
