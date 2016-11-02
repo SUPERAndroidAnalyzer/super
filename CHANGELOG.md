@@ -1,42 +1,54 @@
-# SUPER 0.2.0
+# Changelog
 
-- Features
+## SUPER 0.2.0
 
- - Installation package for Mac OS
+### Features
 
- - Line highlighting in found vulnerabilities
+ - SUPER now uses templates for report generation. This is one of the biggest changes of the
+   release, and enables users to create their own report templates.
 
- - Reports now show the version of SUPER used to generate them
+ - Installation package for Mac OS.
 
- - Added `--open` option to automatically open reports
+ - Line highlighting in found vulnerabilities.
 
-- Bug Fixes
+ - Reports now show the version of SUPER used to generate them.
+
+ - Added `--open` option to automatically open reports.
+
+ - Added options to the CLI to modify the ones in the config file. We now have `--downloads` or
+   `--template` options in the CLI.
+
+ - Added the `--test-all` option to the CLI, that will test all *.apk* files in the *downloads*
+   folder.
+
+### Bug Fixes
 
  - Changed paths for better multiplatform support
 
- - Regular Expressions
+ - Regular Expressions:
     - URL Disclosure no longer detects content providers ("content://...")
 
-- Contributions
+### Contributions
 
- - pocket7878
- - VoltBit
- - b52
- - nxnfufunezn
- - atk
+ - @pocket7878
+ - @VoltBit
+ - @b52
+ - @nxnfufunezn
+ - @atk
 
 
-# SUPER 0.1.0
+## SUPER 0.1.0
 
-- Features
+### Features
 
- - Release of 64-bit packages for Linux (Debian 8.6, Ubuntu 16.04, CentOS 7, Fedora 24) and Windows (8.1+)
+ - Release of 64-bit packages for Linux (Debian 8.6, Ubuntu 16.04, CentOS 7, Fedora 24) and Windows
+   (8.1+).
 
- - _AndroidManifest.xml_ analysis (Dangerous permission checks)
+ - *AndroidManifest.xml* analysis (Dangerous permission checks).
 
- - Certificate analysis (Certificate validity checks)
+ - Certificate analysis (Certificate validity checks).
 
- - Code analysis (37 rules for checking the source code)
+ - Code analysis (37 rules for checking the source code):
     - SQLi
     - XSS
     - URL Disclosure
@@ -46,10 +58,10 @@
     - Root detection
     - ...
 
- - HTML and JSON report generation
+ - HTML and JSON report generation.
 
- - Classification of vulnerabilities (Critical, High, Medium, Low, Info)
+ - Classification of vulnerabilities (Critical, High, Medium, Low, Info).
 
- - Application related info
+ - Application related info.
 
- - File hashing
+ - File fingerprinting.
