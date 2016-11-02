@@ -25,13 +25,16 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     }
 }
 
-pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()> {
+pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
+                                           package: S,
+                                           results: &mut Results)
+                                           -> Result<()> {
     if config.is_verbose() {
         println!("Reading and analyzing the certificates…")
     }
 
     let path = config.get_dist_folder()
-        .join(config.get_app_package())
+        .join(package.as_ref())
         .join("original")
         .join("META-INF");
     let dir_iter = try!(fs::read_dir(&path));

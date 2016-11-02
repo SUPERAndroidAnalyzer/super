@@ -11,14 +11,18 @@ use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnera
      get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
-pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manifest> {
+pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
+                                        package: S,
+                                        results: &mut Results)
+                                        -> Option<Manifest> {
     if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
                   analyze it.")
     }
 
-    let manifest = match Manifest::load(config.get_dist_folder().join(config.get_app_package()),
+    let manifest = match Manifest::load(config.get_dist_folder().join(package.as_ref()),
                                         config,
+                                        package.as_ref(),
                                         results) {
         Ok(m) => {
             if config.is_verbose() {
@@ -39,11 +43,11 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
         }
     };
 
-    if manifest.get_package() != config.get_app_package() {
+    if manifest.get_package() != package.as_ref() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              config.get_app_package(),
+                              package.as_ref(),
                               manifest.get_package()),
                       config.is_verbose());
 
@@ -195,10 +199,11 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn load<P: AsRef<Path>>(path: P,
-                                config: &Config,
-                                results: &mut Results)
-                                -> Result<Manifest> {
+    pub fn load<P: AsRef<Path>, S: AsRef<str>>(path: P,
+                                               config: &Config,
+                                               package: S,
+                                               results: &mut Results)
+                                               -> Result<Manifest> {
         let mut file = try!(File::open(format!("{}/AndroidManifest.xml", path.as_ref().display())));
         let mut manifest: Manifest = Default::default();
 
@@ -339,7 +344,7 @@ impl Manifest {
                                     }
                                     "label" => manifest.set_label(
                                         if attr.value.starts_with("@string/") {
-                                            match get_string(&attr.value[8..], config) {
+                                            match get_string(&attr.value[8..], config, package.as_ref()) {
                                                 Ok(s) => s,
                                                 Err(e) => {
                                                     print_warning(format!("An error occurred when\

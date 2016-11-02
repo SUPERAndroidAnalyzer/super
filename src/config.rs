@@ -15,6 +15,7 @@ use std::cmp::{PartialOrd, Ordering};
 
 use colored::Colorize;
 use toml::{Parser, Value};
+use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
@@ -29,8 +30,8 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 /// checking their values. Implements the `Default` trait.
 #[derive(Debug)]
 pub struct Config {
-    /// Application package.
-    app_package: String,
+    /// Application packages to analyze.
+    app_packages: Vec<String>,
     /// Boolean to represent `--verbose` mode.
     verbose: bool,
     /// Boolean to represent `--quiet` mode.
@@ -69,43 +70,130 @@ pub struct Config {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn new<S: Into<String>>(app_package: S,
-                                verbose: bool,
-                                quiet: bool,
-                                force: bool,
-                                bench: bool,
-                                open: bool)
-                                -> Result<Config> {
+    pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_package = app_package.into();
-        config.verbose = verbose;
-        config.quiet = quiet;
-        config.force = force;
-        config.bench = bench;
-        config.open = open;
+
+        config.verbose = cli.is_present("verbose");
+        config.quiet = cli.is_present("quiet");
+        config.force = cli.is_present("force");
+        config.bench = cli.is_present("bench");
+        config.open = cli.is_present("open");
+
+        if cli.is_present("test-all") {
+            config.read_apks();
+        } else {
+            config.add_app_package(cli.value_of("package").unwrap());
+        }
 
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                try!(Config::load_from_file(&mut config, &config_path, verbose));
+                try!(config.load_from_file(&config_path));
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            try!(Config::load_from_file(&mut config, &config_path, verbose));
+            try!(config.load_from_file(&config_path));
             config.loaded_files.push(config_path);
         }
+
+        config.set_options(cli);
 
         Ok(config)
     }
 
+    /// Modifies the options from the CLI.
+    fn set_options(&mut self, cli: ArgMatches<'static>) {
+        if let Some(threads) = cli.value_of("threads") {
+            match threads.parse() {
+                Ok(t) if t > 0u8 => {
+                    self.set_threads(t);
+                }
+                _ => {
+                    print_warning(format!("The threads options must be an integer between 1 and \
+                                           {}",
+                                          u8::MAX),
+                                  self.verbose);
+                }
+            }
+        }
+        if let Some(downloads_folder) = cli.value_of("downloads") {
+            self.set_downloads_folder(downloads_folder);
+        }
+        if let Some(dist_folder) = cli.value_of("dist") {
+            self.set_dist_folder(dist_folder);
+        }
+        if let Some(results_folder) = cli.value_of("results") {
+            self.set_results_folder(results_folder);
+        }
+        if let Some(apktool_file) = cli.value_of("apktool") {
+            self.set_apktool_file(apktool_file);
+        }
+        if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
+            self.set_dex2jar_folder(dex2jar_folder);
+        }
+        if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
+            self.set_jd_cmd_file(jd_cmd_file);
+        }
+        if let Some(results_template) = cli.value_of("template") {
+            self.set_results_template(results_template);
+        }
+        if let Some(rules_json) = cli.value_of("rules") {
+            self.set_rules_json(rules_json);
+        }
+    }
+
+    /// Reads all the apk files in the downloads folder and adds them to the configuration.
+    fn read_apks(&mut self) {
+        match fs::read_dir(&self.downloads_folder) {
+            Ok(iter) => {
+                for entry in iter {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(ext) = entry.path().extension() {
+                                if ext == "apk" {
+                                    self.add_app_package(entry.path()
+                                        .file_stem()
+                                        .unwrap()
+                                        .to_string_lossy()
+                                        .into_owned())
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            print_warning(format!("There was an error when reading the \
+                                                   downloads folder: {}",
+                                                  e),
+                                          self.verbose);
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error when reading the downloads folder: {}",
+                                    e),
+                            self.verbose);
+                exit(Error::from(e).into());
+            }
+        }
+    }
+
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        self.downloads_folder.exists() && self.get_apk_file().exists() &&
-        self.apktool_file.exists() && self.dex2jar_folder.exists() &&
-        self.jd_cmd_file.exists() && self.results_template.exists() &&
-        self.rules_json.exists()
+        let check = self.downloads_folder.exists() && self.apktool_file.exists() &&
+                    self.dex2jar_folder.exists() && self.jd_cmd_file.exists() &&
+                    self.results_template.exists() && self.rules_json.exists();
+        if check {
+            for package in &self.app_packages {
+                if !self.get_apk_file(package).exists() {
+                    return false;
+                }
+            }
+            true
+        } else {
+            false
+        }
     }
 
     /// Returns the folders and files that do not exist.
@@ -115,9 +203,11 @@ impl Config {
             errors.push(format!("The downloads folder `{}` does not exist",
                                 self.downloads_folder.display()));
         }
-        if !self.get_apk_file().exists() {
-            errors.push(format!("The APK file `{}` does not exist",
-                                self.get_apk_file().display()));
+        for package in &self.app_packages {
+            if !self.get_apk_file(package).exists() {
+                errors.push(format!("The APK file `{}` does not exist",
+                                    self.get_apk_file(package).display()));
+            }
         }
         if !self.apktool_file.exists() {
             errors.push(format!("The APKTool JAR file `{}` does not exist",
@@ -148,18 +238,18 @@ impl Config {
     }
 
     /// Returns the app package.
-    pub fn get_app_package(&self) -> &str {
-        &self.app_package
+    pub fn get_app_packages(&self) -> &[String] {
+        &self.app_packages
     }
 
     /// Changes the app package.
-    pub fn set_app_package<S: Into<String>>(&mut self, app_package: S) {
-        self.app_package = app_package.into();
+    pub fn add_app_package<S: Into<String>>(&mut self, app_package: S) {
+        self.app_packages.push(app_package.into().replace(".apk", ""));
     }
 
-    /// Returns the path to the _.apk_.
-    pub fn get_apk_file(&self) -> PathBuf {
-        self.downloads_folder.join(format!("{}.apk", self.app_package))
+    /// Returns the path to the apk file of the given package.
+    pub fn get_apk_file<S: AsRef<str>>(&self, package: S) -> PathBuf {
+        self.downloads_folder.join(format!("{}.apk", package.as_ref()))
     }
 
     /// Returns true if the application is running in `--verbose` mode, false otherwise.
@@ -318,7 +408,7 @@ impl Config {
     }
 
     /// Loads a configuration file into the `Config` struct.
-    fn load_from_file<P: AsRef<Path>>(config: &mut Config, path: P, verbose: bool) -> Result<()> {
+    fn load_from_file<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
         let mut f = try!(fs::File::open(path));
         let mut toml = String::new();
         let _ = try!(f.read_to_string(&mut toml));
@@ -330,7 +420,7 @@ impl Config {
             None => {
                 print_error(format!("There was an error parsing the config.toml file: {:?}",
                                     parser.errors),
-                            verbose);
+                            self.verbose);
                 exit(Error::Parse.into());
             }
         };
@@ -341,44 +431,44 @@ impl Config {
                 "threads" => {
                     match value {
                         Value::Integer(1...MAX_THREADS) => {
-                            config.threads = value.as_integer().unwrap() as u8
+                            self.threads = value.as_integer().unwrap() as u8
                         }
                         _ => {
                             print_warning(format!("The 'threads' option in config.toml must \
                                                    be an integer between 1 and {}.\nUsing \
                                                    default.",
                                                   MAX_THREADS),
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "downloads_folder" => {
                     match value {
-                        Value::String(s) => config.downloads_folder = PathBuf::from(s),
+                        Value::String(s) => self.downloads_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'downloads_folder' option in config.toml must \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dist_folder" => {
                     match value {
-                        Value::String(s) => config.dist_folder = PathBuf::from(s),
+                        Value::String(s) => self.dist_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dist_folder' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "results_folder" => {
                     match value {
-                        Value::String(s) => config.results_folder = PathBuf::from(s),
+                        Value::String(s) => self.results_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_folder' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -387,27 +477,27 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.apktool_file = PathBuf::from(s.clone());
+                                self.apktool_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The APKTool file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'apktool_file' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dex2jar_folder" => {
                     match value {
-                        Value::String(s) => config.dex2jar_folder = PathBuf::from(s),
+                        Value::String(s) => self.dex2jar_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dex2jar_folder' option in config.toml should \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -416,27 +506,27 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.jd_cmd_file = PathBuf::from(s.clone());
+                                self.jd_cmd_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The JD-CMD file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'jd_cmd_file' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "results_template" => {
                     match value {
-                        Value::String(s) => config.results_template = PathBuf::from(s),
+                        Value::String(s) => self.results_template = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_template' option in config.toml \
                                            should be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -445,17 +535,17 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "json" {
-                                config.rules_json = PathBuf::from(s.clone());
+                                self.rules_json = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The rules.json file must be a JSON \
                                                file.\nUsing default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'rules_json' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -476,7 +566,7 @@ impl Config {
                                 let cfg = match cfg.as_table() {
                                     Some(t) => t,
                                     None => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -484,7 +574,7 @@ impl Config {
                                 let name = match cfg.get("name") {
                                     Some(&Value::String(ref n)) => n,
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -503,13 +593,13 @@ impl Config {
                                                                       "medium".italic(),
                                                                       "high".italic(),
                                                                       "critical".italic()),
-                                                              verbose);
+                                                              self.verbose);
                                                 break;
                                             }
                                         }
                                     }
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -517,7 +607,7 @@ impl Config {
                                 let description = match cfg.get("description") {
                                     Some(&Value::String(ref d)) => d.to_owned(),
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -530,14 +620,14 @@ impl Config {
                                         criticity = \"warning|low|medium|high|criticity\"\n\
                                         description = \"Long description to explain the \
                                         vulnerability\"".italic()),
-                                                      verbose);
+                                                      self.verbose);
                                         break;
                                     }
 
-                                    config.unknown_permission = (criticity, description.clone());
+                                    self.unknown_permission = (criticity, description.clone());
                                 } else {
                                     if cfg.len() != 4 {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
 
@@ -553,7 +643,7 @@ impl Config {
                                                                   name.italic(),
                                                                   "unknown".italic(),
                                                                   "[[permissions]]".italic()),
-                                                          verbose);
+                                                          self.verbose);
                                             break;
                                         }
                                     };
@@ -561,11 +651,11 @@ impl Config {
                                     let label = match cfg.get("label") {
                                         Some(&Value::String(ref l)) => l.to_owned(),
                                         _ => {
-                                            print_warning(format_warning, verbose);
+                                            print_warning(format_warning, self.verbose);
                                             break;
                                         }
                                     };
-                                    config.permissions
+                                    self.permissions
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
@@ -576,11 +666,14 @@ impl Config {
                         _ => {
                             print_warning("You must specify the permissions you want to \
                                            select as vulnerable.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
-                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
+                _ => {
+                    print_warning(format!("Unknown configuration option {}.", key),
+                                  self.verbose)
+                }
             }
         }
         Ok(())
@@ -589,7 +682,7 @@ impl Config {
     /// Returns the default `Config` struct.
     fn local_default() -> Config {
         Config {
-            app_package: String::new(),
+            app_packages: Vec::new(),
             verbose: false,
             quiet: false,
             force: false,
@@ -726,10 +819,10 @@ mod tests {
     #[test]
     fn it_config() {
         // Create config object.
-        let mut config: Config = Default::default();
+        let mut config = Config::default();
 
         // Check that the properties of the config object are correct.
-        assert_eq!(config.get_app_package(), "");
+        assert!(config.get_app_packages().is_empty());
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
         assert!(!config.is_force());
@@ -781,7 +874,7 @@ mod tests {
         }
 
         // Change properties.
-        config.set_app_package("test_app");
+        config.add_app_package("test_app");
         config.set_verbose(true);
         config.set_quiet(true);
         config.set_force(true);
@@ -789,36 +882,25 @@ mod tests {
         config.set_open(true);
 
         // Check that the new properties are correct.
-        assert_eq!(config.get_app_package(), "test_app");
+        assert_eq!(config.get_app_packages()[0], "test_app");
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());
         assert!(config.is_bench());
         assert!(config.is_open());
 
-        if config.get_apk_file().exists() {
-            fs::remove_file(config.get_apk_file()).unwrap();
+        if config.get_apk_file("test_app").exists() {
+            fs::remove_file(config.get_apk_file("test_app")).unwrap();
         }
         assert!(!config.check());
 
-        let _ = fs::File::create(config.get_apk_file()).unwrap();
+        let _ = fs::File::create(config.get_apk_file("test_app")).unwrap();
         assert!(config.check());
 
-        let config = Config::new("test_app", false, false, false, false, false).unwrap();
-        let mut error_string = String::from("Configuration errors were found:\n");
-        for error in config.get_errors() {
-            error_string.push_str(&error);
-            error_string.push('\n');
-        }
-        error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration\n");
-        for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file.display()));
-        }
-        println!("{}", error_string);
+        let config = Config::new(false, false, false, false, false).unwrap();
         assert!(config.check());
 
-        fs::remove_file(config.get_apk_file()).unwrap();
+        fs::remove_file(config.get_apk_file("test_app")).unwrap();
     }
 
     /// Test for the `config.toml.sample` sample configuration file.
@@ -827,7 +909,7 @@ mod tests {
         // Create config object.
         let mut config = Config::default();
         Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
-        config.set_app_package("test_app");
+        config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);

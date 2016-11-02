@@ -6,7 +6,6 @@ use std::path::Path;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 use std::slice::Iter;
 
 use serde_json;
@@ -15,11 +14,13 @@ use regex::Regex;
 use colored::Colorize;
 
 use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
-use results::{Results, Vulnerability, Benchmark};
+use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 
-pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut Results) {
-    let code_start = Instant::now();
+pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
+                                    config: &Config,
+                                    package: S,
+                                    results: &mut Results) {
     let rules = match load_rules(config) {
         Ok(r) => r,
         Err(e) => {
@@ -30,12 +31,8 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
         }
     };
 
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Rule loading", code_start.elapsed()));
-    }
-
     let mut files: Vec<DirEntry> = Vec::new();
-    if let Err(e) = add_files_to_vec("", &mut files, config) {
+    if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!("An error occurred when reading files for analysis, the results \
                                might be incomplete. Error: {}",
                               e),
@@ -48,14 +45,13 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
-    let dist_folder = Arc::new(config.get_dist_folder().join(config.get_app_package()));
+    let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
         println!("Starting analysis of the code with {} threads. {} files to go!",
                  format!("{}", config.get_threads()).bold(),
                  format!("{}", total_files).bold());
     }
-    let analysis_start = Instant::now();
 
     let handles: Vec<_> = (0..config.get_threads())
         .map(|_| {
@@ -121,16 +117,8 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
         }
     }
 
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("File analysis", analysis_start.elapsed()));
-    }
-
     for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
         results.add_vulnerability(vuln);
-    }
-
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Total code analysis", code_start.elapsed()));
     }
 
     if config.is_verbose() {
@@ -265,17 +253,18 @@ fn get_line_for<S: AsRef<str>>(index: usize, text: S) -> usize {
     line
 }
 
-fn add_files_to_vec<P: AsRef<Path>>(path: P,
-                                    vec: &mut Vec<DirEntry>,
-                                    config: &Config)
-                                    -> Result<()> {
+fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
+                                                   vec: &mut Vec<DirEntry>,
+                                                   package: S,
+                                                   config: &Config)
+                                                   -> Result<()> {
     if path.as_ref() == Path::new("classes/android") ||
        path.as_ref() == Path::new("classes/com/google/android/gms") ||
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
     let real_path = config.get_dist_folder()
-        .join(config.get_app_package())
+        .join(package.as_ref())
         .join(path);
     for f in try!(fs::read_dir(&real_path)) {
         let f = match f {
@@ -294,9 +283,10 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
         if f_type.is_dir() && f_path != real_path.join("original") {
             try!(add_files_to_vec(f.path()
                                       .strip_prefix(&config.get_dist_folder()
-                                          .join(config.get_app_package()))
+                                          .join(package.as_ref()))
                                       .unwrap(),
                                   vec,
+                                  package.as_ref(),
                                   config));
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();

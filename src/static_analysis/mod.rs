@@ -8,13 +8,11 @@ pub mod manifest;
 pub mod certificate;
 pub mod code;
 
-use std::time::Instant;
-
 use self::manifest::*;
 #[cfg(feature = "certificate")]
 use self::certificate::*;
 use self::code::*;
-use results::{Results, Benchmark};
+use results::Results;
 use {Config, print_warning};
 #[cfg(not(feature = "certificate"))]
 use Result;
@@ -22,37 +20,29 @@ use Result;
 /// Runs the analysis for manifest, certificate and code files.
 ///
 /// * Benchmarking support.
-pub fn static_analysis(config: &Config, results: &mut Results) {
+pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut Results) {
     if config.is_verbose() {
         println!("It's time to analyze the application. First, a static analysis will be \
                   performed, starting with the AndroidManifest.xml file and then going through \
                   the actual code. Let's start!");
     }
 
-    let manifest_start = Instant::now();
     // Run analysis for manifest file.
-    let manifest = manifest_analysis(config, results);
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Manifest analysis", manifest_start.elapsed()));
-    }
+    let manifest = manifest_analysis(config, package.as_ref(), results);
 
     if cfg!(feature = "certificate") {
-        let certificate_start = Instant::now();
         // Run analysis for cerificate file.
-        if let Err(e) = certificate_analysis(config, results) {
+        if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
             print_warning(format!("There was an error analysing the certificate: {:?}", e),
                           config.is_verbose())
-        } else if config.is_bench() {
-            results.add_benchmark(Benchmark::new("Certificate analysis",
-                                                 certificate_start.elapsed()));
         }
     }
 
     // Run analysis for source code files.
-    code_analysis(manifest, config, results);
+    code_analysis(manifest, config, package.as_ref(), results);
 }
 
 #[cfg(not(feature = "certificate"))]
-fn certificate_analysis(_: &Config, _: &mut Results) -> Result<()> {
+fn certificate_analysis<S: AsRef<str>>(_: &Config, _: S, _: &mut Results) -> Result<()> {
     Ok(())
 }
