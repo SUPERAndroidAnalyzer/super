@@ -32,12 +32,11 @@ pub struct Results {
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
     critical: BTreeSet<Vulnerability>,
-    benchmarks: Vec<Benchmark>,
 }
 
 impl Results {
-    pub fn init(config: &Config) -> Option<Results> {
-        let path = config.get_results_folder().join(config.get_app_package());
+    pub fn init<S: AsRef<str>>(config: &Config, package: S) -> Option<Results> {
+        let path = config.get_results_folder().join(package.as_ref());
         if !fs::metadata(&path).is_ok() || config.is_force() {
             if fs::metadata(&path).is_ok() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -49,7 +48,7 @@ impl Results {
                 }
             }
 
-            let fingerprint = match FingerPrint::new(config) {
+            let fingerprint = match FingerPrint::new(config, package) {
                 Ok(f) => f,
                 Err(e) => {
                     print_error(format!("An error occurred when trying to fingerprint the \
@@ -80,11 +79,6 @@ impl Results {
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
                 critical: BTreeSet::new(),
-                benchmarks: if config.is_bench() {
-                    Vec::with_capacity(10)
-                } else {
-                    Vec::with_capacity(0)
-                },
             })
         } else {
             if config.is_verbose() {
@@ -143,16 +137,8 @@ impl Results {
         }
     }
 
-    pub fn add_benchmark(&mut self, bench: Benchmark) {
-        self.benchmarks.push(bench);
-    }
-
-    pub fn get_benchmarks(&self) -> Iter<Benchmark> {
-        self.benchmarks.iter()
-    }
-
-    pub fn generate_report(&self, config: &Config) -> Result<()> {
-        let path = config.get_results_folder().join(config.get_app_package());
+    pub fn generate_report<S: AsRef<str>>(&self, package: S, config: &Config) -> Result<()> {
+        let path = config.get_results_folder().join(package.as_ref());
         if !path.exists() || config.is_force() {
             if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -171,14 +157,14 @@ impl Results {
                 println!("Results folder created. Time to create the reports.");
             }
 
-            try!(self.generate_json_report(config));
+            try!(self.generate_json_report(package.as_ref(), config));
 
             if config.is_verbose() {
                 println!("JSON report generated.");
                 println!("");
             }
 
-            try!(self.generate_html_report(config));
+            try!(self.generate_html_report(package.as_ref(), config));
 
             if config.is_verbose() {
                 println!("HTML report generated.");
@@ -188,12 +174,12 @@ impl Results {
         Ok(())
     }
 
-    fn generate_json_report(&self, config: &Config) -> Result<()> {
+    fn generate_json_report<S: AsRef<str>>(&self, package: S, config: &Config) -> Result<()> {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("results.json")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
@@ -247,12 +233,12 @@ impl Results {
         Ok(())
     }
 
-    fn generate_html_report(&self, config: &Config) -> Result<()> {
+    fn generate_html_report<S: AsRef<str>>(&self, package: S, config: &Config) -> Result<()> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("index.html")));
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
@@ -438,9 +424,9 @@ impl Results {
 
         // Copying JS and CSS files
         try!(copy_folder(config.get_results_template(),
-                         &config.get_results_folder().join(config.get_app_package())));
+                         &config.get_results_folder().join(package.as_ref())));
 
-        try!(self.generate_code_html_files(config));
+        try!(self.generate_code_html_files(config, package));
 
         Ok(())
     }
@@ -542,12 +528,12 @@ impl Results {
         Ok(())
     }
 
-    fn generate_code_html_files(&self, config: &Config) -> Result<()> {
-        let _ = try!(self.generate_code_html_folder("", config));
-        let menu = try!(self.generate_html_src_menu("", config));
+    fn generate_code_html_files<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
+        let _ = try!(self.generate_code_html_folder("", config, package.as_ref()));
+        let menu = try!(self.generate_html_src_menu("", config, package.as_ref()));
 
         let mut f = try!(File::create(config.get_results_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("src")
             .join("index.html")));
 
@@ -575,18 +561,22 @@ impl Results {
         Ok(())
     }
 
-    fn generate_code_html_folder<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<usize> {
+    fn generate_code_html_folder<P: AsRef<Path>, S: AsRef<str>>(&self,
+                                                                path: P,
+                                                                config: &Config,
+                                                                package: S)
+                                                                -> Result<usize> {
         if path.as_ref() == Path::new("classes/android") ||
            path.as_ref() == Path::new("classes/com/google/android/gms") ||
            path.as_ref() == Path::new("smali") {
             return Ok(0);
         }
         let dir_iter = try!(fs::read_dir(config.get_dist_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join(path.as_ref())));
 
         try!(fs::create_dir_all(config.get_results_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("src")
             .join(path.as_ref())));
         let mut count = 0;
@@ -597,7 +587,7 @@ impl Results {
                 Err(e) => {
                     print_warning(format!("There was an error reading the directory {}: {}",
                                           config.get_dist_folder()
-                                              .join(config.get_app_package())
+                                              .join(package.as_ref())
                                               .join(path.as_ref())
                                               .display(),
                                           e),
@@ -609,21 +599,23 @@ impl Results {
             match f.path().extension() {
                 Some(e) => {
                     if e.to_string_lossy() == "xml" || e.to_string_lossy() == "java" {
-                        let prefix = config.get_dist_folder().join(config.get_app_package());
+                        let prefix = config.get_dist_folder().join(package.as_ref());
                         try!(self.generate_code_html_for(f.path().strip_prefix(&prefix).unwrap(),
-                                                         config));
+                                                         config,
+                                                         package.as_ref()));
                         count += 1;
                     }
                 }
                 None => {
                     if f.path().is_dir() {
-                        let prefix = config.get_dist_folder().join(config.get_app_package());
+                        let prefix = config.get_dist_folder().join(package.as_ref());
 
                         if f.path().strip_prefix(&prefix).unwrap() != Path::new("original") {
                             let f_count = try!(self.generate_code_html_folder(f.path()
                                                                .strip_prefix(&prefix)
                                                                .unwrap(),
-                                                           config));
+                                                           config,
+                                                           package.as_ref()));
                             if f_count > 0 {
                                 count += 1;
                             }
@@ -634,7 +626,7 @@ impl Results {
         }
         if count == 0 {
             try!(fs::remove_dir(config.get_results_folder()
-                .join(config.get_app_package())
+                .join(package.as_ref())
                 .join("src")
                 .join(path)));
         }
@@ -642,12 +634,13 @@ impl Results {
         Ok(count)
     }
 
-    fn generate_html_src_menu<P: AsRef<Path>>(&self,
-                                              dir_path: P,
-                                              config: &Config)
-                                              -> Result<String> {
+    fn generate_html_src_menu<P: AsRef<Path>, S: AsRef<str>>(&self,
+                                                             dir_path: P,
+                                                             config: &Config,
+                                                             package: S)
+                                                             -> Result<String> {
         let iter = try!(fs::read_dir(config.get_results_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("src")
             .join(dir_path.as_ref())));
         let mut menu = String::new();
@@ -686,11 +679,12 @@ impl Results {
                             None => String::new(),
                         };
                         let prefix = config.get_results_folder()
-                            .join(config.get_app_package())
+                            .join(package.as_ref())
                             .join("src");
                         let submenu =
                             match self.generate_html_src_menu(path.strip_prefix(&prefix).unwrap(),
-                                                        config) {
+                                                        config,
+                                                        package.as_ref()) {
                                 Ok(m) => m,
                                 Err(e) => {
                                     let path = path.to_string_lossy();
@@ -726,13 +720,17 @@ impl Results {
         Ok(menu)
     }
 
-    fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
+    fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self,
+                                                             path: P,
+                                                             config: &Config,
+                                                             package: S)
+                                                             -> Result<()> {
         let mut f_in = try!(File::open(config.get_dist_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join(path.as_ref())));
         let mut f_out = try!(File::create(format!("{}.html",
                                                   config.get_results_folder()
-                                                      .join(config.get_app_package())
+                                                      .join(package.as_ref())
                                                       .join("src")
                                                       .join(path.as_ref())
                                                       .display())));

@@ -58,14 +58,14 @@ static BANNER: &'static str = include_str!("banner.txt");
 fn main() {
     let matches = get_help_menu();
 
-    let app_package = matches.value_of("package").unwrap().replace(".apk", "");
+    let test_all = matches.is_present("test-all");
     let verbose = matches.is_present("verbose");
     let quiet = matches.is_present("quiet");
     let force = matches.is_present("force");
     let bench = matches.is_present("bench");
     let open = matches.is_present("open");
 
-    let mut config = match Config::new(app_package.as_str(), verbose, quiet, force, bench, open) {
+    let mut config = match Config::new(verbose, quiet, force, bench, open) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
@@ -75,7 +75,41 @@ fn main() {
         }
     };
 
-    config.set_app_package(app_package);
+    if !test_all {
+        config.add_app_package(matches.value_of("package").unwrap());
+    } else {
+        match fs::read_dir(config.get_downloads_folder()) {
+            Ok(iter) => {
+                for entry in iter {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(ext) = entry.path().extension() {
+                                if ext == "apk" {
+                                    config.add_app_package(entry.path()
+                                        .file_stem()
+                                        .unwrap()
+                                        .to_string_lossy()
+                                        .into_owned())
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            print_warning(format!("There was an error when reading the \
+                                                   downloads folder: {}",
+                                                  e),
+                                          config.is_verbose());
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error when reading the downloads folder: {}",
+                                    e),
+                            config.is_verbose());
+                exit(Error::from(e).into());
+            }
+        }
+    }
     config.set_verbose(verbose);
     config.set_quiet(quiet);
     config.set_force(force);
@@ -149,106 +183,104 @@ fn main() {
     }
 
     let mut benchmarks = if config.is_bench() {
-        Vec::with_capacity(4)
+        Vec::with_capacity(1 + 4 * config.get_app_packages().len()) // TODO calculate
     } else {
         Vec::with_capacity(0)
     };
 
-    let start_time = Instant::now();
+    let total_start = Instant::now();
+    for package in config.get_app_packages() {
+        let start_time = Instant::now();
 
-    // APKTool app decompression
-    decompress(&config);
-
-    if config.is_bench() {
-        benchmarks.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
-    }
-
-    // Extracting the classes.dex from the .apk file
-    extract_dex(&config, &mut benchmarks);
-
-    if config.is_verbose() {
-        println!("");
-        println!("Now it's time for the actual decompilation of the source code. We'll translate \
-                  Android JVM bytecode to Java, so that we can check the code afterwards.");
-    }
-
-    let decompile_start = Instant::now();
-
-    // Decompiling the app
-    decompile(&config);
-
-    if config.is_bench() {
-        benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
-    }
-
-    if let Some(mut results) = Results::init(&config) {
-        if config.is_bench() {
-            while !benchmarks.is_empty() {
-                results.add_benchmark(benchmarks.remove(0));
-            }
-        }
-
-        let static_start = Instant::now();
-        // Static application analysis
-        static_analysis(&config, &mut results);
+        // APKTool app decompression
+        decompress(&config, package);
 
         if config.is_bench() {
-            results.add_benchmark(Benchmark::new("Total static analysis", static_start.elapsed()));
+            benchmarks.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
         }
 
-        // TODO dynamic analysis
+        // Extracting the classes.dex from the .apk file
+        extract_dex(&config, package, &mut benchmarks);
 
-        if !config.is_quiet() {
+        if config.is_verbose() {
             println!("");
+            println!("Now it's time for the actual decompilation of the source code. We'll \
+                      translate Android JVM bytecode to Java, so that we can check the code \
+                      afterwards.");
         }
 
-        let report_start = Instant::now();
+        let decompile_start = Instant::now();
 
-        match results.generate_report(&config) {
-            Ok(_) => {
-                if config.is_verbose() {
-                    println!("The results report has been saved. Everything went smoothly, now \
-                              you can check all the results.");
-                    println!("");
-                    println!("I will now analyze myself for vulnerabilities…");
-                    sleep(Duration::from_millis(1500));
-                    println!("Nah, just kidding, I've been developed in {}!",
-                             "Rust".bold().green())
-                } else if !config.is_quiet() {
-                    println!("Report generated.");
+        // Decompiling the app
+        decompile(&config, package);
+
+        if config.is_bench() {
+            benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+        }
+
+        if let Some(mut results) = Results::init(&config, package) {
+            let static_start = Instant::now();
+            // Static application analysis
+            static_analysis(&config, package, &mut results);
+
+            if config.is_bench() {
+                benchmarks.push(Benchmark::new("Total static analysis", static_start.elapsed()));
+            }
+
+            // TODO dynamic analysis
+
+            if !config.is_quiet() {
+                println!("");
+            }
+
+            let report_start = Instant::now();
+            match results.generate_report(package, &config) {
+                Ok(_) => {
+                    if config.is_verbose() {
+                        println!("The results report has been saved. Everything went smoothly, \
+                                  now you can check all the results.");
+                        println!("");
+                        println!("I will now analyze myself for vulnerabilities…");
+                        sleep(Duration::from_millis(1500));
+                        println!("Nah, just kidding, I've been developed in {}!",
+                                 "Rust".bold().green())
+                    } else if !config.is_quiet() {
+                        println!("Report generated.");
+                    }
+                }
+                Err(e) => {
+                    print_error(format!("There was an error generating the results report: {}", e),
+                                config.is_verbose());
+                    exit(Error::Unknown.into())
                 }
             }
-            Err(e) => {
-                print_error(format!("There was an error generating the results report: {}", e),
-                            config.is_verbose());
-                exit(Error::Unknown.into())
+
+
+            if config.is_bench() {
+                benchmarks.push(Benchmark::new("Report generation", report_start.elapsed()));
+                benchmarks.push(Benchmark::new(format!("Total time for {}", package),
+                                               total_start.elapsed()));
+            }
+
+            if config.is_open() {
+                let report_path = config.get_results_folder()
+                    .join(package)
+                    .join("index.html");
+                if let Err(e) = open::that(report_path) {
+                    print_error(format!("Report could not be opened automatically: {}", e),
+                                config.is_verbose());
+                }
             }
         }
+    }
 
-        if config.is_bench() {
-            results.add_benchmark(Benchmark::new("Report generation", report_start.elapsed()));
+    if config.is_bench() {
+        benchmarks.push(Benchmark::new("Total time", total_start.elapsed()));
+        println!("");
+        println!("{}", "Benchmarks:".bold());
+        for bench in benchmarks {
+            println!("{}", bench);
         }
-
-        if config.is_bench() {
-            results.add_benchmark(Benchmark::new("Total time", start_time.elapsed()));
-            println!("");
-            println!("{}", "Benchmarks:".bold());
-            for bench in results.get_benchmarks() {
-                println!("{}", bench);
-            }
-        }
-
-        if config.is_open() {
-            let report_path = config.get_results_folder()
-                .join(config.get_app_package())
-                .join("index.html");
-            if let Err(e) = open::that(report_path) {
-                print_error(format!("Report could not be opened automatically: {}", e),
-                            config.is_verbose());
-            }
-        }
-    } else if !config.is_quiet() {
-        println!("Analysis cancelled.");
     }
 }
 
@@ -384,8 +416,15 @@ fn get_help_menu() -> ArgMatches<'static> {
         .arg(Arg::with_name("package")
             .help("The package string of the application to test.")
             .value_name("package")
-            .required(true)
+            .required_unless("test-all")
+            .conflicts_with("test-all")
             .takes_value(true))
+        .arg(Arg::with_name("test-all")
+            .short("a")
+            .long("test-all")
+            .conflicts_with("package")
+            .conflicts_with("open")
+            .help("Test all .apk files in the downloads directory."))
         .arg(Arg::with_name("verbose")
             .short("v")
             .long("verbose")
@@ -404,6 +443,7 @@ fn get_help_menu() -> ArgMatches<'static> {
             .help("If you'd like a zen auditor that won't output anything in stdout."))
         .arg(Arg::with_name("open")
             .long("open")
+            .conflicts_with("test-all")
             .help("Open the report in a browser once it is complete."))
         .arg(Arg::with_name("threads")
             .short("t")

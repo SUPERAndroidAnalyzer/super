@@ -14,8 +14,8 @@ use {Error, Config, print_error, print_warning};
 use results::Benchmark;
 
 /// Decompresses the application using _Apktool_.
-pub fn decompress(config: &Config) {
-    let path = config.get_dist_folder().join(config.get_app_package());
+pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
+    let path = config.get_dist_folder().join(package.as_ref());
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
@@ -48,7 +48,7 @@ pub fn decompress(config: &Config) {
             .arg("-o")
             .arg(&path)
             .arg("-f")
-            .arg(config.get_apk_file())
+            .arg(config.get_apk_file(package))
             .output();
 
         let output = match output {
@@ -84,8 +84,8 @@ pub fn decompress(config: &Config) {
 }
 
 /// Extracts the _.dex_ files.
-pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
-    if config.is_force() || !config.get_dist_folder().join(config.get_app_package()).exists() {
+pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut Vec<Benchmark>) {
+    if config.is_force() || !config.get_dist_folder().join(package.as_ref()).exists() {
         if config.is_verbose() {
             println!("");
             println!("To decompile the app, first we need to extract the {} file.",
@@ -95,7 +95,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
         let start_time = Instant::now();
 
         // Command to extract the .dex files.
-        let zip = ZipArchive::new(match File::open(config.get_apk_file()) {
+        let zip = ZipArchive::new(match File::open(config.get_apk_file(package.as_ref())) {
             Ok(f) => f,
             Err(e) => {
                 print_error(format!("There was an error when decompressing the {} file. More \
@@ -131,7 +131,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 
         // Placing the classes.dex file into the dist_folder.
         let mut out_file = match File::create(config.get_dist_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("classes.dex")) {
             Ok(f) => f,
             Err(e) => {
@@ -180,7 +180,7 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
         let dex_jar_time = Instant::now();
 
         // Converting the .dex to .jar.
-        dex_to_jar(config);
+        dex_to_jar(config, package.as_ref());
 
         benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
     } else if config.is_verbose() {
@@ -191,9 +191,9 @@ pub fn extract_dex(config: &Config, benchmarks: &mut Vec<Benchmark>) {
 }
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
-fn dex_to_jar(config: &Config) {
+fn dex_to_jar<S: AsRef<str>>(config: &Config, package: S) {
     let classes = config.get_dist_folder()
-        .join(config.get_app_package())
+        .join(package.as_ref())
         .join("classes.jar");
 
     // Command to convert .dex to .jar. using dex2jar.
@@ -205,7 +205,7 @@ fn dex_to_jar(config: &Config) {
                 "d2j-dex2jar.sh"
             }))
         .arg(config.get_dist_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("classes.dex"))
         .arg("-o")
         .arg(&classes)
@@ -245,9 +245,9 @@ fn dex_to_jar(config: &Config) {
 }
 
 /// Decompiles the application using _jd\_cmd_.
-pub fn decompile(config: &Config) {
+pub fn decompile<S: AsRef<str>>(config: &Config, package: S) {
     let out_path = config.get_dist_folder()
-        .join(config.get_app_package())
+        .join(package.as_ref())
         .join("classes");
     if config.is_force() || !out_path.exists() {
         // Command to decompile the application using jd_cmd.
@@ -256,7 +256,7 @@ pub fn decompile(config: &Config) {
             .arg("-jar")
             .arg(config.get_jd_cmd_file())
             .arg(config.get_dist_folder()
-                .join(config.get_app_package())
+                .join(package.as_ref())
                 .join("classes.jar"))
             .arg("-od")
             .arg(&out_path)

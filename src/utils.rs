@@ -73,10 +73,13 @@ pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String 
     result
 }
 
-pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
+pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
+                                                config: &Config,
+                                                package: P)
+                                                -> Result<String> {
     let mut file = try!(fs::File::open({
         let path = config.get_dist_folder()
-            .join(config.get_app_package())
+            .join(package.as_ref())
             .join("res")
             .join("values-en")
             .join("strings.xml");
@@ -85,7 +88,7 @@ pub fn get_string<S: AsRef<str>>(label: S, config: &Config) -> Result<String> {
             path
         } else {
             config.get_dist_folder()
-                .join(config.get_app_package())
+                .join(package.as_ref())
                 .join("res")
                 .join("values")
                 .join("strings.xml")

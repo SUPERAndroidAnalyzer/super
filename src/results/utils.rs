@@ -128,8 +128,8 @@ pub struct FingerPrint {
 
 impl FingerPrint {
     /// Creates a new fingerprint.
-    pub fn new(config: &Config) -> Result<FingerPrint> {
-        let mut f = try!(File::open(config.get_apk_file()));
+    pub fn new<S: AsRef<str>>(config: &Config, package: S) -> Result<FingerPrint> {
+        let mut f = try!(File::open(config.get_apk_file(package)));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
         let _ = try!(f.read_to_end(&mut buffer));
 

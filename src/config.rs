@@ -29,8 +29,8 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 /// checking their values. Implements the `Default` trait.
 #[derive(Debug)]
 pub struct Config {
-    /// Application package.
-    app_package: String,
+    /// Application packages to analyze.
+    app_packages: Vec<String>,
     /// Boolean to represent `--verbose` mode.
     verbose: bool,
     /// Boolean to represent `--quiet` mode.
@@ -69,15 +69,8 @@ pub struct Config {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn new<S: Into<String>>(app_package: S,
-                                verbose: bool,
-                                quiet: bool,
-                                force: bool,
-                                bench: bool,
-                                open: bool)
-                                -> Result<Config> {
+    pub fn new(verbose: bool, quiet: bool, force: bool, bench: bool, open: bool) -> Result<Config> {
         let mut config: Config = Default::default();
-        config.app_package = app_package.into();
         config.verbose = verbose;
         config.quiet = quiet;
         config.force = force;
@@ -102,10 +95,19 @@ impl Config {
 
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        self.downloads_folder.exists() && self.get_apk_file().exists() &&
-        self.apktool_file.exists() && self.dex2jar_folder.exists() &&
-        self.jd_cmd_file.exists() && self.results_template.exists() &&
-        self.rules_json.exists()
+        let check = self.downloads_folder.exists() && self.apktool_file.exists() &&
+                    self.dex2jar_folder.exists() && self.jd_cmd_file.exists() &&
+                    self.results_template.exists() && self.rules_json.exists();
+        if check {
+            for package in &self.app_packages {
+                if !self.get_apk_file(package).exists() {
+                    return false;
+                }
+            }
+            true
+        } else {
+            false
+        }
     }
 
     /// Returns the folders and files that do not exist.
@@ -115,9 +117,11 @@ impl Config {
             errors.push(format!("The downloads folder `{}` does not exist",
                                 self.downloads_folder.display()));
         }
-        if !self.get_apk_file().exists() {
-            errors.push(format!("The APK file `{}` does not exist",
-                                self.get_apk_file().display()));
+        for package in &self.app_packages {
+            if !self.get_apk_file(package).exists() {
+                errors.push(format!("The APK file `{}` does not exist",
+                                    self.get_apk_file(package).display()));
+            }
         }
         if !self.apktool_file.exists() {
             errors.push(format!("The APKTool JAR file `{}` does not exist",
@@ -148,18 +152,18 @@ impl Config {
     }
 
     /// Returns the app package.
-    pub fn get_app_package(&self) -> &str {
-        &self.app_package
+    pub fn get_app_packages(&self) -> &[String] {
+        &self.app_packages
     }
 
     /// Changes the app package.
-    pub fn set_app_package<S: Into<String>>(&mut self, app_package: S) {
-        self.app_package = app_package.into();
+    pub fn add_app_package<S: Into<String>>(&mut self, app_package: S) {
+        self.app_packages.push(app_package.into().replace(".apk", ""));
     }
 
-    /// Returns the path to the _.apk_.
-    pub fn get_apk_file(&self) -> PathBuf {
-        self.downloads_folder.join(format!("{}.apk", self.app_package))
+    /// Returns the path to the apk file of the given package.
+    pub fn get_apk_file<S: AsRef<str>>(&self, package: S) -> PathBuf {
+        self.downloads_folder.join(format!("{}.apk", package.as_ref()))
     }
 
     /// Returns true if the application is running in `--verbose` mode, false otherwise.
@@ -589,7 +593,7 @@ impl Config {
     /// Returns the default `Config` struct.
     fn local_default() -> Config {
         Config {
-            app_package: String::new(),
+            app_packages: Vec::new(),
             verbose: false,
             quiet: false,
             force: false,
@@ -726,10 +730,10 @@ mod tests {
     #[test]
     fn it_config() {
         // Create config object.
-        let mut config: Config = Default::default();
+        let mut config = Config::default();
 
         // Check that the properties of the config object are correct.
-        assert_eq!(config.get_app_package(), "");
+        assert!(config.get_app_packages().is_empty());
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
         assert!(!config.is_force());
@@ -781,7 +785,7 @@ mod tests {
         }
 
         // Change properties.
-        config.set_app_package("test_app");
+        config.add_app_package("test_app");
         config.set_verbose(true);
         config.set_quiet(true);
         config.set_force(true);
@@ -789,36 +793,25 @@ mod tests {
         config.set_open(true);
 
         // Check that the new properties are correct.
-        assert_eq!(config.get_app_package(), "test_app");
+        assert_eq!(config.get_app_packages()[0], "test_app");
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());
         assert!(config.is_bench());
         assert!(config.is_open());
 
-        if config.get_apk_file().exists() {
-            fs::remove_file(config.get_apk_file()).unwrap();
+        if config.get_apk_file("test_app").exists() {
+            fs::remove_file(config.get_apk_file("test_app")).unwrap();
         }
         assert!(!config.check());
 
-        let _ = fs::File::create(config.get_apk_file()).unwrap();
+        let _ = fs::File::create(config.get_apk_file("test_app")).unwrap();
         assert!(config.check());
 
-        let config = Config::new("test_app", false, false, false, false, false).unwrap();
-        let mut error_string = String::from("Configuration errors were found:\n");
-        for error in config.get_errors() {
-            error_string.push_str(&error);
-            error_string.push('\n');
-        }
-        error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration\n");
-        for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file.display()));
-        }
-        println!("{}", error_string);
+        let config = Config::new(false, false, false, false, false).unwrap();
         assert!(config.check());
 
-        fs::remove_file(config.get_apk_file()).unwrap();
+        fs::remove_file(config.get_apk_file("test_app")).unwrap();
     }
 
     /// Test for the `config.toml.sample` sample configuration file.
@@ -827,7 +820,7 @@ mod tests {
         // Create config object.
         let mut config = Config::default();
         Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
-        config.set_app_package("test_app");
+        config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);
