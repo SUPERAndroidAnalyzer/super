@@ -51,7 +51,7 @@ license_file = ["LICENSE", "0"]
 extended_description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI."""
-depends = "libc6, libgcc1, default-jre-headless, openssl, bash"
+depends = "libc6, libgcc1, default-jre-headless, bash"
 section = "devel"
 priority = "optional"
 assets = [
@@ -64,35 +64,35 @@ assets = [
     ["vendor/apktool_2.2.0.jar", "usr/share/super/vendor/", "755"],
     ["vendor/apktool.LICENSE.txt", "usr/share/super/vendor/", "644"],
     # Dex2Jar
-    ["vendor/dex2jar-2.0/LICENSE.txt", "usr/share/super/vendor/dex2jar-2.0/", "644"],
-    ["vendor/dex2jar-2.0/d2j-dex2jar.sh", "usr/share/super/vendor/dex2jar-2.0/", "755"],
-    ["vendor/dex2jar-2.0/d2j_invoke.sh", "usr/share/super/vendor/dex2jar-2.0/", "755"],
-    ["vendor/dex2jar-2.0/lib/antlr-runtime-3.5.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/asm-debug-all-4.1.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/d2j-base-cmd-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/d2j-jasmin-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/d2j-smali-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-ir-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-reader-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-reader-api-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-tools-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-translator-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dex-writer-2.0.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
-    ["vendor/dex2jar-2.0/lib/dx-1.7.jar", "usr/share/super/vendor/dex2jar-2.0/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/", "644"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/d2j-dex2jar.sh", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/d2j_invoke.sh", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/antlr-runtime-3.5.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/asm-debug-all-4.1.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-base-cmd-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-jasmin-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-smali-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-ir-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-reader-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-reader-api-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-tools-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-translator-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-writer-2.0.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dx-1.7.jar", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
     #CSS
-    ["vendor/results_template/css/androidstudio.css", "usr/share/super/vendor/results_template/css/", "644"],
-    ["vendor/results_template/css/style.css", "usr/share/super/vendor/results_template/css/", "644"],
+    ["templates/super/css/androidstudio.css", "usr/share/super/templates/super/css/", "644"],
+    ["templates/super/css/style.css", "usr/share/super/templates/super/css/", "644"],
     # Images
-    ["vendor/results_template/img/folder-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
-    ["vendor/results_template/img/java-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
-    ["vendor/results_template/img/xml-icon.png", "usr/share/super/vendor/results_template/img/", "644"],
-    ["vendor/results_template/img/report.png", "usr/share/super/vendor/results_template/img/", "644"],
-    ["vendor/results_template/img/logo.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["templates/super/img/folder-icon.png", "usr/share/super/templates/super/img/", "644"],
+    ["templates/super/img/java-icon.png", "usr/share/super/templates/super/img/", "644"],
+    ["templates/super/xml-icon.png", "usr/share/super/templates/super/img/", "644"],
+    ["templates/super/img/report.png", "usr/share/super/vendor/results_template/img/", "644"],
+    ["templates/super/img/logo.png", "usr/share/super/templates/super/img/", "644"],
     # JavaScript
-    ["vendor/results_template/js/highlight.js.LICENSE", "usr/share/super/vendor/results_template/js/", "644"],
-    ["vendor/results_template/js/highlight.pack.js", "usr/share/super/vendor/results_template/js/", "644"],
-    ["vendor/results_template/js/jquery-3.1.0.slim.min.js", "usr/share/super/vendor/results_template/js/", "644"],
-    ["vendor/results_template/js/src_nav.js", "usr/share/super/vendor/results_template/js/", "644"],
+    ["templates/super/js/highlight.js.LICENSE", "usr/share/super/templates/super/js/", "644"],
+    ["templates/super/js/highlight.pack.js", "usr/share/super/templates/super/js/", "644"],
+    ["templates/super/js/jquery-3.1.1.slim.min.js", "usr/share/super/templates/super/js/", "644"],
+    ["templates/super/js/src_nav.js", "usr/share/super/templates/super/js/", "644"],
     # Config
     ["rules.json", "etc/super/", "644"],
     ["config.toml", "etc/super/", "644"],
