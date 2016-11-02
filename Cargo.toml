@@ -31,6 +31,7 @@ lazy_static = "^0.2"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
 open = "^1.1"
+bytecount = "0.1"
 
 [dependencies.handlebars]
 version = "^0.22"

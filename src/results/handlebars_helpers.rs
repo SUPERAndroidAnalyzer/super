@@ -1,5 +1,6 @@
 use handlebars::{Context, Helper, Handlebars, RenderContext, RenderError};
 use serde_json::Value;
+use bytecount::count;
 
 use super::utils::{split_indent, html_escape};
 
@@ -40,9 +41,87 @@ pub fn line_numbers(_: &Context,
     let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
     let iter_end = end_line + 5;
 
+    let mut rendered = String::with_capacity((line_separator.len() + 1) *
+                                             (iter_end - iter_start) as usize);
     for l in iter_start..iter_end {
-        let rendered = format!("{}{}", l, line_separator);
-        let _ = try!(rc.writer.write(rendered.as_bytes()));
+        rendered.push_str(&format!("{}", l));
+        rendered.push_str(line_separator);
+    }
+    let _ = try!(rc.writer.write(rendered.as_bytes()));
+
+    Ok(())
+}
+
+/// Generates a list of line numbers for all the given code.
+///
+/// An optional line separator can be added that will be used at the end of each line. By default,
+/// this separator will be `<br>`.
+pub fn all_lines(_: &Context,
+                 h: &Helper,
+                 _: &Handlebars,
+                 rc: &mut RenderContext)
+                 -> Result<(), RenderError> {
+    let code = try!(h.param(0)
+        .and_then(|v| v.value().as_str())
+        .ok_or(RenderError::new("the code must be a string")));
+    let line_separator = match h.param(1) {
+        Some(s) => {
+            match *s.value() {
+                Value::String(ref s) => s,
+                _ => {
+                    return Err(RenderError::new("the provided line separator for the code lines \
+                                                 was not a string"))
+                }
+            }
+        }
+        None => "<br>",
+    };
+
+    let line_count = count(code.as_bytes(), b'\n');
+    let mut rendered = String::with_capacity((line_separator.len() + 1) * line_count);
+    for l in 1..line_count + 1 {
+        rendered.push_str(&format!("{}", l));
+        rendered.push_str(line_separator);
+    }
+    let _ = try!(rc.writer.write(rendered.as_bytes()));
+
+    Ok(())
+}
+
+/// Generates all the HTML for the given code.
+///
+/// An optional line separator can be added that will be used at the end of each line. By default,
+/// this separator will be `<br>`.
+pub fn all_code(_: &Context,
+                h: &Helper,
+                _: &Handlebars,
+                rc: &mut RenderContext)
+                -> Result<(), RenderError> {
+    let code = try!(h.param(0)
+        .and_then(|v| v.value().as_str())
+        .ok_or(RenderError::new("the code must be a string")));
+    let line_separator = match h.param(1) {
+        Some(s) => {
+            match *s.value() {
+                Value::String(ref s) => s,
+                _ => {
+                    return Err(RenderError::new("the provided line separator for the code lines \
+                                                 was not a string"))
+                }
+            }
+        }
+        None => "<br>",
+    };
+
+    for (i, line) in code.lines().enumerate() {
+        let (indent, line) = split_indent(line);
+        let line = format!("<code id=\"code-line-{}\">{}<span \
+                            class=\"line_body\">{}</span></code>{}",
+                           i,
+                           indent,
+                           html_escape(line),
+                           line_separator);
+        let _ = try!(rc.writer.write(line.as_bytes()));
     }
 
     Ok(())

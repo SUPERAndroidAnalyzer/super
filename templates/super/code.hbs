@@ -7,11 +7,9 @@
         <link rel="stylesheet" href="{{ back_path }}css/style.css">
     </head>
     <body>
-        <div><div class="line_numbers">{{ line_numbers }}</div>
+        <div><div class="line_numbers">{{ all_lines code }}</div>
             <div class="code"><pre><code>
-                {{#each line }}
-                <code id="code-line-{{ line.number }}">{{ line.ident }}<span class="line_body">{{ line.code }}</span></code><br>
-                {{/each }}
+                {{ all_code code }}
             </code></pre></div>
         </div>
         <script src="{{ back_path }}js/jquery-3.1.1.slim.min.js"></script>

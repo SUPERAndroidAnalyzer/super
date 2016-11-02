@@ -24,6 +24,7 @@ extern crate lazy_static;
 extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
+extern crate bytecount;
 extern crate handlebars;
 
 mod cli;

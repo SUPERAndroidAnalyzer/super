@@ -110,6 +110,8 @@ impl Results {
         let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
         let _ = handlebars.register_helper("html_code", Box::new(html_code));
         let _ = handlebars.register_helper("report_index", Box::new(report_index));
+        let _ = handlebars.register_helper("all_code", Box::new(all_code));
+        let _ = handlebars.register_helper("all_lines", Box::new(all_lines));
         for dir_entry in try!(fs::read_dir(config.get_template_path())) {
             let dir_entry = try!(dir_entry);
             if let Some(ext) = dir_entry.path().extension() {
@@ -500,75 +502,19 @@ impl Results {
 
         let mut code = String::new();
         let _ = try!(f_in.read_to_string(&mut code));
-        let code = html_escape(code);
 
         let mut back_path = String::new();
-        for _ in 0..path.as_ref().components().count() {
+        for _ in path.as_ref().components() {
             back_path.push_str("../");
         }
 
-        let mut line_numbers = String::new();
-        for i in 0..code.lines().count() {
-            line_numbers.push_str(format!("{}<br>", i + 1).as_str());
-        }
+        let mut data = BTreeMap::new();
+        let _ = data.insert(String::from("path"),
+                            Value::String(format!("{}", path.as_ref().display())));
+        let _ = data.insert(String::from("code"), Value::String(code));
+        let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        try!(f_out.write_all(b"<!DOCTYPE html>"));
-        try!(f_out.write_all(b"<html lang=\"en\">"));
-        try!(f_out.write_all(b"<head>"));
-        try!(f_out.write_all(&format!("<title>Source - {}</title>", path.as_ref().display())
-            .into_bytes()));
-        try!(f_out.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/style.css\">",
-                                      back_path)
-            .into_bytes()));
-        try!(f_out.write_all(&format!("<link rel=\"stylesheet\" href=\"{}css/androidstudio.css\">",
-                                back_path)
-                .into_bytes()));
-        try!(f_out.write_all(b"</head>"));
-        try!(f_out.write_all(b"<body>"));
-        try!(f_out.write_all(&format!("<div><div class=\"line_numbers\">{}</div>", line_numbers)
-            .into_bytes()));
-        try!(f_out.write_all(b"<div class=\"code\"><pre><code>"));
-        for (i, line) in code.lines().enumerate() {
-            let (indent, body) = split_indent(line);
-            try!(f_out.write_all(&format!("<code id=\"code-line-{}\">{}<span \
-                                           class=\"line_body\">{}</span></code><br>",
-                                          i + 1,
-                                          indent,
-                                          body)
-                .into_bytes()));
-        }
-        try!(f_out.write_all(b"</code></pre></div></div>"));
-        try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.1.slim.min.js\"></script>",
-                                      back_path)
-            .into_bytes()));
-        try!(f_out.write_all(&format!("<script src=\"{}js/highlight.pack.js\"></script>",
-                                      back_path)
-            .into_bytes()));
-        try!(f_out.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
-        try!(f_out.write_all(b"<script>
-        var query_params = decodeURIComponent(window.location.search.substring(1)),
-            variables = query_params.split('&'),
-            start_line,
-            end_line,
-            criticity;
-        for(var i = 0; i < variables.length; i++) {
-          var pair = variables[i].split('=');
-          if (pair[0] == \"start_line\") {
-            start_line = pair[1];
-          }
-          if (pair[0] == \"end_line\") {
-              end_line = pair[1];
-          }
-          if (pair[0] == \"criticity\") {
-              criticity = pair[1];
-          }
-        }
-        for (var i = start_line; i <= end_line; i++) {
-            $(\"#code-line-\" + i).addClass(\"vulnerable_line \" + criticity);
-        }</script>"));
-        try!(f_out.write_all(b"</body>"));
-        try!(f_out.write_all(b"</html>"));
+        try!(f_out.write_all(try!(self.templates.render("code", &data)).as_bytes()));
 
         Ok(())
     }
