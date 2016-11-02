@@ -897,7 +897,7 @@ mod tests {
         let _ = fs::File::create(config.get_apk_file("test_app")).unwrap();
         assert!(config.check());
 
-        let config = Config::new(false, false, false, false, false).unwrap();
+        let config = Config::default();
         assert!(config.check());
 
         fs::remove_file(config.get_apk_file("test_app")).unwrap();
@@ -908,7 +908,7 @@ mod tests {
     fn it_config_sample() {
         // Create config object.
         let mut config = Config::default();
-        Config::load_from_file(&mut config, "config.toml.sample", false).unwrap();
+        config.load_from_file("config.toml.sample").unwrap();
         config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.
