@@ -1,5 +1,5 @@
 Name:    super
-Version: 0.1.0
+Version: 0.2.0
 Release: 1%{?dist}
 Summary: Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 URL:     http://superanalyzer.rocks/
@@ -20,20 +20,20 @@ Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 
 %install
 mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/results_template/css
-mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/results_template/img
-mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/results_template/js
-mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.0/lib
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/css
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/img
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/js
+mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_defaultdocdir}/%{name}/
 install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
 install -p -m 755 target/release/%{name} %{buildroot}%{_bindir}/
-install -p -m 755 -D vendor/dex2jar-2.0/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.0/lib/
-install -p -m 755 -D vendor/dex2jar-2.0/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.0/
-install -p -m 644 -D vendor/dex2jar-2.0/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.0/
-install -p -m 644 -D vendor/results_template/css/* %{buildroot}%{_datadir}/%{name}/vendor/results_template/css/
-install -p -m 644 -D vendor/results_template/img/* %{buildroot}%{_datadir}/%{name}/vendor/results_template/img/
-install -p -m 644 -D vendor/results_template/js/* %{buildroot}%{_datadir}/%{name}/vendor/results_template/js/
+install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar2.1-SNAPSHOT/lib/
+install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
+install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
+install -p -m 644 -D templates/%{name}/css/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/css/
+install -p -m 644 -D templates/%{name}/img/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/img/
+install -p -m 644 -D templates/%{name}/js/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/js/
 install -p -m 755 -D vendor/*.jar %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 -D vendor/*.txt %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 rules.json %{buildroot}%{_sysconfdir}/%{name}/
