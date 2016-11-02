@@ -55,10 +55,10 @@ pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
             Ok(o) => o,
             Err(e) => {
                 print_error(format!("There was an error when executing the decompression \
-                                     command: {}",
+                                     command: {:?}",
                                     e),
                             config.is_verbose());
-                exit(Error::Unknown.into());
+                exit(Error::from(e).into());
             }
         };
 
@@ -85,7 +85,8 @@ pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
 
 /// Extracts the _.dex_ files.
 pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut Vec<Benchmark>) {
-    if config.is_force() || !config.get_dist_folder().join(package.as_ref()).exists() {
+    if config.is_force() ||
+       !config.get_dist_folder().join(package.as_ref()).join("classes.dex").exists() {
         if config.is_verbose() {
             println!("");
             println!("To decompile the app, first we need to extract the {} file.",
@@ -176,71 +177,72 @@ pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut 
         } else if !config.is_quiet() {
             println!("Dex file extracted.");
         }
-
-        let dex_jar_time = Instant::now();
-
-        // Converting the .dex to .jar.
-        dex_to_jar(config, package.as_ref());
-
-        benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
     } else if config.is_verbose() {
         println!("Seems that there is already a {} file for the application. There is no need to \
-                  create it again.",
-                 ".jar".italic());
+                  extract it again.",
+                 ".dex".italic());
     }
 }
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
-fn dex_to_jar<S: AsRef<str>>(config: &Config, package: S) {
+pub fn dex_to_jar<S: AsRef<str>>(config: &Config, package: S) {
     let classes = config.get_dist_folder()
         .join(package.as_ref())
         .join("classes.jar");
+    if config.is_force() || !classes.exists() {
 
-    // Command to convert .dex to .jar. using dex2jar.
-    // "-o path" to specify an output file
-    let output = Command::new(config.get_dex2jar_folder()
-            .join(if cfg!(target_family = "windows") {
-                "d2j-dex2jar.bat"
-            } else {
-                "d2j-dex2jar.sh"
-            }))
-        .arg(config.get_dist_folder()
-            .join(package.as_ref())
-            .join("classes.dex"))
-        .arg("-o")
-        .arg(&classes)
-        .output();
+        // Command to convert .dex to .jar. using dex2jar.
+        // "-o path" to specify an output file
+        let output = Command::new(config.get_dex2jar_folder()
+                .join(if cfg!(target_family = "windows") {
+                    "d2j-dex2jar.bat"
+                } else {
+                    "d2j-dex2jar.sh"
+                }))
+            .arg(config.get_dist_folder()
+                .join(package.as_ref())
+                .join("classes.dex"))
+            .arg("-o")
+            .arg(&classes)
+            .output();
 
-    if output.is_err() {
-        print_error(format!("There was an error when executing the {} to {} conversion \
-                             command: {}",
-                            ".dex".italic(),
-                            ".jar".italic(),
-                            output.err().unwrap()),
-                    config.is_verbose());
-        exit(Error::Unknown.into());
-    }
+        let output = match output {
+            Ok(o) => o,
+            Err(e) => {
+                print_error(format!("There was an error when executing the {} to {} conversion \
+                                     command: {:?}",
+                                    ".dex".italic(),
+                                    ".jar".italic(),
+                                    e),
+                            config.is_verbose());
+                exit(Error::from(e).into());
+            }
+        };
 
-    let output = output.unwrap();
-    if !output.status.success() {
-        print_error(format!("The {} to {} conversion command returned an error. More info: \
-                             {}",
-                            ".dex".italic(),
-                            ".jar".italic(),
-                            String::from_utf8_lossy(&output.stderr[..])),
-                    config.is_verbose());
-        exit(Error::Unknown.into());
-    }
+        if !output.status.success() {
+            print_error(format!("The {} to {} conversion command returned an error. More info: \
+                                 {}",
+                                ".dex".italic(),
+                                ".jar".italic(),
+                                String::from_utf8_lossy(&output.stderr[..])),
+                        config.is_verbose());
+            exit(Error::Unknown.into());
+        }
 
-    if config.is_verbose() {
-        println!("{}",
-                 format!("The application {} {} {}",
-                         ".jar".italic(),
-                         "file has been generated in".green(),
-                         format!("{}", classes.display()).green())
-                     .green());
-    } else if !config.is_quiet() {
-        println!("Jar file generated.");
+        if config.is_verbose() {
+            println!("{}",
+                     format!("The application {} {} {}",
+                             ".jar".italic(),
+                             "file has been generated in".green(),
+                             format!("{}", classes.display()).green())
+                         .green());
+        } else if !config.is_quiet() {
+            println!("Jar file generated.");
+        }
+    } else if config.is_verbose() {
+        println!("Seems that there is already a {} file for the application. There is no need to \
+                  create it again.",
+                 ".jar".italic());
     }
 }
 
@@ -262,17 +264,20 @@ pub fn decompile<S: AsRef<str>>(config: &Config, package: S) {
             .arg(&out_path)
             .output();
 
-        if output.is_err() {
-            print_error(format!("There was an unknown error decompiling the application: {}",
-                                output.err().unwrap()),
-                        config.is_verbose());
-            exit(Error::Unknown.into());
-        }
+        let output = match output {
+            Ok(o) => o,
+            Err(e) => {
+                print_error(format!("There was an unknown error decompiling the application: \
+                                     {:?}",
+                                    e),
+                            config.is_verbose());
+                exit(Error::from(e).into());
+            }
+        };
 
-        let output = output.unwrap();
         if !output.status.success() {
-            print_error(format!("The decompilation command returned an error. More info: {}",
-                                String::from_utf8_lossy(&output.stderr[..])),
+            print_error(format!("The decompilation command returned an error. More info:\n{}",
+                                String::from_utf8_lossy(&output.stdout[..])),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }

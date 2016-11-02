@@ -5,7 +5,7 @@
     plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
     unconditional_recursion, unknown_lints, unused, unused_allocation, unused_attributes,
     unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
+#![warn(missing_docs, trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
     unused_import_braces, unused_qualifications, unused_results, variant_size_differences)]
 
 #[macro_use]
@@ -110,7 +110,7 @@ fn main() {
     for package in config.get_app_packages() {
         if !config.is_quiet() {
             println!("");
-            println!("Starting analysis of {}", package);
+            println!("Starting analysis of {}", package.italic());
         }
         let start_time = Instant::now();
 
@@ -123,6 +123,11 @@ fn main() {
 
         // Extracting the classes.dex from the .apk file
         extract_dex(&config, package, &mut benchmarks);
+
+        let dex_jar_time = Instant::now();
+        // Converting the .dex to .jar.
+        dex_to_jar(&config, package);
+        benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
 
         if config.is_verbose() {
             println!("");

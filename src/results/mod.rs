@@ -16,7 +16,7 @@ mod utils;
 mod handlebars_helpers;
 
 pub use self::utils::{Benchmark, Vulnerability, split_indent};
-use self::utils::{FingerPrint, html_escape};
+use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder};
