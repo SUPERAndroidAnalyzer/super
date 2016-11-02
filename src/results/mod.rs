@@ -26,6 +26,7 @@ pub struct Results {
     app_min_sdk: i32,
     app_target_sdk: Option<i32>,
     app_fingerprint: FingerPrint,
+    certificate: String,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
     medium: BTreeSet<Vulnerability>,
@@ -73,6 +74,7 @@ impl Results {
                 app_min_sdk: 0,
                 app_target_sdk: None,
                 app_fingerprint: fingerprint,
+                certificate: String::new(),
                 warnings: BTreeSet::new(),
                 low: BTreeSet::new(),
                 medium: BTreeSet::new(),
@@ -90,6 +92,9 @@ impl Results {
 
     pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
         self.app_package = package.into();
+    }
+    pub fn set_certificate<S: AsRef<str>>(&mut self, certificate: S) {
+        self.certificate = String::from(certificate.as_ref());
     }
 
     pub fn set_app_label<S: Into<String>>(&mut self, label: S) {
@@ -422,9 +427,8 @@ impl Results {
         try!(f.write_all(b"</html>"));
 
         // Copying JS and CSS files
-        try!(copy_folder(config.get_results_template(),
-                         &config.get_results_folder().join(package.as_ref())));
-
+        try!(copy_folder(config.get_template_path(),
+                         config.get_results_folder().join(package.as_ref())));
         try!(self.generate_code_html_files(config, package));
 
         Ok(())
