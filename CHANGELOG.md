@@ -23,10 +23,10 @@
 
 ### Bug Fixes
 
- - Changed paths for better multiplatform support
+ - Changed paths for better multiplatform support.
 
  - Regular Expressions:
-    - URL Disclosure no longer detects content providers ("content://...")
+    - URL Disclosure no longer detects content providers ("content://...").
 
 ### Contributions
 
