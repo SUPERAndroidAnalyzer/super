@@ -30,11 +30,11 @@
 
 ### Contributions
 
- - @pocket7878
- - @VoltBit
- - @b52
- - @nxnfufunezn
- - @atk
+ - **[@pocket7878](https://github.com/pocket7878)**
+ - **[@VoltBit](https://github.com/VoltBit)**
+ - **[@b52](https://github.com/b52)**
+ - **[@nxnfufunezn](https://github.com/nxnfufunezn)**
+ - **[@atk](https://github.com/atk)**
 
 
 ## SUPER 0.1.0
