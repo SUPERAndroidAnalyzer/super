@@ -5,7 +5,7 @@
     plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
     unconditional_recursion, unknown_lints, unused, unused_allocation, unused_attributes,
     unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(missing_docs, trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
+#![warn(trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
     unused_import_braces, unused_qualifications, unused_results, variant_size_differences)]
 
 #[macro_use]
@@ -25,6 +25,7 @@ extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
 
+mod cli;
 mod decompilation;
 mod static_analysis;
 mod results;
@@ -40,13 +41,12 @@ use std::io::Write;
 use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
-use std::u8;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
-use clap::{Arg, App, ArgMatches};
 use colored::Colorize;
 
+use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
@@ -56,16 +56,10 @@ pub use utils::*;
 static BANNER: &'static str = include_str!("banner.txt");
 
 fn main() {
-    let matches = get_help_menu();
+    let cli = generate_cli();
+    let verbose = cli.is_present("verbose");
 
-    let test_all = matches.is_present("test-all");
-    let verbose = matches.is_present("verbose");
-    let quiet = matches.is_present("quiet");
-    let force = matches.is_present("force");
-    let bench = matches.is_present("bench");
-    let open = matches.is_present("open");
-
-    let mut config = match Config::new(verbose, quiet, force, bench, open) {
+    let config = match Config::from_cli(cli) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
@@ -74,84 +68,6 @@ fn main() {
             Config::default()
         }
     };
-
-    if !test_all {
-        config.add_app_package(matches.value_of("package").unwrap());
-    } else {
-        match fs::read_dir(config.get_downloads_folder()) {
-            Ok(iter) => {
-                for entry in iter {
-                    match entry {
-                        Ok(entry) => {
-                            if let Some(ext) = entry.path().extension() {
-                                if ext == "apk" {
-                                    config.add_app_package(entry.path()
-                                        .file_stem()
-                                        .unwrap()
-                                        .to_string_lossy()
-                                        .into_owned())
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            print_warning(format!("There was an error when reading the \
-                                                   downloads folder: {}",
-                                                  e),
-                                          config.is_verbose());
-                        }
-                    }
-                }
-            }
-            Err(e) => {
-                print_error(format!("There was an error when reading the downloads folder: {}",
-                                    e),
-                            config.is_verbose());
-                exit(Error::from(e).into());
-            }
-        }
-    }
-    config.set_verbose(verbose);
-    config.set_quiet(quiet);
-    config.set_force(force);
-    config.set_bench(bench);
-    config.set_open(open);
-
-    if let Some(threads) = matches.value_of("threads") {
-        match threads.parse() {
-            Ok(t) if t > 0u8 => {
-                config.set_threads(t);
-            }
-            _ => {
-                print_warning(format!("The threads options must be an integer between 1 and {}",
-                                      u8::MAX),
-                              verbose);
-            }
-        }
-    }
-    if let Some(downloads_folder) = matches.value_of("downloads") {
-        config.set_downloads_folder(downloads_folder);
-    }
-    if let Some(dist_folder) = matches.value_of("dist") {
-        config.set_dist_folder(dist_folder);
-    }
-    if let Some(results_folder) = matches.value_of("results") {
-        config.set_results_folder(results_folder);
-    }
-    if let Some(apktool_file) = matches.value_of("apktool") {
-        config.set_apktool_file(apktool_file);
-    }
-    if let Some(dex2jar_folder) = matches.value_of("dex2jar") {
-        config.set_dex2jar_folder(dex2jar_folder);
-    }
-    if let Some(jd_cmd_file) = matches.value_of("jd-cmd") {
-        config.set_jd_cmd_file(jd_cmd_file);
-    }
-    if let Some(results_template) = matches.value_of("template") {
-        config.set_results_template(results_template);
-    }
-    if let Some(rules_json) = matches.value_of("rules") {
-        config.set_rules_json(rules_json);
-    }
 
     if !config.check() {
         let mut error_string = String::from("Configuration errors were found:\n");
@@ -190,6 +106,10 @@ fn main() {
 
     let total_start = Instant::now();
     for package in config.get_app_packages() {
+        if !config.is_quiet() {
+            println!("");
+            println!("Starting analysis of {}", package);
+        }
         let start_time = Instant::now();
 
         // APKTool app decompression
@@ -406,83 +326,6 @@ impl FromStr for Criticity {
             _ => Err(Error::Parse),
         }
     }
-}
-
-fn get_help_menu() -> ArgMatches<'static> {
-    App::new("SUPER Android Analyzer")
-        .version(crate_version!())
-        .author("SUPER Team <contact@superanalyzer.rocks>")
-        .about("Audits Android apps (.apk files) for vulnerabilities.")
-        .arg(Arg::with_name("package")
-            .help("The package string of the application to test.")
-            .value_name("package")
-            .required_unless("test-all")
-            .conflicts_with("test-all")
-            .takes_value(true))
-        .arg(Arg::with_name("test-all")
-            .short("a")
-            .long("test-all")
-            .conflicts_with("package")
-            .conflicts_with("open")
-            .help("Test all .apk files in the downloads directory."))
-        .arg(Arg::with_name("verbose")
-            .short("v")
-            .long("verbose")
-            .conflicts_with("quiet")
-            .help("If you'd like the auditor to talk more than necessary."))
-        .arg(Arg::with_name("force")
-            .long("force")
-            .help("If you'd like to force the auditor to do everything from the beginning."))
-        .arg(Arg::with_name("bench")
-            .long("bench")
-            .help("Show benchmarks for the analysis."))
-        .arg(Arg::with_name("quiet")
-            .short("q")
-            .long("quiet")
-            .conflicts_with("verbose")
-            .help("If you'd like a zen auditor that won't output anything in stdout."))
-        .arg(Arg::with_name("open")
-            .long("open")
-            .conflicts_with("test-all")
-            .help("Open the report in a browser once it is complete."))
-        .arg(Arg::with_name("threads")
-            .short("t")
-            .long("threads")
-            .help("Number of threads to use.")
-            .takes_value(true))
-        .arg(Arg::with_name("downloads")
-            .long("downloads")
-            .help("Folder where the downloads are stored.")
-            .takes_value(true))
-        .arg(Arg::with_name("dist")
-            .long("dist")
-            .help("Folder where distribution files will be extracted.")
-            .takes_value(true))
-        .arg(Arg::with_name("results")
-            .long("results")
-            .help("Folder where to store the results.")
-            .takes_value(true))
-        .arg(Arg::with_name("apktool")
-            .long("apktool")
-            .help("Path to the apktool file.")
-            .takes_value(true))
-        .arg(Arg::with_name("dex2jar")
-            .long("dex2jar")
-            .help("Where to store the jar files.")
-            .takes_value(true))
-        .arg(Arg::with_name("jd-cmd")
-            .long("jd-cmd")
-            .help("Path to the jd-cmd file.")
-            .takes_value(true))
-        .arg(Arg::with_name("template")
-            .long("template")
-            .help("Path to a results template file.")
-            .takes_value(true))
-        .arg(Arg::with_name("rules")
-            .long("rules")
-            .help("Path to a JSON rules file.")
-            .takes_value(true))
-        .get_matches()
 }
 
 /// Copies the contents of `from` to `to`

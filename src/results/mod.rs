@@ -4,7 +4,6 @@ use std::io::{Read, Write};
 use std::collections::BTreeSet;
 use std::path::Path;
 use std::borrow::{Borrow, Cow};
-use std::slice::Iter;
 
 use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};

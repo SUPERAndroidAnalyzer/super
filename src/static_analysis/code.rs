@@ -6,7 +6,6 @@ use std::path::Path;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 use std::slice::Iter;
 
 use serde_json;

@@ -8,8 +8,6 @@ pub mod manifest;
 pub mod certificate;
 pub mod code;
 
-use std::time::Instant;
-
 use self::manifest::*;
 #[cfg(feature = "certificate")]
 use self::certificate::*;

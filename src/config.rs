@@ -15,6 +15,7 @@ use std::cmp::{PartialOrd, Ordering};
 
 use colored::Colorize;
 use toml::{Parser, Value};
+use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
@@ -69,28 +70,113 @@ pub struct Config {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn new(verbose: bool, quiet: bool, force: bool, bench: bool, open: bool) -> Result<Config> {
+    pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
         let mut config: Config = Default::default();
-        config.verbose = verbose;
-        config.quiet = quiet;
-        config.force = force;
-        config.bench = bench;
-        config.open = open;
+
+        config.verbose = cli.is_present("verbose");
+        config.quiet = cli.is_present("quiet");
+        config.force = cli.is_present("force");
+        config.bench = cli.is_present("bench");
+        config.open = cli.is_present("open");
+
+        if cli.is_present("test-all") {
+            config.read_apks();
+        } else {
+            config.add_app_package(cli.value_of("package").unwrap());
+        }
 
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                try!(Config::load_from_file(&mut config, &config_path, verbose));
+                try!(config.load_from_file(&config_path));
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            try!(Config::load_from_file(&mut config, &config_path, verbose));
+            try!(config.load_from_file(&config_path));
             config.loaded_files.push(config_path);
         }
 
+        config.set_options(cli);
+
         Ok(config)
+    }
+
+    /// Modifies the options from the CLI.
+    fn set_options(&mut self, cli: ArgMatches<'static>) {
+        if let Some(threads) = cli.value_of("threads") {
+            match threads.parse() {
+                Ok(t) if t > 0u8 => {
+                    self.set_threads(t);
+                }
+                _ => {
+                    print_warning(format!("The threads options must be an integer between 1 and \
+                                           {}",
+                                          u8::MAX),
+                                  self.verbose);
+                }
+            }
+        }
+        if let Some(downloads_folder) = cli.value_of("downloads") {
+            self.set_downloads_folder(downloads_folder);
+        }
+        if let Some(dist_folder) = cli.value_of("dist") {
+            self.set_dist_folder(dist_folder);
+        }
+        if let Some(results_folder) = cli.value_of("results") {
+            self.set_results_folder(results_folder);
+        }
+        if let Some(apktool_file) = cli.value_of("apktool") {
+            self.set_apktool_file(apktool_file);
+        }
+        if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
+            self.set_dex2jar_folder(dex2jar_folder);
+        }
+        if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
+            self.set_jd_cmd_file(jd_cmd_file);
+        }
+        if let Some(results_template) = cli.value_of("template") {
+            self.set_results_template(results_template);
+        }
+        if let Some(rules_json) = cli.value_of("rules") {
+            self.set_rules_json(rules_json);
+        }
+    }
+
+    /// Reads all the apk files in the downloads folder and adds them to the configuration.
+    fn read_apks(&mut self) {
+        match fs::read_dir(&self.downloads_folder) {
+            Ok(iter) => {
+                for entry in iter {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(ext) = entry.path().extension() {
+                                if ext == "apk" {
+                                    self.add_app_package(entry.path()
+                                        .file_stem()
+                                        .unwrap()
+                                        .to_string_lossy()
+                                        .into_owned())
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            print_warning(format!("There was an error when reading the \
+                                                   downloads folder: {}",
+                                                  e),
+                                          self.verbose);
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error when reading the downloads folder: {}",
+                                    e),
+                            self.verbose);
+                exit(Error::from(e).into());
+            }
+        }
     }
 
     /// Checks if all the needed folders and files exist.
@@ -322,7 +408,7 @@ impl Config {
     }
 
     /// Loads a configuration file into the `Config` struct.
-    fn load_from_file<P: AsRef<Path>>(config: &mut Config, path: P, verbose: bool) -> Result<()> {
+    fn load_from_file<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
         let mut f = try!(fs::File::open(path));
         let mut toml = String::new();
         let _ = try!(f.read_to_string(&mut toml));
@@ -334,7 +420,7 @@ impl Config {
             None => {
                 print_error(format!("There was an error parsing the config.toml file: {:?}",
                                     parser.errors),
-                            verbose);
+                            self.verbose);
                 exit(Error::Parse.into());
             }
         };
@@ -345,44 +431,44 @@ impl Config {
                 "threads" => {
                     match value {
                         Value::Integer(1...MAX_THREADS) => {
-                            config.threads = value.as_integer().unwrap() as u8
+                            self.threads = value.as_integer().unwrap() as u8
                         }
                         _ => {
                             print_warning(format!("The 'threads' option in config.toml must \
                                                    be an integer between 1 and {}.\nUsing \
                                                    default.",
                                                   MAX_THREADS),
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "downloads_folder" => {
                     match value {
-                        Value::String(s) => config.downloads_folder = PathBuf::from(s),
+                        Value::String(s) => self.downloads_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'downloads_folder' option in config.toml must \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dist_folder" => {
                     match value {
-                        Value::String(s) => config.dist_folder = PathBuf::from(s),
+                        Value::String(s) => self.dist_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dist_folder' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "results_folder" => {
                     match value {
-                        Value::String(s) => config.results_folder = PathBuf::from(s),
+                        Value::String(s) => self.results_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_folder' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -391,27 +477,27 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.apktool_file = PathBuf::from(s.clone());
+                                self.apktool_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The APKTool file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'apktool_file' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dex2jar_folder" => {
                     match value {
-                        Value::String(s) => config.dex2jar_folder = PathBuf::from(s),
+                        Value::String(s) => self.dex2jar_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dex2jar_folder' option in config.toml should \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -420,27 +506,27 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.jd_cmd_file = PathBuf::from(s.clone());
+                                self.jd_cmd_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The JD-CMD file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'jd_cmd_file' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "results_template" => {
                     match value {
-                        Value::String(s) => config.results_template = PathBuf::from(s),
+                        Value::String(s) => self.results_template = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_template' option in config.toml \
                                            should be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -449,17 +535,17 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "json" {
-                                config.rules_json = PathBuf::from(s.clone());
+                                self.rules_json = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The rules.json file must be a JSON \
                                                file.\nUsing default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'rules_json' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -480,7 +566,7 @@ impl Config {
                                 let cfg = match cfg.as_table() {
                                     Some(t) => t,
                                     None => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -488,7 +574,7 @@ impl Config {
                                 let name = match cfg.get("name") {
                                     Some(&Value::String(ref n)) => n,
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -507,13 +593,13 @@ impl Config {
                                                                       "medium".italic(),
                                                                       "high".italic(),
                                                                       "critical".italic()),
-                                                              verbose);
+                                                              self.verbose);
                                                 break;
                                             }
                                         }
                                     }
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -521,7 +607,7 @@ impl Config {
                                 let description = match cfg.get("description") {
                                     Some(&Value::String(ref d)) => d.to_owned(),
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -534,14 +620,14 @@ impl Config {
                                         criticity = \"warning|low|medium|high|criticity\"\n\
                                         description = \"Long description to explain the \
                                         vulnerability\"".italic()),
-                                                      verbose);
+                                                      self.verbose);
                                         break;
                                     }
 
-                                    config.unknown_permission = (criticity, description.clone());
+                                    self.unknown_permission = (criticity, description.clone());
                                 } else {
                                     if cfg.len() != 4 {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
 
@@ -557,7 +643,7 @@ impl Config {
                                                                   name.italic(),
                                                                   "unknown".italic(),
                                                                   "[[permissions]]".italic()),
-                                                          verbose);
+                                                          self.verbose);
                                             break;
                                         }
                                     };
@@ -565,11 +651,11 @@ impl Config {
                                     let label = match cfg.get("label") {
                                         Some(&Value::String(ref l)) => l.to_owned(),
                                         _ => {
-                                            print_warning(format_warning, verbose);
+                                            print_warning(format_warning, self.verbose);
                                             break;
                                         }
                                     };
-                                    config.permissions
+                                    self.permissions
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
@@ -580,11 +666,14 @@ impl Config {
                         _ => {
                             print_warning("You must specify the permissions you want to \
                                            select as vulnerable.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
-                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
+                _ => {
+                    print_warning(format!("Unknown configuration option {}.", key),
+                                  self.verbose)
+                }
             }
         }
         Ok(())
