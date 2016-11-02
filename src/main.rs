@@ -244,7 +244,7 @@ impl From<handlebars::TemplateFileError> for Error {
     fn from(err: handlebars::TemplateFileError) -> Error {
         match err {
             handlebars::TemplateFileError::TemplateError(e) => e.into(),
-            handlebars::TemplateFileError::IOError(e) => e.into(),
+            handlebars::TemplateFileError::IOError(e, _) => e.into(),
         }
     }
 }

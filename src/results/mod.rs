@@ -4,18 +4,22 @@ use std::io::{Read, Write};
 use std::collections::BTreeSet;
 use std::path::Path;
 use std::borrow::{Borrow, Cow};
+use std::slice::Iter;
+use std::result::Result as StdResult;
 
 use serde_json::builder::ObjectBuilder;
+use serde::ser::{Serialize, Serializer};
 use chrono::{Local, Datelike};
 use rustc_serialize::hex::ToHex;
-use regex::Regex;
 use handlebars::Handlebars;
 use colored::Colorize;
 
 mod utils;
+mod handlebars_helpers;
 
 pub use self::utils::{Benchmark, Vulnerability, split_indent};
-use self::utils::FingerPrint;
+use self::utils::{FingerPrint, html_escape};
+use self::handlebars_helpers::*;
 
 use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder};
 
@@ -303,11 +307,9 @@ impl Results {
         try!(f.write_all(b"</head>"));
         try!(f.write_all(b"<body>"));
         try!(f.write_all(b"<section class=\"report\">"));
-        try!(f.write_all(b"<a href=\"http://superanalyzer.rocks\" \
-                                title=\"S.U.P.E.R. Android Analyzer\">\
-                            <img src=\"img/logo.png\" alt=\"S.U.P.E.R. Android Analyzer\"></a>"));
-        try!(f.write_all(b"<h1 id=\"title\">S.U.P.E.R. Android Analyzer \
-                            Report</h1>"));
+        try!(f.write_all(b"<a href=\"http://superanalyzer.rocks\" title=\"SUPER Android Analyzer\">\
+                            <img src=\"img/logo.png\" alt=\"SUPER Android Analyzer\"></a>"));
+        try!(f.write_all(b"<h1 id=\"title\">SUPER Android Analyzer Report</h1>"));
         try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
                                    application <em>{}</em>. Report generated on {}.</p>",
                                   self.app_package,
@@ -442,7 +444,7 @@ impl Results {
 
         // Footer
         try!(f.write_all(b"<footer>"));
-        try!(f.write_all(&format!("<p>Copyright © {} - S.U.P.E.R. Android Analyzer</p>",
+        try!(f.write_all(&format!("<p>Copyright © {} - SUPER Android Analyzer</p>",
                                   if now.year() > 2016 {
                                       format!("2016 - {}", now.year())
                                   } else {
@@ -541,7 +543,7 @@ impl Results {
 
                 let mut line_numbers = String::new();
                 let mut codes = String::new();
-                for (i, line) in Results::html_escape(code).lines().enumerate() {
+                for (i, line) in html_escape(code).lines().enumerate() {
                     line_numbers.push_str(format!("{}<br>", i + start_line + 1).as_str());
                     if i + start_line >= vuln.get_start_line().unwrap() &&
                        i + start_line <= vuln.get_end_line().unwrap() {
@@ -782,7 +784,7 @@ impl Results {
 
         let mut code = String::new();
         let _ = try!(f_in.read_to_string(&mut code));
-        let code = Results::html_escape(code.as_str());
+        let code = html_escape(code);
 
         let mut back_path = String::new();
         for _ in 0..path.as_ref().components().count() {
@@ -821,7 +823,7 @@ impl Results {
                 .into_bytes()));
         }
         try!(f_out.write_all(b"</code></pre></div></div>"));
-        try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.0.slim.min.js\"></script>",
+        try!(f_out.write_all(&format!("<script src=\"{}js/jquery-3.1.1.slim.min.js\"></script>",
                                       back_path)
             .into_bytes()));
         try!(f_out.write_all(&format!("<script src=\"{}js/highlight.pack.js\"></script>",
@@ -854,31 +856,37 @@ impl Results {
 
         Ok(())
     }
+}
 
-    fn html_escape<'a, S: Into<Cow<'a, str>>>(code: S) -> Cow<'a, str> {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new("[<>&]").unwrap();
-        }
-        let input = code.into();
-        let mut last_match = 0;
+impl Serialize for Results {
+    fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
+        where S: Serializer
+    {
+        let now = Local::now();
+        let mut state = try!(serializer.serialize_struct("Results", 7));
 
-        if REGEX.is_match(&input) {
-            let matches = REGEX.find_iter(&input);
-            let mut output = String::with_capacity(input.len());
-            for (begin, end) in matches {
-                output.push_str(&input[last_match..begin]);
-                match &input[begin..end] {
-                    "<" => output.push_str("&lt;"),
-                    ">" => output.push_str("&gt;"),
-                    "&" => output.push_str("&amp;"),
-                    _ => unreachable!(),
-                }
-                last_match = end;
-            }
-            output.push_str(&input[last_match..]);
-            Cow::Owned(output)
-        } else {
-            input
-        }
+        try!(serializer.serialize_struct_elt(&mut state, "super_version", crate_version!()));
+        try!(serializer.serialize_struct_elt(&mut state, "now", &now));
+        try!(serializer.serialize_struct_elt(&mut state, "now_rfc2822", now.to_rfc2822()));
+        try!(serializer.serialize_struct_elt(&mut state, "now_rfc3339", now.to_rfc3339()));
+
+        try!(serializer.serialize_struct_elt(&mut state, "app_package", &self.app_package));
+        try!(serializer.serialize_struct_elt(&mut state, "app_version", &self.app_version));
+        try!(serializer.serialize_struct_elt(&mut state, "app_version_number",
+                                             &self.app_version_num));
+        try!(serializer.serialize_struct_elt(&mut state, "app_fingerprint", &self.app_fingerprint));
+
+        try!(serializer.serialize_struct_elt(&mut state,
+                                             "total_vulnerabilities",
+                                             self.low.len() + self.medium.len() + self.high.len() +
+                                             self.critical.len()));
+        try!(serializer.serialize_struct_elt(&mut state, "criticals", &self.critical));
+        try!(serializer.serialize_struct_elt(&mut state, "highs", &self.high));
+        try!(serializer.serialize_struct_elt(&mut state, "mediums", &self.medium));
+        try!(serializer.serialize_struct_elt(&mut state, "lows", &self.low));
+        try!(serializer.serialize_struct_elt(&mut state, "warnings", &self.warnings));
+
+        try!(serializer.serialize_struct_end(state));
+        Ok(())
     }
 }

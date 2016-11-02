@@ -2,8 +2,9 @@ use std::{fmt, result};
 use std::fs::File;
 use std::io::Read;
 use std::cmp::Ordering;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::time::Duration;
+use std::borrow::Cow;
 
 use serde::ser::{Serialize, Serializer};
 use crypto::digest::Digest;
@@ -11,6 +12,7 @@ use crypto::md5::Md5;
 use crypto::sha1::Sha1;
 use crypto::sha2::Sha256;
 use rustc_serialize::hex::ToHex;
+use regex::Regex;
 
 use {Config, Result, Criticity};
 
@@ -20,7 +22,7 @@ pub struct Vulnerability {
     criticity: Criticity,
     name: String,
     description: String,
-    file: Option<String>,
+    file: Option<PathBuf>,
     start_line: Option<usize>,
     end_line: Option<usize>,
     code: Option<String>,
@@ -42,7 +44,7 @@ impl Vulnerability {
             name: name.into(),
             description: description.into(),
             file: match file {
-                Some(f) => Some(f.as_ref().to_string_lossy().into_owned()),
+                Some(p) => Some(p.as_ref().to_path_buf()),
                 None => None,
             },
             start_line: start_line,
@@ -100,13 +102,23 @@ impl Serialize for Vulnerability {
     fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
         where S: Serializer
     {
-        let mut state = try!(serializer.serialize_struct("Vulnerability", 7));
+        let mut state = try!(serializer.serialize_struct("Vulnerability",
+                                                         if self.start_line == self.end_line {
+                                                             7
+                                                         } else {
+                                                             8
+                                                         }));
         try!(serializer.serialize_struct_elt(&mut state, "criticity", self.criticity));
         try!(serializer.serialize_struct_elt(&mut state, "name", self.name.as_str()));
         try!(serializer.serialize_struct_elt(&mut state, "description", self.description.as_str()));
         try!(serializer.serialize_struct_elt(&mut state, "file", &self.file));
-        try!(serializer.serialize_struct_elt(&mut state, "start_line", self.start_line));
-        try!(serializer.serialize_struct_elt(&mut state, "end_line", self.end_line));
+        if self.start_line == self.end_line {
+            try!(serializer.serialize_struct_elt(&mut state, "line", self.start_line));
+        } else {
+            try!(serializer.serialize_struct_elt(&mut state, "start_line", self.start_line));
+            try!(serializer.serialize_struct_elt(&mut state, "end_line", self.end_line));
+        }
+        try!(serializer.serialize_struct_elt(&mut state, "code", &self.code));
         try!(serializer.serialize_struct_end(state));
         Ok(())
     }
@@ -188,6 +200,39 @@ pub fn split_indent(line: &str) -> (&str, &str) {
     match line.find(|c: char| !c.is_whitespace()) {
         Some(p) => line.split_at(p),
         None => ("", line),
+    }
+}
+
+/// Escapes the given input's HTML special characters.
+///
+/// It changes the following characters:
+///  - `<` => `&lt;`
+///  - `>` => `&gt;`
+///  - `&` => `&amp;`
+pub fn html_escape<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
+    lazy_static! {
+        static ref REGEX: Regex = Regex::new("[<>&]").unwrap();
+    }
+    let input = input.into();
+    let mut last_match = 0;
+
+    if REGEX.is_match(&input) {
+        let matches = REGEX.find_iter(&input);
+        let mut output = String::with_capacity(input.len());
+        for (begin, end) in matches {
+            output.push_str(&input[last_match..begin]);
+            match &input[begin..end] {
+                "<" => output.push_str("&lt;"),
+                ">" => output.push_str("&gt;"),
+                "&" => output.push_str("&amp;"),
+                _ => unreachable!(),
+            }
+            last_match = end;
+        }
+        output.push_str(&input[last_match..]);
+        Cow::Owned(output)
+    } else {
+        input
     }
 }
 
