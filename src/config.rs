@@ -136,8 +136,8 @@ impl Config {
         if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
             self.set_jd_cmd_file(jd_cmd_file);
         }
-        if let Some(results_template) = cli.value_of("template") {
-            self.template = results_template.to_owned();
+        if let Some(template_name) = cli.value_of("template") {
+            self.template = template_name.to_owned();
         }
         if let Some(rules_json) = cli.value_of("rules") {
             self.set_rules_json(rules_json);
@@ -378,16 +378,24 @@ impl Config {
         self.jd_cmd_file = jd_cmd_file.into()
     }
 
+    /// Gets the path to the template.
     pub fn get_template_path(&self) -> PathBuf {
         self.templates_folder.join(&self.template)
     }
 
+    /// Gets the path to the templates folder.
     pub fn get_templates_folder(&self) -> &Path {
         &self.templates_folder
     }
 
+    /// Gets the name of the template.
     pub fn get_template_name(&self) -> &str {
         &self.template
+    }
+
+    /// Sets the template to use, by name.
+    pub fn set_template_name<S: Into<String>>(&mut self, template_name: S) {
+        self.template = template_name.into();
     }
 
     /// Returns the path to the `rules_json`.

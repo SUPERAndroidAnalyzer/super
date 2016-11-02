@@ -9,6 +9,8 @@ use serde_json::builder::ObjectBuilder;
 use chrono::{Local, Datelike};
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
+use handlebars::Handlebars;
+use colored::Colorize;
 
 mod utils;
 
@@ -32,13 +34,14 @@ pub struct Results {
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
     critical: BTreeSet<Vulnerability>,
+    templates: Handlebars,
 }
 
 impl Results {
     pub fn init<S: AsRef<str>>(config: &Config, package: S) -> Option<Results> {
         let path = config.get_results_folder().join(package.as_ref());
-        if !fs::metadata(&path).is_ok() || config.is_force() {
-            if fs::metadata(&path).is_ok() {
+        if !path.exists() || config.is_force() {
+            if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_error(format!("An unknown error occurred when trying to delete the \
                                          results folder: {}",
@@ -48,12 +51,20 @@ impl Results {
                 }
             }
 
-            let fingerprint = match FingerPrint::new(config, package) {
+            let fingerprint = match FingerPrint::new(config, package.as_ref()) {
                 Ok(f) => f,
                 Err(e) => {
                     print_error(format!("An error occurred when trying to fingerprint the \
                                          application: {}",
                                         e),
+                                config.is_verbose());
+                    return None;
+                }
+            };
+            let templates = match Results::load_templates(config) {
+                Ok(r) => r,
+                Err(e) => {
+                    print_error(format!("An error occurred when trying to load templates: {}", e),
                                 config.is_verbose());
                     return None;
                 }
@@ -80,6 +91,7 @@ impl Results {
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
                 critical: BTreeSet::new(),
+                templates: templates,
             })
         } else {
             if config.is_verbose() {
@@ -93,6 +105,36 @@ impl Results {
     pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
         self.app_package = package.into();
     }
+
+    fn load_templates(config: &Config) -> Result<Handlebars> {
+        let mut handlebars = Handlebars::new();
+        for dir_entry in try!(fs::read_dir(config.get_template_path())) {
+            let dir_entry = try!(dir_entry);
+            if let Some(ext) = dir_entry.path().extension() {
+                if ext == "hbs" {
+                    try!(handlebars.register_template_file(try!(try!(dir_entry.path()
+                            .file_stem()
+                            .ok_or(Error::TemplateName(String::from("template files \
+                                                                          must have a file \
+                                                                          name"))))
+                        .to_str()
+                        .ok_or(Error::TemplateName(String::from("template names must be \
+                                                                  unicode")))),
+                                                           dir_entry.path()));
+                }
+            }
+        }
+        if handlebars.get_template("index").is_none() || handlebars.get_template("src").is_none() ||
+           handlebars.get_template("code").is_none() {
+            Err(Error::TemplateName(format!("templates must include {}, {} and {} templates",
+                                            "index".italic(),
+                                            "src".italic(),
+                                            "code".italic())))
+        } else {
+            Ok(handlebars)
+        }
+    }
+
     pub fn set_certificate<S: AsRef<str>>(&mut self, certificate: S) {
         self.certificate = String::from(certificate.as_ref());
     }

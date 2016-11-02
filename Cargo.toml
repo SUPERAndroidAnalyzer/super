@@ -36,14 +36,12 @@ open = "^1.1"
 version = "^0.21"
 default-features = false
 features = ["serde_type"]
-optional = true
 
 [features]
 default = ["beta"]
 beta = []
-unstable = ["beta", "certificate", "templates"]
+unstable = ["beta", "certificate"]
 certificate = []
-templates = ["handlebars"]
 
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"
