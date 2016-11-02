@@ -1,5 +1,6 @@
 use std::fs;
 use std::process::{Command, exit};
+use std::borrow::Borrow;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
@@ -103,7 +104,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
 
                 println!("{}", cmd);
             }
-            results.set_certificate(&cmd);
+            results.set_certificate(cmd.borrow());
 
             let mut issuer = String::new();
             let mut subject = String::new();

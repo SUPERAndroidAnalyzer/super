@@ -60,42 +60,6 @@ impl Vulnerability {
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
     }
-
-    /// Gets the name of the vulnerability.
-    pub fn get_name(&self) -> &str {
-        self.name.as_str()
-    }
-
-    /// Get the description of the vulnerability.
-    pub fn get_description(&self) -> &str {
-        self.description.as_str()
-    }
-
-    /// Gets the file where the vulnerability was found.
-    pub fn get_file(&self) -> Option<&Path> {
-        match self.file.as_ref() {
-            Some(s) => Some(Path::new(s)),
-            None => None,
-        }
-    }
-
-    /// Gets the code related to the vulnerability.
-    pub fn get_code(&self) -> Option<&str> {
-        match self.code.as_ref() {
-            Some(s) => Some(s.as_str()),
-            None => None,
-        }
-    }
-
-    /// Gets the start line of the vulnerability.
-    pub fn get_start_line(&self) -> Option<usize> {
-        self.start_line
-    }
-
-    /// Gets the end line of the vulnerability.
-    pub fn get_end_line(&self) -> Option<usize> {
-        self.end_line
-    }
 }
 
 impl Serialize for Vulnerability {
@@ -103,22 +67,39 @@ impl Serialize for Vulnerability {
         where S: Serializer
     {
         let mut state = try!(serializer.serialize_struct("Vulnerability",
-                                                         if self.start_line == self.end_line {
-                                                             7
+                                                         if self.code.is_some() {
+                                                             if self.start_line == self.end_line {
+                                                                 7
+                                                             } else {
+                                                                 8
+                                                             }
                                                          } else {
-                                                             8
+                                                             4
                                                          }));
         try!(serializer.serialize_struct_elt(&mut state, "criticity", self.criticity));
         try!(serializer.serialize_struct_elt(&mut state, "name", self.name.as_str()));
         try!(serializer.serialize_struct_elt(&mut state, "description", self.description.as_str()));
         try!(serializer.serialize_struct_elt(&mut state, "file", &self.file));
-        if self.start_line == self.end_line {
-            try!(serializer.serialize_struct_elt(&mut state, "line", self.start_line));
-        } else {
-            try!(serializer.serialize_struct_elt(&mut state, "start_line", self.start_line));
-            try!(serializer.serialize_struct_elt(&mut state, "end_line", self.end_line));
+        if self.code.is_some() {
+            try!(serializer.serialize_struct_elt(&mut state,
+                                                 "language",
+                                                 self.file
+                                                     .as_ref()
+                                                     .unwrap()
+                                                     .extension()
+                                                     .unwrap()
+                                                     .to_string_lossy()));
+            if self.start_line == self.end_line {
+                try!(serializer.serialize_struct_elt(&mut state, "line",
+                                                     self.start_line.unwrap() + 1));
+            } else {
+                try!(serializer.serialize_struct_elt(&mut state, "start_line",
+                                                     self.start_line.unwrap()+1));
+                try!(serializer.serialize_struct_elt(&mut state, "end_line",
+                                                     self.end_line.unwrap() + 1));
+            }
+            try!(serializer.serialize_struct_elt(&mut state, "code", &self.code));
         }
-        try!(serializer.serialize_struct_elt(&mut state, "code", &self.code));
         try!(serializer.serialize_struct_end(state));
         Ok(())
     }
@@ -164,21 +145,6 @@ impl FingerPrint {
         sha256.result(&mut fingerprint.sha256);
 
         Ok(fingerprint)
-    }
-
-    /// Gets the MD5 hash.
-    pub fn get_md5(&self) -> &[u8] {
-        &self.md5
-    }
-
-    /// Gets the SHA-1 hash.
-    pub fn get_sha1(&self) -> &[u8] {
-        &self.sha1
-    }
-
-    /// Gets the SHA-256 hash.
-    pub fn get_sha256(&self) -> &[u8] {
-        &self.sha256
     }
 }
 

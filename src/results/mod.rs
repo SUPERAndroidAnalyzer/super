@@ -1,7 +1,7 @@
 use std::fs;
 use std::fs::File;
 use std::io::{Read, Write};
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, BTreeMap};
 use std::path::Path;
 use std::borrow::{Borrow, Cow};
 use std::slice::Iter;
@@ -9,8 +9,7 @@ use std::result::Result as StdResult;
 
 use serde_json::builder::ObjectBuilder;
 use serde::ser::{Serialize, Serializer};
-use chrono::{Local, Datelike};
-use rustc_serialize::hex::ToHex;
+use chrono::Local;
 use handlebars::Handlebars;
 use colored::Colorize;
 
@@ -32,6 +31,7 @@ pub struct Results {
     app_min_sdk: i32,
     app_target_sdk: Option<i32>,
     app_fingerprint: FingerPrint,
+    #[allow(unused)]
     certificate: String,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
@@ -106,12 +106,11 @@ impl Results {
         }
     }
 
-    pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
-        self.app_package = package.into();
-    }
-
     fn load_templates(config: &Config) -> Result<Handlebars> {
         let mut handlebars = Handlebars::new();
+        let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
+        let _ = handlebars.register_helper("html_code", Box::new(html_code));
+        let _ = handlebars.register_helper("report_index", Box::new(report_index));
         for dir_entry in try!(fs::read_dir(config.get_template_path())) {
             let dir_entry = try!(dir_entry);
             if let Some(ext) = dir_entry.path().extension() {
@@ -128,10 +127,11 @@ impl Results {
                 }
             }
         }
-        if handlebars.get_template("index").is_none() || handlebars.get_template("src").is_none() ||
+        if handlebars.get_template("report").is_none() ||
+           handlebars.get_template("src").is_none() ||
            handlebars.get_template("code").is_none() {
             Err(Error::TemplateName(format!("templates must include {}, {} and {} templates",
-                                            "index".italic(),
+                                            "report".italic(),
                                             "src".italic(),
                                             "code".italic())))
         } else {
@@ -139,8 +139,13 @@ impl Results {
         }
     }
 
-    pub fn set_certificate<S: AsRef<str>>(&mut self, certificate: S) {
-        self.certificate = String::from(certificate.as_ref());
+    pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
+        self.app_package = package.into();
+    }
+
+    #[cfg(feature = "certificate")]
+    pub fn set_certificate<S: Into<String>>(&mut self, certificate: S) {
+        self.certificate = certificate.into();
     }
 
     pub fn set_app_label<S: Into<String>>(&mut self, label: S) {
@@ -294,284 +299,31 @@ impl Results {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        let now = Local::now();
+        try!(f.write_all(try!(self.templates.render("report", self)).as_bytes()));
 
-        // Header
-        try!(f.write_all(b"<!DOCTYPE html>"));
-        try!(f.write_all(b"<html lang=\"en\">"));
-        try!(f.write_all(b"<head>"));
-        try!(f.write_all(b"<title>Vulnerability report</title>"));
-        try!(f.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/style.css\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"css/androidstudio.css\">"));
-        try!(f.write_all(b"</head>"));
-        try!(f.write_all(b"<body>"));
-        try!(f.write_all(b"<section class=\"report\">"));
-        try!(f.write_all(b"<a href=\"http://superanalyzer.rocks\" title=\"SUPER Android Analyzer\">\
-                            <img src=\"img/logo.png\" alt=\"SUPER Android Analyzer\"></a>"));
-        try!(f.write_all(b"<h1 id=\"title\">SUPER Android Analyzer Report</h1>"));
-        try!(f.write_all(&format!("<p>This is the vulnerability report for the android \
-                                   application <em>{}</em>. Report generated on {}.</p>",
-                                  self.app_package,
-                                  now.to_rfc2822())
-            .into_bytes()));
-        try!(f.write_all(&format!("<p>SUPER Android Analyzer version: {}</p>",
-                                  crate_version!())
-            .into_bytes()));
-
-        // Application data
-        try!(f.write_all(b"<h2>Application data:</h2>"));
-        try!(f.write_all(b"<ul>"));
-        if !self.app_label.is_empty() {
-            try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>",
-                                      self.app_label.as_str())
-                .into_bytes()));
-        }
-        if !self.app_description.is_empty() {
-            try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
-                                      self.app_description.as_str())
-                .into_bytes()));
-        }
-        if !self.app_package.is_empty() {
-            try!(f.write_all(&format!("<li><strong>Package:</strong> {}</li>",
-                                      self.app_package.as_str())
-                .into_bytes()));
-        }
-        if !self.app_version.is_empty() {
-            try!(f.write_all(&format!("<li><strong>Version:</strong> {}</li>",
-                                      self.app_version.as_str())
-                .into_bytes()));
-        }
-        if self.app_version_num > 0 {
-            try!(f.write_all(&format!("<li><strong>Version number:</strong> {}</li>",
-                                      self.app_version_num)
-                .into_bytes()));
-        }
-        if self.app_min_sdk > 0 {
-            try!(f.write_all(&format!("<li><strong>Minimum SDK version:</strong> {}</li>",
-                                      self.app_min_sdk)
-                .into_bytes()));
-        }
-        if self.app_target_sdk.is_some() {
-            try!(f.write_all(&format!("<li><strong>Target SDK:</strong> {}</li>",
-                                      self.app_target_sdk.unwrap())
-                .into_bytes()));
-        }
-        try!(f.write_all(b"<li><strong>Fingerprints:</strong><ul>"));
-        try!(f.write_all(&format!("<li>MD5: {}</li>", self.app_fingerprint.get_md5().to_hex())
-            .into_bytes()));
-        try!(f.write_all(&format!("<li>SHA-1: {}</li>",
-                                  self.app_fingerprint.get_sha1().to_hex())
-            .into_bytes()));
-        try!(f.write_all(&format!("<li>SHA-256: {}</li>",
-                                  self.app_fingerprint.get_sha256().to_hex())
-            .into_bytes()));
-        try!(f.write_all(b"</ul></li>"));
-
-        try!(f.write_all(b"<li><a href=\"src/index.html\" \
-                        title=\"Source code\">Check source code</a></li>"));
-        try!(f.write_all(b"</ul>"));
-
-        // Vulnerability count
-        let total_vuln = self.low.len() + self.medium.len() + self.high.len() + self.critical.len();
-        try!(f.write_all(&format!("<h3>Total vulnerabilities found: {}</h3>", total_vuln)
-            .into_bytes()));
-        try!(f.write_all(b"<ul>"));
-        if self.critical.is_empty() {
-            try!(f.write_all(b"<li>Critical: 0</li>"));
-        } else {
-            try!(f.write_all(&format!("<li>Critical: <span class=\"critical\">{}</span> <a \
-                                       href=\"#critical\" title=\"Critical\">⇒</a></li>",
-                                      self.critical.len())
-                .into_bytes()));
-        }
-        if self.high.is_empty() {
-            try!(f.write_all(b"<li>High: 0</li>"));
-        } else {
-            try!(f.write_all(&format!("<li>High: <span class=\"high\">{}</span> <a \
-                                       href=\"#high\" title=\"High\">⇒</a></li>",
-                                      self.high.len())
-                .into_bytes()));
-        }
-        if self.medium.is_empty() {
-            try!(f.write_all(b"<li>Medium: 0</li>"));
-        } else {
-            try!(f.write_all(&format!("<li>Medium: <span class=\"medium\">{}</span> <a \
-                                       href=\"#medium\" title=\"Medium\">⇒</a></li>",
-                                      self.medium.len())
-                .into_bytes()));
-        }
-        if self.low.is_empty() {
-            try!(f.write_all(b"<li>Low: 0</li>"));
-        } else {
-            try!(f.write_all(&format!("<li>Low: <span class=\"low\">{}</span> <a href=\"#low\" \
-                                       title=\"Low\">⇒</a></li>",
-                                      self.low.len())
-                .into_bytes()));
-        }
-        if self.warnings.is_empty() {
-            try!(f.write_all(b"<li>Warnings: 0</li>"));
-        } else {
-            try!(f.write_all(&format!("<li>Warnings: <span class=\"warnings\">{}</span> <a \
-                                       href=\"#warnings\" title=\"Warnings\">⇒</a></li>",
-                                      self.warnings.len())
-                .into_bytes()));
-        }
-        try!(f.write_all(b"</ul>"));
-
-        try!(f.write_all(b"<h2>Vulnerabilities:</h2>"));
-
-        if !self.critical.is_empty() {
-            try!(self.print_html_vuln_set(&mut f, &self.critical, Criticity::Critical))
-        }
-
-        if !self.high.is_empty() {
-            try!(self.print_html_vuln_set(&mut f, &self.high, Criticity::High))
-        }
-
-        if !self.medium.is_empty() {
-            try!(self.print_html_vuln_set(&mut f, &self.medium, Criticity::Medium))
-        }
-
-        if !self.low.is_empty() {
-            try!(self.print_html_vuln_set(&mut f, &self.low, Criticity::Low))
-        }
-
-        if !self.warnings.is_empty() {
-            try!(self.print_html_vuln_set(&mut f, &self.warnings, Criticity::Warning))
-        }
-        try!(f.write_all(b"</section>"));
-
-        // Footer
-        try!(f.write_all(b"<footer>"));
-        try!(f.write_all(&format!("<p>Copyright © {} - SUPER Android Analyzer</p>",
-                                  if now.year() > 2016 {
-                                      format!("2016 - {}", now.year())
-                                  } else {
-                                      format!("{}", now.year())
-                                  })
-            .into_bytes()));
-        try!(f.write_all(b"</footer>"));
-        try!(f.write_all(b"<script src=\"js/highlight.pack.js\"></script>"));
-        try!(f.write_all(b"<script>hljs.initHighlightingOnLoad();</script>"));
-        try!(f.write_all(b"<script src=\"js/jquery-3.1.0.slim.min.js\"></script>"));
-        try!(f.write_all(b"<script>$('.vulnerability h4 a.collapse').click(function(event) {\
-            event.preventDefault();\
-            $(this).parents('section.vulnerability').find('ul div').hide('slow');\
-            $(this).hide('fast');\
-            $(this).prev('a').show('fast');\
-        });\
-        $('.vulnerability h4 a.show').click(function(event) {\
-            event.preventDefault();\
-            $(this).parents('section.vulnerability').find('ul div').show('slow');\
-            $(this).hide('fast');\
-            $(this).next('a').show('fast');\
-        });</script>"));
-        try!(f.write_all(b"</body>"));
-        try!(f.write_all(b"</html>"));
-
-        // Copying JS and CSS files
-        try!(copy_folder(config.get_template_path(),
-                         config.get_results_folder().join(package.as_ref())));
-        try!(self.generate_code_html_files(config, package));
-
-        Ok(())
-    }
-
-    fn print_html_vuln_set(&self,
-                           f: &mut File,
-                           set: &BTreeSet<Vulnerability>,
-                           criticity: Criticity)
-                           -> Result<()> {
-        let criticity_str = format!("{:?}", criticity);
-        if criticity == Criticity::Warning {
-            try!(f.write_all(&String::from("<h3 id=\"warnings\">Warnings: <a href=\"#title\" \
-                                            title=\"Top\">⇮</a></h3>")
-                .into_bytes()));
-
-        } else {
-            try!(f.write_all(&format!("<h3 id=\"{}\">{} criticity vulnerabilities: <a \
-                                       href=\"#title\" title=\"Top\">⇮</a></h3>",
-                                      criticity_str.to_lowercase(),
-                                      criticity_str)
-                .into_bytes()));
-        }
-
-        for (i, vuln) in set.iter().enumerate() {
-            try!(f.write_all(b"<section class=\"vulnerability\">"));
-            try!(f.write_all(&format!("<h4>{}{:03}: <a href=\"#\" title=\"Display \
-                                       vulnerability\" class=\"show\">+</a><a href=\"#\" \
-                                       style=\"display: none\" class=\"collapse\" \
-                                       title=\"Collapse vulnerability\">-</a></h4>",
-                                      criticity_str.chars().nth(0).unwrap(),
-                                      i + 1)
-                .into_bytes()));
-            try!(f.write_all(b"<ul>"));
-            try!(f.write_all(&format!("<li><strong>Label:</strong> {}</li>", vuln.get_name())
-                .into_bytes()));
-            try!(f.write_all(b"<div style=\"display: none\">"));
-            try!(f.write_all(&format!("<li><strong>Description:</strong> {}</li>",
-                                      vuln.get_description())
-                .into_bytes()));
-            if let Some(file) = vuln.get_file() {
-                try!(f.write_all(&format!("<li><strong>File:</strong> <a \
-                                           href=\"src/{0}.html?start_line={1}&end_line={2}\
-                                           &vulnerability_type={3}#code-line-{1}\">{0}</a></li>",
-                                          file.display(),
-                                          vuln.get_start_line().unwrap() + 1,
-                                          vuln.get_end_line().unwrap() + 1,
-                                          criticity_str.to_lowercase())
-                    .into_bytes()));
-            }
-            if let Some(code) = vuln.get_code() {
-                if vuln.get_start_line().unwrap() != vuln.get_end_line().unwrap() {
-                    try!(f.write_all(&format!("<li><strong>Lines:</strong> {}-{}</li>",
-                                              vuln.get_start_line().unwrap() + 1,
-                                              vuln.get_end_line().unwrap() + 1)
-                        .into_bytes()));
-                } else {
-                    try!(f.write_all(&format!("<li><strong>Line:</strong> {}</li>",
-                                              vuln.get_start_line().unwrap() + 1)
-                        .into_bytes()));
-                }
-
-                let start_line = if vuln.get_start_line().unwrap() < 5 {
-                    0
-                } else {
-                    vuln.get_start_line().unwrap() - 4
-                };
-
-                let mut line_numbers = String::new();
-                let mut codes = String::new();
-                for (i, line) in html_escape(code).lines().enumerate() {
-                    line_numbers.push_str(format!("{}<br>", i + start_line + 1).as_str());
-                    if i + start_line >= vuln.get_start_line().unwrap() &&
-                       i + start_line <= vuln.get_end_line().unwrap() {
-                        let (indent, body) = split_indent(line);
-                        codes.push_str(format!("<code class=\"vulnerable_line {}\">{}<span \
-                                                class=\"line_body\">{}</span></code><br>",
-                                               criticity_str.to_lowercase(),
-                                               indent,
-                                               body)
-                            .as_str());
-                    } else {
-                        codes.push_str(format!("{}<br>", line).as_str());
+        for entry in try!(fs::read_dir(config.get_template_path())) {
+            let entry = try!(entry);
+            let entry_path = entry.path();
+            if try!(entry.file_type()).is_dir() {
+                try!(copy_folder(&entry_path,
+                                 &config.get_results_folder()
+                                     .join(package.as_ref())
+                                     .join(entry_path.file_name().unwrap())));
+            } else {
+                match entry_path.as_path().extension() {
+                    Some(e) if e == "hbs" => {}
+                    None => {}
+                    _ => {
+                        let _ = try!(fs::copy(&entry_path,
+                                              &config.get_results_folder()
+                                                  .join(package.as_ref())));
                     }
                 }
-                let lang = vuln.get_file().unwrap().extension().unwrap().to_string_lossy();
-                try!(f.write_all(&format!("<li><p><strong>Affected code:</strong></p><div><div \
-                                           class=\"line_numbers\">{}</div><div \
-                                           class=\"code\"><pre><code \
-                                           class=\"{}\">{}</code></pre></div></li>",
-                                          line_numbers,
-                                          lang,
-                                          codes.as_str())
-                    .into_bytes()));
             }
-            try!(f.write_all(b"</div>"));
-            try!(f.write_all(b"</ul>"));
-            try!(f.write_all(b"</section>"));
         }
+
+        try!(self.generate_code_html_files(config, package.as_ref()));
+
         Ok(())
     }
 
@@ -584,26 +336,9 @@ impl Results {
             .join("src")
             .join("index.html")));
 
-        try!(f.write_all(b"<!DOCTYPE html>"));
-        try!(f.write_all(b"<html lang=\"en\">"));
-        try!(f.write_all(b"<head>"));
-        try!(f.write_all(b"<title>Source code</title>"));
-        try!(f.write_all(b"<meta charset=\"UTF-8\">"));
-        try!(f.write_all(b"<link rel=\"stylesheet\" href=\"../css/style.css\">"));
-        try!(f.write_all(b"</head>"));
-        try!(f.write_all(b"<body class=\"src\">"));
-        try!(f.write_all(b"<nav>"));
-        try!(f.write_all(b"<a href=\"../index.html\" \
-                        title=\"Return to report\"><h2><img \
-                        src=\"../img/report.png\"><br>Return to report</h2></a>"));
-        try!(f.write_all(&menu.into_bytes()));
-        try!(f.write_all(b"</nav>"));
-        try!(f.write_all(b"<iframe name=\"code\" src=\"AndroidManifest.xml.html\">"));
-        try!(f.write_all(b"</iframe>"));
-        try!(f.write_all(b"<script src=\"../js/jquery-3.1.0.slim.min.js\"></script>"));
-        try!(f.write_all(b"<script src=\"../js/src_nav.js\"></script>"));
-        try!(f.write_all(b"</body>"));
-        try!(f.write_all(b"</html>"));
+        let mut data = BTreeMap::new();
+        let _ = data.insert("menu", menu);
+        try!(f.write_all(try!(self.templates.render("src", &data)).as_bytes()));
 
         Ok(())
     }
@@ -835,7 +570,7 @@ impl Results {
             variables = query_params.split('&'),
             start_line,
             end_line,
-            vulnerability_type;
+            criticity;
         for(var i = 0; i < variables.length; i++) {
           var pair = variables[i].split('=');
           if (pair[0] == \"start_line\") {
@@ -844,12 +579,12 @@ impl Results {
           if (pair[0] == \"end_line\") {
               end_line = pair[1];
           }
-          if (pair[0] == \"vulnerability_type\") {
-              vulnerability_type = pair[1];
+          if (pair[0] == \"criticity\") {
+              criticity = pair[1];
           }
         }
         for (var i = start_line; i <= end_line; i++) {
-            $(\"#code-line-\" + i).addClass(\"vulnerable_line \" + vulnerability_type);
+            $(\"#code-line-\" + i).addClass(\"vulnerable_line \" + criticity);
         }</script>"));
         try!(f_out.write_all(b"</body>"));
         try!(f_out.write_all(b"</html>"));
@@ -863,7 +598,7 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut state = try!(serializer.serialize_struct("Results", 7));
+        let mut state = try!(serializer.serialize_struct("Results", 23));
 
         try!(serializer.serialize_struct_elt(&mut state, "super_version", crate_version!()));
         try!(serializer.serialize_struct_elt(&mut state, "now", &now));
@@ -875,16 +610,25 @@ impl Serialize for Results {
         try!(serializer.serialize_struct_elt(&mut state, "app_version_number",
                                              &self.app_version_num));
         try!(serializer.serialize_struct_elt(&mut state, "app_fingerprint", &self.app_fingerprint));
+        try!(serializer.serialize_struct_elt(&mut state, "certificate", &self.certificate));
+
+        try!(serializer.serialize_struct_elt(&mut state, "app_min_sdk", &self.app_min_sdk));
+        try!(serializer.serialize_struct_elt(&mut state, "app_target_sdk", &self.app_target_sdk));
 
         try!(serializer.serialize_struct_elt(&mut state,
                                              "total_vulnerabilities",
                                              self.low.len() + self.medium.len() + self.high.len() +
                                              self.critical.len()));
         try!(serializer.serialize_struct_elt(&mut state, "criticals", &self.critical));
+        try!(serializer.serialize_struct_elt(&mut state, "criticals_len", self.critical.len()));
         try!(serializer.serialize_struct_elt(&mut state, "highs", &self.high));
+        try!(serializer.serialize_struct_elt(&mut state, "highs_len", self.high.len()));
         try!(serializer.serialize_struct_elt(&mut state, "mediums", &self.medium));
+        try!(serializer.serialize_struct_elt(&mut state, "mediums_len", self.medium.len()));
         try!(serializer.serialize_struct_elt(&mut state, "lows", &self.low));
+        try!(serializer.serialize_struct_elt(&mut state, "lows_len", self.low.len()));
         try!(serializer.serialize_struct_elt(&mut state, "warnings", &self.warnings));
+        try!(serializer.serialize_struct_elt(&mut state, "warnings_len", self.warnings.len()));
 
         try!(serializer.serialize_struct_end(state));
         Ok(())

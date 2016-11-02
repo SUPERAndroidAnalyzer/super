@@ -7,10 +7,10 @@
         <link rel="stylesheet" href="css/androidstudio.css">
     </head>
     <body>
-        <a href="http://superanalyzer.rocks" title="SUPER Android Analyzer">
-            <img src="img/logo.png" alt="SUPER Android Analyzer logo">
-        </a>
         <section class="report">
+            <a href="http://superanalyzer.rocks" title="SUPER Android Analyzer">
+                <img src="img/logo.png" alt="SUPER Android Analyzer logo">
+            </a>
             <h1 id="title">SUPER Android Analyzer Report</h1>
             <p>This is the vulnerability report for the android application <em>{{ app_package }}</em>. Report generated on <time datetime="now_rfc3339">{{ now_rfc2822 }}</time> with SUPER Android Analyzer {{ super_version }}.</p>
             <h2>Application data:</h2>
@@ -18,8 +18,8 @@
                 <li><strong>Package:</strong> {{ app_package }}</li>
                 <li><strong>Version:</strong> {{ app_version }}</li>
                 <li><strong>Version number:</strong> {{ app_version_number }}</li>
-                <li><strong>Minimum SDK version:</strong> {{ app_min_sdk_version }}</li>
-                <li><strong>Target SDK:</strong> {{ app_target_sdk_version }}</li>
+                <li><strong>Minimum SDK version:</strong> {{ app_min_sdk }}</li>
+                <li><strong>Target SDK:</strong> {{ app_target_sdk }}</li>
                 <li><strong>Fingerprints:</strong>
                     <ul>
                         <li>MD5: {{ app_fingerprint.md5 }}</li>
@@ -31,41 +31,41 @@
             </ul>
             <h3>Total vulnerabilities found: {{ total_vulnerabilities }}</h3>
             <ul>
-                <li>Critical: {{#if criticals }}<span class="critical">{{ criticals.length }}</span> <a href="#critical" title="Critical">⇒</a>{{else}}0{{/if}}</li>
-                <li>High: {{#if highs }}<span class="high">{{ highs.length }}</span> <a href="#high" title="High">⇒</a>{{else}}0{{/if}}</li>
-                <li>Medium: {{#if mediums }}<span class="medium">{{ mediums.length }}</span> <a href="#medium" title="Medium">⇒</a>{{else}}0{{/if}}</li>
-                <li>Low: {{#if lows }}<span class="low">{{ lows.length }}</span> <a href="#low" title="Low">⇒</a>{{else}}0{{/if}}</li>
-                <li>Warnings: {{#if warnings }}<span class="warning">{{ warnings.length }}</span> <a href="#warnings" title="Warnings">⇒</a>{{else}}0{{/if}}</li>
+                <li>Critical: {{#if criticals }}<span class="critical">{{ criticals_len }}</span> <a href="#critical" title="Critical">⇒</a>{{else}}0{{/if}}</li>
+                <li>High: {{#if highs }}<span class="high">{{ highs_len }}</span> <a href="#high" title="High">⇒</a>{{else}}0{{/if}}</li>
+                <li>Medium: {{#if mediums }}<span class="medium">{{ mediums_len }}</span> <a href="#medium" title="Medium">⇒</a>{{else}}0{{/if}}</li>
+                <li>Low: {{#if lows }}<span class="low">{{ lows_len }}</span> <a href="#low" title="Low">⇒</a>{{else}}0{{/if}}</li>
+                <li>Warnings: {{#if warnings }}<span class="warning">{{ warnings_len }}</span> <a href="#warnings" title="Warnings">⇒</a>{{else}}0{{/if}}</li>
             </ul>
             <h2>Vulnerabilities:</h2>
             {{#if criticals }}
             <h3 id="critical">Critical vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each criticals }}
-            {{> vulnerability vulnerability=this criticity="C" }}
+            {{> vulnerability list_len=../criticals_len }}
             {{/each}}
             {{/if}}
             {{#if highs }}
             <h3 id="high">High criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each highs }}
-            {{> vulnerability v=this criticity="C" }}
+            {{> vulnerability list_len=../highs_len }}
             {{/each}}
             {{/if}}
             {{#if mediums }}
             <h3 id="medium">Medium criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each mediums }}
-            {{> vulnerability v=this criticity="C" }}
+            {{> vulnerability list_len=../mediums_len}}
             {{/each}}
             {{/if}}
             {{#if lows }}
             <h3 id="low">Low criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each lows }}
-            {{> vulnerability v=this criticity="C" }}
+            {{> vulnerability list_len=../lows_len }}
             {{/each}}
             {{/if}}
             {{#if warnings }}
             <h3 id="warning">Warnings: <a href="#title" title="Top">⇮</a></h3>
             {{#each warnings }}
-            {{> vulnerability v=this criticity="C" }}
+            {{> vulnerability list_len=../warnings_len }}
             {{/each}}
             {{/if}}
         </section>

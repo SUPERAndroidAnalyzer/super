@@ -215,6 +215,7 @@ pub enum Error {
     IO(io::Error),
     TemplateName(String),
     Template(Box<handlebars::TemplateError>),
+    Render(Box<handlebars::RenderError>),
     Unknown,
 }
 
@@ -229,6 +230,7 @@ impl Into<i32> for Error {
             Error::IO(_) => 100,
             Error::TemplateName(_) => 125,
             Error::Template(_) => 150,
+            Error::Render(_) => 175,
             Error::Unknown => 1,
         }
     }
@@ -252,6 +254,12 @@ impl From<handlebars::TemplateFileError> for Error {
 impl From<handlebars::TemplateError> for Error {
     fn from(err: handlebars::TemplateError) -> Error {
         Error::Template(Box::new(err))
+    }
+}
+
+impl From<handlebars::RenderError> for Error {
+    fn from(err: handlebars::RenderError) -> Error {
+        Error::Render(Box::new(err))
     }
 }
 
@@ -283,6 +291,7 @@ impl StdError for Error {
             Error::IO(ref e) => e.description(),
             Error::TemplateName(ref e) => e,
             Error::Template(ref e) => e.description(),
+            Error::Render(ref e) => e.description(),
             Error::Unknown => "an unknown error occurred",
         }
     }
@@ -291,6 +300,7 @@ impl StdError for Error {
         match *self {
             Error::IO(ref e) => Some(e),
             Error::Template(ref e) => Some(e),
+            Error::Render(ref e) => Some(e),
             _ => None,
         }
     }
@@ -361,7 +371,7 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
         try!(fs::create_dir(to.as_ref()));
     }
 
-    for f in try!(fs::read_dir(from.as_ref())) {
+    for f in try!(fs::read_dir(from)) {
         let f = try!(f);
         if f.path().is_dir() {
             try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
