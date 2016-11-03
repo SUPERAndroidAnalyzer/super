@@ -402,6 +402,61 @@ impl Manifest {
                                 }
                             }
                         }
+                        tag @ "provider" |
+                        tag @ "receiver" |
+                        tag @ "activity" |
+                        tag @ "activity-alias" |
+                        tag @ "service" => {
+                            let mut exported = None;
+                            let mut name = String::new();
+                            for attr in attributes {
+                                match attr.name.local_name.as_str() {
+                                    "exported" => {
+                                        if let Ok(found_exported) = attr.value.as_str().parse() {
+                                            exported = Some(found_exported);
+                                        }
+                                    }
+                                    "name" => name = attr.value,
+                                    _ => {}
+                                }
+                            }
+                            match exported {
+                                Some(true) | None => {
+                                    if tag != "provider" || exported.is_some() ||
+                                       manifest.get_min_sdk() < 17 {
+
+                                        let line = get_line(manifest.get_code(),
+                                                            &format!("android:name=\"{}\"", name))
+                                            .ok();
+                                        let code = match line {
+                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                                            None => None,
+                                        };
+
+                                        let vuln = Vulnerability::new(Criticity::Warning,
+                                                                      format!("Exported {}", tag),
+                                                                      format!("Exported {} was \
+                                                                               found. It can be \
+                                                                               used by other \
+                                                                               applications.",
+                                                                              tag),
+                                                                      Some("AndroidManifest.xml"),
+                                                                      line,
+                                                                      line,
+                                                                      code);
+                                        results.add_vulnerability(vuln);
+
+                                        print_vulnerability(format!("Exported {} was found. It \
+                                                                     can be used by other \
+                                                                     applications.",
+                                                                    tag),
+                                                            Criticity::Warning);
+                                    }
+                                }
+                                _ => {}
+                            }
+
+                        }
                         _ => {}
                     }
                 }
