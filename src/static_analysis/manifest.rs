@@ -205,7 +205,8 @@ impl Manifest {
                                                results: &mut Results)
                                                -> Result<Manifest> {
         let mut file = try!(File::open(format!("{}/AndroidManifest.xml", path.as_ref().display())));
-        let mut manifest: Manifest = Default::default();
+        let mut manifest = Manifest::default();
+        try!(manifest.read_yaml(path, config));
 
         let mut code = String::new();
         let _ = try!(file.read_to_string(&mut code));
@@ -344,7 +345,8 @@ impl Manifest {
                                     }
                                     "label" => manifest.set_label(
                                         if attr.value.starts_with("@string/") {
-                                            match get_string(&attr.value[8..], config, package.as_ref()) {
+                                            match get_string(&attr.value[8..],
+                                                             config, package.as_ref()) {
                                                 Ok(s) => s,
                                                 Err(e) => {
                                                     print_warning(format!("An error occurred when\
@@ -414,8 +416,12 @@ impl Manifest {
             }
         }
 
+        Ok(manifest)
+    }
+
+    fn read_yaml<P: AsRef<Path>>(&mut self, path: P, config: &Config) -> Result<()> {
         let yaml_warning = "An error occurred when parsing the apktool.yml file.";
-        let mut file = try!(File::open(format!("{}/apktool.yml", path.as_ref().display())));
+        let mut file = try!(File::open(path.as_ref().join("apktool.yml")));
         let mut code = String::new();
         let _ = try!(file.read_to_string(&mut code));
         match YamlLoader::load_from_str(&code) {
@@ -427,7 +433,7 @@ impl Manifest {
                                 match sdk_info.get(&Yaml::String(String::from("minSdkVersion"))) {
                                     Some(&Yaml::String(ref min_sdk_str)) => {
                                         match min_sdk_str.parse() {
-                                            Ok(min_sdk) => manifest.set_min_sdk(min_sdk),
+                                            Ok(min_sdk) => self.set_min_sdk(min_sdk),
                                             Err(e) => {
                                                 print_warning(format!("{} {}", yaml_warning, e),
                                                               config.is_verbose());
@@ -441,7 +447,7 @@ impl Manifest {
                                     &Yaml::String(String::from("targetSdkVersion"))) {
                                     Some(&Yaml::String(ref target_sdk_str)) => {
                                         match target_sdk_str.parse() {
-                                            Ok(target_sdk) => manifest.set_target_sdk(target_sdk),
+                                            Ok(target_sdk) => self.set_target_sdk(target_sdk),
                                             Err(e) => {
                                                 print_warning(format!("{} {}", yaml_warning, e),
                                                                 config.is_verbose());
@@ -461,7 +467,7 @@ impl Manifest {
                                     Some(&Yaml::String(ref version_code_str)) => {
                                         match version_code_str.parse() {
                                             Ok(version_code) => {
-                                                manifest.set_version_number(version_code)
+                                                self.set_version_number(version_code)
                                             }
                                             Err(e) => {
                                                 print_warning(format!("{} {}", yaml_warning, e),
@@ -474,7 +480,7 @@ impl Manifest {
 
                                 match version_info.get(&Yaml::String(String::from("versionName"))) {
                                     Some(&Yaml::String(ref version_name)) => {
-                                        manifest.set_version_str(version_name.as_str());
+                                        self.set_version_str(version_name.as_str());
                                     }
                                     _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
@@ -487,8 +493,7 @@ impl Manifest {
             }
             Err(e) => print_warning(format!("{} {}", yaml_warning, e), config.is_verbose()),
         }
-
-        Ok(manifest)
+        Ok(())
     }
 
     fn set_code<S: Into<String>>(&mut self, code: S) {
