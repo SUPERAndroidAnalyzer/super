@@ -6,27 +6,28 @@
 
  - SUPER now uses templates for report generation. This is one of the biggest changes of the
    release, and enables users to create their own report templates.
-
  - Installation package for Mac OS.
-
  - Line highlighting in found vulnerabilities.
-
  - Reports now show the version of SUPER used to generate them.
-
  - Added `--open` option to automatically open reports.
-
  - Added options to the CLI to modify the ones in the config file. We now have `--downloads` or
    `--template` options in the CLI.
-
  - Added the `--test-all` option to the CLI, that will test all *.apk* files in the *downloads*
    folder.
+
+## Changes in rules
+
+ - We now detect `exported` attributes in `<provider>`, `<receiver>`, `<activity>`,
+   `<activity-alias>` and `<service>` tags in the *AndroidManifest.xml*, and we report potential
+   vulnerabilities. This still needs work since we still don't have all the required information to
+   show real vulnerabilities.
 
 ### Bug Fixes
 
  - Changed paths for better multiplatform support.
 
  - Regular Expressions:
-    - URL Disclosure no longer detects content providers ("content://...").
+    - URL Disclosure no longer detects content providers (`content://...`).
 
 ### Contributions
 
@@ -43,11 +44,8 @@
 
  - Release of 64-bit packages for Linux (Debian 8.6, Ubuntu 16.04, CentOS 7, Fedora 24) and Windows
    (8.1+).
-
  - *AndroidManifest.xml* analysis (Dangerous permission checks).
-
  - Certificate analysis (Certificate validity checks).
-
  - Code analysis (37 rules for checking the source code):
     - SQLi
     - XSS
@@ -57,11 +55,7 @@
     - Generic exceptions
     - Root detection
     - ...
-
  - HTML and JSON report generation.
-
  - Classification of vulnerabilities (Critical, High, Medium, Low, Info).
-
  - Application related info.
-
  - File fingerprinting.

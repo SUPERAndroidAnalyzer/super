@@ -93,6 +93,12 @@ assets = [
     ["templates/super/js/highlight.pack.js", "usr/share/super/templates/super/js/", "644"],
     ["templates/super/js/jquery-3.1.1.slim.min.js", "usr/share/super/templates/super/js/", "644"],
     ["templates/super/js/src_nav.js", "usr/share/super/templates/super/js/", "644"],
+    # templates
+    ["templates/super/code.hbs", "usr/share/super/templates/super/", "644"],
+    ["templates/super/menu.hbs", "usr/share/super/templates/super/", "644"],
+    ["templates/super/report.hbs", "usr/share/super/templates/super/", "644"],
+    ["templates/super/src.hbs", "usr/share/super/templates/super/", "644"],
+    ["templates/super/vulnerability.hbs", "usr/share/super/templates/super/", "644"],
     # Config
     ["rules.json", "etc/super/", "644"],
     ["config.toml", "etc/super/", "644"],
