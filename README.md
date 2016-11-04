@@ -1,8 +1,8 @@
 # SUPER Android Analyzer #
 
-[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=develop)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
-[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/develop?svg=true)](https://ci.appveyor.com/project/Razican/super/branch/develop)
-[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=develop)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=develop)
+[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
+[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true)](https://ci.appveyor.com/project/Razican/super/branch/master)
+[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master)
 
 <img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
