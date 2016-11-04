@@ -161,7 +161,7 @@ fn main() {
             }
 
             let report_start = Instant::now();
-            match results.generate_report(package, &config) {
+            match results.generate_report(&config) {
                 Ok(_) => {
                     if config.is_verbose() {
                         println!("The results report has been saved. Everything went smoothly, \
