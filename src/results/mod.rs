@@ -15,7 +15,7 @@ use serde_json::value::Value;
 mod utils;
 mod handlebars_helpers;
 
-pub use self::utils::{Benchmark, Vulnerability, split_indent};
+pub use self::utils::{Benchmark, Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
@@ -107,6 +107,7 @@ impl Results {
 
     fn load_templates(config: &Config) -> Result<Handlebars> {
         let mut handlebars = Handlebars::new();
+        handlebars.register_escape_fn(|s| html_escape(s).into_owned());
         let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
         let _ = handlebars.register_helper("html_code", Box::new(html_code));
         let _ = handlebars.register_helper("report_index", Box::new(report_index));
