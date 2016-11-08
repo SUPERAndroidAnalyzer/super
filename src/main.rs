@@ -163,7 +163,7 @@ fn main() {
 
             let report_start = Instant::now();
             match results.generate_report(&config, &package_name) {
-                Ok(_) => {
+                Ok(true) => {
                     if config.is_verbose() {
                         println!("The results report has been saved. Everything went smoothly, \
                                   now you can check all the results.");
@@ -176,6 +176,7 @@ fn main() {
                         println!("Report generated.");
                     }
                 }
+                Ok(false) => {}
                 Err(e) => {
                     print_error(format!("There was an error generating the results report: {}",
                                         e.description()),
@@ -193,13 +194,22 @@ fn main() {
 
             if config.is_open() {
                 let report_path = config.get_results_folder()
-                    .join(package)
+                    .join(results.get_app_package())
                     .join("index.html");
                 if let Err(e) = open::that(report_path) {
                     print_error(format!("Report could not be opened automatically: {}",
                                         e.description()),
                                 config.is_verbose());
                 }
+            }
+        } else if config.is_open() {
+            let report_path = config.get_results_folder()
+                .join(package_name)
+                .join("index.html");
+            if let Err(e) = open::that(report_path) {
+                print_error(format!("Report could not be opened automatically: {}",
+                                    e.description()),
+                            config.is_verbose());
             }
         }
     }

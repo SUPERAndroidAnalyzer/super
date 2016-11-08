@@ -148,6 +148,10 @@ impl Results {
         self.app_package = package.into();
     }
 
+    pub fn get_app_package(&self) -> &str {
+        &self.app_package
+    }
+
     #[cfg(feature = "certificate")]
     pub fn set_certificate<S: Into<String>>(&mut self, certificate: S) {
         self.certificate = certificate.into();
@@ -197,7 +201,7 @@ impl Results {
         }
     }
 
-    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
+    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<bool> {
         let path = config.get_results_folder().join(&self.app_package);
         if config.is_force() || !path.exists() {
             if path.exists() {
@@ -232,14 +236,16 @@ impl Results {
             if config.is_verbose() {
                 println!("HTML report generated.");
             }
-        } else if config.is_verbose() {
-            println!("Seems that the report has already been generated. There is no need to o it \
-                      again.");
+            Ok(true)
         } else {
-            println!("Skipping report generation.");
+            if config.is_verbose() {
+                println!("Seems that the report has already been generated. There is no need to \
+                          o it again.");
+            } else {
+                println!("Skipping report generation.");
+            }
+            Ok(false)
         }
-
-        Ok(())
     }
 
     fn generate_json_report(&self, config: &Config) -> Result<()> {
