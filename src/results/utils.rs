@@ -14,7 +14,7 @@ use crypto::sha2::Sha256;
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
-use {Config, Result, Criticity};
+use {Result, Criticity};
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
@@ -121,8 +121,8 @@ pub struct FingerPrint {
 
 impl FingerPrint {
     /// Creates a new fingerprint.
-    pub fn new<S: AsRef<str>>(config: &Config, package: S) -> Result<FingerPrint> {
-        let mut f = try!(File::open(config.get_apk_file(package)));
+    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
+        let mut f = try!(File::open(package));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
         let _ = try!(f.read_to_end(&mut buffer));
 

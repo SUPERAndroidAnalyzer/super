@@ -6,16 +6,19 @@ use std::fs;
 use std::fs::File;
 use std::time::Instant;
 use std::io::{Read, Write};
+use std::path::Path;
 use std::process::{Command, exit};
+use std::error::Error as StdError;
 use colored::Colorize;
 use zip::ZipArchive;
 
 use {Error, Config, print_error, print_warning};
+use utils::get_package_name;
 use results::Benchmark;
 
 /// Decompresses the application using _Apktool_.
-pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
-    let path = config.get_dist_folder().join(package.as_ref());
+pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
+    let path = config.get_dist_folder().join(package.as_ref().file_stem().unwrap());
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
@@ -48,7 +51,7 @@ pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
             .arg("-o")
             .arg(&path)
             .arg("-f")
-            .arg(config.get_apk_file(package))
+            .arg(package.as_ref())
             .output();
 
         let output = match output {
@@ -80,13 +83,18 @@ pub fn decompress<S: AsRef<str>>(config: &Config, package: S) {
     } else if config.is_verbose() {
         println!("Seems that the application has already been decompressed. There is no need to \
                   do it again.");
+    } else {
+        println!("Skipping decompression.");
     }
 }
 
 /// Extracts the _.dex_ files.
-pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut Vec<Benchmark>) {
+pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut Vec<Benchmark>) {
     if config.is_force() ||
-       !config.get_dist_folder().join(package.as_ref()).join("classes.dex").exists() {
+       !config.get_dist_folder()
+        .join(get_package_name(package.as_ref()))
+        .join("classes.dex")
+        .exists() {
         if config.is_verbose() {
             println!("");
             println!("To decompile the app, first we need to extract the {} file.",
@@ -96,7 +104,7 @@ pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut 
         let start_time = Instant::now();
 
         // Command to extract the .dex files.
-        let zip = ZipArchive::new(match File::open(config.get_apk_file(package.as_ref())) {
+        let zip = ZipArchive::new(match File::open(package.as_ref()) {
             Ok(f) => f,
             Err(e) => {
                 print_error(format!("There was an error when decompressing the {} file. More \
@@ -107,11 +115,11 @@ pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut 
                 exit(Error::Unknown.into());
             }
         });
-        if zip.is_err() {
+        if let Err(e) = zip {
             print_error(format!("There was an error when decompressing the {} file. More info: \
                                  {}",
                                 ".apk".italic(),
-                                zip.err().unwrap()),
+                                e.description()),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }
@@ -132,7 +140,7 @@ pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut 
 
         // Placing the classes.dex file into the dist_folder.
         let mut out_file = match File::create(config.get_dist_folder()
-            .join(package.as_ref())
+            .join(get_package_name(package.as_ref()))
             .join("classes.dex")) {
             Ok(f) => f,
             Err(e) => {
@@ -181,13 +189,15 @@ pub fn extract_dex<S: AsRef<str>>(config: &Config, package: S, benchmarks: &mut 
         println!("Seems that there is already a {} file for the application. There is no need to \
                   extract it again.",
                  ".dex".italic());
+    } else {
+        println!("Skipping {} file extraction.", ".dex".italic());
     }
 }
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
-pub fn dex_to_jar<S: AsRef<str>>(config: &Config, package: S) {
+pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
     let classes = config.get_dist_folder()
-        .join(package.as_ref())
+        .join(get_package_name(package.as_ref()))
         .join("classes.jar");
     if config.is_force() || !classes.exists() {
 
@@ -243,13 +253,15 @@ pub fn dex_to_jar<S: AsRef<str>>(config: &Config, package: S) {
         println!("Seems that there is already a {} file for the application. There is no need to \
                   create it again.",
                  ".jar".italic());
+    } else {
+        println!("Skipping {} file generation.", ".jar".italic());
     }
 }
 
 /// Decompiles the application using _jd\_cmd_.
-pub fn decompile<S: AsRef<str>>(config: &Config, package: S) {
+pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
     let out_path = config.get_dist_folder()
-        .join(package.as_ref())
+        .join(get_package_name(package.as_ref()))
         .join("classes");
     if config.is_force() || !out_path.exists() {
         // Command to decompile the application using jd_cmd.
@@ -291,5 +303,7 @@ pub fn decompile<S: AsRef<str>>(config: &Config, package: S) {
     } else if config.is_verbose() {
         println!("Seems that there is already a source folder for the application. There is no \
                   need to decompile it again.");
+    } else {
+        println!("Skipping decompilation.");
     }
 }

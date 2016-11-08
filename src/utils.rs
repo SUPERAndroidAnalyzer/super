@@ -1,5 +1,6 @@
 use std::{fs, io};
 use std::io::{Read, Write};
+use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
 
@@ -62,6 +63,13 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
                  _ => return,
              });
     sleep(Duration::from_millis(200));
+}
+
+/// Gets the name of the package from the path of the *.apk* file.
+///
+/// Note: it will panic if the path has no `file_stem`.
+pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
+    path.as_ref().file_stem().unwrap().to_string_lossy().into_owned()
 }
 
 /// Gets the code snippet near the start and end lines.

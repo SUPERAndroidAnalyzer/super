@@ -108,9 +108,10 @@ fn main() {
 
     let total_start = Instant::now();
     for package in config.get_app_packages() {
+        let package_name = get_package_name(package);
         if !config.is_quiet() {
             println!("");
-            println!("Starting analysis of {}", package.italic());
+            println!("Starting analysis of {}", package_name.italic());
         }
         let start_time = Instant::now();
 
@@ -145,10 +146,10 @@ fn main() {
             benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
         }
 
-        if let Some(mut results) = Results::init(&config, package) {
+        if let Some(mut results) = Results::init(&config, &package_name) {
             let static_start = Instant::now();
             // Static application analysis
-            static_analysis(&config, package, &mut results);
+            static_analysis(&config, &package_name, &mut results);
 
             if config.is_bench() {
                 benchmarks.push(Benchmark::new("Total static analysis", static_start.elapsed()));
@@ -159,7 +160,7 @@ fn main() {
             if !config.is_quiet() {
                 println!("");
             }
-
+            println!("HERE3");
             let report_start = Instant::now();
             match results.generate_report(&config) {
                 Ok(_) => {
@@ -185,7 +186,7 @@ fn main() {
 
             if config.is_bench() {
                 benchmarks.push(Benchmark::new("Report generation", report_start.elapsed()));
-                benchmarks.push(Benchmark::new(format!("Total time for {}", package),
+                benchmarks.push(Benchmark::new(format!("Total time for {}", package_name),
                                                total_start.elapsed()));
             }
 

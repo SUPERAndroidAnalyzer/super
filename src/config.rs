@@ -31,7 +31,7 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 #[derive(Debug)]
 pub struct Config {
     /// Application packages to analyze.
-    app_packages: Vec<String>,
+    app_packages: Vec<PathBuf>,
     /// Boolean to represent `--verbose` mode.
     verbose: bool,
     /// Boolean to represent `--quiet` mode.
@@ -58,7 +58,9 @@ pub struct Config {
     jd_cmd_file: PathBuf,
     /// Path to the `rules.json` file.
     rules_json: PathBuf,
+    /// The folder where the templates are stored.
     templates_folder: PathBuf,
+    /// The name of the template to use.
     template: String,
     /// Represents an unknow permission.
     unknown_permission: (Criticity, String),
@@ -108,7 +110,7 @@ impl Config {
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
                 Ok(t) if t > 0u8 => {
-                    self.set_threads(t);
+                    self.threads = t;
                 }
                 _ => {
                     print_warning(format!("The threads options must be an integer between 1 and \
@@ -119,28 +121,28 @@ impl Config {
             }
         }
         if let Some(downloads_folder) = cli.value_of("downloads") {
-            self.set_downloads_folder(downloads_folder);
+            self.downloads_folder = PathBuf::from(downloads_folder);
         }
         if let Some(dist_folder) = cli.value_of("dist") {
-            self.set_dist_folder(dist_folder);
+            self.dist_folder = PathBuf::from(dist_folder);
         }
         if let Some(results_folder) = cli.value_of("results") {
-            self.set_results_folder(results_folder);
+            self.results_folder = PathBuf::from(results_folder);
         }
         if let Some(apktool_file) = cli.value_of("apktool") {
-            self.set_apktool_file(apktool_file);
+            self.apktool_file = PathBuf::from(apktool_file);
         }
         if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
-            self.set_dex2jar_folder(dex2jar_folder);
+            self.dex2jar_folder = PathBuf::from(dex2jar_folder);
         }
         if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
-            self.set_jd_cmd_file(jd_cmd_file);
+            self.jd_cmd_file = PathBuf::from(jd_cmd_file);
         }
         if let Some(template_name) = cli.value_of("template") {
             self.template = template_name.to_owned();
         }
         if let Some(rules_json) = cli.value_of("rules") {
-            self.set_rules_json(rules_json);
+            self.rules_json = PathBuf::from(rules_json);
         }
     }
 
@@ -187,7 +189,7 @@ impl Config {
                     self.rules_json.exists();
         if check {
             for package in &self.app_packages {
-                if !self.get_apk_file(package).exists() {
+                if !package.exists() {
                     return false;
                 }
             }
@@ -205,9 +207,8 @@ impl Config {
                                 self.downloads_folder.display()));
         }
         for package in &self.app_packages {
-            if !self.get_apk_file(package).exists() {
-                errors.push(format!("The APK file `{}` does not exist",
-                                    self.get_apk_file(package).display()));
+            if !package.exists() {
+                errors.push(format!("The APK file `{}` does not exist", package.display()));
             }
         }
         if !self.apktool_file.exists() {
@@ -244,18 +245,22 @@ impl Config {
     }
 
     /// Returns the app package.
-    pub fn get_app_packages(&self) -> &[String] {
+    pub fn get_app_packages(&self) -> &[PathBuf] {
         &self.app_packages
     }
 
-    /// Changes the app package.
-    pub fn add_app_package<S: Into<String>>(&mut self, app_package: S) {
-        self.app_packages.push(app_package.into().replace(".apk", ""));
-    }
+    /// Adds a package to check.
+    fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
+        let mut package_path = self.downloads_folder.join(app_package);
+        if package_path.extension().is_none() {
+            package_path.set_extension("apk");
+        } else if package_path.extension().unwrap() != "apk" {
+            let mut file_name = package_path.file_name().unwrap().to_string_lossy().into_owned();
+            file_name.push_str(".apk");
+            package_path.set_file_name(file_name);
+        }
 
-    /// Returns the path to the apk file of the given package.
-    pub fn get_apk_file<S: AsRef<str>>(&self, package: S) -> PathBuf {
-        self.downloads_folder.join(format!("{}.apk", package.as_ref()))
+        self.app_packages.push(package_path);
     }
 
     /// Returns true if the application is running in `--verbose` mode, false otherwise.
@@ -263,19 +268,9 @@ impl Config {
         self.verbose
     }
 
-    /// Activate or disable `--verbose` mode.
-    pub fn set_verbose(&mut self, verbose: bool) {
-        self.verbose = verbose;
-    }
-
     /// Returns true if the application is running in `--quiet` mode, false otherwise.
     pub fn is_quiet(&self) -> bool {
         self.quiet
-    }
-
-    /// Activate or disable `--quiet` mode.
-    pub fn set_quiet(&mut self, quiet: bool) {
-        self.quiet = quiet;
     }
 
     /// Returns true if the application is running in `--force` mode, false otherwise.
@@ -283,19 +278,9 @@ impl Config {
         self.force
     }
 
-    /// Activate or disable `--force` mode.
-    pub fn set_force(&mut self, force: bool) {
-        self.force = force;
-    }
-
     /// Returns true if the application is running in `--bench` mode, false otherwise.
     pub fn is_bench(&self) -> bool {
         self.bench
-    }
-
-    /// Activate or disable `--bench` mode.
-    pub fn set_bench(&mut self, bench: bool) {
-        self.bench = bench;
     }
 
     /// Returns true if the application is running in `--open` mode, false otherwise.
@@ -303,29 +288,9 @@ impl Config {
         self.open
     }
 
-    /// Activate or disable `--open` mode.
-    pub fn set_open(&mut self, open: bool) {
-        self.open = open;
-    }
-
     /// Returns the `threads` field.
     pub fn get_threads(&self) -> u8 {
         self.threads
-    }
-
-    /// Sets the `threads` field.
-    pub fn set_threads(&mut self, threads: u8) {
-        self.threads = threads;
-    }
-
-    /// Returns the path to the `downloads_folder`.
-    pub fn get_downloads_folder(&self) -> &Path {
-        &self.downloads_folder
-    }
-
-    /// Sets the path to the `downloads_folder`.
-    pub fn set_downloads_folder<P: Into<PathBuf>>(&mut self, downloads_folder: P) {
-        self.downloads_folder = downloads_folder.into()
     }
 
     /// Returns the path to the `dist_folder`.
@@ -333,19 +298,9 @@ impl Config {
         &self.dist_folder
     }
 
-    /// Sets the path to the `dist_folder`.
-    pub fn set_dist_folder<P: Into<PathBuf>>(&mut self, dist_folder: P) {
-        self.dist_folder = dist_folder.into()
-    }
-
     /// Returns the path to the `results_folder`.
     pub fn get_results_folder(&self) -> &Path {
         &self.results_folder
-    }
-
-    /// Sets the path to the `results_folder`.
-    pub fn set_results_folder<P: Into<PathBuf>>(&mut self, results_folder: P) {
-        self.results_folder = results_folder.into()
     }
 
     /// Returns the path to the`apktool_file`.
@@ -353,29 +308,14 @@ impl Config {
         &self.apktool_file
     }
 
-    /// Sets the path to the `apktool_file`.
-    pub fn set_apktool_file<P: Into<PathBuf>>(&mut self, apktool_file: P) {
-        self.apktool_file = apktool_file.into()
-    }
-
     /// Returns the path to the `dex2jar_folder`.
     pub fn get_dex2jar_folder(&self) -> &Path {
         &self.dex2jar_folder
     }
 
-    /// Sets the path to the `dex2jar_folder`.
-    pub fn set_dex2jar_folder<P: Into<PathBuf>>(&mut self, dex2jar_folder: P) {
-        self.dex2jar_folder = dex2jar_folder.into()
-    }
-
     /// Returns the path to the `jd_cmd_file`.
     pub fn get_jd_cmd_file(&self) -> &Path {
         &self.jd_cmd_file
-    }
-
-    /// Sets the path to the `jd_cmd_file`.
-    pub fn set_jd_cmd_file<P: Into<PathBuf>>(&mut self, jd_cmd_file: P) {
-        self.jd_cmd_file = jd_cmd_file.into()
     }
 
     /// Gets the path to the template.
@@ -393,19 +333,9 @@ impl Config {
         &self.template
     }
 
-    /// Sets the template to use, by name.
-    pub fn set_template_name<S: Into<String>>(&mut self, template_name: S) {
-        self.template = template_name.into();
-    }
-
     /// Returns the path to the `rules_json`.
     pub fn get_rules_json(&self) -> &Path {
         &self.rules_json
-    }
-
-    /// Sets the path to the `rules_json`.
-    pub fn set_rules_json<P: Into<PathBuf>>(&mut self, rules_json: P) {
-        self.rules_json = rules_json.into()
     }
 
     /// Returns the criticity of the `unknown_permission` field.

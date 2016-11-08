@@ -19,7 +19,7 @@ pub use self::utils::{Benchmark, Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
-use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder};
+use {Error, Config, Result, Criticity, print_error, copy_folder};
 
 pub struct Results {
     app_package: String,
@@ -54,7 +54,7 @@ impl Results {
                 }
             }
 
-            let fingerprint = match FingerPrint::new(config, package.as_ref()) {
+            let fingerprint = match FingerPrint::new(package.as_ref()) {
                 Ok(f) => f,
                 Err(e) => {
                     print_error(format!("An error occurred when trying to fingerprint the \
@@ -100,6 +100,8 @@ impl Results {
             if config.is_verbose() {
                 println!("The results for this application have already been generated. No need \
                           to generate them again.");
+            } else {
+                println!("Skipping result generation.");
             }
             None
         }
@@ -196,36 +198,25 @@ impl Results {
 
     pub fn generate_report(&self, config: &Config) -> Result<()> {
         let path = config.get_results_folder().join(&self.app_package);
-        if !path.exists() || config.is_force() {
-            if path.exists() {
-                if let Err(e) = fs::remove_dir_all(&path) {
-                    print_warning(format!("There was an error when removing the report folder: \
-                                           {}",
-                                          e),
-                                  config.is_verbose());
-                }
-            }
+        if config.is_verbose() {
+            println!("Starting report generation. First we'll create the results folder.");
+        }
+        try!(fs::create_dir_all(&path));
+        if config.is_verbose() {
+            println!("Results folder created. Time to create the reports.");
+        }
 
-            if config.is_verbose() {
-                println!("Starting report generation. First we'll create the results folder.");
-            }
-            try!(fs::create_dir_all(&path));
-            if config.is_verbose() {
-                println!("Results folder created. Time to create the reports.");
-            }
+        try!(self.generate_json_report(config));
 
-            try!(self.generate_json_report(config));
+        if config.is_verbose() {
+            println!("JSON report generated.");
+            println!("");
+        }
 
-            if config.is_verbose() {
-                println!("JSON report generated.");
-                println!("");
-            }
+        try!(self.generate_html_report(config));
 
-            try!(self.generate_html_report(config));
-
-            if config.is_verbose() {
-                println!("HTML report generated.");
-            }
+        if config.is_verbose() {
+            println!("HTML report generated.");
         }
 
         Ok(())

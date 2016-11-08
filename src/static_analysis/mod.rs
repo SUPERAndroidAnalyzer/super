@@ -26,7 +26,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
                   performed, starting with the AndroidManifest.xml file and then going through \
                   the actual code. Let's start!");
     }
-
+    println!("HERE!");
     // Run analysis for manifest file.
     let manifest = manifest_analysis(config, package.as_ref(), results);
 
@@ -37,7 +37,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
                           config.is_verbose())
         }
     }
-
+    println!("HERE2");
     // Run analysis for source code files.
     code_analysis(manifest, config, package.as_ref(), results);
 }

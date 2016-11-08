@@ -55,7 +55,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
             println!("This does not mean that something went wrong, but it's supposed to have \
                       the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     config.get_downloads_folder().display());
+                     "downloads".italic());
         }
     }
 
