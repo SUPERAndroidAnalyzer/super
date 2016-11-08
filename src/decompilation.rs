@@ -16,7 +16,7 @@ use {Error, Config, print_error, print_warning, get_package_name};
 use results::Benchmark;
 
 /// Decompresses the application using _Apktool_.
-pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
+pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
     let path = config.get_dist_folder().join(package.as_ref().file_stem().unwrap());
     if !path.exists() || config.is_force() {
         if path.exists() {
@@ -27,10 +27,11 @@ pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
             if let Err(e) = fs::remove_dir_all(&path) {
                 print_warning(format!("There was an error when removing the decompression \
                                        folder: {}",
-                                      e),
+                                      e.description()),
                               config.is_verbose());
             }
         }
+        config.set_force();
 
         if config.is_verbose() {
             println!("");
@@ -57,8 +58,8 @@ pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
             Ok(o) => o,
             Err(e) => {
                 print_error(format!("There was an error when executing the decompression \
-                                     command: {:?}",
-                                    e),
+                                     command: {}",
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::from(e).into());
             }
@@ -88,12 +89,15 @@ pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
 }
 
 /// Extracts the _.dex_ files.
-pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut Vec<Benchmark>) {
+pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
+                                   package: P,
+                                   benchmarks: &mut Vec<Benchmark>) {
     if config.is_force() ||
        !config.get_dist_folder()
         .join(get_package_name(package.as_ref()))
         .join("classes.dex")
         .exists() {
+        config.set_force();
         if config.is_verbose() {
             println!("");
             println!("To decompile the app, first we need to extract the {} file.",
@@ -109,7 +113,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
                 print_error(format!("There was an error when decompressing the {} file. More \
                                      info: {}",
                                     ".apk".italic(),
-                                    e),
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::Unknown.into());
             }
@@ -131,7 +135,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
                 print_error(format!("There was an error while finding the classes.dex file \
                                      inside the {} file. More info: {}",
                                     ".apk".italic(),
-                                    e),
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::Unknown.into());
             }
@@ -145,7 +149,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
             Err(e) => {
                 print_error(format!("There was an error while creating classes.dex file. More \
                                      info: {}",
-                                    e),
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::Unknown.into());
             }
@@ -157,7 +161,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
             print_error(format!("There was an error while reading classes.dex file from the {}. \
                                  More info: {}",
                                 ".apk".italic(),
-                                e),
+                                e.description()),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }
@@ -165,7 +169,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
         if let Err(e) = out_file.write_all(&bytes) {
             print_error(format!("There was an error while writting classes.dex file. More info: \
                                  {}",
-                                e),
+                                e.description()),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }
@@ -194,12 +198,13 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
 }
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
-pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
+pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
     let package_name = get_package_name(package.as_ref());
     let classes = config.get_dist_folder()
         .join(&package_name)
         .join("classes.jar");
     if config.is_force() || !classes.exists() {
+        config.set_force();
 
         // Command to convert .dex to .jar. using dex2jar.
         // "-o path" to specify an output file
@@ -212,6 +217,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
             .arg(config.get_dist_folder()
                 .join(&package_name)
                 .join("classes.dex"))
+            .arg("-f")
             .arg("-o")
             .arg(&classes)
             .output();
@@ -223,22 +229,19 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
                                      command: {:?}",
                                     ".dex".italic(),
                                     ".jar".italic(),
-                                    e),
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::from(e).into());
             }
         };
 
-        println!("output.stdout: `{}`",
-                 String::from_utf8_lossy(&output.stdout));
-        println!("output.stderr: `{}`",
-                 String::from_utf8_lossy(&output.stderr));
-
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
         // and the status is always success. So the only difference is if we detect the actual
-        // exception that was produced.
-        if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) {
+        // exception that was produced. But, the thing is that in some cases it does not return an
+        // exception, so we have to check if errors such as "use certain option" occur.
+        if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) ||
+           stderr.contains("use") {
             print_error(format!("The {} to {} conversion command returned an error. More info: \
                                  {}",
                                 ".dex".italic(),
@@ -268,12 +271,14 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
 }
 
 /// Decompiles the application using _jd\_cmd_.
-pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
+pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.get_dist_folder()
         .join(&package_name)
         .join("classes");
     if config.is_force() || !out_path.exists() {
+        config.set_force();
+
         // Command to decompile the application using jd_cmd.
         // "-od path" to specify an output directory
         let output = Command::new("java")
@@ -291,7 +296,7 @@ pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
             Err(e) => {
                 print_error(format!("There was an unknown error decompiling the application: \
                                      {:?}",
-                                    e),
+                                    e.description()),
                             config.is_verbose());
                 exit(Error::from(e).into());
             }

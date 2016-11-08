@@ -48,7 +48,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                        {} dir searching certificates. \
                                        Certificate analysis will be skipped. More info: {}",
                                       path.display(),
-                                      e),
+                                      e.description()),
                               config.is_verbose());
                 break;
             }

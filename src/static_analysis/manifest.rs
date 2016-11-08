@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
+use std::error::Error as StdError;
 
 use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};
@@ -32,7 +33,8 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
             m
         }
         Err(e) => {
-            print_error(format!("There was an error when loading the manifest: {}", e),
+            print_error(format!("There was an error when loading the manifest: {}",
+                                e.description()),
                         config.is_verbose());
             if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \
@@ -232,7 +234,7 @@ impl Manifest {
                                                                        the manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -252,7 +254,7 @@ impl Manifest {
                                                                        manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -267,7 +269,7 @@ impl Manifest {
                             for attr in attributes {
                                 match attr.name.local_name.as_str() {
                                     "debuggable" => {
-                                        let debug = match attr.value.as_str().parse() {
+                                        let debug: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -276,7 +278,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -286,7 +288,9 @@ impl Manifest {
                                         }
                                     }
                                     "allowBackup" => {
-                                        let allows_backup = match attr.value.as_str().parse() {
+                                        let allows_backup: bool = match attr.value
+                                            .as_str()
+                                            .parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -295,7 +299,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -306,7 +310,7 @@ impl Manifest {
                                     }
                                     "description" => manifest.set_description(attr.value.as_str()),
                                     "hasCode" => {
-                                        let has_code = match attr.value.as_str().parse() {
+                                        let has_code: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -315,7 +319,7 @@ impl Manifest {
                                                                            the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -325,7 +329,7 @@ impl Manifest {
                                         }
                                     }
                                     "largeHeap" => {
-                                        let large_heap = match attr.value.as_str().parse() {
+                                        let large_heap: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -334,7 +338,7 @@ impl Manifest {
                                                                           the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -353,7 +357,8 @@ impl Manifest {
                                                                          trying to get the string\
                                                                          for the app label in the\
                                                                        manifest: {}.\nThe process\
-                                                                      will continue, though.", e),
+                                                                      will continue, though.",
+                                                                          e.description()),
                                                                       config.is_verbose());
                                                     break;
                                                 }
@@ -465,7 +470,7 @@ impl Manifest {
                     print_warning(format!("An error occurred when parsing the \
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
-                                          e),
+                                          e.description()),
                                   config.is_verbose());
                 }
             }
@@ -490,7 +495,9 @@ impl Manifest {
                                         match min_sdk_str.parse() {
                                             Ok(min_sdk) => self.set_min_sdk(min_sdk),
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}",
+                                                                      yaml_warning,
+                                                                      e.description()),
                                                               config.is_verbose());
                                             }
                                         }
@@ -504,7 +511,8 @@ impl Manifest {
                                         match target_sdk_str.parse() {
                                             Ok(target_sdk) => self.set_target_sdk(target_sdk),
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}", yaml_warning,
+                                                                      e.description()),
                                                                 config.is_verbose());
                                             }
                                         }
@@ -525,7 +533,9 @@ impl Manifest {
                                                 self.set_version_number(version_code)
                                             }
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}",
+                                                                      yaml_warning,
+                                                                      e.description()),
                                                               config.is_verbose());
                                             }
                                         }
@@ -546,7 +556,10 @@ impl Manifest {
                     _ => print_warning(yaml_warning, config.is_verbose()),
                 }
             }
-            Err(e) => print_warning(format!("{} {}", yaml_warning, e), config.is_verbose()),
+            Err(e) => {
+                print_warning(format!("{} {}", yaml_warning, e.description()),
+                              config.is_verbose())
+            }
         }
         Ok(())
     }

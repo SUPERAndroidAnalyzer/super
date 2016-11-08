@@ -7,6 +7,7 @@ use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
 use std::slice::Iter;
+use std::error::Error as StdError;
 
 use serde_json;
 use serde_json::value::Value;
@@ -25,7 +26,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         Ok(r) => r,
         Err(e) => {
             print_error(format!("An error occurred when loading code analysis rules. Error: {}",
-                                e),
+                                e.description()),
                         config.is_verbose());
             return;
         }
@@ -35,7 +36,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!("An error occurred when reading files for analysis, the results \
                                might be incomplete. Error: {}",
-                              e),
+                              e.description()),
                       config.is_verbose());
     }
     let total_files = files.len();
@@ -78,7 +79,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
-                                                      e),
+                                                      e.description()),
                                               verbose)
                             }
                         }
@@ -111,7 +112,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
 
     for t in handles {
         if let Err(e) = t.join() {
-            print_warning(format!("An error occurred when joining analysis thrads: Error: {:?}",
+            print_warning(format!("An error occurred when joining analysis threads: Error: {:?}",
                                   e),
                           config.is_verbose());
         }
@@ -205,7 +206,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                    forward_check '{}'. The rule will be \
                                                    skipped. {}",
                                                   r,
-                                                  e),
+                                                  e.description()),
                                           verbose);
                             break 'rule;
                         }
@@ -272,7 +273,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
                                       real_path.display(),
-                                      e),
+                                      e.description()),
                               config.is_verbose());
                 return Err(Error::from(e));
             }
@@ -404,7 +405,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!("An error occurred when compiling the regular \
                                                expresion: {}",
-                                              e),
+                                              e.description()),
                                       config.is_verbose());
                         return Err(Error::Parse);
                     }
@@ -550,7 +551,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 Err(e) => {
                                     print_warning(format!("An error occurred when compiling the \
                                                            regular expresion: {}",
-                                                          e),
+                                                          e.description()),
                                                   config.is_verbose());
                                     return Err(Error::Parse);
                                 }

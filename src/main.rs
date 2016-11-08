@@ -61,11 +61,11 @@ fn main() {
     let cli = generate_cli();
     let verbose = cli.is_present("verbose");
 
-    let config = match Config::from_cli(cli) {
+    let mut config = match Config::from_cli(cli) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
-                                  e),
+                                  e.description()),
                           verbose);
             Config::default()
         }
@@ -108,7 +108,7 @@ fn main() {
 
     let total_start = Instant::now();
     for package in config.get_app_packages() {
-        let package_name = get_package_name(package);
+        let package_name = get_package_name(&package);
         if !config.is_quiet() {
             println!("");
             println!("Starting analysis of {}", package_name.italic());
@@ -116,18 +116,18 @@ fn main() {
         let start_time = Instant::now();
 
         // APKTool app decompression
-        decompress(&config, package);
+        decompress(&mut config, &package);
 
         if config.is_bench() {
             benchmarks.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
         }
 
         // Extracting the classes.dex from the .apk file
-        extract_dex(&config, package, &mut benchmarks);
+        extract_dex(&mut config, &package, &mut benchmarks);
 
         let dex_jar_time = Instant::now();
         // Converting the .dex to .jar.
-        dex_to_jar(&config, package);
+        dex_to_jar(&mut config, &package);
         benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
 
         if config.is_verbose() {
@@ -140,13 +140,13 @@ fn main() {
         let decompile_start = Instant::now();
 
         // Decompiling the app
-        decompile(&config, package);
+        decompile(&mut config, &package);
 
         if config.is_bench() {
             benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
         }
 
-        if let Some(mut results) = Results::init(&config, package) {
+        if let Some(mut results) = Results::init(&config, &package) {
             let static_start = Instant::now();
             // Static application analysis
             static_analysis(&config, &package_name, &mut results);
@@ -177,7 +177,8 @@ fn main() {
                     }
                 }
                 Err(e) => {
-                    print_error(format!("There was an error generating the results report: {}", e),
+                    print_error(format!("There was an error generating the results report: {}",
+                                        e.description()),
                                 config.is_verbose());
                     exit(Error::Unknown.into())
                 }
@@ -195,7 +196,8 @@ fn main() {
                     .join(package)
                     .join("index.html");
                 if let Err(e) = open::that(report_path) {
-                    print_error(format!("Report could not be opened automatically: {}", e),
+                    print_error(format!("Report could not be opened automatically: {}",
+                                        e.description()),
                                 config.is_verbose());
                 }
             }

@@ -4,6 +4,7 @@ use std::io::{Read, Write, BufWriter};
 use std::collections::{BTreeSet, BTreeMap};
 use std::path::Path;
 use std::result::Result as StdResult;
+use std::error::Error as StdError;
 
 use serde::ser::{Serialize, Serializer};
 use chrono::Local;
@@ -19,7 +20,7 @@ pub use self::utils::{Benchmark, Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
-use {Error, Config, Result, Criticity, print_error, copy_folder, get_package_name};
+use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder, get_package_name};
 
 pub struct Results {
     app_package: String,
@@ -198,25 +199,44 @@ impl Results {
 
     pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
         let path = config.get_results_folder().join(&self.app_package);
-        if config.is_verbose() {
-            println!("Starting report generation. First we'll create the results folder.");
-        }
-        try!(fs::create_dir_all(&path));
-        if config.is_verbose() {
-            println!("Results folder created. Time to create the reports.");
-        }
+        if config.is_force() || !path.exists() {
+            if path.exists() {
+                if config.is_verbose() {
+                    println!("The application results folder exists. But no more…");
+                }
 
-        try!(self.generate_json_report(config));
+                if let Err(e) = fs::remove_dir_all(&path) {
+                    print_warning(format!("There was an error when removing the results \
+                                           folder: {}",
+                                          e.description()),
+                                  config.is_verbose());
+                }
+            }
+            if config.is_verbose() {
+                println!("Starting report generation. First we'll create the results folder.");
+            }
+            try!(fs::create_dir_all(&path));
+            if config.is_verbose() {
+                println!("Results folder created. Time to create the reports.");
+            }
 
-        if config.is_verbose() {
-            println!("JSON report generated.");
-            println!("");
-        }
+            try!(self.generate_json_report(config));
 
-        try!(self.generate_html_report(config, package));
+            if config.is_verbose() {
+                println!("JSON report generated.");
+                println!("");
+            }
 
-        if config.is_verbose() {
-            println!("HTML report generated.");
+            try!(self.generate_html_report(config, package));
+
+            if config.is_verbose() {
+                println!("HTML report generated.");
+            }
+        } else if config.is_verbose() {
+            println!("Seems that the report has already been generated. There is no need to o it \
+                      again.");
+        } else {
+            println!("Skipping report generation.");
         }
 
         Ok(())
@@ -342,7 +362,8 @@ impl Results {
             } else {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
-                        try!(self.generate_code_html_for(&stripped, config, cli_package_name.as_ref()));
+                        try!(self.generate_code_html_for(&stripped, config,
+                                                         cli_package_name.as_ref()));
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = BTreeMap::new();
                         let _ = data.insert(String::from("name"), Value::String(name));
@@ -431,7 +452,11 @@ impl Results {
     //     Ok(menu)
     // }
 
-    fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self, path: P, config: &Config, cli_package_name: S) -> Result<()> {
+    fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self,
+                                                             path: P,
+                                                             config: &Config,
+                                                             cli_package_name: S)
+                                                             -> Result<()> {
         let mut f_in = try!(File::open(config.get_dist_folder()
             .join(cli_package_name.as_ref())
             .join(path.as_ref())));

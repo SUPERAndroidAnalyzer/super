@@ -12,6 +12,7 @@ use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
+use std::error::Error as StdError;
 
 use colored::Colorize;
 use toml::{Parser, Value};
@@ -166,7 +167,7 @@ impl Config {
                         Err(e) => {
                             print_warning(format!("There was an error when reading the \
                                                    downloads folder: {}",
-                                                  e),
+                                                  e.description()),
                                           self.verbose);
                         }
                     }
@@ -174,7 +175,7 @@ impl Config {
             }
             Err(e) => {
                 print_error(format!("There was an error when reading the downloads folder: {}",
-                                    e),
+                                    e.description()),
                             self.verbose);
                 exit(Error::from(e).into());
             }
@@ -245,8 +246,8 @@ impl Config {
     }
 
     /// Returns the app package.
-    pub fn get_app_packages(&self) -> &[PathBuf] {
-        &self.app_packages
+    pub fn get_app_packages(&self) -> Vec<PathBuf> {
+        self.app_packages.clone()
     }
 
     /// Adds a package to check.
@@ -276,6 +277,11 @@ impl Config {
     /// Returns true if the application is running in `--force` mode, false otherwise.
     pub fn is_force(&self) -> bool {
         self.force
+    }
+
+    /// Sets the application to force recreate the analysis files and results.
+    pub fn set_force(&mut self) {
+        self.force = true;
     }
 
     /// Returns true if the application is running in `--bench` mode, false otherwise.
