@@ -74,7 +74,7 @@ pub struct Config {
 impl Config {
     /// Creates a new `Config` struct.
     pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
-        let mut config: Config = Default::default();
+        let mut config = Config::default();
 
         config.verbose = cli.is_present("verbose");
         config.quiet = cli.is_present("quiet");
@@ -792,7 +792,7 @@ mod tests {
         assert!(!config.is_bench());
         assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), Path::new("."));
+        assert_eq!(config.downloads_folder, Path::new("."));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
@@ -828,8 +828,8 @@ mod tests {
                     since it can lead to missunderstanding between developers.");
         assert_eq!(config.get_permissions().next(), None);
 
-        if !config.get_downloads_folder().exists() {
-            fs::create_dir(config.get_downloads_folder()).unwrap();
+        if !config.downloads_folder.exists() {
+            fs::create_dir(&config.downloads_folder).unwrap();
         }
         if !config.get_dist_folder().exists() {
             fs::create_dir(config.get_dist_folder()).unwrap();
@@ -840,32 +840,33 @@ mod tests {
 
         // Change properties.
         config.add_app_package("test_app");
-        config.set_verbose(true);
-        config.set_quiet(true);
-        config.set_force(true);
-        config.set_bench(true);
-        config.set_open(true);
+        config.verbose = true;
+        config.quiet = true;
+        config.force = true;
+        config.bench = true;
+        config.open = true;
 
         // Check that the new properties are correct.
-        assert_eq!(config.get_app_packages()[0], "test_app");
+        let packages = config.get_app_packages();
+        assert_eq!(&packages[0], &config.downloads_folder.join("test_app.apk"));
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());
         assert!(config.is_bench());
         assert!(config.is_open());
 
-        if config.get_apk_file("test_app").exists() {
-            fs::remove_file(config.get_apk_file("test_app")).unwrap();
+        if packages[0].exists() {
+            fs::remove_file(&packages[0]).unwrap();
         }
         assert!(!config.check());
 
-        let _ = fs::File::create(config.get_apk_file("test_app")).unwrap();
+        let _ = fs::File::create(&packages[0]).unwrap();
         assert!(config.check());
 
         let config = Config::default();
         assert!(config.check());
 
-        fs::remove_file(config.get_apk_file("test_app")).unwrap();
+        fs::remove_file(&packages[0]).unwrap();
     }
 
     /// Test for the `config.toml.sample` sample configuration file.
@@ -878,7 +879,7 @@ mod tests {
 
         // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
+        assert_eq!(config.downloads_folder, Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_apktool_file(),

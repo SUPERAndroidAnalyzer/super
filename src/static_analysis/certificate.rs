@@ -1,6 +1,7 @@
 use std::fs;
 use std::process::{Command, exit};
 use std::borrow::Borrow;
+use std::error::Error as StdError;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
