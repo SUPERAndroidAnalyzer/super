@@ -146,7 +146,7 @@ fn main() {
             benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
         }
 
-        if let Some(mut results) = Results::init(&config, &package_name) {
+        if let Some(mut results) = Results::init(&config, package) {
             let static_start = Instant::now();
             // Static application analysis
             static_analysis(&config, &package_name, &mut results);
@@ -160,9 +160,9 @@ fn main() {
             if !config.is_quiet() {
                 println!("");
             }
-            println!("HERE3");
+
             let report_start = Instant::now();
-            match results.generate_report(&config) {
+            match results.generate_report(&config, &package_name) {
                 Ok(_) => {
                     if config.is_verbose() {
                         println!("The results report has been saved. Everything went smoothly, \

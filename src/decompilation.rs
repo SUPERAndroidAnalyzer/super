@@ -12,8 +12,7 @@ use std::error::Error as StdError;
 use colored::Colorize;
 use zip::ZipArchive;
 
-use {Error, Config, print_error, print_warning};
-use utils::get_package_name;
+use {Error, Config, print_error, print_warning, get_package_name};
 use results::Benchmark;
 
 /// Decompresses the application using _Apktool_.
@@ -67,7 +66,7 @@ pub fn decompress<P: AsRef<Path>>(config: &Config, package: P) {
 
         if !output.status.success() {
             print_error(format!("The decompression command returned an error. More info: {}",
-                                String::from_utf8_lossy(&output.stderr[..])),
+                                String::from_utf8_lossy(&output.stderr)),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }
@@ -163,7 +162,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
             exit(Error::Unknown.into());
         }
 
-        if let Err(e) = out_file.write_all(&bytes[..]) {
+        if let Err(e) = out_file.write_all(&bytes) {
             print_error(format!("There was an error while writting classes.dex file. More info: \
                                  {}",
                                 e),
@@ -196,8 +195,9 @@ pub fn extract_dex<P: AsRef<Path>>(config: &Config, package: P, benchmarks: &mut
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
 pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
+    let package_name = get_package_name(package.as_ref());
     let classes = config.get_dist_folder()
-        .join(get_package_name(package.as_ref()))
+        .join(&package_name)
         .join("classes.jar");
     if config.is_force() || !classes.exists() {
 
@@ -210,7 +210,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
                     "d2j-dex2jar.sh"
                 }))
             .arg(config.get_dist_folder()
-                .join(package.as_ref())
+                .join(&package_name)
                 .join("classes.dex"))
             .arg("-o")
             .arg(&classes)
@@ -229,12 +229,21 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
             }
         };
 
-        if !output.status.success() {
+        println!("output.stdout: `{}`",
+                 String::from_utf8_lossy(&output.stdout));
+        println!("output.stderr: `{}`",
+                 String::from_utf8_lossy(&output.stderr));
+
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
+        // and the status is always success. So the only difference is if we detect the actual
+        // exception that was produced.
+        if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) {
             print_error(format!("The {} to {} conversion command returned an error. More info: \
                                  {}",
                                 ".dex".italic(),
                                 ".jar".italic(),
-                                String::from_utf8_lossy(&output.stderr[..])),
+                                stderr),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }
@@ -260,8 +269,9 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &Config, package: P) {
 
 /// Decompiles the application using _jd\_cmd_.
 pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
+    let package_name = get_package_name(package.as_ref());
     let out_path = config.get_dist_folder()
-        .join(get_package_name(package.as_ref()))
+        .join(&package_name)
         .join("classes");
     if config.is_force() || !out_path.exists() {
         // Command to decompile the application using jd_cmd.
@@ -270,7 +280,7 @@ pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
             .arg("-jar")
             .arg(config.get_jd_cmd_file())
             .arg(config.get_dist_folder()
-                .join(package.as_ref())
+                .join(&package_name)
                 .join("classes.jar"))
             .arg("-od")
             .arg(&out_path)
@@ -289,7 +299,7 @@ pub fn decompile<P: AsRef<Path>>(config: &Config, package: P) {
 
         if !output.status.success() {
             print_error(format!("The decompilation command returned an error. More info:\n{}",
-                                String::from_utf8_lossy(&output.stdout[..])),
+                                String::from_utf8_lossy(&output.stdout)),
                         config.is_verbose());
             exit(Error::Unknown.into());
         }

@@ -19,7 +19,7 @@ pub use self::utils::{Benchmark, Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
-use {Error, Config, Result, Criticity, print_error, copy_folder};
+use {Error, Config, Result, Criticity, print_error, copy_folder, get_package_name};
 
 pub struct Results {
     app_package: String,
@@ -41,8 +41,8 @@ pub struct Results {
 }
 
 impl Results {
-    pub fn init<S: AsRef<str>>(config: &Config, package: S) -> Option<Results> {
-        let path = config.get_results_folder().join(package.as_ref());
+    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Option<Results> {
+        let path = config.get_results_folder().join(get_package_name(package.as_ref()));
         if !path.exists() || config.is_force() {
             if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -54,7 +54,7 @@ impl Results {
                 }
             }
 
-            let fingerprint = match FingerPrint::new(package.as_ref()) {
+            let fingerprint = match FingerPrint::new(package) {
                 Ok(f) => f,
                 Err(e) => {
                     print_error(format!("An error occurred when trying to fingerprint the \
@@ -196,7 +196,7 @@ impl Results {
         }
     }
 
-    pub fn generate_report(&self, config: &Config) -> Result<()> {
+    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
         let path = config.get_results_folder().join(&self.app_package);
         if config.is_verbose() {
             println!("Starting report generation. First we'll create the results folder.");
@@ -213,7 +213,7 @@ impl Results {
             println!("");
         }
 
-        try!(self.generate_html_report(config));
+        try!(self.generate_html_report(config, package));
 
         if config.is_verbose() {
             println!("HTML report generated.");
@@ -237,7 +237,7 @@ impl Results {
         Ok(())
     }
 
-    fn generate_html_report(&self, config: &Config) -> Result<()> {
+    fn generate_html_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
@@ -271,13 +271,13 @@ impl Results {
             }
         }
 
-        try!(self.generate_code_html_files(config));
+        try!(self.generate_code_html_files(config, package));
 
         Ok(())
     }
 
-    fn generate_code_html_files(&self, config: &Config) -> Result<()> {
-        let menu = Value::Array(try!(self.generate_code_html_folder("", config)));
+    fn generate_code_html_files<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
+        let menu = Value::Array(try!(self.generate_code_html_folder("", config, package)));
 
         let mut f = try!(File::create(config.get_results_folder()
             .join(&self.app_package)
@@ -291,17 +291,18 @@ impl Results {
         Ok(())
     }
 
-    fn generate_code_html_folder<P: AsRef<Path>>(&self,
-                                                 path: P,
-                                                 config: &Config)
-                                                 -> Result<Vec<Value>> {
+    fn generate_code_html_folder<P: AsRef<Path>, S: AsRef<str>>(&self,
+                                                                path: P,
+                                                                config: &Config,
+                                                                cli_package_name: S)
+                                                                -> Result<Vec<Value>> {
         if path.as_ref() == Path::new("classes/android") ||
            path.as_ref() == Path::new("classes/com/google/android/gms") ||
            path.as_ref() == Path::new("smali") {
             return Ok(Vec::new());
         }
         let dir_iter = try!(fs::read_dir(config.get_dist_folder()
-            .join(&self.app_package)
+            .join(cli_package_name.as_ref())
             .join(path.as_ref())));
 
         try!(fs::create_dir_all(config.get_results_folder()
@@ -314,12 +315,13 @@ impl Results {
             let entry = try!(entry);
             let path = entry.path();
 
-            if path.is_dir() {
-                let prefix = config.get_dist_folder().join(&self.app_package);
-                let stripped = path.strip_prefix(&prefix).unwrap();
+            let prefix = config.get_dist_folder().join(cli_package_name.as_ref());
+            let stripped = path.strip_prefix(&prefix).unwrap();
 
+            if path.is_dir() {
                 if stripped != Path::new("original") {
-                    let inner_menu = try!(self.generate_code_html_folder(stripped, config));
+                    let inner_menu = try!(self.generate_code_html_folder(stripped, config,
+                                                            cli_package_name.as_ref()));
                     if !inner_menu.is_empty() {
                         let mut object = BTreeMap::new();
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
@@ -340,9 +342,7 @@ impl Results {
             } else {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
-                        let prefix = config.get_dist_folder().join(&self.app_package);
-                        let path = path.strip_prefix(&prefix).unwrap();
-                        try!(self.generate_code_html_for(&path, config));
+                        try!(self.generate_code_html_for(&stripped, config, cli_package_name.as_ref()));
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = BTreeMap::new();
                         let _ = data.insert(String::from("name"), Value::String(name));
@@ -431,9 +431,9 @@ impl Results {
     //     Ok(menu)
     // }
 
-    fn generate_code_html_for<P: AsRef<Path>>(&self, path: P, config: &Config) -> Result<()> {
+    fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self, path: P, config: &Config, cli_package_name: S) -> Result<()> {
         let mut f_in = try!(File::open(config.get_dist_folder()
-            .join(&self.app_package)
+            .join(cli_package_name.as_ref())
             .join(path.as_ref())));
         let mut f_out = try!(File::create(format!("{}.html",
                                                   config.get_results_folder()
