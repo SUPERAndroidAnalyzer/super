@@ -18,7 +18,7 @@
             variables = query_params.split('&'),
             start_line,
             end_line,
-            vulnerability_type;
+            criticity;
         for(var i = 0; i < variables.length; i++) {
             var pair = variables[i].split('=');
             if (pair[0] == "start_line") {
@@ -27,12 +27,12 @@
             if (pair[0] == "end_line") {
                 end_line = pair[1];
             }
-            if (pair[0] == "vulnerability_type") {
-                vulnerability_type = pair[1];
+            if (pair[0] == "criticity") {
+                criticity = pair[1];
             }
         }
         for (var i = start_line; i <= end_line; i++) {
-            $("#code-line-"+i).addClass("vulnerable_line "+vulnerability_type);
+            $("#code-line-"+i).addClass("vulnerable_line "+criticity);
         }
         </script>
     </body>
