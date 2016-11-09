@@ -105,6 +105,7 @@ fn main() {
 
     let total_start = Instant::now();
     for package in config.get_app_packages() {
+        config.reset_force();
         analyze_package(package, &mut config, &mut benchmarks);
     }
 

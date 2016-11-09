@@ -37,7 +37,9 @@ pub struct Config {
     verbose: bool,
     /// Boolean to represent `--quiet` mode.
     quiet: bool,
-    /// Boolean to represent `--force` mode.
+    /// Boolean to represent overall `--force` mode.
+    overall_force: bool,
+    /// Boolean to represent current `--force` mode.
     force: bool,
     /// Boolean to represent `--bench` mode.
     bench: bool,
@@ -78,7 +80,8 @@ impl Config {
 
         config.verbose = cli.is_present("verbose");
         config.quiet = cli.is_present("quiet");
-        config.force = cli.is_present("force");
+        config.overall_force = cli.is_present("force");
+        config.force = config.overall_force;
         config.bench = cli.is_present("bench");
         config.open = cli.is_present("open");
 
@@ -279,9 +282,14 @@ impl Config {
         self.force
     }
 
-    /// Sets the application to force recreate the analysis files and results.
+    /// Sets the application to force recreate the analysis files and results temporarily.
     pub fn set_force(&mut self) {
         self.force = true;
+    }
+
+    /// Resets the `--force` option, so that it gets reset to the configured force option.
+    pub fn reset_force(&mut self) {
+        self.force = self.overall_force
     }
 
     /// Returns true if the application is running in `--bench` mode, false otherwise.
@@ -647,6 +655,7 @@ impl Config {
             app_packages: Vec::new(),
             verbose: false,
             quiet: false,
+            overall_force: false,
             force: false,
             bench: false,
             open: false,
@@ -854,6 +863,13 @@ mod tests {
         assert!(config.is_force());
         assert!(config.is_bench());
         assert!(config.is_open());
+
+        config.reset_force();
+        assert!(!config.is_force());
+
+        config.overall_force = true;
+        config.reset_force();
+        assert!(config.is_force());
 
         if packages[0].exists() {
             fs::remove_file(&packages[0]).unwrap();
