@@ -95,7 +95,6 @@ assets = [
     ["templates/super/js/src_nav.js", "usr/share/super/templates/super/js/", "644"],
     # templates
     ["templates/super/code.hbs", "usr/share/super/templates/super/", "644"],
-    ["templates/super/menu.hbs", "usr/share/super/templates/super/", "644"],
     ["templates/super/report.hbs", "usr/share/super/templates/super/", "644"],
     ["templates/super/src.hbs", "usr/share/super/templates/super/", "644"],
     ["templates/super/vulnerability.hbs", "usr/share/super/templates/super/", "644"],
