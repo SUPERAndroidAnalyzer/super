@@ -82,12 +82,6 @@ impl Config {
         config.bench = cli.is_present("bench");
         config.open = cli.is_present("open");
 
-        if cli.is_present("test-all") {
-            config.read_apks();
-        } else {
-            config.add_app_package(cli.value_of("package").unwrap());
-        }
-
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
@@ -101,13 +95,19 @@ impl Config {
             config.loaded_files.push(config_path);
         }
 
-        config.set_options(cli);
+        config.set_options(&cli);
+
+        if cli.is_present("test-all") {
+            config.read_apks();
+        } else {
+            config.add_app_package(cli.value_of("package").unwrap());
+        }
 
         Ok(config)
     }
 
     /// Modifies the options from the CLI.
-    fn set_options(&mut self, cli: ArgMatches<'static>) {
+    fn set_options(&mut self, cli: &ArgMatches<'static>) {
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
                 Ok(t) if t > 0u8 => {
