@@ -9,11 +9,12 @@ use std::io::{Read, Write};
 use std::path::Path;
 use std::process::{Command, exit};
 use std::error::Error as StdError;
+use std::collections::BTreeMap;
+
 use colored::Colorize;
 use zip::ZipArchive;
 
-use {Error, Config, print_error, print_warning, get_package_name};
-use results::Benchmark;
+use {Error, Config, Benchmark, print_error, print_warning, get_package_name};
 
 /// Decompresses the application using _Apktool_.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
@@ -91,10 +92,11 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
 /// Extracts the _.dex_ files.
 pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                    package: P,
-                                   benchmarks: &mut Vec<Benchmark>) {
+                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) {
+    let package_name = get_package_name(package.as_ref());
     if config.is_force() ||
        !config.get_dist_folder()
-        .join(get_package_name(package.as_ref()))
+        .join(&package_name)
         .join("classes.dex")
         .exists() {
         config.set_force();
@@ -174,7 +176,11 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
             exit(Error::Unknown.into());
         }
 
-        benchmarks.push(Benchmark::new("Dex extraction", start_time.elapsed()));
+        if config.is_bench() {
+            benchmarks.get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new("Dex extraction", start_time.elapsed()));
+        }
 
         if config.is_verbose() {
             println!("{}",

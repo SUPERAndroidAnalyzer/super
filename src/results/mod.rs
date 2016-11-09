@@ -16,7 +16,7 @@ use serde_json::ser;
 mod utils;
 mod handlebars_helpers;
 
-pub use self::utils::{Benchmark, Vulnerability, split_indent, html_escape};
+pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
@@ -116,6 +116,7 @@ impl Results {
         let _ = handlebars.register_helper("report_index", Box::new(report_index));
         let _ = handlebars.register_helper("all_code", Box::new(all_code));
         let _ = handlebars.register_helper("all_lines", Box::new(all_lines));
+        let _ = handlebars.register_helper("generate_menu", Box::new(generate_menu));
         for dir_entry in try!(fs::read_dir(config.get_template_path())) {
             let dir_entry = try!(dir_entry);
             if let Some(ext) = dir_entry.path().extension() {
@@ -374,7 +375,7 @@ impl Results {
                         let mut data = BTreeMap::new();
                         let _ = data.insert(String::from("name"), Value::String(name));
                         let _ = data.insert(String::from("path"),
-                                            Value::String(format!("{}", path.display())));
+                                            Value::String(format!("{}", stripped.display())));
                         let _ = data.insert(String::from("type"),
                                             Value::String(e.to_string_lossy().into_owned()));
                         menu.push(Value::Object(data));

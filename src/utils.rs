@@ -1,8 +1,9 @@
-use std::{fs, io};
+use std::{fs, io, fmt};
 use std::io::{Read, Write};
 use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
+use std::result::Result as StdResult;
 
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
@@ -138,6 +139,32 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
         }
     }
     Ok(String::new())
+}
+
+/// Structure to store a benchmark information.
+pub struct Benchmark {
+    label: String,
+    duration: Duration,
+}
+
+impl Benchmark {
+    /// Creates a new benchmark.
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
+        Benchmark {
+            label: label.into(),
+            duration: duration,
+        }
+    }
+}
+
+impl fmt::Display for Benchmark {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(f,
+               "{}: {}.{}s",
+               self.label,
+               self.duration.as_secs(),
+               self.duration.subsec_nanos())
+    }
 }
 
 #[cfg(test)]

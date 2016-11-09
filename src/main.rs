@@ -35,7 +35,7 @@ mod config;
 mod utils;
 
 use std::{fs, io, fmt, result};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::fmt::Display;
 use std::str::FromStr;
 use std::error::Error as StdError;
@@ -43,6 +43,7 @@ use std::io::Write;
 use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
+use std::collections::BTreeMap;
 
 use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
@@ -100,111 +101,137 @@ fn main() {
         sleep(Duration::from_millis(1250));
     }
 
-    let mut benchmarks = if config.is_bench() {
-        Vec::with_capacity(1 + 4 * config.get_app_packages().len()) // TODO calculate
-    } else {
-        Vec::with_capacity(0)
-    };
+    let mut benchmarks = BTreeMap::new();
 
     let total_start = Instant::now();
     for package in config.get_app_packages() {
-        let package_name = get_package_name(&package);
+        analyze_package(package, &mut config, &mut benchmarks);
+    }
+
+    if config.is_bench() {
+        let total_time = Benchmark::new("Total time", total_start.elapsed());
+        println!("");
+        println!("{}", "Benchmarks:".bold());
+        for (package_name, benchmarks) in benchmarks {
+            println!("{}:", package_name.italic());
+            for bench in benchmarks {
+                println!("{}", bench);
+            }
+            println!("");
+        }
+        println!("{}", total_time);
+    }
+}
+
+/// Analyzes the given package with the given config.
+fn analyze_package(package: PathBuf,
+                   config: &mut Config,
+                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) {
+    let package_name = get_package_name(&package);
+    if config.is_bench() {
+        let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
+    }
+    if !config.is_quiet() {
+        println!("");
+        println!("Starting analysis of {}.", package_name.italic());
+    }
+    let start_time = Instant::now();
+
+    // APKTool app decompression
+    decompress(config, &package);
+
+    if config.is_bench() {
+        benchmarks.get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+    }
+
+    // Extracting the classes.dex from the .apk file
+    extract_dex(config, &package, benchmarks);
+
+    let dex_jar_time = Instant::now();
+    // Converting the .dex to .jar.
+    dex_to_jar(config, &package);
+
+    if config.is_bench() {
+        benchmarks.get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
+    }
+
+    if config.is_verbose() {
+        println!("");
+        println!("Now it's time for the actual decompilation of the source code. We'll \
+                  translate Android JVM bytecode to Java, so that we can check the code \
+                  afterwards.");
+    }
+
+    let decompile_start = Instant::now();
+
+    // Decompiling the app
+    decompile(config, &package);
+
+    if config.is_bench() {
+        benchmarks.get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+    }
+
+    if let Some(mut results) = Results::init(config, &package) {
+        let static_start = Instant::now();
+        // Static application analysis
+        static_analysis(config, &package_name, &mut results);
+
+        if config.is_bench() {
+            benchmarks.get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new("Total static analysis", static_start.elapsed()));
+        }
+
+        // TODO dynamic analysis
+
         if !config.is_quiet() {
             println!("");
-            println!("Starting analysis of {}", package_name.italic());
         }
-        let start_time = Instant::now();
 
-        // APKTool app decompression
-        decompress(&mut config, &package);
+        let report_start = Instant::now();
+        match results.generate_report(config, &package_name) {
+            Ok(true) => {
+                if config.is_verbose() {
+                    println!("The results report has been saved. Everything went smoothly, \
+                              now you can check all the results.");
+                    println!("");
+                    println!("I will now analyze myself for vulnerabilities…");
+                    sleep(Duration::from_millis(1500));
+                    println!("Nah, just kidding, I've been developed in {}!",
+                             "Rust".bold().green())
+                } else if !config.is_quiet() {
+                    println!("Report generated.");
+                }
+            }
+            Ok(false) => {}
+            Err(e) => {
+                print_error(format!("There was an error generating the results report: {}",
+                                    e.description()),
+                            config.is_verbose());
+                exit(Error::Unknown.into())
+            }
+        }
+
 
         if config.is_bench() {
-            benchmarks.push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+            benchmarks.get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new("Report generation", report_start.elapsed()));
+            benchmarks.get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new(format!("Total time for {}", package_name),
+                                     start_time.elapsed()));
         }
 
-        // Extracting the classes.dex from the .apk file
-        extract_dex(&mut config, &package, &mut benchmarks);
-
-        let dex_jar_time = Instant::now();
-        // Converting the .dex to .jar.
-        dex_to_jar(&mut config, &package);
-        benchmarks.push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
-
-        if config.is_verbose() {
-            println!("");
-            println!("Now it's time for the actual decompilation of the source code. We'll \
-                      translate Android JVM bytecode to Java, so that we can check the code \
-                      afterwards.");
-        }
-
-        let decompile_start = Instant::now();
-
-        // Decompiling the app
-        decompile(&mut config, &package);
-
-        if config.is_bench() {
-            benchmarks.push(Benchmark::new("Decompilation", decompile_start.elapsed()));
-        }
-
-        if let Some(mut results) = Results::init(&config, &package) {
-            let static_start = Instant::now();
-            // Static application analysis
-            static_analysis(&config, &package_name, &mut results);
-
-            if config.is_bench() {
-                benchmarks.push(Benchmark::new("Total static analysis", static_start.elapsed()));
-            }
-
-            // TODO dynamic analysis
-
-            if !config.is_quiet() {
-                println!("");
-            }
-
-            let report_start = Instant::now();
-            match results.generate_report(&config, &package_name) {
-                Ok(true) => {
-                    if config.is_verbose() {
-                        println!("The results report has been saved. Everything went smoothly, \
-                                  now you can check all the results.");
-                        println!("");
-                        println!("I will now analyze myself for vulnerabilities…");
-                        sleep(Duration::from_millis(1500));
-                        println!("Nah, just kidding, I've been developed in {}!",
-                                 "Rust".bold().green())
-                    } else if !config.is_quiet() {
-                        println!("Report generated.");
-                    }
-                }
-                Ok(false) => {}
-                Err(e) => {
-                    print_error(format!("There was an error generating the results report: {}",
-                                        e.description()),
-                                config.is_verbose());
-                    exit(Error::Unknown.into())
-                }
-            }
-
-
-            if config.is_bench() {
-                benchmarks.push(Benchmark::new("Report generation", report_start.elapsed()));
-                benchmarks.push(Benchmark::new(format!("Total time for {}", package_name),
-                                               total_start.elapsed()));
-            }
-
-            if config.is_open() {
-                let report_path = config.get_results_folder()
-                    .join(results.get_app_package())
-                    .join("index.html");
-                if let Err(e) = open::that(report_path) {
-                    print_error(format!("Report could not be opened automatically: {}",
-                                        e.description()),
-                                config.is_verbose());
-                }
-            }
-        } else if config.is_open() {
+        if config.is_open() {
             let report_path = config.get_results_folder()
-                .join(package_name)
+                .join(results.get_app_package())
                 .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}",
@@ -212,14 +239,14 @@ fn main() {
                             config.is_verbose());
             }
         }
-    }
-
-    if config.is_bench() {
-        benchmarks.push(Benchmark::new("Total time", total_start.elapsed()));
-        println!("");
-        println!("{}", "Benchmarks:".bold());
-        for bench in benchmarks {
-            println!("{}", bench);
+    } else if config.is_open() {
+        let report_path = config.get_results_folder()
+            .join(package_name)
+            .join("index.html");
+        if let Err(e) = open::that(report_path) {
+            print_error(format!("Report could not be opened automatically: {}",
+                                e.description()),
+                        config.is_verbose());
         }
     }
 }
