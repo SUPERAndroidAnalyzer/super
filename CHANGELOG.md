@@ -7,27 +7,31 @@
  - SUPER now uses templates for report generation. This is one of the biggest changes of the
    release, and enables users to create their own report templates.
  - Installation package for Mac OS.
- - Line highlighting in found vulnerabilities.
+ - Line highlighting is now shown in the vulnerable line of the code in found vulnerabilities,
+   colored depending on the criticity of the vulnerability.
  - Reports now show the version of SUPER used to generate them.
- - Added `--open` option to automatically open reports.
- - Added options to the CLI to modify the ones in the config file. We now have `--downloads` or
-   `--template` options in the CLI.
+ - SUPER now supports analysis of applications placed anywhere instead of having to place them
+   in a folder.
+ - Added the `--open` option to automatically open reports.
  - Added the `--test-all` option to the CLI, that will test all *.apk* files in the *downloads*
    folder.
+ - Added options to the CLI to modify the properties in the config file. We now have
+   `--downloads`, `--threads`, `--dist`, `--results`, `--apktool`, `--dex2jar`, `--jd-cmd`,
+    `--rules` or `--template` options in the CLI.
 
 ## Changes in rules
 
- - We now detect `exported` attributes in `<provider>`, `<receiver>`, `<activity>`,
-   `<activity-alias>` and `<service>` tags in the *AndroidManifest.xml*, and we report potential
+ - SUPER now detects `exported` attributes in `<provider>`, `<receiver>`, `<activity>`,
+   `<activity-alias>` and `<service>` tags in the *AndroidManifest.xml*, and reports potential
    vulnerabilities. This still needs work since we still don't have all the required information to
    show real vulnerabilities.
 
 ### Bug Fixes
 
  - Changed paths for better multiplatform support.
-
  - Regular Expressions:
     - URL Disclosure no longer detects content providers (`content://...`).
+ - Solved some coloring errors when combining styling and color in the same print.
 
 ### Contributions
 
