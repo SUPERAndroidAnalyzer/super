@@ -79,4 +79,4 @@ notifications:
       - sergiodlo@protonmail.com
       - jaimesr@protonmail.ch
     on_success: change
-on_failure: always
+    on_failure: always
