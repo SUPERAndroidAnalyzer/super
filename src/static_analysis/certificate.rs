@@ -1,7 +1,7 @@
-extern crate colored;
-
 use std::fs;
 use std::process::{Command, exit};
+use std::borrow::Borrow;
+use std::error::Error as StdError;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
@@ -9,8 +9,8 @@ use chrono::{Local, Datelike};
 use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 
-fn parse_month(month_str: &str) -> u32 {
-    let month_number = match month_str {
+fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
+    match month_str.as_ref() {
         "Jan" => 1,
         "Feb" => 2,
         "Mar" => 3,
@@ -24,19 +24,21 @@ fn parse_month(month_str: &str) -> u32 {
         "Nov" => 11,
         "Dec" => 12,
         _ => 0,
-    };
-
-    month_number
+    }
 }
 
-pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()> {
+pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
+                                           package: S,
+                                           results: &mut Results)
+                                           -> Result<()> {
     if config.is_verbose() {
-        println!("Reading and analyzing the certificates...")
+        println!("Reading and analyzing the certificates…")
     }
 
-    let path = format!("{}/{}/original/META-INF/",
-                       config.get_dist_folder(),
-                       config.get_app_id());
+    let path = config.get_dist_folder()
+        .join(package.as_ref())
+        .join("original")
+        .join("META-INF");
     let dir_iter = try!(fs::read_dir(&path));
 
     for f in dir_iter {
@@ -44,11 +46,10 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!("An error occurred when reading the \
-                                       {}/{}/original/META-INF/ dir searching certificates. \
+                                       {} dir searching certificates. \
                                        Certificate analysis will be skipped. More info: {}",
-                                      config.get_dist_folder(),
-                                      config.get_app_id(),
-                                      e),
+                                      path.display(),
+                                      e.description()),
                               config.is_verbose());
                 break;
             }
@@ -97,26 +98,27 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 exit(Error::Unknown.into());
             };
 
-            let cmd = output.stdout;
+            let cmd = String::from_utf8_lossy(&output.stdout);
             if config.is_verbose() {
                 println!("The application is signed with the following certificate: {}",
                          path_file.bold());
 
-                println!("{}", String::from_utf8_lossy(&cmd));
+                println!("{}", cmd);
             }
+            results.set_certificate(cmd.borrow());
 
             let mut issuer = String::new();
             let mut subject = String::new();
             let mut after = String::new();
-            for line in String::from_utf8_lossy(&cmd).lines() {
+            for line in cmd.lines() {
                 if line.contains("Issuer:") {
-                    issuer = String::from(line.clone());
+                    issuer = line.to_owned();
                 }
                 if line.contains("Subject:") {
-                    subject = String::from(line.clone());
+                    subject = line.to_owned();
                 }
                 if line.contains("Not After :") {
-                    after = String::from(line.clone());
+                    after = line.to_owned();
                 }
             }
 
@@ -132,10 +134,10 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 let vuln = Vulnerability::new(criticity,
                                               "Android Debug Certificate",
                                               description,
-                                              None as Option<&str>,
+                                              None::<String>,
                                               None,
                                               None,
-                                              None);
+                                              None::<String>);
                 results.add_vulnerability(vuln);
 
                 if config.is_verbose() {
@@ -169,10 +171,10 @@ pub fn certificate_analysis(config: &Config, results: &mut Results) -> Result<()
                 let vuln = Vulnerability::new(criticity,
                                               "Expired certificate",
                                               description,
-                                              None as Option<&str>,
+                                              None::<String>,
                                               None,
                                               None,
-                                              None);
+                                              None::<String>);
                 results.add_vulnerability(vuln);
 
                 if config.is_verbose() {

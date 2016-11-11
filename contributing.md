@@ -16,8 +16,8 @@ Reporting issues is helpful but an even better approach is to send a pull reques
 *forking* the main repository and committing to your own copy. This will require you to use the
 version control system called Git.
 
-The bug tracker is located at [GitHub](https://github.com/SUPERAndroidAnalyzer/super/issues).
-Please post your issues there.
+The bug tracker of the SUPER repository is located at
+[GitHub](https://github.com/SUPERAndroidAnalyzer/super/issues). Please post your issues there.
 
 ## Guidelines ##
 
@@ -36,7 +36,7 @@ readable as possible.
 SUPER must be compatible with the latest Rust stable release, and it must use all the benefits of
 that release as far as possible. It must also be compatible with the latest Rust beta and nightly
 builds. It will also use all the possible lints, and warnings will not be permitted from version
-0.1.0 onwards.
+1.0.0 onwards.
 
 ### Branching ###
 

@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
+use std::error::Error as StdError;
 
 use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};
@@ -11,40 +12,44 @@ use {Error, Config, Result, Criticity, print_error, print_warning, print_vulnera
      get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
-pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manifest> {
+pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
+                                        package: S,
+                                        results: &mut Results)
+                                        -> Option<Manifest> {
     if config.is_verbose() {
         println!("Loading the manifest file. For this, we first parse the document and then we'll \
                   analyze it.")
     }
 
-    let manifest =
-        match Manifest::load(format!("{}/{}/", config.get_dist_folder(), config.get_app_id()),
-                             config,
-                             results) {
-            Ok(m) => {
-                if config.is_verbose() {
-                    println!("{}", "The manifest was loaded successfully!".green());
-                    println!("");
-                }
-                m
+    let manifest = match Manifest::load(config.get_dist_folder().join(package.as_ref()),
+                                        config,
+                                        package.as_ref(),
+                                        results) {
+        Ok(m) => {
+            if config.is_verbose() {
+                println!("{}", "The manifest was loaded successfully!".green());
+                println!("");
             }
-            Err(e) => {
-                print_error(format!("There was an error when loading the manifest: {}", e),
-                            config.is_verbose());
-                if config.is_verbose() {
-                    println!("The rest of the analysis will continue, but there will be no \
-                              analysis of the AndroidManifest.xml file, and code analysis rules \
-                              requiring permissions will not run.");
-                }
-                return None;
+            m
+        }
+        Err(e) => {
+            print_error(format!("There was an error when loading the manifest: {}",
+                                e.description()),
+                        config.is_verbose());
+            if config.is_verbose() {
+                println!("The rest of the analysis will continue, but there will be no analysis \
+                          of the AndroidManifest.xml file, and code analysis rules requiring \
+                          permissions will not run.");
             }
-        };
+            return None;
+        }
+    };
 
-    if manifest.get_package() != config.get_app_id() {
+    if manifest.get_package() != package.as_ref() {
         print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              config.get_app_id(),
+                              package.as_ref(),
                               manifest.get_package()),
                       config.is_verbose());
 
@@ -52,7 +57,7 @@ pub fn manifest_analysis(config: &Config, results: &mut Results) -> Option<Manif
             println!("This does not mean that something went wrong, but it's supposed to have \
                       the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     config.get_downloads_folder());
+                     "downloads".italic());
         }
     }
 
@@ -196,15 +201,17 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn load<P: AsRef<Path>>(path: P,
-                                config: &Config,
-                                results: &mut Results)
-                                -> Result<Manifest> {
+    pub fn load<P: AsRef<Path>, S: AsRef<str>>(path: P,
+                                               config: &Config,
+                                               package: S,
+                                               results: &mut Results)
+                                               -> Result<Manifest> {
         let mut file = try!(File::open(format!("{}/AndroidManifest.xml", path.as_ref().display())));
-        let mut manifest: Manifest = Default::default();
+        let mut manifest = Manifest::default();
+        try!(manifest.read_yaml(path, config));
 
         let mut code = String::new();
-        try!(file.read_to_string(&mut code));
+        let _ = try!(file.read_to_string(&mut code));
         manifest.set_code(code.as_str());
 
         let bytes = code.into_bytes();
@@ -227,7 +234,7 @@ impl Manifest {
                                                                        the manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -247,7 +254,7 @@ impl Manifest {
                                                                        manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -262,7 +269,7 @@ impl Manifest {
                             for attr in attributes {
                                 match attr.name.local_name.as_str() {
                                     "debuggable" => {
-                                        let debug = match attr.value.as_str().parse() {
+                                        let debug: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -271,7 +278,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -281,7 +288,9 @@ impl Manifest {
                                         }
                                     }
                                     "allowBackup" => {
-                                        let allows_backup = match attr.value.as_str().parse() {
+                                        let allows_backup: bool = match attr.value
+                                            .as_str()
+                                            .parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -290,7 +299,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -301,7 +310,7 @@ impl Manifest {
                                     }
                                     "description" => manifest.set_description(attr.value.as_str()),
                                     "hasCode" => {
-                                        let has_code = match attr.value.as_str().parse() {
+                                        let has_code: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -310,7 +319,7 @@ impl Manifest {
                                                                            the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -320,7 +329,7 @@ impl Manifest {
                                         }
                                     }
                                     "largeHeap" => {
-                                        let large_heap = match attr.value.as_str().parse() {
+                                        let large_heap: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred \
@@ -329,7 +338,7 @@ impl Manifest {
                                                                           the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e),
+                                                                      e.description()),
                                                               config.is_verbose());
                                                 break;
                                             }
@@ -340,14 +349,16 @@ impl Manifest {
                                     }
                                     "label" => manifest.set_label(
                                         if attr.value.starts_with("@string/") {
-                                            match get_string(&attr.value[8..], config) {
+                                            match get_string(&attr.value[8..],
+                                                             config, package.as_ref()) {
                                                 Ok(s) => s,
                                                 Err(e) => {
                                                     print_warning(format!("An error occurred when\
                                                                          trying to get the string\
                                                                          for the app label in the\
                                                                        manifest: {}.\nThe process\
-                                                                      will continue, though.", e),
+                                                                      will continue, though.",
+                                                                          e.description()),
                                                                       config.is_verbose());
                                                     break;
                                                 }
@@ -361,43 +372,95 @@ impl Manifest {
                         }
                         "uses-permission" => {
                             for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "name" => {
-                                        let permission = match Permission::from_str(attr.value
-                                            .as_str()) {
-                                            Ok(p) => p,
-                                            Err(_) => {
-                                                let line = get_line(manifest.get_code(),
-                                                                    attr.value.as_str())
-                                                    .ok();
-                                                let code = match line {
-                                                    Some(l) => {
-                                                        Some(get_code(manifest.get_code(), l, l))
-                                                    }
-                                                    None => None,
-                                                };
+                                if let "name" = attr.name.local_name.as_str() {
+                                    let permission = match Permission::from_str(attr.value
+                                        .as_str()) {
+                                        Ok(p) => p,
+                                        Err(_) => {
+                                            let line = get_line(manifest.get_code(),
+                                                                attr.value.as_str())
+                                                .ok();
+                                            let code = match line {
+                                                Some(l) => {
+                                                    Some(get_code(manifest.get_code(), l, l))
+                                                }
+                                                None => None,
+                                            };
 
-                                                let vuln = Vulnerability::new(
+                                            let vuln = Vulnerability::new(
                                                     config.get_unknown_permission_criticity(),
                                                     "Unknown permission",
                                                     config.get_unknown_permission_description(),
                                                     Some("AndroidManifest.xml"), line, line, code);
-                                                results.add_vulnerability(vuln);
+                                            results.add_vulnerability(vuln);
 
-                                                if config.is_verbose() {
-                                                    print_vulnerability(
+                                            if config.is_verbose() {
+                                                print_vulnerability(
                                                         config.get_unknown_permission_description(),
                                                         config.get_unknown_permission_criticity());
-                                                }
-                                                break;
                                             }
-                                        };
-                                        manifest.get_mut_permission_checklist()
-                                            .set_needs_permission(permission);
+                                            break;
+                                        }
+                                    };
+                                    manifest.get_mut_permission_checklist()
+                                        .set_needs_permission(permission);
+                                }
+                            }
+                        }
+                        tag @ "provider" |
+                        tag @ "receiver" |
+                        tag @ "activity" |
+                        tag @ "activity-alias" |
+                        tag @ "service" => {
+                            let mut exported = None;
+                            let mut name = String::new();
+                            for attr in attributes {
+                                match attr.name.local_name.as_str() {
+                                    "exported" => {
+                                        if let Ok(found_exported) = attr.value.as_str().parse() {
+                                            exported = Some(found_exported);
+                                        }
                                     }
+                                    "name" => name = attr.value,
                                     _ => {}
                                 }
                             }
+                            match exported {
+                                Some(true) | None => {
+                                    if tag != "provider" || exported.is_some() ||
+                                       manifest.get_min_sdk() < 17 {
+
+                                        let line = get_line(manifest.get_code(),
+                                                            &format!("android:name=\"{}\"", name))
+                                            .ok();
+                                        let code = match line {
+                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                                            None => None,
+                                        };
+
+                                        let vuln = Vulnerability::new(Criticity::Warning,
+                                                                      format!("Exported {}", tag),
+                                                                      format!("Exported {} was \
+                                                                               found. It can be \
+                                                                               used by other \
+                                                                               applications.",
+                                                                              tag),
+                                                                      Some("AndroidManifest.xml"),
+                                                                      line,
+                                                                      line,
+                                                                      code);
+                                        results.add_vulnerability(vuln);
+
+                                        print_vulnerability(format!("Exported {} was found. It \
+                                                                     can be used by other \
+                                                                     applications.",
+                                                                    tag),
+                                                            Criticity::Warning);
+                                    }
+                                }
+                                _ => {}
+                            }
+
                         }
                         _ => {}
                     }
@@ -407,16 +470,20 @@ impl Manifest {
                     print_warning(format!("An error occurred when parsing the \
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
-                                          e),
+                                          e.description()),
                                   config.is_verbose());
                 }
             }
         }
 
+        Ok(manifest)
+    }
+
+    fn read_yaml<P: AsRef<Path>>(&mut self, path: P, config: &Config) -> Result<()> {
         let yaml_warning = "An error occurred when parsing the apktool.yml file.";
-        let mut file = try!(File::open(format!("{}/apktool.yml", path.as_ref().display())));
+        let mut file = try!(File::open(path.as_ref().join("apktool.yml")));
         let mut code = String::new();
-        try!(file.read_to_string(&mut code));
+        let _ = try!(file.read_to_string(&mut code));
         match YamlLoader::load_from_str(&code) {
             Ok(mut apktool_info) => {
                 match apktool_info.pop() {
@@ -426,9 +493,11 @@ impl Manifest {
                                 match sdk_info.get(&Yaml::String(String::from("minSdkVersion"))) {
                                     Some(&Yaml::String(ref min_sdk_str)) => {
                                         match min_sdk_str.parse() {
-                                            Ok(min_sdk) => manifest.set_min_sdk(min_sdk),
+                                            Ok(min_sdk) => self.set_min_sdk(min_sdk),
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}",
+                                                                      yaml_warning,
+                                                                      e.description()),
                                                               config.is_verbose());
                                             }
                                         }
@@ -440,9 +509,10 @@ impl Manifest {
                                     &Yaml::String(String::from("targetSdkVersion"))) {
                                     Some(&Yaml::String(ref target_sdk_str)) => {
                                         match target_sdk_str.parse() {
-                                            Ok(target_sdk) => manifest.set_target_sdk(target_sdk),
+                                            Ok(target_sdk) => self.set_target_sdk(target_sdk),
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}", yaml_warning,
+                                                                      e.description()),
                                                                 config.is_verbose());
                                             }
                                         }
@@ -460,10 +530,12 @@ impl Manifest {
                                     Some(&Yaml::String(ref version_code_str)) => {
                                         match version_code_str.parse() {
                                             Ok(version_code) => {
-                                                manifest.set_version_number(version_code)
+                                                self.set_version_number(version_code)
                                             }
                                             Err(e) => {
-                                                print_warning(format!("{} {}", yaml_warning, e),
+                                                print_warning(format!("{} {}",
+                                                                      yaml_warning,
+                                                                      e.description()),
                                                               config.is_verbose());
                                             }
                                         }
@@ -473,7 +545,7 @@ impl Manifest {
 
                                 match version_info.get(&Yaml::String(String::from("versionName"))) {
                                     Some(&Yaml::String(ref version_name)) => {
-                                        manifest.set_version_str(version_name);
+                                        self.set_version_str(version_name.as_str());
                                     }
                                     _ => print_warning(yaml_warning, config.is_verbose()),
                                 }
@@ -484,26 +556,28 @@ impl Manifest {
                     _ => print_warning(yaml_warning, config.is_verbose()),
                 }
             }
-            Err(e) => print_warning(format!("{} {}", yaml_warning, e), config.is_verbose()),
+            Err(e) => {
+                print_warning(format!("{} {}", yaml_warning, e.description()),
+                              config.is_verbose())
+            }
         }
-
-        Ok(manifest)
+        Ok(())
     }
 
-    fn set_code(&mut self, code: &str) {
-        self.code = String::from(code);
+    fn set_code<S: Into<String>>(&mut self, code: S) {
+        self.code = code.into();
     }
 
     pub fn get_code(&self) -> &str {
-        self.code.as_str()
+        &self.code
     }
 
     pub fn get_package(&self) -> &str {
-        self.package.as_str()
+        &self.package
     }
 
-    fn set_package(&mut self, package: &str) {
-        self.package = String::from(package);
+    fn set_package<S: Into<String>>(&mut self, package: S) {
+        self.package = package.into();
     }
 
     pub fn get_version_number(&self) -> i32 {
@@ -515,27 +589,27 @@ impl Manifest {
     }
 
     pub fn get_version_str(&self) -> &str {
-        self.version_str.as_str()
+        &self.version_str
     }
 
-    fn set_version_str(&mut self, version_str: &str) {
-        self.version_str = String::from(version_str);
+    fn set_version_str<S: Into<String>>(&mut self, version_str: S) {
+        self.version_str = version_str.into();
     }
 
     pub fn get_label(&self) -> &str {
-        self.label.as_str()
+        &self.label
     }
 
-    fn set_label(&mut self, label: &str) {
-        self.label = String::from(label);
+    fn set_label<S: Into<String>>(&mut self, label: S) {
+        self.label = label.into();
     }
 
     pub fn get_description(&self) -> &str {
-        self.description.as_str()
+        &self.description
     }
 
-    fn set_description(&mut self, description: &str) {
-        self.description = String::from(description);
+    fn set_description<S: Into<String>>(&mut self, description: S) {
+        self.description = description.into();
     }
 
     pub fn get_min_sdk(&self) -> i32 {
@@ -554,9 +628,9 @@ impl Manifest {
         self.target_sdk = Some(target_sdk);
     }
 
-    pub fn has_code(&self) -> bool {
-        self.has_code
-    }
+    // pub fn has_code(&self) -> bool {
+    //     self.has_code
+    // }
 
     fn set_has_code(&mut self) {
         self.has_code = true;
@@ -578,9 +652,9 @@ impl Manifest {
         self.large_heap = true;
     }
 
-    pub fn get_install_location(&self) -> InstallLocation {
-        self.install_location
-    }
+    // pub fn get_install_location(&self) -> InstallLocation {
+    //     self.install_location
+    // }
 
     fn set_install_location(&mut self, install_location: InstallLocation) {
         self.install_location = install_location;
@@ -638,14 +712,14 @@ impl FromStr for InstallLocation {
             "internalOnly" => Ok(InstallLocation::InternalOnly),
             "auto" => Ok(InstallLocation::Auto),
             "preferExternal" => Ok(InstallLocation::PreferExternal),
-            _ => Err(Error::ParseError),
+            _ => Err(Error::Parse),
         }
     }
 }
 
-fn get_line(code: &str, haystack: &str) -> Result<usize> {
-    for (i, line) in code.lines().enumerate() {
-        if line.contains(haystack) {
+fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
+    for (i, line) in code.as_ref().lines().enumerate() {
+        if line.contains(haystack.as_ref()) {
             return Ok(i);
         }
     }
@@ -4066,7 +4140,7 @@ impl FromStr for Permission {
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
                 Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
-            _ => Err(Error::ParseError),
+            _ => Err(Error::Parse),
         }
     }
 }

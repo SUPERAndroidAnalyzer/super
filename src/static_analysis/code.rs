@@ -2,12 +2,12 @@ use std::fs;
 use std::fs::{File, DirEntry};
 use std::io::Read;
 use std::str::FromStr;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
-use std::time::Instant;
 use std::slice::Iter;
+use std::error::Error as StdError;
 
 use serde_json;
 use serde_json::value::Value;
@@ -15,30 +15,28 @@ use regex::Regex;
 use colored::Colorize;
 
 use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
-use results::{Results, Vulnerability, Benchmark};
+use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 
-pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut Results) {
-    let code_start = Instant::now();
+pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
+                                    config: &Config,
+                                    package: S,
+                                    results: &mut Results) {
     let rules = match load_rules(config) {
         Ok(r) => r,
         Err(e) => {
             print_error(format!("An error occurred when loading code analysis rules. Error: {}",
-                                e),
+                                e.description()),
                         config.is_verbose());
             return;
         }
     };
 
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Rule loading", code_start.elapsed()));
-    }
-
     let mut files: Vec<DirEntry> = Vec::new();
-    if let Err(e) = add_files_to_vec("", &mut files, config) {
+    if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!("An error occurred when reading files for analysis, the results \
                                might be incomplete. Error: {}",
-                              e),
+                              e.description()),
                       config.is_verbose());
     }
     let total_files = files.len();
@@ -48,14 +46,13 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
     let verbose = config.is_verbose();
-    let dist_folder = Arc::new(format!("{}/{}", config.get_dist_folder(), config.get_app_id()));
+    let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
         println!("Starting analysis of the code with {} threads. {} files to go!",
                  format!("{}", config.get_threads()).bold(),
                  format!("{}", total_files).bold());
     }
-    let analysis_start = Instant::now();
 
     let handles: Vec<_> = (0..config.get_threads())
         .map(|_| {
@@ -73,17 +70,16 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
                     };
                     match f {
                         Some(f) => {
-                            if let Err(e) =
-                                   analyze_file(f.path(),
-                                                PathBuf::from(thread_dist_folder.as_str()),
-                                                &thread_rules,
-                                                &thread_manifest,
-                                                &thread_vulns,
-                                                verbose) {
+                            if let Err(e) = analyze_file(f.path(),
+                                                         &*thread_dist_folder,
+                                                         &thread_rules,
+                                                         &thread_manifest,
+                                                         &thread_vulns,
+                                                         verbose) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
-                                                      e),
+                                                      e.description()),
                                               verbose)
                             }
                         }
@@ -116,22 +112,14 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
 
     for t in handles {
         if let Err(e) = t.join() {
-            print_warning(format!("An error occurred when joining analysis thrads: Error: {:?}",
+            print_warning(format!("An error occurred when joining analysis threads: Error: {:?}",
                                   e),
                           config.is_verbose());
         }
     }
 
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("File analysis", analysis_start.elapsed()));
-    }
-
     for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
         results.add_vulnerability(vuln);
-    }
-
-    if config.is_bench() {
-        results.add_benchmark(Benchmark::new("Total code analysis", code_start.elapsed()));
     }
 
     if config.is_verbose() {
@@ -142,22 +130,21 @@ pub fn code_analysis(manifest: Option<Manifest>, config: &Config, results: &mut 
     }
 }
 
-fn analyze_file<P: AsRef<Path>>(path: P,
-                                dist_folder: P,
-                                rules: &Vec<Rule>,
-                                manifest: &Option<Manifest>,
-                                results: &Mutex<Vec<Vulnerability>>,
-                                verbose: bool)
-                                -> Result<()> {
+fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
+                                                dist_folder: T,
+                                                rules: &[Rule],
+                                                manifest: &Option<Manifest>,
+                                                results: &Mutex<Vec<Vulnerability>>,
+                                                verbose: bool)
+                                                -> Result<()> {
     let mut f = try!(File::open(&path));
     let mut code = String::new();
-    try!(f.read_to_string(&mut code));
+    let _ = try!(f.read_to_string(&mut code));
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.get_max_sdk().is_some() {
-            if rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
-                continue 'check;
-            }
+        if manifest.is_some() && rule.get_max_sdk().is_some() &&
+           rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
+            continue 'check;
         }
 
         for permission in rule.get_permissions() {
@@ -219,7 +206,7 @@ fn analyze_file<P: AsRef<Path>>(path: P,
                                                    forward_check '{}'. The rule will be \
                                                    skipped. {}",
                                                   r,
-                                                  e),
+                                                  e.description()),
                                           verbose);
                             break 'rule;
                         }
@@ -254,9 +241,9 @@ fn analyze_file<P: AsRef<Path>>(path: P,
     Ok(())
 }
 
-fn get_line_for(index: usize, text: &str) -> usize {
+fn get_line_for<S: AsRef<str>>(index: usize, text: S) -> usize {
     let mut line = 0;
-    for (i, c) in text.char_indices() {
+    for (i, c) in text.as_ref().char_indices() {
         if i == index {
             break;
         }
@@ -267,26 +254,26 @@ fn get_line_for(index: usize, text: &str) -> usize {
     line
 }
 
-fn add_files_to_vec<P: AsRef<Path>>(path: P,
-                                    vec: &mut Vec<DirEntry>,
-                                    config: &Config)
-                                    -> Result<()> {
+fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
+                                                   vec: &mut Vec<DirEntry>,
+                                                   package: S,
+                                                   config: &Config)
+                                                   -> Result<()> {
     if path.as_ref() == Path::new("classes/android") ||
        path.as_ref() == Path::new("classes/com/google/android/gms") ||
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
-    let real_path = format!("{}/{}/{}",
-                            config.get_dist_folder(),
-                            config.get_app_id(),
-                            path.as_ref().display());
+    let real_path = config.get_dist_folder()
+        .join(package.as_ref())
+        .join(path);
     for f in try!(fs::read_dir(&real_path)) {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
-                                      &real_path,
-                                      e),
+                                      real_path.display(),
+                                      e.description()),
                               config.is_verbose());
                 return Err(Error::from(e));
             }
@@ -294,13 +281,13 @@ fn add_files_to_vec<P: AsRef<Path>>(path: P,
         let f_type = try!(f.file_type());
         let f_path = f.path();
         let f_ext = f_path.extension();
-        if f_type.is_dir() && f_path != Path::new(&format!("{}/original", real_path)) {
+        if f_type.is_dir() && f_path != real_path.join("original") {
             try!(add_files_to_vec(f.path()
-                                      .strip_prefix(&format!("{}/{}",
-                                                             config.get_dist_folder(),
-                                                             config.get_app_id()))
+                                      .strip_prefix(&config.get_dist_folder()
+                                          .join(package.as_ref()))
                                       .unwrap(),
                                   vec,
+                                  package.as_ref(),
                                   config));
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
@@ -370,7 +357,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         Some(a) => a,
         None => {
             print_warning("Rules must be a JSON array.", config.is_verbose());
-            return Err(Error::ParseError);
+            return Err(Error::Parse);
         }
     };
 
@@ -402,13 +389,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(o) => o,
             None => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning, config.is_verbose());
-            return Err(Error::ParseError);
+            return Err(Error::Parse);
         }
 
         let regex = match rule.get("regex") {
@@ -418,15 +405,15 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!("An error occurred when compiling the regular \
                                                expresion: {}",
-                                              e),
+                                              e.description()),
                                       config.is_verbose());
-                        return Err(Error::ParseError);
+                        return Err(Error::Parse);
                     }
                 }
             }
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -435,7 +422,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -443,21 +430,21 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
-                    list.push(match p {
-                        &Value::String(ref p) => {
+                    list.push(match *p {
+                        Value::String(ref p) => {
                             match Permission::from_str(p) {
                                 Ok(p) => p,
                                 Err(_) => {
                                     print_warning(format!("the permission {} is unknown",
                                                           p.italic()),
                                                   config.is_verbose());
-                                    return Err(Error::ParseError);
+                                    return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning, config.is_verbose());
-                            return Err(Error::ParseError);
+                            return Err(Error::Parse);
                         }
                     });
                 }
@@ -465,7 +452,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),
         };
@@ -481,7 +468,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                want the 'fc1' capture to be inserted in the \
                                                forward check.",
                                               config.is_verbose());
-                                return Err(Error::ParseError);
+                                return Err(Error::Parse);
                             }
                         }
                         Some("fc2") => {
@@ -490,7 +477,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                                want the 'fc2' capture to be inserted in the \
                                                forward check.",
                                               config.is_verbose());
-                                return Err(Error::ParseError);
+                                return Err(Error::Parse);
                             }
                         }
                         _ => {}
@@ -498,12 +485,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
 
                 let mut capture_names = regex.capture_names();
-                if capture_names.find(|c| c.is_some() && c.unwrap() == "fc2").is_some() &&
-                   capture_names.find(|c| c.is_some() && c.unwrap() == "fc1").is_none() {
+                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2") &&
+                   !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1") {
                     print_warning("You must have a capture group named fc1 to use the capture \
                                    fc2.",
                                   config.is_verbose());
-                    return Err(Error::ParseError);
+                    return Err(Error::Parse);
                 }
 
                 Some(s.clone())
@@ -511,7 +498,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -519,7 +506,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref l)) => l,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -527,7 +514,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref d)) => d,
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -549,7 +536,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             _ => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
         };
 
@@ -557,22 +544,22 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for r in v {
-                    list.push(match r {
-                        &Value::String(ref r) => {
+                    list.push(match *r {
+                        Value::String(ref r) => {
                             match Regex::new(r) {
                                 Ok(r) => r,
                                 Err(e) => {
                                     print_warning(format!("An error occurred when compiling the \
                                                            regular expresion: {}",
-                                                          e),
+                                                          e.description()),
                                                   config.is_verbose());
-                                    return Err(Error::ParseError);
+                                    return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning, config.is_verbose());
-                            return Err(Error::ParseError);
+                            return Err(Error::Parse);
                         }
                     });
                 }
@@ -580,7 +567,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning, config.is_verbose());
-                return Err(Error::ParseError);
+                return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),
         };
@@ -604,30 +591,31 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
+    use config::Config;
 
-    fn check_match(text: &str, rule: &Rule) -> bool {
-        if rule.get_regex().is_match(text) {
+    fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
+        if rule.get_regex().is_match(text.as_ref()) {
             for white in rule.get_whitelist() {
-                if white.is_match(text) {
-                    let (s, e) = white.find(text).unwrap();
+                if white.is_match(text.as_ref()) {
+                    let (s, e) = white.find(text.as_ref()).unwrap();
                     println!("Whitelist '{}' matches the text '{}' in '{}'",
                              white.as_str(),
-                             text,
-                             &text[s..e]);
+                             text.as_ref(),
+                             &text.as_ref()[s..e]);
                     return false;
                 }
             }
             match rule.get_forward_check() {
                 None => {
-                    let (s, e) = rule.get_regex().find(text).unwrap();
+                    let (s, e) = rule.get_regex().find(text.as_ref()).unwrap();
                     println!("The regular expression '{}' matches the text '{}' in '{}'",
                              rule.get_regex(),
-                             text,
-                             &text[s..e]);
+                             text.as_ref(),
+                             &text.as_ref()[s..e]);
                     true
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(text).unwrap();
+                    let caps = rule.get_regex().captures(text.as_ref()).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -642,17 +630,17 @@ mod tests {
                     }
 
                     let regex = Regex::new(r.as_str()).unwrap();
-                    if regex.is_match(text) {
-                        let (s, e) = regex.find(text).unwrap();
+                    if regex.is_match(text.as_ref()) {
+                        let (s, e) = regex.find(text.as_ref()).unwrap();
                         println!("The forward check '{}'  matches the text '{}' in '{}'",
                                  regex.as_str(),
-                                 text,
-                                 &text[s..e]);
+                                 text.as_ref(),
+                                 &text.as_ref()[s..e]);
                         true
                     } else {
                         println!("The forward check '{}' does not match the text '{}'",
                                  regex.as_str(),
-                                 text);
+                                 text.as_ref());
                         false
                     }
                 }
@@ -660,14 +648,14 @@ mod tests {
         } else {
             println!("The regular expression '{}' does not match the text '{}'",
                      rule.get_regex(),
-                     text);
+                     text.as_ref());
             false
         }
     }
 
     #[test]
     fn it_url_regex() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
 
@@ -692,7 +680,7 @@ mod tests {
 
     #[test]
     fn it_catch_exception() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(1).unwrap();
 
@@ -719,7 +707,7 @@ mod tests {
 
     #[test]
     fn it_throws_exception() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(2).unwrap();
 
@@ -744,7 +732,7 @@ mod tests {
 
     #[test]
     fn it_hidden_fields() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(3).unwrap();
 
@@ -767,7 +755,7 @@ mod tests {
 
     #[test]
     fn it_ipv4_disclosure() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(4).unwrap();
 
@@ -794,7 +782,7 @@ mod tests {
 
     #[test]
     fn it_math_random() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(5).unwrap();
 
@@ -813,7 +801,7 @@ mod tests {
 
     #[test]
     fn it_log() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(6).unwrap();
 
@@ -844,7 +832,7 @@ mod tests {
 
     #[test]
     fn it_file_separator() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(7).unwrap();
 
@@ -864,7 +852,7 @@ mod tests {
 
     #[test]
     fn it_weak_algs() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(8).unwrap();
 
@@ -896,7 +884,7 @@ mod tests {
 
     #[test]
     fn it_sleep_method() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(9).unwrap();
 
@@ -923,7 +911,7 @@ mod tests {
 
     #[test]
     fn it_world_readable_permissions() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(10).unwrap();
 
@@ -947,7 +935,7 @@ mod tests {
 
     #[test]
     fn it_world_writable_permissions() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(11).unwrap();
 
@@ -971,7 +959,7 @@ mod tests {
 
     #[test]
     fn it_external_storage_write_read() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(12).unwrap();
 
@@ -990,7 +978,7 @@ mod tests {
 
     #[test]
     fn it_temp_file() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(13).unwrap();
 
@@ -1009,7 +997,7 @@ mod tests {
 
     #[test]
     fn it_webview_xss() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(14).unwrap();
 
@@ -1028,7 +1016,7 @@ mod tests {
 
     #[test]
     fn it_webview_ssl_errors() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(15).unwrap();
 
@@ -1048,7 +1036,7 @@ mod tests {
 
     #[test]
     fn it_sql_injection() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(16).unwrap();
 
@@ -1075,7 +1063,7 @@ mod tests {
 
     #[test]
     fn it_ssl_accepting_all_certificates() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(17).unwrap();
 
@@ -1100,7 +1088,7 @@ mod tests {
 
     #[test]
     fn it_sms_mms_sending() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
@@ -1133,7 +1121,7 @@ mod tests {
 
     #[test]
     fn it_superuser_privileges() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(19).unwrap();
 
@@ -1156,7 +1144,7 @@ mod tests {
 
     #[test]
     fn it_superuser_device_detection() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(20).unwrap();
 
@@ -1181,7 +1169,7 @@ mod tests {
 
     #[test]
     fn it_base_station_location() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(21).unwrap();
 
@@ -1200,7 +1188,7 @@ mod tests {
 
     #[test]
     fn it_get_device_id() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(22).unwrap();
 
@@ -1219,7 +1207,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_serial() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(23).unwrap();
 
@@ -1238,7 +1226,7 @@ mod tests {
 
     #[test]
     fn it_gps_location() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(24).unwrap();
 
@@ -1264,7 +1252,7 @@ mod tests {
 
     #[test]
     fn it_base64_encode() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(25).unwrap();
 
@@ -1284,7 +1272,7 @@ mod tests {
 
     #[test]
     fn it_base64_decoding() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(26).unwrap();
 
@@ -1303,7 +1291,7 @@ mod tests {
 
     #[test]
     fn it_infinite_loop() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(27).unwrap();
 
@@ -1322,7 +1310,7 @@ mod tests {
 
     #[test]
     fn it_email_disclosure() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(28).unwrap();
 
@@ -1344,7 +1332,7 @@ mod tests {
 
     #[test]
     fn it_hardcoded_certificate() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(29).unwrap();
 
@@ -1371,7 +1359,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_operator() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(30).unwrap();
 
@@ -1390,7 +1378,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_operatorname() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(31).unwrap();
 
@@ -1409,7 +1397,7 @@ mod tests {
 
     #[test]
     fn it_obfuscation() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(32).unwrap();
 
@@ -1432,10 +1420,9 @@ mod tests {
         }
     }
 
-
     #[test]
     fn it_command_exec() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(33).unwrap();
 
@@ -1460,7 +1447,7 @@ mod tests {
 
     #[test]
     fn it_ssl_getinsecure_method() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(34).unwrap();
 
@@ -1483,7 +1470,7 @@ mod tests {
 
     #[test]
     fn it_finally_with_return() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(35).unwrap();
 
@@ -1504,7 +1491,7 @@ mod tests {
 
     #[test]
     fn it_sleep_method_notvalidated() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(36).unwrap();
 
@@ -1524,5 +1511,4 @@ mod tests {
             assert!(!check_match(m, rule));
         }
     }
-
 }

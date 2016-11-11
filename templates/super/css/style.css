@@ -1,0 +1,164 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body.src {
+    background-color: #33373C;
+}
+
+section.report {
+    margin: 4em;
+}
+
+a img {
+    text-decoration: none;
+    max-height: 23em;
+    float: left;
+    margin-right: 1em;
+}
+
+footer {
+    margin: 2em;
+}
+
+h1, h2, h3, h4 {
+    font-family: sans-serif;
+}
+
+ul {
+    list-style-type: none;
+}
+
+nav li:not(.open) ul{
+    display: none;
+}
+
+nav li a {
+    color: #CCCCCC;
+    font-family: sans-serif;
+}
+
+nav {
+    float: left;
+    width: 20%;
+    height: 100%;
+    font-size: 0.8em;
+    background-color: #33373C;
+}
+
+nav ul {
+    padding-left: 0.5em;
+}
+
+nav > ul {
+    height: 70%;
+    overflow: auto;
+}
+
+nav img {
+    height: 1.2em;
+    margin-right: 0.5em;
+}
+
+nav h2 {
+    color: #CCCCCC;
+    margin: 1.5em;
+    font-size: 1.3em;
+    border: 1px solid #CCCCCC;
+    text-align: center;
+    padding: 1em;
+}
+
+nav h2 img {
+    height: 3.5em;
+}
+
+iframe {
+    width: 80%;
+    height: 100%;
+    float: left;
+    padding: 0;
+    border: none;
+    overflow: scroll;
+}
+
+body > div > div.code {
+    margin-top: -0.8em;
+}
+
+section.vulnerability li {
+    margin-left: -1.5em;
+}
+
+section.vulnerability {
+    border: 1px solid #CCCCCC;
+    margin: 1em 5em;
+    padding: 1.5em 3em;
+}
+
+span.critical, span.high {
+    color: #F93A3A;
+}
+
+span.medium {
+    color: #F9AD3A;
+}
+
+span.low {
+    color: #3A9BF9;
+}
+
+.vulnerability div.code code {
+    border-radius: 0 1em 1em 0;
+}
+
+.vulnerability div.code code code {
+    border-radius: 0;
+}
+
+a {
+    text-decoration: none;
+    color: #74B1ED;
+}
+
+div.line_numbers {
+    float: left;
+    font-family: monospace;
+    padding: 0.5em 0.3em 0.5em 1em;
+    color: #A9B7C6;
+    background: #3E4348;
+    border-radius: 1em 0 0 1em;
+    margin-left: -0.8em;
+    text-align: right;
+}
+
+div.line_numbers em {
+    font-weight: bolder;
+    text-decoration: underline;
+    font-style: normal;
+}
+
+code.vulnerable_line > span.line_body {
+  border-bottom: 1px dotted;
+}
+
+code.vulnerable_line.warning > span.line_body {
+  border-bottom-color: #FFF;
+}
+
+code.vulnerable_line.critical > span.line_body {
+  border-bottom-color: #F93A3A;
+}
+
+code.vulnerable_line.high > span.line_body {
+  border-bottom-color: #F93A3A;
+}
+
+code.vulnerable_line.medium > span.line_body {
+  border-bottom-color: #F9AD3A;
+}
+
+code.vulnerable_line.low > span.line_body {
+  border-bottom-color: #3A9BF9;
+}

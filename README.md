@@ -1,50 +1,47 @@
 # SUPER Android Analyzer #
 
-[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
-[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true)](https://ci.appveyor.com/project/Razican/super/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master)
+[![Build Status][linux_mac_build_img]][linux_mac_build]
+[![Build status][windows_build_img]][windows_build]
+[![Coverage Status][coverage_img]][coverage]
 
-<img src="src/super.jpg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
+<img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
-Secure, Unified, Powerful and Extensible Rust Android Analyzer
+*Secure, Unified, Powerful and Extensible Rust Android Analyzer*
 
-This project aims to create an automatic system capable of analyzing **Android** applications to
-search for security vulnerabilities. In the process of creating such tool the current market will
-be analyzed to look into the existent solutions and find out what can be improved. Also, a
-vulnerability analysis process will be researched, choosing the one that best matches with the
-original objectives to design our tool later.
+SUPER is a command-line application that can be used in Windows, MacOS X and Linux, that analyzes
+*.apk* files in search for vulnerabilities. It does this by decompressing APKs and applying a series
+of rules to detect those vulnerabilities.
 
-The second objective of the project will be to implement the developed tool in a way that it will
-be capable of analyzing a significant amount of applications. During this process new knowledge
-will be acquired both in technology and security, with will provide us with the bases for new
-developments.
+But, why create a new analyzer? Is it not enough with MobSF, Qark, Androbugs…? Well, we think it's
+not enough. All of them have two main issues we wanted to fix: They are written in Java or Python
+and they are not easily extensible. They are not meant to be used by businesses directly working in
+Android analysis, and don't put that kind of functionality first.
 
-The main objective of the project will be to analyze a big amount of **Android** applications from
-the **Google Play** market carrying out a global analysis of the current state of the security in
-**Android** applications. Furthermore, our applications could be used in the future to make an
-analysis of the evolution of said state.
+Our approach solves those issues in different ways: We first decided to use **Rust** as our
+programming language. The language developed openly by Mozilla Foundation gives us lots of
+utilities to work with regular expressions, files etc. and, most importantly, it enables us to
+create a secure software that does not depend in *JVM* or *JIT* compilers. With Rust, stack
+overflows, segmentation faults etc. are directly not possible, which makes sense in a security
+centered application. And it also gives us enough power to do efficient analysis, giving us the
+option to automate it in high volume. This is given by Rust zero-cost abstractions, that gives us
+an efficiency only comparable to C/C++.
+
+And secondly, we decided to make the software 100% extensible: All rules are centered in a
+`rules.json` file, and each company or tester could create its own rules to analyze what they need.
+It's also modular, so that new developments can easily add new functionality. Finally, a templating
+system for results reports gives users the ability to personalize the report.
+
+It also gives great code review tools, directly in the HTML report, so that anyone can search
+through the generated code with syntax highlighting for even better vulnerability analysis.
 
 ## Installation ##
 
-We are planning on releasing binaries for the application so it is easier to use. Until then,
-installing **Rust** is needed to use it. These are the steps before using the program:
+We have released some binaries in the [download page][downloads] for Windows (8.1+), Linux, and
+MacOS X. We only have 64-bit packages for now. If you need to use SUPER in a 32-bit system, you
+will need to [compile SUPER from source][compile]. For that, you will need to install **Rust** with
+[rustup.rs][rustup].
 
-1. Download and install **Rust**. This is easily done through the following link:
-
-   https://www.rustup.rs/
-
-2. Clone the repository.
-
-  `git clone https://github.com/SUPERAndroidAnalyzer/super.git`
-
-3. Build dependencies. Inside the repository, execute the following command. It should download and
-   compile all program dependencies.
-
-  `cargo build`
-
-If everything went right up until this point, you're ready to go!
-
-*Note: It requires Java 1.7+ and OpenSSL*
+*Note: It requires Java 1.7+ to run.*
 
 ## Usage ##
 
@@ -55,27 +52,51 @@ are a few usage options available:
 
 ```
 USAGE:
-    super [FLAGS] <package>
+    super [FLAGS] [OPTIONS] <package>
 
 FLAGS:
-        --bench      Show benchmarks for the analysis.
-        --force      If you'd like to force the auditor to do everything from the beginning.
-    -h, --help       Prints help information
-    -q, --quiet      If you'd like a zen auditor that won't talk unless it's 100% necessary.
-    -V, --version    Prints version information
-    -v, --verbose    If you'd like the auditor to talk more than necessary.
+        --bench       Show benchmarks for the analysis
+        --force       If you'd like to force the auditor to do everything from the beginning
+    -h, --help        Prints help information
+        --open        Open the report in a browser once it is complete
+    -q, --quiet       If you'd like a zen auditor that won't output anything in stdout
+    -a, --test-all    Test all .apk files in the downloads directory
+    -V, --version     Prints version information
+    -v, --verbose     If you'd like the auditor to talk more than necessary
+
+OPTIONS:
+        --apktool <apktool>        Path to the apktool file
+        --dex2jar <dex2jar>        Where to store the jar files
+        --dist <dist>              Folder where distribution files will be extracted
+        --downloads <downloads>    Folder where the downloads are stored
+        --jd-cmd <jd-cmd>          Path to the jd-cmd file
+        --results <results>        Folder where to store the results
+        --rules <rules>            Path to a JSON rules file
+        --template <template>      Path to a results template file
+    -t, --threads <threads>        Number of threads to use
 
 ARGS:
-    <package>    The package string of the application to test.
+    <package>    The package string of the application to test
 ```
 
 ## Contributing ##
 
-Everybody is welcome to contribute to SUPER. Please check out the [SUPER Contribution Guidelines](https://github.com/SUPERAndroidAnalyzer/super/blob/develop/contributing.md)
-for instructions about how to proceed.
+Everybody is welcome to contribute to SUPER. Please check out the
+[SUPER Contribution Guidelines][contributing] for instructions about how to proceed.
 
 ## License ##
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.
+
+[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master
+[linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
+[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true
+[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/master
+[coverage_img]: https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master
+[coverage]: https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master
+[compile]: http://superanalyzer.rocks/download.html#compile-from-source
+[downloads]: http://superanalyzer.rocks/download.html
+[rustup]: https://www.rustup.rs/
+[contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/develop/contributing.md

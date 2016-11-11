@@ -1,3 +1,49 @@
+### CONFIGURATION VARIABLES ###
+# Uncomment and set variables if you wish to change the default ones
+
+# Number of threads used
+# threads = 2 # Number of threads for the application
+
+# Folder to look for applications
+# downloads_folder = "downloads" # Folder for APK files
+
+# Folder where the source code will be extracted
+# dist_folder = "dist"
+
+# Folder where results will be generated
+# results_folder = "results"
+
+# APKTool JAR file
+# apktool_file = "/usr/share/super/vendor/apktool_2.2.0.jar"
+
+# Dex2Jar folder
+# dex2jar_folder = "/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"
+
+# JD-cmd JAR file
+# jd_cmd_file = "/usr/share/super/vendor/jd-cmd.jar"
+
+# Templates folder
+# templates_folder = "/usr/share/super/templates"
+
+# Results template used
+# template = "super"
+
+# Vulnerability rules JSON
+# rules_json = "/etc/super/rules.json"
+
+### PERMISSIONS ###
+# Add or remove permissions if you wish to change them. The format is the following:
+#[[permissions]]
+#name = "unknown" # Unknown permissions
+#criticity = "low"
+#description = "Even if the application can create its own permissions, it's discouraged, since it can lead to missunderstanding between developers."
+
+#[[permissions]]
+#name = "android.permission.INTERNET" # Internet access permission
+#criticity = "warning"
+#label = "Internet permission"
+#description = "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed."
+
 # Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.INTERNET"

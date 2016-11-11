@@ -1,8 +1,9 @@
-use std::{fs, io};
-use std::path::Path;
+use std::{fs, io, fmt};
 use std::io::{Read, Write};
+use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
+use std::result::Result as StdResult;
 
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
@@ -10,6 +11,7 @@ use colored::Colorize;
 
 use super::{Criticity, Result, Config};
 
+/// Configuration for the XML parser.
 pub const PARSER_CONFIG: ParserConfig = ParserConfig {
     trim_whitespace: true,
     whitespace_to_characters: false,
@@ -18,8 +20,9 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
     coalesce_characters: true,
 };
 
+/// Prints an error to `stderr` in red.
 pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
-    io::stderr()
+    let _ = io::stderr()
         .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
         .unwrap();
 
@@ -31,8 +34,9 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
     }
 }
 
+/// Prints a warning to `stderr` in yellow.
 pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
-    io::stderr()
+    let _ = io::stderr()
         .write(&format!("{} {}\n",
                         "Warning:".bold().yellow(),
                         warning.as_ref().yellow())
@@ -47,22 +51,34 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     }
 }
 
+/// Prints a vulnerability to `stdout` in a color depending on the criticity.
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
-    let text = text.as_ref();
-    let start = format!("Possible {} criticity vulnerability found!:", criticity);
-    let (start, message) = match criticity {
-        Criticity::Low => (start.cyan(), text.cyan()),
-        Criticity::Medium => (start.yellow(), text.yellow()),
-        Criticity::High | Criticity::Critical => (start.red(), text.red()),
-        _ => return,
-    };
-    println!("{} {}", start, message);
+    let message = format!("Possible {} criticity vulnerability found!: {}",
+                          criticity,
+                          text.as_ref());
+    println!("{}",
+             match criticity {
+                 Criticity::Low => message.cyan(),
+                 Criticity::Medium => message.yellow(),
+                 Criticity::High | Criticity::Critical => message.red(),
+                 _ => return,
+             });
     sleep(Duration::from_millis(200));
 }
 
-pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
+/// Gets the name of the package from the path of the *.apk* file.
+///
+/// Note: it will panic if the path has no `file_stem`.
+pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
+    path.as_ref().file_stem().unwrap().to_string_lossy().into_owned()
+}
+
+/// Gets the code snippet near the start and end lines.
+///
+/// It will return 5 lines above and 5 lines below the vulnerability.
+pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
-    for (i, text) in code.lines().enumerate() {
+    for (i, text) in code.as_ref().lines().enumerate() {
         if i >= (e_line + 5) {
             break;
         } else if (s_line >= 5 && i > s_line - 5) || (s_line < 5 && i < s_line + 5) {
@@ -73,26 +89,31 @@ pub fn get_code(code: &str, s_line: usize, e_line: usize) -> String {
     result
 }
 
-pub fn file_exists<P: AsRef<Path>>(path: P) -> bool {
-    path.as_ref().exists()
-}
-
-pub fn get_string(label: &str, config: &Config) -> Result<String> {
+/// Gets a string from the strings XML file.
+pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
+                                                config: &Config,
+                                                package: P)
+                                                -> Result<String> {
     let mut file = try!(fs::File::open({
-        let path = format!("{}/{}/res/values-en/strings.xml",
-                           config.get_dist_folder(),
-                           config.get_app_id());
-        if file_exists(&path) {
+        let path = config.get_dist_folder()
+            .join(package.as_ref())
+            .join("res")
+            .join("values-en")
+            .join("strings.xml");
+
+        if path.exists() {
             path
         } else {
-            format!("{}/{}/res/values/strings.xml",
-                    config.get_dist_folder(),
-                    config.get_app_id())
+            config.get_dist_folder()
+                .join(package.as_ref())
+                .join("res")
+                .join("values")
+                .join("strings.xml")
         }
     }));
 
     let mut code = String::new();
-    try!(file.read_to_string(&mut code));
+    let _ = try!(file.read_to_string(&mut code));
 
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
@@ -101,15 +122,12 @@ pub fn get_string(label: &str, config: &Config) -> Result<String> {
     for e in parser {
         match e {
             Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                match name.local_name.as_str() {
-                    "string" => {
-                        for attr in attributes {
-                            if attr.name.local_name == "name" && attr.value == label {
-                                found = true;
-                            }
+                if let "string" = name.local_name.as_str() {
+                    for attr in attributes {
+                        if attr.name.local_name == "name" && attr.value == label.as_ref() {
+                            found = true;
                         }
                     }
-                    _ => {}
                 }
             }
             Ok(XmlEvent::Characters(data)) => {
@@ -123,11 +141,35 @@ pub fn get_string(label: &str, config: &Config) -> Result<String> {
     Ok(String::new())
 }
 
+/// Structure to store a benchmark information.
+pub struct Benchmark {
+    label: String,
+    duration: Duration,
+}
+
+impl Benchmark {
+    /// Creates a new benchmark.
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
+        Benchmark {
+            label: label.into(),
+            duration: duration,
+        }
+    }
+}
+
+impl fmt::Display for Benchmark {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(f,
+               "{}: {}.{}s",
+               self.label,
+               self.duration.as_secs(),
+               self.duration.subsec_nanos())
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use {get_code, file_exists};
-    use std::fs;
-    use std::fs::File;
+    use get_code;
 
     #[test]
     fn it_get_code() {
@@ -184,17 +226,5 @@ mod test {
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
                     Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
                     Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n");
-    }
-
-    #[test]
-    fn it_file_exists() {
-        if file_exists("test.txt") {
-            fs::remove_file("test.txt").unwrap();
-        }
-        assert!(!file_exists("test.txt"));
-        File::create("test.txt").unwrap();
-        assert!(file_exists("test.txt"));
-        fs::remove_file("test.txt").unwrap();
-        assert!(!file_exists("test.txt"));
     }
 }

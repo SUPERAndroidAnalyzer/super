@@ -1,5 +1,9 @@
+//! Configuration module.
+//!
+//! Handles and configures the initial settings and variables needed to run the program.
+
 use std::{u8, fs};
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::convert::From;
 use std::str::FromStr;
 use std::io::Read;
@@ -8,276 +12,423 @@ use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
+use std::error::Error as StdError;
 
 use colored::Colorize;
 use toml::{Parser, Value};
+use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
-use {Error, Result, Criticity, print_error, print_warning, file_exists};
+use {Error, Result, Criticity, print_error, print_warning};
 
+/// Largest number of threads permitted.
 const MAX_THREADS: i64 = u8::MAX as i64;
 
+/// Config struct
+///
+/// Contains configuration related fields. It is used for storing the configuration parameters and
+/// checking their values. Implements the `Default` trait.
 #[derive(Debug)]
 pub struct Config {
-    app_id: String,
+    /// Application packages to analyze.
+    app_packages: Vec<PathBuf>,
+    /// Boolean to represent `--verbose` mode.
     verbose: bool,
+    /// Boolean to represent `--quiet` mode.
     quiet: bool,
+    /// Boolean to represent overall `--force` mode.
+    overall_force: bool,
+    /// Boolean to represent current `--force` mode.
     force: bool,
+    /// Boolean to represent `--bench` mode.
     bench: bool,
+    /// Boolean to represent `--open` mode.
+    open: bool,
+    /// Number of threads.
     threads: u8,
-    downloads_folder: String,
-    dist_folder: String,
-    results_folder: String,
-    apktool_file: String,
-    dex2jar_folder: String,
-    jd_cmd_file: String,
-    results_template: String,
-    rules_json: String,
+    /// Folder where the applications are stored.
+    downloads_folder: PathBuf,
+    /// Folder with files from analyzed applications.
+    dist_folder: PathBuf,
+    /// Folder to store the results of analysis.
+    results_folder: PathBuf,
+    /// Path to the _Apktool_ binary.
+    apktool_file: PathBuf,
+    /// Path to the _Dex2jar_ binaries.
+    dex2jar_folder: PathBuf,
+    /// Path to the _JD\_CMD_ binary.
+    jd_cmd_file: PathBuf,
+    /// Path to the `rules.json` file.
+    rules_json: PathBuf,
+    /// The folder where the templates are stored.
+    templates_folder: PathBuf,
+    /// The name of the template to use.
+    template: String,
+    /// Represents an unknow permission.
     unknown_permission: (Criticity, String),
+    /// List of permissions to analyze.
     permissions: BTreeSet<PermissionConfig>,
-    loaded_files: Vec<String>,
+    /// Checker for the loaded files
+    loaded_files: Vec<PathBuf>,
 }
 
 impl Config {
-    #[cfg(target_family = "unix")]
-    pub fn new(app_id: &str,
-               verbose: bool,
-               quiet: bool,
-               force: bool,
-               bench: bool)
-               -> Result<Config> {
-        let mut config: Config = Default::default();
-        config.app_id = String::from(app_id);
-        config.verbose = verbose;
-        config.quiet = quiet;
-        config.force = force;
-        config.bench = bench;
+    /// Creates a new `Config` struct.
+    pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
+        let mut config = Config::default();
 
-        if file_exists("/etc/config.toml") {
-            try!(Config::load_from_file(&mut config, "/etc/config.toml", verbose));
-            config.loaded_files.push(String::from("/etc/config.toml"));
+        config.verbose = cli.is_present("verbose");
+        config.quiet = cli.is_present("quiet");
+        config.overall_force = cli.is_present("force");
+        config.force = config.overall_force;
+        config.bench = cli.is_present("bench");
+        config.open = cli.is_present("open");
+
+        if cfg!(target_family = "unix") {
+            let config_path = PathBuf::from("/etc/config.toml");
+            if config_path.exists() {
+                try!(config.load_from_file(&config_path));
+                config.loaded_files.push(config_path);
+            }
         }
-        if file_exists("./config.toml") {
-            try!(Config::load_from_file(&mut config, "./config.toml", verbose));
-            config.loaded_files.push(String::from("./config.toml"));
+        let config_path = PathBuf::from("config.toml");
+        if config_path.exists() {
+            try!(config.load_from_file(&config_path));
+            config.loaded_files.push(config_path);
         }
 
-        Ok(config)
-    }
+        config.set_options(&cli);
 
-    #[cfg(target_family = "windows")]
-    pub fn new(app_id: &str,
-               verbose: bool,
-               quiet: bool,
-               force: bool,
-               bench: bool)
-               -> Result<Config> {
-        let mut config: Config = Default::default();
-        config.app_id = String::from(app_id);
-        config.verbose = verbose;
-        config.quiet = quiet;
-        config.force = force;
-        config.bench = bench;
-
-        if file_exists("config.toml") {
-            try!(Config::load_from_file(&mut config, "config.toml", verbose));
-            config.loaded_files.push(String::from("config.toml"));
+        if cli.is_present("test-all") {
+            config.read_apks();
+        } else {
+            config.add_app_package(cli.value_of("package").unwrap());
         }
 
         Ok(config)
     }
 
+    /// Modifies the options from the CLI.
+    fn set_options(&mut self, cli: &ArgMatches<'static>) {
+        if let Some(threads) = cli.value_of("threads") {
+            match threads.parse() {
+                Ok(t) if t > 0u8 => {
+                    self.threads = t;
+                }
+                _ => {
+                    print_warning(format!("The threads options must be an integer between 1 and \
+                                           {}",
+                                          u8::MAX),
+                                  self.verbose);
+                }
+            }
+        }
+        if let Some(downloads_folder) = cli.value_of("downloads") {
+            self.downloads_folder = PathBuf::from(downloads_folder);
+        }
+        if let Some(dist_folder) = cli.value_of("dist") {
+            self.dist_folder = PathBuf::from(dist_folder);
+        }
+        if let Some(results_folder) = cli.value_of("results") {
+            self.results_folder = PathBuf::from(results_folder);
+        }
+        if let Some(apktool_file) = cli.value_of("apktool") {
+            self.apktool_file = PathBuf::from(apktool_file);
+        }
+        if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
+            self.dex2jar_folder = PathBuf::from(dex2jar_folder);
+        }
+        if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
+            self.jd_cmd_file = PathBuf::from(jd_cmd_file);
+        }
+        if let Some(template_name) = cli.value_of("template") {
+            self.template = template_name.to_owned();
+        }
+        if let Some(rules_json) = cli.value_of("rules") {
+            self.rules_json = PathBuf::from(rules_json);
+        }
+    }
+
+    /// Reads all the apk files in the downloads folder and adds them to the configuration.
+    fn read_apks(&mut self) {
+        match fs::read_dir(&self.downloads_folder) {
+            Ok(iter) => {
+                for entry in iter {
+                    match entry {
+                        Ok(entry) => {
+                            if let Some(ext) = entry.path().extension() {
+                                if ext == "apk" {
+                                    self.add_app_package(entry.path()
+                                        .file_stem()
+                                        .unwrap()
+                                        .to_string_lossy()
+                                        .into_owned())
+                                }
+                            }
+                        }
+                        Err(e) => {
+                            print_warning(format!("There was an error when reading the \
+                                                   downloads folder: {}",
+                                                  e.description()),
+                                          self.verbose);
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                print_error(format!("There was an error when reading the downloads folder: {}",
+                                    e.description()),
+                            self.verbose);
+                exit(Error::from(e).into());
+            }
+        }
+    }
+
+    /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        file_exists(&self.downloads_folder) &&
-        file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) &&
-        file_exists(&self.apktool_file) && file_exists(&self.dex2jar_folder) &&
-        file_exists(&self.jd_cmd_file) && file_exists(&self.results_template) &&
-        file_exists(&self.rules_json)
+        let check = self.downloads_folder.exists() && self.apktool_file.exists() &&
+                    self.dex2jar_folder.exists() && self.jd_cmd_file.exists() &&
+                    self.get_template_path().exists() &&
+                    self.rules_json.exists();
+        if check {
+            for package in &self.app_packages {
+                if !package.exists() {
+                    return false;
+                }
+            }
+            true
+        } else {
+            false
+        }
     }
 
+    /// Returns the folders and files that do not exist.
     pub fn get_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
-        if !file_exists(&self.downloads_folder) {
-            errors.push(format!("the downloads folder `{}` does not exist",
-                                self.downloads_folder));
+        if !self.downloads_folder.exists() {
+            errors.push(format!("The downloads folder `{}` does not exist",
+                                self.downloads_folder.display()));
         }
-        if !file_exists(format!("{}/{}.apk", self.downloads_folder, self.app_id)) {
-            errors.push(format!("the APK file `{}` does not exist",
-                                format!("{}/{}.apk", self.downloads_folder, self.app_id)));
+        for package in &self.app_packages {
+            if !package.exists() {
+                errors.push(format!("The APK file `{}` does not exist", package.display()));
+            }
         }
-        if !file_exists(&self.apktool_file) {
-            errors.push(format!("the APKTool JAR file `{}` does not exist",
-                                self.apktool_file));
+        if !self.apktool_file.exists() {
+            errors.push(format!("The APKTool JAR file `{}` does not exist",
+                                self.apktool_file.display()));
         }
-        if !file_exists(&self.dex2jar_folder) {
-            errors.push(format!("the Dex2Jar folder `{}` does not exist",
-                                self.dex2jar_folder));
+        if !self.dex2jar_folder.exists() {
+            errors.push(format!("The Dex2Jar folder `{}` does not exist",
+                                self.dex2jar_folder.display()));
         }
-        if !file_exists(&self.jd_cmd_file) {
-            errors.push(format!("the jd-cmd file `{}` does not exist", self.jd_cmd_file));
+        if !self.jd_cmd_file.exists() {
+            errors.push(format!("The jd-cmd file `{}` does not exist",
+                                self.jd_cmd_file.display()));
         }
-        if !file_exists(&self.results_template) {
-            errors.push(format!("the results template `{}` does not exist",
-                                self.results_template));
+        if !self.templates_folder.exists() {
+            errors.push(format!("the templates folder `{}` does not exist",
+                                self.templates_folder.display()));
         }
-        if !file_exists(&self.rules_json) {
-            errors.push(format!("the `{}` rule file does not exist", self.rules_json));
+        if !self.get_template_path().exists() {
+            errors.push(format!("the template `{}` does not exist in `{}`",
+                                self.template,
+                                self.templates_folder.display()));
+        }
+        if !self.rules_json.exists() {
+            errors.push(format!("The `{}` rule file does not exist",
+                                self.rules_json.display()));
         }
         errors
     }
 
-    pub fn get_loaded_config_files(&self) -> VecIter<String> {
+    /// Returns the currently loaded config files.
+    pub fn get_loaded_config_files(&self) -> VecIter<PathBuf> {
         self.loaded_files.iter()
     }
 
-    pub fn get_app_id(&self) -> &str {
-        self.app_id.as_str()
+    /// Returns the app package.
+    pub fn get_app_packages(&self) -> Vec<PathBuf> {
+        self.app_packages.clone()
     }
 
-    pub fn set_app_id(&mut self, app_id: &str) {
-        self.app_id = String::from(app_id);
+    /// Adds a package to check.
+    fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
+        let mut package_path = self.downloads_folder.join(app_package);
+        if package_path.extension().is_none() {
+            package_path.set_extension("apk");
+        } else if package_path.extension().unwrap() != "apk" {
+            let mut file_name = package_path.file_name().unwrap().to_string_lossy().into_owned();
+            file_name.push_str(".apk");
+            package_path.set_file_name(file_name);
+        }
+
+        self.app_packages.push(package_path);
     }
 
+    /// Returns true if the application is running in `--verbose` mode, false otherwise.
     pub fn is_verbose(&self) -> bool {
         self.verbose
     }
 
-    pub fn set_verbose(&mut self, verbose: bool) {
-        self.verbose = verbose;
-    }
-
+    /// Returns true if the application is running in `--quiet` mode, false otherwise.
     pub fn is_quiet(&self) -> bool {
         self.quiet
     }
 
-    pub fn set_quiet(&mut self, quiet: bool) {
-        self.quiet = quiet;
-    }
-
+    /// Returns true if the application is running in `--force` mode, false otherwise.
     pub fn is_force(&self) -> bool {
         self.force
     }
 
-    pub fn set_force(&mut self, force: bool) {
-        self.force = force;
+    /// Sets the application to force recreate the analysis files and results temporarily.
+    pub fn set_force(&mut self) {
+        self.force = true;
     }
 
+    /// Resets the `--force` option, so that it gets reset to the configured force option.
+    pub fn reset_force(&mut self) {
+        self.force = self.overall_force
+    }
+
+    /// Returns true if the application is running in `--bench` mode, false otherwise.
     pub fn is_bench(&self) -> bool {
         self.bench
     }
 
-    pub fn set_bench(&mut self, bench: bool) {
-        self.bench = bench;
+    /// Returns true if the application is running in `--open` mode, false otherwise.
+    pub fn is_open(&self) -> bool {
+        self.open
     }
 
+    /// Returns the `threads` field.
     pub fn get_threads(&self) -> u8 {
         self.threads
     }
 
-    pub fn get_downloads_folder(&self) -> &str {
-        self.downloads_folder.as_str()
+    /// Returns the path to the `dist_folder`.
+    pub fn get_dist_folder(&self) -> &Path {
+        &self.dist_folder
     }
 
-    pub fn get_dist_folder(&self) -> &str {
-        self.dist_folder.as_str()
+    /// Returns the path to the `results_folder`.
+    pub fn get_results_folder(&self) -> &Path {
+        &self.results_folder
     }
 
-    pub fn get_results_folder(&self) -> &str {
-        self.results_folder.as_str()
+    /// Returns the path to the`apktool_file`.
+    pub fn get_apktool_file(&self) -> &Path {
+        &self.apktool_file
     }
 
-    pub fn get_apktool_file(&self) -> &str {
-        self.apktool_file.as_str()
+    /// Returns the path to the `dex2jar_folder`.
+    pub fn get_dex2jar_folder(&self) -> &Path {
+        &self.dex2jar_folder
     }
 
-    pub fn get_dex2jar_folder(&self) -> &str {
-        self.dex2jar_folder.as_str()
+    /// Returns the path to the `jd_cmd_file`.
+    pub fn get_jd_cmd_file(&self) -> &Path {
+        &self.jd_cmd_file
     }
 
-    pub fn get_jd_cmd_file(&self) -> &str {
-        self.jd_cmd_file.as_str()
+    /// Gets the path to the template.
+    pub fn get_template_path(&self) -> PathBuf {
+        self.templates_folder.join(&self.template)
     }
 
-    pub fn get_results_template(&self) -> &str {
-        self.results_template.as_str()
+    /// Gets the path to the templates folder.
+    pub fn get_templates_folder(&self) -> &Path {
+        &self.templates_folder
     }
 
-    pub fn get_rules_json(&self) -> &str {
-        self.rules_json.as_str()
+    /// Gets the name of the template.
+    pub fn get_template_name(&self) -> &str {
+        &self.template
     }
 
+    /// Returns the path to the `rules_json`.
+    pub fn get_rules_json(&self) -> &Path {
+        &self.rules_json
+    }
+
+    /// Returns the criticity of the `unknown_permission` field.
     pub fn get_unknown_permission_criticity(&self) -> Criticity {
         self.unknown_permission.0
     }
 
+    /// Returns the description of the `unknown_permission` field.
     pub fn get_unknown_permission_description(&self) -> &str {
         self.unknown_permission.1.as_str()
     }
 
+    /// Returns the loaded `permissions`.
     pub fn get_permissions(&self) -> Iter<PermissionConfig> {
         self.permissions.iter()
     }
 
-    fn load_from_file<P: AsRef<Path>>(config: &mut Config, path: P, verbose: bool) -> Result<()> {
+    /// Loads a configuration file into the `Config` struct.
+    fn load_from_file<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
         let mut f = try!(fs::File::open(path));
         let mut toml = String::new();
-        try!(f.read_to_string(&mut toml));
+        let _ = try!(f.read_to_string(&mut toml));
 
+        // Parse the configuration file.
         let mut parser = Parser::new(toml.as_str());
         let toml = match parser.parse() {
             Some(t) => t,
             None => {
                 print_error(format!("There was an error parsing the config.toml file: {:?}",
                                     parser.errors),
-                            verbose);
-                exit(Error::ParseError.into());
+                            self.verbose);
+                exit(Error::Parse.into());
             }
         };
 
+        // Read the values from the configuration file.
         for (key, value) in toml {
             match key.as_str() {
                 "threads" => {
                     match value {
                         Value::Integer(1...MAX_THREADS) => {
-                            config.threads = value.as_integer().unwrap() as u8
+                            self.threads = value.as_integer().unwrap() as u8
                         }
                         _ => {
                             print_warning(format!("The 'threads' option in config.toml must \
                                                    be an integer between 1 and {}.\nUsing \
                                                    default.",
                                                   MAX_THREADS),
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "downloads_folder" => {
                     match value {
-                        Value::String(s) => config.downloads_folder = s,
+                        Value::String(s) => self.downloads_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'downloads_folder' option in config.toml must \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dist_folder" => {
                     match value {
-                        Value::String(s) => config.dist_folder = s,
+                        Value::String(s) => self.dist_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dist_folder' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "results_folder" => {
                     match value {
-                        Value::String(s) => config.results_folder = s,
+                        Value::String(s) => self.results_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'results_folder' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -286,27 +437,27 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.apktool_file = s.clone();
+                                self.apktool_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The APKTool file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'apktool_file' option in config.toml must be \
                                            an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
                 "dex2jar_folder" => {
                     match value {
-                        Value::String(s) => config.dex2jar_folder = s,
+                        Value::String(s) => self.dex2jar_folder = PathBuf::from(s),
                         _ => {
                             print_warning("The 'dex2jar_folder' option in config.toml should \
                                            be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -315,27 +466,37 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "jar" {
-                                config.jd_cmd_file = s.clone();
+                                self.jd_cmd_file = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The JD-CMD file must be a JAR file.\nUsing \
                                                default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'jd_cmd_file' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
-                "results_template" => {
+                "templates_folder" => {
                     match value {
-                        Value::String(s) => config.results_template = s,
+                        Value::String(s) => self.templates_folder = PathBuf::from(s),
                         _ => {
-                            print_warning("The 'results_template' option in config.toml \
+                            print_warning("The 'templates_folder' option in config.toml \
                                            should be an string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
+                        }
+                    }
+                }
+                "template" => {
+                    match value {
+                        Value::String(s) => self.template = s,
+                        _ => {
+                            print_warning("The 'template' option in config.toml \
+                                           should be an string.\nUsing default.",
+                                          self.verbose)
                         }
                     }
                 }
@@ -344,17 +505,17 @@ impl Config {
                         Value::String(s) => {
                             let extension = Path::new(&s).extension();
                             if extension.is_some() && extension.unwrap() == "json" {
-                                config.rules_json = s.clone();
+                                self.rules_json = PathBuf::from(s.clone());
                             } else {
                                 print_warning("The rules.json file must be a JSON \
                                                file.\nUsing default.",
-                                              verbose)
+                                              self.verbose)
                             }
                         }
                         _ => {
                             print_warning("The 'rules_json' option in config.toml must be an \
                                            string.\nUsing default.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
@@ -375,7 +536,7 @@ impl Config {
                                 let cfg = match cfg.as_table() {
                                     Some(t) => t,
                                     None => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -383,7 +544,7 @@ impl Config {
                                 let name = match cfg.get("name") {
                                     Some(&Value::String(ref n)) => n,
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -402,21 +563,21 @@ impl Config {
                                                                       "medium".italic(),
                                                                       "high".italic(),
                                                                       "critical".italic()),
-                                                              verbose);
+                                                              self.verbose);
                                                 break;
                                             }
                                         }
                                     }
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
 
                                 let description = match cfg.get("description") {
-                                    Some(&Value::String(ref d)) => d,
+                                    Some(&Value::String(ref d)) => d.to_owned(),
                                     _ => {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
                                 };
@@ -429,18 +590,18 @@ impl Config {
                                         criticity = \"warning|low|medium|high|criticity\"\n\
                                         description = \"Long description to explain the \
                                         vulnerability\"".italic()),
-                                                      verbose);
+                                                      self.verbose);
                                         break;
                                     }
 
-                                    config.unknown_permission = (criticity, description.clone());
+                                    self.unknown_permission = (criticity, description.clone());
                                 } else {
                                     if cfg.len() != 4 {
-                                        print_warning(format_warning, verbose);
+                                        print_warning(format_warning, self.verbose);
                                         break;
                                     }
 
-                                    let permission = match Permission::from_str(name.as_str()) {
+                                    let permission = match Permission::from_str(name) {
                                         Ok(p) => p,
                                         Err(_) => {
                                             print_warning(format!("Unknown permission: {}\nTo \
@@ -452,191 +613,115 @@ impl Config {
                                                                   name.italic(),
                                                                   "unknown".italic(),
                                                                   "[[permissions]]".italic()),
-                                                          verbose);
+                                                          self.verbose);
                                             break;
                                         }
                                     };
 
                                     let label = match cfg.get("label") {
-                                        Some(&Value::String(ref l)) => l,
+                                        Some(&Value::String(ref l)) => l.to_owned(),
                                         _ => {
-                                            print_warning(format_warning, verbose);
+                                            print_warning(format_warning, self.verbose);
                                             break;
                                         }
                                     };
-                                    config.permissions
+                                    self.permissions
                                         .insert(PermissionConfig::new(permission,
                                                                       criticity,
                                                                       label,
-                                                                      description.as_str()));
+                                                                      description));
                                 }
                             }
                         }
                         _ => {
                             print_warning("You must specify the permissions you want to \
                                            select as vulnerable.",
-                                          verbose)
+                                          self.verbose)
                         }
                     }
                 }
-                _ => print_warning(format!("Unknown configuration option {}.", key), verbose),
+                _ => {
+                    print_warning(format!("Unknown configuration option {}.", key),
+                                  self.verbose)
+                }
             }
         }
         Ok(())
     }
-}
 
-impl Default for Config {
-    #[cfg(target_os = "linux")]
-    fn default() -> Config {
-        if file_exists("/usr/share/super") {
-            Config {
-                app_id: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("/usr/share/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("/usr/share/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("/usr/share/super/vendor/jd-cmd.jar"),
-                results_template: String::from("/usr/share/super/vendor/results_template"),
-                rules_json: if Path::new("/etc/super").exists() {
-                    String::from("/etc/super/rules.json")
-                } else {
-                    String::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        } else {
-            Config {
-                app_id: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
-                results_template: String::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super/rules.json") {
-                    String::from("/etc/super/rules.json")
-                } else {
-                    String::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        }
-    }
-
-    #[cfg(target_os = "macos")]
-    fn default() -> Config {
-        if file_exists("/usr/local/super") {
-            Config {
-                app_id: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("/usr/local/super/vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("/usr/local/super/vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("/usr/local/super/vendor/jd-cmd.jar"),
-                results_template: String::from("/usr/local/super/vendor/results_template"),
-                rules_json: if Path::new("/etc/super").exists() {
-                    String::from("/etc/super/rules.json")
-                } else {
-                    String::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        } else {
-            Config {
-                app_id: String::new(),
-                verbose: false,
-                quiet: false,
-                force: false,
-                bench: false,
-                threads: 2,
-                downloads_folder: String::from("downloads"),
-                dist_folder: String::from("dist"),
-                results_folder: String::from("results"),
-                apktool_file: String::from("vendor/apktool_2.2.0.jar"),
-                dex2jar_folder: String::from("vendor/dex2jar-2.0"),
-                jd_cmd_file: String::from("vendor/jd-cmd.jar"),
-                results_template: String::from("vendor/results_template"),
-                rules_json: if file_exists("/etc/super/rules.json") {
-                    String::from("/etc/super/rules.json")
-                } else {
-                    String::from("rules.json")
-                },
-                unknown_permission: (Criticity::Low,
-                                     String::from("Even if the application can create its own \
-                                                   permissions, it's discouraged, since it can \
-                                                   lead to missunderstanding between developers.")),
-                permissions: BTreeSet::new(),
-                loaded_files: Vec::new(),
-            }
-        }
-    }
-
-    #[cfg(target_family = "windows")]
-    fn default() -> Config {
+    /// Returns the default `Config` struct.
+    fn local_default() -> Config {
         Config {
-            app_id: String::new(),
+            app_packages: Vec::new(),
             verbose: false,
             quiet: false,
+            overall_force: false,
             force: false,
             bench: false,
+            open: false,
             threads: 2,
-            downloads_folder: String::from("downloads"),
-            dist_folder: String::from("dist"),
-            results_folder: String::from("results"),
-            apktool_file: String::from("vendor\\apktool_2.2.0.jar"),
-            dex2jar_folder: String::from("vendor\\dex2jar-2.0"),
-            jd_cmd_file: String::from("vendor\\jd-cmd.jar"),
-            results_template: String::from("vendor\\results_template"),
-            rules_json: String::from("rules.json"),
+            downloads_folder: PathBuf::from("."),
+            dist_folder: PathBuf::from("dist"),
+            results_folder: PathBuf::from("results"),
+            apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
+            dex2jar_folder: Path::new("vendor").join("dex2jar-2.1-SNAPSHOT"),
+            jd_cmd_file: Path::new("vendor").join("jd-cmd.jar"),
+            templates_folder: PathBuf::from("templates"),
+            template: String::from("super"),
+            rules_json: PathBuf::from("rules.json"),
             unknown_permission: (Criticity::Low,
                                  String::from("Even if the application can create its own \
-                                               permissions, it's discouraged, since it can lead \
-                                               to missunderstanding between developers.")),
+                                               permissions, it's discouraged, since it can \
+                                               lead to missunderstanding between developers.")),
             permissions: BTreeSet::new(),
             loaded_files: Vec::new(),
         }
     }
 }
 
+impl Default for Config {
+    /// Creates the default `Config` struct in Unix systems.
+    #[cfg(target_family = "unix")]
+    fn default() -> Config {
+        let mut config = Config::local_default();
+        let etc_rules = PathBuf::from("/etc/super/rules.json");
+        if etc_rules.exists() {
+            config.rules_json = etc_rules;
+        }
+        let share_path = Path::new(if cfg!(target_os = "macos") {
+            "/usr/local/super"
+        } else {
+            "/usr/share/super"
+        });
+        if share_path.exists() {
+            config.apktool_file = share_path.join("vendor/apktool_2.2.0.jar");
+            config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
+            config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
+            config.templates_folder = share_path.join("templates");
+        }
+        config
+    }
+
+    /// Creates the default `Config` struct in Windows systems.
+    #[cfg(target_family = "windows")]
+    fn default() -> Config {
+        Config::local_default()
+    }
+}
+
+/// Vulnerable permission configuration information.
+///
+/// Represents a Permission with all its fields. Implements the `PartialEq` and `PartialOrd`
+/// traits.
 #[derive(Debug, Ord, Eq)]
 pub struct PermissionConfig {
+    /// Permission name.
     permission: Permission,
+    /// Permission criticity.
     criticity: Criticity,
+    /// Permission label.
     label: String,
+    /// Permission description.
     description: String,
 }
 
@@ -659,31 +744,36 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    fn new(permission: Permission,
-           criticity: Criticity,
-           label: &str,
-           description: &str)
-           -> PermissionConfig {
+    /// Creates a new `PermissionConfig`.
+    fn new<L: Into<String>, D: Into<String>>(permission: Permission,
+                                             criticity: Criticity,
+                                             label: L,
+                                             description: D)
+                                             -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticity: criticity,
-            label: String::from(label),
-            description: String::from(description),
+            label: label.into(),
+            description: description.into(),
         }
     }
 
+    /// Returns the enum that represents the `permission`.
     pub fn get_permission(&self) -> Permission {
         self.permission
     }
 
+    /// Returns the permission's `criticity`.
     pub fn get_criticity(&self) -> Criticity {
         self.criticity
     }
 
+    /// Returns the permission's `label`.
     pub fn get_label(&self) -> &str {
         self.label.as_str()
     }
 
+    /// Returns the permission's `description`.
     pub fn get_description(&self) -> &str {
         self.description.as_str()
     }
@@ -691,55 +781,55 @@ impl PermissionConfig {
 
 #[cfg(test)]
 mod tests {
-    use {Criticity, file_exists};
+    use Criticity;
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
     use std::path::Path;
-    use std::thread;
-    use std::time::Duration;
 
+    /// Test for the default configuration function.
     #[test]
     fn it_config() {
-        let mut config: Config = Default::default();
+        // Create config object.
+        let mut config = Config::default();
 
-        assert_eq!(config.get_app_id(), "");
+        // Check that the properties of the config object are correct.
+        assert!(config.get_app_packages().is_empty());
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
         assert!(!config.is_force());
         assert!(!config.is_bench());
+        assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), "downloads");
-        assert_eq!(config.get_dist_folder(), "dist");
-        assert_eq!(config.get_results_folder(), "results");
-        if cfg!(target_os = "linux") && Path::new("/usr/share/super").exists() {
-            assert_eq!(config.get_apktool_file(),
-                       "/usr/share/super/vendor/apktool_2.2.0.jar");
-            assert_eq!(config.get_dex2jar_folder(),
-                       "/usr/share/super/vendor/dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(),
-                       "/usr/share/super/vendor/jd-cmd.jar");
-            assert_eq!(config.get_results_template(),
-                       "/usr/share/super/vendor/results_template");
-        } else if cfg!(target_os = "macos") && Path::new("/usr/local/super").exists() {
-            assert_eq!(config.get_apktool_file(),
-                       "/usr/local/super/vendor/apktool_2.2.0.jar");
-            assert_eq!(config.get_dex2jar_folder(),
-                       "/usr/local/super/vendor/dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(),
-                       "/usr/local/super/vendor/jd-cmd.jar");
-            assert_eq!(config.get_results_template(),
-                       "/usr/local/super/vendor/results_template");
+        assert_eq!(config.downloads_folder, Path::new("."));
+        assert_eq!(config.get_dist_folder(), Path::new("dist"));
+        assert_eq!(config.get_results_folder(), Path::new("results"));
+        assert_eq!(config.get_template_name(), "super");
+        let share_path = Path::new(if cfg!(target_os = "macos") {
+            "/usr/local/super"
+        } else if cfg!(target_family = "windows") {
+            ""
         } else {
-            assert_eq!(config.get_apktool_file(), "vendor/apktool_2.2.0.jar");
-            assert_eq!(config.get_dex2jar_folder(), "vendor/dex2jar-2.0");
-            assert_eq!(config.get_jd_cmd_file(), "vendor/jd-cmd.jar");
-            assert_eq!(config.get_results_template(), "vendor/results_template");
-        }
-        if cfg!(target_family = "unix") && file_exists("/etc/super/rules.json") {
-            assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+            "/usr/share/super"
+        });
+        let share_path = if share_path.exists() {
+            share_path
         } else {
-            assert_eq!(config.get_rules_json(), "rules.json");
+            Path::new("")
+        };
+        assert_eq!(config.get_apktool_file(),
+                   share_path.join("vendor").join("apktool_2.2.0.jar"));
+        assert_eq!(config.get_dex2jar_folder(),
+                   share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
+        assert_eq!(config.get_jd_cmd_file(),
+                   share_path.join("vendor").join("jd-cmd.jar"));
+        assert_eq!(config.get_templates_folder(), share_path.join("templates"));
+        assert_eq!(config.get_template_path(),
+                   share_path.join("templates").join("super"));
+        if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
+            assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
+        } else {
+            assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
@@ -747,86 +837,79 @@ mod tests {
                     since it can lead to missunderstanding between developers.");
         assert_eq!(config.get_permissions().next(), None);
 
-        if !file_exists(config.get_downloads_folder()) {
-            fs::create_dir(config.get_downloads_folder()).unwrap();
+        if !config.downloads_folder.exists() {
+            fs::create_dir(&config.downloads_folder).unwrap();
         }
-        if !file_exists(config.get_dist_folder()) {
+        if !config.get_dist_folder().exists() {
             fs::create_dir(config.get_dist_folder()).unwrap();
         }
-        if !file_exists(config.get_results_folder()) {
+        if !config.get_results_folder().exists() {
             fs::create_dir(config.get_results_folder()).unwrap();
         }
 
-        config.set_app_id("test_app");
-        config.set_verbose(true);
-        config.set_quiet(true);
-        config.set_force(true);
-        config.set_bench(true);
+        // Change properties.
+        config.add_app_package("test_app");
+        config.verbose = true;
+        config.quiet = true;
+        config.force = true;
+        config.bench = true;
+        config.open = true;
 
-        assert_eq!(config.get_app_id(), "test_app");
+        // Check that the new properties are correct.
+        let packages = config.get_app_packages();
+        assert_eq!(&packages[0], &config.downloads_folder.join("test_app.apk"));
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());
         assert!(config.is_bench());
+        assert!(config.is_open());
 
-        if file_exists(format!("{}/{}.apk",
-                               config.get_downloads_folder(),
-                               config.get_app_id())) {
-            fs::remove_file(format!("{}/{}.apk",
-                                    config.get_downloads_folder(),
-                                    config.get_app_id()))
-                .unwrap();
+        config.reset_force();
+        assert!(!config.is_force());
+
+        config.overall_force = true;
+        config.reset_force();
+        assert!(config.is_force());
+
+        if packages[0].exists() {
+            fs::remove_file(&packages[0]).unwrap();
         }
         assert!(!config.check());
 
-        fs::File::create(format!("{}/{}.apk",
-                                 config.get_downloads_folder(),
-                                 config.get_app_id()))
-            .unwrap();
+        let _ = fs::File::create(&packages[0]).unwrap();
         assert!(config.check());
 
-        while !file_exists("config.toml.sample") {
-            thread::sleep(Duration::from_millis(50));
-        }
-        let config = Config::new("test_app", false, false, false, false).unwrap();
-        let mut error_string = String::from("Configuration errors were found:\n");
-        for error in config.get_errors() {
-            error_string.push_str(&error);
-            error_string.push('\n');
-        }
-        error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration\n");
-        for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file));
-        }
-        println!("{}", error_string);
+        let config = Config::default();
         assert!(config.check());
 
-        fs::remove_file(format!("{}/{}.apk",
-                                config.get_downloads_folder(),
-                                config.get_app_id()))
-            .unwrap();
+        fs::remove_file(&packages[0]).unwrap();
     }
 
+    /// Test for the `config.toml.sample` sample configuration file.
     #[test]
     fn it_config_sample() {
-        fs::rename("config.toml", "config.toml.bk").unwrap();
-        fs::rename("config.toml.sample", "config.toml").unwrap();
+        // Create config object.
+        let mut config = Config::default();
+        config.load_from_file("config.toml.sample").unwrap();
+        config.add_app_package("test_app");
 
-        let config = Config::new("test_app", false, false, false, false).unwrap();
+        // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), "downloads");
-        assert_eq!(config.get_dist_folder(), "dist");
-        assert_eq!(config.get_results_folder(), "results");
+        assert_eq!(config.downloads_folder, Path::new("downloads"));
+        assert_eq!(config.get_dist_folder(), Path::new("dist"));
+        assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_apktool_file(),
-                   "/usr/share/super/vendor/apktool_2.2.0.jar");
+                   Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
-                   "/usr/share/super/vendor/dex2jar-2.0");
+                   Path::new("/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
-                   "/usr/share/super/vendor/jd-cmd.jar");
-        assert_eq!(config.get_results_template(),
-                   "/usr/share/super/vendor/results_template");
-        assert_eq!(config.get_rules_json(), "/etc/super/rules.json");
+                   Path::new("/usr/share/super/vendor/jd-cmd.jar"));
+        assert_eq!(config.get_templates_folder(),
+                   Path::new("/usr/share/super/templates"));
+        assert_eq!(config.get_template_path(),
+                   Path::new("/usr/share/super/templates/super"));
+        assert_eq!(config.get_template_name(), "super");
+        assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
         assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
@@ -842,8 +925,5 @@ mod tests {
                     The browser and other applications provide means to send data to the \
                     internet, so this permission is not required to send data to the internet. \
                     Check if the permission is actually needed.");
-
-        fs::rename("config.toml", "config.toml.sample").unwrap();
-        fs::rename("config.toml.bk", "config.toml").unwrap();
     }
 }

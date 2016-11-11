@@ -4,7 +4,6 @@ results/*
 target
 rpmbuild/*
 !rpmbuild/super.spec
-Cargo.lock
 *.bk
 *.apk
 .DS_Store
