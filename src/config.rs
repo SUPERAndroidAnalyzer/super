@@ -522,116 +522,7 @@ impl Config {
                 "permissions" => {
                     match value {
                         Value::Array(p) => {
-                            let format_warning =
-                                format!("The permission configuration format must be the \
-                                         following:\n{}\nUsing default.",
-                                        "[[permissions]]\nname=\"unknown|permission.name\"\n\
-                                        criticity = \"warning|low|medium|high|critical\"\n\
-                                        label = \"Permission label\"\n\
-                                        description = \"Long description to explain the \
-                                        vulnerability\""
-                                            .italic());
-
-                            for cfg in p {
-                                let cfg = match cfg.as_table() {
-                                    Some(t) => t,
-                                    None => {
-                                        print_warning(format_warning, self.verbose);
-                                        break;
-                                    }
-                                };
-
-                                let name = match cfg.get("name") {
-                                    Some(&Value::String(ref n)) => n,
-                                    _ => {
-                                        print_warning(format_warning, self.verbose);
-                                        break;
-                                    }
-                                };
-
-                                let criticity = match cfg.get("criticity") {
-                                    Some(&Value::String(ref c)) => {
-                                        match Criticity::from_str(c) {
-                                            Ok(c) => c,
-                                            Err(_) => {
-                                                print_warning(format!("Criticity must be \
-                                                                       one of {}, {}, {}, \
-                                                                       {} or {}.\nUsing \
-                                                                       default.",
-                                                                      "warning".italic(),
-                                                                      "low".italic(),
-                                                                      "medium".italic(),
-                                                                      "high".italic(),
-                                                                      "critical".italic()),
-                                                              self.verbose);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    _ => {
-                                        print_warning(format_warning, self.verbose);
-                                        break;
-                                    }
-                                };
-
-                                let description = match cfg.get("description") {
-                                    Some(&Value::String(ref d)) => d.to_owned(),
-                                    _ => {
-                                        print_warning(format_warning, self.verbose);
-                                        break;
-                                    }
-                                };
-
-                                if name == "unknown" {
-                                    if cfg.len() != 3 {
-                                        print_warning(format!("The format for the unknown \
-                                        permissions is the following:\n{}\nUsing default.",
-                                        "[[permissions]]\nname = \"unknown\"\n\
-                                        criticity = \"warning|low|medium|high|criticity\"\n\
-                                        description = \"Long description to explain the \
-                                        vulnerability\"".italic()),
-                                                      self.verbose);
-                                        break;
-                                    }
-
-                                    self.unknown_permission = (criticity, description.clone());
-                                } else {
-                                    if cfg.len() != 4 {
-                                        print_warning(format_warning, self.verbose);
-                                        break;
-                                    }
-
-                                    let permission = match Permission::from_str(name) {
-                                        Ok(p) => p,
-                                        Err(_) => {
-                                            print_warning(format!("Unknown permission: {}\nTo \
-                                                                   set the default \
-                                                                   vulnerability level for an \
-                                                                   unknown permission, please, \
-                                                                   use the {} permission name, \
-                                                                   under the {} section.",
-                                                                  name.italic(),
-                                                                  "unknown".italic(),
-                                                                  "[[permissions]]".italic()),
-                                                          self.verbose);
-                                            break;
-                                        }
-                                    };
-
-                                    let label = match cfg.get("label") {
-                                        Some(&Value::String(ref l)) => l.to_owned(),
-                                        _ => {
-                                            print_warning(format_warning, self.verbose);
-                                            break;
-                                        }
-                                    };
-                                    self.permissions
-                                        .insert(PermissionConfig::new(permission,
-                                                                      criticity,
-                                                                      label,
-                                                                      description));
-                                }
-                            }
+                            self.load_permissions(p);
                         }
                         _ => {
                             print_warning("You must specify the permissions you want to \
@@ -647,6 +538,111 @@ impl Config {
             }
         }
         Ok(())
+    }
+
+    /// Loads permissions from the TOML configuration vector.
+    fn load_permissions(&mut self, permissions: Vec<Value>) {
+        let format_warning =
+            format!("The permission configuration format must be the following:\n{}\nUsing \
+                     default.",
+                    "[[permissions]]\nname=\"unknown|permission.name\"\ncriticity = \
+                     \"warning|low|medium|high|critical\"\nlabel = \"Permission \
+                     label\"\ndescription = \"Long description to explain the vulnerability\""
+                        .italic());
+
+        for cfg in permissions {
+            let cfg = match cfg.as_table() {
+                Some(t) => t,
+                None => {
+                    print_warning(format_warning, self.verbose);
+                    break;
+                }
+            };
+
+            let name = match cfg.get("name") {
+                Some(&Value::String(ref n)) => n,
+                _ => {
+                    print_warning(format_warning, self.verbose);
+                    break;
+                }
+            };
+
+            let criticity = match cfg.get("criticity") {
+                Some(&Value::String(ref c)) => {
+                    match Criticity::from_str(c) {
+                        Ok(c) => c,
+                        Err(_) => {
+                            print_warning(format!("Criticity must be one of {}, {}, {}, {} or \
+                                                   {}.\nUsing default.",
+                                                  "warning".italic(),
+                                                  "low".italic(),
+                                                  "medium".italic(),
+                                                  "high".italic(),
+                                                  "critical".italic()),
+                                          self.verbose);
+                            break;
+                        }
+                    }
+                }
+                _ => {
+                    print_warning(format_warning, self.verbose);
+                    break;
+                }
+            };
+
+            let description = match cfg.get("description") {
+                Some(&Value::String(ref d)) => d.to_owned(),
+                _ => {
+                    print_warning(format_warning, self.verbose);
+                    break;
+                }
+            };
+
+            if name == "unknown" {
+                if cfg.len() != 3 {
+                    print_warning(format!("The format for the unknown \
+                    permissions is the following:\n{}\nUsing default.",
+                                          "[[permissions]]\nname = \"unknown\"\ncriticity = \
+                                           \"warning|low|medium|high|criticity\"\ndescription = \
+                                           \"Long description to explain the vulnerability\""
+                                              .italic()),
+                                  self.verbose);
+                    break;
+                }
+
+                self.unknown_permission = (criticity, description.clone());
+            } else {
+                if cfg.len() != 4 {
+                    print_warning(format_warning, self.verbose);
+                    break;
+                }
+
+                let permission = match Permission::from_str(name) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        print_warning(format!("Unknown permission: {}\nTo set the default \
+                                               vulnerability level for an unknown permission, \
+                                               please, use the {} permission name, under the {} \
+                                               section.",
+                                              name.italic(),
+                                              "unknown".italic(),
+                                              "[[permissions]]".italic()),
+                                      self.verbose);
+                        break;
+                    }
+                };
+
+                let label = match cfg.get("label") {
+                    Some(&Value::String(ref l)) => l.to_owned(),
+                    _ => {
+                        print_warning(format_warning, self.verbose);
+                        break;
+                    }
+                };
+                self.permissions
+                    .insert(PermissionConfig::new(permission, criticity, label, description));
+            }
+        }
     }
 
     /// Returns the default `Config` struct.
