@@ -1,15 +1,15 @@
 # SUPER Android Analyzer #
 
-[![Build Status](https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master)](https://travis-ci.org/SUPERAndroidAnalyzer/super)
-[![Build status](https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true)](https://ci.appveyor.com/project/Razican/super/branch/master)
-[![Coverage Status](https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master)](https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master)
+[![Build Status][linux_mac_build_img]][linux_mac_build]
+[![Build status][windows_build_img]][windows_build]
+[![Coverage Status][coverage_img]][coverage]
 
 <img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
 *Secure, Unified, Powerful and Extensible Rust Android Analyzer*
 
 SUPER is a command-line application that can be used in Windows, MacOS X and Linux, that analyzes
-.apk files in search for vulnerabilities. It does this by decompressing APKs and applying a series
+*.apk* files in search for vulnerabilities. It does this by decompressing APKs and applying a series
 of rules to detect those vulnerabilities.
 
 But, why create a new analyzer? Is it not enough with MobSF, Qark, Androbugs…? Well, we think it's
@@ -29,22 +29,19 @@ an efficiency only comparable to C/C++.
 And secondly, we decided to make the software 100% extensible: All rules are centered in a
 `rules.json` file, and each company or tester could create its own rules to analyze what they need.
 It's also modular, so that new developments can easily add new functionality. Finally, a templating
-system for results reports (that will be improved in future updates) gives users the ability to
-personalize the report.
+system for results reports gives users the ability to personalize the report.
 
 It also gives great code review tools, directly in the HTML report, so that anyone can search
 through the generated code with syntax highlighting for even better vulnerability analysis.
 
 ## Installation ##
 
-We have released some binaries in the [download page](http://superanalyzer.rocks/download.html) for
-Windows (8.1+), and Linux, and we are
-[creating MacOS X packages](https://github.com/SUPERAndroidAnalyzer/super/issues/18). We only have
-64-bit packages for now. If you need to use SUPER in a 32-bit system, or in MacOS X, you will need
-to [compile SUPER from source](http://superanalyzer.rocks/download.html#compile-from-source). For
-that, you will need to install **Rust** with [rustup.rs](https://www.rustup.rs/).
+We have released some binaries in the [download page][downloads] for Windows (8.1+), Linux, and
+MacOS X. We only have 64-bit packages for now. If you need to use SUPER in a 32-bit system, you
+will need to [compile SUPER from source][compile]. For that, you will need to install **Rust** with
+[rustup.rs][rustup].
 
-*Note: It requires Java 1.7+ and OpenSSL to run.*
+*Note: It requires Java 1.7+ to run.*
 
 ## Usage ##
 
@@ -84,11 +81,22 @@ ARGS:
 
 ## Contributing ##
 
-Everybody is welcome to contribute to SUPER. Please check out the [SUPER Contribution Guidelines](https://github.com/SUPERAndroidAnalyzer/super/blob/develop/contributing.md)
-for instructions about how to proceed.
+Everybody is welcome to contribute to SUPER. Please check out the
+[SUPER Contribution Guidelines][contributing] for instructions about how to proceed.
 
 ## License ##
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.
+
+[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master
+[linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
+[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true
+[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/master
+[coverage_img]: https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master
+[coverage]: https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master
+[compile]: http://superanalyzer.rocks/download.html#compile-from-source
+[downloads]: http://superanalyzer.rocks/download.html
+[rustup]: https://www.rustup.rs/
+[contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/develop/contributing.md
