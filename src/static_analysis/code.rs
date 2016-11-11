@@ -7,6 +7,7 @@ use std::borrow::Borrow;
 use std::thread;
 use std::sync::{Arc, Mutex};
 use std::slice::Iter;
+use std::error::Error as StdError;
 
 use serde_json;
 use serde_json::value::Value;
@@ -25,7 +26,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         Ok(r) => r,
         Err(e) => {
             print_error(format!("An error occurred when loading code analysis rules. Error: {}",
-                                e),
+                                e.description()),
                         config.is_verbose());
             return;
         }
@@ -35,7 +36,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!("An error occurred when reading files for analysis, the results \
                                might be incomplete. Error: {}",
-                              e),
+                              e.description()),
                       config.is_verbose());
     }
     let total_files = files.len();
@@ -78,7 +79,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
-                                                      e),
+                                                      e.description()),
                                               verbose)
                             }
                         }
@@ -111,7 +112,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
 
     for t in handles {
         if let Err(e) = t.join() {
-            print_warning(format!("An error occurred when joining analysis thrads: Error: {:?}",
+            print_warning(format!("An error occurred when joining analysis threads: Error: {:?}",
                                   e),
                           config.is_verbose());
         }
@@ -205,7 +206,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                    forward_check '{}'. The rule will be \
                                                    skipped. {}",
                                                   r,
-                                                  e),
+                                                  e.description()),
                                           verbose);
                             break 'rule;
                         }
@@ -272,7 +273,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
                                       real_path.display(),
-                                      e),
+                                      e.description()),
                               config.is_verbose());
                 return Err(Error::from(e));
             }
@@ -404,7 +405,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!("An error occurred when compiling the regular \
                                                expresion: {}",
-                                              e),
+                                              e.description()),
                                       config.is_verbose());
                         return Err(Error::Parse);
                     }
@@ -550,7 +551,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 Err(e) => {
                                     print_warning(format!("An error occurred when compiling the \
                                                            regular expresion: {}",
-                                                          e),
+                                                          e.description()),
                                                   config.is_verbose());
                                     return Err(Error::Parse);
                                 }
@@ -590,6 +591,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
+    use config::Config;
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
         if rule.get_regex().is_match(text.as_ref()) {
@@ -653,7 +655,7 @@ mod tests {
 
     #[test]
     fn it_url_regex() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(0).unwrap();
 
@@ -678,7 +680,7 @@ mod tests {
 
     #[test]
     fn it_catch_exception() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(1).unwrap();
 
@@ -705,7 +707,7 @@ mod tests {
 
     #[test]
     fn it_throws_exception() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(2).unwrap();
 
@@ -730,7 +732,7 @@ mod tests {
 
     #[test]
     fn it_hidden_fields() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(3).unwrap();
 
@@ -753,7 +755,7 @@ mod tests {
 
     #[test]
     fn it_ipv4_disclosure() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(4).unwrap();
 
@@ -780,7 +782,7 @@ mod tests {
 
     #[test]
     fn it_math_random() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(5).unwrap();
 
@@ -799,7 +801,7 @@ mod tests {
 
     #[test]
     fn it_log() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(6).unwrap();
 
@@ -830,7 +832,7 @@ mod tests {
 
     #[test]
     fn it_file_separator() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(7).unwrap();
 
@@ -850,7 +852,7 @@ mod tests {
 
     #[test]
     fn it_weak_algs() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(8).unwrap();
 
@@ -882,7 +884,7 @@ mod tests {
 
     #[test]
     fn it_sleep_method() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(9).unwrap();
 
@@ -909,7 +911,7 @@ mod tests {
 
     #[test]
     fn it_world_readable_permissions() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(10).unwrap();
 
@@ -933,7 +935,7 @@ mod tests {
 
     #[test]
     fn it_world_writable_permissions() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(11).unwrap();
 
@@ -957,7 +959,7 @@ mod tests {
 
     #[test]
     fn it_external_storage_write_read() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(12).unwrap();
 
@@ -976,7 +978,7 @@ mod tests {
 
     #[test]
     fn it_temp_file() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(13).unwrap();
 
@@ -995,7 +997,7 @@ mod tests {
 
     #[test]
     fn it_webview_xss() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(14).unwrap();
 
@@ -1014,7 +1016,7 @@ mod tests {
 
     #[test]
     fn it_webview_ssl_errors() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(15).unwrap();
 
@@ -1034,7 +1036,7 @@ mod tests {
 
     #[test]
     fn it_sql_injection() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(16).unwrap();
 
@@ -1061,7 +1063,7 @@ mod tests {
 
     #[test]
     fn it_ssl_accepting_all_certificates() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(17).unwrap();
 
@@ -1086,7 +1088,7 @@ mod tests {
 
     #[test]
     fn it_sms_mms_sending() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
@@ -1119,7 +1121,7 @@ mod tests {
 
     #[test]
     fn it_superuser_privileges() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(19).unwrap();
 
@@ -1142,7 +1144,7 @@ mod tests {
 
     #[test]
     fn it_superuser_device_detection() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(20).unwrap();
 
@@ -1167,7 +1169,7 @@ mod tests {
 
     #[test]
     fn it_base_station_location() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(21).unwrap();
 
@@ -1186,7 +1188,7 @@ mod tests {
 
     #[test]
     fn it_get_device_id() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(22).unwrap();
 
@@ -1205,7 +1207,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_serial() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(23).unwrap();
 
@@ -1224,7 +1226,7 @@ mod tests {
 
     #[test]
     fn it_gps_location() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(24).unwrap();
 
@@ -1250,7 +1252,7 @@ mod tests {
 
     #[test]
     fn it_base64_encode() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(25).unwrap();
 
@@ -1270,7 +1272,7 @@ mod tests {
 
     #[test]
     fn it_base64_decoding() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(26).unwrap();
 
@@ -1289,7 +1291,7 @@ mod tests {
 
     #[test]
     fn it_infinite_loop() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(27).unwrap();
 
@@ -1308,7 +1310,7 @@ mod tests {
 
     #[test]
     fn it_email_disclosure() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(28).unwrap();
 
@@ -1330,7 +1332,7 @@ mod tests {
 
     #[test]
     fn it_hardcoded_certificate() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(29).unwrap();
 
@@ -1357,7 +1359,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_operator() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(30).unwrap();
 
@@ -1376,7 +1378,7 @@ mod tests {
 
     #[test]
     fn it_get_sim_operatorname() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(31).unwrap();
 
@@ -1395,7 +1397,7 @@ mod tests {
 
     #[test]
     fn it_obfuscation() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(32).unwrap();
 
@@ -1420,7 +1422,7 @@ mod tests {
 
     #[test]
     fn it_command_exec() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(33).unwrap();
 
@@ -1445,7 +1447,7 @@ mod tests {
 
     #[test]
     fn it_ssl_getinsecure_method() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(34).unwrap();
 
@@ -1468,7 +1470,7 @@ mod tests {
 
     #[test]
     fn it_finally_with_return() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(35).unwrap();
 
@@ -1489,7 +1491,7 @@ mod tests {
 
     #[test]
     fn it_sleep_method_notvalidated() {
-        let config = Default::default();
+        let config = Config::default();
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(36).unwrap();
 

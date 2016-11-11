@@ -1,7 +1,9 @@
-use std::{fs, io};
+use std::{fs, io, fmt};
 use std::io::{Read, Write};
+use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
+use std::result::Result as StdResult;
 
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
@@ -62,6 +64,13 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
                  _ => return,
              });
     sleep(Duration::from_millis(200));
+}
+
+/// Gets the name of the package from the path of the *.apk* file.
+///
+/// Note: it will panic if the path has no `file_stem`.
+pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
+    path.as_ref().file_stem().unwrap().to_string_lossy().into_owned()
 }
 
 /// Gets the code snippet near the start and end lines.
@@ -130,6 +139,32 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
         }
     }
     Ok(String::new())
+}
+
+/// Structure to store a benchmark information.
+pub struct Benchmark {
+    label: String,
+    duration: Duration,
+}
+
+impl Benchmark {
+    /// Creates a new benchmark.
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
+        Benchmark {
+            label: label.into(),
+            duration: duration,
+        }
+    }
+}
+
+impl fmt::Display for Benchmark {
+    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+        write!(f,
+               "{}: {}.{}s",
+               self.label,
+               self.duration.as_secs(),
+               self.duration.subsec_nanos())
+    }
 }
 
 #[cfg(test)]

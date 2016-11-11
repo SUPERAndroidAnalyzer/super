@@ -12,6 +12,7 @@ use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
+use std::error::Error as StdError;
 
 use colored::Colorize;
 use toml::{Parser, Value};
@@ -31,12 +32,14 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 #[derive(Debug)]
 pub struct Config {
     /// Application packages to analyze.
-    app_packages: Vec<String>,
+    app_packages: Vec<PathBuf>,
     /// Boolean to represent `--verbose` mode.
     verbose: bool,
     /// Boolean to represent `--quiet` mode.
     quiet: bool,
-    /// Boolean to represent `--force` mode.
+    /// Boolean to represent overall `--force` mode.
+    overall_force: bool,
+    /// Boolean to represent current `--force` mode.
     force: bool,
     /// Boolean to represent `--bench` mode.
     bench: bool,
@@ -58,7 +61,9 @@ pub struct Config {
     jd_cmd_file: PathBuf,
     /// Path to the `rules.json` file.
     rules_json: PathBuf,
+    /// The folder where the templates are stored.
     templates_folder: PathBuf,
+    /// The name of the template to use.
     template: String,
     /// Represents an unknow permission.
     unknown_permission: (Criticity, String),
@@ -71,19 +76,14 @@ pub struct Config {
 impl Config {
     /// Creates a new `Config` struct.
     pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
-        let mut config: Config = Default::default();
+        let mut config = Config::default();
 
         config.verbose = cli.is_present("verbose");
         config.quiet = cli.is_present("quiet");
-        config.force = cli.is_present("force");
+        config.overall_force = cli.is_present("force");
+        config.force = config.overall_force;
         config.bench = cli.is_present("bench");
         config.open = cli.is_present("open");
-
-        if cli.is_present("test-all") {
-            config.read_apks();
-        } else {
-            config.add_app_package(cli.value_of("package").unwrap());
-        }
 
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
@@ -98,17 +98,23 @@ impl Config {
             config.loaded_files.push(config_path);
         }
 
-        config.set_options(cli);
+        config.set_options(&cli);
+
+        if cli.is_present("test-all") {
+            config.read_apks();
+        } else {
+            config.add_app_package(cli.value_of("package").unwrap());
+        }
 
         Ok(config)
     }
 
     /// Modifies the options from the CLI.
-    fn set_options(&mut self, cli: ArgMatches<'static>) {
+    fn set_options(&mut self, cli: &ArgMatches<'static>) {
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
                 Ok(t) if t > 0u8 => {
-                    self.set_threads(t);
+                    self.threads = t;
                 }
                 _ => {
                     print_warning(format!("The threads options must be an integer between 1 and \
@@ -119,28 +125,28 @@ impl Config {
             }
         }
         if let Some(downloads_folder) = cli.value_of("downloads") {
-            self.set_downloads_folder(downloads_folder);
+            self.downloads_folder = PathBuf::from(downloads_folder);
         }
         if let Some(dist_folder) = cli.value_of("dist") {
-            self.set_dist_folder(dist_folder);
+            self.dist_folder = PathBuf::from(dist_folder);
         }
         if let Some(results_folder) = cli.value_of("results") {
-            self.set_results_folder(results_folder);
+            self.results_folder = PathBuf::from(results_folder);
         }
         if let Some(apktool_file) = cli.value_of("apktool") {
-            self.set_apktool_file(apktool_file);
+            self.apktool_file = PathBuf::from(apktool_file);
         }
         if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
-            self.set_dex2jar_folder(dex2jar_folder);
+            self.dex2jar_folder = PathBuf::from(dex2jar_folder);
         }
         if let Some(jd_cmd_file) = cli.value_of("jd-cmd") {
-            self.set_jd_cmd_file(jd_cmd_file);
+            self.jd_cmd_file = PathBuf::from(jd_cmd_file);
         }
         if let Some(template_name) = cli.value_of("template") {
             self.template = template_name.to_owned();
         }
         if let Some(rules_json) = cli.value_of("rules") {
-            self.set_rules_json(rules_json);
+            self.rules_json = PathBuf::from(rules_json);
         }
     }
 
@@ -164,7 +170,7 @@ impl Config {
                         Err(e) => {
                             print_warning(format!("There was an error when reading the \
                                                    downloads folder: {}",
-                                                  e),
+                                                  e.description()),
                                           self.verbose);
                         }
                     }
@@ -172,7 +178,7 @@ impl Config {
             }
             Err(e) => {
                 print_error(format!("There was an error when reading the downloads folder: {}",
-                                    e),
+                                    e.description()),
                             self.verbose);
                 exit(Error::from(e).into());
             }
@@ -187,7 +193,7 @@ impl Config {
                     self.rules_json.exists();
         if check {
             for package in &self.app_packages {
-                if !self.get_apk_file(package).exists() {
+                if !package.exists() {
                     return false;
                 }
             }
@@ -205,9 +211,8 @@ impl Config {
                                 self.downloads_folder.display()));
         }
         for package in &self.app_packages {
-            if !self.get_apk_file(package).exists() {
-                errors.push(format!("The APK file `{}` does not exist",
-                                    self.get_apk_file(package).display()));
+            if !package.exists() {
+                errors.push(format!("The APK file `{}` does not exist", package.display()));
             }
         }
         if !self.apktool_file.exists() {
@@ -244,18 +249,22 @@ impl Config {
     }
 
     /// Returns the app package.
-    pub fn get_app_packages(&self) -> &[String] {
-        &self.app_packages
+    pub fn get_app_packages(&self) -> Vec<PathBuf> {
+        self.app_packages.clone()
     }
 
-    /// Changes the app package.
-    pub fn add_app_package<S: Into<String>>(&mut self, app_package: S) {
-        self.app_packages.push(app_package.into().replace(".apk", ""));
-    }
+    /// Adds a package to check.
+    fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
+        let mut package_path = self.downloads_folder.join(app_package);
+        if package_path.extension().is_none() {
+            package_path.set_extension("apk");
+        } else if package_path.extension().unwrap() != "apk" {
+            let mut file_name = package_path.file_name().unwrap().to_string_lossy().into_owned();
+            file_name.push_str(".apk");
+            package_path.set_file_name(file_name);
+        }
 
-    /// Returns the path to the apk file of the given package.
-    pub fn get_apk_file<S: AsRef<str>>(&self, package: S) -> PathBuf {
-        self.downloads_folder.join(format!("{}.apk", package.as_ref()))
+        self.app_packages.push(package_path);
     }
 
     /// Returns true if the application is running in `--verbose` mode, false otherwise.
@@ -263,19 +272,9 @@ impl Config {
         self.verbose
     }
 
-    /// Activate or disable `--verbose` mode.
-    pub fn set_verbose(&mut self, verbose: bool) {
-        self.verbose = verbose;
-    }
-
     /// Returns true if the application is running in `--quiet` mode, false otherwise.
     pub fn is_quiet(&self) -> bool {
         self.quiet
-    }
-
-    /// Activate or disable `--quiet` mode.
-    pub fn set_quiet(&mut self, quiet: bool) {
-        self.quiet = quiet;
     }
 
     /// Returns true if the application is running in `--force` mode, false otherwise.
@@ -283,9 +282,14 @@ impl Config {
         self.force
     }
 
-    /// Activate or disable `--force` mode.
-    pub fn set_force(&mut self, force: bool) {
-        self.force = force;
+    /// Sets the application to force recreate the analysis files and results temporarily.
+    pub fn set_force(&mut self) {
+        self.force = true;
+    }
+
+    /// Resets the `--force` option, so that it gets reset to the configured force option.
+    pub fn reset_force(&mut self) {
+        self.force = self.overall_force
     }
 
     /// Returns true if the application is running in `--bench` mode, false otherwise.
@@ -293,19 +297,9 @@ impl Config {
         self.bench
     }
 
-    /// Activate or disable `--bench` mode.
-    pub fn set_bench(&mut self, bench: bool) {
-        self.bench = bench;
-    }
-
     /// Returns true if the application is running in `--open` mode, false otherwise.
     pub fn is_open(&self) -> bool {
         self.open
-    }
-
-    /// Activate or disable `--open` mode.
-    pub fn set_open(&mut self, open: bool) {
-        self.open = open;
     }
 
     /// Returns the `threads` field.
@@ -313,29 +307,9 @@ impl Config {
         self.threads
     }
 
-    /// Sets the `threads` field.
-    pub fn set_threads(&mut self, threads: u8) {
-        self.threads = threads;
-    }
-
-    /// Returns the path to the `downloads_folder`.
-    pub fn get_downloads_folder(&self) -> &Path {
-        &self.downloads_folder
-    }
-
-    /// Sets the path to the `downloads_folder`.
-    pub fn set_downloads_folder<P: Into<PathBuf>>(&mut self, downloads_folder: P) {
-        self.downloads_folder = downloads_folder.into()
-    }
-
     /// Returns the path to the `dist_folder`.
     pub fn get_dist_folder(&self) -> &Path {
         &self.dist_folder
-    }
-
-    /// Sets the path to the `dist_folder`.
-    pub fn set_dist_folder<P: Into<PathBuf>>(&mut self, dist_folder: P) {
-        self.dist_folder = dist_folder.into()
     }
 
     /// Returns the path to the `results_folder`.
@@ -343,19 +317,9 @@ impl Config {
         &self.results_folder
     }
 
-    /// Sets the path to the `results_folder`.
-    pub fn set_results_folder<P: Into<PathBuf>>(&mut self, results_folder: P) {
-        self.results_folder = results_folder.into()
-    }
-
     /// Returns the path to the`apktool_file`.
     pub fn get_apktool_file(&self) -> &Path {
         &self.apktool_file
-    }
-
-    /// Sets the path to the `apktool_file`.
-    pub fn set_apktool_file<P: Into<PathBuf>>(&mut self, apktool_file: P) {
-        self.apktool_file = apktool_file.into()
     }
 
     /// Returns the path to the `dex2jar_folder`.
@@ -363,19 +327,9 @@ impl Config {
         &self.dex2jar_folder
     }
 
-    /// Sets the path to the `dex2jar_folder`.
-    pub fn set_dex2jar_folder<P: Into<PathBuf>>(&mut self, dex2jar_folder: P) {
-        self.dex2jar_folder = dex2jar_folder.into()
-    }
-
     /// Returns the path to the `jd_cmd_file`.
     pub fn get_jd_cmd_file(&self) -> &Path {
         &self.jd_cmd_file
-    }
-
-    /// Sets the path to the `jd_cmd_file`.
-    pub fn set_jd_cmd_file<P: Into<PathBuf>>(&mut self, jd_cmd_file: P) {
-        self.jd_cmd_file = jd_cmd_file.into()
     }
 
     /// Gets the path to the template.
@@ -393,19 +347,9 @@ impl Config {
         &self.template
     }
 
-    /// Sets the template to use, by name.
-    pub fn set_template_name<S: Into<String>>(&mut self, template_name: S) {
-        self.template = template_name.into();
-    }
-
     /// Returns the path to the `rules_json`.
     pub fn get_rules_json(&self) -> &Path {
         &self.rules_json
-    }
-
-    /// Sets the path to the `rules_json`.
-    pub fn set_rules_json<P: Into<PathBuf>>(&mut self, rules_json: P) {
-        self.rules_json = rules_json.into()
     }
 
     /// Returns the criticity of the `unknown_permission` field.
@@ -711,6 +655,7 @@ impl Config {
             app_packages: Vec::new(),
             verbose: false,
             quiet: false,
+            overall_force: false,
             force: false,
             bench: false,
             open: false,
@@ -856,7 +801,7 @@ mod tests {
         assert!(!config.is_bench());
         assert!(!config.is_open());
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), Path::new("."));
+        assert_eq!(config.downloads_folder, Path::new("."));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
@@ -892,8 +837,8 @@ mod tests {
                     since it can lead to missunderstanding between developers.");
         assert_eq!(config.get_permissions().next(), None);
 
-        if !config.get_downloads_folder().exists() {
-            fs::create_dir(config.get_downloads_folder()).unwrap();
+        if !config.downloads_folder.exists() {
+            fs::create_dir(&config.downloads_folder).unwrap();
         }
         if !config.get_dist_folder().exists() {
             fs::create_dir(config.get_dist_folder()).unwrap();
@@ -904,32 +849,40 @@ mod tests {
 
         // Change properties.
         config.add_app_package("test_app");
-        config.set_verbose(true);
-        config.set_quiet(true);
-        config.set_force(true);
-        config.set_bench(true);
-        config.set_open(true);
+        config.verbose = true;
+        config.quiet = true;
+        config.force = true;
+        config.bench = true;
+        config.open = true;
 
         // Check that the new properties are correct.
-        assert_eq!(config.get_app_packages()[0], "test_app");
+        let packages = config.get_app_packages();
+        assert_eq!(&packages[0], &config.downloads_folder.join("test_app.apk"));
         assert!(config.is_verbose());
         assert!(config.is_quiet());
         assert!(config.is_force());
         assert!(config.is_bench());
         assert!(config.is_open());
 
-        if config.get_apk_file("test_app").exists() {
-            fs::remove_file(config.get_apk_file("test_app")).unwrap();
+        config.reset_force();
+        assert!(!config.is_force());
+
+        config.overall_force = true;
+        config.reset_force();
+        assert!(config.is_force());
+
+        if packages[0].exists() {
+            fs::remove_file(&packages[0]).unwrap();
         }
         assert!(!config.check());
 
-        let _ = fs::File::create(config.get_apk_file("test_app")).unwrap();
+        let _ = fs::File::create(&packages[0]).unwrap();
         assert!(config.check());
 
         let config = Config::default();
         assert!(config.check());
 
-        fs::remove_file(config.get_apk_file("test_app")).unwrap();
+        fs::remove_file(&packages[0]).unwrap();
     }
 
     /// Test for the `config.toml.sample` sample configuration file.
@@ -942,7 +895,7 @@ mod tests {
 
         // Check that the properties of the config object are correct.
         assert_eq!(config.get_threads(), 2);
-        assert_eq!(config.get_downloads_folder(), Path::new("downloads"));
+        assert_eq!(config.downloads_folder, Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_apktool_file(),

@@ -8,6 +8,8 @@ pub mod manifest;
 pub mod certificate;
 pub mod code;
 
+use std::error::Error;
+
 use self::manifest::*;
 #[cfg(feature = "certificate")]
 use self::certificate::*;
@@ -33,7 +35,8 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     if cfg!(feature = "certificate") {
         // Run analysis for cerificate file.
         if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
-            print_warning(format!("There was an error analysing the certificate: {:?}", e),
+            print_warning(format!("There was an error analysing the certificate: {:?}",
+                                  e.description()),
                           config.is_verbose())
         }
     }

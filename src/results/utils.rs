@@ -1,9 +1,8 @@
-use std::{fmt, result};
+use std::result::Result as StdResult;
 use std::fs::File;
 use std::io::Read;
 use std::cmp::Ordering;
 use std::path::{Path, PathBuf};
-use std::time::Duration;
 use std::borrow::Cow;
 
 use serde::ser::{Serialize, Serializer};
@@ -14,7 +13,7 @@ use crypto::sha2::Sha256;
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
-use {Config, Result, Criticity};
+use {Result, Criticity};
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
@@ -63,7 +62,7 @@ impl Vulnerability {
 }
 
 impl Serialize for Vulnerability {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+    fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
         where S: Serializer
     {
         let mut state = try!(serializer.serialize_struct("Vulnerability",
@@ -121,8 +120,8 @@ pub struct FingerPrint {
 
 impl FingerPrint {
     /// Creates a new fingerprint.
-    pub fn new<S: AsRef<str>>(config: &Config, package: S) -> Result<FingerPrint> {
-        let mut f = try!(File::open(config.get_apk_file(package)));
+    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
+        let mut f = try!(File::open(package));
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
         let _ = try!(f.read_to_end(&mut buffer));
 
@@ -149,7 +148,7 @@ impl FingerPrint {
 }
 
 impl Serialize for FingerPrint {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+    fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
         where S: Serializer
     {
         let mut state = try!(serializer.serialize_struct("fingerprint", 3));
@@ -199,31 +198,5 @@ pub fn html_escape<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
         Cow::Owned(output)
     } else {
         input
-    }
-}
-
-/// Structure to store a benchmark information.
-pub struct Benchmark {
-    label: String,
-    duration: Duration,
-}
-
-impl Benchmark {
-    /// Creates a new benchmark.
-    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
-        Benchmark {
-            label: label.into(),
-            duration: duration,
-        }
-    }
-}
-
-impl fmt::Display for Benchmark {
-    fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
-        write!(f,
-               "{}: {}.{}s",
-               self.label,
-               self.duration.as_secs(),
-               self.duration.subsec_nanos())
     }
 }

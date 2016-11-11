@@ -28,12 +28,13 @@ mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_defaultdocdir}/%{name}/
 install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
 install -p -m 755 target/release/%{name} %{buildroot}%{_bindir}/
-install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar2.1-SNAPSHOT/lib/
+install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D templates/%{name}/css/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/css/
 install -p -m 644 -D templates/%{name}/img/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/img/
 install -p -m 644 -D templates/%{name}/js/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/js/
+install -p -m 644 -D templates/%{name}/*.hbs %{buildroot}%{_datadir}/%{name}/templates/%{name}/
 install -p -m 755 -D vendor/*.jar %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 -D vendor/*.txt %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 rules.json %{buildroot}%{_sysconfdir}/%{name}/
