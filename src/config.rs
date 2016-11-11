@@ -88,13 +88,13 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                try!(config.load_from_file(&config_path));
+                config.load_from_file(&config_path)?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            try!(config.load_from_file(&config_path));
+            config.load_from_file(&config_path)?;
             config.loaded_files.push(config_path);
         }
 
@@ -369,9 +369,9 @@ impl Config {
 
     /// Loads a configuration file into the `Config` struct.
     fn load_from_file<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
-        let mut f = try!(fs::File::open(path));
+        let mut f = fs::File::open(path)?;
         let mut toml = String::new();
-        let _ = try!(f.read_to_string(&mut toml));
+        let _ = f.read_to_string(&mut toml)?;
 
         // Parse the configuration file.
         let mut parser = Parser::new(toml.as_str());

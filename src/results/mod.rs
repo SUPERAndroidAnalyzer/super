@@ -117,19 +117,24 @@ impl Results {
         let _ = handlebars.register_helper("all_code", Box::new(all_code));
         let _ = handlebars.register_helper("all_lines", Box::new(all_lines));
         let _ = handlebars.register_helper("generate_menu", Box::new(generate_menu));
-        for dir_entry in try!(fs::read_dir(config.get_template_path())) {
-            let dir_entry = try!(dir_entry);
+        for dir_entry in fs::read_dir(config.get_template_path())? {
+            let dir_entry = dir_entry?;
             if let Some(ext) = dir_entry.path().extension() {
                 if ext == "hbs" {
-                    try!(handlebars.register_template_file(try!(try!(dir_entry.path()
-                            .file_stem()
-                            .ok_or(Error::TemplateName(String::from("template files \
-                                                                          must have a file \
-                                                                          name"))))
-                        .to_str()
-                        .ok_or(Error::TemplateName(String::from("template names must be \
-                                                                  unicode")))),
-                                                           dir_entry.path()));
+                    handlebars.register_template_file(dir_entry.path()
+                                                    .file_stem()
+                                                    .ok_or_else(|| {
+                                                        Error::TemplateName("template files must \
+                                                                             have a file name"
+                                                            .to_owned())
+                                                    })?
+                                                    .to_str()
+                                                    .ok_or_else(|| {
+                                                        Error::TemplateName("template names must \
+                                                                             be unicode"
+                                                            .to_owned())
+                                                    })?,
+                                                dir_entry.path())?;
                 }
             }
         }
@@ -220,19 +225,19 @@ impl Results {
             if config.is_verbose() {
                 println!("Starting report generation. First we'll create the results folder.");
             }
-            try!(fs::create_dir_all(&path));
+            fs::create_dir_all(&path)?;
             if config.is_verbose() {
                 println!("Results folder created. Time to create the reports.");
             }
 
-            try!(self.generate_json_report(config));
+            self.generate_json_report(config)?;
 
             if config.is_verbose() {
                 println!("JSON report generated.");
                 println!("");
             }
 
-            try!(self.generate_html_report(config, package));
+            self.generate_html_report(config, package)?;
 
             if config.is_verbose() {
                 println!("HTML report generated.");
@@ -253,13 +258,13 @@ impl Results {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }
-        let mut f = BufWriter::new(try!(File::create(config.get_results_folder()
+        let mut f = BufWriter::new(File::create(config.get_results_folder()
             .join(&self.app_package)
-            .join("results.json"))));
+            .join("results.json"))?);
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
-        try!(ser::to_writer(&mut f, self));
+        ser::to_writer(&mut f, self)?;
 
         Ok(())
     }
@@ -268,52 +273,52 @@ impl Results {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = try!(File::create(config.get_results_folder()
+        let mut f = File::create(config.get_results_folder()
             .join(&self.app_package)
-            .join("index.html")));
+            .join("index.html"))?;
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        try!(f.write_all(try!(self.templates.render("report", self)).as_bytes()));
+        f.write_all(self.templates.render("report", self)?.as_bytes())?;
 
-        for entry in try!(fs::read_dir(config.get_template_path())) {
-            let entry = try!(entry);
+        for entry in fs::read_dir(config.get_template_path())? {
+            let entry = entry?;
             let entry_path = entry.path();
-            if try!(entry.file_type()).is_dir() {
-                try!(copy_folder(&entry_path,
-                                 &config.get_results_folder()
-                                     .join(&self.app_package)
-                                     .join(entry_path.file_name().unwrap())));
+            if entry.file_type()?.is_dir() {
+                copy_folder(&entry_path,
+                            &config.get_results_folder()
+                                .join(&self.app_package)
+                                .join(entry_path.file_name().unwrap()))?;
             } else {
                 match entry_path.as_path().extension() {
                     Some(e) if e == "hbs" => {}
                     None => {}
                     _ => {
-                        let _ = try!(fs::copy(&entry_path,
-                                              &config.get_results_folder()
-                                                  .join(&self.app_package)));
+                        let _ = fs::copy(&entry_path,
+                                         &config.get_results_folder()
+                                             .join(&self.app_package))?;
                     }
                 }
             }
         }
 
-        try!(self.generate_code_html_files(config, package));
+        self.generate_code_html_files(config, package)?;
 
         Ok(())
     }
 
     fn generate_code_html_files<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
-        let menu = Value::Array(try!(self.generate_code_html_folder("", config, package)));
+        let menu = Value::Array(self.generate_code_html_folder("", config, package)?);
 
-        let mut f = try!(File::create(config.get_results_folder()
+        let mut f = File::create(config.get_results_folder()
             .join(&self.app_package)
             .join("src")
-            .join("index.html")));
+            .join("index.html"))?;
 
         let mut data = BTreeMap::new();
         let _ = data.insert("menu", menu);
-        try!(f.write_all(try!(self.templates.render("src", &data)).as_bytes()));
+        f.write_all(self.templates.render("src", &data)?.as_bytes())?;
 
         Ok(())
     }
@@ -328,18 +333,18 @@ impl Results {
            path.as_ref() == Path::new("smali") {
             return Ok(Vec::new());
         }
-        let dir_iter = try!(fs::read_dir(config.get_dist_folder()
+        let dir_iter = fs::read_dir(config.get_dist_folder()
             .join(cli_package_name.as_ref())
-            .join(path.as_ref())));
+            .join(path.as_ref()))?;
 
-        try!(fs::create_dir_all(config.get_results_folder()
+        fs::create_dir_all(config.get_results_folder()
             .join(&self.app_package)
             .join("src")
-            .join(path.as_ref())));
+            .join(path.as_ref()))?;
 
         let mut menu = Vec::new();
         for entry in dir_iter {
-            let entry = try!(entry);
+            let entry = entry?;
             let path = entry.path();
 
             let prefix = config.get_dist_folder().join(cli_package_name.as_ref());
@@ -347,8 +352,8 @@ impl Results {
 
             if path.is_dir() {
                 if stripped != Path::new("original") {
-                    let inner_menu = try!(self.generate_code_html_folder(stripped, config,
-                                                            cli_package_name.as_ref()));
+                    let inner_menu = self.generate_code_html_folder(stripped, config,
+                                                            cli_package_name.as_ref())?;
                     if !inner_menu.is_empty() {
                         let mut object = BTreeMap::new();
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
@@ -362,15 +367,14 @@ impl Results {
                             .join("src")
                             .join(stripped);
                         if path.exists() {
-                            try!(fs::remove_dir_all(path));
+                            fs::remove_dir_all(path)?;
                         }
                     }
                 }
             } else {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
-                        try!(self.generate_code_html_for(&stripped, config,
-                                                         cli_package_name.as_ref()));
+                        self.generate_code_html_for(&stripped, config, cli_package_name.as_ref())?;
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = BTreeMap::new();
                         let _ = data.insert(String::from("name"), Value::String(name));
@@ -393,18 +397,18 @@ impl Results {
                                                              config: &Config,
                                                              cli_package_name: S)
                                                              -> Result<()> {
-        let mut f_in = try!(File::open(config.get_dist_folder()
+        let mut f_in = File::open(config.get_dist_folder()
             .join(cli_package_name.as_ref())
-            .join(path.as_ref())));
-        let mut f_out = try!(File::create(format!("{}.html",
-                                                  config.get_results_folder()
-                                                      .join(&self.app_package)
-                                                      .join("src")
-                                                      .join(path.as_ref())
-                                                      .display())));
+            .join(path.as_ref()))?;
+        let mut f_out = File::create(format!("{}.html",
+                                             config.get_results_folder()
+                                                 .join(&self.app_package)
+                                                 .join("src")
+                                                 .join(path.as_ref())
+                                                 .display()))?;
 
         let mut code = String::new();
-        let _ = try!(f_in.read_to_string(&mut code));
+        let _ = f_in.read_to_string(&mut code)?;
 
         let mut back_path = String::new();
         for _ in path.as_ref().components() {
@@ -417,7 +421,7 @@ impl Results {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        try!(f_out.write_all(try!(self.templates.render("code", &data)).as_bytes()));
+        f_out.write_all(self.templates.render("code", &data)?.as_bytes())?;
 
         Ok(())
     }
@@ -428,39 +432,38 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut state = try!(serializer.serialize_struct("Results", 23));
+        let mut state = serializer.serialize_struct("Results", 23)?;
 
-        try!(serializer.serialize_struct_elt(&mut state, "super_version", crate_version!()));
-        try!(serializer.serialize_struct_elt(&mut state, "now", &now));
-        try!(serializer.serialize_struct_elt(&mut state, "now_rfc2822", now.to_rfc2822()));
-        try!(serializer.serialize_struct_elt(&mut state, "now_rfc3339", now.to_rfc3339()));
+        serializer.serialize_struct_elt(&mut state, "super_version", crate_version!())?;
+        serializer.serialize_struct_elt(&mut state, "now", &now)?;
+        serializer.serialize_struct_elt(&mut state, "now_rfc2822", now.to_rfc2822())?;
+        serializer.serialize_struct_elt(&mut state, "now_rfc3339", now.to_rfc3339())?;
 
-        try!(serializer.serialize_struct_elt(&mut state, "app_package", &self.app_package));
-        try!(serializer.serialize_struct_elt(&mut state, "app_version", &self.app_version));
-        try!(serializer.serialize_struct_elt(&mut state, "app_version_number",
-                                             &self.app_version_num));
-        try!(serializer.serialize_struct_elt(&mut state, "app_fingerprint", &self.app_fingerprint));
-        try!(serializer.serialize_struct_elt(&mut state, "certificate", &self.certificate));
+        serializer.serialize_struct_elt(&mut state, "app_package", &self.app_package)?;
+        serializer.serialize_struct_elt(&mut state, "app_version", &self.app_version)?;
+        serializer.serialize_struct_elt(&mut state, "app_version_number", &self.app_version_num)?;
+        serializer.serialize_struct_elt(&mut state, "app_fingerprint", &self.app_fingerprint)?;
+        serializer.serialize_struct_elt(&mut state, "certificate", &self.certificate)?;
 
-        try!(serializer.serialize_struct_elt(&mut state, "app_min_sdk", &self.app_min_sdk));
-        try!(serializer.serialize_struct_elt(&mut state, "app_target_sdk", &self.app_target_sdk));
+        serializer.serialize_struct_elt(&mut state, "app_min_sdk", &self.app_min_sdk)?;
+        serializer.serialize_struct_elt(&mut state, "app_target_sdk", &self.app_target_sdk)?;
 
-        try!(serializer.serialize_struct_elt(&mut state,
-                                             "total_vulnerabilities",
-                                             self.low.len() + self.medium.len() + self.high.len() +
-                                             self.critical.len()));
-        try!(serializer.serialize_struct_elt(&mut state, "criticals", &self.critical));
-        try!(serializer.serialize_struct_elt(&mut state, "criticals_len", self.critical.len()));
-        try!(serializer.serialize_struct_elt(&mut state, "highs", &self.high));
-        try!(serializer.serialize_struct_elt(&mut state, "highs_len", self.high.len()));
-        try!(serializer.serialize_struct_elt(&mut state, "mediums", &self.medium));
-        try!(serializer.serialize_struct_elt(&mut state, "mediums_len", self.medium.len()));
-        try!(serializer.serialize_struct_elt(&mut state, "lows", &self.low));
-        try!(serializer.serialize_struct_elt(&mut state, "lows_len", self.low.len()));
-        try!(serializer.serialize_struct_elt(&mut state, "warnings", &self.warnings));
-        try!(serializer.serialize_struct_elt(&mut state, "warnings_len", self.warnings.len()));
+        serializer.serialize_struct_elt(&mut state,
+                                  "total_vulnerabilities",
+                                  self.low.len() + self.medium.len() + self.high.len() +
+                                  self.critical.len())?;
+        serializer.serialize_struct_elt(&mut state, "criticals", &self.critical)?;
+        serializer.serialize_struct_elt(&mut state, "criticals_len", self.critical.len())?;
+        serializer.serialize_struct_elt(&mut state, "highs", &self.high)?;
+        serializer.serialize_struct_elt(&mut state, "highs_len", self.high.len())?;
+        serializer.serialize_struct_elt(&mut state, "mediums", &self.medium)?;
+        serializer.serialize_struct_elt(&mut state, "mediums_len", self.medium.len())?;
+        serializer.serialize_struct_elt(&mut state, "lows", &self.low)?;
+        serializer.serialize_struct_elt(&mut state, "lows_len", self.low.len())?;
+        serializer.serialize_struct_elt(&mut state, "warnings", &self.warnings)?;
+        serializer.serialize_struct_elt(&mut state, "warnings_len", self.warnings.len())?;
 
-        try!(serializer.serialize_struct_end(state));
+        serializer.serialize_struct_end(state)?;
         Ok(())
     }
 }

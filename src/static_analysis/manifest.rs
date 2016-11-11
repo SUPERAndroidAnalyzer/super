@@ -206,12 +206,12 @@ impl Manifest {
                                                package: S,
                                                results: &mut Results)
                                                -> Result<Manifest> {
-        let mut file = try!(File::open(format!("{}/AndroidManifest.xml", path.as_ref().display())));
+        let mut file = File::open(format!("{}/AndroidManifest.xml", path.as_ref().display()))?;
         let mut manifest = Manifest::default();
-        try!(manifest.read_yaml(path, config));
+        manifest.read_yaml(path, config)?;
 
         let mut code = String::new();
-        let _ = try!(file.read_to_string(&mut code));
+        let _ = file.read_to_string(&mut code)?;
         manifest.set_code(code.as_str());
 
         let bytes = code.into_bytes();
@@ -481,9 +481,9 @@ impl Manifest {
 
     fn read_yaml<P: AsRef<Path>>(&mut self, path: P, config: &Config) -> Result<()> {
         let yaml_warning = "An error occurred when parsing the apktool.yml file.";
-        let mut file = try!(File::open(path.as_ref().join("apktool.yml")));
+        let mut file = File::open(path.as_ref().join("apktool.yml"))?;
         let mut code = String::new();
-        let _ = try!(file.read_to_string(&mut code));
+        let _ = file.read_to_string(&mut code)?;
         match YamlLoader::load_from_str(&code) {
             Ok(mut apktool_info) => {
                 match apktool_info.pop() {

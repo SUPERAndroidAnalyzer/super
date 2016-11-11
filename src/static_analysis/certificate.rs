@@ -39,7 +39,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         .join(package.as_ref())
         .join("original")
         .join("META-INF");
-    let dir_iter = try!(fs::read_dir(&path));
+    let dir_iter = fs::read_dir(&path)?;
 
     for f in dir_iter {
         let f = match f {

@@ -65,41 +65,40 @@ impl Serialize for Vulnerability {
     fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
         where S: Serializer
     {
-        let mut state = try!(serializer.serialize_struct("Vulnerability",
-                                                         if self.code.is_some() {
-                                                             if self.start_line == self.end_line {
-                                                                 7
-                                                             } else {
-                                                                 8
-                                                             }
-                                                         } else {
-                                                             4
-                                                         }));
-        try!(serializer.serialize_struct_elt(&mut state, "criticity", self.criticity));
-        try!(serializer.serialize_struct_elt(&mut state, "name", self.name.as_str()));
-        try!(serializer.serialize_struct_elt(&mut state, "description", self.description.as_str()));
-        try!(serializer.serialize_struct_elt(&mut state, "file", &self.file));
+        let mut state = serializer.serialize_struct("Vulnerability",
+                              if self.code.is_some() {
+                                  if self.start_line == self.end_line {
+                                      7
+                                  } else {
+                                      8
+                                  }
+                              } else {
+                                  4
+                              })?;
+        serializer.serialize_struct_elt(&mut state, "criticity", self.criticity)?;
+        serializer.serialize_struct_elt(&mut state, "name", self.name.as_str())?;
+        serializer.serialize_struct_elt(&mut state, "description", self.description.as_str())?;
+        serializer.serialize_struct_elt(&mut state, "file", &self.file)?;
         if self.code.is_some() {
-            try!(serializer.serialize_struct_elt(&mut state,
-                                                 "language",
-                                                 self.file
-                                                     .as_ref()
-                                                     .unwrap()
-                                                     .extension()
-                                                     .unwrap()
-                                                     .to_string_lossy()));
+            serializer.serialize_struct_elt(&mut state,
+                                      "language",
+                                      self.file
+                                          .as_ref()
+                                          .unwrap()
+                                          .extension()
+                                          .unwrap()
+                                          .to_string_lossy())?;
             if self.start_line == self.end_line {
-                try!(serializer.serialize_struct_elt(&mut state, "line",
-                                                     self.start_line.unwrap() + 1));
+                serializer.serialize_struct_elt(&mut state, "line", self.start_line.unwrap() + 1)?;
             } else {
-                try!(serializer.serialize_struct_elt(&mut state, "start_line",
-                                                     self.start_line.unwrap()+1));
-                try!(serializer.serialize_struct_elt(&mut state, "end_line",
-                                                     self.end_line.unwrap() + 1));
+                serializer.serialize_struct_elt(&mut state, "start_line",
+                                                     self.start_line.unwrap()+1)?;
+                serializer.serialize_struct_elt(&mut state, "end_line",
+                                                     self.end_line.unwrap() + 1)?;
             }
-            try!(serializer.serialize_struct_elt(&mut state, "code", &self.code));
+            serializer.serialize_struct_elt(&mut state, "code", &self.code)?;
         }
-        try!(serializer.serialize_struct_end(state));
+        serializer.serialize_struct_end(state)?;
         Ok(())
     }
 }
@@ -121,9 +120,9 @@ pub struct FingerPrint {
 impl FingerPrint {
     /// Creates a new fingerprint.
     pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
-        let mut f = try!(File::open(package));
+        let mut f = File::open(package)?;
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
-        let _ = try!(f.read_to_end(&mut buffer));
+        let _ = f.read_to_end(&mut buffer)?;
 
         let mut md5 = Md5::new();
         let mut sha1 = Sha1::new();
@@ -151,11 +150,11 @@ impl Serialize for FingerPrint {
     fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
         where S: Serializer
     {
-        let mut state = try!(serializer.serialize_struct("fingerprint", 3));
-        try!(serializer.serialize_struct_elt(&mut state, "md5", self.md5.to_hex()));
-        try!(serializer.serialize_struct_elt(&mut state, "sha1", self.sha1.to_hex()));
-        try!(serializer.serialize_struct_elt(&mut state, "sha256", self.sha256.to_hex()));
-        try!(serializer.serialize_struct_end(state));
+        let mut state = serializer.serialize_struct("fingerprint", 3)?;
+        serializer.serialize_struct_elt(&mut state, "md5", self.md5.to_hex())?;
+        serializer.serialize_struct_elt(&mut state, "sha1", self.sha1.to_hex())?;
+        serializer.serialize_struct_elt(&mut state, "sha256", self.sha256.to_hex())?;
+        serializer.serialize_struct_end(state)?;
         Ok(())
     }
 }

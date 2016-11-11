@@ -15,10 +15,12 @@ pub fn line_numbers(_: &Context,
                     _: &Handlebars,
                     rc: &mut RenderContext)
                     -> Result<(), RenderError> {
-    let vulnerability = try!(h.param(0)
+    let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
-        .ok_or(RenderError::new("to generate the vulnerability index, the first parameter must \
-                                 be a vulnerability")));
+        .ok_or_else(|| {
+            RenderError::new("to generate the vulnerability index, the first parameter must be a \
+                              vulnerability")
+        })?;
     let line_separator = match h.param(1) {
         Some(s) => {
             match *s.value() {
@@ -49,7 +51,7 @@ pub fn line_numbers(_: &Context,
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
     }
-    let _ = try!(rc.writer.write(rendered.as_bytes()));
+    let _ = rc.writer.write(rendered.as_bytes())?;
 
     Ok(())
 }
@@ -63,9 +65,9 @@ pub fn all_lines(_: &Context,
                  _: &Handlebars,
                  rc: &mut RenderContext)
                  -> Result<(), RenderError> {
-    let code = try!(h.param(0)
+    let code = h.param(0)
         .and_then(|v| v.value().as_str())
-        .ok_or(RenderError::new("the code must be a string")));
+        .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
             match *s.value() {
@@ -85,7 +87,7 @@ pub fn all_lines(_: &Context,
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
     }
-    let _ = try!(rc.writer.write(rendered.as_bytes()));
+    let _ = rc.writer.write(rendered.as_bytes())?;
 
     Ok(())
 }
@@ -99,9 +101,9 @@ pub fn all_code(_: &Context,
                 _: &Handlebars,
                 rc: &mut RenderContext)
                 -> Result<(), RenderError> {
-    let code = try!(h.param(0)
+    let code = h.param(0)
         .and_then(|v| v.value().as_str())
-        .ok_or(RenderError::new("the code must be a string")));
+        .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
             match *s.value() {
@@ -123,7 +125,7 @@ pub fn all_code(_: &Context,
                            indent,
                            html_escape(line),
                            line_separator);
-        let _ = try!(rc.writer.write(line.as_bytes()));
+        let _ = rc.writer.write(line.as_bytes())?;
     }
 
     Ok(())
@@ -145,10 +147,12 @@ pub fn html_code(_: &Context,
                  _: &Handlebars,
                  rc: &mut RenderContext)
                  -> Result<(), RenderError> {
-    let vulnerability = try!(h.param(0)
+    let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
-        .ok_or(RenderError::new("to generate the vulnerability index, the first parameter must \
-                                 be a vulnerability")));
+        .ok_or_else(|| {
+            RenderError::new("to generate the vulnerability index, the first parameter must be a \
+                              vulnerability")
+        })?;
     let line_separator = match h.param(1) {
         Some(s) => {
             match *s.value() {
@@ -187,7 +191,7 @@ pub fn html_code(_: &Context,
             format!("{}{}", html_escape(line), line_separator)
         };
 
-        let _ = try!(rc.writer.write(rendered.as_bytes()));
+        let _ = rc.writer.write(rendered.as_bytes())?;
     }
 
     Ok(())
@@ -202,14 +206,18 @@ pub fn report_index(_: &Context,
                     _: &Handlebars,
                     rc: &mut RenderContext)
                     -> Result<(), RenderError> {
-    let vulnerability = try!(h.param(0)
+    let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
-        .ok_or(RenderError::new("to generate the vulnerability index, the first parameter must \
-                                 be a vulnerability")));
-    let index = try!(h.param(1)
+        .ok_or_else(|| {
+            RenderError::new("to generate the vulnerability index, the first parameter must be a \
+                              vulnerability")
+        })?;
+    let index = h.param(1)
         .and_then(|v| v.value().as_u64())
-        .ok_or(RenderError::new("the index of the vulnerability in the current list must \
-                                 be the second parameter"))) as usize + 1;
+        .ok_or_else(|| {
+            RenderError::new("the index of the vulnerability in the current list must be the \
+                              second parameter")
+        })? as usize + 1;
 
     let list_len = h.param(2).unwrap().value().as_u64().unwrap();
     let char_index = vulnerability.get("criticity")
@@ -226,7 +234,7 @@ pub fn report_index(_: &Context,
         index_padding = 2;
     }
     let rendered = format!("{}{:#02$}", char_index, index, index_padding);
-    let _ = try!(rc.writer.write(rendered.as_bytes()));
+    let _ = rc.writer.write(rendered.as_bytes())?;
 
     Ok(())
 }
@@ -240,48 +248,49 @@ pub fn generate_menu(_: &Context,
                      _: &Handlebars,
                      rc: &mut RenderContext)
                      -> Result<(), RenderError> {
-    let menu = try!(h.param(0)
+    let menu = h.param(0)
         .and_then(|m| m.value().as_array())
-        .ok_or(RenderError::new("to generate the menu, the first parameter must be a menu \
-                                 array")));
-    let _ = try!(rc.writer.write(b"<ul>"));
-    try!(render_menu(menu, &mut rc.writer));
-    let _ = try!(rc.writer.write(b"</ul>"));
+        .ok_or_else(|| {
+            RenderError::new("to generate the menu, the first parameter must be a menu array")
+        })?;
+    let _ = rc.writer.write(b"<ul>")?;
+    render_menu(menu, &mut rc.writer)?;
+    let _ = rc.writer.write(b"</ul>")?;
     Ok(())
 }
 
 fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderError> {
     for value in menu {
         if let Value::Object(ref item) = *value {
-            let _ = try!(renderer.write(b"<li>"));
-            let name = try!(item.get("name")
+            let _ = renderer.write(b"<li>")?;
+            let name = item.get("name")
                 .and_then(|n| n.as_str())
-                .ok_or(RenderError::new("invalid menu object type")));
+                .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
-                let _ = try!(renderer.write(format!("<a href=\"#\" title=\"{0}\"><img \
-                                                     src=\"../img/folder-icon.png\">{0}</a>",
-                                                    name)
-                    .as_bytes()));
-                let _ = try!(renderer.write(b"<ul>"));
+                let _ = renderer.write(format!("<a href=\"#\" title=\"{0}\"><img \
+                                    src=\"../img/folder-icon.png\">{0}</a>",
+                                   name)
+                        .as_bytes())?;
+                let _ = renderer.write(b"<ul>")?;
 
-                try!(render_menu(menu, renderer));
-                let _ = try!(renderer.write(b"</ul>"));
+                render_menu(menu, renderer)?;
+                let _ = renderer.write(b"</ul>")?;
             } else {
-                let path = try!(item.get("path")
+                let path = item.get("path")
                     .and_then(|n| n.as_str())
-                    .ok_or(RenderError::new("invalid menu object type")));
-                let file_type = try!(item.get("type")
+                    .ok_or_else(|| RenderError::new("invalid menu object type"))?;
+                let file_type = item.get("type")
                     .and_then(|n| n.as_str())
-                    .ok_or(RenderError::new("invalid menu object type")));
-                let _ = try!(renderer.write(format!("<a href=\"{1}.html\" title=\"{0}\" \
+                    .ok_or_else(|| RenderError::new("invalid menu object type"))?;
+                let _ = renderer.write(format!("<a href=\"{1}.html\" title=\"{0}\" \
                                                      target=\"code\"><img \
                                                      src=\"../img/{2}-icon.png\">{0}</a>",
                                                     name,
                                                     path,
                                                     file_type)
-                    .as_bytes()));
+                    .as_bytes())?;
             }
-            let _ = try!(renderer.write(b"</li>"));
+            let _ = renderer.write(b"</li>")?;
         } else {
             return Err(RenderError::new("invalid menu object type"));
         }

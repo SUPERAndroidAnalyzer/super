@@ -17,9 +17,9 @@
    folder.
  - Added options to the CLI to modify the properties in the config file. We now have
    `--downloads`, `--threads`, `--dist`, `--results`, `--apktool`, `--dex2jar`, `--jd-cmd`,
-    `--rules` or `--template` options in the CLI.
+   `--rules` or `--template` options in the CLI.
 
-## Changes in rules
+### Changes in rules
 
  - SUPER now detects `exported` attributes in `<provider>`, `<receiver>`, `<activity>`,
    `<activity-alias>` and `<service>` tags in the *AndroidManifest.xml*, and reports potential

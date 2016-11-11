@@ -94,7 +94,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                                                 config: &Config,
                                                 package: P)
                                                 -> Result<String> {
-    let mut file = try!(fs::File::open({
+    let mut file = fs::File::open({
         let path = config.get_dist_folder()
             .join(package.as_ref())
             .join("res")
@@ -110,10 +110,10 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                 .join("values")
                 .join("strings.xml")
         }
-    }));
+    })?;
 
     let mut code = String::new();
-    let _ = try!(file.read_to_string(&mut code));
+    let _ = file.read_to_string(&mut code)?;
 
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);

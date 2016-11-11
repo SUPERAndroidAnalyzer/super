@@ -137,9 +137,9 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                 results: &Mutex<Vec<Vulnerability>>,
                                                 verbose: bool)
                                                 -> Result<()> {
-    let mut f = try!(File::open(&path));
+    let mut f = File::open(&path)?;
     let mut code = String::new();
-    let _ = try!(f.read_to_string(&mut code));
+    let _ = f.read_to_string(&mut code)?;
 
     'check: for rule in rules {
         if manifest.is_some() && rule.get_max_sdk().is_some() &&
@@ -267,7 +267,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
     let real_path = config.get_dist_folder()
         .join(package.as_ref())
         .join(path);
-    for f in try!(fs::read_dir(&real_path)) {
+    for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
@@ -278,17 +278,17 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
                 return Err(Error::from(e));
             }
         };
-        let f_type = try!(f.file_type());
+        let f_type = f.file_type()?;
         let f_path = f.path();
         let f_ext = f_path.extension();
         if f_type.is_dir() && f_path != real_path.join("original") {
-            try!(add_files_to_vec(f.path()
-                                      .strip_prefix(&config.get_dist_folder()
-                                          .join(package.as_ref()))
-                                      .unwrap(),
-                                  vec,
-                                  package.as_ref(),
-                                  config));
+            add_files_to_vec(f.path()
+                                 .strip_prefix(&config.get_dist_folder()
+                                     .join(package.as_ref()))
+                                 .unwrap(),
+                             vec,
+                             package.as_ref(),
+                             config)?;
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
             if filename != "AndroidManifest.xml" && filename != "R.java" &&
@@ -349,8 +349,8 @@ impl Rule {
 }
 
 fn load_rules(config: &Config) -> Result<Vec<Rule>> {
-    let f = try!(File::open(config.get_rules_json()));
-    let rules_json: Value = try!(serde_json::from_reader(f));
+    let f = File::open(config.get_rules_json())?;
+    let rules_json: Value = serde_json::from_reader(f)?;
 
     let mut rules = Vec::new();
     let rules_json = match rules_json.as_array() {

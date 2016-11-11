@@ -408,7 +408,7 @@ impl Serialize for Criticity {
     fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
         where S: Serializer
     {
-        try!(serializer.serialize_str(format!("{}", self).as_str()));
+        serializer.serialize_str(format!("{}", self).as_str())?;
         Ok(())
     }
 }
@@ -434,15 +434,15 @@ impl FromStr for Criticity {
 /// overwriten.
 pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     if !to.as_ref().exists() {
-        try!(fs::create_dir(to.as_ref()));
+        fs::create_dir(to.as_ref())?;
     }
 
-    for f in try!(fs::read_dir(from)) {
-        let f = try!(f);
+    for f in fs::read_dir(from)? {
+        let f = f?;
         if f.path().is_dir() {
-            try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+            copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
         } else {
-            let _ = try!(fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+            let _ = fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
         }
     }
     Ok(())
