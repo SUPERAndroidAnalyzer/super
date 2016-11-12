@@ -31,6 +31,12 @@
 # Vulnerability rules JSON
 # rules_json = "/etc/super/rules.json"
 
+# Generates HTML report
+# html_report = true
+
+# Generates JSON report
+# json_report = false
+
 ### PERMISSIONS ###
 # Add or remove permissions if you wish to change them. The format is the following:
 #[[permissions]]

@@ -175,22 +175,36 @@ impl Results {
                 println!("Results folder created. Time to create the reports.");
             }
 
-            let mut json_reporter = Json::new();
-            json_reporter.generate(config, self).unwrap();
+            if config.has_to_generate_json() {
+                let mut json_reporter = Json::new();
 
-            if config.is_verbose() {
-                println!("JSON report generated.");
-                println!("");
+                if let Err(e) = json_reporter.generate(config, self) {
+                    print_warning(format!("There was en error generating JSON report: {}", e),
+                                  config.is_verbose());
+                }
+
+                if config.is_verbose() {
+                    println!("JSON report generated.");
+                    println!("");
+                }
             }
 
-            let mut handlebars_reporter = HandlebarsReport::new(config.get_template_path(),
-                                                                package.as_ref().to_owned())
-                .unwrap();
-            handlebars_reporter.generate(config, self).unwrap();
+            if config.has_to_generate_html() {
+                let handelbars_report_result = HandlebarsReport::new(config.get_template_path(),
+                                                                     package.as_ref().to_owned());
 
-            if config.is_verbose() {
-                println!("HTML report generated.");
+                if let Ok(mut handlebars_reporter) = handelbars_report_result {
+                    if let Err(e) = handlebars_reporter.generate(config, self) {
+                        print_warning(format!("There was en error generating HTML report: {}", e),
+                                      config.is_verbose());
+                    }
+
+                    if config.is_verbose() {
+                        println!("HTML report generated.");
+                    }
+                }
             }
+
             Ok(true)
         } else {
             if config.is_verbose() {
