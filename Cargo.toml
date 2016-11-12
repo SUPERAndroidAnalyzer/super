@@ -32,6 +32,8 @@ rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
 open = "^1.1"
 bytecount = "0.1"
+log = "^0.3"
+env_logger = "^0.3"
 
 [dependencies.handlebars]
 version = "^0.22"

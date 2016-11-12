@@ -26,6 +26,9 @@ extern crate rustc_serialize;
 extern crate open;
 extern crate bytecount;
 extern crate handlebars;
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 
 mod cli;
 mod decompilation;
@@ -49,6 +52,9 @@ use serde::ser::{Serialize, Serializer};
 use serde_json::error::ErrorCode as JSONErrorCode;
 use colored::Colorize;
 
+use log::{LogRecord, LogLevelFilter, LogLevel};
+use env_logger::LogBuilder;
+
 use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
@@ -61,6 +67,7 @@ static BANNER: &'static str = include_str!("banner.txt");
 fn main() {
     let cli = generate_cli();
     let verbose = cli.is_present("verbose");
+    initialize_logger(verbose);
 
     let mut config = match Config::from_cli(cli) {
         Ok(c) => c,
@@ -453,6 +460,33 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn initialize_logger(is_verbose: bool) {
+	let format = |record: &LogRecord| {
+        match record.level() {
+            LogLevel::Warn => format!("{}{}", "Warning: ".bold().yellow(), record.args().to_string().yellow()),
+            LogLevel::Error => format!("{}{}", "Error: ".bold().red(), record.args().to_string().red()),
+            LogLevel::Info => format!("{}", record.args()),
+            _ => format!("{}: {}", record.level(), record.args()),
+        }
+    };
+
+    let log_level = if is_verbose {
+        LogLevelFilter::Debug
+    } else {
+        LogLevelFilter::Info
+    };
+
+    let mut builder = LogBuilder::new();
+    let builder_state = builder
+        .format(format)
+        .filter(None, log_level)
+        .init();
+
+    if let Err(e) = builder_state {
+        println!("Could not initialize logger: {}", e);
+    }
 }
 
 #[cfg(test)]
