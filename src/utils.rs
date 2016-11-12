@@ -22,48 +22,58 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
 
 /// Prints an error to `stderr` in red.
 pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
-    let _ = io::stderr()
-        .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
-        .unwrap();
+    if cfg!(not(test)) {
+        let _ =
+            io::stderr()
+                .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red())
+                    .into_bytes()[..])
+                .unwrap();
 
-    if !verbose {
-        println!("If you need more information, try to run the program again with the {} flag.",
-                 "-v".bold());
-    } else {
-        sleep(Duration::from_millis(200));
+        if !verbose {
+            println!("If you need more information, try to run the program again with the {} \
+                      flag.",
+                     "-v".bold());
+        } else {
+            sleep(Duration::from_millis(200));
+        }
     }
 }
 
 /// Prints a warning to `stderr` in yellow.
 pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
-    let _ = io::stderr()
-        .write(&format!("{} {}\n",
-                        "Warning:".bold().yellow(),
-                        warning.as_ref().yellow())
-            .into_bytes()[..])
-        .unwrap();
+    if cfg!(not(test)) {
+        let _ = io::stderr()
+            .write(&format!("{} {}\n",
+                            "Warning:".bold().yellow(),
+                            warning.as_ref().yellow())
+                .into_bytes()[..])
+            .unwrap();
 
-    if !verbose {
-        println!("If you need more information, try to run the program again with the {} flag.",
-                 "-v".bold());
-    } else {
-        sleep(Duration::from_millis(200));
+        if !verbose {
+            println!("If you need more information, try to run the program again with the {} \
+                      flag.",
+                     "-v".bold());
+        } else {
+            sleep(Duration::from_millis(200));
+        }
     }
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticity.
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
-    let message = format!("Possible {} criticity vulnerability found!: {}",
-                          criticity,
-                          text.as_ref());
-    println!("{}",
-             match criticity {
-                 Criticity::Low => message.cyan(),
-                 Criticity::Medium => message.yellow(),
-                 Criticity::High | Criticity::Critical => message.red(),
-                 _ => return,
-             });
-    sleep(Duration::from_millis(200));
+    if cfg!(not(test)) {
+        let message = format!("Possible {} criticity vulnerability found!: {}",
+                              criticity,
+                              text.as_ref());
+        println!("{}",
+                 match criticity {
+                     Criticity::Low => message.cyan(),
+                     Criticity::Medium => message.yellow(),
+                     Criticity::High | Criticity::Critical => message.red(),
+                     _ => return,
+                 });
+        sleep(Duration::from_millis(200));
+    }
 }
 
 /// Gets the name of the package from the path of the *.apk* file.
