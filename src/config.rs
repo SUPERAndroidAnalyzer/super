@@ -388,39 +388,17 @@ impl Config {
         // Read the values from the configuration file.
         for (key, value) in toml {
             match key.as_str() {
-                "threads" => {
-                    self.load_threads_section(value)
-                }
-                "downloads_folder" => {
-                    self.load_downloads_folder_section(value)
-                }
-                "dist_folder" => {
-                    self.load_dist_folder_section(value)
-                }
-                "results_folder" => {
-                    self.load_results_folder_section(value)
-                }
-                "apktool_file" => {
-                    self.load_apktool_file_section(value)
-                }
-                "dex2jar_folder" => {
-                    self.load_dex2jar_folder_section(value)
-                }
-                "jd_cmd_file" => {
-                    self.load_jd_cmd_file_section(value)
-                }
-                "templates_folder" => {
-                    self.load_templates_folder_section(value)
-                }
-                "template" => {
-                    self.load_template_section(value)
-                }
-                "rules_json" => {
-                    self.load_rules_section(value)
-                }
-                "permissions" => {
-                    self.load_permissions(value)
-                }
+                "threads" => self.load_threads_section(value),
+                "downloads_folder" => self.load_downloads_folder_section(value),
+                "dist_folder" => self.load_dist_folder_section(value),
+                "results_folder" => self.load_results_folder_section(value),
+                "apktool_file" => self.load_apktool_file_section(value),
+                "dex2jar_folder" => self.load_dex2jar_folder_section(value),
+                "jd_cmd_file" => self.load_jd_cmd_file_section(value),
+                "templates_folder" => self.load_templates_folder_section(value),
+                "template" => self.load_template_section(value),
+                "rules_json" => self.load_rules_section(value),
+                "permissions" => self.load_permissions(value),
                 _ => {
                     print_warning(format!("Unknown configuration option {}.", key),
                                   self.verbose)
@@ -433,9 +411,7 @@ impl Config {
     /// Loads threads section from the TOML value.
     fn load_threads_section(&mut self, value: Value) {
         match value {
-            Value::Integer(1...MAX_THREADS) => {
-                self.threads = value.as_integer().unwrap() as u8
-            }
+            Value::Integer(1...MAX_THREADS) => self.threads = value.as_integer().unwrap() as u8,
             _ => {
                 print_warning(format!("The 'threads' option in config.toml must \
                                        be an integer between 1 and {}.\nUsing \
@@ -584,115 +560,120 @@ impl Config {
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, permissions: Value) {
         match permissions {
-             Value::Array(permissions) => {
-                let format_warning =
-                     format!("The permission configuration format must be the following:\n{}\nUsing \
-                              default.",
-                             "[[permissions]]\nname=\"unknown|permission.name\"\ncriticity = \
-                              \"warning|low|medium|high|critical\"\nlabel = \"Permission \
-                              label\"\ndescription = \"Long description to explain the vulnerability\""
-                                 .italic());
+            Value::Array(permissions) => {
+                let format_warning = format!("The permission configuration format must be the \
+                                              following:\n{}\nUsing default.",
+                                             "[[permissions]]\nname=\"unknown|permission.\
+                                              name\"\ncriticity = \
+                                              \"warning|low|medium|high|critical\"\nlabel = \
+                                              \"Permission label\"\ndescription = \"Long \
+                                              description to explain the vulnerability\""
+                                                 .italic());
 
-                 for cfg in permissions {
-                     let cfg = match cfg.as_table() {
-                         Some(t) => t,
-                         None => {
-                             print_warning(format_warning, self.verbose);
-                             break;
-                         }
-                     };
+                for cfg in permissions {
+                    let cfg = match cfg.as_table() {
+                        Some(t) => t,
+                        None => {
+                            print_warning(format_warning, self.verbose);
+                            break;
+                        }
+                    };
 
-                     let name = match cfg.get("name") {
-                         Some(&Value::String(ref n)) => n,
-                         _ => {
-                             print_warning(format_warning, self.verbose);
-                             break;
-                         }
-                     };
+                    let name = match cfg.get("name") {
+                        Some(&Value::String(ref n)) => n,
+                        _ => {
+                            print_warning(format_warning, self.verbose);
+                            break;
+                        }
+                    };
 
-                     let criticity = match cfg.get("criticity") {
-                         Some(&Value::String(ref c)) => {
-                             match Criticity::from_str(c) {
-                                 Ok(c) => c,
-                                 Err(_) => {
-                                     print_warning(format!("Criticity must be one of {}, {}, {}, {} or \
-                                                            {}.\nUsing default.",
-                                                           "warning".italic(),
-                                                           "low".italic(),
-                                                           "medium".italic(),
-                                                           "high".italic(),
-                                                           "critical".italic()),
-                                                   self.verbose);
-                                     break;
-                                 }
-                             }
-                         }
-                         _ => {
-                             print_warning(format_warning, self.verbose);
-                             break;
-                         }
-                     };
+                    let criticity = match cfg.get("criticity") {
+                        Some(&Value::String(ref c)) => {
+                            match Criticity::from_str(c) {
+                                Ok(c) => c,
+                                Err(_) => {
+                                    print_warning(format!("Criticity must be one of {}, {}, {}, \
+                                                           {} or {}.\nUsing default.",
+                                                          "warning".italic(),
+                                                          "low".italic(),
+                                                          "medium".italic(),
+                                                          "high".italic(),
+                                                          "critical".italic()),
+                                                  self.verbose);
+                                    break;
+                                }
+                            }
+                        }
+                        _ => {
+                            print_warning(format_warning, self.verbose);
+                            break;
+                        }
+                    };
 
-                     let description = match cfg.get("description") {
-                         Some(&Value::String(ref d)) => d.to_owned(),
-                         _ => {
-                             print_warning(format_warning, self.verbose);
-                             break;
-                         }
-                     };
+                    let description = match cfg.get("description") {
+                        Some(&Value::String(ref d)) => d.to_owned(),
+                        _ => {
+                            print_warning(format_warning, self.verbose);
+                            break;
+                        }
+                    };
 
-                     if name == "unknown" {
-                         if cfg.len() != 3 {
-                             print_warning(format!("The format for the unknown \
+                    if name == "unknown" {
+                        if cfg.len() != 3 {
+                            print_warning(format!("The format for the unknown \
                              permissions is the following:\n{}\nUsing default.",
-                                                   "[[permissions]]\nname = \"unknown\"\ncriticity = \
-                                                    \"warning|low|medium|high|criticity\"\ndescription = \
-                                                    \"Long description to explain the vulnerability\""
+                                                   "[[permissions]]\nname = \
+                                                   \"unknown\"\ncriticity = \
+                                                    \"warning|low|medium|high|criticity\"\n\
+                                                    description = \"Long description to explain \
+                                                    the vulnerability\""
                                                        .italic()),
-                                           self.verbose);
-                             break;
-                         }
+                                          self.verbose);
+                            break;
+                        }
 
-                         self.unknown_permission = (criticity, description.clone());
-                     } else {
-                         if cfg.len() != 4 {
-                             print_warning(format_warning, self.verbose);
-                             break;
-                         }
+                        self.unknown_permission = (criticity, description.clone());
+                    } else {
+                        if cfg.len() != 4 {
+                            print_warning(format_warning, self.verbose);
+                            break;
+                        }
 
-                         let permission = match Permission::from_str(name) {
-                             Ok(p) => p,
-                             Err(_) => {
-                                 print_warning(format!("Unknown permission: {}\nTo set the default \
-                                                        vulnerability level for an unknown permission, \
-                                                        please, use the {} permission name, under the {} \
-                                                        section.",
-                                                       name.italic(),
-                                                       "unknown".italic(),
-                                                       "[[permissions]]".italic()),
-                                               self.verbose);
-                                 break;
-                             }
-                         };
+                        let permission = match Permission::from_str(name) {
+                            Ok(p) => p,
+                            Err(_) => {
+                                print_warning(format!("Unknown permission: {}\nTo set the \
+                                                       default vulnerability level for an \
+                                                       unknown permission, please, use the {} \
+                                                       permission name, under the {} section.",
+                                                      name.italic(),
+                                                      "unknown".italic(),
+                                                      "[[permissions]]".italic()),
+                                              self.verbose);
+                                break;
+                            }
+                        };
 
-                         let label = match cfg.get("label") {
-                             Some(&Value::String(ref l)) => l.to_owned(),
-                             _ => {
-                                 print_warning(format_warning, self.verbose);
-                                 break;
-                             }
-                         };
-                         self.permissions
-                             .insert(PermissionConfig::new(permission, criticity, label, description));
-                     }
-                 }
-             }
-             _ => {
-                 print_warning("You must specify the permissions you want to \
-                                select as vulnerable.",
-                               self.verbose)
-             }
-         }
+                        let label = match cfg.get("label") {
+                            Some(&Value::String(ref l)) => l.to_owned(),
+                            _ => {
+                                print_warning(format_warning, self.verbose);
+                                break;
+                            }
+                        };
+                        self.permissions
+                            .insert(PermissionConfig::new(permission,
+                                                          criticity,
+                                                          label,
+                                                          description));
+                    }
+                }
+            }
+            _ => {
+                print_warning("You must specify the permissions you want to select as vulnerable.",
+                              self.verbose)
+            }
+        }
     }
 
     /// Returns the default `Config` struct.
@@ -984,7 +965,8 @@ mod tests {
 
         final_config.load_apktool_file_section(value);
 
-        assert_eq!(PathBuf::from("/some/path/to/apktool.jar"), final_config.apktool_file)
+        assert_eq!(PathBuf::from("/some/path/to/apktool.jar"),
+                   final_config.apktool_file)
     }
 
     /// Test to check an invalid apk tool section is not loaded
@@ -1012,7 +994,8 @@ mod tests {
 
         final_config.load_apktool_file_section(value);
 
-        assert_eq!(PathBuf::from("/some/path/to/jd-cmd.jar"), final_config.apktool_file)
+        assert_eq!(PathBuf::from("/some/path/to/jd-cmd.jar"),
+                   final_config.apktool_file)
     }
 
     /// Test to check an invalid jd cmd file section is not loaded
@@ -1074,11 +1057,15 @@ mod tests {
         final_config.load_templates_folder_section(Value::String(str_value.clone()));
         final_config.load_template_section(Value::String(str_value.clone()));
 
-        assert_eq!(final_config.downloads_folder, PathBuf::from(str_value.clone()));
+        assert_eq!(final_config.downloads_folder,
+                   PathBuf::from(str_value.clone()));
         assert_eq!(final_config.dist_folder, PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.results_folder, PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.dex2jar_folder, PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.templates_folder, PathBuf::from(str_value.clone()));
+        assert_eq!(final_config.results_folder,
+                   PathBuf::from(str_value.clone()));
+        assert_eq!(final_config.dex2jar_folder,
+                   PathBuf::from(str_value.clone()));
+        assert_eq!(final_config.templates_folder,
+                   PathBuf::from(str_value.clone()));
         assert_eq!(final_config.template, str_value.clone());
     }
 
@@ -1090,7 +1077,8 @@ mod tests {
 
         final_config.load_rules_section(value);
 
-        assert_eq!(PathBuf::from("/some/path/to/rules.json"), final_config.rules_json)
+        assert_eq!(PathBuf::from("/some/path/to/rules.json"),
+                   final_config.rules_json)
     }
 
     /// Test to check an invalid rules section is not loaded
@@ -1118,41 +1106,79 @@ mod tests {
         let permission_without_name: BTreeMap<String, Value> = BTreeMap::new();
 
         let mut permission_invalid_criticity: BTreeMap<String, Value> = BTreeMap::new();
-        permission_invalid_criticity.insert("name".to_string(), Value::String("permission_name".to_string())).is_some();
-        permission_invalid_criticity.insert("criticity".to_string(), Value::String("invalid_level".to_string())).is_some();
+        permission_invalid_criticity.insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
+            .is_some();
+        permission_invalid_criticity.insert("criticity".to_string(),
+                    Value::String("invalid_level".to_string()))
+            .is_some();
 
         let mut permission_without_criticity: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_criticity.insert("name".to_string(), Value::String("permission_name".to_string())).is_some();
+        permission_without_criticity.insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
+            .is_some();
 
         let mut permission_without_description: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_description.insert("name".to_string(), Value::String("permission_name".to_string())).is_some();
-        permission_without_description.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        permission_without_description.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
+        permission_without_description.insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
+            .is_some();
+        permission_without_description.insert("criticity".to_string(),
+                                              Value::String("low".to_string())).is_some();
+        permission_without_description.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
 
         let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_unknown_too_much_values.insert("name".to_string(), Value::String("unknown".to_string())).is_some();
-        permission_unknown_too_much_values.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        permission_unknown_too_much_values.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
-        permission_unknown_too_much_values.insert("additional_field".to_string(), Value::String("additional field data".to_string())).is_some();
+        permission_unknown_too_much_values.insert("name".to_string(),
+                                                  Value::String("unknown".to_string())).is_some();
+        permission_unknown_too_much_values.insert("criticity".to_string(),
+                                                  Value::String("low".to_string())).is_some();
+        permission_unknown_too_much_values.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
+        permission_unknown_too_much_values.insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
+            .is_some();
 
         let mut permission_known_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_too_much_values.insert("name".to_string(), Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string())).is_some();
-        permission_known_too_much_values.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        permission_known_too_much_values.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
-        permission_known_too_much_values.insert("label".to_string(), Value::String("label".to_string())).is_some();
-        permission_known_too_much_values.insert("additional_field".to_string(), Value::String("additional field data".to_string())).is_some();
+        permission_known_too_much_values.insert("name".to_string(),
+                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
+            .is_some();
+        permission_known_too_much_values.insert("criticity".to_string(),
+                                                Value::String("low".to_string())).is_some();
+        permission_known_too_much_values.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
+        permission_known_too_much_values.insert("label".to_string(),
+                                                Value::String("label".to_string())).is_some();
+        permission_known_too_much_values.insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
+            .is_some();
 
         let mut permission_known_name_not_found: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_name_not_found.insert("name".to_string(), Value::String("invalid name".to_string())).is_some();
-        permission_known_name_not_found.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        permission_known_name_not_found.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
-        permission_known_name_not_found.insert("label".to_string(), Value::String("label".to_string())).is_some();
+        permission_known_name_not_found.insert("name".to_string(),
+                    Value::String("invalid name".to_string()))
+            .is_some();
+        permission_known_name_not_found.insert("criticity".to_string(),
+                                               Value::String("low".to_string())).is_some();
+        permission_known_name_not_found.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
+        permission_known_name_not_found.insert("label".to_string(),
+                                               Value::String("label".to_string())).is_some();
 
         let mut permission_without_label: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_label.insert("name".to_string(), Value::String("invalid name".to_string())).is_some();
-        permission_without_label.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        permission_without_label.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
-        permission_without_label.insert("additional_field".to_string(), Value::String("additional field data".to_string())).is_some();
+        permission_without_label.insert("name".to_string(),
+                    Value::String("invalid name".to_string()))
+            .is_some();
+        permission_without_label.insert("criticity".to_string(), Value::String("low".to_string()))
+            .is_some();
+        permission_without_label.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
+        permission_without_label.insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
+            .is_some();
 
         let permissions = vec![
                 Value::Integer(20),
@@ -1170,7 +1196,8 @@ mod tests {
             final_config.load_permissions(Value::Array(vec![p]));
 
             assert_eq!(default_config.permissions, final_config.permissions);
-            assert_eq!(default_config.unknown_permission, final_config.unknown_permission);
+            assert_eq!(default_config.unknown_permission,
+                       final_config.unknown_permission);
         }
     }
 
@@ -1180,13 +1207,19 @@ mod tests {
         let mut final_config = Config::default();
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission.insert("name".to_string(), Value::String("unknown".to_string())).is_some();
-        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        unknown_permission.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
+        unknown_permission.insert("name".to_string(), Value::String("unknown".to_string()))
+            .is_some();
+        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string()))
+            .is_some();
+        unknown_permission.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
-        assert_eq!(final_config.get_unknown_permission_criticity(), Criticity::from_str("low").unwrap());
-        assert_eq!(final_config.get_unknown_permission_description(), "permission description");
+        assert_eq!(final_config.get_unknown_permission_criticity(),
+                   Criticity::from_str("low").unwrap());
+        assert_eq!(final_config.get_unknown_permission_description(),
+                   "permission description");
     }
 
     #[test]
@@ -1194,10 +1227,16 @@ mod tests {
         let mut final_config = Config::default();
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission.insert("name".to_string(), Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string())).is_some();
-        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string())).is_some();
-        unknown_permission.insert("description".to_string(), Value::String("permission description".to_string())).is_some();
-        unknown_permission.insert("label".to_string(), Value::String("label".to_string())).is_some();
+        unknown_permission.insert("name".to_string(),
+                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
+            .is_some();
+        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string()))
+            .is_some();
+        unknown_permission.insert("description".to_string(),
+                    Value::String("permission description".to_string()))
+            .is_some();
+        unknown_permission.insert("label".to_string(), Value::String("label".to_string()))
+            .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
 
