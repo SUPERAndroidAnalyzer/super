@@ -1,26 +1,23 @@
 use std::fs;
-use std::fs::File;
-use std::io::{Read, Write, BufWriter};
-use std::collections::{BTreeSet, BTreeMap};
+use std::collections::BTreeSet;
 use std::path::Path;
 use std::result::Result as StdResult;
 use std::error::Error as StdError;
 
 use serde::ser::{Serialize, Serializer};
 use chrono::Local;
-use handlebars::Handlebars;
-use colored::Colorize;
-use serde_json::value::Value;
-use serde_json::ser;
 
 mod utils;
 mod handlebars_helpers;
+mod report;
 
 pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
-use self::handlebars_helpers::*;
 
-use {Error, Config, Result, Criticality, print_error, print_warning, copy_folder, get_package_name};
+use {Config, Result, Criticality, print_error, print_warning, get_package_name};
+
+use results::report::{Json, HandlebarsReport};
+use results::report::Report;
 
 pub struct Results {
     app_package: String,
@@ -38,7 +35,6 @@ pub struct Results {
     medium: BTreeSet<Vulnerability>,
     high: BTreeSet<Vulnerability>,
     critical: BTreeSet<Vulnerability>,
-    templates: Handlebars,
 }
 
 impl Results {
@@ -65,14 +61,6 @@ impl Results {
                     return None;
                 }
             };
-            let templates = match Results::load_templates(config) {
-                Ok(r) => r,
-                Err(e) => {
-                    print_error(format!("An error occurred when trying to load templates: {}", e),
-                                config.is_verbose());
-                    return None;
-                }
-            };
             if config.is_verbose() {
                 println!("The results struct has been created. All the vulnerabilitis will now \
                           be recorded and when the analysis ends, they will be written to result \
@@ -95,7 +83,6 @@ impl Results {
                 medium: BTreeSet::new(),
                 high: BTreeSet::new(),
                 critical: BTreeSet::new(),
-                templates: templates,
             })
         } else {
             if config.is_verbose() {
@@ -105,48 +92,6 @@ impl Results {
                 println!("Skipping result generation.");
             }
             None
-        }
-    }
-
-    fn load_templates(config: &Config) -> Result<Handlebars> {
-        let mut handlebars = Handlebars::new();
-        handlebars.register_escape_fn(|s| html_escape(s).into_owned());
-        let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
-        let _ = handlebars.register_helper("html_code", Box::new(html_code));
-        let _ = handlebars.register_helper("report_index", Box::new(report_index));
-        let _ = handlebars.register_helper("all_code", Box::new(all_code));
-        let _ = handlebars.register_helper("all_lines", Box::new(all_lines));
-        let _ = handlebars.register_helper("generate_menu", Box::new(generate_menu));
-        for dir_entry in fs::read_dir(config.get_template_path())? {
-            let dir_entry = dir_entry?;
-            if let Some(ext) = dir_entry.path().extension() {
-                if ext == "hbs" {
-                    handlebars.register_template_file(dir_entry.path()
-                                                    .file_stem()
-                                                    .ok_or_else(|| {
-                                                        Error::TemplateName("template files must \
-                                                                             have a file name"
-                                                            .to_owned())
-                                                    })?
-                                                    .to_str()
-                                                    .ok_or_else(|| {
-                                                        Error::TemplateName("template names must \
-                                                                             be unicode"
-                                                            .to_owned())
-                                                    })?,
-                                                dir_entry.path())?;
-                }
-            }
-        }
-        if handlebars.get_template("report").is_none() ||
-           handlebars.get_template("src").is_none() ||
-           handlebars.get_template("code").is_none() {
-            Err(Error::TemplateName(format!("templates must include {}, {} and {} templates",
-                                            "report".italic(),
-                                            "src".italic(),
-                                            "code".italic())))
-        } else {
-            Ok(handlebars)
         }
     }
 
@@ -230,14 +175,18 @@ impl Results {
                 println!("Results folder created. Time to create the reports.");
             }
 
-            self.generate_json_report(config)?;
+            let mut json_reporter = Json::new();
+            json_reporter.generate(config, self).unwrap();
 
             if config.is_verbose() {
                 println!("JSON report generated.");
                 println!("");
             }
 
-            self.generate_html_report(config, package)?;
+            let mut handlebars_reporter = HandlebarsReport::new(config.get_template_path(),
+                                                                package.as_ref().to_owned())
+                .unwrap();
+            handlebars_reporter.generate(config, self).unwrap();
 
             if config.is_verbose() {
                 println!("HTML report generated.");
@@ -252,187 +201,6 @@ impl Results {
             }
             Ok(false)
         }
-    }
-
-    fn generate_json_report(&self, config: &Config) -> Result<()> {
-        if config.is_verbose() {
-            println!("Starting JSON report generation. First we create the file.")
-        }
-        let mut f = BufWriter::new(File::create(config.get_results_folder()
-                .join(&self.app_package)
-                .join("results.json"))
-            ?);
-        if config.is_verbose() {
-            println!("The report file has been created. Now it's time to fill it.")
-        }
-        ser::to_writer(&mut f, self)?;
-
-        Ok(())
-    }
-
-    fn generate_html_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
-        if config.is_verbose() {
-            println!("Starting HTML report generation. First we create the file.")
-        }
-        let mut f = File::create(config.get_results_folder()
-                .join(&self.app_package)
-                .join("index.html"))
-            ?;
-        if config.is_verbose() {
-            println!("The report file has been created. Now it's time to fill it.")
-        }
-
-        f.write_all(self.templates.render("report", self)?.as_bytes())?;
-
-        for entry in fs::read_dir(config.get_template_path())? {
-            let entry = entry?;
-            let entry_path = entry.path();
-            if entry.file_type()?.is_dir() {
-                copy_folder(&entry_path,
-                            &config.get_results_folder()
-                                .join(&self.app_package)
-                                .join(entry_path.file_name().unwrap()))
-                    ?;
-            } else {
-                match entry_path.as_path().extension() {
-                    Some(e) if e == "hbs" => {}
-                    None => {}
-                    _ => {
-                        let _ = fs::copy(&entry_path,
-                                         &config.get_results_folder()
-                                             .join(&self.app_package))
-                            ?;
-                    }
-                }
-            }
-        }
-
-        self.generate_code_html_files(config, package)?;
-
-        Ok(())
-    }
-
-    fn generate_code_html_files<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
-        let menu = Value::Array(self.generate_code_html_folder("", config, package)?);
-
-        let mut f = File::create(config.get_results_folder()
-                .join(&self.app_package)
-                .join("src")
-                .join("index.html"))
-            ?;
-
-        let mut data = BTreeMap::new();
-        let _ = data.insert("menu", menu);
-        f.write_all(self.templates.render("src", &data)?.as_bytes())?;
-
-        Ok(())
-    }
-
-    fn generate_code_html_folder<P: AsRef<Path>, S: AsRef<str>>(&self,
-                                                                path: P,
-                                                                config: &Config,
-                                                                cli_package_name: S)
-                                                                -> Result<Vec<Value>> {
-        if path.as_ref() == Path::new("classes/android") ||
-           path.as_ref() == Path::new("classes/com/google/android/gms") ||
-           path.as_ref() == Path::new("smali") {
-            return Ok(Vec::new());
-        }
-        let dir_iter = fs::read_dir(config.get_dist_folder()
-                .join(cli_package_name.as_ref())
-                .join(path.as_ref()))
-            ?;
-
-        fs::create_dir_all(config.get_results_folder()
-                .join(&self.app_package)
-                .join("src")
-                .join(path.as_ref()))
-            ?;
-
-        let mut menu = Vec::new();
-        for entry in dir_iter {
-            let entry = entry?;
-            let path = entry.path();
-
-            let prefix = config.get_dist_folder().join(cli_package_name.as_ref());
-            let stripped = path.strip_prefix(&prefix).unwrap();
-
-            if path.is_dir() {
-                if stripped != Path::new("original") {
-                    let inner_menu = self.generate_code_html_folder(stripped, config,
-                                                            cli_package_name.as_ref())?;
-                    if !inner_menu.is_empty() {
-                        let mut object = BTreeMap::new();
-                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
-
-                        let _ = object.insert(String::from("name"), Value::String(name));
-                        let _ = object.insert(String::from("menu"), Value::Array(inner_menu));
-                        menu.push(Value::Object(object));
-                    } else {
-                        let path = config.get_results_folder()
-                            .join(&self.app_package)
-                            .join("src")
-                            .join(stripped);
-                        if path.exists() {
-                            fs::remove_dir_all(path)?;
-                        }
-                    }
-                }
-            } else {
-                match path.extension() {
-                    Some(e) if e == "xml" || e == "java" => {
-                        self.generate_code_html_for(&stripped, config, cli_package_name.as_ref())?;
-                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
-                        let mut data = BTreeMap::new();
-                        let _ = data.insert(String::from("name"), Value::String(name));
-                        let _ = data.insert(String::from("path"),
-                                            Value::String(format!("{}", stripped.display())));
-                        let _ = data.insert(String::from("type"),
-                                            Value::String(e.to_string_lossy().into_owned()));
-                        menu.push(Value::Object(data));
-                    }
-                    _ => {}
-                }
-            }
-        }
-
-        Ok(menu)
-    }
-
-    fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(&self,
-                                                             path: P,
-                                                             config: &Config,
-                                                             cli_package_name: S)
-                                                             -> Result<()> {
-        let mut f_in = File::open(config.get_dist_folder()
-                .join(cli_package_name.as_ref())
-                .join(path.as_ref()))
-            ?;
-        let mut f_out = File::create(format!("{}.html",
-                                             config.get_results_folder()
-                                                 .join(&self.app_package)
-                                                 .join("src")
-                                                 .join(path.as_ref())
-                                                 .display()))
-            ?;
-
-        let mut code = String::new();
-        let _ = f_in.read_to_string(&mut code)?;
-
-        let mut back_path = String::new();
-        for _ in path.as_ref().components() {
-            back_path.push_str("../");
-        }
-
-        let mut data = BTreeMap::new();
-        let _ = data.insert(String::from("path"),
-                            Value::String(format!("{}", path.as_ref().display())));
-        let _ = data.insert(String::from("code"), Value::String(code));
-        let _ = data.insert(String::from("back_path"), Value::String(back_path));
-
-        f_out.write_all(self.templates.render("code", &data)?.as_bytes())?;
-
-        Ok(())
     }
 }
 
