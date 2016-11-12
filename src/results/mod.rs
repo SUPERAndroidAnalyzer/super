@@ -432,7 +432,7 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut state = serializer.serialize_struct("Results", 23)?;
+        let mut state = serializer.serialize_struct("Results", 22)?;
 
         serializer.serialize_struct_elt(&mut state, "super_version", crate_version!())?;
         serializer.serialize_struct_elt(&mut state, "now", &now)?;
