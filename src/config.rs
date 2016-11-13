@@ -45,6 +45,10 @@ pub struct Config {
     bench: bool,
     /// Boolean to represent `--open` mode.
     open: bool,
+    /// Boolean to represent `--json` mode.
+    json: bool,
+    /// Boolean to represent `--html` mode.
+    html: bool,
     /// Minimum criticality to analyze
     min_criticality: Criticality,
     /// Number of threads.
@@ -86,6 +90,8 @@ impl Config {
         config.force = config.overall_force;
         config.bench = cli.is_present("bench");
         config.open = cli.is_present("open");
+        config.json = cli.is_present("json");
+        config.html = cli.is_present("html");
 
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
@@ -321,6 +327,16 @@ impl Config {
         self.open
     }
 
+    /// Returns true if the application has to generate result in JSON format.
+    pub fn has_to_generate_json(&self) -> bool {
+        self.json
+    }
+
+    /// Returns true if the application has to generate result in HTML format.
+    pub fn has_to_generate_html(&self) -> bool {
+        self.html || (!self.html && !self.json)
+    }
+
     /// Returns the `min_criticality` field.
     pub fn get_min_criticality(&self) -> Criticality {
         self.min_criticality
@@ -423,6 +439,8 @@ impl Config {
                 "template" => self.load_template_section(value),
                 "rules_json" => self.load_rules_section(value),
                 "permissions" => self.load_permissions(value),
+                "html_report" => self.load_html_report_section(value),
+                "json_report" => self.load_json_report_section(value),
                 _ => {
                     print_warning(format!("Unknown configuration option {}.", key),
                                   self.verbose)
@@ -700,6 +718,30 @@ impl Config {
         }
     }
 
+    /// Loads html report section from the TOML value.
+    fn load_html_report_section(&mut self, value: Value) {
+        match value {
+            Value::Boolean(b) => self.html = b,
+            _ => {
+                print_warning("The 'html_report' option in config.toml \
+                               should be a boolean.\nUsing default.",
+                              self.verbose)
+            }
+        }
+    }
+
+    /// Loads json report section from the TOML value.
+    fn load_json_report_section(&mut self, value: Value) {
+        match value {
+            Value::Boolean(b) => self.json = b,
+            _ => {
+                print_warning("The 'json_report' option in config.toml \
+                               should be a boolean.\nUsing default.",
+                              self.verbose)
+            }
+        }
+    }
+
     /// Returns the default `Config` struct.
     fn local_default() -> Config {
         Config {
@@ -710,6 +752,8 @@ impl Config {
             force: false,
             bench: false,
             open: false,
+            json: false,
+            html: false,
             threads: 2,
             min_criticality: Criticality::Warning,
             downloads_folder: PathBuf::from("."),
@@ -1096,6 +1140,18 @@ mod tests {
         assert_eq!(final_config.template, str_value.clone());
     }
 
+    /// Test to check mixed sections that should receive boolean data
+    #[test]
+    fn it_loads_boolean_data_on_some_sections() {
+        let mut final_config = Config::default();
+
+        final_config.load_html_report_section(Value::Boolean(false));
+        final_config.load_json_report_section(Value::Boolean(true));
+
+        assert_eq!(final_config.html, false);
+        assert_eq!(final_config.json, true);
+    }
+
     /// Test to check a valid rules section is loaded
     #[test]
     fn it_loads_rules_section_if_it_is_well_formed() {
@@ -1268,5 +1324,16 @@ mod tests {
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
 
         assert_eq!(final_config.get_permissions().len(), 1)
+    }
+
+    /// Test to check the default reports to be generated
+    #[test]
+    fn it_generates_html_but_not_json_by_default() {
+        let mut final_config = Config::default();
+        final_config.html = false;
+        final_config.json = false;
+
+        assert!(final_config.has_to_generate_html());
+        assert!(!final_config.has_to_generate_json());
     }
 }
