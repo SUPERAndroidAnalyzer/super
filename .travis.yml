@@ -32,11 +32,12 @@ before_script:
 # The main build
 script:
   - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+          export PATH=$PATH:~/.cargo/bin &&
+          cargo fmt -- --write-mode=diff
+      fi
+  - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-            export PATH=$PATH:~/.cargo/bin &&
-            cargo fmt -- --write-mode=diff
-        fi
       travis-cargo build &&
       travis-cargo test &&
       travis-cargo build -- --features beta &&
