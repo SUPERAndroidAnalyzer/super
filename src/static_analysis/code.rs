@@ -572,16 +572,18 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => Vec::with_capacity(0),
         };
 
-        rules.push(Rule {
-            regex: regex,
-            permissions: permissions,
-            forward_check: forward_check,
-            max_sdk: max_sdk,
-            label: label.clone(),
-            description: description.clone(),
-            criticity: criticity,
-            whitelist: whitelist,
-        })
+        if criticity >= config.get_min_criticality() {
+            rules.push(Rule {
+                regex: regex,
+                permissions: permissions,
+                forward_check: forward_check,
+                max_sdk: max_sdk,
+                label: label.clone(),
+                description: description.clone(),
+                criticity: criticity,
+                whitelist: whitelist,
+            })
+        }
     }
 
     Ok(rules)

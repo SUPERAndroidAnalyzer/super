@@ -73,84 +73,96 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
 
     if manifest.is_debug() {
         let criticity = Criticity::Critical;
-        let description = "The application is in debug mode. \
-                           This allows any malicious person to inject arbitrary code in the \
-                           application. This option should only be used while in development.";
 
-        let line = get_line(manifest.get_code(), "android:debuggable=\"true\"").ok();
-        let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l, l)),
-            None => None,
-        };
+        if criticity >= config.get_min_criticality() {
 
-        let vuln = Vulnerability::new(criticity,
-                                      "Manifest Debug",
-                                      description,
-                                      Some("AndroidManifest.xml"),
-                                      line,
-                                      line,
-                                      code);
-        results.add_vulnerability(vuln);
+            let description = "The application is in debug mode. \
+                               This allows any malicious person to inject arbitrary code in the \
+                               application. This option should only be used while in development.";
 
-        if config.is_verbose() {
-            print_vulnerability(description, criticity);
+            let line = get_line(manifest.get_code(), "android:debuggable=\"true\"").ok();
+            let code = match line {
+                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                None => None,
+            };
+
+            let vuln = Vulnerability::new(criticity,
+                                          "Manifest Debug",
+                                          description,
+                                          Some("AndroidManifest.xml"),
+                                          line,
+                                          line,
+                                          code);
+
+            results.add_vulnerability(vuln);
+
+            if config.is_verbose() {
+                print_vulnerability(description, criticity);
+            }
         }
     }
 
     if manifest.needs_large_heap() {
         let criticity = Criticity::Warning;
-        let description = "The application needs a large heap. This is not a vulnerability \
-                             as such, but could be in devices with small heap. Check if the \
-                             large heap is actually needed.";
 
-        let line = get_line(manifest.get_code(), "android:largeHeap=\"true\"").ok();
-        let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l, l)),
-            None => None,
-        };
+        if criticity >= config.get_min_criticality() {
+            let description = "The application needs a large heap. This is not a vulnerability \
+                                 as such, but could be in devices with small heap. Check if the \
+                                 large heap is actually needed.";
 
-        let vuln = Vulnerability::new(criticity,
-                                      "Large heap",
-                                      description,
-                                      Some("AndroidManifest.xml"),
-                                      line,
-                                      line,
-                                      code);
-        results.add_vulnerability(vuln);
+            let line = get_line(manifest.get_code(), "android:largeHeap=\"true\"").ok();
+            let code = match line {
+                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                None => None,
+            };
 
-        if config.is_verbose() {
-            print_vulnerability(description, criticity);
+            let vuln = Vulnerability::new(criticity,
+                                          "Large heap",
+                                          description,
+                                          Some("AndroidManifest.xml"),
+                                          line,
+                                          line,
+                                          code);
+            results.add_vulnerability(vuln);
+
+            if config.is_verbose() {
+                print_vulnerability(description, criticity);
+            }
         }
     }
 
     if manifest.allows_backup() {
         let criticity = Criticity::Medium;
-        let description = "This option allows backups of the application data via adb. Malicious \
-                           people with physical access could use adb to get private data of your \
-                           app into their PC.";
 
-        let line = get_line(manifest.get_code(), "android:allowBackup=\"true\"").ok();
-        let code = match line {
-            Some(l) => Some(get_code(manifest.get_code(), l, l)),
-            None => None,
-        };
+        if criticity >= config.get_min_criticality() {
+            let description = "This option allows backups of the application data via adb. \
+                               Malicious people with physical access could use adb to get private \
+                               data of your app into their PC.";
 
-        let vuln = Vulnerability::new(criticity,
-                                      "Allows Backup",
-                                      description,
-                                      Some("AndroidManifest.xml"),
-                                      line,
-                                      line,
-                                      code);
-        results.add_vulnerability(vuln);
+            let line = get_line(manifest.get_code(), "android:allowBackup=\"true\"").ok();
+            let code = match line {
+                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                None => None,
+            };
 
-        if config.is_verbose() {
-            print_vulnerability(description, criticity);
+            let vuln = Vulnerability::new(criticity,
+                                          "Allows Backup",
+                                          description,
+                                          Some("AndroidManifest.xml"),
+                                          line,
+                                          line,
+                                          code);
+            results.add_vulnerability(vuln);
+
+            if config.is_verbose() {
+                print_vulnerability(description, criticity);
+            }
         }
     }
 
     for permission in config.get_permissions() {
-        if manifest.get_permission_checklist().needs_permission(permission.get_permission()) {
+        if manifest.get_permission_checklist().needs_permission(permission.get_permission()) &&
+           permission.get_criticity() >= config.get_min_criticality() {
             let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
                 Some(l) => Some(get_code(manifest.get_code(), l, l)),
@@ -387,17 +399,25 @@ impl Manifest {
                                                 None => None,
                                             };
 
-                                            let vuln = Vulnerability::new(
-                                                    config.get_unknown_permission_criticity(),
-                                                    "Unknown permission",
-                                                    config.get_unknown_permission_description(),
-                                                    Some("AndroidManifest.xml"), line, line, code);
-                                            results.add_vulnerability(vuln);
+                                            let criticity =
+                                                config.get_unknown_permission_criticity();
+                                            let description =
+                                                config.get_unknown_permission_description();
+                                            let file = Some("AndroidManifest.xml");
 
-                                            if config.is_verbose() {
-                                                print_vulnerability(
-                                                        config.get_unknown_permission_description(),
-                                                        config.get_unknown_permission_criticity());
+                                            if criticity > config.get_min_criticality() {
+                                                let vuln = Vulnerability::new(criticity,
+                                                                              "Unknown permission",
+                                                                              description,
+                                                                              file,
+                                                                              line,
+                                                                              line,
+                                                                              code);
+                                                results.add_vulnerability(vuln);
+
+                                                if config.is_verbose() {
+                                                    print_vulnerability(description, criticity);
+                                                }
                                             }
                                             break;
                                         }
@@ -438,24 +458,29 @@ impl Manifest {
                                             None => None,
                                         };
 
-                                        let vuln = Vulnerability::new(Criticity::Warning,
-                                                                      format!("Exported {}", tag),
-                                                                      format!("Exported {} was \
-                                                                               found. It can be \
-                                                                               used by other \
-                                                                               applications.",
-                                                                              tag),
-                                                                      Some("AndroidManifest.xml"),
-                                                                      line,
-                                                                      line,
-                                                                      code);
-                                        results.add_vulnerability(vuln);
+                                        let criticity = Criticity::Warning;
 
-                                        print_vulnerability(format!("Exported {} was found. It \
-                                                                     can be used by other \
-                                                                     applications.",
-                                                                    tag),
-                                                            Criticity::Warning);
+                                        if criticity >= config.get_min_criticality() {
+                                            let vuln =
+                                                Vulnerability::new(criticity,
+                                                                   format!("Exported {}", tag),
+                                                                   format!("Exported {} was \
+                                                                            found. It can be \
+                                                                            used by other \
+                                                                            applications.",
+                                                                           tag),
+                                                                   Some("AndroidManifest.xml"),
+                                                                   line,
+                                                                   line,
+                                                                   code);
+                                            results.add_vulnerability(vuln);
+
+                                            print_vulnerability(format!("Exported {} was found. \
+                                                                         It can be used by \
+                                                                         other applications.",
+                                                                        tag),
+                                                                Criticity::Warning);
+                                        }
                                     }
                                 }
                                 _ => {}

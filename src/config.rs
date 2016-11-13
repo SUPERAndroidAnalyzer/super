@@ -45,6 +45,8 @@ pub struct Config {
     bench: bool,
     /// Boolean to represent `--open` mode.
     open: bool,
+    /// Minimum criticality to analyze
+    min_criticality: Criticity,
     /// Number of threads.
     threads: u8,
     /// Folder where the applications are stored.
@@ -111,13 +113,30 @@ impl Config {
 
     /// Modifies the options from the CLI.
     fn set_options(&mut self, cli: &ArgMatches<'static>) {
+        if let Some(min_criticality) = cli.value_of("min_criticality") {
+            match min_criticality.parse() {
+                Ok(m) => {
+                    self.min_criticality = m;
+                }
+                _ => {
+                    print_warning(format!("The min_criticality option must be one of {}, {}, \
+                                           {}, {} or {}.\nUsing default.",
+                                          "warning".italic(),
+                                          "low".italic(),
+                                          "medium".italic(),
+                                          "high".italic(),
+                                          "critical".italic()),
+                                  self.verbose);
+                }
+            }
+        }
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
                 Ok(t) if t > 0u8 => {
                     self.threads = t;
                 }
                 _ => {
-                    print_warning(format!("The threads options must be an integer between 1 and \
+                    print_warning(format!("The threads option must be an integer between 1 and \
                                            {}",
                                           u8::MAX),
                                   self.verbose);
@@ -300,6 +319,11 @@ impl Config {
     /// Returns true if the application is running in `--open` mode, false otherwise.
     pub fn is_open(&self) -> bool {
         self.open
+    }
+
+    /// Returns the `min_criticality` field.
+    pub fn get_min_criticality(&self) -> Criticity {
+        self.min_criticality
     }
 
     /// Returns the `threads` field.
@@ -687,6 +711,7 @@ impl Config {
             bench: false,
             open: false,
             threads: 2,
+            min_criticality: Criticity::Warning,
             downloads_folder: PathBuf::from("."),
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
