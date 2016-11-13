@@ -42,7 +42,11 @@ pub fn line_numbers(_: &Context,
         (start_line, end_line)
     };
 
-    let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
+    let iter_start = if start_line > 5 {
+        start_line - 4
+    } else {
+        1
+    };
     let iter_end = end_line + 5;
 
     let mut rendered = String::with_capacity((line_separator.len() + 1) *
@@ -174,7 +178,11 @@ pub fn html_code(_: &Context,
         (start_line, end_line)
     };
 
-    let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
+    let iter_start = if start_line > 5 {
+        start_line - 4
+    } else {
+        1
+    };
 
     for (i, line) in vulnerability.get("code").unwrap().as_str().unwrap().lines().enumerate() {
         let line_number = i + iter_start as usize;

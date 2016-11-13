@@ -259,8 +259,9 @@ impl Results {
             println!("Starting JSON report generation. First we create the file.")
         }
         let mut f = BufWriter::new(File::create(config.get_results_folder()
-            .join(&self.app_package)
-            .join("results.json"))?);
+                .join(&self.app_package)
+                .join("results.json"))
+            ?);
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -274,8 +275,9 @@ impl Results {
             println!("Starting HTML report generation. First we create the file.")
         }
         let mut f = File::create(config.get_results_folder()
-            .join(&self.app_package)
-            .join("index.html"))?;
+                .join(&self.app_package)
+                .join("index.html"))
+            ?;
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -289,7 +291,8 @@ impl Results {
                 copy_folder(&entry_path,
                             &config.get_results_folder()
                                 .join(&self.app_package)
-                                .join(entry_path.file_name().unwrap()))?;
+                                .join(entry_path.file_name().unwrap()))
+                    ?;
             } else {
                 match entry_path.as_path().extension() {
                     Some(e) if e == "hbs" => {}
@@ -297,7 +300,8 @@ impl Results {
                     _ => {
                         let _ = fs::copy(&entry_path,
                                          &config.get_results_folder()
-                                             .join(&self.app_package))?;
+                                             .join(&self.app_package))
+                            ?;
                     }
                 }
             }
@@ -312,9 +316,10 @@ impl Results {
         let menu = Value::Array(self.generate_code_html_folder("", config, package)?);
 
         let mut f = File::create(config.get_results_folder()
-            .join(&self.app_package)
-            .join("src")
-            .join("index.html"))?;
+                .join(&self.app_package)
+                .join("src")
+                .join("index.html"))
+            ?;
 
         let mut data = BTreeMap::new();
         let _ = data.insert("menu", menu);
@@ -334,13 +339,15 @@ impl Results {
             return Ok(Vec::new());
         }
         let dir_iter = fs::read_dir(config.get_dist_folder()
-            .join(cli_package_name.as_ref())
-            .join(path.as_ref()))?;
+                .join(cli_package_name.as_ref())
+                .join(path.as_ref()))
+            ?;
 
         fs::create_dir_all(config.get_results_folder()
-            .join(&self.app_package)
-            .join("src")
-            .join(path.as_ref()))?;
+                .join(&self.app_package)
+                .join("src")
+                .join(path.as_ref()))
+            ?;
 
         let mut menu = Vec::new();
         for entry in dir_iter {
@@ -398,14 +405,16 @@ impl Results {
                                                              cli_package_name: S)
                                                              -> Result<()> {
         let mut f_in = File::open(config.get_dist_folder()
-            .join(cli_package_name.as_ref())
-            .join(path.as_ref()))?;
+                .join(cli_package_name.as_ref())
+                .join(path.as_ref()))
+            ?;
         let mut f_out = File::create(format!("{}.html",
                                              config.get_results_folder()
                                                  .join(&self.app_package)
                                                  .join("src")
                                                  .join(path.as_ref())
-                                                 .display()))?;
+                                                 .display()))
+            ?;
 
         let mut code = String::new();
         let _ = f_in.read_to_string(&mut code)?;

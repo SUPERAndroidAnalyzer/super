@@ -288,7 +288,8 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
                                  .unwrap(),
                              vec,
                              package.as_ref(),
-                             config)?;
+                             config)
+                ?;
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
             if filename != "AndroidManifest.xml" && filename != "R.java" &&
