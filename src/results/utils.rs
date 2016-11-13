@@ -13,12 +13,12 @@ use crypto::sha2::Sha256;
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
-use {Result, Criticity};
+use {Result, Criticality};
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
 pub struct Vulnerability {
-    criticity: Criticity,
+    criticality: Criticality,
     name: String,
     description: String,
     file: Option<PathBuf>,
@@ -30,7 +30,7 @@ pub struct Vulnerability {
 impl Vulnerability {
     /// Creates a new vulnerability.
     pub fn new<N: Into<String>, D: Into<String>, P: AsRef<Path>, C: Into<String>>
-        (criticity: Criticity,
+        (criticality: Criticality,
          name: N,
          description: D,
          file: Option<P>,
@@ -39,7 +39,7 @@ impl Vulnerability {
          code: Option<C>)
          -> Vulnerability {
         Vulnerability {
-            criticity: criticity,
+            criticality: criticality,
             name: name.into(),
             description: description.into(),
             file: match file {
@@ -55,9 +55,9 @@ impl Vulnerability {
         }
     }
 
-    /// Gets the criticity of the vulnerability.
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
+    /// Gets the criticality of the vulnerability.
+    pub fn get_criticality(&self) -> Criticality {
+        self.criticality
     }
 }
 
@@ -75,7 +75,7 @@ impl Serialize for Vulnerability {
                               } else {
                                   4
                               })?;
-        serializer.serialize_struct_elt(&mut state, "criticity", self.criticity)?;
+        serializer.serialize_struct_elt(&mut state, "criticality", self.criticality)?;
         serializer.serialize_struct_elt(&mut state, "name", self.name.as_str())?;
         serializer.serialize_struct_elt(&mut state, "description", self.description.as_str())?;
         serializer.serialize_struct_elt(&mut state, "file", &self.file)?;
@@ -105,8 +105,12 @@ impl Serialize for Vulnerability {
 
 impl PartialOrd for Vulnerability {
     fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
-        Some((&self.criticity, &self.file, &self.start_line, &self.end_line, &self.name)
-            .cmp(&(&other.criticity, &other.file, &other.start_line, &other.end_line, &other.name)))
+        Some((&self.criticality, &self.file, &self.start_line, &self.end_line, &self.name)
+            .cmp(&(&other.criticality,
+                   &other.file,
+                   &other.start_line,
+                   &other.end_line,
+                   &other.name)))
     }
 }
 

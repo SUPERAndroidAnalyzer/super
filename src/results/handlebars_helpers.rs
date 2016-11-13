@@ -42,7 +42,11 @@ pub fn line_numbers(_: &Context,
         (start_line, end_line)
     };
 
-    let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
+    let iter_start = if start_line > 5 {
+        start_line - 4
+    } else {
+        1
+    };
     let iter_end = end_line + 5;
 
     let mut rendered = String::with_capacity((line_separator.len() + 1) *
@@ -137,7 +141,7 @@ pub fn all_code(_: &Context,
 /// will be rendered. For vulnerable lines, the following code will be generated:
 ///
 /// ```html
-/// <code class="vulnerable_line {{ criticity }}">{{ indent }}
+/// <code class="vulnerable_line {{ criticality }}">{{ indent }}
 /// <span class="line_body">{{ code }}</span></code>{{ line_separator }}
 /// ```
 ///
@@ -174,7 +178,11 @@ pub fn html_code(_: &Context,
         (start_line, end_line)
     };
 
-    let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
+    let iter_start = if start_line > 5 {
+        start_line - 4
+    } else {
+        1
+    };
 
     for (i, line) in vulnerability.get("code").unwrap().as_str().unwrap().lines().enumerate() {
         let line_number = i + iter_start as usize;
@@ -183,7 +191,7 @@ pub fn html_code(_: &Context,
             let (indent, code) = split_indent(line);
             format!("<code class=\"vulnerable_line {}\">{}<span \
                      class=\"line_body\">{}</span></code>{}",
-                    vulnerability.get("criticity").unwrap().as_str().unwrap(),
+                    vulnerability.get("criticality").unwrap().as_str().unwrap(),
                     indent,
                     html_escape(code),
                     line_separator)
@@ -220,7 +228,7 @@ pub fn report_index(_: &Context,
         })? as usize + 1;
 
     let list_len = h.param(2).unwrap().value().as_u64().unwrap();
-    let char_index = vulnerability.get("criticity")
+    let char_index = vulnerability.get("criticality")
         .unwrap()
         .as_str()
         .unwrap()

@@ -45,19 +45,19 @@
             {{/each}}
             {{/if}}
             {{#if highs }}
-            <h3 id="high">High criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            <h3 id="high">High criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each highs }}
             {{> vulnerability list_len=../highs_len }}
             {{/each}}
             {{/if}}
             {{#if mediums }}
-            <h3 id="medium">Medium criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            <h3 id="medium">Medium criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each mediums }}
             {{> vulnerability list_len=../mediums_len}}
             {{/each}}
             {{/if}}
             {{#if lows }}
-            <h3 id="low">Low criticity vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
+            <h3 id="low">Low criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
             {{#each lows }}
             {{> vulnerability list_len=../lows_len }}
             {{/each}}
