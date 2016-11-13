@@ -1333,7 +1333,7 @@ mod tests {
         final_config.html = false;
         final_config.json = false;
 
-        assert!(final_config.has_to_generate_html() == true);
-        assert!(final_config.has_to_generate_json() == false);
+        assert!(final_config.has_to_generate_html());
+        assert!(!final_config.has_to_generate_json());
     }
 }
