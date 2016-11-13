@@ -20,7 +20,7 @@ use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
-use {Error, Result, Criticity, print_error, print_warning};
+use {Error, Result, Criticality, print_error, print_warning};
 
 /// Largest number of threads permitted.
 const MAX_THREADS: i64 = u8::MAX as i64;
@@ -46,7 +46,7 @@ pub struct Config {
     /// Boolean to represent `--open` mode.
     open: bool,
     /// Minimum criticality to analyze
-    min_criticality: Criticity,
+    min_criticality: Criticality,
     /// Number of threads.
     threads: u8,
     /// Folder where the applications are stored.
@@ -68,7 +68,7 @@ pub struct Config {
     /// The name of the template to use.
     template: String,
     /// Represents an unknow permission.
-    unknown_permission: (Criticity, String),
+    unknown_permission: (Criticality, String),
     /// List of permissions to analyze.
     permissions: BTreeSet<PermissionConfig>,
     /// Checker for the loaded files
@@ -322,7 +322,7 @@ impl Config {
     }
 
     /// Returns the `min_criticality` field.
-    pub fn get_min_criticality(&self) -> Criticity {
+    pub fn get_min_criticality(&self) -> Criticality {
         self.min_criticality
     }
 
@@ -376,8 +376,8 @@ impl Config {
         &self.rules_json
     }
 
-    /// Returns the criticity of the `unknown_permission` field.
-    pub fn get_unknown_permission_criticity(&self) -> Criticity {
+    /// Returns the criticality of the `unknown_permission` field.
+    pub fn get_unknown_permission_criticality(&self) -> Criticality {
         self.unknown_permission.0
     }
 
@@ -588,7 +588,7 @@ impl Config {
                 let format_warning = format!("The permission configuration format must be the \
                                               following:\n{}\nUsing default.",
                                              "[[permissions]]\nname=\"unknown|permission.\
-                                              name\"\ncriticity = \
+                                              name\"\ncriticality = \
                                               \"warning|low|medium|high|critical\"\nlabel = \
                                               \"Permission label\"\ndescription = \"Long \
                                               description to explain the vulnerability\""
@@ -611,13 +611,13 @@ impl Config {
                         }
                     };
 
-                    let criticity = match cfg.get("criticity") {
+                    let criticality = match cfg.get("criticality") {
                         Some(&Value::String(ref c)) => {
-                            match Criticity::from_str(c) {
+                            match Criticality::from_str(c) {
                                 Ok(c) => c,
                                 Err(_) => {
-                                    print_warning(format!("Criticity must be one of {}, {}, {}, \
-                                                           {} or {}.\nUsing default.",
+                                    print_warning(format!("Criticality must be one of {}, {}, \
+                                                           {}, {} or {}.\nUsing default.",
                                                           "warning".italic(),
                                                           "low".italic(),
                                                           "medium".italic(),
@@ -647,8 +647,8 @@ impl Config {
                             print_warning(format!("The format for the unknown \
                              permissions is the following:\n{}\nUsing default.",
                                                    "[[permissions]]\nname = \
-                                                   \"unknown\"\ncriticity = \
-                                                    \"warning|low|medium|high|criticity\"\n\
+                                                   \"unknown\"\ncriticality = \
+                                                    \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
                                                        .italic()),
@@ -656,7 +656,7 @@ impl Config {
                             break;
                         }
 
-                        self.unknown_permission = (criticity, description.clone());
+                        self.unknown_permission = (criticality, description.clone());
                     } else {
                         if cfg.len() != 4 {
                             print_warning(format_warning, self.verbose);
@@ -687,7 +687,7 @@ impl Config {
                         };
                         self.permissions
                             .insert(PermissionConfig::new(permission,
-                                                          criticity,
+                                                          criticality,
                                                           label,
                                                           description));
                     }
@@ -711,7 +711,7 @@ impl Config {
             bench: false,
             open: false,
             threads: 2,
-            min_criticality: Criticity::Warning,
+            min_criticality: Criticality::Warning,
             downloads_folder: PathBuf::from("."),
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
@@ -721,7 +721,7 @@ impl Config {
             templates_folder: PathBuf::from("templates"),
             template: String::from("super"),
             rules_json: PathBuf::from("rules.json"),
-            unknown_permission: (Criticity::Low,
+            unknown_permission: (Criticality::Low,
                                  String::from("Even if the application can create its own \
                                                permissions, it's discouraged, since it can \
                                                lead to missunderstanding between developers.")),
@@ -769,8 +769,8 @@ impl Default for Config {
 pub struct PermissionConfig {
     /// Permission name.
     permission: Permission,
-    /// Permission criticity.
-    criticity: Criticity,
+    /// Permission criticality.
+    criticality: Criticality,
     /// Permission label.
     label: String,
     /// Permission description.
@@ -798,13 +798,13 @@ impl PartialOrd for PermissionConfig {
 impl PermissionConfig {
     /// Creates a new `PermissionConfig`.
     fn new<L: Into<String>, D: Into<String>>(permission: Permission,
-                                             criticity: Criticity,
+                                             criticality: Criticality,
                                              label: L,
                                              description: D)
                                              -> PermissionConfig {
         PermissionConfig {
             permission: permission,
-            criticity: criticity,
+            criticality: criticality,
             label: label.into(),
             description: description.into(),
         }
@@ -815,9 +815,9 @@ impl PermissionConfig {
         self.permission
     }
 
-    /// Returns the permission's `criticity`.
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
+    /// Returns the permission's `criticality`.
+    pub fn get_criticality(&self) -> Criticality {
+        self.criticality
     }
 
     /// Returns the permission's `label`.
@@ -833,7 +833,7 @@ impl PermissionConfig {
 
 #[cfg(test)]
 mod tests {
-    use Criticity;
+    use Criticality;
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;
@@ -886,7 +886,8 @@ mod tests {
         } else {
             assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
-        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
+        assert_eq!(config.get_unknown_permission_criticality(),
+                   Criticality::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
                     since it can lead to missunderstanding between developers.");
@@ -965,7 +966,8 @@ mod tests {
                    Path::new("/usr/share/super/templates/super"));
         assert_eq!(config.get_template_name(), "super");
         assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
-        assert_eq!(config.get_unknown_permission_criticity(), Criticity::Low);
+        assert_eq!(config.get_unknown_permission_criticality(),
+                   Criticality::Low);
         assert_eq!(config.get_unknown_permission_description(),
                    "Even if the application can create its own permissions, it's discouraged, \
                     since it can lead to missunderstanding between developers.");
@@ -973,7 +975,7 @@ mod tests {
         let permission = config.get_permissions().next().unwrap();
         assert_eq!(permission.get_permission(),
                    Permission::AndroidPermissionInternet);
-        assert_eq!(permission.get_criticity(), Criticity::Warning);
+        assert_eq!(permission.get_criticality(), Criticality::Warning);
         assert_eq!(permission.get_label(), "Internet permission");
         assert_eq!(permission.get_description(),
                    "Allows the app to create network sockets and use custom network protocols. \
@@ -1130,16 +1132,16 @@ mod tests {
 
         let permission_without_name: BTreeMap<String, Value> = BTreeMap::new();
 
-        let mut permission_invalid_criticity: BTreeMap<String, Value> = BTreeMap::new();
-        permission_invalid_criticity.insert("name".to_string(),
+        let mut permission_invalid_criticality: BTreeMap<String, Value> = BTreeMap::new();
+        permission_invalid_criticality.insert("name".to_string(),
                     Value::String("permission_name".to_string()))
             .is_some();
-        permission_invalid_criticity.insert("criticity".to_string(),
+        permission_invalid_criticality.insert("criticality".to_string(),
                     Value::String("invalid_level".to_string()))
             .is_some();
 
-        let mut permission_without_criticity: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_criticity.insert("name".to_string(),
+        let mut permission_without_criticality: BTreeMap<String, Value> = BTreeMap::new();
+        permission_without_criticality.insert("name".to_string(),
                     Value::String("permission_name".to_string()))
             .is_some();
 
@@ -1147,7 +1149,7 @@ mod tests {
         permission_without_description.insert("name".to_string(),
                     Value::String("permission_name".to_string()))
             .is_some();
-        permission_without_description.insert("criticity".to_string(),
+        permission_without_description.insert("criticality".to_string(),
                                               Value::String("low".to_string())).is_some();
         permission_without_description.insert("description".to_string(),
                     Value::String("permission description".to_string()))
@@ -1156,7 +1158,7 @@ mod tests {
         let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
         permission_unknown_too_much_values.insert("name".to_string(),
                                                   Value::String("unknown".to_string())).is_some();
-        permission_unknown_too_much_values.insert("criticity".to_string(),
+        permission_unknown_too_much_values.insert("criticality".to_string(),
                                                   Value::String("low".to_string())).is_some();
         permission_unknown_too_much_values.insert("description".to_string(),
                     Value::String("permission description".to_string()))
@@ -1169,7 +1171,7 @@ mod tests {
         permission_known_too_much_values.insert("name".to_string(),
                     Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
             .is_some();
-        permission_known_too_much_values.insert("criticity".to_string(),
+        permission_known_too_much_values.insert("criticality".to_string(),
                                                 Value::String("low".to_string())).is_some();
         permission_known_too_much_values.insert("description".to_string(),
                     Value::String("permission description".to_string()))
@@ -1184,7 +1186,7 @@ mod tests {
         permission_known_name_not_found.insert("name".to_string(),
                     Value::String("invalid name".to_string()))
             .is_some();
-        permission_known_name_not_found.insert("criticity".to_string(),
+        permission_known_name_not_found.insert("criticality".to_string(),
                                                Value::String("low".to_string())).is_some();
         permission_known_name_not_found.insert("description".to_string(),
                     Value::String("permission description".to_string()))
@@ -1196,7 +1198,7 @@ mod tests {
         permission_without_label.insert("name".to_string(),
                     Value::String("invalid name".to_string()))
             .is_some();
-        permission_without_label.insert("criticity".to_string(), Value::String("low".to_string()))
+        permission_without_label.insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_without_label.insert("description".to_string(),
                     Value::String("permission description".to_string()))
@@ -1208,8 +1210,8 @@ mod tests {
         let permissions = vec![
                 Value::Integer(20),
                 Value::Table(permission_without_name),
-                Value::Table(permission_invalid_criticity),
-                Value::Table(permission_without_criticity),
+                Value::Table(permission_invalid_criticality),
+                Value::Table(permission_without_criticality),
                 Value::Table(permission_without_description),
                 Value::Table(permission_unknown_too_much_values),
                 Value::Table(permission_known_too_much_values),
@@ -1234,15 +1236,15 @@ mod tests {
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
         unknown_permission.insert("name".to_string(), Value::String("unknown".to_string()))
             .is_some();
-        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string()))
+        unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission.insert("description".to_string(),
                     Value::String("permission description".to_string()))
             .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
-        assert_eq!(final_config.get_unknown_permission_criticity(),
-                   Criticity::from_str("low").unwrap());
+        assert_eq!(final_config.get_unknown_permission_criticality(),
+                   Criticality::from_str("low").unwrap());
         assert_eq!(final_config.get_unknown_permission_description(),
                    "permission description");
     }
@@ -1255,7 +1257,7 @@ mod tests {
         unknown_permission.insert("name".to_string(),
                     Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
             .is_some();
-        unknown_permission.insert("criticity".to_string(), Value::String("low".to_string()))
+        unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission.insert("description".to_string(),
                     Value::String("permission description".to_string()))

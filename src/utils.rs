@@ -9,7 +9,7 @@ use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
 
-use super::{Criticity, Result, Config};
+use super::{Criticality, Result, Config};
 
 /// Configuration for the XML parser.
 pub const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -59,17 +59,17 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
     }
 }
 
-/// Prints a vulnerability to `stdout` in a color depending on the criticity.
-pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
+/// Prints a vulnerability to `stdout` in a color depending on the criticality.
+pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) {
-        let message = format!("Possible {} criticity vulnerability found!: {}",
-                              criticity,
+        let message = format!("Possible {} criticality vulnerability found!: {}",
+                              criticality,
                               text.as_ref());
         println!("{}",
-                 match criticity {
-                     Criticity::Low => message.cyan(),
-                     Criticity::Medium => message.yellow(),
-                     Criticity::High | Criticity::Critical => message.red(),
+                 match criticality {
+                     Criticality::Low => message.cyan(),
+                     Criticality::Medium => message.yellow(),
+                     Criticality::High | Criticality::Critical => message.red(),
                      _ => return,
                  });
         sleep(Duration::from_millis(200));

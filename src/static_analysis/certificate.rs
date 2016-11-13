@@ -6,7 +6,7 @@ use std::error::Error as StdError;
 use colored::Colorize;
 use chrono::{Local, Datelike};
 
-use {Error, Config, Criticity, Result, print_error, print_vulnerability, print_warning};
+use {Error, Config, Criticality, Result, print_error, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 
 fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
@@ -127,11 +127,11 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             let mut after = after.split(": ");
 
             if issuer.nth(1).unwrap().contains("Android Debug") {
-                let criticity = Criticity::Critical;
+                let criticality = Criticality::Critical;
                 let description = "The application is signed with the Android Debug Certificate. \
                                    This certificate should never be used for publishing an app.";
 
-                let vuln = Vulnerability::new(criticity,
+                let vuln = Vulnerability::new(criticality,
                                               "Android Debug Certificate",
                                               description,
                                               None::<String>,
@@ -141,7 +141,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 results.add_vulnerability(vuln);
 
                 if config.is_verbose() {
-                    print_vulnerability(description, criticity);
+                    print_vulnerability(description, criticality);
                 }
             }
             if issuer.nth(1) == subject.nth(1) {
@@ -163,12 +163,12 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
 
             if year > cert_year || (year == cert_year && month > cert_month) ||
                (year == cert_year && month == cert_month && day > cert_day) {
-                let criticity = Criticity::High;
+                let criticality = Criticality::High;
                 let description = "The certificate of the application has expired. You should not \
                                    use applications with expired certificates since the app is \
                                    not secure anymore.";
 
-                let vuln = Vulnerability::new(criticity,
+                let vuln = Vulnerability::new(criticality,
                                               "Expired certificate",
                                               description,
                                               None::<String>,
@@ -178,7 +178,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 results.add_vulnerability(vuln);
 
                 if config.is_verbose() {
-                    print_vulnerability(description, criticity);
+                    print_vulnerability(description, criticality);
                 }
             }
         }

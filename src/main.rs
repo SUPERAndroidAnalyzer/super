@@ -383,28 +383,28 @@ impl JSONError {
 /// SUPER result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Vulnerability criticity
+/// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
-pub enum Criticity {
+pub enum Criticality {
     /// Warning.
     Warning,
-    /// Low criticity vulnerability.
+    /// Low criticality vulnerability.
     Low,
-    /// Medium criticity vulnerability.
+    /// Medium criticality vulnerability.
     Medium,
-    /// High criticity vulnerability.
+    /// High criticality vulnerability.
     High,
     /// Critical vulnerability.
     Critical,
 }
 
-impl Display for Criticity {
+impl Display for Criticality {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
 }
 
-impl Serialize for Criticity {
+impl Serialize for Criticality {
     fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
         where S: Serializer
     {
@@ -413,15 +413,15 @@ impl Serialize for Criticity {
     }
 }
 
-impl FromStr for Criticity {
+impl FromStr for Criticality {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Criticity> {
+    fn from_str(s: &str) -> Result<Criticality> {
         match s.to_lowercase().as_str() {
-            "critical" => Ok(Criticity::Critical),
-            "high" => Ok(Criticity::High),
-            "medium" => Ok(Criticity::Medium),
-            "low" => Ok(Criticity::Low),
-            "warning" => Ok(Criticity::Warning),
+            "critical" => Ok(Criticality::Critical),
+            "high" => Ok(Criticality::High),
+            "medium" => Ok(Criticality::Medium),
+            "low" => Ok(Criticality::Low),
+            "warning" => Ok(Criticality::Warning),
             _ => Err(Error::Parse),
         }
     }
@@ -450,55 +450,61 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use Criticity;
+    use Criticality;
     use std::str::FromStr;
 
     #[test]
-    fn it_criticity() {
-        assert_eq!(Criticity::from_str("warning").unwrap(), Criticity::Warning);
-        assert_eq!(Criticity::from_str("Warning").unwrap(), Criticity::Warning);
-        assert_eq!(Criticity::from_str("WARNING").unwrap(), Criticity::Warning);
+    fn it_criticality() {
+        assert_eq!(Criticality::from_str("warning").unwrap(),
+                   Criticality::Warning);
+        assert_eq!(Criticality::from_str("Warning").unwrap(),
+                   Criticality::Warning);
+        assert_eq!(Criticality::from_str("WARNING").unwrap(),
+                   Criticality::Warning);
 
-        assert_eq!(Criticity::from_str("low").unwrap(), Criticity::Low);
-        assert_eq!(Criticity::from_str("Low").unwrap(), Criticity::Low);
-        assert_eq!(Criticity::from_str("LOW").unwrap(), Criticity::Low);
+        assert_eq!(Criticality::from_str("low").unwrap(), Criticality::Low);
+        assert_eq!(Criticality::from_str("Low").unwrap(), Criticality::Low);
+        assert_eq!(Criticality::from_str("LOW").unwrap(), Criticality::Low);
 
-        assert_eq!(Criticity::from_str("medium").unwrap(), Criticity::Medium);
-        assert_eq!(Criticity::from_str("Medium").unwrap(), Criticity::Medium);
-        assert_eq!(Criticity::from_str("MEDIUM").unwrap(), Criticity::Medium);
+        assert_eq!(Criticality::from_str("medium").unwrap(),
+                   Criticality::Medium);
+        assert_eq!(Criticality::from_str("Medium").unwrap(),
+                   Criticality::Medium);
+        assert_eq!(Criticality::from_str("MEDIUM").unwrap(),
+                   Criticality::Medium);
 
-        assert_eq!(Criticity::from_str("high").unwrap(), Criticity::High);
-        assert_eq!(Criticity::from_str("High").unwrap(), Criticity::High);
-        assert_eq!(Criticity::from_str("HIGH").unwrap(), Criticity::High);
+        assert_eq!(Criticality::from_str("high").unwrap(), Criticality::High);
+        assert_eq!(Criticality::from_str("High").unwrap(), Criticality::High);
+        assert_eq!(Criticality::from_str("HIGH").unwrap(), Criticality::High);
 
-        assert_eq!(Criticity::from_str("critical").unwrap(),
-                   Criticity::Critical);
-        assert_eq!(Criticity::from_str("Critical").unwrap(),
-                   Criticity::Critical);
-        assert_eq!(Criticity::from_str("CRITICAL").unwrap(),
-                   Criticity::Critical);
+        assert_eq!(Criticality::from_str("critical").unwrap(),
+                   Criticality::Critical);
+        assert_eq!(Criticality::from_str("Critical").unwrap(),
+                   Criticality::Critical);
+        assert_eq!(Criticality::from_str("CRITICAL").unwrap(),
+                   Criticality::Critical);
 
-        assert!(Criticity::Warning < Criticity::Low);
-        assert!(Criticity::Warning < Criticity::Medium);
-        assert!(Criticity::Warning < Criticity::High);
-        assert!(Criticity::Warning < Criticity::Critical);
-        assert!(Criticity::Low < Criticity::Medium);
-        assert!(Criticity::Low < Criticity::High);
-        assert!(Criticity::Low < Criticity::Critical);
-        assert!(Criticity::Medium < Criticity::High);
-        assert!(Criticity::Medium < Criticity::Critical);
-        assert!(Criticity::High < Criticity::Critical);
+        assert!(Criticality::Warning < Criticality::Low);
+        assert!(Criticality::Warning < Criticality::Medium);
+        assert!(Criticality::Warning < Criticality::High);
+        assert!(Criticality::Warning < Criticality::Critical);
+        assert!(Criticality::Low < Criticality::Medium);
+        assert!(Criticality::Low < Criticality::High);
+        assert!(Criticality::Low < Criticality::Critical);
+        assert!(Criticality::Medium < Criticality::High);
+        assert!(Criticality::Medium < Criticality::Critical);
+        assert!(Criticality::High < Criticality::Critical);
 
-        assert_eq!(format!("{}", Criticity::Warning).as_str(), "warning");
-        assert_eq!(format!("{}", Criticity::Low).as_str(), "low");
-        assert_eq!(format!("{}", Criticity::Medium).as_str(), "medium");
-        assert_eq!(format!("{}", Criticity::High).as_str(), "high");
-        assert_eq!(format!("{}", Criticity::Critical).as_str(), "critical");
+        assert_eq!(format!("{}", Criticality::Warning).as_str(), "warning");
+        assert_eq!(format!("{}", Criticality::Low).as_str(), "low");
+        assert_eq!(format!("{}", Criticality::Medium).as_str(), "medium");
+        assert_eq!(format!("{}", Criticality::High).as_str(), "high");
+        assert_eq!(format!("{}", Criticality::Critical).as_str(), "critical");
 
-        assert_eq!(format!("{:?}", Criticity::Warning).as_str(), "Warning");
-        assert_eq!(format!("{:?}", Criticity::Low).as_str(), "Low");
-        assert_eq!(format!("{:?}", Criticity::Medium).as_str(), "Medium");
-        assert_eq!(format!("{:?}", Criticity::High).as_str(), "High");
-        assert_eq!(format!("{:?}", Criticity::Critical).as_str(), "Critical");
+        assert_eq!(format!("{:?}", Criticality::Warning).as_str(), "Warning");
+        assert_eq!(format!("{:?}", Criticality::Low).as_str(), "Low");
+        assert_eq!(format!("{:?}", Criticality::Medium).as_str(), "Medium");
+        assert_eq!(format!("{:?}", Criticality::High).as_str(), "High");
+        assert_eq!(format!("{:?}", Criticality::Critical).as_str(), "Critical");
     }
 }

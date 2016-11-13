@@ -20,7 +20,7 @@ pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 use self::handlebars_helpers::*;
 
-use {Error, Config, Result, Criticity, print_error, print_warning, copy_folder, get_package_name};
+use {Error, Config, Result, Criticality, print_error, print_warning, copy_folder, get_package_name};
 
 pub struct Results {
     app_package: String,
@@ -188,20 +188,20 @@ impl Results {
     }
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
-        match vuln.get_criticity() {
-            Criticity::Warning => {
+        match vuln.get_criticality() {
+            Criticality::Warning => {
                 self.warnings.insert(vuln);
             }
-            Criticity::Low => {
+            Criticality::Low => {
                 self.low.insert(vuln);
             }
-            Criticity::Medium => {
+            Criticality::Medium => {
                 self.medium.insert(vuln);
             }
-            Criticity::High => {
+            Criticality::High => {
                 self.high.insert(vuln);
             }
-            Criticity::Critical => {
+            Criticality::Critical => {
                 self.critical.insert(vuln);
             }
         }

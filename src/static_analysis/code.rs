@@ -14,7 +14,7 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, Result, Error, Criticity, print_warning, print_error, print_vulnerability, get_code};
+use {Config, Result, Error, Criticality, print_warning, print_error, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 
@@ -168,7 +168,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                     let start_line = get_line_for(s, code.as_str());
                     let end_line = get_line_for(e, code.as_str());
                     let mut results = results.lock().unwrap();
-                    results.push(Vulnerability::new(rule.get_criticity(),
+                    results.push(Vulnerability::new(rule.get_criticality(),
                                                     rule.get_label(),
                                                     rule.get_description(),
                                                     Some(path.as_ref()
@@ -181,7 +181,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                   end_line))));
 
                     if verbose {
-                        print_vulnerability(rule.get_description(), rule.get_criticity());
+                        print_vulnerability(rule.get_description(), rule.get_criticality());
                     }
                 }
                 Some(check) => {
@@ -216,7 +216,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                         let start_line = get_line_for(s, code.as_str());
                         let end_line = get_line_for(e, code.as_str());
                         let mut results = results.lock().unwrap();
-                        results.push(Vulnerability::new(rule.get_criticity(),
+                        results.push(Vulnerability::new(rule.get_criticality(),
                                                         rule.get_label(),
                                                         rule.get_description(),
                                                         Some(path.as_ref()
@@ -229,7 +229,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                       end_line))));
 
                         if verbose {
-                            print_vulnerability(rule.get_description(), rule.get_criticity());
+                            print_vulnerability(rule.get_description(), rule.get_criticality());
                         }
                     }
                 }
@@ -312,7 +312,7 @@ struct Rule {
     whitelist: Vec<Regex>,
     label: String,
     description: String,
-    criticity: Criticity,
+    criticality: Criticality,
 }
 
 impl Rule {
@@ -340,8 +340,8 @@ impl Rule {
         self.description.as_str()
     }
 
-    pub fn get_criticity(&self) -> Criticity {
-        self.criticity
+    pub fn get_criticality(&self) -> Criticality {
+        self.criticality
     }
 
     pub fn get_whitelist(&self) -> Iter<Regex> {
@@ -374,7 +374,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                      check, with names {} and {}. To use them you have to include {} or {} in \
                      the forward check.",
                     "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
-                     description for this rule\"\n\t\"criticity\": \
+                     description for this rule\"\n\t\"criticality\": \
                      \"warning|low|medium|high|critical\"\n\t\"regex\": \
                      \"regex_to_find_vulnerability\"\n}"
                         .italic(),
@@ -519,12 +519,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
-        let criticity = match rule.get("criticity") {
+        let criticality = match rule.get("criticality") {
             Some(&Value::String(ref c)) => {
-                match Criticity::from_str(c) {
+                match Criticality::from_str(c) {
                     Ok(c) => c,
                     Err(e) => {
-                        print_warning(format!("Criticity must be  one of {}, {}, {}, {} or {}.",
+                        print_warning(format!("Criticality must be  one of {}, {}, {}, {} or {}.",
                                               "warning".italic(),
                                               "low".italic(),
                                               "medium".italic(),
@@ -573,7 +573,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => Vec::with_capacity(0),
         };
 
-        if criticity >= config.get_min_criticality() {
+        if criticality >= config.get_min_criticality() {
             rules.push(Rule {
                 regex: regex,
                 permissions: permissions,
@@ -581,7 +581,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 max_sdk: max_sdk,
                 label: label.clone(),
                 description: description.clone(),
-                criticity: criticity,
+                criticality: criticality,
                 whitelist: whitelist,
             })
         }
