@@ -143,7 +143,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
 
     'check: for rule in rules {
         if manifest.is_some() && rule.get_max_sdk().is_some() &&
-           rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() {
+           rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk() as i32 {
             continue 'check;
         }
 
