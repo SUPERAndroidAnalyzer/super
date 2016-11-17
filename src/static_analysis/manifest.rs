@@ -65,10 +65,10 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
     results.set_app_label(manifest.get_label());
     results.set_app_description(manifest.get_description());
     results.set_app_version(manifest.get_version_str());
-    results.set_app_version_num(manifest.get_version_number() as i32);
-    results.set_app_min_sdk(manifest.get_min_sdk() as i32);
+    results.set_app_version_num(manifest.get_version_number());
+    results.set_app_min_sdk(manifest.get_min_sdk());
     if manifest.get_target_sdk().is_some() {
-        results.set_app_target_sdk(manifest.get_target_sdk().unwrap() as i32);
+        results.set_app_target_sdk(manifest.get_target_sdk().unwrap());
     }
 
     if manifest.is_debug() {
@@ -368,7 +368,7 @@ impl Manifest {
                                 match attr.name.local_name.as_str() {
                                     "package" => manifest.set_package(attr.value.as_str()),
                                     "versionCode" => {
-                                        let version_number: i32 = match attr.value.parse() {
+                                        let version_number: u32 = match attr.value.parse() {
                                             Ok(n) => n,
                                             Err(e) => {
                                                 print_warning(format!("An error occurred when \
@@ -381,7 +381,7 @@ impl Manifest {
                                                 break;
                                             }
                                         };
-                                        manifest.set_version_number(version_number as u32);
+                                        manifest.set_version_number(version_number);
                                     }
                                     "versionName" => manifest.set_version_str(attr.value.as_str()),
                                     "installLocation" => {

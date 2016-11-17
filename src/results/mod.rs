@@ -24,9 +24,9 @@ pub struct Results {
     app_label: String,
     app_description: String,
     app_version: String,
-    app_version_num: i32,
-    app_min_sdk: i32,
-    app_target_sdk: Option<i32>,
+    app_version_num: u32,
+    app_min_sdk: u32,
+    app_target_sdk: Option<u32>,
     app_fingerprint: FingerPrint,
     #[allow(unused)]
     certificate: String,
@@ -120,15 +120,15 @@ impl Results {
         self.app_version = version.into();
     }
 
-    pub fn set_app_version_num(&mut self, version: i32) {
+    pub fn set_app_version_num(&mut self, version: u32) {
         self.app_version_num = version;
     }
 
-    pub fn set_app_min_sdk(&mut self, sdk: i32) {
+    pub fn set_app_min_sdk(&mut self, sdk: u32) {
         self.app_min_sdk = sdk;
     }
 
-    pub fn set_app_target_sdk(&mut self, sdk: i32) {
+    pub fn set_app_target_sdk(&mut self, sdk: u32) {
         self.app_target_sdk = Some(sdk);
     }
 
