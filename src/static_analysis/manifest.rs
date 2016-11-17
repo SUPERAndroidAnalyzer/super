@@ -214,6 +214,7 @@ impl PackageMetadata {
         let mut file = File::open(path)?;
         let mut code = String::new();
         let _ = file.read_to_string(&mut code)?;
+
         match YamlLoader::load_from_str(&code) {
             Ok(mut apktool_info) => {
                 match apktool_info.pop() {
@@ -286,7 +287,10 @@ impl PackageMetadata {
                     _ => print_warning(yaml_warning, is_verbose),
                 }
             }
-            Err(e) => print_warning(format!("{} {}", yaml_warning, e.description()), is_verbose),
+            Err(e) => {
+                print_warning(format!("{} {}", yaml_warning, e.description()), is_verbose);
+                return Err(Error::Parse);
+            }
         }
 
         Ok(metadata)
@@ -870,13 +874,9 @@ mod tests {
     }
 
     #[test]
+    #[should_panic]
     fn it_do_not_load_on_invalid_apktool() {
-        let metadata = PackageMetadata::from_apktool("tests/apktool/invalid.yml", false).unwrap();
-
-        assert_eq!(0, metadata.get_min_sdk());
-        assert_eq!(None, metadata.get_target_sdk());
-        assert_eq!(0, metadata.get_version_number());
-        assert_eq!("", metadata.get_version_str());
+        let _ = PackageMetadata::from_apktool("tests/apktool/invalid.yml", false).unwrap();
     }
 }
 
