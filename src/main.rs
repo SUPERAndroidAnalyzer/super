@@ -332,6 +332,13 @@ impl From<serde_json::error::Error> for Error {
     }
 }
 
+impl From<yaml_rust::ScanError> for Error {
+    fn from(_: yaml_rust::ScanError) -> Error {
+        Error::Parse
+    }
+}
+
+
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", self.description())

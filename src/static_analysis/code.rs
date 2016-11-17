@@ -307,7 +307,7 @@ struct Rule {
     regex: Regex,
     permissions: Vec<Permission>,
     forward_check: Option<String>,
-    max_sdk: Option<i32>,
+    max_sdk: Option<u32>,
     whitelist: Vec<Regex>,
     label: String,
     description: String,
@@ -327,7 +327,7 @@ impl Rule {
         self.forward_check.as_ref()
     }
 
-    pub fn get_max_sdk(&self) -> Option<i32> {
+    pub fn get_max_sdk(&self) -> Option<u32> {
         self.max_sdk
     }
 
@@ -418,7 +418,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         };
 
         let max_sdk = match rule.get("max_sdk") {
-            Some(&Value::U64(sdk)) => Some(sdk as i32),
+            Some(&Value::U64(sdk)) => Some(sdk as u32),
             None => None,
             _ => {
                 print_warning(format_warning, config.is_verbose());
