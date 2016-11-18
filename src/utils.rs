@@ -8,6 +8,7 @@ use std::result::Result as StdResult;
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
+use log::LogLevel::Debug;
 
 use super::{Criticality, Result, Config};
 
@@ -21,11 +22,11 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 /// Prints an error to `stderr` in red.
-pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
+pub fn print_error<S: AsRef<str>>(error: S, _: bool) {
     if cfg!(not(test)) {
         error!("{}", error.as_ref());
 
-        if !verbose {
+        if !log_enabled!(Debug) {
             println!("If you need more information, try to run the program again with the {} flag.",
                      "-v".bold());
         } else {
@@ -35,11 +36,11 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
 }
 
 /// Prints a warning to `stderr` in yellow.
-pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
+pub fn print_warning<S: AsRef<str>>(warning: S, _: bool) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
 
-        if !verbose {
+        if !log_enabled!(Debug) {
             println!("If you need more information, try to run the program again with the {} flag.", "-v".bold())
         } else {
             sleep(Duration::from_millis(200));
