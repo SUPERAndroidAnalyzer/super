@@ -62,8 +62,10 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
              _ => return,
          };
 
-        println!("{}", formatted_message);
-        sleep(Duration::from_millis(200));
+        if log_enabled!(Debug) {
+            println!("{}", formatted_message);
+            sleep(Duration::from_millis(200));
+        }
     }
 }
 
