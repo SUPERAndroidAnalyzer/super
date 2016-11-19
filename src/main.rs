@@ -59,7 +59,7 @@ pub use utils::*;
 static BANNER: &'static str = include_str!("banner.txt");
 
 fn main() {
-    let cli = generate_cli();
+    let cli = generate_cli().get_matches();
     let verbose = cli.is_present("verbose");
 
     let mut config = match Config::from_cli(cli) {
