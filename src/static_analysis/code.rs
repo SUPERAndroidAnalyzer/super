@@ -26,8 +26,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         Ok(r) => r,
         Err(e) => {
             print_error(format!("An error occurred when loading code analysis rules. Error: {}",
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
             return;
         }
     };
@@ -36,8 +35,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!("An error occurred when reading files for analysis, the results \
                                might be incomplete. Error: {}",
-                              e.description()),
-                      config.is_verbose());
+                              e.description()));
     }
     let total_files = files.len();
 
@@ -45,7 +43,6 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     let manifest = Arc::new(manifest);
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
-    let verbose = config.is_verbose();
     let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
@@ -74,13 +71,11 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                                          &*thread_dist_folder,
                                                          &thread_rules,
                                                          &thread_manifest,
-                                                         &thread_vulns,
-                                                         verbose) {
+                                                         &thread_vulns) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
-                                                      e.description()),
-                                              verbose)
+                                                      e.description()))
                             }
                         }
                         None => break,
@@ -113,8 +108,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     for t in handles {
         if let Err(e) = t.join() {
             print_warning(format!("An error occurred when joining analysis threads: Error: {:?}",
-                                  e),
-                          config.is_verbose());
+                                  e));
         }
     }
 
@@ -134,8 +128,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                 dist_folder: T,
                                                 rules: &[Rule],
                                                 manifest: &Option<Manifest>,
-                                                results: &Mutex<Vec<Vulnerability>>,
-                                                verbose: bool)
+                                                results: &Mutex<Vec<Vulnerability>>)
                                                 -> Result<()> {
     let mut f = File::open(&path)?;
     let mut code = String::new();
@@ -180,9 +173,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                   start_line,
                                                                   end_line))));
 
-                    if verbose {
-                        print_vulnerability(rule.get_description(), rule.get_criticality());
-                    }
+                    print_vulnerability(rule.get_description(), rule.get_criticality());
                 }
                 Some(check) => {
                     let caps = rule.get_regex().captures(&code[s..e]).unwrap();
@@ -206,8 +197,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                    forward_check '{}'. The rule will be \
                                                    skipped. {}",
                                                   r,
-                                                  e.description()),
-                                          verbose);
+                                                  e.description()));
                             break 'rule;
                         }
                     };
@@ -228,9 +218,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                       start_line,
                                                                       end_line))));
 
-                        if verbose {
-                            print_vulnerability(rule.get_description(), rule.get_criticality());
-                        }
+                        print_vulnerability(rule.get_description(), rule.get_criticality());
                     }
                 }
             }
@@ -273,8 +261,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
             Err(e) => {
                 print_warning(format!("There was an error reading the directory {}: {}",
                                       real_path.display(),
-                                      e.description()),
-                              config.is_verbose());
+                                      e.description()));
                 return Err(Error::from(e));
             }
         };
@@ -356,7 +343,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     let rules_json = match rules_json.as_array() {
         Some(a) => a,
         None => {
-            print_warning("Rules must be a JSON array.", config.is_verbose());
+            print_warning("Rules must be a JSON array.");
             return Err(Error::Parse);
         }
     };
@@ -388,13 +375,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         let rule = match rule.as_object() {
             Some(o) => o,
             None => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
 
         if rule.len() < 4 || rule.len() > 8 {
-            print_warning(format_warning, config.is_verbose());
+            print_warning(format_warning);
             return Err(Error::Parse);
         }
 
@@ -405,14 +392,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!("An error occurred when compiling the regular \
                                                expresion: {}",
-                                              e.description()),
-                                      config.is_verbose());
+                                              e.description()));
                         return Err(Error::Parse);
                     }
                 }
             }
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -421,7 +407,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::U64(sdk)) => Some(sdk as u32),
             None => None,
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -436,14 +422,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 Ok(p) => p,
                                 Err(_) => {
                                     print_warning(format!("the permission {} is unknown",
-                                                          p.italic()),
-                                                  config.is_verbose());
+                                                          p.italic()));
                                     return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
-                            print_warning(format_warning, config.is_verbose());
+                            print_warning(format_warning);
                             return Err(Error::Parse);
                         }
                     });
@@ -451,7 +436,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 list
             }
             Some(_) => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),
@@ -466,8 +451,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             if !s.contains("{fc1}") {
                                 print_warning("You must provide the '{fc1}' string where you \
                                                want the 'fc1' capture to be inserted in the \
-                                               forward check.",
-                                              config.is_verbose());
+                                               forward check.");
                                 return Err(Error::Parse);
                             }
                         }
@@ -475,8 +459,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             if !s.contains("{fc2}") {
                                 print_warning("You must provide the '{fc2}' string where you \
                                                want the 'fc2' capture to be inserted in the \
-                                               forward check.",
-                                              config.is_verbose());
+                                               forward check.");
                                 return Err(Error::Parse);
                             }
                         }
@@ -488,8 +471,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2") &&
                    !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1") {
                     print_warning("You must have a capture group named fc1 to use the capture \
-                                   fc2.",
-                                  config.is_verbose());
+                                   fc2.");
                     return Err(Error::Parse);
                 }
 
@@ -497,7 +479,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             None => None,
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -505,7 +487,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         let label = match rule.get("label") {
             Some(&Value::String(ref l)) => l,
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -513,7 +495,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         let description = match rule.get("description") {
             Some(&Value::String(ref d)) => d,
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -528,14 +510,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                               "low".italic(),
                                               "medium".italic(),
                                               "high".italic(),
-                                              "critical".italic()),
-                                      config.is_verbose());
+                                              "critical".italic()));
                         return Err(e);
                     }
                 }
             }
             _ => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
         };
@@ -551,14 +532,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 Err(e) => {
                                     print_warning(format!("An error occurred when compiling the \
                                                            regular expresion: {}",
-                                                          e.description()),
-                                                  config.is_verbose());
+                                                          e.description()));
                                     return Err(Error::Parse);
                                 }
                             }
                         }
                         _ => {
-                            print_warning(format_warning, config.is_verbose());
+                            print_warning(format_warning);
                             return Err(Error::Parse);
                         }
                     });
@@ -566,7 +546,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 list
             }
             Some(_) => {
-                print_warning(format_warning, config.is_verbose());
+                print_warning(format_warning);
                 return Err(Error::Parse);
             }
             None => Vec::with_capacity(0),

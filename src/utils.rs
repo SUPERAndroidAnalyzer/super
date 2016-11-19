@@ -1,5 +1,5 @@
-use std::{fs, io, fmt};
-use std::io::{Read, Write};
+use std::{fs, fmt};
+use std::io::Read;
 use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
@@ -8,6 +8,7 @@ use std::result::Result as StdResult;
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
+use log::LogLevel::Debug;
 
 use super::{Criticality, Result, Config};
 
@@ -21,15 +22,11 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 /// Prints an error to `stderr` in red.
-pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
+pub fn print_error<S: AsRef<str>>(error: S) {
     if cfg!(not(test)) {
-        let _ =
-            io::stderr()
-                .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red())
-                    .into_bytes()[..])
-                .unwrap();
+        error!("{}", error.as_ref());
 
-        if !verbose {
+        if !log_enabled!(Debug) {
             println!("If you need more information, try to run the program again with the {} \
                       flag.",
                      "-v".bold());
@@ -40,19 +37,13 @@ pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
 }
 
 /// Prints a warning to `stderr` in yellow.
-pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
+pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
-        let _ = io::stderr()
-            .write(&format!("{} {}\n",
-                            "Warning:".bold().yellow(),
-                            warning.as_ref().yellow())
-                .into_bytes()[..])
-            .unwrap();
+        warn!("{}", warning.as_ref());
 
-        if !verbose {
-            println!("If you need more information, try to run the program again with the {} \
-                      flag.",
-                     "-v".bold());
+        if !log_enabled!(Debug) {
+            println!("If you need more information, try to run the program again with the {} flag.",
+                     "-v".bold())
         } else {
             sleep(Duration::from_millis(200));
         }
@@ -61,17 +52,19 @@ pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
-    if cfg!(not(test)) {
+    if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!("Possible {} criticality vulnerability found!: {}",
                               criticality,
                               text.as_ref());
-        println!("{}",
-                 match criticality {
-                     Criticality::Low => message.cyan(),
-                     Criticality::Medium => message.yellow(),
-                     Criticality::High | Criticality::Critical => message.red(),
-                     _ => return,
-                 });
+
+        let formatted_message = match criticality {
+            Criticality::Low => message.cyan(),
+            Criticality::Medium => message.yellow(),
+            Criticality::High | Criticality::Critical => message.red(),
+            _ => return,
+        };
+
+        println!("{}", formatted_message);
         sleep(Duration::from_millis(200));
     }
 }

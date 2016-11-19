@@ -45,8 +45,7 @@ impl Results {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_error(format!("An unknown error occurred when trying to delete the \
                                          results folder: {}",
-                                        e),
-                                config.is_verbose());
+                                        e));
                     return None;
                 }
             }
@@ -56,8 +55,7 @@ impl Results {
                 Err(e) => {
                     print_error(format!("An error occurred when trying to fingerprint the \
                                          application: {}",
-                                        e),
-                                config.is_verbose());
+                                        e));
                     return None;
                 }
             };
@@ -163,8 +161,7 @@ impl Results {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_warning(format!("There was an error when removing the results \
                                            folder: {}",
-                                          e.description()),
-                                  config.is_verbose());
+                                          e.description()));
                 }
             }
             if config.is_verbose() {
@@ -179,8 +176,7 @@ impl Results {
                 let mut json_reporter = Json::new();
 
                 if let Err(e) = json_reporter.generate(config, self) {
-                    print_warning(format!("There was en error generating JSON report: {}", e),
-                                  config.is_verbose());
+                    print_warning(format!("There was en error generating JSON report: {}", e));
                 }
 
                 if config.is_verbose() {
@@ -195,8 +191,7 @@ impl Results {
 
                 if let Ok(mut handlebars_reporter) = handelbars_report_result {
                     if let Err(e) = handlebars_reporter.generate(config, self) {
-                        print_warning(format!("There was en error generating HTML report: {}", e),
-                                      config.is_verbose());
+                        print_warning(format!("There was en error generating HTML report: {}", e));
                     }
 
                     if config.is_verbose() {
