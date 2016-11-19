@@ -7,7 +7,7 @@ use std::error::Error as StdError;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use chrono::Local;
 
-mod utils;
+pub mod utils;
 mod handlebars_helpers;
 mod report;
 

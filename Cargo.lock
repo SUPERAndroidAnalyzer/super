@@ -3,9 +3,11 @@ name = "super-analyzer"
 version = "0.4.0-dev"
 dependencies = [
  "bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.20.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "colored 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "elf 0.0.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "handlebars 0.25.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lazy_static 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -43,6 +45,11 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "bytecount"
 version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "byteorder"
+version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -100,6 +107,14 @@ dependencies = [
 name = "dtoa"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "elf"
+version = "0.0.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "env_logger"
@@ -439,12 +454,14 @@ dependencies = [
 "checksum ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "23ac7c30002a5accbf7e8987d0632fa6de155b7c3d39d0067317a391e00a2ef6"
 "checksum bitflags 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "aad18937a628ec6abcd26d1489012cc0e18c21798210f491af69ded9b881106d"
 "checksum bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "1e8f09fbc8c6726a4b616dcfbd4f54491068d6bb1b93ac03c78ac18ff9a5924a"
+"checksum byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)" = "0fc10e8cc6b2580fda3f36eb6dc5316657f812a3df879a44a66fc9f0fdbc4855"
 "checksum bzip2 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "e39c71fcff507b547240346a894c5df38e6fd42fb02590a5d5b3f2dae9173ad2"
 "checksum bzip2-sys 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "98ce3fff84d4e90011f464bbdf48e3428f04270439f703868fd489d2aaedfc30"
 "checksum chrono 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "158b0bd7d75cbb6bf9c25967a48a2e9f77da95876b858eadfabaa99cd069de6e"
 "checksum clap 2.20.4 (registry+https://github.com/rust-lang/crates.io-index)" = "a60af5cb867dd4ee2378398acde80c73b466b58a963f598061ce7e394800998d"
 "checksum colored 1.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "30e634d7d90e02beb7a2a51c7f7950ed2223d7e2c8667b1e9d6a521850aac132"
 "checksum dtoa 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "80c8b71fd71146990a9742fc06dcbbde19161a267e0ad4e572c35162f4578c90"
+"checksum elf 0.0.10 (registry+https://github.com/rust-lang/crates.io-index)" = "4841de15dbe0e49b9b62a417589299e3be0d557e0900d36acb87e6dae47197f5"
 "checksum env_logger 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "99971fb1b635fe7a0ee3c4d065845bb93cca80a23b5613b5613391ece5de4144"
 "checksum flate2 0.2.17 (registry+https://github.com/rust-lang/crates.io-index)" = "d4e4d0c15ef829cbc1b7cda651746be19cceeb238be7b1049227b14891df9e25"
 "checksum gcc 0.3.43 (registry+https://github.com/rust-lang/crates.io-index)" = "c07c758b972368e703a562686adb39125707cc1ef3399da8c019fc6c2498a75d"

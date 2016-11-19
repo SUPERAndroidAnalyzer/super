@@ -29,6 +29,8 @@ extern crate handlebars;
 #[macro_use]
 extern crate log;
 extern crate env_logger;
+#[cfg(feature = "binary-analysis")]
+extern crate elf;
 
 mod cli;
 mod decompilation;
