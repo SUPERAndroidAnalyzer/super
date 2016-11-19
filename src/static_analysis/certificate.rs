@@ -49,8 +49,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                        {} dir searching certificates. \
                                        Certificate analysis will be skipped. More info: {}",
                                       path.display(),
-                                      e.description()),
-                              config.is_verbose());
+                                      e.description()));
                 break;
             }
         };
@@ -85,16 +84,14 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             if output.is_err() {
                 print_error(format!("There was an error when executing the openssl command to \
                                      check the certificate: {}",
-                                    output.err().unwrap()),
-                            config.is_verbose());
+                                    output.err().unwrap()));
                 exit(Error::Unknown.into());
             }
 
             let output = output.unwrap();
             if !output.status.success() {
                 print_error(format!("The openssl command returned an error. More info: {}",
-                                    String::from_utf8_lossy(&output.stderr[..])),
-                            config.is_verbose());
+                                    String::from_utf8_lossy(&output.stderr[..])));
                 exit(Error::Unknown.into());
             };
 
