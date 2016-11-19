@@ -52,7 +52,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
-    if cfg!(not(test)) {
+    if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!("Possible {} criticality vulnerability found!: {}",
                               criticality,
                               text.as_ref());
@@ -64,10 +64,8 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
             _ => return,
         };
 
-        if log_enabled!(Debug) {
-            println!("{}", formatted_message);
-            sleep(Duration::from_millis(200));
-        }
+        println!("{}", formatted_message);
+        sleep(Duration::from_millis(200));
     }
 }
 

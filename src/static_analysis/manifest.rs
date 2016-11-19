@@ -93,10 +93,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                                           code);
 
             results.add_vulnerability(vuln);
-
-            if config.is_verbose() {
-                print_vulnerability(description, criticality);
-            }
+            print_vulnerability(description, criticality);
         }
     }
 
@@ -122,10 +119,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                                           line,
                                           code);
             results.add_vulnerability(vuln);
-
-            if config.is_verbose() {
-                print_vulnerability(description, criticality);
-            }
+            print_vulnerability(description, criticality);
         }
     }
 
@@ -151,10 +145,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                                           line,
                                           code);
             results.add_vulnerability(vuln);
-
-            if config.is_verbose() {
-                print_vulnerability(description, criticality);
-            }
+            print_vulnerability(description, criticality);
         }
     }
 
@@ -175,10 +166,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                                           line,
                                           code);
             results.add_vulnerability(vuln);
-
-            if config.is_verbose() {
-                print_vulnerability(permission.get_description(), permission.get_criticality());
-            }
+            print_vulnerability(permission.get_description(), permission.get_criticality());
         }
     }
 
@@ -541,9 +529,7 @@ impl Manifest {
                                                                               code);
                                                 results.add_vulnerability(vuln);
 
-                                                if config.is_verbose() {
-                                                    print_vulnerability(description, criticality);
-                                                }
+                                                print_vulnerability(description, criticality);
                                             }
                                             break;
                                         }

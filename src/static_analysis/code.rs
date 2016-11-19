@@ -43,7 +43,6 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     let manifest = Arc::new(manifest);
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
-    let verbose = config.is_verbose();
     let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
@@ -72,8 +71,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                                          &*thread_dist_folder,
                                                          &thread_rules,
                                                          &thread_manifest,
-                                                         &thread_vulns,
-                                                         verbose) {
+                                                         &thread_vulns) {
                                 print_warning(format!("Error analyzing file {}. The analysis \
                                                        will continue, though. Error: {}",
                                                       f.path().display(),
@@ -130,8 +128,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                 dist_folder: T,
                                                 rules: &[Rule],
                                                 manifest: &Option<Manifest>,
-                                                results: &Mutex<Vec<Vulnerability>>,
-                                                verbose: bool)
+                                                results: &Mutex<Vec<Vulnerability>>)
                                                 -> Result<()> {
     let mut f = File::open(&path)?;
     let mut code = String::new();
@@ -176,9 +173,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                   start_line,
                                                                   end_line))));
 
-                    if verbose {
-                        print_vulnerability(rule.get_description(), rule.get_criticality());
-                    }
+                    print_vulnerability(rule.get_description(), rule.get_criticality());
                 }
                 Some(check) => {
                     let caps = rule.get_regex().captures(&code[s..e]).unwrap();
@@ -223,9 +218,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                                       start_line,
                                                                       end_line))));
 
-                        if verbose {
-                            print_vulnerability(rule.get_description(), rule.get_criticality());
-                        }
+                        print_vulnerability(rule.get_description(), rule.get_criticality());
                     }
                 }
             }

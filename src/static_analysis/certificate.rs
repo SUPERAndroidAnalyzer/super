@@ -136,10 +136,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                               None,
                                               None::<String>);
                 results.add_vulnerability(vuln);
-
-                if config.is_verbose() {
-                    print_vulnerability(description, criticality);
-                }
+                print_vulnerability(description, criticality);
             }
             if issuer.nth(1) == subject.nth(1) {
                 // TODO: This means it is self signed. Should we do something?
@@ -173,10 +170,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                               None,
                                               None::<String>);
                 results.add_vulnerability(vuln);
-
-                if config.is_verbose() {
-                    print_vulnerability(description, criticality);
-                }
+                print_vulnerability(description, criticality);
             }
         }
     }
