@@ -34,8 +34,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
         }
         Err(e) => {
             print_error(format!("There was an error when loading the manifest: {}",
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
             if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \
                           of the AndroidManifest.xml file, and code analysis rules requiring \
@@ -50,8 +49,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
                               package.as_ref(),
-                              manifest.get_package()),
-                      config.is_verbose());
+                              manifest.get_package()));
 
         if config.is_verbose() {
             println!("This does not mean that something went wrong, but it's supposed to have \
@@ -209,7 +207,6 @@ impl PackageMetadata {
     /// It will load target file, decode YAML and parse the data
     pub fn from_apktool<P: AsRef<Path>>(path: P) -> Result<Self> {
         let mut metadata = PackageMetadata::default();
-        let is_verbose = false;
 
         let yaml_warning = "An error occurred when parsing the apktool.yml file.";
         let mut file = File::open(path)?;
@@ -229,16 +226,15 @@ impl PackageMetadata {
                                             Err(e) => {
                                                 print_warning(format!("{} {}",
                                                                       yaml_warning,
-                                                                      e.description()),
-                                                              is_verbose);
+                                                                      e.description()));
                                                 debug!("Could not parse string for minSdkVersion");
                                             }
                                         }
                                     }
                                     _ => {
-                                        print_warning(yaml_warning, is_verbose);
+                                        print_warning(yaml_warning);
                                         debug!("Expected a string for node minSdkVersion");
-                                    },
+                                    }
                                 }
 
                                 match sdk_info.get(
@@ -248,16 +244,15 @@ impl PackageMetadata {
                                             Ok(target_sdk) => metadata.set_target_sdk(target_sdk),
                                             Err(e) => {
                                                 print_warning(format!("{} {}", yaml_warning,
-                                                                      e.description()),
-                                                                is_verbose);
+                                                                      e.description()));
                                             }
                                         }
                                     },
                                     None => {},
-                                    _ => print_warning(yaml_warning, is_verbose),
+                                    _ => print_warning(yaml_warning),
                                 }
                             }
-                            _ => print_warning(yaml_warning, is_verbose),
+                            _ => print_warning(yaml_warning),
                         }
 
                         match info.get(&Yaml::String(String::from("versionInfo"))) {
@@ -271,29 +266,28 @@ impl PackageMetadata {
                                             Err(e) => {
                                                 print_warning(format!("{} {}",
                                                                       yaml_warning,
-                                                                      e.description()),
-                                                              is_verbose);
+                                                                      e.description()));
                                             }
                                         }
                                     }
-                                    _ => print_warning(yaml_warning, is_verbose),
+                                    _ => print_warning(yaml_warning),
                                 }
 
                                 match version_info.get(&Yaml::String(String::from("versionName"))) {
                                     Some(&Yaml::String(ref version_name)) => {
                                         metadata.set_version_str(version_name.as_str());
                                     }
-                                    _ => print_warning(yaml_warning, is_verbose),
+                                    _ => print_warning(yaml_warning),
                                 }
                             }
-                            _ => print_warning(yaml_warning, is_verbose),
+                            _ => print_warning(yaml_warning),
                         }
                     }
-                    _ => print_warning(yaml_warning, is_verbose),
+                    _ => print_warning(yaml_warning),
                 }
             }
             Err(e) => {
-                print_warning(format!("{} {}", yaml_warning, e.description()), is_verbose);
+                print_warning(format!("{} {}", yaml_warning, e.description()));
                 return Err(Error::Parse);
             }
         }
@@ -385,8 +379,7 @@ impl Manifest {
                                                                        the manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -405,8 +398,7 @@ impl Manifest {
                                                                        manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -429,8 +421,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -450,8 +441,7 @@ impl Manifest {
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -470,8 +460,7 @@ impl Manifest {
                                                                            the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -489,8 +478,7 @@ impl Manifest {
                                                                           the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e.description()),
-                                                              config.is_verbose());
+                                                                      e.description()));
                                                 break;
                                             }
                                         };
@@ -509,8 +497,7 @@ impl Manifest {
                                                                          for the app label in the\
                                                                        manifest: {}.\nThe process\
                                                                       will continue, though.",
-                                                                          e.description()),
-                                                                      config.is_verbose());
+                                                                          e.description()));
                                                     break;
                                                 }
                                             }
@@ -634,8 +621,7 @@ impl Manifest {
                     print_warning(format!("An error occurred when parsing the \
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
-                                          e.description()),
-                                  config.is_verbose());
+                                          e.description()));
                 }
             }
         }
@@ -858,8 +844,7 @@ mod tests {
 
     #[test]
     fn it_loads_metadata_from_apktool() {
-        let metadata = PackageMetadata::from_apktool("tests/apktool/full_apktool.yml")
-            .unwrap();
+        let metadata = PackageMetadata::from_apktool("tests/apktool/full_apktool.yml").unwrap();
 
         assert_eq!(14, metadata.get_min_sdk());
         assert_eq!(Some(23), metadata.get_target_sdk());
@@ -869,8 +854,7 @@ mod tests {
 
     #[test]
     fn it_loads_metadata_from_apktool_partial() {
-        let metadata = PackageMetadata::from_apktool("tests/apktool/partial_apktool.yml")
-            .unwrap();
+        let metadata = PackageMetadata::from_apktool("tests/apktool/partial_apktool.yml").unwrap();
 
         assert_eq!(0, metadata.get_min_sdk());
         assert_eq!(None, metadata.get_target_sdk());

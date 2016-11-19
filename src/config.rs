@@ -131,8 +131,7 @@ impl Config {
                                           "low".italic(),
                                           "medium".italic(),
                                           "high".italic(),
-                                          "critical".italic()),
-                                  self.verbose);
+                                          "critical".italic()));
                 }
             }
         }
@@ -144,8 +143,7 @@ impl Config {
                 _ => {
                     print_warning(format!("The threads option must be an integer between 1 and \
                                            {}",
-                                          u8::MAX),
-                                  self.verbose);
+                                          u8::MAX));
                 }
             }
         }
@@ -195,16 +193,14 @@ impl Config {
                         Err(e) => {
                             print_warning(format!("There was an error when reading the \
                                                    downloads folder: {}",
-                                                  e.description()),
-                                          self.verbose);
+                                                  e.description()));
                         }
                     }
                 }
             }
             Err(e) => {
                 print_error(format!("There was an error when reading the downloads folder: {}",
-                                    e.description()),
-                            self.verbose);
+                                    e.description()));
                 exit(Error::from(e).into());
             }
         }
@@ -419,8 +415,7 @@ impl Config {
             Some(t) => t,
             None => {
                 print_error(format!("There was an error parsing the config.toml file: {:?}",
-                                    parser.errors),
-                            self.verbose);
+                                    parser.errors));
                 exit(Error::Parse.into());
             }
         };
@@ -441,10 +436,7 @@ impl Config {
                 "permissions" => self.load_permissions(value),
                 "html_report" => self.load_html_report_section(value),
                 "json_report" => self.load_json_report_section(value),
-                _ => {
-                    print_warning(format!("Unknown configuration option {}.", key),
-                                  self.verbose)
-                }
+                _ => print_warning(format!("Unknown configuration option {}.", key)),
             }
         }
         Ok(())
@@ -458,8 +450,7 @@ impl Config {
                 print_warning(format!("The 'threads' option in config.toml must \
                                        be an integer between 1 and {}.\nUsing \
                                        default.",
-                                      MAX_THREADS),
-                              self.verbose)
+                                      MAX_THREADS))
             }
         }
     }
@@ -470,8 +461,7 @@ impl Config {
             Value::String(s) => self.downloads_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'downloads_folder' option in config.toml must \
-                               be an string.\nUsing default.",
-                              self.verbose)
+                               be an string.\nUsing default.")
             }
         }
     }
@@ -482,8 +472,7 @@ impl Config {
             Value::String(s) => self.dist_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'dist_folder' option in config.toml must be an \
-                               string.\nUsing default.",
-                              self.verbose)
+                               string.\nUsing default.")
             }
         }
     }
@@ -494,8 +483,7 @@ impl Config {
             Value::String(s) => self.results_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'results_folder' option in config.toml must be \
-                               an string.\nUsing default.",
-                              self.verbose)
+                               an string.\nUsing default.")
             }
         }
     }
@@ -509,14 +497,12 @@ impl Config {
                     self.apktool_file = PathBuf::from(s.clone());
                 } else {
                     print_warning("The APKTool file must be a JAR file.\nUsing \
-                                   default.",
-                                  self.verbose)
+                                   default.")
                 }
             }
             _ => {
                 print_warning("The 'apktool_file' option in config.toml must be \
-                               an string.\nUsing default.",
-                              self.verbose)
+                               an string.\nUsing default.")
             }
         }
     }
@@ -527,8 +513,7 @@ impl Config {
             Value::String(s) => self.dex2jar_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'dex2jar_folder' option in config.toml should \
-                               be an string.\nUsing default.",
-                              self.verbose)
+                               be an string.\nUsing default.")
             }
         }
     }
@@ -542,14 +527,12 @@ impl Config {
                     self.jd_cmd_file = PathBuf::from(s.clone());
                 } else {
                     print_warning("The JD-CMD file must be a JAR file.\nUsing \
-                                   default.",
-                                  self.verbose)
+                                   default.")
                 }
             }
             _ => {
                 print_warning("The 'jd_cmd_file' option in config.toml must be an \
-                               string.\nUsing default.",
-                              self.verbose)
+                               string.\nUsing default.")
             }
         }
     }
@@ -560,8 +543,7 @@ impl Config {
             Value::String(s) => self.templates_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'templates_folder' option in config.toml \
-                               should be an string.\nUsing default.",
-                              self.verbose)
+                               should be an string.\nUsing default.")
             }
         }
     }
@@ -572,8 +554,7 @@ impl Config {
             Value::String(s) => self.template = s,
             _ => {
                 print_warning("The 'template' option in config.toml \
-                               should be an string.\nUsing default.",
-                              self.verbose)
+                               should be an string.\nUsing default.")
             }
         }
     }
@@ -587,14 +568,12 @@ impl Config {
                     self.rules_json = PathBuf::from(s.clone());
                 } else {
                     print_warning("The rules.json file must be a JSON \
-                                   file.\nUsing default.",
-                                  self.verbose)
+                                   file.\nUsing default.")
                 }
             }
             _ => {
                 print_warning("The 'rules_json' option in config.toml must be an \
-                               string.\nUsing default.",
-                              self.verbose)
+                               string.\nUsing default.")
             }
         }
     }
@@ -616,7 +595,7 @@ impl Config {
                     let cfg = match cfg.as_table() {
                         Some(t) => t,
                         None => {
-                            print_warning(format_warning, self.verbose);
+                            print_warning(format_warning);
                             break;
                         }
                     };
@@ -624,7 +603,7 @@ impl Config {
                     let name = match cfg.get("name") {
                         Some(&Value::String(ref n)) => n,
                         _ => {
-                            print_warning(format_warning, self.verbose);
+                            print_warning(format_warning);
                             break;
                         }
                     };
@@ -640,14 +619,13 @@ impl Config {
                                                           "low".italic(),
                                                           "medium".italic(),
                                                           "high".italic(),
-                                                          "critical".italic()),
-                                                  self.verbose);
+                                                          "critical".italic()));
                                     break;
                                 }
                             }
                         }
                         _ => {
-                            print_warning(format_warning, self.verbose);
+                            print_warning(format_warning);
                             break;
                         }
                     };
@@ -655,7 +633,7 @@ impl Config {
                     let description = match cfg.get("description") {
                         Some(&Value::String(ref d)) => d.to_owned(),
                         _ => {
-                            print_warning(format_warning, self.verbose);
+                            print_warning(format_warning);
                             break;
                         }
                     };
@@ -669,15 +647,14 @@ impl Config {
                                                     \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
-                                                       .italic()),
-                                          self.verbose);
+                                                       .italic()));
                             break;
                         }
 
                         self.unknown_permission = (criticality, description.clone());
                     } else {
                         if cfg.len() != 4 {
-                            print_warning(format_warning, self.verbose);
+                            print_warning(format_warning);
                             break;
                         }
 
@@ -690,8 +667,7 @@ impl Config {
                                                        permission name, under the {} section.",
                                                       name.italic(),
                                                       "unknown".italic(),
-                                                      "[[permissions]]".italic()),
-                                              self.verbose);
+                                                      "[[permissions]]".italic()));
                                 break;
                             }
                         };
@@ -699,7 +675,7 @@ impl Config {
                         let label = match cfg.get("label") {
                             Some(&Value::String(ref l)) => l.to_owned(),
                             _ => {
-                                print_warning(format_warning, self.verbose);
+                                print_warning(format_warning);
                                 break;
                             }
                         };
@@ -712,8 +688,7 @@ impl Config {
                 }
             }
             _ => {
-                print_warning("You must specify the permissions you want to select as vulnerable.",
-                              self.verbose)
+                print_warning("You must specify the permissions you want to select as vulnerable.")
             }
         }
     }
@@ -724,8 +699,7 @@ impl Config {
             Value::Boolean(b) => self.html = b,
             _ => {
                 print_warning("The 'html_report' option in config.toml \
-                               should be a boolean.\nUsing default.",
-                              self.verbose)
+                               should be a boolean.\nUsing default.")
             }
         }
     }
@@ -736,8 +710,7 @@ impl Config {
             Value::Boolean(b) => self.json = b,
             _ => {
                 print_warning("The 'json_report' option in config.toml \
-                               should be a boolean.\nUsing default.",
-                              self.verbose)
+                               should be a boolean.\nUsing default.")
             }
         }
     }

@@ -73,8 +73,7 @@ fn main() {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
-                                  e.description()),
-                          verbose);
+                                  e.description()));
             Config::default()
         }
     };
@@ -90,7 +89,7 @@ fn main() {
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
-        print_error(error_string, verbose);
+        print_error(error_string);
         exit(Error::Config.into());
     }
 
@@ -220,8 +219,7 @@ fn analyze_package(package: PathBuf,
             Ok(false) => {}
             Err(e) => {
                 print_error(format!("There was an error generating the results report: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::Unknown.into())
             }
         }
@@ -243,8 +241,7 @@ fn analyze_package(package: PathBuf,
                 .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
             }
         }
     } else if config.is_open() {
@@ -253,8 +250,7 @@ fn analyze_package(package: PathBuf,
             .join("index.html");
         if let Err(e) = open::that(report_path) {
             print_error(format!("Report could not be opened automatically: {}",
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
         }
     }
 }
@@ -463,10 +459,18 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 }
 
 fn initialize_logger(is_verbose: bool) {
-	let format = |record: &LogRecord| {
+    let format = |record: &LogRecord| {
         match record.level() {
-            LogLevel::Warn => format!("{}{}", "Warning: ".bold().yellow(), record.args().to_string().yellow()),
-            LogLevel::Error => format!("{}{}", "Error: ".bold().red(), record.args().to_string().red()),
+            LogLevel::Warn => {
+                format!("{}{}",
+                        "Warning: ".bold().yellow(),
+                        record.args().to_string().yellow())
+            }
+            LogLevel::Error => {
+                format!("{}{}",
+                        "Error: ".bold().red(),
+                        record.args().to_string().red())
+            }
             LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
             LogLevel::Info => format!("{}", record.args()),
             _ => format!("{}: {}", record.level(), record.args()),
@@ -480,8 +484,7 @@ fn initialize_logger(is_verbose: bool) {
     };
 
     let mut builder = LogBuilder::new();
-    let builder_state = builder
-        .format(format)
+    let builder_state = builder.format(format)
         .filter(None, log_level)
         .init();
 

@@ -36,8 +36,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
         // Run analysis for cerificate file.
         if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
             print_warning(format!("There was an error analysing the certificate: {:?}",
-                                  e.description()),
-                          config.is_verbose())
+                                  e.description()))
         }
     }
 
