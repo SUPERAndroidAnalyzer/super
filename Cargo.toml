@@ -15,6 +15,7 @@ Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI.\
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
+build = "build.rs"
 
 [dependencies]
 clap = "^2.18"
@@ -39,6 +40,9 @@ env_logger = "^0.3"
 version = "^0.22"
 default-features = false
 features = ["serde_type"]
+
+[build-dependencies]
+clap = "^2.18"
 
 [features]
 default = ["beta"]

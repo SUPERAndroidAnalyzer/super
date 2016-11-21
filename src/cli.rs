@@ -1,6 +1,6 @@
-use clap::{Arg, App, ArgMatches};
+use clap::{Arg, App};
 
-pub fn generate_cli() -> ArgMatches<'static> {
+pub fn generate_cli() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())
         .author("SUPER Team <contact@superanalyzer.rocks>")
@@ -84,5 +84,4 @@ pub fn generate_cli() -> ArgMatches<'static> {
             .long("rules")
             .help("Path to a JSON rules file")
             .takes_value(true))
-        .get_matches()
 }
