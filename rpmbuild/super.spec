@@ -22,7 +22,7 @@ Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
 mkdir -p %{buildroot}%{_datadir}/fish/vendor_completions.d
-#mkdir -p %{buildroot}%{_datadir}/zsh/site-functions
+mkdir -p %{buildroot}%{_datadir}/zsh/site-functions
 mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/css
 mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/img
 mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/js
@@ -33,7 +33,7 @@ install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
 install -p -m 755 target/release/%{name} %{buildroot}%{_bindir}/
 install -p -m 755 target/release/%{name}.bash-completion %{buildroot}%{_datadir}/bash-completion/completions/
 install -p -m 755 target/release/%{name}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/
-#install -p -m 755 target/release/%{name}.zsh %{buildroot}%{_datadir}/zsh/site-functions/
+install -p -m 755 target/release/_%{name} %{buildroot}%{_datadir}/zsh/site-functions/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/

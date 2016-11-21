@@ -28,12 +28,16 @@ before_script:
       export PATH=$HOME/.local/bin:$PATH &&
       ( cargo install rustfmt || true )
       fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      ( cargo install --git https://github.com/mmstick/cargo-deb.git || true )
+      fi
+  - export PATH=$PATH:~/.cargo/bin
 
 # The main build
 script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-          export PATH=$PATH:~/.cargo/bin &&
           cargo fmt -- --write-mode=diff
       fi
   - |
@@ -44,6 +48,7 @@ script:
       travis-cargo test -- --features beta &&
       travis-cargo build -- --features unstable &&
       travis-cargo test -- --features unstable
+      cargo deb
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
