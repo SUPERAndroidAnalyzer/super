@@ -11,7 +11,7 @@ addons:
       - libcurl4-openssl-dev
       - libelf-dev
       - libdw-dev
-      - binutils-dev
+      - binutils
 
 # Run builds for all the supported trains
 rust:
