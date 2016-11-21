@@ -15,8 +15,6 @@ fn main() {
     out_dir.pop();
 
     cli.gen_completions("super", Shell::Bash, &out_dir);
-    cli.gen_completions("super", Shell::Fish, out_dir);
-    // ZSH completion script generation is blocked by:
-    // https://github.com/kbknapp/clap-rs/issues/754
-    // cli.gen_completions("super", Shell::Zsh, out_dir);
+    cli.gen_completions("super", Shell::Fish, &out_dir);
+    cli.gen_completions("super", Shell::Zsh, out_dir);
 }
