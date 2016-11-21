@@ -181,7 +181,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
     Some(manifest)
 }
 
-/// PackageMetadata contains versions parameters that are read from apktool.yml
+/// `PackageMetadata` contains versions parameters that are read from apktool.yml
 #[derive(Default, Debug)]
 pub struct PackageMetadata {
     min_sdk: u32,
@@ -640,7 +640,7 @@ impl Manifest {
     }
 
     pub fn get_version_str(&self) -> &str {
-        &self.metadata.get_version_str()
+        self.metadata.get_version_str()
     }
 
     fn set_version_str<S: Into<String>>(&mut self, version_str: S) {

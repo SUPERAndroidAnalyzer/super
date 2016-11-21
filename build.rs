@@ -12,6 +12,7 @@ fn main() {
     let mut out_dir = PathBuf::from(env!("OUT_DIR"));
     out_dir.pop();
     out_dir.pop();
+    out_dir.pop();
 
     cli.gen_completions("super", Shell::Bash, &out_dir);
     cli.gen_completions("super", Shell::Fish, out_dir);
