@@ -54,6 +54,7 @@ use colored::Colorize;
 
 use log::{LogRecord, LogLevelFilter, LogLevel};
 use env_logger::LogBuilder;
+use std::env;
 
 use cli::generate_cli;
 use decompilation::*;
@@ -484,9 +485,19 @@ fn initialize_logger(is_verbose: bool) {
     };
 
     let mut builder = LogBuilder::new();
-    let builder_state = builder.format(format)
-        .filter(None, log_level)
-        .init();
+
+    let builder_state = match env::var("RUST_LOG") {
+        Ok(env_log) => {
+            builder.format(format)
+                .parse(&env_log)
+                .init()
+        }
+        Err(_) => {
+            builder.format(format)
+                .filter(Some("super"), log_level)
+                .init()
+        }
+    };
 
     if let Err(e) = builder_state {
         println!("Could not initialize logger: {}", e);
