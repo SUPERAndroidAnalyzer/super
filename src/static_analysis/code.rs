@@ -347,6 +347,7 @@ impl Rule {
         self.whitelist.iter()
     }
 
+    /// Returns if this rule has to be applied to the given filename
     pub fn has_to_check(&self, filename: &str) -> bool {
         if self.include_file_regex.is_none() && self.exclude_file_regex.is_none() {
             return true;
