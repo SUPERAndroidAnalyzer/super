@@ -33,7 +33,8 @@
     "regex": "(?:setVisible\\s*\\(\\s*View\\s*\\.\\s*(?:INVISIBLE|invisible)\\s*\\))|(?:android:visibility\\s*=\\s*\"invisible\")|(?:android:background\\s*=\\s*\"(?i)(?:@?null)\")",
     "criticality": "warning",
     "label": "Hidden fields",
-    "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosure."
+    "description": "Hidden fields are often used to cover data from the user, but they are discouraged, since they can lead to data disclosure.",
+    "include_file_regex": ".java$"
 }, {
     "regex": "[^0-9a-zA-Z\\n.](?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)",
     "criticality": "warning",
@@ -55,8 +56,7 @@
     "regex": "(?:(?:\\b[A-Z]{1}:)\\\\\\s*[^\\0 !$&*(?:)+]\\w.+)|(?:(?:\\b[A-Z]{1}:)\\\\)",
     "criticality": "warning",
     "label": "Hardcoded file separator",
-    "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix).",
-    "include_file_regex": ".java$"
+    "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix)."
 }, {
     "regex": "(?:DESKeySpec)|(?:getInstance\\(\\s*\"?\\s*(?:md5|MD5|md4|MD4)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:sha-1|SHA-1)\\s*\"?\\s*\\))|(?:getInstance\\(\\s*\"?\\s*(?:rc2|RC2|rc4|RC4|AES\\s*\/\\s*ECB|(rsa|RSA)\/.+\/nopadding)\\s*\"?\\s*\\))",
     "criticality": "high",
@@ -74,13 +74,13 @@
     "criticality": "high",
     "label": "World readable permissions",
     "description": "Setting world readable permissions allows to anyone (with access to the target file) to read file content.",
-    "include_file_regex": ".xml$"
+    "include_file_regex": ".java$"
 }, {
     "regex": "(?:(?:Context\\.)?MODE_WORLD_WRITABLE)|(?:openFileOutput\\(\\s*\"?.+\"?\\s*,\\s*2\\s*\\))",
     "criticality": "high",
     "label": "World writable permissions",
     "description": "Setting world writable permissions allows to anyone (with access to the target file) to modify file content.",
-    "include_file_regex": ".xml$"
+    "include_file_regex": ".java$"
 }, {
     "regex": "\\.getExternal(?:Storage|FilesDir)(?:\\(.*\\))?",
     "permissions": [
@@ -133,17 +133,19 @@
     "criticality": "warning",
     "label": "Sending sms-mms",
     "description": "This application is sending sms or mms and it might be without the user's knowledge.",
-    "include_file_regex": ".xml$"
+    "include_file_regex": ".java$"
 }, {
     "regex": "com\\.noshufou\\.android\\.su|com\\.thirdparty\\.superuser|eu\\.chainfire\\.supersu|com\\.koushikdutta\\.superuser|eu\\.chainfire\\.",
     "criticality": "medium",
     "label": "Super user privileges.",
-    "description": "This applications may require super user privileges."
+    "description": "This applications may require super user privileges.",
+    "include_file_regex": ".java$"
 }, {
     "regex": ".\\s*contains\\s*\\(\\s*\"test-keys\"\\s*\\)|\/system\/app\/Superuser.apk|isDeviceRooted\\s*\\(\\s*\\)|\/system\/bin\/failsafe\/su|\/system\/sd\/xbin\/su|RootTools.isAccessGiven\\s*\\(\\s*\\)",
     "criticality": "high",
     "label": "Rooted device detection",
-    "description": "This applications is performing checks for rooted device. This could be use to execute specific code if the device is rooted to take control of it."
+    "description": "This applications is performing checks for rooted device. This could be use to execute specific code if the device is rooted to take control of it.",
+    "include_file_regex": ".java$"
 }, {
     "regex": "telephony\\.TelephonyManager",
     "forward_check": "getCellLocation",
@@ -201,8 +203,7 @@
     "regex": "\"\\s*\\w*\\.\\s*(?:p12|key|pub|crt|cert|pem|cer|jks|bks)(?:\\s*|\")",
     "criticality": "warning",
     "label": "Certificate or Keystore disclosure",
-    "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore.",
-    "include_file_regex": ".java$"
+    "description": "The decompilation of the source code could lead to the disclosure of hardcoded certificate or keystore."
 }, {
     "regex": "telephony\\.TelephonyManager",
     "forward_check": "getSimOperator\\s*\\(",
