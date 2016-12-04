@@ -8,7 +8,6 @@ use std::thread;
 use std::sync::{Arc, Mutex};
 use std::slice::Iter;
 use std::error::Error as StdError;
-use std::ffi::OsStr;
 
 use serde_json;
 use serde_json::value::Value;
