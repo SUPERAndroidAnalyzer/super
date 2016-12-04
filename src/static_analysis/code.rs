@@ -140,6 +140,16 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
             continue 'check;
         }
 
+        let filename = path.as_ref()
+            .file_name()
+            .and_then(|f| f.to_str());
+
+        if let Some(f) = filename {
+            if !rule.has_to_check(f) {
+                continue 'check;
+            }
+        }
+
         for permission in rule.get_permissions() {
             if manifest.is_none() ||
                !manifest.as_ref()
@@ -299,6 +309,8 @@ struct Rule {
     label: String,
     description: String,
     criticality: Criticality,
+    include_file_regex: Option<Regex>,
+    exclude_file_regex: Option<Regex>,
 }
 
 impl Rule {
@@ -332,6 +344,25 @@ impl Rule {
 
     pub fn get_whitelist(&self) -> Iter<Regex> {
         self.whitelist.iter()
+    }
+
+    /// Returns if this rule has to be applied to the given filename
+    pub fn has_to_check(&self, filename: &str) -> bool {
+        if self.include_file_regex.is_none() && self.exclude_file_regex.is_none() {
+            return true;
+        }
+
+        let mut has_to_check = false;
+
+        if let Some(ref r) = self.include_file_regex {
+            has_to_check = r.is_match(filename)
+        }
+
+        if let Some(ref r) = self.exclude_file_regex {
+            has_to_check = !r.is_match(filename)
+        }
+
+        has_to_check
     }
 }
 
@@ -552,6 +583,36 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => Vec::with_capacity(0),
         };
 
+        let inclusion_regex = rule.get("include_file_regex")
+            .and_then(Value::as_str)
+            .and_then(|r| {
+                let include_regex = Regex::new(r);
+                match include_regex {
+                    Ok(regex) => Some(regex),
+                    Err(e) => {
+                        print_warning(format!("An error ocurred when compiling the inclusion \
+                                               regular expresion: {}",
+                                              e.description()));
+                        None
+                    }
+                }
+            });
+
+        let exclusion_regex = rule.get("exclude_file_regex")
+            .and_then(Value::as_str)
+            .and_then(|r| {
+                let exclude_regex = Regex::new(r);
+                match exclude_regex {
+                    Ok(regex) => Some(regex),
+                    Err(e) => {
+                        print_warning(format!("An error ocurred when compiling the exclusion \
+                                               regular expresion: {}",
+                                              e.description()));
+                        None
+                    }
+                }
+            });
+
         if criticality >= config.get_min_criticality() {
             rules.push(Rule {
                 regex: regex,
@@ -562,6 +623,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 description: description.clone(),
                 criticality: criticality,
                 whitelist: whitelist,
+                include_file_regex: inclusion_regex,
+                exclude_file_regex: exclusion_regex,
             })
         }
     }
@@ -574,6 +637,7 @@ mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
     use config::Config;
+    use Criticality;
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
         if rule.get_regex().is_match(text.as_ref()) {
@@ -1492,5 +1556,113 @@ mod tests {
         for m in should_not_match {
             assert!(!check_match(m, rule));
         }
+    }
+
+    #[test]
+    fn it_has_to_check_rule_if_exclude_and_include_regexp_are_not_provided() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: None,
+            exclude_file_regex: None,
+        };
+
+        assert!(rule.has_to_check("filename.xml"));
+    }
+
+    #[test]
+    fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not_provided() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+            exclude_file_regex: None,
+        };
+
+        assert!(rule.has_to_check("filename.xml"));
+    }
+
+    #[test]
+    fn it_does_not_have_to_check_rule_if_include_regexp_is_non_match_and_exlcude_not_provided() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+            exclude_file_regex: None,
+        };
+
+        assert!(!rule.has_to_check("filename.yml"));
+    }
+
+    #[test]
+    fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+            exclude_file_regex: Some(Regex::new(r"nonmatching").unwrap()),
+        };
+
+        assert!(rule.has_to_check("filename.xml"));
+    }
+
+    #[test]
+    fn it_does_not_have_to_check_rule_if_exclude_is_match() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: Some(Regex::new(r"nonmatching").unwrap()),
+            exclude_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+        };
+
+        assert!(!rule.has_to_check("filename.xml"));
+    }
+
+    #[test]
+    fn it_does_not_have_to_check_if_both_regexps_matches() {
+        let rule = Rule {
+            regex: Regex::new("").unwrap(),
+            permissions: Vec::new(),
+            forward_check: None,
+            max_sdk: None,
+            whitelist: Vec::new(),
+            label: String::new(),
+            description: String::new(),
+            criticality: Criticality::Warning,
+            include_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+            exclude_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
+        };
+
+        assert!(!rule.has_to_check("filename.xml"));
     }
 }
