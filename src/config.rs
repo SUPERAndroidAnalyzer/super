@@ -1019,10 +1019,8 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![
-            Value::String("/some/invalid/apktool.jpg".to_string()),
-            Value::Integer(20),
-        ];
+        let values = vec![Value::String("/some/invalid/apktool.jpg".to_string()),
+                          Value::Integer(20)];
 
         for value in values {
             final_config.load_apktool_file_section(value);
@@ -1048,10 +1046,8 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![
-            Value::String("/some/invalid/js_cmd.jpg".to_string()),
-            Value::Integer(20),
-        ];
+        let values = vec![Value::String("/some/invalid/js_cmd.jpg".to_string()),
+                          Value::Integer(20)];
 
         for value in values {
             final_config.load_jd_cmd_file_section(value);
@@ -1077,10 +1073,7 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![
-            Value::Integer(super::MAX_THREADS + 1),
-            Value::Float(2.4),
-        ];
+        let values = vec![Value::Integer(super::MAX_THREADS + 1), Value::Float(2.4)];
 
         for value in values {
             final_config.load_threads_section(value);
@@ -1143,10 +1136,7 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![
-            Value::String("/some/invalid/rules.jpg".to_string()),
-            Value::Integer(20),
-        ];
+        let values = vec![Value::String("/some/invalid/rules.jpg".to_string()), Value::Integer(20)];
 
         for value in values {
             final_config.load_rules_section(value);
@@ -1236,17 +1226,15 @@ mod tests {
                     Value::String("additional field data".to_string()))
             .is_some();
 
-        let permissions = vec![
-                Value::Integer(20),
-                Value::Table(permission_without_name),
-                Value::Table(permission_invalid_criticality),
-                Value::Table(permission_without_criticality),
-                Value::Table(permission_without_description),
-                Value::Table(permission_unknown_too_much_values),
-                Value::Table(permission_known_too_much_values),
-                Value::Table(permission_known_name_not_found),
-                Value::Table(permission_without_label),
-        ];
+        let permissions = vec![Value::Integer(20),
+                               Value::Table(permission_without_name),
+                               Value::Table(permission_invalid_criticality),
+                               Value::Table(permission_without_criticality),
+                               Value::Table(permission_without_description),
+                               Value::Table(permission_unknown_too_much_values),
+                               Value::Table(permission_known_too_much_values),
+                               Value::Table(permission_known_name_not_found),
+                               Value::Table(permission_without_label)];
 
         for p in permissions {
             final_config.load_permissions(Value::Array(vec![p]));
