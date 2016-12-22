@@ -181,7 +181,7 @@ impl Results {
 
                 if config.is_verbose() {
                     println!("JSON report generated.");
-                    println!("");
+                    println!();
                 }
             }
 

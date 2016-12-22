@@ -18,7 +18,7 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.13.0
+  - 1.14.0
 
 # Load travis-cargo
 before_script:

@@ -28,7 +28,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
         Ok(m) => {
             if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
-                println!("");
+                println!();
             }
             m
         }
@@ -171,9 +171,9 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("{}", "The manifest was analyzed correctly!".green());
-        println!("");
+        println!();
     } else if !config.is_quiet() {
         println!("Manifest analyzed.");
     }

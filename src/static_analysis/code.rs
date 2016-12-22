@@ -117,7 +117,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("{}", "The source code was analized correctly!".green());
     } else if !config.is_quiet() {
         println!("Source code analyzed.");

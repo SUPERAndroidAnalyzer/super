@@ -104,7 +104,7 @@ fn main() {
                   application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
-        println!("");
+        println!();
         sleep(Duration::from_millis(1250));
     }
 
@@ -118,14 +118,14 @@ fn main() {
 
     if config.is_bench() {
         let total_time = Benchmark::new("Total time", total_start.elapsed());
-        println!("");
+        println!();
         println!("{}", "Benchmarks:".bold());
         for (package_name, benchmarks) in benchmarks {
             println!("{}:", package_name.italic());
             for bench in benchmarks {
                 println!("{}", bench);
             }
-            println!("");
+            println!();
         }
         println!("{}", total_time);
     }
@@ -140,7 +140,7 @@ fn analyze_package(package: PathBuf,
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
     }
     if !config.is_quiet() {
-        println!("");
+        println!();
         println!("Starting analysis of {}.", package_name.italic());
     }
     let start_time = Instant::now();
@@ -168,7 +168,7 @@ fn analyze_package(package: PathBuf,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("Now it's time for the actual decompilation of the source code. We'll \
                   translate Android JVM bytecode to Java, so that we can check the code \
                   afterwards.");
@@ -199,7 +199,7 @@ fn analyze_package(package: PathBuf,
         // TODO dynamic analysis
 
         if !config.is_quiet() {
-            println!("");
+            println!();
         }
 
         let report_start = Instant::now();
@@ -208,7 +208,7 @@ fn analyze_package(package: PathBuf,
                 if config.is_verbose() {
                     println!("The results report has been saved. Everything went smoothly, \
                               now you can check all the results.");
-                    println!("");
+                    println!();
                     println!("I will now analyze myself for vulnerabilities…");
                     sleep(Duration::from_millis(1500));
                     println!("Nah, just kidding, I've been developed in {}!",
