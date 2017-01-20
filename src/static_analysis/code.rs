@@ -59,27 +59,25 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
             let thread_vulns = found_vulns.clone();
             let thread_dist_folder = dist_folder.clone();
 
-            thread::spawn(move || {
-                loop {
-                    let f = {
-                        let mut files = thread_files.lock().unwrap();
-                        files.pop()
-                    };
-                    match f {
-                        Some(f) => {
-                            if let Err(e) = analyze_file(f.path(),
-                                                         &*thread_dist_folder,
-                                                         &thread_rules,
-                                                         &thread_manifest,
-                                                         &thread_vulns) {
-                                print_warning(format!("Error analyzing file {}. The analysis \
-                                                       will continue, though. Error: {}",
-                                                      f.path().display(),
-                                                      e.description()))
-                            }
+            thread::spawn(move || loop {
+                let f = {
+                    let mut files = thread_files.lock().unwrap();
+                    files.pop()
+                };
+                match f {
+                    Some(f) => {
+                        if let Err(e) = analyze_file(f.path(),
+                                                     &*thread_dist_folder,
+                                                     &thread_rules,
+                                                     &thread_manifest,
+                                                     &thread_vulns) {
+                            print_warning(format!("Error analyzing file {}. The analysis will \
+                                                   continue, though. Error: {}",
+                                                  f.path().display(),
+                                                  e.description()))
                         }
-                        None => break,
                     }
+                    None => break,
                 }
             })
         })
@@ -160,16 +158,16 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
             }
         }
 
-        'rule: for (s, e) in rule.get_regex().find_iter(code.as_str()) {
+        'rule: for m in rule.get_regex().find_iter(code.as_str()) {
             for white in rule.get_whitelist() {
-                if white.is_match(&code[s..e]) {
+                if white.is_match(&code[m.start()..m.end()]) {
                     continue 'rule;
                 }
             }
             match rule.get_forward_check() {
                 None => {
-                    let start_line = get_line_for(s, code.as_str());
-                    let end_line = get_line_for(e, code.as_str());
+                    let start_line = get_line_for(m.start(), code.as_str());
+                    let end_line = get_line_for(m.end(), code.as_str());
                     let mut results = results.lock().unwrap();
                     results.push(Vulnerability::new(rule.get_criticality(),
                                                     rule.get_label(),
@@ -186,18 +184,18 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                     print_vulnerability(rule.get_description(), rule.get_criticality());
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(&code[s..e]).unwrap();
+                    let caps = rule.get_regex().captures(&code[m.start()..m.end()]).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
                     let mut r = check.clone();
 
                     if let Some(fc1) = fcheck1 {
-                        r = r.replace("{fc1}", fc1);
+                        r = r.replace("{fc1}", fc1.as_str());
                     }
 
                     if let Some(fc2) = fcheck2 {
-                        r = r.replace("{fc2}", fc2);
+                        r = r.replace("{fc2}", fc2.as_str());
                     }
 
                     let regex = match Regex::new(r.as_str()) {
@@ -212,9 +210,9 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                         }
                     };
 
-                    for (s, e) in regex.find_iter(code.as_str()) {
-                        let start_line = get_line_for(s, code.as_str());
-                        let end_line = get_line_for(e, code.as_str());
+                    for m in regex.find_iter(code.as_str()) {
+                        let start_line = get_line_for(m.start(), code.as_str());
+                        let end_line = get_line_for(m.end(), code.as_str());
                         let mut results = results.lock().unwrap();
                         results.push(Vulnerability::new(rule.get_criticality(),
                                                         rule.get_label(),

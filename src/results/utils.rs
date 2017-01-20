@@ -187,15 +187,15 @@ pub fn html_escape<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
     if REGEX.is_match(&input) {
         let matches = REGEX.find_iter(&input);
         let mut output = String::with_capacity(input.len());
-        for (begin, end) in matches {
-            output.push_str(&input[last_match..begin]);
-            match &input[begin..end] {
+        for m in matches {
+            output.push_str(&input[last_match..m.start()]);
+            match &input[m.start()..m.end()] {
                 "<" => output.push_str("&lt;"),
                 ">" => output.push_str("&gt;"),
                 "&" => output.push_str("&amp;"),
                 _ => unreachable!(),
             }
-            last_match = end;
+            last_match = m.end();
         }
         output.push_str(&input[last_match..]);
         Cow::Owned(output)
