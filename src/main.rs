@@ -460,22 +460,20 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 }
 
 fn initialize_logger(is_verbose: bool) {
-    let format = |record: &LogRecord| {
-        match record.level() {
-            LogLevel::Warn => {
-                format!("{}{}",
-                        "Warning: ".bold().yellow(),
-                        record.args().to_string().yellow())
-            }
-            LogLevel::Error => {
-                format!("{}{}",
-                        "Error: ".bold().red(),
-                        record.args().to_string().red())
-            }
-            LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
-            LogLevel::Info => format!("{}", record.args()),
-            _ => format!("{}: {}", record.level(), record.args()),
+    let format = |record: &LogRecord| match record.level() {
+        LogLevel::Warn => {
+            format!("{}{}",
+                    "Warning: ".bold().yellow(),
+                    record.args().to_string().yellow())
         }
+        LogLevel::Error => {
+            format!("{}{}",
+                    "Error: ".bold().red(),
+                    record.args().to_string().red())
+        }
+        LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
+        LogLevel::Info => format!("{}", record.args()),
+        _ => format!("{}: {}", record.level(), record.args()),
     };
 
     let log_level = if is_verbose {

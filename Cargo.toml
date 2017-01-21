@@ -37,8 +37,7 @@ log = "^0.3"
 env_logger = "^0.4"
 
 [dependencies.handlebars]
-version = "^0.22"
-default-features = false
+version = "^0.24"
 features = ["serde_type"]
 
 [build-dependencies]

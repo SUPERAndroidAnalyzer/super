@@ -642,12 +642,12 @@ impl Config {
                         if cfg.len() != 3 {
                             print_warning(format!("The format for the unknown \
                              permissions is the following:\n{}\nUsing default.",
-                                                   "[[permissions]]\nname = \
+                                                  "[[permissions]]\nname = \
                                                    \"unknown\"\ncriticality = \
                                                     \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
-                                                       .italic()));
+                                                      .italic()));
                             break;
                         }
 

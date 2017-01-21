@@ -1,6 +1,6 @@
 use std::io::Write;
 
-use handlebars::{Context, Helper, Handlebars, RenderContext, RenderError};
+use handlebars::{Helper, Handlebars, RenderContext, RenderError};
 use serde_json::Value;
 use bytecount::count;
 
@@ -10,11 +10,7 @@ use super::utils::{split_indent, html_escape};
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn line_numbers(_: &Context,
-                    h: &Helper,
-                    _: &Handlebars,
-                    rc: &mut RenderContext)
-                    -> Result<(), RenderError> {
+pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -60,11 +56,7 @@ pub fn line_numbers(_: &Context,
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn all_lines(_: &Context,
-                 h: &Helper,
-                 _: &Handlebars,
-                 rc: &mut RenderContext)
-                 -> Result<(), RenderError> {
+pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
     let code = h.param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
@@ -96,11 +88,7 @@ pub fn all_lines(_: &Context,
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn all_code(_: &Context,
-                h: &Helper,
-                _: &Handlebars,
-                rc: &mut RenderContext)
-                -> Result<(), RenderError> {
+pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
     let code = h.param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
@@ -142,11 +130,7 @@ pub fn all_code(_: &Context,
 /// ```
 ///
 /// This enables easy styling of the code in templates.
-pub fn html_code(_: &Context,
-                 h: &Helper,
-                 _: &Handlebars,
-                 rc: &mut RenderContext)
-                 -> Result<(), RenderError> {
+pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -201,11 +185,7 @@ pub fn html_code(_: &Context,
 ///
 /// E.g.: for a critical vulnerability in an application with between 100 and 200 vulnerability,
 /// for the critical vulnerability number 12 it would produce `C012`.
-pub fn report_index(_: &Context,
-                    h: &Helper,
-                    _: &Handlebars,
-                    rc: &mut RenderContext)
-                    -> Result<(), RenderError> {
+pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -243,8 +223,7 @@ pub fn report_index(_: &Context,
 ///
 /// It will generaten unordered HTML list (`<ul>...</ul>`) where all files and folders of the given
 /// menu object.
-pub fn generate_menu(_: &Context,
-                     h: &Helper,
+pub fn generate_menu(h: &Helper,
                      _: &Handlebars,
                      rc: &mut RenderContext)
                      -> Result<(), RenderError> {
