@@ -641,21 +641,21 @@ mod tests {
         if rule.get_regex().is_match(text.as_ref()) {
             for white in rule.get_whitelist() {
                 if white.is_match(text.as_ref()) {
-                    let (s, e) = white.find(text.as_ref()).unwrap();
+                    let m = white.find(text.as_ref()).unwrap();
                     println!("Whitelist '{}' matches the text '{}' in '{}'",
                              white.as_str(),
                              text.as_ref(),
-                             &text.as_ref()[s..e]);
+                             &text.as_ref()[m.start()..m.end()]);
                     return false;
                 }
             }
             match rule.get_forward_check() {
                 None => {
-                    let (s, e) = rule.get_regex().find(text.as_ref()).unwrap();
+                    let m = rule.get_regex().find(text.as_ref()).unwrap();
                     println!("The regular expression '{}' matches the text '{}' in '{}'",
                              rule.get_regex(),
                              text.as_ref(),
-                             &text.as_ref()[s..e]);
+                             &text.as_ref()[m.start()..m.end()]);
                     true
                 }
                 Some(check) => {
@@ -666,20 +666,20 @@ mod tests {
                     let mut r = check.clone();
 
                     if let Some(fc1) = fcheck1 {
-                        r = r.replace("{fc1}", fc1);
+                        r = r.replace("{fc1}", fc1.as_str());
                     }
 
                     if let Some(fc2) = fcheck2 {
-                        r = r.replace("{fc2}", fc2);
+                        r = r.replace("{fc2}", fc2.as_str());
                     }
 
                     let regex = Regex::new(r.as_str()).unwrap();
                     if regex.is_match(text.as_ref()) {
-                        let (s, e) = regex.find(text.as_ref()).unwrap();
+                        let m = regex.find(text.as_ref()).unwrap();
                         println!("The forward check '{}'  matches the text '{}' in '{}'",
                                  regex.as_str(),
                                  text.as_ref(),
-                                 &text.as_ref()[s..e]);
+                                 &text.as_ref()[m.start()..m.end()]);
                         true
                     } else {
                         println!("The forward check '{}' does not match the text '{}'",

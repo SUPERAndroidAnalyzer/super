@@ -18,7 +18,7 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.14.0
+  - 1.15.1
 
 # Load travis-cargo
 before_script:
@@ -48,7 +48,7 @@ script:
       travis-cargo build -- --features beta &&
       travis-cargo test -- --features beta &&
       travis-cargo build -- --features unstable &&
-      travis-cargo test -- --features unstable
+      travis-cargo test -- --features unstable &&
       cargo deb
       fi
   - |
