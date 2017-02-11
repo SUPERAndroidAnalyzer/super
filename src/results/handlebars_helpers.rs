@@ -264,10 +264,10 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                 let _ = renderer.write(format!("<a href=\"{1}.html\" title=\"{0}\" \
                                                      target=\"code\"><img \
                                                      src=\"../img/{2}-icon.png\">{0}</a>",
-                                                    name,
-                                                    path,
-                                                    file_type)
-                    .as_bytes())?;
+                                   name,
+                                   path,
+                                   file_type)
+                        .as_bytes())?;
             }
             let _ = renderer.write(b"</li>")?;
         } else {

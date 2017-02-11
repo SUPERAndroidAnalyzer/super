@@ -15,7 +15,7 @@ use std::cmp::{PartialOrd, Ordering};
 use std::error::Error as StdError;
 
 use colored::Colorize;
-use toml::{Parser, Value};
+use toml::Value;
 use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
@@ -410,14 +410,16 @@ impl Config {
         let _ = f.read_to_string(&mut toml)?;
 
         // Parse the configuration file.
-        let mut parser = Parser::new(toml.as_str());
-        let toml = match parser.parse() {
-            Some(t) => t,
-            None => {
-                print_error(format!("There was an error parsing the config.toml file: {:?}",
-                                    parser.errors));
-                exit(Error::Parse.into());
-            }
+        let toml = if let Value::Table(toml) =
+            toml.parse::<Value>()
+                .unwrap_or_else(|e| {
+                    print_error(format!("There was an error parsing the config.toml file: {}", e));
+                    exit(Error::Parse.into());
+                }) {
+            toml
+        } else {
+            print_error("The config.toml file does not have the correct formatting.");
+            exit(Error::Parse.into());
         };
 
         // Read the values from the configuration file.
@@ -540,7 +542,7 @@ impl Config {
     /// Loads templated folder section from the TOML value.
     fn load_templates_folder_section(&mut self, value: Value) {
         match value {
-            Value::String(s) => self.templates_folder = PathBuf::from(s),
+            Value::String(ref s) => self.templates_folder = PathBuf::from(s),
             _ => {
                 print_warning("The 'templates_folder' option in config.toml \
                                should be an string.\nUsing default.")
@@ -579,8 +581,8 @@ impl Config {
     }
 
     /// Loads permissions from the TOML configuration vector.
-    fn load_permissions(&mut self, permissions: Value) {
-        match permissions {
+    fn load_permissions(&mut self, value: Value) {
+        match value {
             Value::Array(permissions) => {
                 let format_warning = format!("The permission configuration format must be the \
                                               following:\n{}\nUsing default.",
@@ -688,7 +690,7 @@ impl Config {
                 }
             }
             _ => {
-                print_warning("You must specify the permissions you want to select as vulnerable.")
+                print_warning("You must specify the permissions you want to select as vulnerable.");
             }
         }
     }

@@ -36,10 +36,11 @@ before_script:
 
 # The main build
 script:
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-          cargo fmt -- --write-mode=diff
-      fi
+  # Turning of format checking due to several rustfmt bugs.
+  # - |
+  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  #         cargo fmt -- --write-mode=diff
+  #     fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       travis-cargo build &&

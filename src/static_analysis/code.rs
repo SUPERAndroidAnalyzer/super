@@ -433,7 +433,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         };
 
         let max_sdk = match rule.get("max_sdk") {
-            Some(&Value::U64(sdk)) => Some(sdk as u32),
+            Some(&Value::Number(ref sdk)) if sdk.is_u64() => Some(sdk.as_u64().unwrap() as u32),
             None => None,
             _ => {
                 print_warning(format_warning);
@@ -1136,14 +1136,15 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match =
-            &["telephony.SmsManager     sendMultipartTextMessage(String destinationAddress, \
-               String scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
-               ArrayList<PendingIntent> deliveryIntents)",
-              "telephony.SmsManager     sendTextMessage(String destinationAddress, String \
-               scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-              "telephony.SmsManager     vnd.android-dir/mms-sms",
-              "telephony.SmsManager     vnd.android-dir/mms-sms"];
+        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String \
+                              destinationAddress, String scAddress, ArrayList<String> parts, \
+                              ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
+                              deliveryIntents)",
+                             "telephony.SmsManager  sendTextMessage(String destinationAddress, \
+                              String scAddress, String text, PendingIntent sentIntent, \
+                              PendingIntent deliveryIntent)",
+                             "telephony.SmsManager  vnd.android-dir/mms-sms",
+                             "telephony.SmsManager  vnd.android-dir/mms-sms"];
 
         let should_not_match = &["vnd.android-dir/mms-sms",
                                  "sendTextMessage(String destinationAddress, String scAddress, \

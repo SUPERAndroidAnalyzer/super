@@ -49,7 +49,6 @@ use std::thread::sleep;
 use std::collections::BTreeMap;
 
 use serde::ser::{Serialize, Serializer};
-use serde_json::error::ErrorCode as JSONErrorCode;
 use colored::Colorize;
 
 use log::{LogRecord, LogLevelFilter, LogLevel};
@@ -264,7 +263,7 @@ pub enum Error {
     /// Parsing error.
     Parse,
     /// JSON error.
-    JSON(JSONError),
+    JSON(serde_json::error::Error),
     /// The code was not found.
     CodeNotFound,
     /// Configuration error.
@@ -327,12 +326,7 @@ impl From<handlebars::RenderError> for Error {
 
 impl From<serde_json::error::Error> for Error {
     fn from(err: serde_json::error::Error) -> Error {
-        match err {
-            serde_json::error::Error::Syntax(code, line, column) => {
-                Error::JSON(JSONError::new(code, line, column))
-            }
-            serde_json::error::Error::Io(err) => Error::IO(err),
-        }
+        Error::JSON(err)
     }
 }
 
@@ -341,7 +335,6 @@ impl From<yaml_rust::ScanError> for Error {
         Error::Parse
     }
 }
-
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -375,22 +368,6 @@ impl StdError for Error {
     }
 }
 
-/// JSON error structure.
-#[derive(Debug)]
-pub struct JSONError {
-    description: String,
-}
-
-impl JSONError {
-    fn new(code: JSONErrorCode, line: usize, column: usize) -> JSONError {
-        JSONError { description: format!("{:?} at line {} column {}", code, line, column) }
-    }
-
-    fn description(&self) -> &str {
-        &self.description
-    }
-}
-
 /// SUPER result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -416,11 +393,10 @@ impl Display for Criticality {
 }
 
 impl Serialize for Criticality {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
         where S: Serializer
     {
-        serializer.serialize_str(format!("{}", self).as_str())?;
-        Ok(())
+        serializer.serialize_str(format!("{}", self).as_str())
     }
 }
 
