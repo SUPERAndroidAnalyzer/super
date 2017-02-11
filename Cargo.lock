@@ -1,6 +1,6 @@
 [root]
 name = "super"
-version = "0.3.0-dev"
+version = "0.3.0"
 dependencies = [
  "bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
