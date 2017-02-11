@@ -176,9 +176,9 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("{}", "The certificates were analyzed correctly!".green());
-        println!("");
+        println!();
     } else if !config.is_quiet() {
         println!("Certificates analyzed.");
     }

@@ -18,7 +18,7 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.13.0
+  - 1.15.1
 
 # Load travis-cargo
 before_script:
@@ -36,10 +36,11 @@ before_script:
 
 # The main build
 script:
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-          cargo fmt -- --write-mode=diff
-      fi
+  # Turning of format checking due to several rustfmt bugs.
+  # - |
+  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  #         cargo fmt -- --write-mode=diff
+  #     fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       travis-cargo build &&
@@ -47,7 +48,7 @@ script:
       travis-cargo build -- --features beta &&
       travis-cargo test -- --features beta &&
       travis-cargo build -- --features unstable &&
-      travis-cargo test -- --features unstable
+      travis-cargo test -- --features unstable &&
       cargo deb
       fi
   - |

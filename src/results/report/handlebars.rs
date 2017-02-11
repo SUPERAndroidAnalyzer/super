@@ -11,6 +11,7 @@ use results::handlebars_helpers::*;
 use std::fs;
 use {copy_folder, Error};
 use colored::Colorize;
+use serde_json::Map;
 use serde_json::value::Value;
 use std::collections::BTreeMap;
 use std::path::Path;
@@ -121,11 +122,11 @@ impl HandlebarsReport {
                 if stripped != Path::new("original") {
                     let inner_menu = self.generate_code_html_folder(stripped, config, results)?;
                     if !inner_menu.is_empty() {
-                        let mut object = BTreeMap::new();
+                        let mut object = Map::with_capacity(2);
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
 
-                        let _ = object.insert(String::from("name"), Value::String(name));
-                        let _ = object.insert(String::from("menu"), Value::Array(inner_menu));
+                        let _ = object.insert("name".to_owned(), Value::String(name));
+                        let _ = object.insert("menu".to_owned(), Value::Array(inner_menu));
                         menu.push(Value::Object(object));
                     } else {
                         let path = config.get_results_folder()
@@ -142,11 +143,11 @@ impl HandlebarsReport {
                     Some(e) if e == "xml" || e == "java" => {
                         self.generate_code_html_for(&stripped, config, results, &self.package)?;
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
-                        let mut data = BTreeMap::new();
-                        let _ = data.insert(String::from("name"), Value::String(name));
-                        let _ = data.insert(String::from("path"),
+                        let mut data = Map::with_capacity(3);
+                        let _ = data.insert("name".to_owned(), Value::String(name));
+                        let _ = data.insert("path".to_owned(),
                                             Value::String(format!("{}", stripped.display())));
-                        let _ = data.insert(String::from("type"),
+                        let _ = data.insert("type".to_owned(),
                                             Value::String(e.to_string_lossy().into_owned()));
                         menu.push(Value::Object(data));
                     }

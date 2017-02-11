@@ -4,7 +4,7 @@ use std::path::Path;
 use std::result::Result as StdResult;
 use std::error::Error as StdError;
 
-use serde::ser::{Serialize, Serializer};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 use chrono::Local;
 
 mod utils;
@@ -181,7 +181,7 @@ impl Results {
 
                 if config.is_verbose() {
                     println!("JSON report generated.");
-                    println!("");
+                    println!();
                 }
             }
 
@@ -214,42 +214,40 @@ impl Results {
 }
 
 impl Serialize for Results {
-    fn serialize<S>(&self, serializer: &mut S) -> StdResult<(), S::Error>
+    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
         where S: Serializer
     {
         let now = Local::now();
-        let mut state = serializer.serialize_struct("Results", 22)?;
+        let mut ser_struct = serializer.serialize_struct("Results", 22)?;
 
-        serializer.serialize_struct_elt(&mut state, "super_version", crate_version!())?;
-        serializer.serialize_struct_elt(&mut state, "now", &now)?;
-        serializer.serialize_struct_elt(&mut state, "now_rfc2822", now.to_rfc2822())?;
-        serializer.serialize_struct_elt(&mut state, "now_rfc3339", now.to_rfc3339())?;
+        ser_struct.serialize_field("super_version", crate_version!())?;
+        ser_struct.serialize_field("now", &now)?;
+        ser_struct.serialize_field("now_rfc2822", &now.to_rfc2822())?;
+        ser_struct.serialize_field("now_rfc3339", &now.to_rfc3339())?;
 
-        serializer.serialize_struct_elt(&mut state, "app_package", &self.app_package)?;
-        serializer.serialize_struct_elt(&mut state, "app_version", &self.app_version)?;
-        serializer.serialize_struct_elt(&mut state, "app_version_number", &self.app_version_num)?;
-        serializer.serialize_struct_elt(&mut state, "app_fingerprint", &self.app_fingerprint)?;
-        serializer.serialize_struct_elt(&mut state, "certificate", &self.certificate)?;
+        ser_struct.serialize_field("app_package", &self.app_package)?;
+        ser_struct.serialize_field("app_version", &self.app_version)?;
+        ser_struct.serialize_field("app_version_number", &self.app_version_num)?;
+        ser_struct.serialize_field("app_fingerprint", &self.app_fingerprint)?;
+        ser_struct.serialize_field("certificate", &self.certificate)?;
 
-        serializer.serialize_struct_elt(&mut state, "app_min_sdk", &self.app_min_sdk)?;
-        serializer.serialize_struct_elt(&mut state, "app_target_sdk", &self.app_target_sdk)?;
+        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
+        ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;
 
-        serializer.serialize_struct_elt(&mut state,
-                                  "total_vulnerabilities",
-                                  self.low.len() + self.medium.len() + self.high.len() +
-                                  self.critical.len())?;
-        serializer.serialize_struct_elt(&mut state, "criticals", &self.critical)?;
-        serializer.serialize_struct_elt(&mut state, "criticals_len", self.critical.len())?;
-        serializer.serialize_struct_elt(&mut state, "highs", &self.high)?;
-        serializer.serialize_struct_elt(&mut state, "highs_len", self.high.len())?;
-        serializer.serialize_struct_elt(&mut state, "mediums", &self.medium)?;
-        serializer.serialize_struct_elt(&mut state, "mediums_len", self.medium.len())?;
-        serializer.serialize_struct_elt(&mut state, "lows", &self.low)?;
-        serializer.serialize_struct_elt(&mut state, "lows_len", self.low.len())?;
-        serializer.serialize_struct_elt(&mut state, "warnings", &self.warnings)?;
-        serializer.serialize_struct_elt(&mut state, "warnings_len", self.warnings.len())?;
+        ser_struct.serialize_field("total_vulnerabilities",
+                             &(self.low.len() + self.medium.len() + self.high.len() +
+                               self.critical.len()))?;
+        ser_struct.serialize_field("criticals", &self.critical)?;
+        ser_struct.serialize_field("criticals_len", &self.critical.len())?;
+        ser_struct.serialize_field("highs", &self.high)?;
+        ser_struct.serialize_field("highs_len", &self.high.len())?;
+        ser_struct.serialize_field("mediums", &self.medium)?;
+        ser_struct.serialize_field("mediums_len", &self.medium.len())?;
+        ser_struct.serialize_field("lows", &self.low)?;
+        ser_struct.serialize_field("lows_len", &self.low.len())?;
+        ser_struct.serialize_field("warnings", &self.warnings)?;
+        ser_struct.serialize_field("warnings_len", &self.warnings.len())?;
 
-        serializer.serialize_struct_end(state)?;
-        Ok(())
+        ser_struct.end()
     }
 }

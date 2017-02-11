@@ -1,5 +1,5 @@
 [{
-    "regex": "(?:(?:ftp|http)s?:\/\/|www\\.)[\\w\\.-]+\\.[a-zA-Z]{2,6}(?:\/[\\w\\.\/-]*)?",
+    "regex": "(?:(?:ftp|http)s?:\/\/|www\\.)[\\w\\.-]+\\.[[:alpha:]]{2,6}(?:\/[\\w\\.\/-]*)?",
     "whitelist": [
         "schemas.android.com",
         "www.w3.org",
@@ -47,13 +47,13 @@
     "description": "This method is not as random as it is supossed to be. It should not be use to generate OTP codes.",
     "include_file_regex": ".java$"
 }, {
-    "regex": "Log\\s*\\.\\s*(?:w(?:tf)?|e|d|i|v)+\\s*\\((?:\\s*\"?(?:[A-Za-z0-9])*(?:.)*\"?\\s*),(?:\\s*\"(?:[A-Za-z0-9])*(?:.)*\"\\s*\\+)?\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*(?:(?:\\+\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*)*)?\\)\\s*;",
+    "regex": "Log\\s*\\.\\s*(?:w(?:tf)?|e|d|i|v)+\\s*\\((?:\\s*\"?(?:[A-Za-z0-9])*(?:.)*\"?\\s*),(?:\\s*\"(?:[[:alnum:]])*(?:.)*\"\\s*\\+)?\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*(?:(?:\\+\\s*(?:[A-Za-z0-9.\\(\\)\\[\\]-])*(?:_(?:[A-Za-z0-9.\\(\\)\\[\\]-])*)*\\s*)*)?\\)\\s*;",
     "criticality": "low",
     "label": "Unchecked output in Logs",
     "description": "Sensitive information should never be logged since it can lead to that information being disclosed.",
     "include_file_regex": ".java$"
 }, {
-    "regex": "(?:(?:\\b[A-Z]{1}:)\\\\\\s*[^\\0 !$&*(?:)+]\\w.+)|(?:(?:\\b[A-Z]{1}:)\\\\)",
+    "regex": "(?:(?:\\b[[:upper:]]{1}:)\\\\\\s*[^\\0 !$&*(?:)+]\\w.+)|(?:(?:\\b[[:upper:]]{1}:)\\\\)",
     "criticality": "warning",
     "label": "Hardcoded file separator",
     "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix)."
@@ -64,7 +64,7 @@
     "description": "Using weak algorithms allows an attacker to break the cyphered communications gaining access to plain text content.",
     "include_file_regex": ".java$"
 }, {
-    "regex": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*(?:(?:\\d+(?:\\s*\\+\\s*\\d*\\s*)*\\s*\\+\\s*[:alpha:]+(?:(?:\\s*\\+\\s*(?:\\d|[:alpha:])*)*)?)|(?:[:alpha:]+\\s*(?:\\+\\s*(?:\\d|[:alpha:])*(?:\\s*\\+\\s*(?:\\d|[:alpha:])*)*)?))\\s*\\)\\s*;",
+    "regex": "(?:Thread|thread|SystemClock)\\s*\\.\\s*sleep\\s*\\(\\s*(?:(?:\\d+(?:\\s*\\+\\s*\\d*\\s*)*\\s*\\+\\s*[[:alpha:]]+(?:(?:\\s*\\+\\s*(?:\\d|[[:alpha:]])*)*)?)|(?:[[:alpha:]]+\\s*(?:\\+\\s*(?:\\d|[[:alpha:]])*(?:\\s*\\+\\s*(?:\\d|[[:alpha:]])*)*)?))\\s*\\)\\s*;",
     "criticality": "low",
     "label": "Sleep Method",
     "description": "Sleep Method is used with vars as arguments. If those vars are modified it could force the aplication to stop indefinitely.",

@@ -34,7 +34,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
         config.set_force();
 
         if config.is_verbose() {
-            println!("");
+            println!();
             println!("Decompressing the application…");
         }
 
@@ -98,7 +98,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
         .exists() {
         config.set_force();
         if config.is_verbose() {
-            println!("");
+            println!();
             println!("To decompile the app, first we need to extract the {} file.",
                      ".dex".italic());
         }
@@ -179,7 +179,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                              ".dex".italic().green(),
                              "file was extracted successfully!".green())
                          .green());
-            println!("");
+            println!();
             println!("Now it's time to create the {} file from its classes.",
                      ".jar".italic());
         } else if !config.is_quiet() {

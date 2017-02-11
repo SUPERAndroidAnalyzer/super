@@ -49,7 +49,6 @@ use std::thread::sleep;
 use std::collections::BTreeMap;
 
 use serde::ser::{Serialize, Serializer};
-use serde_json::error::ErrorCode as JSONErrorCode;
 use colored::Colorize;
 
 use log::{LogRecord, LogLevelFilter, LogLevel};
@@ -104,7 +103,7 @@ fn main() {
                   application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
-        println!("");
+        println!();
         sleep(Duration::from_millis(1250));
     }
 
@@ -118,14 +117,14 @@ fn main() {
 
     if config.is_bench() {
         let total_time = Benchmark::new("Total time", total_start.elapsed());
-        println!("");
+        println!();
         println!("{}", "Benchmarks:".bold());
         for (package_name, benchmarks) in benchmarks {
             println!("{}:", package_name.italic());
             for bench in benchmarks {
                 println!("{}", bench);
             }
-            println!("");
+            println!();
         }
         println!("{}", total_time);
     }
@@ -140,7 +139,7 @@ fn analyze_package(package: PathBuf,
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
     }
     if !config.is_quiet() {
-        println!("");
+        println!();
         println!("Starting analysis of {}.", package_name.italic());
     }
     let start_time = Instant::now();
@@ -168,7 +167,7 @@ fn analyze_package(package: PathBuf,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("Now it's time for the actual decompilation of the source code. We'll \
                   translate Android JVM bytecode to Java, so that we can check the code \
                   afterwards.");
@@ -199,7 +198,7 @@ fn analyze_package(package: PathBuf,
         // TODO dynamic analysis
 
         if !config.is_quiet() {
-            println!("");
+            println!();
         }
 
         let report_start = Instant::now();
@@ -208,7 +207,7 @@ fn analyze_package(package: PathBuf,
                 if config.is_verbose() {
                     println!("The results report has been saved. Everything went smoothly, \
                               now you can check all the results.");
-                    println!("");
+                    println!();
                     println!("I will now analyze myself for vulnerabilities…");
                     sleep(Duration::from_millis(1500));
                     println!("Nah, just kidding, I've been developed in {}!",
@@ -264,7 +263,7 @@ pub enum Error {
     /// Parsing error.
     Parse,
     /// JSON error.
-    JSON(JSONError),
+    JSON(serde_json::error::Error),
     /// The code was not found.
     CodeNotFound,
     /// Configuration error.
@@ -327,12 +326,7 @@ impl From<handlebars::RenderError> for Error {
 
 impl From<serde_json::error::Error> for Error {
     fn from(err: serde_json::error::Error) -> Error {
-        match err {
-            serde_json::error::Error::Syntax(code, line, column) => {
-                Error::JSON(JSONError::new(code, line, column))
-            }
-            serde_json::error::Error::Io(err) => Error::IO(err),
-        }
+        Error::JSON(err)
     }
 }
 
@@ -341,7 +335,6 @@ impl From<yaml_rust::ScanError> for Error {
         Error::Parse
     }
 }
-
 
 impl Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -375,22 +368,6 @@ impl StdError for Error {
     }
 }
 
-/// JSON error structure.
-#[derive(Debug)]
-pub struct JSONError {
-    description: String,
-}
-
-impl JSONError {
-    fn new(code: JSONErrorCode, line: usize, column: usize) -> JSONError {
-        JSONError { description: format!("{:?} at line {} column {}", code, line, column) }
-    }
-
-    fn description(&self) -> &str {
-        &self.description
-    }
-}
-
 /// SUPER result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
@@ -416,11 +393,10 @@ impl Display for Criticality {
 }
 
 impl Serialize for Criticality {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
         where S: Serializer
     {
-        serializer.serialize_str(format!("{}", self).as_str())?;
-        Ok(())
+        serializer.serialize_str(format!("{}", self).as_str())
     }
 }
 
@@ -460,22 +436,20 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 }
 
 fn initialize_logger(is_verbose: bool) {
-    let format = |record: &LogRecord| {
-        match record.level() {
-            LogLevel::Warn => {
-                format!("{}{}",
-                        "Warning: ".bold().yellow(),
-                        record.args().to_string().yellow())
-            }
-            LogLevel::Error => {
-                format!("{}{}",
-                        "Error: ".bold().red(),
-                        record.args().to_string().red())
-            }
-            LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
-            LogLevel::Info => format!("{}", record.args()),
-            _ => format!("{}: {}", record.level(), record.args()),
+    let format = |record: &LogRecord| match record.level() {
+        LogLevel::Warn => {
+            format!("{}{}",
+                    "Warning: ".bold().yellow(),
+                    record.args().to_string().yellow())
         }
+        LogLevel::Error => {
+            format!("{}{}",
+                    "Error: ".bold().red(),
+                    record.args().to_string().red())
+        }
+        LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
+        LogLevel::Info => format!("{}", record.args()),
+        _ => format!("{}: {}", record.level(), record.args()),
     };
 
     let log_level = if is_verbose {

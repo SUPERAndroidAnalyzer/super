@@ -1,6 +1,6 @@
 [package]
 name = "super"
-version = "0.3.0-dev"
+version = "0.3.0"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
@@ -18,31 +18,30 @@ keywords = ["Android", "security", "audit", "super", "analyzer"]
 build = "build.rs"
 
 [dependencies]
-clap = "^2.19"
-colored = "^1.3.2"
+clap = "^2.20"
+colored = "^1.4"
 zip = "^0.2"
 xml-rs = "^0.3"
-serde = "^0.8"
-serde_json = "^0.8"
+serde = "^0.9"
+serde_json = "^0.9"
 yaml-rust = "0.3"
-chrono = { version = "^0.2", features = ["serde"] }
-toml = "^0.2"
-regex = "^0.1"
+chrono = { version = "^0.3", features = ["serde"] }
+toml = "^0.3"
+regex = "^0.2"
 lazy_static = "^0.2"
 rust-crypto = "^0.2"
 rustc-serialize = "^0.3"
-open = "^1.1"
+open = "^1.2"
 bytecount = "0.1"
 log = "^0.3"
-env_logger = "^0.3"
+env_logger = "^0.4"
 
 [dependencies.handlebars]
-version = "^0.22"
-default-features = false
+version = "^0.25"
 features = ["serde_type"]
 
 [build-dependencies]
-clap = "^2.19"
+clap = "^2.20"
 
 [features]
 default = ["beta"]
