@@ -9,7 +9,7 @@ addons:
   apt:
     packages:
       - libcurl4-openssl-dev
-      - libelf-dev
+      - zlib1g-dev
       - libdw-dev
       - binutils-dev
 
@@ -18,8 +18,7 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.13.0
-  - 1.11.0
+  - 1.15.1
 
 # Load travis-cargo
 before_script:
@@ -29,21 +28,28 @@ before_script:
       export PATH=$HOME/.local/bin:$PATH &&
       ( cargo install rustfmt || true )
       fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      ( cargo install --git https://github.com/mmstick/cargo-deb.git || true )
+      fi
+  - export PATH=$PATH:~/.cargo/bin
 
 # The main build
 script:
+  # Turning of format checking due to several rustfmt bugs.
+  # - |
+  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  #         cargo fmt -- --write-mode=diff
+  #     fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-            export PATH=$PATH:~/.cargo/bin &&
-            cargo fmt -- --write-mode=diff
-        fi
       travis-cargo build &&
       travis-cargo test &&
       travis-cargo build -- --features beta &&
       travis-cargo test -- --features beta &&
       travis-cargo build -- --features unstable &&
-      travis-cargo test -- --features unstable
+      travis-cargo test -- --features unstable &&
+      cargo deb
       fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then

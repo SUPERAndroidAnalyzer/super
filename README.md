@@ -90,13 +90,13 @@ This program is free software: you can redistribute it and/or modify it under th
 General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.
 
-[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master
+[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=develop
 [linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
-[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true
-[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/master
-[coverage_img]: https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=master
-[coverage]: https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=master
+[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/develop?svg=true
+[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/develop
+[coverage_img]: https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=develop
+[coverage]: https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=develop
 [compile]: http://superanalyzer.rocks/download.html#compile-from-source
 [downloads]: http://superanalyzer.rocks/download.html
 [rustup]: https://www.rustup.rs/
-[contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/develop/contributing.md
+[contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/master/contributing.md

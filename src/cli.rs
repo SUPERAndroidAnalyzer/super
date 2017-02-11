@@ -1,6 +1,6 @@
-use clap::{Arg, App, ArgMatches};
+use clap::{Arg, App};
 
-pub fn generate_cli() -> ArgMatches<'static> {
+pub fn generate_cli() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())
         .author("SUPER Team <contact@superanalyzer.rocks>")
@@ -37,6 +37,16 @@ pub fn generate_cli() -> ArgMatches<'static> {
             .long("open")
             .conflicts_with("test-all")
             .help("Open the report in a browser once it is complete"))
+        .arg(Arg::with_name("json")
+            .long("json")
+            .help("Generates the reults in JSON format"))
+        .arg(Arg::with_name("html")
+            .long("html")
+            .help("Generates the reults in HTML format"))
+        .arg(Arg::with_name("min_criticality")
+            .long("min-criticality")
+            .help("Set a minimum criticality to analyze (Critical, High, Medium, Low)")
+            .takes_value(true))
         .arg(Arg::with_name("threads")
             .short("t")
             .long("threads")
@@ -74,5 +84,4 @@ pub fn generate_cli() -> ArgMatches<'static> {
             .long("rules")
             .help("Path to a JSON rules file")
             .takes_value(true))
-        .get_matches()
 }

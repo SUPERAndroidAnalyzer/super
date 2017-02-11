@@ -31,166 +31,172 @@
 # Vulnerability rules JSON
 # rules_json = "/etc/super/rules.json"
 
+# Generates HTML report
+# html_report = true
+
+# Generates JSON report
+# json_report = false
+
 ### PERMISSIONS ###
 # Add or remove permissions if you wish to change them. The format is the following:
 #[[permissions]]
 #name = "unknown" # Unknown permissions
-#criticity = "low"
+#criticality = "low"
 #description = "Even if the application can create its own permissions, it's discouraged, since it can lead to missunderstanding between developers."
 
 #[[permissions]]
 #name = "android.permission.INTERNET" # Internet access permission
-#criticity = "warning"
+#criticality = "warning"
 #label = "Internet permission"
 #description = "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed."
 
 # Vulnerable or potentially vulnerable permissions
 [[permissions]]
 name = "android.permission.INTERNET"
-criticity = "warning"
+criticality = "warning"
 label = "Internet permission"
 description = "Allows the app to create network sockets and use custom network protocols. The browser and other applications provide means to send data to the internet, so this permission is not required to send data to the internet. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.READ_CALENDAR"
-criticity = "warning"
+criticality = "warning"
 label = "Read calendar permission"
 description = "Allows the app to read all calendar events stored on your phone, including those of friends or co-workers. This may allow the app to share or save your calendar data, regardless of confidentiality or sensitivity. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.WRITE_CALENDAR"
-criticity = "warning"
+criticality = "warning"
 label = "Write calendar permission"
 description = "Allows the app to add, remove, change events that you can modify on your phone, including those of friends or co-workers. This may allow the app to send messages that appear to come from calendar owners, or modify events without the owners' knowledge. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.CAMERA"
-criticity = "warning"
+criticality = "warning"
 label = "Camera permission"
 description = "Allows the app to take pictures and videos with the camera. This permission allows the app to use the camera at any time without your confirmation. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.READ_CONTACTS"
-criticity = "warning"
+criticality = "warning"
 label = "Read contacts permission"
 description = "Allows the app to read data about your contacts stored on your phone, including the frequency with which you've called, emailed, or communicated in other ways with specific individuals. This permission allows apps to save your contact data, and malicious apps may share contact data without your knowledge. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.WRITE_CONTACTS"
-criticity = "warning"
+criticality = "warning"
 label = "Write contacts permission"
 description = "Allows the app to modify the data about your contacts stored on your phone, including the frequency with which you've called, emailed, or communicated in other ways with specific contacts. This permission allows apps to delete contact data. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.GET_ACCOUNTS"
-criticity = "warning"
+criticality = "warning"
 label = "Get accounts permission"
 description = "Allows the app to get the list of accounts known by the phone. This may include any accounts created by applications you have installed. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.ACCESS_FINE_LOCATION"
-criticity = "warning"
+criticality = "warning"
 label = "Access fine location permission"
 description = "Allows the app to get your precise location using the Global Positioning System (GPS) or network location sources such as cell towers and Wi-Fi. These location services must be turned on and available to your device for the app to use them. Apps may use this to determine where you are, and may consume additional battery power. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.ACCESS_COARSE_LOCATION"
-criticity = "warning"
+criticality = "warning"
 label = "Access coarse location permission"
 description = "Allows the app to get your approximate location. This location is derived by location services using network location sources such as cell towers and Wi-Fi. These location services must be turned on and available to your device for the app to use them. Apps may use this to determine approximately where you are. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.RECORD_AUDIO"
-criticity = "warning"
+criticality = "warning"
 label = "Record audio permission"
 description = "Allows the app to record audio with the microphone. This permission allows the app to record audio at any time without your confirmation. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.READ_PHONE_STATE"
-criticity = "warning"
+criticality = "warning"
 label = "Read phone state permission"
 description = "Allows the app to access the phone features of the device. This permission allows the app to determine the phone number and device IDs, whether a call is active, and the remote number connected by a call. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.CALL_PHONE"
-criticity = "warning"
+criticality = "warning"
 label = "Call phone permission"
 description = "Allows the app to call phone numbers without your intervention. This may result in unexpected charges or calls. Note that this doesn't allow the app to call emergency numbers. Malicious apps may cost you money by making calls without your confirmation. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.READ_CALL_LOG"
-criticity = "warning"
+criticality = "warning"
 label = "Read call log permission"
 description = "Allows the app to read your phone's call log, including data about incoming and outgoing calls. This permission allows apps to save your call log data, and malicious apps may share call log data without your knowledge. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.WRITE_CALL_LOG"
-criticity = "warning"
+criticality = "warning"
 label = "Write call log permission"
 description = "Allows the app to modify your phone's call log, including data about incoming and outgoing calls. Malicious apps may use this to erase or modify your call log. Check if the permission is actually needed."
 
 [[permissions]]
 name = "com.android.voicemail.permission.ADD_VOICEMAIL"
-criticity = "warning"
+criticality = "warning"
 label = "Add voicemail permission"
 description = "Allows the app to add messages to your voicemail inbox. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.USE_SIP"
-criticity = "warning"
+criticality = "warning"
 label = "Use SIP permission"
 description = "Allows the app to use the SIP service to make/receive Internet calls. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.PROCESS_OUTGOING_CALLS"
-criticity = "warning"
+criticality = "warning"
 label = "Process outgoing calls permission"
 description = "Allows the app to process outgoing calls and change the number to be dialed. This permission allows the app to monitor, redirect, or prevent outgoing calls. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.BODY_SENSORS"
-criticity = "warning"
+criticality = "warning"
 label = "Body sensors permission"
 description = "Allows an application to access data from sensors that the user uses to measure what is happening inside his/her body, such as heart rate. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.SEND_SMS"
-criticity = "warning"
+criticality = "warning"
 label = "Send SMS permission"
 description = "Allows the app to send SMS messages. This may result in unexpected charges. Malicious apps may cost you money by sending messages without your confirmation. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.RECEIVE_SMS"
-criticity = "warning"
+criticality = "warning"
 label = "Receive SMS permission"
 description = "Allows the app to receive and process SMS messages. This means the app could monitor or delete messages sent to your device without showing them to you. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.RECEIVE_WAP_PUSH"
-criticity = "warning"
+criticality = "warning"
 label = "Receive WAP push permission"
 description = "Allows the app to receive and process WAP messages. This permission includes the ability to monitor or delete messages sent to you without showing them to you. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.RECEIVE_MMS"
-criticity = "warning"
+criticality = "warning"
 label = "Receive MMS permission"
 description = "Allows an application to monitor incoming MMS messages. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.READ_EXTERNAL_STORAGE"
-criticity = "warning"
+criticality = "warning"
 label = "Read external storage permission"
 description = "Allows the app to read the contents of your SD card. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.WRITE_EXTERNAL_STORAGE"
-criticity = "warning"
+criticality = "warning"
 label = "Write external storage permission"
 description = "Allows the app to write to the SD card. Check if the permission is actually needed."
 
 [[permissions]]
 name = "android.permission.WRITE_SECURE_SETTINGS"
-criticity = "warning"
+criticality = "warning"
 label = "Write secure settings"
 description = "Allows the app to change system configuration of the device. Check if the permission is actually needed."

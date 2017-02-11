@@ -28,14 +28,13 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
             if let Err(e) = fs::remove_dir_all(&path) {
                 print_warning(format!("There was an error when removing the decompression \
                                        folder: {}",
-                                      e.description()),
-                              config.is_verbose());
+                                      e.description()));
             }
         }
         config.set_force();
 
         if config.is_verbose() {
-            println!("");
+            println!();
             println!("Decompressing the application…");
         }
 
@@ -60,16 +59,14 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
             Err(e) => {
                 print_error(format!("There was an error when executing the decompression \
                                      command: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::from(e).into());
             }
         };
 
         if !output.status.success() {
             print_error(format!("The decompression command returned an error. More info: {}",
-                                String::from_utf8_lossy(&output.stderr)),
-                        config.is_verbose());
+                                String::from_utf8_lossy(&output.stderr)));
             exit(Error::Unknown.into());
         }
 
@@ -101,7 +98,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
         .exists() {
         config.set_force();
         if config.is_verbose() {
-            println!("");
+            println!();
             println!("To decompile the app, first we need to extract the {} file.",
                      ".dex".italic());
         }
@@ -115,8 +112,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                 print_error(format!("There was an error when decompressing the {} file. More \
                                      info: {}",
                                     ".apk".italic(),
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::Unknown.into());
             }
         });
@@ -124,8 +120,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
             print_error(format!("There was an error when decompressing the {} file. More info: \
                                  {}",
                                 ".apk".italic(),
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
             exit(Error::Unknown.into());
         }
 
@@ -137,8 +132,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                 print_error(format!("There was an error while finding the classes.dex file \
                                      inside the {} file. More info: {}",
                                     ".apk".italic(),
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::Unknown.into());
             }
         };
@@ -151,8 +145,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
             Err(e) => {
                 print_error(format!("There was an error while creating classes.dex file. More \
                                      info: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::Unknown.into());
             }
         };
@@ -163,16 +156,14 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
             print_error(format!("There was an error while reading classes.dex file from the {}. \
                                  More info: {}",
                                 ".apk".italic(),
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
             exit(Error::Unknown.into());
         }
 
         if let Err(e) = out_file.write_all(&bytes) {
             print_error(format!("There was an error while writting classes.dex file. More info: \
                                  {}",
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
             exit(Error::Unknown.into());
         }
 
@@ -188,7 +179,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                              ".dex".italic().green(),
                              "file was extracted successfully!".green())
                          .green());
-            println!("");
+            println!();
             println!("Now it's time to create the {} file from its classes.",
                      ".jar".italic());
         } else if !config.is_quiet() {
@@ -235,8 +226,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
                                      command: {:?}",
                                     ".dex".italic(),
                                     ".jar".italic(),
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::from(e).into());
             }
         };
@@ -252,8 +242,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
                                  {}",
                                 ".dex".italic(),
                                 ".jar".italic(),
-                                stderr),
-                        config.is_verbose());
+                                stderr));
             exit(Error::Unknown.into());
         }
 
@@ -302,16 +291,14 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) {
             Err(e) => {
                 print_error(format!("There was an unknown error decompiling the application: \
                                      {:?}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::from(e).into());
             }
         };
 
         if !output.status.success() {
             print_error(format!("The decompilation command returned an error. More info:\n{}",
-                                String::from_utf8_lossy(&output.stdout)),
-                        config.is_verbose());
+                                String::from_utf8_lossy(&output.stdout)));
             exit(Error::Unknown.into());
         }
 

@@ -1,5 +1,5 @@
-use std::{fs, io, fmt};
-use std::io::{Read, Write};
+use std::{fs, fmt};
+use std::io::Read;
 use std::path::Path;
 use std::time::Duration;
 use std::thread::sleep;
@@ -8,8 +8,9 @@ use std::result::Result as StdResult;
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
+use log::LogLevel::Debug;
 
-use super::{Criticity, Result, Config};
+use super::{Criticality, Result, Config};
 
 /// Configuration for the XML parser.
 pub const PARSER_CONFIG: ParserConfig = ParserConfig {
@@ -21,49 +22,51 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
 };
 
 /// Prints an error to `stderr` in red.
-pub fn print_error<S: AsRef<str>>(error: S, verbose: bool) {
-    let _ = io::stderr()
-        .write(&format!("{} {}\n", "Error:".bold().red(), error.as_ref().red()).into_bytes()[..])
-        .unwrap();
+pub fn print_error<S: AsRef<str>>(error: S) {
+    if cfg!(not(test)) {
+        error!("{}", error.as_ref());
 
-    if !verbose {
-        println!("If you need more information, try to run the program again with the {} flag.",
-                 "-v".bold());
-    } else {
-        sleep(Duration::from_millis(200));
+        if !log_enabled!(Debug) {
+            println!("If you need more information, try to run the program again with the {} \
+                      flag.",
+                     "-v".bold());
+        } else {
+            sleep(Duration::from_millis(200));
+        }
     }
 }
 
 /// Prints a warning to `stderr` in yellow.
-pub fn print_warning<S: AsRef<str>>(warning: S, verbose: bool) {
-    let _ = io::stderr()
-        .write(&format!("{} {}\n",
-                        "Warning:".bold().yellow(),
-                        warning.as_ref().yellow())
-            .into_bytes()[..])
-        .unwrap();
+pub fn print_warning<S: AsRef<str>>(warning: S) {
+    if cfg!(not(test)) {
+        warn!("{}", warning.as_ref());
 
-    if !verbose {
-        println!("If you need more information, try to run the program again with the {} flag.",
-                 "-v".bold());
-    } else {
-        sleep(Duration::from_millis(200));
+        if !log_enabled!(Debug) {
+            println!("If you need more information, try to run the program again with the {} flag.",
+                     "-v".bold())
+        } else {
+            sleep(Duration::from_millis(200));
+        }
     }
 }
 
-/// Prints a vulnerability to `stdout` in a color depending on the criticity.
-pub fn print_vulnerability<S: AsRef<str>>(text: S, criticity: Criticity) {
-    let message = format!("Possible {} criticity vulnerability found!: {}",
-                          criticity,
-                          text.as_ref());
-    println!("{}",
-             match criticity {
-                 Criticity::Low => message.cyan(),
-                 Criticity::Medium => message.yellow(),
-                 Criticity::High | Criticity::Critical => message.red(),
-                 _ => return,
-             });
-    sleep(Duration::from_millis(200));
+/// Prints a vulnerability to `stdout` in a color depending on the criticality.
+pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
+    if cfg!(not(test)) && log_enabled!(Debug) {
+        let message = format!("Possible {} criticality vulnerability found!: {}",
+                              criticality,
+                              text.as_ref());
+
+        let formatted_message = match criticality {
+            Criticality::Low => message.cyan(),
+            Criticality::Medium => message.yellow(),
+            Criticality::High | Criticality::Critical => message.red(),
+            _ => return,
+        };
+
+        println!("{}", formatted_message);
+        sleep(Duration::from_millis(200));
+    }
 }
 
 /// Gets the name of the package from the path of the *.apk* file.
@@ -94,7 +97,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                                                 config: &Config,
                                                 package: P)
                                                 -> Result<String> {
-    let mut file = try!(fs::File::open({
+    let mut file = fs::File::open({
         let path = config.get_dist_folder()
             .join(package.as_ref())
             .join("res")
@@ -110,10 +113,10 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                 .join("values")
                 .join("strings.xml")
         }
-    }));
+    })?;
 
     let mut code = String::new();
-    let _ = try!(file.read_to_string(&mut code));
+    let _ = file.read_to_string(&mut code)?;
 
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);

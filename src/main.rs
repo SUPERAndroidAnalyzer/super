@@ -26,6 +26,9 @@ extern crate rustc_serialize;
 extern crate open;
 extern crate bytecount;
 extern crate handlebars;
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 
 mod cli;
 mod decompilation;
@@ -46,8 +49,11 @@ use std::thread::sleep;
 use std::collections::BTreeMap;
 
 use serde::ser::{Serialize, Serializer};
-use serde_json::error::ErrorCode as JSONErrorCode;
 use colored::Colorize;
+
+use log::{LogRecord, LogLevelFilter, LogLevel};
+use env_logger::LogBuilder;
+use std::env;
 
 use cli::generate_cli;
 use decompilation::*;
@@ -59,15 +65,15 @@ pub use utils::*;
 static BANNER: &'static str = include_str!("banner.txt");
 
 fn main() {
-    let cli = generate_cli();
+    let cli = generate_cli().get_matches();
     let verbose = cli.is_present("verbose");
+    initialize_logger(verbose);
 
     let mut config = match Config::from_cli(cli) {
         Ok(c) => c,
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
-                                  e.description()),
-                          verbose);
+                                  e.description()));
             Config::default()
         }
     };
@@ -83,7 +89,7 @@ fn main() {
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
-        print_error(error_string, verbose);
+        print_error(error_string);
         exit(Error::Config.into());
     }
 
@@ -97,7 +103,7 @@ fn main() {
                   application.");
         println!("You activated the verbose mode. {}",
                  "May Tux be with you!".bold());
-        println!("");
+        println!();
         sleep(Duration::from_millis(1250));
     }
 
@@ -111,14 +117,14 @@ fn main() {
 
     if config.is_bench() {
         let total_time = Benchmark::new("Total time", total_start.elapsed());
-        println!("");
+        println!();
         println!("{}", "Benchmarks:".bold());
         for (package_name, benchmarks) in benchmarks {
             println!("{}:", package_name.italic());
             for bench in benchmarks {
                 println!("{}", bench);
             }
-            println!("");
+            println!();
         }
         println!("{}", total_time);
     }
@@ -133,7 +139,7 @@ fn analyze_package(package: PathBuf,
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
     }
     if !config.is_quiet() {
-        println!("");
+        println!();
         println!("Starting analysis of {}.", package_name.italic());
     }
     let start_time = Instant::now();
@@ -161,7 +167,7 @@ fn analyze_package(package: PathBuf,
     }
 
     if config.is_verbose() {
-        println!("");
+        println!();
         println!("Now it's time for the actual decompilation of the source code. We'll \
                   translate Android JVM bytecode to Java, so that we can check the code \
                   afterwards.");
@@ -192,7 +198,7 @@ fn analyze_package(package: PathBuf,
         // TODO dynamic analysis
 
         if !config.is_quiet() {
-            println!("");
+            println!();
         }
 
         let report_start = Instant::now();
@@ -201,7 +207,7 @@ fn analyze_package(package: PathBuf,
                 if config.is_verbose() {
                     println!("The results report has been saved. Everything went smoothly, \
                               now you can check all the results.");
-                    println!("");
+                    println!();
                     println!("I will now analyze myself for vulnerabilities…");
                     sleep(Duration::from_millis(1500));
                     println!("Nah, just kidding, I've been developed in {}!",
@@ -213,8 +219,7 @@ fn analyze_package(package: PathBuf,
             Ok(false) => {}
             Err(e) => {
                 print_error(format!("There was an error generating the results report: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
                 exit(Error::Unknown.into())
             }
         }
@@ -236,8 +241,7 @@ fn analyze_package(package: PathBuf,
                 .join("index.html");
             if let Err(e) = open::that(report_path) {
                 print_error(format!("Report could not be opened automatically: {}",
-                                    e.description()),
-                            config.is_verbose());
+                                    e.description()));
             }
         }
     } else if config.is_open() {
@@ -246,8 +250,7 @@ fn analyze_package(package: PathBuf,
             .join("index.html");
         if let Err(e) = open::that(report_path) {
             print_error(format!("Report could not be opened automatically: {}",
-                                e.description()),
-                        config.is_verbose());
+                                e.description()));
         }
     }
 }
@@ -260,7 +263,7 @@ pub enum Error {
     /// Parsing error.
     Parse,
     /// JSON error.
-    JSON(JSONError),
+    JSON(serde_json::error::Error),
     /// The code was not found.
     CodeNotFound,
     /// Configuration error.
@@ -323,12 +326,13 @@ impl From<handlebars::RenderError> for Error {
 
 impl From<serde_json::error::Error> for Error {
     fn from(err: serde_json::error::Error) -> Error {
-        match err {
-            serde_json::error::Error::Syntax(code, line, column) => {
-                Error::JSON(JSONError::new(code, line, column))
-            }
-            serde_json::error::Error::Io(err) => Error::IO(err),
-        }
+        Error::JSON(err)
+    }
+}
+
+impl From<yaml_rust::ScanError> for Error {
+    fn from(_: yaml_rust::ScanError) -> Error {
+        Error::Parse
     }
 }
 
@@ -364,64 +368,47 @@ impl StdError for Error {
     }
 }
 
-/// JSON error structure.
-#[derive(Debug)]
-pub struct JSONError {
-    description: String,
-}
-
-impl JSONError {
-    fn new(code: JSONErrorCode, line: usize, column: usize) -> JSONError {
-        JSONError { description: format!("{:?} at line {} column {}", code, line, column) }
-    }
-
-    fn description(&self) -> &str {
-        &self.description
-    }
-}
-
 /// SUPER result type.
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Vulnerability criticity
+/// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
-pub enum Criticity {
+pub enum Criticality {
     /// Warning.
     Warning,
-    /// Low criticity vulnerability.
+    /// Low criticality vulnerability.
     Low,
-    /// Medium criticity vulnerability.
+    /// Medium criticality vulnerability.
     Medium,
-    /// High criticity vulnerability.
+    /// High criticality vulnerability.
     High,
     /// Critical vulnerability.
     Critical,
 }
 
-impl Display for Criticity {
+impl Display for Criticality {
     fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
 }
 
-impl Serialize for Criticity {
-    fn serialize<S>(&self, serializer: &mut S) -> result::Result<(), S::Error>
+impl Serialize for Criticality {
+    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
         where S: Serializer
     {
-        try!(serializer.serialize_str(format!("{}", self).as_str()));
-        Ok(())
+        serializer.serialize_str(format!("{}", self).as_str())
     }
 }
 
-impl FromStr for Criticity {
+impl FromStr for Criticality {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Criticity> {
+    fn from_str(s: &str) -> Result<Criticality> {
         match s.to_lowercase().as_str() {
-            "critical" => Ok(Criticity::Critical),
-            "high" => Ok(Criticity::High),
-            "medium" => Ok(Criticity::Medium),
-            "low" => Ok(Criticity::Low),
-            "warning" => Ok(Criticity::Warning),
+            "critical" => Ok(Criticality::Critical),
+            "high" => Ok(Criticality::High),
+            "medium" => Ok(Criticality::Medium),
+            "low" => Ok(Criticality::Low),
+            "warning" => Ok(Criticality::Warning),
             _ => Err(Error::Parse),
         }
     }
@@ -434,71 +421,120 @@ impl FromStr for Criticity {
 /// overwriten.
 pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     if !to.as_ref().exists() {
-        try!(fs::create_dir(to.as_ref()));
+        fs::create_dir(to.as_ref())?;
     }
 
-    for f in try!(fs::read_dir(from)) {
-        let f = try!(f);
+    for f in fs::read_dir(from)? {
+        let f = f?;
         if f.path().is_dir() {
-            try!(copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+            copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
         } else {
-            let _ = try!(fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap())));
+            let _ = fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
         }
     }
     Ok(())
 }
 
+fn initialize_logger(is_verbose: bool) {
+    let format = |record: &LogRecord| match record.level() {
+        LogLevel::Warn => {
+            format!("{}{}",
+                    "Warning: ".bold().yellow(),
+                    record.args().to_string().yellow())
+        }
+        LogLevel::Error => {
+            format!("{}{}",
+                    "Error: ".bold().red(),
+                    record.args().to_string().red())
+        }
+        LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
+        LogLevel::Info => format!("{}", record.args()),
+        _ => format!("{}: {}", record.level(), record.args()),
+    };
+
+    let log_level = if is_verbose {
+        LogLevelFilter::Debug
+    } else {
+        LogLevelFilter::Info
+    };
+
+    let mut builder = LogBuilder::new();
+
+    let builder_state = match env::var("RUST_LOG") {
+        Ok(env_log) => {
+            builder.format(format)
+                .parse(&env_log)
+                .init()
+        }
+        Err(_) => {
+            builder.format(format)
+                .filter(Some("super"), log_level)
+                .init()
+        }
+    };
+
+    if let Err(e) = builder_state {
+        println!("Could not initialize logger: {}", e);
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use Criticity;
+    use Criticality;
     use std::str::FromStr;
 
     #[test]
-    fn it_criticity() {
-        assert_eq!(Criticity::from_str("warning").unwrap(), Criticity::Warning);
-        assert_eq!(Criticity::from_str("Warning").unwrap(), Criticity::Warning);
-        assert_eq!(Criticity::from_str("WARNING").unwrap(), Criticity::Warning);
+    fn it_criticality() {
+        assert_eq!(Criticality::from_str("warning").unwrap(),
+                   Criticality::Warning);
+        assert_eq!(Criticality::from_str("Warning").unwrap(),
+                   Criticality::Warning);
+        assert_eq!(Criticality::from_str("WARNING").unwrap(),
+                   Criticality::Warning);
 
-        assert_eq!(Criticity::from_str("low").unwrap(), Criticity::Low);
-        assert_eq!(Criticity::from_str("Low").unwrap(), Criticity::Low);
-        assert_eq!(Criticity::from_str("LOW").unwrap(), Criticity::Low);
+        assert_eq!(Criticality::from_str("low").unwrap(), Criticality::Low);
+        assert_eq!(Criticality::from_str("Low").unwrap(), Criticality::Low);
+        assert_eq!(Criticality::from_str("LOW").unwrap(), Criticality::Low);
 
-        assert_eq!(Criticity::from_str("medium").unwrap(), Criticity::Medium);
-        assert_eq!(Criticity::from_str("Medium").unwrap(), Criticity::Medium);
-        assert_eq!(Criticity::from_str("MEDIUM").unwrap(), Criticity::Medium);
+        assert_eq!(Criticality::from_str("medium").unwrap(),
+                   Criticality::Medium);
+        assert_eq!(Criticality::from_str("Medium").unwrap(),
+                   Criticality::Medium);
+        assert_eq!(Criticality::from_str("MEDIUM").unwrap(),
+                   Criticality::Medium);
 
-        assert_eq!(Criticity::from_str("high").unwrap(), Criticity::High);
-        assert_eq!(Criticity::from_str("High").unwrap(), Criticity::High);
-        assert_eq!(Criticity::from_str("HIGH").unwrap(), Criticity::High);
+        assert_eq!(Criticality::from_str("high").unwrap(), Criticality::High);
+        assert_eq!(Criticality::from_str("High").unwrap(), Criticality::High);
+        assert_eq!(Criticality::from_str("HIGH").unwrap(), Criticality::High);
 
-        assert_eq!(Criticity::from_str("critical").unwrap(),
-                   Criticity::Critical);
-        assert_eq!(Criticity::from_str("Critical").unwrap(),
-                   Criticity::Critical);
-        assert_eq!(Criticity::from_str("CRITICAL").unwrap(),
-                   Criticity::Critical);
+        assert_eq!(Criticality::from_str("critical").unwrap(),
+                   Criticality::Critical);
+        assert_eq!(Criticality::from_str("Critical").unwrap(),
+                   Criticality::Critical);
+        assert_eq!(Criticality::from_str("CRITICAL").unwrap(),
+                   Criticality::Critical);
 
-        assert!(Criticity::Warning < Criticity::Low);
-        assert!(Criticity::Warning < Criticity::Medium);
-        assert!(Criticity::Warning < Criticity::High);
-        assert!(Criticity::Warning < Criticity::Critical);
-        assert!(Criticity::Low < Criticity::Medium);
-        assert!(Criticity::Low < Criticity::High);
-        assert!(Criticity::Low < Criticity::Critical);
-        assert!(Criticity::Medium < Criticity::High);
-        assert!(Criticity::Medium < Criticity::Critical);
-        assert!(Criticity::High < Criticity::Critical);
+        assert!(Criticality::Warning < Criticality::Low);
+        assert!(Criticality::Warning < Criticality::Medium);
+        assert!(Criticality::Warning < Criticality::High);
+        assert!(Criticality::Warning < Criticality::Critical);
+        assert!(Criticality::Low < Criticality::Medium);
+        assert!(Criticality::Low < Criticality::High);
+        assert!(Criticality::Low < Criticality::Critical);
+        assert!(Criticality::Medium < Criticality::High);
+        assert!(Criticality::Medium < Criticality::Critical);
+        assert!(Criticality::High < Criticality::Critical);
 
-        assert_eq!(format!("{}", Criticity::Warning).as_str(), "warning");
-        assert_eq!(format!("{}", Criticity::Low).as_str(), "low");
-        assert_eq!(format!("{}", Criticity::Medium).as_str(), "medium");
-        assert_eq!(format!("{}", Criticity::High).as_str(), "high");
-        assert_eq!(format!("{}", Criticity::Critical).as_str(), "critical");
+        assert_eq!(format!("{}", Criticality::Warning).as_str(), "warning");
+        assert_eq!(format!("{}", Criticality::Low).as_str(), "low");
+        assert_eq!(format!("{}", Criticality::Medium).as_str(), "medium");
+        assert_eq!(format!("{}", Criticality::High).as_str(), "high");
+        assert_eq!(format!("{}", Criticality::Critical).as_str(), "critical");
 
-        assert_eq!(format!("{:?}", Criticity::Warning).as_str(), "Warning");
-        assert_eq!(format!("{:?}", Criticity::Low).as_str(), "Low");
-        assert_eq!(format!("{:?}", Criticity::Medium).as_str(), "Medium");
-        assert_eq!(format!("{:?}", Criticity::High).as_str(), "High");
-        assert_eq!(format!("{:?}", Criticity::Critical).as_str(), "Critical");
+        assert_eq!(format!("{:?}", Criticality::Warning).as_str(), "Warning");
+        assert_eq!(format!("{:?}", Criticality::Low).as_str(), "Low");
+        assert_eq!(format!("{:?}", Criticality::Medium).as_str(), "Medium");
+        assert_eq!(format!("{:?}", Criticality::High).as_str(), "High");
+        assert_eq!(format!("{:?}", Criticality::Critical).as_str(), "Critical");
     }
 }
