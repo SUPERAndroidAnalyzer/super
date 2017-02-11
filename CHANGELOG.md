@@ -49,11 +49,8 @@
 
 ### Contributions
 
-- **[@pocket7878](https://github.com/pocket7878)**
-- **[@VoltBit](https://github.com/VoltBit)**
-- **[@b52](https://github.com/b52)**
-- **[@nxnfufunezn](https://github.com/nxnfufunezn)**
-- **[@atk](https://github.com/atk)**
+Apart from the core team, the following people has contributed to this release:
+- **[gnieto](https://github.com/gnieto)**
 
 ## SUPER 0.2.0
 
@@ -90,6 +87,7 @@
 
 ### Contributions
 
+Apart from the core team, the following people has contributed to this release:
 - **[@pocket7878](https://github.com/pocket7878)**
 - **[@VoltBit](https://github.com/VoltBit)**
 - **[@b52](https://github.com/b52)**

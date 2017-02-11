@@ -1,6 +1,6 @@
 [package]
 name = "super"
-version = "0.3.0-dev"
+version = "0.3.0"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
