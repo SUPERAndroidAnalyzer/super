@@ -15,6 +15,7 @@ Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI.\
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
+categories = ["command-line-utilities", "development-tools"]
 build = "build.rs"
 
 [dependencies]
