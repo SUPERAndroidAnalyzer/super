@@ -1,5 +1,12 @@
 # Changelog
 
+## SUPER 0.3.1
+
+### Bug Fixes
+
+- SUPER will now have `super-analyzer` as package name. This avoids conflicts with Debian
+  repositories.
+
 ## SUPER 0.3.0
 
 ### Features
@@ -12,9 +19,9 @@
   *config.toml* file (`html_report` and `json_report`) or by invoking the script with `--json` or
   `--html` parameters. By default, if `--json` is used, the HTML report won't get generated, but if
   you want both, you can specify so by using both options: `--json --html`.
-- Tab completions: I you now install SUPER using one of the provided packages for UNIX, you will get
-  tab completions. So, anytime you don't exactly know the command, you can simply press TAB and you
-  will get suggestions or even command completions. This works for Bash, Fish and ZSH.
+- Tab completions: If you now install SUPER using one of the provided packages for UNIX, you will
+  get tab completions. So, anytime you don't exactly know the command, you can simply press TAB and
+  you will get suggestions or even command completions. This works for Bash, Fish and ZSH.
 
 ### Internal Changes
 
@@ -50,7 +57,7 @@
 ### Contributions
 
 Apart from the core team, the following people has contributed to this release:
-- **[gnieto](https://github.com/gnieto)**
+- **[@gnieto](https://github.com/gnieto)**
 
 ## SUPER 0.2.0
 

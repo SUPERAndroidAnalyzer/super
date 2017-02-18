@@ -1,6 +1,6 @@
 [package]
-name = "super"
-version = "0.3.0"
+name = "super-analyzer"
+version = "0.3.1"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
@@ -16,6 +16,9 @@ with CLI.\
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 build = "build.rs"
+
+[[bin]]
+name = "super"
 
 [dependencies]
 clap = "^2.20"
