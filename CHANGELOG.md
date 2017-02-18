@@ -1,5 +1,12 @@
 # Changelog
 
+## SUPER 0.3.1
+
+### Bug Fixes
+
+- SUPER will now have `super-analyzer` as package name. This avoids conflicts with Debian
+  repositories.
+
 ## SUPER 0.3.0
 
 ### Features

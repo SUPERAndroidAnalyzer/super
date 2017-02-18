@@ -1,4 +1,4 @@
-Name:    super
+Name:    super-analyzer
 Version: 0.4.0
 Release: 1%{?dist}
 Summary: Secure, Unified, Powerful and Extensible Rust Android Analyzer.
