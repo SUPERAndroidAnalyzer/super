@@ -14,7 +14,8 @@ mod report;
 pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
-use {Config, Result, Criticality, print_error, print_warning, get_package_name};
+use errors::*;
+use {Config, Criticality, print_error, print_warning, get_package_name};
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;

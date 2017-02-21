@@ -1,7 +1,6 @@
 use std::path::PathBuf;
 use results::report::Report;
 use results::Results;
-use Result;
 use config::Config;
 use std::io::{Read, Write};
 use std::fs::File;
@@ -9,12 +8,13 @@ use handlebars::Handlebars;
 use results::utils::html_escape;
 use results::handlebars_helpers::*;
 use std::fs;
-use {copy_folder, Error};
+use copy_folder;
 use colored::Colorize;
 use serde_json::Map;
 use serde_json::value::Value;
 use std::collections::BTreeMap;
 use std::path::Path;
+use errors::*;
 
 pub struct HandlebarsReport {
     handler: Handlebars,
@@ -46,20 +46,15 @@ impl HandlebarsReport {
             let dir_entry = dir_entry?;
             if let Some(ext) = dir_entry.path().extension() {
                 if ext == "hbs" {
-                    handlebars.register_template_file(dir_entry.path()
-                                                    .file_stem()
-                                                    .ok_or_else(|| {
-                                                        Error::TemplateName("template files must \
-                                                                             have a file name"
-                                                            .to_owned())
-                                                    })?
-                                                    .to_str()
-                                                    .ok_or_else(|| {
-                                                        Error::TemplateName("template names must \
-                                                                             be unicode"
-                                                            .to_owned())
-                                                    })?,
-                                                dir_entry.path())?;
+                    let path = dir_entry.path();
+                    let template_file = path
+                        .file_stem()
+                        .ok_or(ErrorKind::TemplateName("template files must have a file name".into()))
+                        .map(|stem| stem.to_str().ok_or(
+                            ErrorKind::TemplateName("template names must be unicode".into()))
+                        )?;
+
+                    handlebars.register_template_file(template_file?, dir_entry.path())?;
                 }
             }
         }
@@ -67,10 +62,12 @@ impl HandlebarsReport {
         if handlebars.get_template("report").is_none() ||
            handlebars.get_template("src").is_none() ||
            handlebars.get_template("code").is_none() {
-            Err(Error::TemplateName(format!("templates must include {}, {} and {} templates",
-                                            "report".italic(),
-                                            "src".italic(),
-                                            "code".italic())))
+            let message = format!("templates must include {}, {} and {} templates",
+                                  "report".italic(),
+                                  "src".italic(),
+                                  "code".italic());
+
+            Err(ErrorKind::TemplateName(message).into())
         } else {
             Ok(handlebars)
         }

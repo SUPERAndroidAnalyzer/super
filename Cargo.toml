@@ -39,6 +39,7 @@ open = "^1.2"
 bytecount = "0.1"
 log = "^0.3"
 env_logger = "^0.4"
+error-chain = "^0.9"
 
 [dependencies.handlebars]
 version = "^0.25"

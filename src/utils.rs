@@ -10,7 +10,8 @@ use xml::ParserConfig;
 use colored::Colorize;
 use log::LogLevel::Debug;
 
-use super::{Criticality, Result, Config};
+use errors::*;
+use super::{Criticality, Config};
 
 /// Configuration for the XML parser.
 pub const PARSER_CONFIG: ParserConfig = ParserConfig {

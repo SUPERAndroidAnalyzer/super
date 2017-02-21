@@ -14,7 +14,8 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, Result, Error, Criticality, print_warning, print_error, print_vulnerability, get_code};
+use errors::*;
+use {Config, Criticality, print_warning, print_error, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 
@@ -373,7 +374,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         Some(a) => a,
         None => {
             print_warning("Rules must be a JSON array.");
-            return Err(Error::Parse);
+            return Err(ErrorKind::Parse.into());
         }
     };
 
@@ -405,13 +406,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(o) => o,
             None => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning);
-            return Err(Error::Parse);
+            return Err(ErrorKind::Parse.into());
         }
 
         let regex = match rule.get("regex") {
@@ -422,13 +423,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                         print_warning(format!("An error occurred when compiling the regular \
                                                expresion: {}",
                                               e.description()));
-                        return Err(Error::Parse);
+                        return Err(ErrorKind::Parse.into());
                     }
                 }
             }
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -437,7 +438,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -452,13 +453,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 Err(_) => {
                                     print_warning(format!("the permission {} is unknown",
                                                           p.italic()));
-                                    return Err(Error::Parse);
+                                    return Err(ErrorKind::Parse.into());
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning);
-                            return Err(Error::Parse);
+                            return Err(ErrorKind::Parse.into());
                         }
                     });
                 }
@@ -466,7 +467,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
             None => Vec::with_capacity(0),
         };
@@ -481,7 +482,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 print_warning("You must provide the '{fc1}' string where you \
                                                want the 'fc1' capture to be inserted in the \
                                                forward check.");
-                                return Err(Error::Parse);
+                                return Err(ErrorKind::Parse.into());
                             }
                         }
                         Some("fc2") => {
@@ -489,7 +490,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                 print_warning("You must provide the '{fc2}' string where you \
                                                want the 'fc2' capture to be inserted in the \
                                                forward check.");
-                                return Err(Error::Parse);
+                                return Err(ErrorKind::Parse.into());
                             }
                         }
                         _ => {}
@@ -501,7 +502,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                    !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1") {
                     print_warning("You must have a capture group named fc1 to use the capture \
                                    fc2.");
-                    return Err(Error::Parse);
+                    return Err(ErrorKind::Parse.into());
                 }
 
                 Some(s.clone())
@@ -509,7 +510,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -517,7 +518,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref l)) => l,
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -525,7 +526,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::String(ref d)) => d,
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -546,7 +547,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             _ => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         };
 
@@ -562,13 +563,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                                     print_warning(format!("An error occurred when compiling the \
                                                            regular expresion: {}",
                                                           e.description()));
-                                    return Err(Error::Parse);
+                                    return Err(ErrorKind::Parse.into());
                                 }
                             }
                         }
                         _ => {
                             print_warning(format_warning);
-                            return Err(Error::Parse);
+                            return Err(ErrorKind::Parse.into());
                         }
                     });
                 }
@@ -576,7 +577,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
             Some(_) => {
                 print_warning(format_warning);
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
             None => Vec::with_capacity(0),
         };

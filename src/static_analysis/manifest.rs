@@ -3,12 +3,13 @@ use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 use std::error::Error as StdError;
+use errors::*;
 
 use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
 
-use {Error, Config, Result, Criticality, print_error, print_warning, print_vulnerability,
+use {Config, Criticality, print_error, print_warning, print_vulnerability,
      get_code, get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
@@ -276,7 +277,7 @@ impl PackageMetadata {
             }
             Err(e) => {
                 print_warning(format!("{} {}", yaml_warning, e.description()));
-                return Err(Error::Parse);
+                return Err(ErrorKind::Parse.into());
             }
         }
 
@@ -748,7 +749,7 @@ impl FromStr for InstallLocation {
             "internalOnly" => Ok(InstallLocation::InternalOnly),
             "auto" => Ok(InstallLocation::Auto),
             "preferExternal" => Ok(InstallLocation::PreferExternal),
-            _ => Err(Error::Parse),
+            _ => Err(ErrorKind::Parse.into()),
         }
     }
 }
@@ -760,7 +761,7 @@ fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
         }
     }
 
-    Err(Error::CodeNotFound)
+    Err(ErrorKind::CodeNotFound.into())
 }
 
 #[cfg(test)]
@@ -3878,7 +3879,7 @@ impl FromStr for Permission {
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
                 Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
-            _ => Err(Error::Parse),
+            _ => Err(ErrorKind::Parse.into()),
         }
     }
 }

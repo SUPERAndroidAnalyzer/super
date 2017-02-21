@@ -7,17 +7,18 @@ use std::fs::File;
 use std::time::Instant;
 use std::io::{Read, Write};
 use std::path::Path;
-use std::process::{Command, exit};
+use std::process::Command;
 use std::error::Error as StdError;
 use std::collections::BTreeMap;
 
 use colored::Colorize;
 use zip::ZipArchive;
+use errors::*;
 
-use {Error, Config, Benchmark, print_error, print_warning, get_package_name};
+use {Config, Benchmark, print_error, print_warning, get_package_name};
 
 /// Decompresses the application using _Apktool_.
-pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
+pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let path = config.get_dist_folder().join(package.as_ref().file_stem().unwrap());
     if !path.exists() || config.is_force() {
         if path.exists() {
@@ -60,14 +61,15 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
                 print_error(format!("There was an error when executing the decompression \
                                      command: {}",
                                     e.description()));
-                exit(Error::from(e).into());
+
+                return Err(Error::from(e));
             }
         };
 
         if !output.status.success() {
             print_error(format!("The decompression command returned an error. More info: {}",
                                 String::from_utf8_lossy(&output.stderr)));
-            exit(Error::Unknown.into());
+            return Err(ErrorKind::Unknown.into());
         }
 
         if config.is_verbose() {
@@ -84,12 +86,14 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) {
     } else {
         println!("Skipping decompression.");
     }
+
+    Ok(())
 }
 
 /// Extracts the _.dex_ files.
 pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                    package: P,
-                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) {
+                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     if config.is_force() ||
        !config.get_dist_folder()
@@ -113,7 +117,8 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                      info: {}",
                                     ".apk".italic(),
                                     e.description()));
-                exit(Error::Unknown.into());
+
+                return Err(ErrorKind::Unknown.into());
             }
         });
         if let Err(e) = zip {
@@ -121,7 +126,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                  {}",
                                 ".apk".italic(),
                                 e.description()));
-            exit(Error::Unknown.into());
+            return Err(ErrorKind::Unknown.into());
         }
 
         // Obtaining the clases.dex file.
@@ -133,7 +138,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                      inside the {} file. More info: {}",
                                     ".apk".italic(),
                                     e.description()));
-                exit(Error::Unknown.into());
+                return Err(ErrorKind::Unknown.into());
             }
         };
 
@@ -146,7 +151,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                 print_error(format!("There was an error while creating classes.dex file. More \
                                      info: {}",
                                     e.description()));
-                exit(Error::Unknown.into());
+                return Err(ErrorKind::Unknown.into());
             }
         };
 
@@ -157,14 +162,15 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                  More info: {}",
                                 ".apk".italic(),
                                 e.description()));
-            exit(Error::Unknown.into());
+            return Err(ErrorKind::Unknown.into());
         }
 
         if let Err(e) = out_file.write_all(&bytes) {
             print_error(format!("There was an error while writting classes.dex file. More info: \
                                  {}",
                                 e.description()));
-            exit(Error::Unknown.into());
+
+            return Err(ErrorKind::Unknown.into());
         }
 
         if config.is_bench() {
@@ -192,10 +198,12 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
     } else {
         println!("Skipping {} file extraction.", ".dex".italic());
     }
+
+    Ok(())
 }
 
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
-pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
+pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let classes = config.get_dist_folder()
         .join(&package_name)
@@ -227,7 +235,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
                                     ".dex".italic(),
                                     ".jar".italic(),
                                     e.description()));
-                exit(Error::from(e).into());
+                return Err(Error::from(e));
             }
         };
 
@@ -243,7 +251,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
                                 ".dex".italic(),
                                 ".jar".italic(),
                                 stderr));
-            exit(Error::Unknown.into());
+            return Err(ErrorKind::Unknown.into());
         }
 
         if config.is_verbose() {
@@ -263,10 +271,12 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) {
     } else {
         println!("Skipping {} file generation.", ".jar".italic());
     }
+
+    Ok(())
 }
 
 /// Decompiles the application using _jd\_cmd_.
-pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) {
+pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.get_dist_folder()
         .join(&package_name)
@@ -292,14 +302,15 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) {
                 print_error(format!("There was an unknown error decompiling the application: \
                                      {:?}",
                                     e.description()));
-                exit(Error::from(e).into());
+
+                return Err(Error::from(e));
             }
         };
 
         if !output.status.success() {
             print_error(format!("The decompilation command returned an error. More info:\n{}",
                                 String::from_utf8_lossy(&output.stdout)));
-            exit(Error::Unknown.into());
+            return Err(ErrorKind::Unknown.into());
         }
 
         if config.is_verbose() {
@@ -314,4 +325,6 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) {
     } else {
         println!("Skipping decompilation.");
     }
+
+    Ok(())
 }

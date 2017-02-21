@@ -29,6 +29,8 @@ extern crate handlebars;
 #[macro_use]
 extern crate log;
 extern crate env_logger;
+#[macro_use]
+extern crate error_chain;
 
 mod cli;
 mod decompilation;
@@ -43,7 +45,6 @@ use std::fmt::Display;
 use std::str::FromStr;
 use std::error::Error as StdError;
 use std::io::Write;
-use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
 use std::collections::BTreeMap;
@@ -59,12 +60,32 @@ use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
+use errors::*;
 pub use config::Config;
 pub use utils::*;
 
 static BANNER: &'static str = include_str!("banner.txt");
 
 fn main() {
+    if let Err(e) = run() {
+
+        for e in e.iter().skip(1) {
+            println!("caused by: {}", e);
+        }
+
+        // The backtrace is not always generated. Try to run this example
+        // with `RUST_BACKTRACE=1`.
+        if let Some(backtrace) = e.backtrace() {
+            println!("backtrace: {:?}", backtrace);
+        }
+
+        error!("{}", e);
+
+        ::std::process::exit(e.into());
+    }
+}
+
+fn run() -> Result<()> {
     let cli = generate_cli().get_matches();
     let verbose = cli.is_present("verbose");
     initialize_logger(verbose);
@@ -74,6 +95,7 @@ fn main() {
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
                                   e.description()));
+
             Config::default()
         }
     };
@@ -90,7 +112,8 @@ fn main() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
         print_error(error_string);
-        exit(Error::Config.into());
+
+        return Err(ErrorKind::Config.into())
     }
 
     if config.is_verbose() {
@@ -112,7 +135,7 @@ fn main() {
     let total_start = Instant::now();
     for package in config.get_app_packages() {
         config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks);
+        analyze_package(package, &mut config, &mut benchmarks)?;
     }
 
     if config.is_bench() {
@@ -128,12 +151,14 @@ fn main() {
         }
         println!("{}", total_time);
     }
+
+    Ok(())
 }
 
 /// Analyzes the given package with the given config.
 fn analyze_package(package: PathBuf,
                    config: &mut Config,
-                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) {
+                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -145,7 +170,7 @@ fn analyze_package(package: PathBuf,
     let start_time = Instant::now();
 
     // APKTool app decompression
-    decompress(config, &package);
+    decompress(config, &package)?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
@@ -154,11 +179,11 @@ fn analyze_package(package: PathBuf,
     }
 
     // Extracting the classes.dex from the .apk file
-    extract_dex(config, &package, benchmarks);
+    extract_dex(config, &package, benchmarks)?;
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package);
+    dex_to_jar(config, &package)?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
@@ -176,7 +201,7 @@ fn analyze_package(package: PathBuf,
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package);
+    decompile(config, &package)?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
@@ -220,7 +245,8 @@ fn analyze_package(package: PathBuf,
             Err(e) => {
                 print_error(format!("There was an error generating the results report: {}",
                                     e.description()));
-                exit(Error::Unknown.into())
+
+                return Err(ErrorKind::Unknown.into())
             }
         }
 
@@ -253,123 +279,63 @@ fn analyze_package(package: PathBuf,
                                 e.description()));
         }
     }
+
+    Ok(())
 }
 
-#[derive(Debug)]
-/// Enum representing all error types of SUPER.
-pub enum Error {
-    /// The *.apk* file does not exist.
-    AppNotExists,
-    /// Parsing error.
-    Parse,
-    /// JSON error.
-    JSON(serde_json::error::Error),
-    /// The code was not found.
-    CodeNotFound,
-    /// Configuration error.
-    Config,
-    /// I/O error.
-    IO(io::Error),
-    /// Template name error.
-    TemplateName(String),
-    /// Template error.
-    Template(Box<handlebars::TemplateError>),
-    /// Template rendering error.
-    Render(Box<handlebars::RenderError>),
-    /// Unknown error.
-    Unknown,
+/// Module containing the definition of error chain types
+#[allow(missing_docs)]
+pub mod errors {
+    // Create the Error, ErrorKind, ResultExt, and Result types
+    error_chain! {
+        foreign_links {
+            IO(::std::io::Error) #[cfg(unix)];
+            Template(::handlebars::TemplateFileError);
+            TemplateRender(::handlebars::RenderError);
+            JSON(::serde_json::error::Error);
+            TOML(::toml::de::Error);
+        }
+
+        errors {
+            Config {
+                description("there was an error in the configuration")
+            }
+            Parse {
+                description("there was an error in some parsing process")
+            }
+            Unknown {
+                description("an unknown error occurred")
+            }
+            TemplateName(message: String) {
+                description("Invalid template name")
+                display("{}", message)
+            }
+            CodeNotFound {
+                description("the code was not found in the file")
+            }
+        }
+    }
 }
 
 impl Into<i32> for Error {
     fn into(self) -> i32 {
-        match self {
-            Error::AppNotExists => 10,
-            Error::Parse => 20,
-            Error::JSON(_) => 30,
-            Error::CodeNotFound => 40,
-            Error::Config => 50,
-            Error::IO(_) => 100,
-            Error::TemplateName(_) => 125,
-            Error::Template(_) => 150,
-            Error::Render(_) => 175,
-            Error::Unknown => 1,
+        let kind = self.kind();
+
+        match *kind {
+            ErrorKind::Parse => 20,
+            ErrorKind::TOML(_) => 20,
+            ErrorKind::JSON(_) => 30,
+            ErrorKind::CodeNotFound => 40,
+            ErrorKind::Config => 50,
+            ErrorKind::IO(_) => 100,
+            ErrorKind::TemplateName(_) => 125,
+            ErrorKind::Template(_) => 150,
+            ErrorKind::TemplateRender(_) => 175,
+            ErrorKind::Unknown => 1,
+            ErrorKind::Msg(_) => 1,
         }
     }
 }
-
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Error {
-        Error::IO(err)
-    }
-}
-
-impl From<handlebars::TemplateFileError> for Error {
-    fn from(err: handlebars::TemplateFileError) -> Error {
-        match err {
-            handlebars::TemplateFileError::TemplateError(e) => e.into(),
-            handlebars::TemplateFileError::IOError(e, _) => e.into(),
-        }
-    }
-}
-
-impl From<handlebars::TemplateError> for Error {
-    fn from(err: handlebars::TemplateError) -> Error {
-        Error::Template(Box::new(err))
-    }
-}
-
-impl From<handlebars::RenderError> for Error {
-    fn from(err: handlebars::RenderError) -> Error {
-        Error::Render(Box::new(err))
-    }
-}
-
-impl From<serde_json::error::Error> for Error {
-    fn from(err: serde_json::error::Error) -> Error {
-        Error::JSON(err)
-    }
-}
-
-impl From<yaml_rust::ScanError> for Error {
-    fn from(_: yaml_rust::ScanError) -> Error {
-        Error::Parse
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
-    }
-}
-
-impl StdError for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::AppNotExists => "the application has not been found",
-            Error::Parse => "there was an error in some parsing process",
-            Error::JSON(ref e) => e.description(),
-            Error::CodeNotFound => "the code was not found in the file",
-            Error::Config => "there was an error in the configuration",
-            Error::IO(ref e) => e.description(),
-            Error::TemplateName(ref e) => e,
-            Error::Template(ref e) => e.description(),
-            Error::Render(ref e) => e.description(),
-            Error::Unknown => "an unknown error occurred",
-        }
-    }
-
-    fn cause(&self) -> Option<&StdError> {
-        match *self {
-            Error::IO(ref e) => Some(e),
-            Error::Template(ref e) => Some(e),
-            Error::Render(ref e) => Some(e),
-            _ => None,
-        }
-    }
-}
-
-/// SUPER result type.
-pub type Result<T> = std::result::Result<T, Error>;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -409,7 +375,7 @@ impl FromStr for Criticality {
             "medium" => Ok(Criticality::Medium),
             "low" => Ok(Criticality::Low),
             "warning" => Ok(Criticality::Warning),
-            _ => Err(Error::Parse),
+            _ => Err(ErrorKind::Parse.into()),
         }
     }
 }
