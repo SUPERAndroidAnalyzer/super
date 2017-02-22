@@ -62,7 +62,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
                                      command: {}",
                                     e.description()));
 
-                return Err(Error::from(e));
+                return Err(e.into());
             }
         };
 
@@ -235,7 +235,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
                                     ".dex".italic(),
                                     ".jar".italic(),
                                     e.description()));
-                return Err(Error::from(e));
+                return Err(e.into());
             }
         };
 
@@ -303,7 +303,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
                                      {:?}",
                                     e.description()));
 
-                return Err(Error::from(e));
+                return Err(e.into());
             }
         };
 

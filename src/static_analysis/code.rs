@@ -271,7 +271,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
                 print_warning(format!("There was an error reading the directory {}: {}",
                                       real_path.display(),
                                       e.description()));
-                return Err(Error::from(e));
+                return Err(e.into());
             }
         };
         let f_type = f.file_type()?;
