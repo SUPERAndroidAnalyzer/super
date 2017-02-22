@@ -132,7 +132,7 @@ fn run() -> Result<()> {
     let total_start = Instant::now();
     for package in config.get_app_packages() {
         config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks)?;
+        analyze_package(package, &mut config, &mut benchmarks).chain_err(|| "Application analysis failed")?;
     }
 
     if config.is_bench() {
@@ -167,7 +167,7 @@ fn analyze_package(package: PathBuf,
     let start_time = Instant::now();
 
     // APKTool app decompression
-    decompress(config, &package)?;
+    decompress(config, &package).chain_err(|| "Apktool decompression failed")?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
@@ -176,11 +176,11 @@ fn analyze_package(package: PathBuf,
     }
 
     // Extracting the classes.dex from the .apk file
-    extract_dex(config, &package, benchmarks)?;
+    extract_dex(config, &package, benchmarks).chain_err(|| "DEX extraction failed")?;
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package)?;
+    dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
@@ -198,7 +198,7 @@ fn analyze_package(package: PathBuf,
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package)?;
+    decompile(config, &package).chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
