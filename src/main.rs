@@ -108,9 +108,11 @@ fn run() -> Result<()> {
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
-        print_error(error_string);
 
-        return Err(ErrorKind::Config.into())
+        let inner_error: Error = ErrorKind::Config.into();
+        let outter_error: Result<()> = Err(error_string.into());
+
+        return outter_error.chain_err(|| inner_error);
     }
 
     if config.is_verbose() {
