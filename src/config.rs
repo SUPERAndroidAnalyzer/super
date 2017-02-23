@@ -20,7 +20,7 @@ use clap::ArgMatches;
 use static_analysis::manifest::Permission;
 
 use errors::*;
-use {Criticality, print_error, print_warning};
+use {Criticality, print_warning};
 
 /// Largest number of threads permitted.
 const MAX_THREADS: i64 = u8::MAX as i64;
@@ -96,13 +96,13 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                config.load_from_file(&config_path)?;
+                config.load_from_file(&config_path).chain_err(|| "The config.toml file does not have the correct formatting.")?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config.load_from_file(&config_path)?;
+            config.load_from_file(&config_path).chain_err(||"The config.toml file does not have the correct formatting.")?;
             config.loaded_files.push(config_path);
         }
 
@@ -408,7 +408,6 @@ impl Config {
         let toml = if let Value::Table(toml) = toml.parse::<Value>().chain_err(||  "there was an error parsing the config.toml file")? {
             toml
         } else {
-            print_error("The config.toml file does not have the correct formatting.");
             return Err(ErrorKind::Parse.into());
         };
 
@@ -429,6 +428,7 @@ impl Config {
                 "html_report" => self.load_html_report_section(value),
                 "json_report" => self.load_json_report_section(value),
                 _ => print_warning(format!("Unknown configuration option {}.", key)),
+
             }
         }
         Ok(())

@@ -109,10 +109,10 @@ fn run() -> Result<()> {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
 
-        let inner_error: Error = ErrorKind::Config.into();
-        let outter_error: Result<()> = Err(error_string.into());
+        let outter_error: Error = ErrorKind::Config.into();
+        let inner_error: Result<()> = Err(error_string.into());
 
-        return outter_error.chain_err(|| inner_error);
+        return inner_error.chain_err(|| outter_error);
     }
 
     if config.is_verbose() {

@@ -53,18 +53,15 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             .arg(&path)
             .arg("-f")
             .arg(package.as_ref())
-            .output();
+            .output()
+            .chain_err(|| "There was an error when executing the decompression command")?;
 
-        let output = match output {
+        /*let output = match output {
             Ok(o) => o,
             Err(e) => {
-                print_error(format!("There was an error when executing the decompression \
-                                     command: {}",
-                                    e.description()));
-
                 return Err(e.into());
             }
-        };
+        };*/
 
         if !output.status.success() {
             print_error(format!("The decompression command returned an error. More info: {}",
