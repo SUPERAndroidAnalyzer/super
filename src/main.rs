@@ -74,6 +74,12 @@ fn main() {
             println!("\t{}{}", "Caused by: ".bold(), e);
         }
 
+        if !log_enabled!(LogLevel::Debug) {
+            println!("If you need more information, try to run the program again with the {} \
+                      flag.",
+                     "-v".bold());
+        }
+
         if let Some(backtrace) = e.backtrace() {
             println!("backtrace: {:?}", backtrace);
         }
