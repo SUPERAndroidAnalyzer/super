@@ -1,13 +1,14 @@
 use std::fs;
-use std::process::{Command, exit};
+use std::process::Command;
 use std::borrow::Borrow;
 use std::error::Error as StdError;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
 
-use {Error, Config, Criticality, Result, print_error, print_vulnerability, print_warning};
+use {Config, Criticality, Result, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
+use errors::*;
 
 fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     match month_str.as_ref() {
@@ -79,20 +80,15 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 .arg("-noout")
                 .arg("-print_certs")
                 .arg("-text")
-                .output();
+                .output()
+                .chain_err(|| "There was an error when executing the openssl command to \
+                    check the certificate")?;
 
-            if output.is_err() {
-                print_error(format!("There was an error when executing the openssl command to \
-                                     check the certificate: {}",
-                                    output.err().unwrap()));
-                exit(Error::Unknown.into());
-            }
-
-            let output = output.unwrap();
             if !output.status.success() {
-                print_error(format!("The openssl command returned an error. More info: {}",
-                                    String::from_utf8_lossy(&output.stderr[..])));
-                exit(Error::Unknown.into());
+                return Err(
+                    format!("The openssl command returned an error. More info: {}",
+                            String::from_utf8_lossy(&output.stderr[..])).into()
+                );
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);

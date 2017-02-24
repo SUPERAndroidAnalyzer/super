@@ -15,7 +15,7 @@ use colored::Colorize;
 use zip::ZipArchive;
 use errors::*;
 
-use {Config, Benchmark, print_error, print_warning, get_package_name};
+use {Config, Benchmark, print_warning, get_package_name};
 
 /// Decompresses the application using _Apktool_.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
@@ -56,17 +56,11 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             .output()
             .chain_err(|| "There was an error when executing the decompression command")?;
 
-        /*let output = match output {
-            Ok(o) => o,
-            Err(e) => {
-                return Err(e.into());
-            }
-        };*/
-
         if !output.status.success() {
-            print_error(format!("The decompression command returned an error. More info: {}",
-                                String::from_utf8_lossy(&output.stderr)));
-            return Err(ErrorKind::Unknown.into());
+            let message = format!("The decompression command returned an error. More info: {}",
+                                String::from_utf8_lossy(&output.stderr));
+
+            return Err(message.into());
         }
 
         if config.is_verbose() {
@@ -107,68 +101,27 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
         let start_time = Instant::now();
 
         // Command to extract the .dex files.
-        let zip = ZipArchive::new(match File::open(package.as_ref()) {
-            Ok(f) => f,
-            Err(e) => {
-                print_error(format!("There was an error when decompressing the {} file. More \
-                                     info: {}",
-                                    ".apk".italic(),
-                                    e.description()));
 
-                return Err(ErrorKind::Unknown.into());
-            }
-        });
-        if let Err(e) = zip {
-            print_error(format!("There was an error when decompressing the {} file. More info: \
-                                 {}",
-                                ".apk".italic(),
-                                e.description()));
-            return Err(ErrorKind::Unknown.into());
-        }
+        let package_content = File::open(package.as_ref())
+            .chain_err(|| format!("There was an error when decompressing the {} file", ".apk".italic()))?;
+        let mut zip = ZipArchive::new(package_content)
+            .chain_err(|| format!("There was an error when decompressing the {} file", ".apk".italic()))?;
 
         // Obtaining the clases.dex file.
-        let mut zip = zip.unwrap();
-        let mut dex_file = match zip.by_name("classes.dex") {
-            Ok(f) => f,
-            Err(e) => {
-                print_error(format!("There was an error while finding the classes.dex file \
-                                     inside the {} file. More info: {}",
-                                    ".apk".italic(),
-                                    e.description()));
-                return Err(ErrorKind::Unknown.into());
-            }
-        };
-
+        let mut dex_file = zip.by_name("classes.dex")
+            .chain_err(|| format!("There was an error while finding the classes.dex file inside the {} file", ".apk".italic()))?;
         // Placing the classes.dex file into the dist_folder.
-        let mut out_file = match File::create(config.get_dist_folder()
-            .join(get_package_name(package.as_ref()))
-            .join("classes.dex")) {
-            Ok(f) => f,
-            Err(e) => {
-                print_error(format!("There was an error while creating classes.dex file. More \
-                                     info: {}",
-                                    e.description()));
-                return Err(ErrorKind::Unknown.into());
-            }
-        };
+        let dex_output_directory = config.get_dist_folder().join(get_package_name(package.as_ref())).join("classes.dex");
+        let mut out_file = File::create(dex_output_directory)
+            .chain_err(|| "There was an error while creating classes.dex file")?;
 
         // Reading the classes.dex file.
         let mut bytes = Vec::with_capacity(dex_file.size() as usize);
-        if let Err(e) = dex_file.read_to_end(&mut bytes) {
-            print_error(format!("There was an error while reading classes.dex file from the {}. \
-                                 More info: {}",
-                                ".apk".italic(),
-                                e.description()));
-            return Err(ErrorKind::Unknown.into());
-        }
+        let _ = dex_file.read_to_end(&mut bytes)
+            .chain_err(|| format!("There was an error while reading classes.dex file from the {}", ".apk".italic()))?;
 
-        if let Err(e) = out_file.write_all(&bytes) {
-            print_error(format!("There was an error while writting classes.dex file. More info: \
-                                 {}",
-                                e.description()));
-
-            return Err(ErrorKind::Unknown.into());
-        }
+        out_file.write_all(&bytes)
+            .chain_err(|| format!("There was an error while writting classes.dex file"))?;
 
         if config.is_bench() {
             benchmarks.get_mut(&package_name)
@@ -222,19 +175,12 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             .arg("-f")
             .arg("-o")
             .arg(&classes)
-            .output();
-
-        let output = match output {
-            Ok(o) => o,
-            Err(e) => {
-                print_error(format!("There was an error when executing the {} to {} conversion \
-                                     command: {:?}",
-                                    ".dex".italic(),
-                                    ".jar".italic(),
-                                    e.description()));
-                return Err(e.into());
-            }
-        };
+            .output()
+            .chain_err(||
+                format!("There was an error when executing the {} to {} conversion command",
+                          ".dex".italic(),
+                          ".jar".italic())
+            )?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -243,12 +189,13 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         // exception, so we have to check if errors such as "use certain option" occur.
         if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) ||
            stderr.contains("use") {
-            print_error(format!("The {} to {} conversion command returned an error. More info: \
+            let message = format!("The {} to {} conversion command returned an error. More info: \
                                  {}",
                                 ".dex".italic(),
                                 ".jar".italic(),
-                                stderr));
-            return Err(ErrorKind::Unknown.into());
+                                stderr);
+
+            return Err(message.into());
         }
 
         if config.is_verbose() {
@@ -291,23 +238,13 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
                 .join("classes.jar"))
             .arg("-od")
             .arg(&out_path)
-            .output();
-
-        let output = match output {
-            Ok(o) => o,
-            Err(e) => {
-                print_error(format!("There was an unknown error decompiling the application: \
-                                     {:?}",
-                                    e.description()));
-
-                return Err(e.into());
-            }
-        };
+            .output()
+            .chain_err(||format!("There was an unknown error decompiling the application"))?;
 
         if !output.status.success() {
-            print_error(format!("The decompilation command returned an error. More info:\n{}",
-                                String::from_utf8_lossy(&output.stdout)));
-            return Err(ErrorKind::Unknown.into());
+            let message = format!("The decompilation command returned an error. More info:\n{}",
+                                  String::from_utf8_lossy(&output.stdout));
+            return Err(message.into());
         }
 
         if config.is_verbose() {

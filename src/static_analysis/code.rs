@@ -14,10 +14,10 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use errors::*;
 use {Config, Criticality, print_warning, print_error, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
+use errors::*;
 
 pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                     config: &Config,

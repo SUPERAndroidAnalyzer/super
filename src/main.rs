@@ -71,7 +71,7 @@ fn main() {
         error!("{}", e);
 
         for e in e.iter().skip(1) {
-            println!("caused by: {}", e);
+            println!("\t{}{}", "Caused by: ".bold(), e);
         }
 
         if let Some(backtrace) = e.backtrace() {
@@ -226,29 +226,22 @@ fn analyze_package(package: PathBuf,
         }
 
         let report_start = Instant::now();
-        match results.generate_report(config, &package_name) {
-            Ok(true) => {
-                if config.is_verbose() {
-                    println!("The results report has been saved. Everything went smoothly, \
-                              now you can check all the results.");
-                    println!();
-                    println!("I will now analyze myself for vulnerabilities…");
-                    sleep(Duration::from_millis(1500));
-                    println!("Nah, just kidding, I've been developed in {}!",
-                             "Rust".bold().green())
-                } else if !config.is_quiet() {
-                    println!("Report generated.");
-                }
-            }
-            Ok(false) => {}
-            Err(e) => {
-                print_error(format!("There was an error generating the results report: {}",
-                                    e.description()));
+        let report_generated = results.generate_report(config, &package_name)
+            .chain_err(|| format!("There was an error generating the results report"))?;
 
-                return Err(ErrorKind::Unknown.into())
+        if report_generated {
+            if config.is_verbose() {
+                println!("The results report has been saved. Everything went smoothly, \
+                              now you can check all the results.");
+                println!();
+                println!("I will now analyze myself for vulnerabilities…");
+                sleep(Duration::from_millis(1500));
+                println!("Nah, just kidding, I've been developed in {}!",
+                         "Rust".bold().green())
+            } else if !config.is_quiet() {
+                println!("Report generated.");
             }
         }
-
 
         if config.is_bench() {
             benchmarks.get_mut(&package_name)
@@ -264,18 +257,22 @@ fn analyze_package(package: PathBuf,
             let report_path = config.get_results_folder()
                 .join(results.get_app_package())
                 .join("index.html");
-            if let Err(e) = open::that(report_path) {
-                print_error(format!("Report could not be opened automatically: {}",
-                                    e.description()));
+
+            let status = open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+
+            if !status.success() {
+                return Err(format!("Report opening errored with status code: {}", status).into());
             }
         }
     } else if config.is_open() {
         let report_path = config.get_results_folder()
             .join(package_name)
             .join("index.html");
-        if let Err(e) = open::that(report_path) {
-            print_error(format!("Report could not be opened automatically: {}",
-                                e.description()));
+
+        let status = open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+
+        if !status.success() {
+            return Err(format!("Report opening errored with status code: {}", status).into());
         }
     }
 
@@ -302,9 +299,6 @@ pub mod errors {
             Parse {
                 description("there was an error in some parsing process")
             }
-            Unknown {
-                description("an unknown error occurred")
-            }
             TemplateName(message: String) {
                 description("Invalid template name")
                 display("{}", message)
@@ -330,7 +324,6 @@ impl Into<i32> for Error {
             ErrorKind::TemplateName(_) => 125,
             ErrorKind::Template(_) => 150,
             ErrorKind::TemplateRender(_) => 175,
-            ErrorKind::Unknown => 1,
             ErrorKind::Msg(_) => 1,
         }
     }
