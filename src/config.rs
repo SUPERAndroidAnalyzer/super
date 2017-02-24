@@ -102,14 +102,14 @@ impl Config {
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config.load_from_file(&config_path).chain_err(||"The config.toml file does not have the correct formatting.")?;
+            config.load_from_file(&config_path).chain_err(|| "The config.toml file does not have the correct formatting.")?;
             config.loaded_files.push(config_path);
         }
 
         config.set_options(&cli);
 
         if cli.is_present("test-all") {
-            config.read_apks()?;
+            config.read_apks().chain_err(|| "Error loading all the downloaded APKs")?;
         } else {
             config.add_app_package(cli.value_of("package").unwrap());
         }
