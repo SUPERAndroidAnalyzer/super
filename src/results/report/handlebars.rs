@@ -23,7 +23,8 @@ pub struct HandlebarsReport {
 
 impl HandlebarsReport {
     pub fn new(template_path: PathBuf, package: String) -> Result<Self> {
-        let handlebars_handler = Self::load_templates(template_path)?;
+        let handlebars_handler = Self::load_templates(template_path)
+            .chain_err(|| "Could not load handlebars templates")?;
 
         let report = HandlebarsReport {
             handler: handlebars_handler,
@@ -47,14 +48,15 @@ impl HandlebarsReport {
             if let Some(ext) = dir_entry.path().extension() {
                 if ext == "hbs" {
                     let path = dir_entry.path();
-                    let template_file = path
-                        .file_stem()
-                        .ok_or(ErrorKind::TemplateName("template files must have a file name".into()))
-                        .map(|stem| stem.to_str().ok_or(
-                            ErrorKind::TemplateName("template names must be unicode".into()))
-                        )?;
+                    let template_file = path.file_stem()
+                        .ok_or_else(|| ErrorKind::TemplateName("template files must have a file name".to_string()))
+                        .and_then(|stem| {
+                            stem.to_str().ok_or_else(|| ErrorKind::TemplateName("template names must be unicode".to_string()))
+                        })?;
 
-                    handlebars.register_template_file(template_file?, dir_entry.path())?;
+
+                    handlebars.register_template_file(template_file, dir_entry.path())
+                        .chain_err(|| "Error registering template file")?;
                 }
             }
         }
