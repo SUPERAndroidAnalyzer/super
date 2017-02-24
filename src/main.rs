@@ -160,7 +160,8 @@ fn run() -> Result<()> {
 /// Analyzes the given package with the given config.
 fn analyze_package(package: PathBuf,
                    config: &mut Config,
-                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) -> Result<()> {
+                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
+                   -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -261,7 +262,8 @@ fn analyze_package(package: PathBuf,
                 .join(results.get_app_package())
                 .join("index.html");
 
-            let status = open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+            let status =
+                open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
 
             if !status.success() {
                 return Err(format!("Report opening errored with status code: {}", status).into());
@@ -272,7 +274,8 @@ fn analyze_package(package: PathBuf,
             .join(package_name)
             .join("index.html");
 
-        let status = open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+        let status =
+            open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
 
         if !status.success() {
             return Err(format!("Report opening errored with status code: {}", status).into());

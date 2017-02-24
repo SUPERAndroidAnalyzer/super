@@ -96,13 +96,15 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                config.load_from_file(&config_path).chain_err(|| "The config.toml file does not have the correct formatting.")?;
+                config.load_from_file(&config_path)
+                    .chain_err(|| "The config.toml file does not have the correct formatting.")?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config.load_from_file(&config_path).chain_err(|| "The config.toml file does not have the correct formatting.")?;
+            config.load_from_file(&config_path)
+                .chain_err(|| "The config.toml file does not have the correct formatting.")?;
             config.loaded_files.push(config_path);
         }
 
@@ -405,7 +407,8 @@ impl Config {
         let _ = f.read_to_string(&mut toml)?;
 
         // Parse the configuration file.
-        let toml = if let Value::Table(toml) = toml.parse::<Value>().chain_err(||  "there was an error parsing the config.toml file")? {
+        let toml = if let Value::Table(toml) =
+            toml.parse::<Value>().chain_err(|| "there was an error parsing the config.toml file")? {
             toml
         } else {
             return Err(ErrorKind::Parse.into());

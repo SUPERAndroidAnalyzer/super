@@ -71,8 +71,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         }
 
         if is_cert {
-            let output = Command::new("openssl")
-                .arg("pkcs7")
+            let output = Command::new("openssl").arg("pkcs7")
                 .arg("-inform")
                 .arg("DER")
                 .arg("-in")
@@ -81,14 +80,14 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 .arg("-print_certs")
                 .arg("-text")
                 .output()
-                .chain_err(|| "There was an error when executing the openssl command to \
-                    check the certificate")?;
+                .chain_err(|| {
+                    "There was an error when executing the openssl command to check the certificate"
+                })?;
 
             if !output.status.success() {
-                return Err(
-                    format!("The openssl command returned an error. More info: {}",
-                            String::from_utf8_lossy(&output.stderr[..])).into()
-                );
+                return Err(format!("The openssl command returned an error. More info: {}",
+                                   String::from_utf8_lossy(&output.stderr[..]))
+                    .into());
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);

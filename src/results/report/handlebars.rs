@@ -49,9 +49,15 @@ impl HandlebarsReport {
                 if ext == "hbs" {
                     let path = dir_entry.path();
                     let template_file = path.file_stem()
-                        .ok_or_else(|| ErrorKind::TemplateName("template files must have a file name".to_string()))
+                        .ok_or_else(|| {
+                            ErrorKind::TemplateName("template files must have a file name"
+                                .to_string())
+                        })
                         .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| ErrorKind::TemplateName("template names must be unicode".to_string()))
+                            stem.to_str().ok_or_else(|| {
+                                ErrorKind::TemplateName("template names must be unicode"
+                                    .to_string())
+                            })
                         })?;
 
 

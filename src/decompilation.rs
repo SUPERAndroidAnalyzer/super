@@ -44,8 +44,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         // -s to skip the disassembly of .dex files
         // "-o path" to specify an output directory
         // -f to force overwritting existing files
-        let output = Command::new("java")
-            .arg("-jar")
+        let output = Command::new("java").arg("-jar")
             .arg(config.get_apktool_file())
             .arg("d")
             .arg("-s")
@@ -58,7 +57,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 
         if !output.status.success() {
             let message = format!("The decompression command returned an error. More info: {}",
-                                String::from_utf8_lossy(&output.stderr));
+                                  String::from_utf8_lossy(&output.stderr));
 
             return Err(message.into());
         }
@@ -84,7 +83,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 /// Extracts the _.dex_ files.
 pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
                                    package: P,
-                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) -> Result<()> {
+                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
+                                   -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     if config.is_force() ||
        !config.get_dist_folder()
@@ -102,23 +102,34 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
 
         // Command to extract the .dex files.
 
-        let package_content = File::open(package.as_ref())
-            .chain_err(|| format!("There was an error when decompressing the {} file", ".apk".italic()))?;
-        let mut zip = ZipArchive::new(package_content)
-            .chain_err(|| format!("There was an error when decompressing the {} file", ".apk".italic()))?;
+        let package_content = File::open(package.as_ref()).chain_err(|| {
+                format!("There was an error when decompressing the {} file",
+                        ".apk".italic())
+            })?;
+        let mut zip = ZipArchive::new(package_content).chain_err(|| {
+                format!("There was an error when decompressing the {} file",
+                        ".apk".italic())
+            })?;
 
         // Obtaining the clases.dex file.
         let mut dex_file = zip.by_name("classes.dex")
-            .chain_err(|| format!("There was an error while finding the classes.dex file inside the {} file", ".apk".italic()))?;
+            .chain_err(|| {
+                format!("There was an error while finding the classes.dex file inside the {} file",
+                        ".apk".italic())
+            })?;
         // Placing the classes.dex file into the dist_folder.
-        let dex_output_directory = config.get_dist_folder().join(get_package_name(package.as_ref())).join("classes.dex");
+        let dex_output_directory =
+            config.get_dist_folder().join(get_package_name(package.as_ref())).join("classes.dex");
         let mut out_file = File::create(dex_output_directory)
             .chain_err(|| "There was an error while creating classes.dex file")?;
 
         // Reading the classes.dex file.
         let mut bytes = Vec::with_capacity(dex_file.size() as usize);
         let _ = dex_file.read_to_end(&mut bytes)
-            .chain_err(|| format!("There was an error while reading classes.dex file from the {}", ".apk".italic()))?;
+            .chain_err(|| {
+                format!("There was an error while reading classes.dex file from the {}",
+                        ".apk".italic())
+            })?;
 
         out_file.write_all(&bytes)
             .chain_err(|| format!("There was an error while writting classes.dex file"))?;
@@ -168,19 +179,18 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
                     "d2j-dex2jar.bat"
                 } else {
                     "d2j-dex2jar.sh"
-                }))
-            .arg(config.get_dist_folder()
+                })).arg(config.get_dist_folder()
                 .join(&package_name)
                 .join("classes.dex"))
             .arg("-f")
             .arg("-o")
             .arg(&classes)
             .output()
-            .chain_err(||
+            .chain_err(|| {
                 format!("There was an error when executing the {} to {} conversion command",
-                          ".dex".italic(),
-                          ".jar".italic())
-            )?;
+                        ".dex".italic(),
+                        ".jar".italic())
+            })?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -191,9 +201,9 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
            stderr.contains("use") {
             let message = format!("The {} to {} conversion command returned an error. More info: \
                                  {}",
-                                ".dex".italic(),
-                                ".jar".italic(),
-                                stderr);
+                                  ".dex".italic(),
+                                  ".jar".italic(),
+                                  stderr);
 
             return Err(message.into());
         }
@@ -230,8 +240,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
 
         // Command to decompile the application using jd_cmd.
         // "-od path" to specify an output directory
-        let output = Command::new("java")
-            .arg("-jar")
+        let output = Command::new("java").arg("-jar")
             .arg(config.get_jd_cmd_file())
             .arg(config.get_dist_folder()
                 .join(&package_name)
@@ -239,7 +248,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
             .arg("-od")
             .arg(&out_path)
             .output()
-            .chain_err(||format!("There was an unknown error decompiling the application"))?;
+            .chain_err(|| format!("There was an unknown error decompiling the application"))?;
 
         if !output.status.success() {
             let message = format!("The decompilation command returned an error. More info:\n{}",
