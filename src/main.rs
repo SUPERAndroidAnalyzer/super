@@ -115,10 +115,7 @@ fn run() -> Result<()> {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
 
-        let outter_error: Error = ErrorKind::Config.into();
-        let inner_error: Result<()> = Err(error_string.into());
-
-        return inner_error.chain_err(|| outter_error);
+        return Err(ErrorKind::Config(error_string).into());
     }
 
     if config.is_verbose() {
@@ -299,8 +296,9 @@ pub mod errors {
         }
 
         errors {
-            Config {
+            Config(message: String) {
                 description("there was an error in the configuration")
+                display("there was an error in the configuration: {}", message)
             }
             Parse {
                 description("there was an error in some parsing process")
@@ -325,7 +323,7 @@ impl Into<i32> for Error {
             ErrorKind::TOML(_) => 20,
             ErrorKind::JSON(_) => 30,
             ErrorKind::CodeNotFound => 40,
-            ErrorKind::Config => 50,
+            ErrorKind::Config(_) => 50,
             ErrorKind::IO(_) => 100,
             ErrorKind::TemplateName(_) => 125,
             ErrorKind::Template(_) => 150,
