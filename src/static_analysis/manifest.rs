@@ -9,7 +9,7 @@ use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
 
-use {Config, Criticality, print_error, print_warning, print_vulnerability, get_code, get_string,
+use {Config, Criticality, print_warning, print_vulnerability, get_code, get_string,
      PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
@@ -34,7 +34,7 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
             m
         }
         Err(e) => {
-            print_error(format!("There was an error when loading the manifest: {}",
+            print_warning(format!("There was an error when loading the manifest: {}",
                                 e.description()));
             if config.is_verbose() {
                 println!("The rest of the analysis will continue, but there will be no analysis \

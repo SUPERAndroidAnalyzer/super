@@ -22,21 +22,6 @@ pub const PARSER_CONFIG: ParserConfig = ParserConfig {
     coalesce_characters: true,
 };
 
-/// Prints an error to `stderr` in red.
-pub fn print_error<S: AsRef<str>>(error: S) {
-    if cfg!(not(test)) {
-        error!("{}", error.as_ref());
-
-        if !log_enabled!(Debug) {
-            println!("If you need more information, try to run the program again with the {} \
-                      flag.",
-                     "-v".bold());
-        } else {
-            sleep(Duration::from_millis(200));
-        }
-    }
-}
-
 /// Prints a warning to `stderr` in yellow.
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {

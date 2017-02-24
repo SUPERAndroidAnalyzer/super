@@ -14,7 +14,7 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, Criticality, print_warning, print_error, print_vulnerability, get_code};
+use {Config, Criticality, print_warning, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 use errors::*;
@@ -26,7 +26,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
     let rules = match load_rules(config) {
         Ok(r) => r,
         Err(e) => {
-            print_error(format!("An error occurred when loading code analysis rules. Error: {}",
+            print_warning(format!("An error occurred when loading code analysis rules. Error: {}",
                                 e.description()));
             return;
         }
