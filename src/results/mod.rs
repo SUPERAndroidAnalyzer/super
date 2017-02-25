@@ -14,7 +14,8 @@ mod report;
 pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
-use {Config, Result, Criticality, print_error, print_warning, get_package_name};
+use error::*;
+use {Config, Criticality, print_warning, get_package_name};
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -43,7 +44,7 @@ impl Results {
         if !path.exists() || config.is_force() {
             if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
-                    print_error(format!("An unknown error occurred when trying to delete the \
+                    print_warning(format!("An unknown error occurred when trying to delete the \
                                          results folder: {}",
                                         e));
                     return None;
@@ -53,7 +54,7 @@ impl Results {
             let fingerprint = match FingerPrint::new(package) {
                 Ok(f) => f,
                 Err(e) => {
-                    print_error(format!("An error occurred when trying to fingerprint the \
+                    print_warning(format!("An error occurred when trying to fingerprint the \
                                          application: {}",
                                         e));
                     return None;

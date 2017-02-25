@@ -1,10 +1,11 @@
 use results::report::Report;
 use results::Results;
-use Result;
 use config::Config;
 use std::io::BufWriter;
 use std::fs::File;
 use serde_json::ser;
+
+use error::*;
 
 pub struct Json;
 

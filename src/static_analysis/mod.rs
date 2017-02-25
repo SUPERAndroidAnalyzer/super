@@ -17,7 +17,7 @@ use self::code::*;
 use results::Results;
 use {Config, print_warning};
 #[cfg(not(feature = "certificate"))]
-use Result;
+use error::*;
 
 /// Runs the analysis for manifest, certificate and code files.
 ///
@@ -41,7 +41,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     }
 
     // Run analysis for source code files.
-    code_analysis(manifest, config, package.as_ref(), results);
+    code_analysis(manifest, config, package.as_ref(), results)
 }
 
 #[cfg(not(feature = "certificate"))]

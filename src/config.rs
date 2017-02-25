@@ -7,7 +7,6 @@ use std::path::{Path, PathBuf};
 use std::convert::From;
 use std::str::FromStr;
 use std::io::Read;
-use std::process::exit;
 use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
@@ -20,7 +19,8 @@ use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
-use {Error, Result, Criticality, print_error, print_warning};
+use error::*;
+use {Criticality, print_warning};
 
 /// Largest number of threads permitted.
 const MAX_THREADS: i64 = u8::MAX as i64;
@@ -96,20 +96,22 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                config.load_from_file(&config_path)?;
+                config.load_from_file(&config_path)
+                    .chain_err(|| "The config.toml file does not have the correct formatting.")?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config.load_from_file(&config_path)?;
+            config.load_from_file(&config_path)
+                .chain_err(|| "The config.toml file does not have the correct formatting.")?;
             config.loaded_files.push(config_path);
         }
 
         config.set_options(&cli);
 
         if cli.is_present("test-all") {
-            config.read_apks();
+            config.read_apks().chain_err(|| "Error loading all the downloaded APKs")?;
         } else {
             config.add_app_package(cli.value_of("package").unwrap());
         }
@@ -174,36 +176,31 @@ impl Config {
     }
 
     /// Reads all the apk files in the downloads folder and adds them to the configuration.
-    fn read_apks(&mut self) {
-        match fs::read_dir(&self.downloads_folder) {
-            Ok(iter) => {
-                for entry in iter {
-                    match entry {
-                        Ok(entry) => {
-                            if let Some(ext) = entry.path().extension() {
-                                if ext == "apk" {
-                                    self.add_app_package(entry.path()
-                                        .file_stem()
-                                        .unwrap()
-                                        .to_string_lossy()
-                                        .into_owned())
-                                }
-                            }
-                        }
-                        Err(e) => {
-                            print_warning(format!("There was an error when reading the \
-                                                   downloads folder: {}",
-                                                  e.description()));
+    fn read_apks(&mut self) -> Result<()> {
+        let iter = fs::read_dir(&self.downloads_folder)?;
+
+        for entry in iter {
+            match entry {
+                Ok(entry) => {
+                    if let Some(ext) = entry.path().extension() {
+                        if ext == "apk" {
+                            self.add_app_package(entry.path()
+                                .file_stem()
+                                .unwrap()
+                                .to_string_lossy()
+                                .into_owned())
                         }
                     }
                 }
-            }
-            Err(e) => {
-                print_error(format!("There was an error when reading the downloads folder: {}",
-                                    e.description()));
-                exit(Error::from(e).into());
+                Err(e) => {
+                    print_warning(format!("There was an error when reading the \
+                                                   downloads folder: {}",
+                                          e.description()));
+                }
             }
         }
+
+        Ok(())
     }
 
     /// Checks if all the needed folders and files exist.
@@ -411,15 +408,10 @@ impl Config {
 
         // Parse the configuration file.
         let toml = if let Value::Table(toml) =
-            toml.parse::<Value>()
-                .unwrap_or_else(|e| {
-                    print_error(format!("There was an error parsing the config.toml file: {}", e));
-                    exit(Error::Parse.into());
-                }) {
+            toml.parse::<Value>().chain_err(|| "there was an error parsing the config.toml file")? {
             toml
         } else {
-            print_error("The config.toml file does not have the correct formatting.");
-            exit(Error::Parse.into());
+            return Err(ErrorKind::Parse.into());
         };
 
         // Read the values from the configuration file.
@@ -439,6 +431,7 @@ impl Config {
                 "html_report" => self.load_html_report_section(value),
                 "json_report" => self.load_json_report_section(value),
                 _ => print_warning(format!("Unknown configuration option {}.", key)),
+
             }
         }
         Ok(())

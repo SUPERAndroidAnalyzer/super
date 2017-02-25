@@ -1,9 +1,9 @@
 mod json;
 mod handlebars;
 
-use Result;
 use results::Results;
 use config::Config;
+use error::*;
 
 pub use self::json::Json;
 pub use self::handlebars::HandlebarsReport;
