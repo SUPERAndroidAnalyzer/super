@@ -39,6 +39,8 @@ open = "^1.2"
 bytecount = "0.1"
 log = "^0.3"
 env_logger = "^0.4"
+elf = "^0.0.10"
+byteorder = "*"
 
 [dependencies.handlebars]
 version = "^0.25"
@@ -50,8 +52,9 @@ clap = "^2.20"
 [features]
 default = ["beta"]
 beta = []
-unstable = ["beta", "certificate"]
+unstable = ["beta", "certificate", "binary-analysis"]
 certificate = []
+binary-analysis = []
 
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"

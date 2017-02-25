@@ -298,7 +298,8 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
     Ok(())
 }
 
-struct Rule {
+#[derive(Clone)]
+pub struct Rule {
     regex: Regex,
     permissions: Vec<Permission>,
     forward_check: Option<String>,
@@ -364,7 +365,7 @@ impl Rule {
     }
 }
 
-fn load_rules(config: &Config) -> Result<Vec<Rule>> {
+pub fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     let f = File::open(config.get_rules_json())?;
     let rules_json: Value = serde_json::from_reader(f)?;
 
