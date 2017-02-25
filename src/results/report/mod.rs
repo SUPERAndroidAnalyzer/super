@@ -3,7 +3,7 @@ mod handlebars;
 
 use results::Results;
 use config::Config;
-use errors::*;
+use error::*;
 
 pub use self::json::Json;
 pub use self::handlebars::HandlebarsReport;

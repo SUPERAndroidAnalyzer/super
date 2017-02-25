@@ -10,7 +10,7 @@ use xml::ParserConfig;
 use colored::Colorize;
 use log::LogLevel::Debug;
 
-use errors::*;
+use error::*;
 use super::{Criticality, Config};
 
 /// Configuration for the XML parser.

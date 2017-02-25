@@ -8,7 +8,7 @@ use chrono::{Local, Datelike};
 
 use {Config, Criticality, Result, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
-use errors::*;
+use error::*;
 
 fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     match month_str.as_ref() {

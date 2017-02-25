@@ -17,7 +17,7 @@ use colored::Colorize;
 use {Config, Criticality, print_warning, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
-use errors::*;
+use error::*;
 
 pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                     config: &Config,

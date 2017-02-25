@@ -5,7 +5,7 @@ use std::io::BufWriter;
 use std::fs::File;
 use serde_json::ser;
 
-use errors::*;
+use error::*;
 
 pub struct Json;
 

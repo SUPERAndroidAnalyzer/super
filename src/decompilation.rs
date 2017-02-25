@@ -13,7 +13,7 @@ use std::collections::BTreeMap;
 
 use colored::Colorize;
 use zip::ZipArchive;
-use errors::*;
+use error::*;
 
 use {Config, Benchmark, print_warning, get_package_name};
 

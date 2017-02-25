@@ -3,7 +3,7 @@ use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
 use std::error::Error as StdError;
-use errors::*;
+use error::*;
 
 use yaml_rust::yaml::{Yaml, YamlLoader};
 use xml::reader::{EventReader, XmlEvent};

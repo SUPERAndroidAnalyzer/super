@@ -14,7 +14,7 @@ use serde_json::Map;
 use serde_json::value::Value;
 use std::collections::BTreeMap;
 use std::path::Path;
-use errors::*;
+use error::*;
 
 pub struct HandlebarsReport {
     handler: Handlebars,

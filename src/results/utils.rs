@@ -13,7 +13,7 @@ use crypto::sha2::Sha256;
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
-use errors::*;
+use error::*;
 use Criticality;
 
 /// Structure to store information about a vulnerability.

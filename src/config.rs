@@ -19,7 +19,7 @@ use clap::ArgMatches;
 
 use static_analysis::manifest::Permission;
 
-use errors::*;
+use error::*;
 use {Criticality, print_warning};
 
 /// Largest number of threads permitted.

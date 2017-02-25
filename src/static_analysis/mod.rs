@@ -17,7 +17,7 @@ use self::code::*;
 use results::Results;
 use {Config, print_warning};
 #[cfg(not(feature = "certificate"))]
-use errors::*;
+use error::*;
 
 /// Runs the analysis for manifest, certificate and code files.
 ///

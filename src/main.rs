@@ -60,7 +60,7 @@ use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
-use errors::*;
+use error::*;
 pub use config::Config;
 pub use utils::*;
 
@@ -287,11 +287,11 @@ fn analyze_package(package: PathBuf,
 
 /// Module containing the definition of error chain types
 #[allow(missing_docs)]
-pub mod errors {
+pub mod error {
     // Create the Error, ErrorKind, ResultExt, and Result types
     error_chain! {
         foreign_links {
-            IO(::std::io::Error) #[cfg(unix)];
+            IO(::std::io::Error);
             Template(::handlebars::TemplateFileError);
             TemplateRender(::handlebars::RenderError);
             JSON(::serde_json::error::Error);
