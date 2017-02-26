@@ -122,29 +122,26 @@ impl Config {
     /// Modifies the options from the CLI.
     fn set_options(&mut self, cli: &ArgMatches<'static>) {
         if let Some(min_criticality) = cli.value_of("min_criticality") {
-            match min_criticality.parse() {
-                Ok(m) => {
-                    self.min_criticality = m;
-                }
-                _ => {
-                    print_warning(format!("The min_criticality option must be one of {}, {}, \
-                                           {}, {} or {}.\nUsing default.",
-                                          "warning".italic(),
-                                          "low".italic(),
-                                          "medium".italic(),
-                                          "high".italic(),
-                                          "critical".italic()));
-                }
+            if let Ok(m) = min_criticality.parse() {
+
+                self.min_criticality = m;
+            } else {
+                print_warning(format!("The min_criticality option must be one of {}, {}, {}, {} or \
+                                       {}.\nUsing default.",
+                                      "warning".italic(),
+                                      "low".italic(),
+                                      "medium".italic(),
+                                      "high".italic(),
+                                      "critical".italic()));
             }
         }
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
-                Ok(t) if t > 0u8 => {
+                Ok(t) if t > 0_u8 => {
                     self.threads = t;
                 }
                 _ => {
-                    print_warning(format!("The threads option must be an integer between 1 and \
-                                           {}",
+                    print_warning(format!("The threads option must be an integer between 1 and {}",
                                           u8::MAX));
                 }
             }
@@ -327,7 +324,7 @@ impl Config {
 
     /// Returns true if the application has to generate result in HTML format.
     pub fn has_to_generate_html(&self) -> bool {
-        self.html || (!self.html && !self.json)
+        !self.json || self.html
     }
 
     /// Returns the `min_criticality` field.
@@ -439,274 +436,241 @@ impl Config {
 
     /// Loads threads section from the TOML value.
     fn load_threads_section(&mut self, value: Value) {
-        match value {
-            Value::Integer(1...MAX_THREADS) => self.threads = value.as_integer().unwrap() as u8,
-            _ => {
-                print_warning(format!("The 'threads' option in config.toml must \
-                                       be an integer between 1 and {}.\nUsing \
-                                       default.",
-                                      MAX_THREADS))
+        if let Value::Integer(t @ 1...MAX_THREADS) = value {
+            #[allow(cast_sign_loss)]
+            {
+                self.threads = t as u8;
             }
+        } else {
+            print_warning(format!("The 'threads' option in config.toml must be an integer between \
+                                   1 and {}.\nUsing default.",
+                                  MAX_THREADS))
         }
     }
 
     /// Loads downloads section from the TOML value.
     fn load_downloads_folder_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => self.downloads_folder = PathBuf::from(s),
-            _ => {
-                print_warning("The 'downloads_folder' option in config.toml must \
-                               be an string.\nUsing default.")
-            }
+        if let Value::String(s) = value {
+            self.downloads_folder = s.into();
+        } else {
+            print_warning("The 'downloads_folder' option in config.toml must be an string.\nUsing \
+                           default.")
         }
     }
 
     /// Loads dist folder section from the TOML value.
     fn load_dist_folder_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => self.dist_folder = PathBuf::from(s),
-            _ => {
-                print_warning("The 'dist_folder' option in config.toml must be an \
-                               string.\nUsing default.")
-            }
+        if let Value::String(s) = value {
+            self.dist_folder = s.into();
+        } else {
+            print_warning("The 'dist_folder' option in config.toml must be an string.\nUsing \
+                           default.");
         }
     }
 
     /// Loads results folder section from the TOML value.
     fn load_results_folder_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => self.results_folder = PathBuf::from(s),
-            _ => {
-                print_warning("The 'results_folder' option in config.toml must be \
-                               an string.\nUsing default.")
-            }
+        if let Value::String(s) = value {
+            self.results_folder = s.into();
+        } else {
+            print_warning("The 'results_folder' option in config.toml must be an string.\nUsing \
+                           default.");
         }
     }
 
     /// Loads apktool file section from the TOML value.
     fn load_apktool_file_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => {
-                let extension = Path::new(&s).extension();
-                if extension.is_some() && extension.unwrap() == "jar" {
-                    self.apktool_file = PathBuf::from(s.clone());
-                } else {
-                    print_warning("The APKTool file must be a JAR file.\nUsing \
-                                   default.")
-                }
+        if let Value::String(s) = value {
+            let extension = Path::new(&s).extension();
+            if extension.is_some() && extension.unwrap() == "jar" {
+                self.apktool_file = PathBuf::from(s.clone());
+            } else {
+                print_warning("The APKTool file must be a JAR file.\nUsing default.");
             }
-            _ => {
-                print_warning("The 'apktool_file' option in config.toml must be \
-                               an string.\nUsing default.")
-            }
+        } else {
+            print_warning("The 'apktool_file' option in config.toml must be an string.\nUsing \
+                           default.");
         }
     }
 
     /// Loads dex2jar folder section from the TOML value.
     fn load_dex2jar_folder_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => self.dex2jar_folder = PathBuf::from(s),
-            _ => {
-                print_warning("The 'dex2jar_folder' option in config.toml should \
-                               be an string.\nUsing default.")
-            }
+        if let Value::String(s) = value {
+            self.dex2jar_folder = s.into();
+        } else {
+            print_warning("The 'dex2jar_folder' option in config.toml should be an string.\nUsing \
+                           default.")
         }
     }
 
     /// Loads jd cmd file section from the TOML value.
     fn load_jd_cmd_file_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => {
-                let extension = Path::new(&s).extension();
-                if extension.is_some() && extension.unwrap() == "jar" {
-                    self.jd_cmd_file = PathBuf::from(s.clone());
-                } else {
-                    print_warning("The JD-CMD file must be a JAR file.\nUsing \
-                                   default.")
-                }
+        if let Value::String(s) = value {
+            let extension = Path::new(&s).extension();
+            if extension.is_some() && extension.unwrap() == "jar" {
+                self.jd_cmd_file = PathBuf::from(s.clone());
+            } else {
+                print_warning("The JD-CMD file must be a JAR file.\nUsing default.");
             }
-            _ => {
-                print_warning("The 'jd_cmd_file' option in config.toml must be an \
-                               string.\nUsing default.")
-            }
+        } else {
+            print_warning("The 'jd_cmd_file' option in config.toml must be an string.\nUsing \
+                           default.")
         }
     }
 
     /// Loads templated folder section from the TOML value.
     fn load_templates_folder_section(&mut self, value: Value) {
-        match value {
-            Value::String(ref s) => self.templates_folder = PathBuf::from(s),
-            _ => {
-                print_warning("The 'templates_folder' option in config.toml \
-                               should be an string.\nUsing default.")
-            }
+        if let Value::String(ref s) = value {
+            self.templates_folder = s.into();
+        } else {
+            print_warning("The 'templates_folder' option in config.toml should be an string.\n\
+                           Using default.")
         }
     }
 
     /// Loads template section from the TOML value.
     fn load_template_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => self.template = s,
-            _ => {
-                print_warning("The 'template' option in config.toml \
-                               should be an string.\nUsing default.")
-            }
+        if let Value::String(s) = value {
+            self.template = s;
+        } else {
+            print_warning("The 'template' option in config.toml should be an string.\nUsing \
+                           default.")
         }
     }
 
     /// Loads rules section from the TOML value.
     fn load_rules_section(&mut self, value: Value) {
-        match value {
-            Value::String(s) => {
-                let extension = Path::new(&s).extension();
-                if extension.is_some() && extension.unwrap() == "json" {
-                    self.rules_json = PathBuf::from(s.clone());
-                } else {
-                    print_warning("The rules.json file must be a JSON \
+        if let Value::String(s) = value {
+            let extension = Path::new(&s).extension();
+            if extension.is_some() && extension.unwrap() == "json" {
+                self.rules_json = PathBuf::from(s.clone());
+            } else {
+                print_warning("The rules.json file must be a JSON \
                                    file.\nUsing default.")
-                }
             }
-            _ => {
-                print_warning("The 'rules_json' option in config.toml must be an \
-                               string.\nUsing default.")
-            }
+        } else {
+            print_warning("The 'rules_json' option in config.toml must be an string.\nUsing \
+                           default.")
         }
     }
 
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, value: Value) {
-        match value {
-            Value::Array(permissions) => {
-                let format_warning = format!("The permission configuration format must be the \
+        if let Value::Array(permissions) = value {
+            let format_warning = format!("The permission configuration format must be the \
                                               following:\n{}\nUsing default.",
-                                             "[[permissions]]\nname=\"unknown|permission.\
+                                         "[[permissions]]\nname=\"unknown|permission.\
                                               name\"\ncriticality = \
                                               \"warning|low|medium|high|critical\"\nlabel = \
                                               \"Permission label\"\ndescription = \"Long \
                                               description to explain the vulnerability\""
-                                                 .italic());
+                                             .italic());
 
-                for cfg in permissions {
-                    let cfg = match cfg.as_table() {
-                        Some(t) => t,
-                        None => {
-                            print_warning(format_warning);
-                            break;
-                        }
-                    };
+            for cfg in permissions {
+                let cfg = if let Some(t) = cfg.as_table() {
+                    t
+                } else {
+                    print_warning(format_warning);
+                    break;
+                };
 
-                    let name = match cfg.get("name") {
-                        Some(&Value::String(ref n)) => n,
-                        _ => {
-                            print_warning(format_warning);
-                            break;
-                        }
-                    };
+                let name = if let Some(&Value::String(ref n)) = cfg.get("name") {
+                    n
+                } else {
+                    print_warning(format_warning);
+                    break;
+                };
 
-                    let criticality = match cfg.get("criticality") {
-                        Some(&Value::String(ref c)) => {
-                            match Criticality::from_str(c) {
-                                Ok(c) => c,
-                                Err(_) => {
-                                    print_warning(format!("Criticality must be one of {}, {}, \
-                                                           {}, {} or {}.\nUsing default.",
-                                                          "warning".italic(),
-                                                          "low".italic(),
-                                                          "medium".italic(),
-                                                          "high".italic(),
-                                                          "critical".italic()));
-                                    break;
-                                }
-                            }
-                        }
-                        _ => {
-                            print_warning(format_warning);
-                            break;
-                        }
-                    };
+                let criticality = if let Some(&Value::String(ref c)) = cfg.get("criticality") {
+                    if let Ok(c) = Criticality::from_str(c) {
+                        c
+                    } else {
+                        print_warning(format!("Criticality must be one of {}, {}, {}, {} or {}.\n\
+                                               Using default.",
+                                              "warning".italic(),
+                                              "low".italic(),
+                                              "medium".italic(),
+                                              "high".italic(),
+                                              "critical".italic()));
+                        break;
+                    }
+                } else {
+                    print_warning(format_warning);
+                    break;
+                };
 
-                    let description = match cfg.get("description") {
-                        Some(&Value::String(ref d)) => d.to_owned(),
-                        _ => {
-                            print_warning(format_warning);
-                            break;
-                        }
-                    };
+                let description = if let Some(&Value::String(ref d)) = cfg.get("description") {
+                    d.to_owned()
+                } else {
+                    print_warning(format_warning);
+                    break;
+                };
 
-                    if name == "unknown" {
-                        if cfg.len() != 3 {
-                            print_warning(format!("The format for the unknown \
+                if name == "unknown" {
+                    if cfg.len() != 3 {
+                        print_warning(format!("The format for the unknown \
                              permissions is the following:\n{}\nUsing default.",
-                                                  "[[permissions]]\nname = \
+                                              "[[permissions]]\nname = \
                                                    \"unknown\"\ncriticality = \
                                                     \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
-                                                      .italic()));
-                            break;
-                        }
-
-                        self.unknown_permission = (criticality, description.clone());
-                    } else {
-                        if cfg.len() != 4 {
-                            print_warning(format_warning);
-                            break;
-                        }
-
-                        let permission = match Permission::from_str(name) {
-                            Ok(p) => p,
-                            Err(_) => {
-                                print_warning(format!("Unknown permission: {}\nTo set the \
-                                                       default vulnerability level for an \
-                                                       unknown permission, please, use the {} \
-                                                       permission name, under the {} section.",
-                                                      name.italic(),
-                                                      "unknown".italic(),
-                                                      "[[permissions]]".italic()));
-                                break;
-                            }
-                        };
-
-                        let label = match cfg.get("label") {
-                            Some(&Value::String(ref l)) => l.to_owned(),
-                            _ => {
-                                print_warning(format_warning);
-                                break;
-                            }
-                        };
-                        self.permissions
-                            .insert(PermissionConfig::new(permission,
-                                                          criticality,
-                                                          label,
-                                                          description));
+                                                  .italic()));
+                        break;
                     }
+
+                    self.unknown_permission = (criticality, description.clone());
+                } else {
+                    if cfg.len() != 4 {
+                        print_warning(format_warning);
+                        break;
+                    }
+
+                    let permission = if let Ok(p) = Permission::from_str(name) {
+                        p
+                    } else {
+                        print_warning(format!("Unknown permission: {}\nTo set the default \
+                                               vulnerability level for an unknown permission, \
+                                               please, use the {} permission name, under the {} \
+                                               section.",
+                                              name.italic(),
+                                              "unknown".italic(),
+                                              "[[permissions]]".italic()));
+                        break;
+                    };
+
+                    let label = if let Some(&Value::String(ref l)) = cfg.get("label") {
+                        l.to_owned()
+                    } else {
+                        print_warning(format_warning);
+                        break;
+                    };
+                    self.permissions
+                        .insert(PermissionConfig::new(permission, criticality, label, description));
                 }
             }
-            _ => {
-                print_warning("You must specify the permissions you want to select as vulnerable.");
-            }
+        } else {
+            print_warning("You must specify the permissions you want to select as vulnerable.");
         }
     }
 
     /// Loads html report section from the TOML value.
     fn load_html_report_section(&mut self, value: Value) {
-        match value {
-            Value::Boolean(b) => self.html = b,
-            _ => {
-                print_warning("The 'html_report' option in config.toml \
-                               should be a boolean.\nUsing default.")
-            }
+        if let Value::Boolean(b) = value {
+            self.html = b
+        } else {
+            print_warning("The 'html_report' option in config.toml should be a boolean.\nUsing \
+                           default.");
         }
     }
 
     /// Loads json report section from the TOML value.
     fn load_json_report_section(&mut self, value: Value) {
-        match value {
-            Value::Boolean(b) => self.json = b,
-            _ => {
-                print_warning("The 'json_report' option in config.toml \
-                               should be a boolean.\nUsing default.")
-            }
+        if let Value::Boolean(b) = value {
+            self.json = b;
+        } else {
+            print_warning("The 'json_report' option in config.toml should be a boolean.\nUsing \
+                           default.");
         }
     }
 

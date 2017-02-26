@@ -126,14 +126,7 @@ impl HandlebarsReport {
             if path.is_dir() {
                 if stripped != Path::new("original") {
                     let inner_menu = self.generate_code_html_folder(stripped, config, results)?;
-                    if !inner_menu.is_empty() {
-                        let mut object = Map::with_capacity(2);
-                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
-
-                        let _ = object.insert("name".to_owned(), Value::String(name));
-                        let _ = object.insert("menu".to_owned(), Value::Array(inner_menu));
-                        menu.push(Value::Object(object));
-                    } else {
+                    if inner_menu.is_empty() {
                         let path = config.get_results_folder()
                             .join(&results.get_app_package())
                             .join("src")
@@ -141,6 +134,13 @@ impl HandlebarsReport {
                         if path.exists() {
                             fs::remove_dir_all(path)?;
                         }
+                    } else {
+                        let mut object = Map::with_capacity(2);
+                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
+
+                        let _ = object.insert("name".to_owned(), Value::String(name));
+                        let _ = object.insert("menu".to_owned(), Value::Array(inner_menu));
+                        menu.push(Value::Object(object));
                     }
                 }
             } else {

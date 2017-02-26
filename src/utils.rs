@@ -14,29 +14,33 @@ use error::*;
 use super::{Criticality, Config};
 
 /// Configuration for the XML parser.
-pub const PARSER_CONFIG: ParserConfig = ParserConfig {
-    trim_whitespace: true,
-    whitespace_to_characters: false,
-    cdata_to_characters: false,
-    ignore_comments: true,
-    coalesce_characters: true,
-};
+lazy_static! {
+    /// XML parser configuration.
+    pub static ref PARSER_CONFIG: ParserConfig = ParserConfig::new()
+    .trim_whitespace(true)
+    .whitespace_to_characters(true)
+    .cdata_to_characters(false)
+    .ignore_comments(true)
+    .coalesce_characters(true);
+}
 
 /// Prints a warning to `stderr` in yellow.
+#[allow(print_stdout)]
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
 
-        if !log_enabled!(Debug) {
+        if log_enabled!(Debug) {
+            sleep(Duration::from_millis(200));
+        } else {
             println!("If you need more information, try to run the program again with the {} flag.",
                      "-v".bold())
-        } else {
-            sleep(Duration::from_millis(200));
         }
     }
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
+#[allow(print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!("Possible {} criticality vulnerability found!: {}",
@@ -105,7 +109,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
     let _ = file.read_to_string(&mut code)?;
 
     let bytes = code.into_bytes();
-    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
+    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG.clone());
 
     let mut found = false;
     for e in parser {

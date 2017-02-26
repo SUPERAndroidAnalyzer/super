@@ -19,12 +19,11 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         })?;
     let line_separator = match h.param(1) {
         Some(s) => {
-            match *s.value() {
-                Value::String(ref s) => s,
-                _ => {
-                    return Err(RenderError::new("the provided line separator for the code lines \
-                                                 was not a string"))
-                }
+            if let Value::String(ref s) = *s.value() {
+                s
+            } else {
+                return Err(RenderError::new("the provided line separator for the code lines was \
+                                             not a string"));
             }
         }
         None => "<br>",
@@ -62,12 +61,11 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
-            match *s.value() {
-                Value::String(ref s) => s,
-                _ => {
-                    return Err(RenderError::new("the provided line separator for the code lines \
-                                                 was not a string"))
-                }
+            if let Value::String(ref s) = *s.value() {
+                s
+            } else {
+                return Err(RenderError::new("the provided line separator for the code lines was \
+                                             not a string"));
             }
         }
         None => "<br>",
@@ -94,12 +92,11 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
-            match *s.value() {
-                Value::String(ref s) => s,
-                _ => {
-                    return Err(RenderError::new("the provided line separator for the code lines \
-                                                 was not a string"))
-                }
+            if let Value::String(ref s) = *s.value() {
+                s
+            } else {
+                return Err(RenderError::new("the provided line separator for the code lines was \
+                                             not a string"));
             }
         }
         None => "<br>",
@@ -139,12 +136,11 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
         })?;
     let line_separator = match h.param(1) {
         Some(s) => {
-            match *s.value() {
-                Value::String(ref s) => s,
-                _ => {
-                    return Err(RenderError::new("the provided line separator for the code lines \
-                                                 was not a string"))
-                }
+            if let Value::String(ref s) = *s.value() {
+                s
+            } else {
+                return Err(RenderError::new("the provided line separator for the code lines was \
+                                             not a string"));
             }
         }
         None => "<br>",
@@ -209,7 +205,7 @@ pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         .next()
         .unwrap();
 
-    let mut index_padding = (list_len as f32 + 1f32).log10().ceil() as usize + 1;
+    let mut index_padding = (list_len as f32 + 1_f32).log10().ceil() as usize + 1;
     if index_padding < 2 {
         index_padding = 2;
     }

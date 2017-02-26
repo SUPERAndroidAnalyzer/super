@@ -1,6 +1,6 @@
 use clap::{Arg, App};
 
-pub fn generate_cli() -> App<'static, 'static> {
+pub fn generate() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())
         .author("SUPER Team <contact@superanalyzer.rocks>")

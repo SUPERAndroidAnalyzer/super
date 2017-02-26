@@ -29,7 +29,7 @@ pub struct Results {
     app_min_sdk: u32,
     app_target_sdk: Option<u32>,
     app_fingerprint: FingerPrint,
-    #[allow(unused)]
+    #[cfg(feature = "certificate")]
     certificate: String,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
@@ -46,7 +46,7 @@ impl Results {
                 if let Err(e) = fs::remove_dir_all(&path) {
                     print_warning(format!("An unknown error occurred when trying to delete the \
                                          results folder: {}",
-                                        e));
+                                          e));
                     return None;
                 }
             }
@@ -56,7 +56,7 @@ impl Results {
                 Err(e) => {
                     print_warning(format!("An error occurred when trying to fingerprint the \
                                          application: {}",
-                                        e));
+                                          e));
                     return None;
                 }
             };
@@ -67,22 +67,43 @@ impl Results {
             } else if !config.is_quiet() {
                 println!("Results struct created.");
             }
-            Some(Results {
-                app_package: String::new(),
-                app_label: String::new(),
-                app_description: String::new(),
-                app_version: String::new(),
-                app_version_num: 0,
-                app_min_sdk: 0,
-                app_target_sdk: None,
-                app_fingerprint: fingerprint,
-                certificate: String::new(),
-                warnings: BTreeSet::new(),
-                low: BTreeSet::new(),
-                medium: BTreeSet::new(),
-                high: BTreeSet::new(),
-                critical: BTreeSet::new(),
-            })
+            #[cfg(feature = "certificate")]
+            {
+                Some(Results {
+                    app_package: String::new(),
+                    app_label: String::new(),
+                    app_description: String::new(),
+                    app_version: String::new(),
+                    app_version_num: 0,
+                    app_min_sdk: 0,
+                    app_target_sdk: None,
+                    app_fingerprint: fingerprint,
+                    certificate: String::new(),
+                    warnings: BTreeSet::new(),
+                    low: BTreeSet::new(),
+                    medium: BTreeSet::new(),
+                    high: BTreeSet::new(),
+                    critical: BTreeSet::new(),
+                })
+            }
+            #[cfg(not(feature = "certificate"))]
+            {
+                Some(Results {
+                    app_package: String::new(),
+                    app_label: String::new(),
+                    app_description: String::new(),
+                    app_version: String::new(),
+                    app_version_num: 0,
+                    app_min_sdk: 0,
+                    app_target_sdk: None,
+                    app_fingerprint: fingerprint,
+                    warnings: BTreeSet::new(),
+                    low: BTreeSet::new(),
+                    medium: BTreeSet::new(),
+                    high: BTreeSet::new(),
+                    critical: BTreeSet::new(),
+                })
+            }
         } else {
             if config.is_verbose() {
                 println!("The results for this application have already been generated. No need \
@@ -219,7 +240,12 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut ser_struct = serializer.serialize_struct("Results", 22)?;
+        let mut ser_struct = serializer.serialize_struct("Results",
+                              if cfg!(feature = "certificate") {
+                                  22
+                              } else {
+                                  21
+                              })?;
 
         ser_struct.serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
@@ -230,7 +256,11 @@ impl Serialize for Results {
         ser_struct.serialize_field("app_version", &self.app_version)?;
         ser_struct.serialize_field("app_version_number", &self.app_version_num)?;
         ser_struct.serialize_field("app_fingerprint", &self.app_fingerprint)?;
-        ser_struct.serialize_field("certificate", &self.certificate)?;
+
+        #[cfg(feature = "certificate")]
+        {
+            ser_struct.serialize_field("certificate", &self.certificate)?;
+        }
 
         ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
         ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;

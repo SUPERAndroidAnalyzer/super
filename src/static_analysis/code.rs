@@ -19,7 +19,7 @@ use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 use error::*;
 
-pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
+pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
                                     config: &Config,
                                     package: S,
                                     results: &mut Results) {
@@ -27,7 +27,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         Ok(r) => r,
         Err(e) => {
             print_warning(format!("An error occurred when loading code analysis rules. Error: {}",
-                                e.description()));
+                                  e.description()));
             return;
         }
     };
@@ -106,6 +106,7 @@ pub fn code_analysis<S: AsRef<str>>(manifest: Option<Manifest>,
 
     for t in handles {
         if let Err(e) = t.join() {
+            #[allow(use_debug)]
             print_warning(format!("An error occurred when joining analysis threads: Error: {:?}",
                                   e));
         }
@@ -231,7 +232,6 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                     }
                 }
             }
-
         }
     }
 
@@ -370,13 +370,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     let rules_json: Value = serde_json::from_reader(f)?;
 
     let mut rules = Vec::new();
-    let rules_json = match rules_json.as_array() {
-        Some(a) => a,
-        None => {
+    let rules_json = if let Some(a) = rules_json.as_array() {
+            a
+        } else {
             print_warning("Rules must be a JSON array.");
             return Err(ErrorKind::Parse.into());
-        }
-    };
+        };
 
     for rule in rules_json {
         let format_warning =
@@ -402,35 +401,31 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     "fc2".italic(),
                     "{fc1}".italic(),
                     "{fc2}".italic());
-        let rule = match rule.as_object() {
-            Some(o) => o,
-            None => {
+        let rule = if let Some(o) = rule.as_object() {
+                o
+            } else {
                 print_warning(format_warning);
                 return Err(ErrorKind::Parse.into());
-            }
-        };
+            };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning);
             return Err(ErrorKind::Parse.into());
         }
 
-        let regex = match rule.get("regex") {
-            Some(&Value::String(ref r)) => {
-                match Regex::new(r) {
-                    Ok(r) => r,
-                    Err(e) => {
-                        print_warning(format!("An error occurred when compiling the regular \
-                                               expresion: {}",
-                                              e.description()));
-                        return Err(ErrorKind::Parse.into());
-                    }
+        let regex = if let Some(&Value::String(ref r)) = rule.get("regex") {
+            match Regex::new(r) {
+                Ok(r) => r,
+                Err(e) => {
+                    print_warning(format!("An error occurred when compiling the regular expresion: \
+                                           {}",
+                                          e.description()));
+                    return Err(ErrorKind::Parse.into());
                 }
             }
-            _ => {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            }
+        } else {
+            print_warning(format_warning);
+            return Err(ErrorKind::Parse.into());
         };
 
         let max_sdk = match rule.get("max_sdk") {
@@ -446,21 +441,16 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
-                    list.push(match *p {
-                        Value::String(ref p) => {
-                            match Permission::from_str(p) {
-                                Ok(p) => p,
-                                Err(_) => {
-                                    print_warning(format!("the permission {} is unknown",
-                                                          p.italic()));
-                                    return Err(ErrorKind::Parse.into());
-                                }
-                            }
-                        }
-                        _ => {
-                            print_warning(format_warning);
+                    list.push(if let Value::String(ref p)  = *p {
+                        if let Ok(p) = Permission::from_str(p) {
+                            p
+                        } else {
+                            print_warning(format!("the permission {} is unknown", p.italic()));
                             return Err(ErrorKind::Parse.into());
                         }
+                    } else{
+                        print_warning(format_warning);
+                        return Err(ErrorKind::Parse.into());
                     });
                 }
                 list
@@ -514,24 +504,21 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             }
         };
 
-        let label = match rule.get("label") {
-            Some(&Value::String(ref l)) => l,
-            _ => {
+        let label = if let Some(&Value::String(ref l)) = rule.get("label") {
+                l
+            } else {
                 print_warning(format_warning);
                 return Err(ErrorKind::Parse.into());
-            }
-        };
+            };
 
-        let description = match rule.get("description") {
-            Some(&Value::String(ref d)) => d,
-            _ => {
+        let description = if let Some(&Value::String(ref d)) = rule.get("description") {
+                d
+            } else {
                 print_warning(format_warning);
                 return Err(ErrorKind::Parse.into());
-            }
-        };
+            };
 
-        let criticality = match rule.get("criticality") {
-            Some(&Value::String(ref c)) => {
+        let criticality = if let Some(&Value::String(ref c)) = rule.get("criticality") {
                 match Criticality::from_str(c) {
                     Ok(c) => c,
                     Err(e) => {
@@ -544,33 +531,28 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                         return Err(e);
                     }
                 }
-            }
-            _ => {
+            } else {
                 print_warning(format_warning);
                 return Err(ErrorKind::Parse.into());
-            }
-        };
+            };
 
         let whitelist = match rule.get("whitelist") {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for r in v {
-                    list.push(match *r {
-                        Value::String(ref r) => {
-                            match Regex::new(r) {
-                                Ok(r) => r,
-                                Err(e) => {
-                                    print_warning(format!("An error occurred when compiling the \
-                                                           regular expresion: {}",
-                                                          e.description()));
-                                    return Err(ErrorKind::Parse.into());
-                                }
+                    list.push(if let Value::String(ref r) = *r {
+                        match Regex::new(r) {
+                            Ok(r) => r,
+                            Err(e) => {
+                                print_warning(format!("An error occurred when compiling the \
+                                                       regular expresion: {}",
+                                                      e.description()));
+                                return Err(ErrorKind::Parse.into());
                             }
                         }
-                        _ => {
-                            print_warning(format_warning);
-                            return Err(ErrorKind::Parse.into());
-                        }
+                    } else {
+                        print_warning(format_warning);
+                        return Err(ErrorKind::Parse.into());
                     });
                 }
                 list
@@ -1137,14 +1119,13 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match =
-            &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
+        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
                scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
                ArrayList<PendingIntent> deliveryIntents)",
-              "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
+                             "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
                scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-              "telephony.SmsManager  vnd.android-dir/mms-sms",
-              "telephony.SmsManager  vnd.android-dir/mms-sms"];
+                             "telephony.SmsManager  vnd.android-dir/mms-sms",
+                             "telephony.SmsManager  vnd.android-dir/mms-sms"];
 
         let should_not_match = &["vnd.android-dir/mms-sms",
                                  "sendTextMessage(String destinationAddress, String scAddress, \

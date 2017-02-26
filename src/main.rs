@@ -1,12 +1,21 @@
 //! SUPER Android Analyzer
 
-// #![forbid(missing_docs, warnings)]
-#![deny(deprecated, improper_ctypes, non_shorthand_field_patterns, overflowing_literals,
-    plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
-    unconditional_recursion, unknown_lints, unused, unused_allocation, unused_attributes,
-    unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(missing_docs, trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
-    unused_import_braces, unused_qualifications, unused_results, variant_size_differences)]
+#![forbid(deprecated, overflowing_literals, stable_features, trivial_casts, unconditional_recursion,
+    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_truem,
+    unused_parens, unused_comparisons, unused_extern_crates, unused_import_braces, unused_results,
+    improper_ctypes, non_shorthand_field_patterns, private_no_mangle_fns, private_no_mangle_statics,
+    filter_map, used_underscore_binding, option_map_unwrap_or, option_map_unwrap_or_else,
+    mutex_integer, mut_mut, mem_forget)]
+#![deny(unused_qualifications, unused, unused_attributes)]
+#![warn(missing_docs, variant_size_differences, enum_glob_use, if_not_else,
+    invalid_upcast_comparisons, items_after_statements, non_ascii_literal, nonminimal_bool,
+    pub_enum_variant_names, shadow_reuse, shadow_same, shadow_unrelated, similar_names,
+    single_match_else, string_add, string_add_assign, unicode_not_nfc, unseparated_literal_suffix,
+    use_debug, wrong_pub_self_convention)]
+// Allowing these at least for now.
+#![allow(missing_docs_in_private_items, unknown_lints, print_stdout, stutter, option_unwrap_used,
+    result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
+    indexing_slicing, cast_precision_loss, cast_sign_loss)]
 
 #[macro_use]
 extern crate clap;
@@ -55,8 +64,6 @@ use colored::Colorize;
 use log::{LogRecord, LogLevelFilter, LogLevel};
 use env_logger::LogBuilder;
 use std::env;
-
-use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
@@ -66,6 +73,7 @@ pub use utils::*;
 
 static BANNER: &'static str = include_str!("banner.txt");
 
+#[allow(print_stdout)]
 fn main() {
     if let Err(e) = run() {
         error!("{}", e);
@@ -81,7 +89,10 @@ fn main() {
         }
 
         if let Some(backtrace) = e.backtrace() {
-            println!("backtrace: {:?}", backtrace);
+            #[allow(use_debug)]
+            {
+                println!("backtrace: {:?}", backtrace);
+            }
         }
 
         ::std::process::exit(e.into());
@@ -89,7 +100,7 @@ fn main() {
 }
 
 fn run() -> Result<()> {
-    let cli = generate_cli().get_matches();
+    let cli = cli::generate().get_matches();
     let verbose = cli.is_present("verbose");
     initialize_logger(verbose);
 
@@ -137,7 +148,9 @@ fn run() -> Result<()> {
     let total_start = Instant::now();
     for package in config.get_app_packages() {
         config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks).chain_err(|| "Application analysis failed")?;
+        analyze_package(package, &mut config, &mut benchmarks).chain_err(|| {
+                "Application analysis failed"
+            })?;
     }
 
     if config.is_bench() {
@@ -231,7 +244,7 @@ fn analyze_package(package: PathBuf,
 
         let report_start = Instant::now();
         let report_generated = results.generate_report(config, &package_name)
-            .chain_err(|| format!("There was an error generating the results report"))?;
+            .chain_err(|| "There was an error generating the results report")?;
 
         if report_generated {
             if config.is_verbose() {
@@ -286,9 +299,8 @@ fn analyze_package(package: PathBuf,
 }
 
 /// Module containing the definition of error chain types
-#[allow(missing_docs)]
-pub mod error {
-    // Create the Error, ErrorKind, ResultExt, and Result types
+#[allow(large_enum_variant)]
+mod error {
     error_chain! {
         foreign_links {
             IO(::std::io::Error);
@@ -299,17 +311,21 @@ pub mod error {
         }
 
         errors {
+            /// Configuration error.
             Config(message: String) {
                 description("there was an error in the configuration")
                 display("there was an error in the configuration: {}", message)
             }
+            /// Parsing error.
             Parse {
                 description("there was an error in some parsing process")
             }
+            /// Template name error.
             TemplateName(message: String) {
                 description("Invalid template name")
                 display("{}", message)
             }
+            /// Code not found.
             CodeNotFound {
                 description("the code was not found in the file")
             }
@@ -322,7 +338,7 @@ impl Into<i32> for Error {
         let kind = self.kind();
 
         match *kind {
-            ErrorKind::Parse => 20,
+            ErrorKind::Parse |
             ErrorKind::TOML(_) => 20,
             ErrorKind::JSON(_) => 30,
             ErrorKind::CodeNotFound => 40,
@@ -352,6 +368,7 @@ pub enum Criticality {
 }
 
 impl Display for Criticality {
+    #[allow(use_debug)]
     fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
@@ -425,17 +442,10 @@ fn initialize_logger(is_verbose: bool) {
 
     let mut builder = LogBuilder::new();
 
-    let builder_state = match env::var("RUST_LOG") {
-        Ok(env_log) => {
-            builder.format(format)
-                .parse(&env_log)
-                .init()
-        }
-        Err(_) => {
-            builder.format(format)
-                .filter(Some("super"), log_level)
-                .init()
-        }
+    let builder_state = if let Ok(env_log) = env::var("RUST_LOG") {
+        builder.format(format).parse(&env_log).init()
+    } else {
+        builder.format(format).filter(Some("super"), log_level).init()
     };
 
     if let Err(e) = builder_state {

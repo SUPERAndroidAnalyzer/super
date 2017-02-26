@@ -132,7 +132,7 @@ pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
             })?;
 
         out_file.write_all(&bytes)
-            .chain_err(|| format!("There was an error while writting classes.dex file"))?;
+            .chain_err(|| "There was an error while writting classes.dex file")?;
 
         if config.is_bench() {
             benchmarks.get_mut(&package_name)
@@ -248,7 +248,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
             .arg("-od")
             .arg(&out_path)
             .output()
-            .chain_err(|| format!("There was an unknown error decompiling the application"))?;
+            .chain_err(|| "There was an unknown error decompiling the application")?;
 
         if !output.status.success() {
             let message = format!("The decompilation command returned an error. More info:\n{}",
