@@ -126,8 +126,8 @@ impl Config {
 
                 self.min_criticality = m;
             } else {
-                print_warning(format!("The min_criticality option must be one of {}, {}, {}, {} or \
-                                       {}.\nUsing default.",
+                print_warning(format!("The min_criticality option must be one of {}, {}, {}, {} \
+                                       or {}.\nUsing default.",
                                       "warning".italic(),
                                       "low".italic(),
                                       "medium".italic(),
@@ -141,7 +141,8 @@ impl Config {
                     self.threads = t;
                 }
                 _ => {
-                    print_warning(format!("The threads option must be an integer between 1 and {}",
+                    print_warning(format!("The threads option must be an integer between 1 and \
+                                           {}",
                                           u8::MAX));
                 }
             }
@@ -442,8 +443,8 @@ impl Config {
                 self.threads = t as u8;
             }
         } else {
-            print_warning(format!("The 'threads' option in config.toml must be an integer between \
-                                   1 and {}.\nUsing default.",
+            print_warning(format!("The 'threads' option in config.toml must be an integer \
+                                   between 1 and {}.\nUsing default.",
                                   MAX_THREADS))
         }
     }
@@ -557,14 +558,13 @@ impl Config {
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, value: Value) {
         if let Value::Array(permissions) = value {
-            let format_warning = format!("The permission configuration format must be the \
-                                              following:\n{}\nUsing default.",
-                                         "[[permissions]]\nname=\"unknown|permission.\
-                                              name\"\ncriticality = \
-                                              \"warning|low|medium|high|critical\"\nlabel = \
-                                              \"Permission label\"\ndescription = \"Long \
-                                              description to explain the vulnerability\""
-                                             .italic());
+            let format_warning =
+                format!("The permission configuration format must be the following:\n{}\nUsing \
+                         default.",
+                        "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
+                         \"warning|low|medium|high|critical\"\nlabel = \"Permission \
+                         label\"\ndescription = \"Long description to explain the vulnerability\""
+                            .italic());
 
             for cfg in permissions {
                 let cfg = if let Some(t) = cfg.as_table() {
@@ -585,8 +585,8 @@ impl Config {
                     if let Ok(c) = Criticality::from_str(c) {
                         c
                     } else {
-                        print_warning(format!("Criticality must be one of {}, {}, {}, {} or {}.\n\
-                                               Using default.",
+                        print_warning(format!("Criticality must be one of {}, {}, {}, {} or \
+                                               {}.\nUsing default.",
                                               "warning".italic(),
                                               "low".italic(),
                                               "medium".italic(),

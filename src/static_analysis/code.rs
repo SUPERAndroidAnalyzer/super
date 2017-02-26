@@ -20,9 +20,9 @@ use super::manifest::{Permission, Manifest};
 use error::*;
 
 pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
-                                    config: &Config,
-                                    package: S,
-                                    results: &mut Results) {
+                               config: &Config,
+                               package: S,
+                               results: &mut Results) {
     let rules = match load_rules(config) {
         Ok(r) => r,
         Err(e) => {
@@ -371,11 +371,11 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
     let mut rules = Vec::new();
     let rules_json = if let Some(a) = rules_json.as_array() {
-            a
-        } else {
-            print_warning("Rules must be a JSON array.");
-            return Err(ErrorKind::Parse.into());
-        };
+        a
+    } else {
+        print_warning("Rules must be a JSON array.");
+        return Err(ErrorKind::Parse.into());
+    };
 
     for rule in rules_json {
         let format_warning =
@@ -402,11 +402,11 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     "{fc1}".italic(),
                     "{fc2}".italic());
         let rule = if let Some(o) = rule.as_object() {
-                o
-            } else {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            };
+            o
+        } else {
+            print_warning(format_warning);
+            return Err(ErrorKind::Parse.into());
+        };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning);
@@ -417,8 +417,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             match Regex::new(r) {
                 Ok(r) => r,
                 Err(e) => {
-                    print_warning(format!("An error occurred when compiling the regular expresion: \
-                                           {}",
+                    print_warning(format!("An error occurred when compiling the regular \
+                                           expresion: {}",
                                           e.description()));
                     return Err(ErrorKind::Parse.into());
                 }
@@ -441,14 +441,14 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             Some(&Value::Array(ref v)) => {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
-                    list.push(if let Value::String(ref p)  = *p {
+                    list.push(if let Value::String(ref p) = *p {
                         if let Ok(p) = Permission::from_str(p) {
                             p
                         } else {
                             print_warning(format!("the permission {} is unknown", p.italic()));
                             return Err(ErrorKind::Parse.into());
                         }
-                    } else{
+                    } else {
                         print_warning(format_warning);
                         return Err(ErrorKind::Parse.into());
                     });
@@ -505,36 +505,36 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
         };
 
         let label = if let Some(&Value::String(ref l)) = rule.get("label") {
-                l
-            } else {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            };
+            l
+        } else {
+            print_warning(format_warning);
+            return Err(ErrorKind::Parse.into());
+        };
 
         let description = if let Some(&Value::String(ref d)) = rule.get("description") {
-                d
-            } else {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            };
+            d
+        } else {
+            print_warning(format_warning);
+            return Err(ErrorKind::Parse.into());
+        };
 
         let criticality = if let Some(&Value::String(ref c)) = rule.get("criticality") {
-                match Criticality::from_str(c) {
-                    Ok(c) => c,
-                    Err(e) => {
-                        print_warning(format!("Criticality must be  one of {}, {}, {}, {} or {}.",
-                                              "warning".italic(),
-                                              "low".italic(),
-                                              "medium".italic(),
-                                              "high".italic(),
-                                              "critical".italic()));
-                        return Err(e);
-                    }
+            match Criticality::from_str(c) {
+                Ok(c) => c,
+                Err(e) => {
+                    print_warning(format!("Criticality must be  one of {}, {}, {}, {} or {}.",
+                                          "warning".italic(),
+                                          "low".italic(),
+                                          "medium".italic(),
+                                          "high".italic(),
+                                          "critical".italic()));
+                    return Err(e);
                 }
-            } else {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            };
+            }
+        } else {
+            print_warning(format_warning);
+            return Err(ErrorKind::Parse.into());
+        };
 
         let whitelist = match rule.get("whitelist") {
             Some(&Value::Array(ref v)) => {
@@ -1119,13 +1119,14 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
+        let should_match =
+            &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
                scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
                ArrayList<PendingIntent> deliveryIntents)",
-                             "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
+              "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
                scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-                             "telephony.SmsManager  vnd.android-dir/mms-sms",
-                             "telephony.SmsManager  vnd.android-dir/mms-sms"];
+              "telephony.SmsManager  vnd.android-dir/mms-sms",
+              "telephony.SmsManager  vnd.android-dir/mms-sms"];
 
         let should_not_match = &["vnd.android-dir/mms-sms",
                                  "sendTextMessage(String destinationAddress, String scAddress, \
