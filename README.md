@@ -2,7 +2,7 @@
 
 [![Build Status][linux_mac_build_img]][linux_mac_build]
 [![Build status][windows_build_img]][windows_build]
-[![codecov][coverage_img][coverage]
+[![codecov][coverage_img]][coverage]
 
 <img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
