@@ -51,7 +51,7 @@ mod config;
 mod utils;
 
 use std::{fs, io, fmt, result};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::fmt::Display;
 use std::str::FromStr;
 use std::error::Error as StdError;
@@ -173,10 +173,10 @@ fn run() -> Result<()> {
 }
 
 /// Analyzes the given package with the given config.
-fn analyze_package(package: PathBuf,
-                   config: &mut Config,
-                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
-                   -> Result<()> {
+fn analyze_package<P: AsRef<Path>>(package: P,
+                                   config: &mut Config,
+                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
+                                   -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
