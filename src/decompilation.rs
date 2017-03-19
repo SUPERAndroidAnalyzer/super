@@ -3,19 +3,15 @@
 //! Handles the extraction, decompression and  decompilation of _.apks_
 
 use std::fs;
-use std::fs::File;
-use std::time::Instant;
-use std::io::{Read, Write};
 use std::path::Path;
 use std::process::Command;
 use std::error::Error as StdError;
-use std::collections::BTreeMap;
 
 use colored::Colorize;
-use zip::ZipArchive;
-use error::*;
+use abxml::apk::Apk;
 
-use {Config, Benchmark, print_warning, get_package_name};
+use error::*;
+use {Config, print_warning, get_package_name};
 
 /// Decompresses the application using _Apktool_.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
@@ -39,28 +35,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application…");
         }
 
-        // Command to decompress the .apk.
-        // d to decode
-        // -s to skip the disassembly of .dex files
-        // "-o path" to specify an output directory
-        // -f to force overwritting existing files
-        let output = Command::new("java").arg("-jar")
-            .arg(config.get_apktool_file())
-            .arg("d")
-            .arg("-s")
-            .arg("-o")
-            .arg(&path)
-            .arg("-f")
-            .arg(package.as_ref())
-            .output()
-            .chain_err(|| "There was an error when executing the decompression command")?;
-
-        if !output.status.success() {
-            let message = format!("The decompression command returned an error. More info: {}",
-                                  String::from_utf8_lossy(&output.stderr));
-
-            return Err(message.into());
-        }
+        let mut apk = Apk::new(package.as_ref()).chain_err(|| "error loading apk file")?;
+        apk.export(&path, true).chain_err(|| "could not decompress the apk file")?;
 
         if config.is_verbose() {
             println!("{}",
@@ -75,89 +51,6 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
                   do it again.");
     } else {
         println!("Skipping decompression.");
-    }
-
-    Ok(())
-}
-
-/// Extracts the _.dex_ files.
-pub fn extract_dex<P: AsRef<Path>>(config: &mut Config,
-                                   package: P,
-                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
-                                   -> Result<()> {
-    let package_name = get_package_name(package.as_ref());
-    if config.is_force() ||
-       !config.get_dist_folder()
-        .join(&package_name)
-        .join("classes.dex")
-        .exists() {
-        config.set_force();
-        if config.is_verbose() {
-            println!();
-            println!("To decompile the app, first we need to extract the {} file.",
-                     ".dex".italic());
-        }
-
-        let start_time = Instant::now();
-
-        // Command to extract the .dex files.
-
-        let package_content = File::open(package.as_ref()).chain_err(|| {
-                format!("There was an error when decompressing the {} file",
-                        ".apk".italic())
-            })?;
-        let mut zip = ZipArchive::new(package_content).chain_err(|| {
-                format!("There was an error when decompressing the {} file",
-                        ".apk".italic())
-            })?;
-
-        // Obtaining the clases.dex file.
-        let mut dex_file = zip.by_name("classes.dex")
-            .chain_err(|| {
-                format!("There was an error while finding the classes.dex file inside the {} file",
-                        ".apk".italic())
-            })?;
-        // Placing the classes.dex file into the dist_folder.
-        let dex_output_directory =
-            config.get_dist_folder().join(get_package_name(package.as_ref())).join("classes.dex");
-        let mut out_file = File::create(dex_output_directory)
-            .chain_err(|| "There was an error while creating classes.dex file")?;
-
-        // Reading the classes.dex file.
-        let mut bytes = Vec::with_capacity(dex_file.size() as usize);
-        let _ = dex_file.read_to_end(&mut bytes)
-            .chain_err(|| {
-                format!("There was an error while reading classes.dex file from the {}",
-                        ".apk".italic())
-            })?;
-
-        out_file.write_all(&bytes)
-            .chain_err(|| "There was an error while writting classes.dex file")?;
-
-        if config.is_bench() {
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Dex extraction", start_time.elapsed()));
-        }
-
-        if config.is_verbose() {
-            println!("{}",
-                     format!("The {} {}",
-                             ".dex".italic().green(),
-                             "file was extracted successfully!".green())
-                         .green());
-            println!();
-            println!("Now it's time to create the {} file from its classes.",
-                     ".jar".italic());
-        } else if !config.is_quiet() {
-            println!("Dex file extracted.");
-        }
-    } else if config.is_verbose() {
-        println!("Seems that there is already a {} file for the application. There is no need to \
-                  extract it again.",
-                 ".dex".italic());
-    } else {
-        println!("Skipping {} file extraction.", ".dex".italic());
     }
 
     Ok(())

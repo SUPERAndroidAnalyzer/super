@@ -24,11 +24,9 @@ name = "super"
 [dependencies]
 clap = "^2.20"
 colored = "^1.4"
-zip = "^0.2"
 xml-rs = "0.4"
 serde = "^0.9"
 serde_json = "^0.9"
-yaml-rust = "0.3"
 chrono = { version = "^0.3", features = ["serde"] }
 toml = "^0.3"
 regex = "^0.2"
@@ -40,6 +38,7 @@ bytecount = "0.1"
 log = "^0.3"
 env_logger = "^0.4"
 error-chain = "^0.9"
+abxml = { git = "https://github.com/gnieto/abxml-rs.git", branch = "develop" }
 
 [dependencies.handlebars]
 version = "^0.25"
@@ -74,9 +73,6 @@ assets = [
     # JD-CMD
     ["vendor/jd-cmd.jar", "usr/share/super/vendor/", "755"],
     ["vendor/jd-cmd.LICENSE.txt", "usr/share/super/vendor/", "644"],
-    # APKTool
-    ["vendor/apktool_2.2.0.jar", "usr/share/super/vendor/", "755"],
-    ["vendor/apktool.LICENSE.txt", "usr/share/super/vendor/", "644"],
     # Dex2Jar
     ["vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/", "644"],
     ["vendor/dex2jar-2.1-SNAPSHOT/NOTICE.txt", "usr/share/super/vendor/dex2jar-2.1-SNAPSHOT/", "644"],

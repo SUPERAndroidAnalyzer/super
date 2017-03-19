@@ -20,11 +20,9 @@
 #[macro_use]
 extern crate clap;
 extern crate colored;
-extern crate zip;
 extern crate xml;
 extern crate serde;
 extern crate serde_json;
-extern crate yaml_rust;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
@@ -40,6 +38,7 @@ extern crate log;
 extern crate env_logger;
 #[macro_use]
 extern crate error_chain;
+extern crate abxml;
 
 mod error;
 mod cli;
@@ -186,17 +185,14 @@ fn analyze_package(package: PathBuf,
     }
     let start_time = Instant::now();
 
-    // APKTool app decompression
-    decompress(config, &package).chain_err(|| "Apktool decompression failed")?;
+    // Apk decompression
+    decompress(config, &package).chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
         benchmarks.get_mut(&package_name)
             .unwrap()
-            .push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
     }
-
-    // Extracting the classes.dex from the .apk file
-    extract_dex(config, &package, benchmarks).chain_err(|| "DEX extraction failed")?;
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
