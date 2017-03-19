@@ -13,9 +13,6 @@
 # Folder where results will be generated
 # results_folder = "results"
 
-# APKTool JAR file
-# apktool_file = "/usr/share/super/vendor/apktool_2.2.0.jar"
-
 # Dex2Jar folder
 # dex2jar_folder = "/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"
 

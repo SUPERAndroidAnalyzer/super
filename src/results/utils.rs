@@ -6,10 +6,7 @@ use std::path::{Path, PathBuf};
 use std::borrow::Cow;
 
 use serde::ser::{Serialize, SerializeStruct, Serializer};
-use crypto::digest::Digest;
-use crypto::md5::Md5;
-use crypto::sha1::Sha1;
-use crypto::sha2::Sha256;
+use {md5, sha1, sha2};
 use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
@@ -113,37 +110,33 @@ impl PartialOrd for Vulnerability {
 
 /// Structure to store.
 pub struct FingerPrint {
-    md5: [u8; 16],
-    sha1: [u8; 20],
+    md5: md5::Digest,
+    sha1: sha1::Digest,
     sha256: [u8; 32],
 }
 
 impl FingerPrint {
     /// Creates a new fingerprint.
     pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
+        use sha2::Digest;
+
         let mut f = File::open(package)?;
         let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
         let _ = f.read_to_end(&mut buffer)?;
 
-        let mut md5 = Md5::new();
-        let mut sha1 = Sha1::new();
-        let mut sha256 = Sha256::new();
+        let mut sha1 = sha1::Sha1::new();
+        sha1.update(&buffer);
 
-        md5.input(&buffer);
-        sha1.input(&buffer);
+        let mut sha256 = sha2::Sha256::new();
         sha256.input(&buffer);
 
-        let mut fingerprint = FingerPrint {
-            md5: [0; 16],
-            sha1: [0; 20],
-            sha256: [0; 32],
-        };
-
-        md5.result(&mut fingerprint.md5);
-        sha1.result(&mut fingerprint.sha1);
-        sha256.result(&mut fingerprint.sha256);
-
-        Ok(fingerprint)
+        let mut sha256_res = [0u8; 32];
+        sha256_res.clone_from_slice(&sha256.result()[..]);
+        Ok(FingerPrint {
+            md5: md5::compute(&buffer),
+            sha1: sha1.digest(),
+            sha256: sha256_res,
+        })
     }
 }
 
@@ -152,8 +145,8 @@ impl Serialize for FingerPrint {
         where S: Serializer
     {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
-        ser_struct.serialize_field("md5", &self.md5.to_hex())?;
-        ser_struct.serialize_field("sha1", &self.sha1.to_hex())?;
+        ser_struct.serialize_field("md5", &format!("{:x}", self.md5))?;
+        ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
         ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
         ser_struct.end()
     }

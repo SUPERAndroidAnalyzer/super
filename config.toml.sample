@@ -2,7 +2,6 @@ threads = 2 # Number of threads for the application
 downloads_folder = "downloads" # Folder for APK files
 dist_folder = "dist" # Folder where the source code will be extracted
 results_folder = "results" # Folder where results will be generated
-apktool_file = "/usr/share/super/vendor/apktool_2.2.0.jar" # APKTool JAR file
 dex2jar_folder = "/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT" # Dex2Jar folder
 jd_cmd_file = "/usr/share/super/vendor/jd-cmd.jar" # JD-cmd JAR file
 templates_folder = "/usr/share/super/templates"

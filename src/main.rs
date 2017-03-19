@@ -28,7 +28,6 @@ extern crate toml;
 extern crate regex;
 #[macro_use]
 extern crate lazy_static;
-extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
 extern crate bytecount;
@@ -39,6 +38,9 @@ extern crate env_logger;
 #[macro_use]
 extern crate error_chain;
 extern crate abxml;
+extern crate md5;
+extern crate sha1;
+extern crate sha2;
 
 mod error;
 mod cli;

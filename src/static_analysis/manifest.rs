@@ -673,7 +673,7 @@ fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
 
 #[cfg(test)]
 mod tests {
-    use super::{PackageMetadata, InstallLocation, Permission, PermissionChecklist, get_line};
+    use super::{InstallLocation, Permission, PermissionChecklist, get_line};
     use std::str::FromStr;
 
     #[test]

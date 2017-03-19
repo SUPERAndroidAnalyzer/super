@@ -59,8 +59,6 @@ pub struct Config {
     dist_folder: PathBuf,
     /// Folder to store the results of analysis.
     results_folder: PathBuf,
-    /// Path to the _Apktool_ binary.
-    apktool_file: PathBuf,
     /// Path to the _Dex2jar_ binaries.
     dex2jar_folder: PathBuf,
     /// Path to the _JD\_CMD_ binary.
@@ -156,9 +154,6 @@ impl Config {
         if let Some(results_folder) = cli.value_of("results") {
             self.results_folder = PathBuf::from(results_folder);
         }
-        if let Some(apktool_file) = cli.value_of("apktool") {
-            self.apktool_file = PathBuf::from(apktool_file);
-        }
         if let Some(dex2jar_folder) = cli.value_of("dex2jar") {
             self.dex2jar_folder = PathBuf::from(dex2jar_folder);
         }
@@ -203,8 +198,8 @@ impl Config {
 
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        let check = self.downloads_folder.exists() && self.apktool_file.exists() &&
-                    self.dex2jar_folder.exists() && self.jd_cmd_file.exists() &&
+        let check = self.downloads_folder.exists() && self.dex2jar_folder.exists() &&
+                    self.jd_cmd_file.exists() &&
                     self.get_template_path().exists() &&
                     self.rules_json.exists();
         if check {
@@ -230,10 +225,6 @@ impl Config {
             if !package.exists() {
                 errors.push(format!("The APK file `{}` does not exist", package.display()));
             }
-        }
-        if !self.apktool_file.exists() {
-            errors.push(format!("The APKTool JAR file `{}` does not exist",
-                                self.apktool_file.display()));
         }
         if !self.dex2jar_folder.exists() {
             errors.push(format!("The Dex2Jar folder `{}` does not exist",
@@ -348,11 +339,6 @@ impl Config {
         &self.results_folder
     }
 
-    /// Returns the path to the`apktool_file`.
-    pub fn get_apktool_file(&self) -> &Path {
-        &self.apktool_file
-    }
-
     /// Returns the path to the `dex2jar_folder`.
     pub fn get_dex2jar_folder(&self) -> &Path {
         &self.dex2jar_folder
@@ -419,7 +405,6 @@ impl Config {
                 "downloads_folder" => self.load_downloads_folder_section(value),
                 "dist_folder" => self.load_dist_folder_section(value),
                 "results_folder" => self.load_results_folder_section(value),
-                "apktool_file" => self.load_apktool_file_section(value),
                 "dex2jar_folder" => self.load_dex2jar_folder_section(value),
                 "jd_cmd_file" => self.load_jd_cmd_file_section(value),
                 "templates_folder" => self.load_templates_folder_section(value),
@@ -475,21 +460,6 @@ impl Config {
             self.results_folder = s.into();
         } else {
             print_warning("The 'results_folder' option in config.toml must be an string.\nUsing \
-                           default.");
-        }
-    }
-
-    /// Loads apktool file section from the TOML value.
-    fn load_apktool_file_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            let extension = Path::new(&s).extension();
-            if extension.is_some() && extension.unwrap() == "jar" {
-                self.apktool_file = PathBuf::from(s.clone());
-            } else {
-                print_warning("The APKTool file must be a JAR file.\nUsing default.");
-            }
-        } else {
-            print_warning("The 'apktool_file' option in config.toml must be an string.\nUsing \
                            default.");
         }
     }
@@ -691,7 +661,6 @@ impl Config {
             downloads_folder: PathBuf::from("."),
             dist_folder: PathBuf::from("dist"),
             results_folder: PathBuf::from("results"),
-            apktool_file: Path::new("vendor").join("apktool_2.2.0.jar"),
             dex2jar_folder: Path::new("vendor").join("dex2jar-2.1-SNAPSHOT"),
             jd_cmd_file: Path::new("vendor").join("jd-cmd.jar"),
             templates_folder: PathBuf::from("templates"),
@@ -722,7 +691,6 @@ impl Default for Config {
             "/usr/share/super"
         });
         if share_path.exists() {
-            config.apktool_file = share_path.join("vendor/apktool_2.2.0.jar");
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
             config.templates_folder = share_path.join("templates");
@@ -848,8 +816,6 @@ mod tests {
         } else {
             Path::new("")
         };
-        assert_eq!(config.get_apktool_file(),
-                   share_path.join("vendor").join("apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
                    share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
@@ -930,8 +896,6 @@ mod tests {
         assert_eq!(config.downloads_folder, Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
-        assert_eq!(config.get_apktool_file(),
-                   Path::new("/usr/share/super/vendor/apktool_2.2.0.jar"));
         assert_eq!(config.get_dex2jar_folder(),
                    Path::new("/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
@@ -960,43 +924,16 @@ mod tests {
                     Check if the permission is actually needed.");
     }
 
-    /// Test to check a valid apk tool section is loaded
-    #[test]
-    fn it_loads_apktool_file_section_if_it_is_well_formed() {
-        let mut final_config = Config::default();
-        let value = Value::String("/some/path/to/apktool.jar".to_string());
-
-        final_config.load_apktool_file_section(value);
-
-        assert_eq!(PathBuf::from("/some/path/to/apktool.jar"),
-                   final_config.apktool_file)
-    }
-
-    /// Test to check an invalid apk tool section is not loaded
-    #[test]
-    fn it_do_not_load_apktool_file_section_if_it_is_not_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-
-        let values = vec![Value::String("/some/invalid/apktool.jpg".to_string()),
-                          Value::Integer(20)];
-
-        for value in values {
-            final_config.load_apktool_file_section(value);
-            assert_eq!(default_config.apktool_file, final_config.apktool_file)
-        }
-    }
-
     /// Test to check a valid jd cmd file section is loaded
     #[test]
     fn it_loads_jd_cmd_file_section_if_it_is_well_formed() {
         let mut final_config = Config::default();
         let value = Value::String("/some/path/to/jd-cmd.jar".to_string());
 
-        final_config.load_apktool_file_section(value);
+        final_config.load_jd_cmd_file_section(value);
 
         assert_eq!(PathBuf::from("/some/path/to/jd-cmd.jar"),
-                   final_config.apktool_file)
+                   final_config.jd_cmd_file)
     }
 
     /// Test to check an invalid jd cmd file section is not loaded
