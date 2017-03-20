@@ -27,7 +27,7 @@ dependencies = [
 [[package]]
 name = "abxml"
 version = "0.1.0"
-source = "git+https://github.com/gnieto/abxml-rs.git?branch=develop#03cf326f703af3aa5763ce1d5a3ad7776d6b8216"
+source = "git+https://github.com/gnieto/abxml-rs.git?branch=develop#c9f71bffdc6d808afaae998c91d36daeb8dbf773"
 dependencies = [
  "ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -35,7 +35,7 @@ dependencies = [
  "env_logger 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "error-chain 0.7.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
- "quick-xml 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "xml-rs 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "zip 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -478,14 +478,6 @@ version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
-name = "quick-xml"
-version = "0.4.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "log 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "redox_syscall"
 version = "0.1.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -769,7 +761,6 @@ dependencies = [
 "checksum pest 0.3.3 (registry+https://github.com/rust-lang/crates.io-index)" = "0a6dda33d67c26f0aac90d324ab2eb7239c819fc7b2552fe9faa4fe88441edc8"
 "checksum podio 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "e5422a1ee1bc57cc47ae717b0137314258138f38fd5f3cea083f43a9725383a0"
 "checksum quick-error 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "0aad603e8d7fb67da22dbdf1f4b826ce8829e406124109e73cf1b2454b93a71c"
-"checksum quick-xml 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = "63c6540872d1a0a1b06c8542a4b6671cfa08c9caa13e346698cdbf2ac52b3530"
 "checksum redox_syscall 0.1.16 (registry+https://github.com/rust-lang/crates.io-index)" = "8dd35cc9a8bdec562c757e3d43c1526b5c6d2653e23e2315065bc25556550753"
 "checksum regex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)" = "4fd4ace6a8cf7860714a2c2280d6c1f7e6a413486c13298bbc86fd3da019402f"
 "checksum regex 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "4278c17d0f6d62dfef0ab00028feb45bd7d2102843f80763474eeb1be8a10c01"
