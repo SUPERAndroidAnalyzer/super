@@ -87,7 +87,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             if !output.status.success() {
                 return Err(format!("The openssl command returned an error. More info: {}",
                                    String::from_utf8_lossy(&output.stderr[..]))
-                    .into());
+                                   .into());
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);

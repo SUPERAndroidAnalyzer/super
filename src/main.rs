@@ -191,9 +191,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     decompress(config, &package).chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Apk decompression",
+                                                                       start_time.elapsed()));
     }
 
     let dex_jar_time = Instant::now();
@@ -201,9 +200,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Dex to Jar decompilation",
+                                                                       dex_jar_time.elapsed()));
     }
 
     if config.is_verbose() {
@@ -219,9 +217,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     decompile(config, &package).chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Decompilation",
+                                                                       decompile_start.elapsed()));
     }
 
     if let Some(mut results) = Results::init(config, &package) {
@@ -230,9 +227,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         static_analysis(config, &package_name, &mut results);
 
         if config.is_bench() {
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Total static analysis", static_start.elapsed()));
+            benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Total static analysis",
+                                                                           static_start.elapsed()));
         }
 
         // TODO dynamic analysis
@@ -242,8 +238,9 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         }
 
         let report_start = Instant::now();
-        let report_generated = results.generate_report(config, &package_name)
-            .chain_err(|| "There was an error generating the results report")?;
+        let report_generated =
+            results.generate_report(config, &package_name)
+                .chain_err(|| "There was an error generating the results report")?;
 
         if report_generated {
             if config.is_verbose() {
@@ -260,9 +257,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         }
 
         if config.is_bench() {
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Report generation", report_start.elapsed()));
+            benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Report generation",
+                                                                           report_start.elapsed()));
             benchmarks.get_mut(&package_name)
                 .unwrap()
                 .push(Benchmark::new(format!("Total time for {}", package_name),
@@ -270,9 +266,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         }
 
         if config.is_open() {
-            let report_path = config.get_results_folder()
-                .join(results.get_app_package())
-                .join("index.html");
+            let report_path =
+                config.get_results_folder().join(results.get_app_package()).join("index.html");
 
             let status =
                 open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
@@ -282,9 +277,7 @@ fn analyze_package<P: AsRef<Path>>(package: P,
             }
         }
     } else if config.is_open() {
-        let report_path = config.get_results_folder()
-            .join(package_name)
-            .join("index.html");
+        let report_path = config.get_results_folder().join(package_name).join("index.html");
 
         let status =
             open::that(report_path).chain_err(|| "Report could not be opened automatically")?;

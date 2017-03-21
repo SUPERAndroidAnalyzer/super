@@ -88,9 +88,9 @@ pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         let mut last_print = 0;
 
         while match files.lock() {
-            Ok(f) => f.len(),
-            Err(_) => 1,
-        } > 0 {
+                  Ok(f) => f.len(),
+                  Err(_) => 1,
+              } > 0 {
 
             let left = match files.lock() {
                 Ok(f) => f.len(),
@@ -140,9 +140,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
             continue 'check;
         }
 
-        let filename = path.as_ref()
-            .file_name()
-            .and_then(|f| f.to_str());
+        let filename = path.as_ref().file_name().and_then(|f| f.to_str());
 
         if let Some(f) = filename {
             if !rule.has_to_check(f) {
@@ -153,9 +151,9 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
         for permission in rule.get_permissions() {
             if manifest.is_none() ||
                !manifest.as_ref()
-                .unwrap()
-                .get_permission_checklist()
-                .needs_permission(*permission) {
+                    .unwrap()
+                    .get_permission_checklist()
+                    .needs_permission(*permission) {
                 continue 'check;
             }
         }
@@ -175,8 +173,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                     rule.get_label(),
                                                     rule.get_description(),
                                                     Some(path.as_ref()
-                                                        .strip_prefix(&dist_folder)
-                                                        .unwrap()),
+                                                             .strip_prefix(&dist_folder)
+                                                             .unwrap()),
                                                     Some(start_line),
                                                     Some(end_line),
                                                     Some(get_code(code.as_str(),
@@ -220,8 +218,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                                                         rule.get_label(),
                                                         rule.get_description(),
                                                         Some(path.as_ref()
-                                                            .strip_prefix(&dist_folder)
-                                                            .unwrap()),
+                                                                 .strip_prefix(&dist_folder)
+                                                                 .unwrap()),
                                                         Some(start_line),
                                                         Some(end_line),
                                                         Some(get_code(code.as_str(),
@@ -261,9 +259,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
-    let real_path = config.get_dist_folder()
-        .join(package.as_ref())
-        .join(path);
+    let real_path = config.get_dist_folder().join(package.as_ref()).join(path);
     for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
@@ -280,7 +276,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
         if f_type.is_dir() && f_path != real_path.join("original") {
             add_files_to_vec(f.path()
                                  .strip_prefix(&config.get_dist_folder()
-                                     .join(package.as_ref()))
+                                                    .join(package.as_ref()))
                                  .unwrap(),
                              vec,
                              package.as_ref(),
@@ -378,8 +374,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     };
 
     for rule in rules_json {
-        let format_warning =
-            format!("Rules must be objects with the following structure:\n{}\nAn optional {} \
+        let format_warning = format!("Rules must be objects with the following structure:\n{}\nAn optional {} \
                      attribute can be added: an array of regular expressions that if matched, \
                      the found match will be discarded. You can also include an optional {} \
                      attribute: an array of the permissions needed for this rule to be checked. \
@@ -442,16 +437,17 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 let mut list = Vec::with_capacity(v.len());
                 for p in v {
                     list.push(if let Value::String(ref p) = *p {
-                        if let Ok(p) = Permission::from_str(p) {
-                            p
-                        } else {
-                            print_warning(format!("the permission {} is unknown", p.italic()));
-                            return Err(ErrorKind::Parse.into());
-                        }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
-                    });
+                                  if let Ok(p) = Permission::from_str(p) {
+                                      p
+                                  } else {
+                                      print_warning(format!("the permission {} is unknown",
+                                                            p.italic()));
+                                      return Err(ErrorKind::Parse.into());
+                                  }
+                              } else {
+                                  print_warning(format_warning);
+                                  return Err(ErrorKind::Parse.into());
+                              });
                 }
                 list
             }
@@ -541,19 +537,19 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 let mut list = Vec::with_capacity(v.len());
                 for r in v {
                     list.push(if let Value::String(ref r) = *r {
-                        match Regex::new(r) {
-                            Ok(r) => r,
-                            Err(e) => {
-                                print_warning(format!("An error occurred when compiling the \
+                                  match Regex::new(r) {
+                                      Ok(r) => r,
+                                      Err(e) => {
+                            print_warning(format!("An error occurred when compiling the \
                                                        regular expresion: {}",
-                                                      e.description()));
-                                return Err(ErrorKind::Parse.into());
-                            }
+                                                  e.description()));
+                            return Err(ErrorKind::Parse.into());
                         }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
-                    });
+                                  }
+                              } else {
+                                  print_warning(format_warning);
+                                  return Err(ErrorKind::Parse.into());
+                              });
                 }
                 list
             }
@@ -564,9 +560,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => Vec::with_capacity(0),
         };
 
-        let inclusion_regex = rule.get("include_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
+        let inclusion_regex =
+            rule.get("include_file_regex").and_then(Value::as_str).and_then(|r| {
                 let include_regex = Regex::new(r);
                 match include_regex {
                     Ok(regex) => Some(regex),
@@ -579,9 +574,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
             });
 
-        let exclusion_regex = rule.get("exclude_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
+        let exclusion_regex =
+            rule.get("exclude_file_regex").and_then(Value::as_str).and_then(|r| {
                 let exclude_regex = Regex::new(r);
                 match exclude_regex {
                     Ok(regex) => Some(regex),
@@ -596,17 +590,17 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
         if criticality >= config.get_min_criticality() {
             rules.push(Rule {
-                regex: regex,
-                permissions: permissions,
-                forward_check: forward_check,
-                max_sdk: max_sdk,
-                label: label.clone(),
-                description: description.clone(),
-                criticality: criticality,
-                whitelist: whitelist,
-                include_file_regex: inclusion_regex,
-                exclude_file_regex: exclusion_regex,
-            })
+                           regex: regex,
+                           permissions: permissions,
+                           forward_check: forward_check,
+                           max_sdk: max_sdk,
+                           label: label.clone(),
+                           description: description.clone(),
+                           criticality: criticality,
+                           whitelist: whitelist,
+                           include_file_regex: inclusion_regex,
+                           exclude_file_regex: exclusion_regex,
+                       })
         }
     }
 
@@ -1119,14 +1113,13 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match =
-            &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
+        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
                scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
                ArrayList<PendingIntent> deliveryIntents)",
-              "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
+                             "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
                scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
-              "telephony.SmsManager  vnd.android-dir/mms-sms",
-              "telephony.SmsManager  vnd.android-dir/mms-sms"];
+                             "telephony.SmsManager  vnd.android-dir/mms-sms",
+                             "telephony.SmsManager  vnd.android-dir/mms-sms"];
 
         let should_not_match = &["vnd.android-dir/mms-sms",
                                  "sendTextMessage(String destinationAddress, String scAddress, \

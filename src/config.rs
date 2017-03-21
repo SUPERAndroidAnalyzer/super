@@ -178,10 +178,10 @@ impl Config {
                     if let Some(ext) = entry.path().extension() {
                         if ext == "apk" {
                             self.add_app_package(entry.path()
-                                .file_stem()
-                                .unwrap()
-                                .to_string_lossy()
-                                .into_owned())
+                                                     .file_stem()
+                                                     .unwrap()
+                                                     .to_string_lossy()
+                                                     .into_owned())
                         }
                     }
                 }
@@ -266,7 +266,10 @@ impl Config {
         if package_path.extension().is_none() {
             package_path.set_extension("apk");
         } else if package_path.extension().unwrap() != "apk" {
-            let mut file_name = package_path.file_name().unwrap().to_string_lossy().into_owned();
+            let mut file_name = package_path.file_name()
+                .unwrap()
+                .to_string_lossy()
+                .into_owned();
             file_name.push_str(".apk");
             package_path.set_file_name(file_name);
         }
@@ -528,8 +531,7 @@ impl Config {
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, value: Value) {
         if let Value::Array(permissions) = value {
-            let format_warning =
-                format!("The permission configuration format must be the following:\n{}\nUsing \
+            let format_warning = format!("The permission configuration format must be the following:\n{}\nUsing \
                          default.",
                         "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
                          \"warning|low|medium|high|critical\"\nlabel = \"Permission \
@@ -585,7 +587,7 @@ impl Config {
                                                     \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
-                                                  .italic()));
+                                                      .italic()));
                         break;
                     }
 
@@ -615,8 +617,10 @@ impl Config {
                         print_warning(format_warning);
                         break;
                     };
-                    self.permissions
-                        .insert(PermissionConfig::new(permission, criticality, label, description));
+                    self.permissions.insert(PermissionConfig::new(permission,
+                                                                  criticality,
+                                                                  label,
+                                                                  description));
                 }
             }
         } else {
@@ -686,10 +690,10 @@ impl Default for Config {
             config.rules_json = etc_rules;
         }
         let share_path = Path::new(if cfg!(target_os = "macos") {
-            "/usr/local/super"
-        } else {
-            "/usr/share/super"
-        });
+                                       "/usr/local/super"
+                                   } else {
+                                       "/usr/share/super"
+                                   });
         if share_path.exists() {
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
@@ -805,8 +809,8 @@ mod tests {
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
         let share_path = Path::new(if cfg!(target_os = "macos") {
-            "/usr/local/super"
-        } else if cfg!(target_family = "windows") {
+                                       "/usr/local/super"
+                                   } else if cfg!(target_family = "windows") {
             ""
         } else {
             "/usr/share/super"
@@ -1049,37 +1053,42 @@ mod tests {
 
         let mut permission_invalid_criticality: BTreeMap<String, Value> = BTreeMap::new();
         permission_invalid_criticality.insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+                                              Value::String("permission_name".to_string()))
             .is_some();
         permission_invalid_criticality.insert("criticality".to_string(),
-                    Value::String("invalid_level".to_string()))
+                                              Value::String("invalid_level".to_string()))
             .is_some();
 
         let mut permission_without_criticality: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_criticality.insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+                                              Value::String("permission_name".to_string()))
             .is_some();
 
         let mut permission_without_description: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_description.insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+                                              Value::String("permission_name".to_string()))
             .is_some();
         permission_without_description.insert("criticality".to_string(),
-                                              Value::String("low".to_string())).is_some();
+                                              Value::String("low".to_string()))
+            .is_some();
         permission_without_description.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                              Value::String("permission description".to_string()))
             .is_some();
 
         let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
         permission_unknown_too_much_values.insert("name".to_string(),
-                                                  Value::String("unknown".to_string())).is_some();
+                                                  Value::String("unknown".to_string()))
+            .is_some();
         permission_unknown_too_much_values.insert("criticality".to_string(),
-                                                  Value::String("low".to_string())).is_some();
+                                                  Value::String("low".to_string()))
+            .is_some();
         permission_unknown_too_much_values.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                                  Value::String("permission description"
+                                                                    .to_string()))
             .is_some();
         permission_unknown_too_much_values.insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+                                                  Value::String("additional field data"
+                                                                    .to_string()))
             .is_some();
 
         let mut permission_known_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
@@ -1087,39 +1096,45 @@ mod tests {
                     Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
             .is_some();
         permission_known_too_much_values.insert("criticality".to_string(),
-                                                Value::String("low".to_string())).is_some();
+                                                Value::String("low".to_string()))
+            .is_some();
         permission_known_too_much_values.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                                Value::String("permission description"
+                                                                  .to_string()))
             .is_some();
         permission_known_too_much_values.insert("label".to_string(),
-                                                Value::String("label".to_string())).is_some();
+                                                Value::String("label".to_string()))
+            .is_some();
         permission_known_too_much_values.insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+                                                Value::String("additional field data".to_string()))
             .is_some();
 
         let mut permission_known_name_not_found: BTreeMap<String, Value> = BTreeMap::new();
         permission_known_name_not_found.insert("name".to_string(),
-                    Value::String("invalid name".to_string()))
+                                               Value::String("invalid name".to_string()))
             .is_some();
         permission_known_name_not_found.insert("criticality".to_string(),
-                                               Value::String("low".to_string())).is_some();
+                                               Value::String("low".to_string()))
+            .is_some();
         permission_known_name_not_found.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                               Value::String("permission description".to_string()))
             .is_some();
         permission_known_name_not_found.insert("label".to_string(),
-                                               Value::String("label".to_string())).is_some();
+                                               Value::String("label".to_string()))
+            .is_some();
 
         let mut permission_without_label: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_label.insert("name".to_string(),
-                    Value::String("invalid name".to_string()))
+                                        Value::String("invalid name".to_string()))
             .is_some();
-        permission_without_label.insert("criticality".to_string(), Value::String("low".to_string()))
+        permission_without_label.insert("criticality".to_string(),
+                                        Value::String("low".to_string()))
             .is_some();
         permission_without_label.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                        Value::String("permission description".to_string()))
             .is_some();
         permission_without_label.insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+                                        Value::String("additional field data".to_string()))
             .is_some();
 
         let permissions = vec![Value::Integer(20),
@@ -1152,7 +1167,7 @@ mod tests {
         unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                  Value::String("permission description".to_string()))
             .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
@@ -1168,12 +1183,13 @@ mod tests {
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
         unknown_permission.insert("name".to_string(),
-                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
+                                  Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
+                                                    .to_string()))
             .is_some();
         unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission.insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+                                  Value::String("permission description".to_string()))
             .is_some();
         unknown_permission.insert("label".to_string(), Value::String("label".to_string()))
             .is_some();

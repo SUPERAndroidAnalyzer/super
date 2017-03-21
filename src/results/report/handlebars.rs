@@ -85,13 +85,15 @@ impl HandlebarsReport {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
         let mut f = File::create(config.get_results_folder()
-            .join(&results.get_app_package())
-            .join("src")
-            .join("index.html"))?;
+                                     .join(&results.get_app_package())
+                                     .join("src")
+                                     .join("index.html"))?;
 
         let mut data = BTreeMap::new();
         let _ = data.insert("menu", menu);
-        f.write_all(self.handler.render("src", &data)?.as_bytes())?;
+        f.write_all(self.handler
+                           .render("src", &data)?
+                           .as_bytes())?;
 
         Ok(())
     }
@@ -106,14 +108,13 @@ impl HandlebarsReport {
            path.as_ref() == Path::new("smali") {
             return Ok(Vec::new());
         }
-        let dir_iter = fs::read_dir(config.get_dist_folder()
-            .join(&self.package)
-            .join(path.as_ref()))?;
+        let dir_iter =
+            fs::read_dir(config.get_dist_folder().join(&self.package).join(path.as_ref()))?;
 
         fs::create_dir_all(config.get_results_folder()
-            .join(&results.get_app_package())
-            .join("src")
-            .join(path.as_ref()))?;
+                               .join(&results.get_app_package())
+                               .join("src")
+                               .join(path.as_ref()))?;
 
         let mut menu = Vec::new();
         for entry in dir_iter {
@@ -136,7 +137,10 @@ impl HandlebarsReport {
                         }
                     } else {
                         let mut object = Map::with_capacity(2);
-                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
+                        let name = path.file_name()
+                            .unwrap()
+                            .to_string_lossy()
+                            .into_owned();
 
                         let _ = object.insert("name".to_owned(), Value::String(name));
                         let _ = object.insert("menu".to_owned(), Value::Array(inner_menu));
@@ -147,13 +151,18 @@ impl HandlebarsReport {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
                         self.generate_code_html_for(&stripped, config, results, &self.package)?;
-                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
+                        let name = path.file_name()
+                            .unwrap()
+                            .to_string_lossy()
+                            .into_owned();
                         let mut data = Map::with_capacity(3);
                         let _ = data.insert("name".to_owned(), Value::String(name));
-                        let _ = data.insert("path".to_owned(),
-                                            Value::String(format!("{}", stripped.display())));
-                        let _ = data.insert("type".to_owned(),
-                                            Value::String(e.to_string_lossy().into_owned()));
+                        let _ =
+                            data.insert("path".to_owned(),
+                                        Value::String(format!("{}", stripped.display())));
+                        let _ =
+                            data.insert("type".to_owned(),
+                                        Value::String(e.to_string_lossy().into_owned()));
                         menu.push(Value::Object(data));
                     }
                     _ => {}
@@ -171,8 +180,8 @@ impl HandlebarsReport {
                                                              cli_package_name: S)
                                                              -> Result<()> {
         let mut f_in = File::open(config.get_dist_folder()
-            .join(cli_package_name.as_ref())
-            .join(path.as_ref()))?;
+                                      .join(cli_package_name.as_ref())
+                                      .join(path.as_ref()))?;
         let mut f_out = File::create(format!("{}.html",
                                              config.get_results_folder()
                                                  .join(&results.get_app_package())
@@ -194,7 +203,9 @@ impl HandlebarsReport {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        f_out.write_all(self.handler.render("code", &data)?.as_bytes())?;
+        f_out.write_all(self.handler
+                            .render("code", &data)?
+                            .as_bytes())?;
 
         Ok(())
     }
@@ -212,7 +223,9 @@ impl Report for HandlebarsReport {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        f.write_all(self.handler.render("report", results)?.as_bytes())?;
+        f.write_all(self.handler
+                           .render("report", results)?
+                           .as_bytes())?;
 
         for entry in fs::read_dir(config.get_template_path())? {
             let entry = entry?;
@@ -220,8 +233,8 @@ impl Report for HandlebarsReport {
             if entry.file_type()?.is_dir() {
                 copy_folder(&entry_path,
                             &config.get_results_folder()
-                                .join(&results.get_app_package())
-                                .join(entry_path.file_name().unwrap()))?;
+                                 .join(&results.get_app_package())
+                                 .join(entry_path.file_name().unwrap()))?;
             } else {
                 match entry_path.as_path().extension() {
                     Some(e) if e == "hbs" => {}
@@ -229,7 +242,7 @@ impl Report for HandlebarsReport {
                     _ => {
                         let _ = fs::copy(&entry_path,
                                          &config.get_results_folder()
-                                             .join(&results.get_app_package()))?;
+                                              .join(&results.get_app_package()))?;
                     }
                 }
             }

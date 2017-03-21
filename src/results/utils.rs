@@ -64,27 +64,27 @@ impl Serialize for Vulnerability {
         where S: Serializer
     {
         let mut ser_struct = serializer.serialize_struct("Vulnerability",
-                              if self.code.is_some() {
-                                  if self.start_line == self.end_line {
-                                      7
-                                  } else {
-                                      8
-                                  }
-                              } else {
-                                  4
-                              })?;
+                                                         if self.code.is_some() {
+                                                             if self.start_line == self.end_line {
+                                                                 7
+                                                             } else {
+                                                                 8
+                                                             }
+                                                         } else {
+                                                             4
+                                                         })?;
         ser_struct.serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
         ser_struct.serialize_field("description", self.description.as_str())?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
             ser_struct.serialize_field("language",
-                                 &self.file
-                                     .as_ref()
-                                     .unwrap()
-                                     .extension()
-                                     .unwrap()
-                                     .to_string_lossy())?;
+                                       &self.file
+                                            .as_ref()
+                                            .unwrap()
+                                            .extension()
+                                            .unwrap()
+                                            .to_string_lossy())?;
             if self.start_line == self.end_line {
                 ser_struct.serialize_field("line", &(self.start_line.unwrap() + 1))?;
             } else {
@@ -100,11 +100,11 @@ impl Serialize for Vulnerability {
 impl PartialOrd for Vulnerability {
     fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
         Some((&self.criticality, &self.file, &self.start_line, &self.end_line, &self.name)
-            .cmp(&(&other.criticality,
-                   &other.file,
-                   &other.start_line,
-                   &other.end_line,
-                   &other.name)))
+                 .cmp(&(&other.criticality,
+                        &other.file,
+                        &other.start_line,
+                        &other.end_line,
+                        &other.name)))
     }
 }
 
@@ -133,10 +133,10 @@ impl FingerPrint {
         let mut sha256_res = [0u8; 32];
         sha256_res.clone_from_slice(&sha256.result()[..]);
         Ok(FingerPrint {
-            md5: md5::compute(&buffer),
-            sha1: sha1.digest(),
-            sha256: sha256_res,
-        })
+               md5: md5::compute(&buffer),
+               sha1: sha1.digest(),
+               sha256: sha256_res,
+           })
     }
 }
 

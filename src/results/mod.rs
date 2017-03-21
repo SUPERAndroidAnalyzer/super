@@ -70,39 +70,39 @@ impl Results {
             #[cfg(feature = "certificate")]
             {
                 Some(Results {
-                    app_package: String::new(),
-                    app_label: String::new(),
-                    app_description: String::new(),
-                    app_version: String::new(),
-                    app_version_num: 0,
-                    app_min_sdk: 0,
-                    app_target_sdk: None,
-                    app_fingerprint: fingerprint,
-                    certificate: String::new(),
-                    warnings: BTreeSet::new(),
-                    low: BTreeSet::new(),
-                    medium: BTreeSet::new(),
-                    high: BTreeSet::new(),
-                    critical: BTreeSet::new(),
-                })
+                         app_package: String::new(),
+                         app_label: String::new(),
+                         app_description: String::new(),
+                         app_version: String::new(),
+                         app_version_num: 0,
+                         app_min_sdk: 0,
+                         app_target_sdk: None,
+                         app_fingerprint: fingerprint,
+                         certificate: String::new(),
+                         warnings: BTreeSet::new(),
+                         low: BTreeSet::new(),
+                         medium: BTreeSet::new(),
+                         high: BTreeSet::new(),
+                         critical: BTreeSet::new(),
+                     })
             }
             #[cfg(not(feature = "certificate"))]
             {
                 Some(Results {
-                    app_package: String::new(),
-                    app_label: String::new(),
-                    app_description: String::new(),
-                    app_version: String::new(),
-                    app_version_num: 0,
-                    app_min_sdk: 0,
-                    app_target_sdk: None,
-                    app_fingerprint: fingerprint,
-                    warnings: BTreeSet::new(),
-                    low: BTreeSet::new(),
-                    medium: BTreeSet::new(),
-                    high: BTreeSet::new(),
-                    critical: BTreeSet::new(),
-                })
+                         app_package: String::new(),
+                         app_label: String::new(),
+                         app_description: String::new(),
+                         app_version: String::new(),
+                         app_version_num: 0,
+                         app_min_sdk: 0,
+                         app_target_sdk: None,
+                         app_fingerprint: fingerprint,
+                         warnings: BTreeSet::new(),
+                         low: BTreeSet::new(),
+                         medium: BTreeSet::new(),
+                         high: BTreeSet::new(),
+                         critical: BTreeSet::new(),
+                     })
             }
         } else {
             if config.is_verbose() {
@@ -241,11 +241,11 @@ impl Serialize for Results {
     {
         let now = Local::now();
         let mut ser_struct = serializer.serialize_struct("Results",
-                              if cfg!(feature = "certificate") {
-                                  22
-                              } else {
-                                  21
-                              })?;
+                                                         if cfg!(feature = "certificate") {
+                                                             22
+                                                         } else {
+                                                             21
+                                                         })?;
 
         ser_struct.serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
@@ -266,8 +266,8 @@ impl Serialize for Results {
         ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;
 
         ser_struct.serialize_field("total_vulnerabilities",
-                             &(self.low.len() + self.medium.len() + self.high.len() +
-                               self.critical.len()))?;
+                                   &(self.low.len() + self.medium.len() + self.high.len() +
+                                     self.critical.len()))?;
         ser_struct.serialize_field("criticals", &self.critical)?;
         ser_struct.serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;
