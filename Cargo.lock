@@ -2,7 +2,7 @@
 name = "super-analyzer"
 version = "0.4.0-dev"
 dependencies = [
- "abxml 0.1.0 (git+https://github.com/gnieto/abxml-rs.git?branch=develop)",
+ "abxml 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.21.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -27,7 +27,7 @@ dependencies = [
 [[package]]
 name = "abxml"
 version = "0.1.0"
-source = "git+https://github.com/gnieto/abxml-rs.git?branch=develop#9398174cbfb58dd84697b19375576a3e20d53867"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "byteorder 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -630,7 +630,7 @@ dependencies = [
 ]
 
 [metadata]
-"checksum abxml 0.1.0 (git+https://github.com/gnieto/abxml-rs.git?branch=develop)" = "<none>"
+"checksum abxml 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4ee01a6747a9dede89d2b94191c976d849189b14b588be58f693020304d51c4e"
 "checksum aho-corasick 0.6.3 (registry+https://github.com/rust-lang/crates.io-index)" = "500909c4f87a9e52355b26626d890833e9e1d53ac566db76c36faa984b889699"
 "checksum ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "23ac7c30002a5accbf7e8987d0632fa6de155b7c3d39d0067317a391e00a2ef6"
 "checksum atty 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "d912da0db7fa85514874458ca3651fe2cddace8d0b0505571dbdcd41ab490159"
