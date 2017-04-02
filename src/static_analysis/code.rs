@@ -112,7 +112,10 @@ pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         }
     }
 
-    for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
+    for vuln in Arc::try_unwrap(found_vulns)
+            .unwrap()
+            .into_inner()
+            .unwrap() {
         results.add_vulnerability(vuln);
     }
 
@@ -150,7 +153,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
 
         for permission in rule.get_permissions() {
             if manifest.is_none() ||
-               !manifest.as_ref()
+               !manifest
+                    .as_ref()
                     .unwrap()
                     .get_permission_checklist()
                     .needs_permission(*permission) {
@@ -184,7 +188,9 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(path: P,
                     print_vulnerability(rule.get_description(), rule.get_criticality());
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(&code[m.start()..m.end()]).unwrap();
+                    let caps = rule.get_regex()
+                        .captures(&code[m.start()..m.end()])
+                        .unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -259,7 +265,10 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
-    let real_path = config.get_dist_folder().join(package.as_ref()).join(path);
+    let real_path = config
+        .get_dist_folder()
+        .join(package.as_ref())
+        .join(path);
     for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
@@ -275,7 +284,8 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
         let f_ext = f_path.extension();
         if f_type.is_dir() && f_path != real_path.join("original") {
             add_files_to_vec(f.path()
-                                 .strip_prefix(&config.get_dist_folder()
+                                 .strip_prefix(&config
+                                                    .get_dist_folder()
                                                     .join(package.as_ref()))
                                  .unwrap(),
                              vec,
@@ -560,8 +570,9 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => Vec::with_capacity(0),
         };
 
-        let inclusion_regex =
-            rule.get("include_file_regex").and_then(Value::as_str).and_then(|r| {
+        let inclusion_regex = rule.get("include_file_regex")
+            .and_then(Value::as_str)
+            .and_then(|r| {
                 let include_regex = Regex::new(r);
                 match include_regex {
                     Ok(regex) => Some(regex),
@@ -574,8 +585,9 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
             });
 
-        let exclusion_regex =
-            rule.get("exclude_file_regex").and_then(Value::as_str).and_then(|r| {
+        let exclusion_regex = rule.get("exclude_file_regex")
+            .and_then(Value::as_str)
+            .and_then(|r| {
                 let exclude_regex = Regex::new(r);
                 match exclude_regex {
                     Ok(regex) => Some(regex),

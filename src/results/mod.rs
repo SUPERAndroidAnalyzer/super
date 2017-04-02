@@ -40,7 +40,9 @@ pub struct Results {
 
 impl Results {
     pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Option<Results> {
-        let path = config.get_results_folder().join(get_package_name(package.as_ref()));
+        let path = config
+            .get_results_folder()
+            .join(get_package_name(package.as_ref()));
         if !path.exists() || config.is_force() {
             if path.exists() {
                 if let Err(e) = fs::remove_dir_all(&path) {
@@ -241,11 +243,11 @@ impl Serialize for Results {
     {
         let now = Local::now();
         let mut ser_struct = serializer.serialize_struct("Results",
-                                                         if cfg!(feature = "certificate") {
-                                                             22
-                                                         } else {
-                                                             21
-                                                         })?;
+                              if cfg!(feature = "certificate") {
+                                  22
+                              } else {
+                                  21
+                              })?;
 
         ser_struct.serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
@@ -266,8 +268,8 @@ impl Serialize for Results {
         ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;
 
         ser_struct.serialize_field("total_vulnerabilities",
-                                   &(self.low.len() + self.medium.len() + self.high.len() +
-                                     self.critical.len()))?;
+                             &(self.low.len() + self.medium.len() + self.high.len() +
+                               self.critical.len()))?;
         ser_struct.serialize_field("criticals", &self.critical)?;
         ser_struct.serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;

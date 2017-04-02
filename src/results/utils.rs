@@ -64,27 +64,27 @@ impl Serialize for Vulnerability {
         where S: Serializer
     {
         let mut ser_struct = serializer.serialize_struct("Vulnerability",
-                                                         if self.code.is_some() {
-                                                             if self.start_line == self.end_line {
-                                                                 7
-                                                             } else {
-                                                                 8
-                                                             }
-                                                         } else {
-                                                             4
-                                                         })?;
+                              if self.code.is_some() {
+                                  if self.start_line == self.end_line {
+                                      7
+                                  } else {
+                                      8
+                                  }
+                              } else {
+                                  4
+                              })?;
         ser_struct.serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
         ser_struct.serialize_field("description", self.description.as_str())?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
             ser_struct.serialize_field("language",
-                                       &self.file
-                                            .as_ref()
-                                            .unwrap()
-                                            .extension()
-                                            .unwrap()
-                                            .to_string_lossy())?;
+                                 &self.file
+                                      .as_ref()
+                                      .unwrap()
+                                      .extension()
+                                      .unwrap()
+                                      .to_string_lossy())?;
             if self.start_line == self.end_line {
                 ser_struct.serialize_field("line", &(self.start_line.unwrap() + 1))?;
             } else {

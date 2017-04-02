@@ -21,9 +21,9 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
     }
 
     let manifest = match Manifest::load(config.get_dist_folder().join(package.as_ref()),
-                         config,
-                         package.as_ref(),
-                         results) {
+                                        config,
+                                        package.as_ref(),
+                                        results) {
         Ok(m) => {
             if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
@@ -149,7 +149,9 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
     }
 
     for permission in config.get_permissions() {
-        if manifest.get_permission_checklist().needs_permission(permission.get_permission()) &&
+        if manifest
+               .get_permission_checklist()
+               .needs_permission(permission.get_permission()) &&
            permission.get_criticality() >= config.get_min_criticality() {
             let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
@@ -378,12 +380,14 @@ impl Manifest {
                                             manifest.set_large_heap();
                                         }
                                     }
-                                    "label" => manifest.set_label(
-                                        if attr.value.starts_with("@string/") {
-                                            match get_string(&attr.value[8..],
-                                                             config, package.as_ref()) {
-                                                Ok(s) => s,
-                                                Err(e) => {
+                                    "label" => {
+                                        manifest
+                                            .set_label(if attr.value.starts_with("@string/") {
+                                                               match get_string(&attr.value[8..],
+                                                                                config,
+                                                                                package.as_ref()) {
+                                                                   Ok(s) => s,
+                                                                   Err(e) => {
                                                     print_warning(format!("An error occurred when\
                                                                          trying to get the string\
                                                                          for the app label in the\
@@ -392,10 +396,12 @@ impl Manifest {
                                                                           e.description()));
                                                     break;
                                                 }
-                                            }
-                                        } else {
-                                            attr.value
-                                        }.as_str()),
+                                                               }
+                                                           } else {
+                                                               attr.value
+                                                           }
+                                                           .as_str())
+                                    }
                                     _ => {}
                                 }
                             }
@@ -414,10 +420,10 @@ impl Manifest {
                                             None => None,
                                         };
 
-                                        let criticality =
-                                            config.get_unknown_permission_criticality();
-                                        let description =
-                                            config.get_unknown_permission_description();
+                                        let criticality = config
+                                            .get_unknown_permission_criticality();
+                                        let description = config
+                                            .get_unknown_permission_description();
                                         let file = Some("AndroidManifest.xml");
 
                                         if criticality > config.get_min_criticality() {
@@ -434,7 +440,8 @@ impl Manifest {
                                         }
                                         break;
                                     };
-                                    manifest.get_mut_permission_checklist()
+                                    manifest
+                                        .get_mut_permission_checklist()
                                         .set_needs_permission(permission);
                                 }
                             }

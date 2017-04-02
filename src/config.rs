@@ -109,7 +109,8 @@ impl Config {
         config.set_options(&cli);
 
         if cli.is_present("test-all") {
-            config.read_apks().chain_err(|| "Error loading all the downloaded APKs")?;
+            config.read_apks()
+                .chain_err(|| "Error loading all the downloaded APKs")?;
         } else {
             config.add_app_package(cli.value_of("package").unwrap());
         }
@@ -177,7 +178,8 @@ impl Config {
                 Ok(entry) => {
                     if let Some(ext) = entry.path().extension() {
                         if ext == "apk" {
-                            self.add_app_package(entry.path()
+                            self.add_app_package(entry
+                                                     .path()
                                                      .file_stem()
                                                      .unwrap()
                                                      .to_string_lossy()
@@ -266,7 +268,8 @@ impl Config {
         if package_path.extension().is_none() {
             package_path.set_extension("apk");
         } else if package_path.extension().unwrap() != "apk" {
-            let mut file_name = package_path.file_name()
+            let mut file_name = package_path
+                .file_name()
                 .unwrap()
                 .to_string_lossy()
                 .into_owned();
@@ -395,7 +398,8 @@ impl Config {
 
         // Parse the configuration file.
         let toml = if let Value::Table(toml) =
-            toml.parse::<Value>().chain_err(|| "there was an error parsing the config.toml file")? {
+            toml.parse::<Value>()
+                .chain_err(|| "there was an error parsing the config.toml file")? {
             toml
         } else {
             return Err(ErrorKind::Parse.into());
@@ -617,10 +621,8 @@ impl Config {
                         print_warning(format_warning);
                         break;
                     };
-                    self.permissions.insert(PermissionConfig::new(permission,
-                                                                  criticality,
-                                                                  label,
-                                                                  description));
+                    self.permissions
+                        .insert(PermissionConfig::new(permission, criticality, label, description));
                 }
             }
         } else {
@@ -1052,89 +1054,101 @@ mod tests {
         let permission_without_name: BTreeMap<String, Value> = BTreeMap::new();
 
         let mut permission_invalid_criticality: BTreeMap<String, Value> = BTreeMap::new();
-        permission_invalid_criticality.insert("name".to_string(),
-                                              Value::String("permission_name".to_string()))
+        permission_invalid_criticality
+            .insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
             .is_some();
-        permission_invalid_criticality.insert("criticality".to_string(),
-                                              Value::String("invalid_level".to_string()))
+        permission_invalid_criticality
+            .insert("criticality".to_string(),
+                    Value::String("invalid_level".to_string()))
             .is_some();
 
         let mut permission_without_criticality: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_criticality.insert("name".to_string(),
-                                              Value::String("permission_name".to_string()))
+        permission_without_criticality
+            .insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
             .is_some();
 
         let mut permission_without_description: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_description.insert("name".to_string(),
-                                              Value::String("permission_name".to_string()))
+        permission_without_description
+            .insert("name".to_string(),
+                    Value::String("permission_name".to_string()))
             .is_some();
-        permission_without_description.insert("criticality".to_string(),
-                                              Value::String("low".to_string()))
+        permission_without_description
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        permission_without_description.insert("description".to_string(),
-                                              Value::String("permission description".to_string()))
+        permission_without_description
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
 
         let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_unknown_too_much_values.insert("name".to_string(),
-                                                  Value::String("unknown".to_string()))
+        permission_unknown_too_much_values
+            .insert("name".to_string(), Value::String("unknown".to_string()))
             .is_some();
-        permission_unknown_too_much_values.insert("criticality".to_string(),
-                                                  Value::String("low".to_string()))
+        permission_unknown_too_much_values
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        permission_unknown_too_much_values.insert("description".to_string(),
-                                                  Value::String("permission description"
-                                                                    .to_string()))
+        permission_unknown_too_much_values
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
-        permission_unknown_too_much_values.insert("additional_field".to_string(),
-                                                  Value::String("additional field data"
-                                                                    .to_string()))
+        permission_unknown_too_much_values
+            .insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
             .is_some();
 
         let mut permission_known_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_too_much_values.insert("name".to_string(),
+        permission_known_too_much_values
+            .insert("name".to_string(),
                     Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
             .is_some();
-        permission_known_too_much_values.insert("criticality".to_string(),
-                                                Value::String("low".to_string()))
+        permission_known_too_much_values
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        permission_known_too_much_values.insert("description".to_string(),
-                                                Value::String("permission description"
-                                                                  .to_string()))
+        permission_known_too_much_values
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
-        permission_known_too_much_values.insert("label".to_string(),
-                                                Value::String("label".to_string()))
+        permission_known_too_much_values
+            .insert("label".to_string(), Value::String("label".to_string()))
             .is_some();
-        permission_known_too_much_values.insert("additional_field".to_string(),
-                                                Value::String("additional field data".to_string()))
+        permission_known_too_much_values
+            .insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
             .is_some();
 
         let mut permission_known_name_not_found: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_name_not_found.insert("name".to_string(),
-                                               Value::String("invalid name".to_string()))
+        permission_known_name_not_found
+            .insert("name".to_string(),
+                    Value::String("invalid name".to_string()))
             .is_some();
-        permission_known_name_not_found.insert("criticality".to_string(),
-                                               Value::String("low".to_string()))
+        permission_known_name_not_found
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        permission_known_name_not_found.insert("description".to_string(),
-                                               Value::String("permission description".to_string()))
+        permission_known_name_not_found
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
-        permission_known_name_not_found.insert("label".to_string(),
-                                               Value::String("label".to_string()))
+        permission_known_name_not_found
+            .insert("label".to_string(), Value::String("label".to_string()))
             .is_some();
 
         let mut permission_without_label: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_label.insert("name".to_string(),
-                                        Value::String("invalid name".to_string()))
+        permission_without_label
+            .insert("name".to_string(),
+                    Value::String("invalid name".to_string()))
             .is_some();
-        permission_without_label.insert("criticality".to_string(),
-                                        Value::String("low".to_string()))
+        permission_without_label
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        permission_without_label.insert("description".to_string(),
-                                        Value::String("permission description".to_string()))
+        permission_without_label
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
-        permission_without_label.insert("additional_field".to_string(),
-                                        Value::String("additional field data".to_string()))
+        permission_without_label
+            .insert("additional_field".to_string(),
+                    Value::String("additional field data".to_string()))
             .is_some();
 
         let permissions = vec![Value::Integer(20),
@@ -1162,12 +1176,15 @@ mod tests {
         let mut final_config = Config::default();
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission.insert("name".to_string(), Value::String("unknown".to_string()))
+        unknown_permission
+            .insert("name".to_string(), Value::String("unknown".to_string()))
             .is_some();
-        unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
+        unknown_permission
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        unknown_permission.insert("description".to_string(),
-                                  Value::String("permission description".to_string()))
+        unknown_permission
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
@@ -1182,16 +1199,19 @@ mod tests {
         let mut final_config = Config::default();
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission.insert("name".to_string(),
-                                  Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
-                                                    .to_string()))
+        unknown_permission
+            .insert("name".to_string(),
+                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
             .is_some();
-        unknown_permission.insert("criticality".to_string(), Value::String("low".to_string()))
+        unknown_permission
+            .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
-        unknown_permission.insert("description".to_string(),
-                                  Value::String("permission description".to_string()))
+        unknown_permission
+            .insert("description".to_string(),
+                    Value::String("permission description".to_string()))
             .is_some();
-        unknown_permission.insert("label".to_string(), Value::String("label".to_string()))
+        unknown_permission
+            .insert("label".to_string(), Value::String("label".to_string()))
             .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));

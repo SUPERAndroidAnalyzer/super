@@ -191,8 +191,10 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     decompress(config, &package).chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Apk decompression",
-                                                                       start_time.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
     }
 
     let dex_jar_time = Instant::now();
@@ -200,8 +202,11 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Dex to Jar decompilation",
-                                                                       dex_jar_time.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Dex to Jar decompilation (dex2jar Java dependency)",
+                                 dex_jar_time.elapsed()));
     }
 
     if config.is_verbose() {
@@ -217,8 +222,11 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     decompile(config, &package).chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Decompilation",
-                                                                       decompile_start.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Decompilation (jd-cli Java dependency)",
+                                 decompile_start.elapsed()));
     }
 
     if let Some(mut results) = Results::init(config, &package) {
@@ -227,8 +235,10 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         static_analysis(config, &package_name, &mut results);
 
         if config.is_bench() {
-            benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Total static analysis",
-                                                                           static_start.elapsed()));
+            benchmarks
+                .get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new("Total static analysis", static_start.elapsed()));
         }
 
         // TODO dynamic analysis
@@ -257,17 +267,22 @@ fn analyze_package<P: AsRef<Path>>(package: P,
         }
 
         if config.is_bench() {
-            benchmarks.get_mut(&package_name).unwrap().push(Benchmark::new("Report generation",
-                                                                           report_start.elapsed()));
-            benchmarks.get_mut(&package_name)
+            benchmarks
+                .get_mut(&package_name)
+                .unwrap()
+                .push(Benchmark::new("Report generation", report_start.elapsed()));
+            benchmarks
+                .get_mut(&package_name)
                 .unwrap()
                 .push(Benchmark::new(format!("Total time for {}", package_name),
                                      start_time.elapsed()));
         }
 
         if config.is_open() {
-            let report_path =
-                config.get_results_folder().join(results.get_app_package()).join("index.html");
+            let report_path = config
+                .get_results_folder()
+                .join(results.get_app_package())
+                .join("index.html");
 
             let status =
                 open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
@@ -277,7 +292,10 @@ fn analyze_package<P: AsRef<Path>>(package: P,
             }
         }
     } else if config.is_open() {
-        let report_path = config.get_results_folder().join(package_name).join("index.html");
+        let report_path = config
+            .get_results_folder()
+            .join(package_name)
+            .join("index.html");
 
         let status =
             open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
@@ -383,7 +401,10 @@ fn initialize_logger(is_verbose: bool) {
     let builder_state = if let Ok(env_log) = env::var("RUST_LOG") {
         builder.format(format).parse(&env_log).init()
     } else {
-        builder.format(format).filter(Some("super"), log_level).init()
+        builder
+            .format(format)
+            .filter(Some("super"), log_level)
+            .init()
     };
 
     if let Err(e) = builder_state {

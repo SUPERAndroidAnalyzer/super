@@ -36,7 +36,8 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         println!("Reading and analyzing the certificates…")
     }
 
-    let path = config.get_dist_folder()
+    let path = config
+        .get_dist_folder()
         .join(package.as_ref())
         .join("original")
         .join("META-INF");

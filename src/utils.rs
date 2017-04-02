@@ -92,16 +92,18 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                                                 package: P)
                                                 -> Result<String> {
     let mut file = fs::File::open({
-                                      let path = config.get_dist_folder()
-            .join(package.as_ref())
-            .join("res")
-            .join("values-en")
-            .join("strings.xml");
+                                      let path = config
+                                          .get_dist_folder()
+                                          .join(package.as_ref())
+                                          .join("res")
+                                          .join("values-en")
+                                          .join("strings.xml");
 
                                       if path.exists() {
                                           path
                                       } else {
-                                          config.get_dist_folder()
+                                          config
+                                              .get_dist_folder()
                                               .join(package.as_ref())
                                               .join("res")
                                               .join("values")

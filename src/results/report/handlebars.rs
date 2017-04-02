@@ -84,16 +84,15 @@ impl HandlebarsReport {
     fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<()> {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
-        let mut f = File::create(config.get_results_folder()
+        let mut f = File::create(config
+                                     .get_results_folder()
                                      .join(&results.get_app_package())
                                      .join("src")
                                      .join("index.html"))?;
 
         let mut data = BTreeMap::new();
         let _ = data.insert("menu", menu);
-        f.write_all(self.handler
-                           .render("src", &data)?
-                           .as_bytes())?;
+        f.write_all(self.handler.render("src", &data)?.as_bytes())?;
 
         Ok(())
     }
@@ -108,10 +107,13 @@ impl HandlebarsReport {
            path.as_ref() == Path::new("smali") {
             return Ok(Vec::new());
         }
-        let dir_iter =
-            fs::read_dir(config.get_dist_folder().join(&self.package).join(path.as_ref()))?;
+        let dir_iter = fs::read_dir(config
+                                        .get_dist_folder()
+                                        .join(&self.package)
+                                        .join(path.as_ref()))?;
 
-        fs::create_dir_all(config.get_results_folder()
+        fs::create_dir_all(config
+                               .get_results_folder()
                                .join(&results.get_app_package())
                                .join("src")
                                .join(path.as_ref()))?;
@@ -128,7 +130,8 @@ impl HandlebarsReport {
                 if stripped != Path::new("original") {
                     let inner_menu = self.generate_code_html_folder(stripped, config, results)?;
                     if inner_menu.is_empty() {
-                        let path = config.get_results_folder()
+                        let path = config
+                            .get_results_folder()
                             .join(&results.get_app_package())
                             .join("src")
                             .join(stripped);
@@ -179,11 +182,13 @@ impl HandlebarsReport {
                                                              results: &Results,
                                                              cli_package_name: S)
                                                              -> Result<()> {
-        let mut f_in = File::open(config.get_dist_folder()
+        let mut f_in = File::open(config
+                                      .get_dist_folder()
                                       .join(cli_package_name.as_ref())
                                       .join(path.as_ref()))?;
         let mut f_out = File::create(format!("{}.html",
-                                             config.get_results_folder()
+                                             config
+                                                 .get_results_folder()
                                                  .join(&results.get_app_package())
                                                  .join("src")
                                                  .join(path.as_ref())
@@ -203,9 +208,7 @@ impl HandlebarsReport {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        f_out.write_all(self.handler
-                            .render("code", &data)?
-                            .as_bytes())?;
+        f_out.write_all(self.handler.render("code", &data)?.as_bytes())?;
 
         Ok(())
     }
@@ -216,23 +219,23 @@ impl Report for HandlebarsReport {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = File::create(config.get_results_folder()
-            .join(&results.app_package)
-            .join("index.html"))?;
+        let mut f = File::create(config
+                                     .get_results_folder()
+                                     .join(&results.app_package)
+                                     .join("index.html"))?;
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        f.write_all(self.handler
-                           .render("report", results)?
-                           .as_bytes())?;
+        f.write_all(self.handler.render("report", results)?.as_bytes())?;
 
         for entry in fs::read_dir(config.get_template_path())? {
             let entry = entry?;
             let entry_path = entry.path();
             if entry.file_type()?.is_dir() {
                 copy_folder(&entry_path,
-                            &config.get_results_folder()
+                            &config
+                                 .get_results_folder()
                                  .join(&results.get_app_package())
                                  .join(entry_path.file_name().unwrap()))?;
             } else {
@@ -241,7 +244,8 @@ impl Report for HandlebarsReport {
                     None => {}
                     _ => {
                         let _ = fs::copy(&entry_path,
-                                         &config.get_results_folder()
+                                         &config
+                                              .get_results_folder()
                                               .join(&results.get_app_package()))?;
                     }
                 }

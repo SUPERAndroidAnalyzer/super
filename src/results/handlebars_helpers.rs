@@ -32,11 +32,13 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         let line = l.as_i64().unwrap();
         (line, line)
     } else {
-        let start_line = vulnerability.get("start_line")
+        let start_line = vulnerability
+            .get("start_line")
             .unwrap()
             .as_i64()
             .unwrap();
-        let end_line = vulnerability.get("end_line")
+        let end_line = vulnerability
+            .get("end_line")
             .unwrap()
             .as_i64()
             .unwrap();
@@ -155,11 +157,13 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
         let line = l.as_i64().unwrap();
         (line, line)
     } else {
-        let start_line = vulnerability.get("start_line")
+        let start_line = vulnerability
+            .get("start_line")
             .unwrap()
             .as_i64()
             .unwrap();
-        let end_line = vulnerability.get("end_line")
+        let end_line = vulnerability
+            .get("end_line")
             .unwrap()
             .as_i64()
             .unwrap();
@@ -168,7 +172,8 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 
     let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
 
-    for (i, line) in vulnerability.get("code")
+    for (i, line) in vulnerability
+            .get("code")
             .unwrap()
             .as_str()
             .unwrap()
@@ -180,7 +185,8 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             let (indent, code) = split_indent(line);
             format!("<code class=\"vulnerable_line {}\">{}<span \
                      class=\"line_body\">{}</span></code>{}",
-                    vulnerability.get("criticality")
+                    vulnerability
+                        .get("criticality")
                         .unwrap()
                         .as_str()
                         .unwrap(),
@@ -215,12 +221,9 @@ pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
                               second parameter")
         })? as usize + 1;
 
-    let list_len = h.param(2)
-        .unwrap()
-        .value()
-        .as_u64()
-        .unwrap();
-    let char_index = vulnerability.get("criticality")
+    let list_len = h.param(2).unwrap().value().as_u64().unwrap();
+    let char_index = vulnerability
+        .get("criticality")
         .unwrap()
         .as_str()
         .unwrap()
@@ -268,8 +271,8 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
                 let _ = renderer.write(format!("<a href=\"#\" title=\"{0}\"><img \
                                     src=\"../img/folder-icon.png\">{0}</a>",
-                                               name)
-                                               .as_bytes())?;
+                                   name)
+                                   .as_bytes())?;
                 let _ = renderer.write(b"<ul>")?;
 
                 render_menu(menu, renderer)?;
@@ -284,10 +287,10 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                 let _ = renderer.write(format!("<a href=\"{1}.html\" title=\"{0}\" \
                                                      target=\"code\"><img \
                                                      src=\"../img/{2}-icon.png\">{0}</a>",
-                                               name,
-                                               path,
-                                               file_type)
-                                               .as_bytes())?;
+                                   name,
+                                   path,
+                                   file_type)
+                                   .as_bytes())?;
             }
             let _ = renderer.write(b"</li>")?;
         } else {
