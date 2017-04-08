@@ -63,7 +63,8 @@ impl Serialize for Vulnerability {
     fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
         where S: Serializer
     {
-        let mut ser_struct = serializer.serialize_struct("Vulnerability",
+        let mut ser_struct = serializer
+            .serialize_struct("Vulnerability",
                               if self.code.is_some() {
                                   if self.start_line == self.end_line {
                                       7
@@ -73,12 +74,15 @@ impl Serialize for Vulnerability {
                               } else {
                                   4
                               })?;
-        ser_struct.serialize_field("criticality", &self.criticality)?;
+        ser_struct
+            .serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
-        ser_struct.serialize_field("description", self.description.as_str())?;
+        ser_struct
+            .serialize_field("description", self.description.as_str())?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
-            ser_struct.serialize_field("language",
+            ser_struct
+                .serialize_field("language",
                                  &self.file
                                       .as_ref()
                                       .unwrap()
@@ -86,10 +90,13 @@ impl Serialize for Vulnerability {
                                       .unwrap()
                                       .to_string_lossy())?;
             if self.start_line == self.end_line {
-                ser_struct.serialize_field("line", &(self.start_line.unwrap() + 1))?;
+                ser_struct
+                    .serialize_field("line", &(self.start_line.unwrap() + 1))?;
             } else {
-                ser_struct.serialize_field("start_line", &(self.start_line.unwrap() + 1))?;
-                ser_struct.serialize_field("end_line", &(self.end_line.unwrap() + 1))?;
+                ser_struct
+                    .serialize_field("start_line", &(self.start_line.unwrap() + 1))?;
+                ser_struct
+                    .serialize_field("end_line", &(self.end_line.unwrap() + 1))?;
             }
             ser_struct.serialize_field("code", &self.code)?;
         }
@@ -145,9 +152,12 @@ impl Serialize for FingerPrint {
         where S: Serializer
     {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
-        ser_struct.serialize_field("md5", &format!("{:x}", self.md5))?;
-        ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
-        ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
+        ser_struct
+            .serialize_field("md5", &format!("{:x}", self.md5))?;
+        ser_struct
+            .serialize_field("sha1", &self.sha1.to_string())?;
+        ser_struct
+            .serialize_field("sha256", &self.sha256.to_hex())?;
         ser_struct.end()
     }
 }

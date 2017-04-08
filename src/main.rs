@@ -150,9 +150,8 @@ fn run() -> Result<()> {
     let total_start = Instant::now();
     for package in config.get_app_packages() {
         config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks).chain_err(|| {
-                "Application analysis failed"
-            })?;
+        analyze_package(package, &mut config, &mut benchmarks)
+            .chain_err(|| "Application analysis failed")?;
     }
 
     if config.is_bench() {
@@ -188,7 +187,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     let start_time = Instant::now();
 
     // Apk decompression
-    decompress(config, &package).chain_err(|| "apk decompression failed")?;
+    decompress(config, &package)
+        .chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -199,7 +199,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
+    dex_to_jar(config, &package)
+        .chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -219,7 +220,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package).chain_err(|| "JAR decompression failed")?;
+    decompile(config, &package)
+        .chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -249,7 +251,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
 
         let report_start = Instant::now();
         let report_generated =
-            results.generate_report(config, &package_name)
+            results
+                .generate_report(config, &package_name)
                 .chain_err(|| "There was an error generating the results report")?;
 
         if report_generated {
@@ -284,8 +287,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
                 .join(results.get_app_package())
                 .join("index.html");
 
-            let status =
-                open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+            let status = open::that(report_path)
+                .chain_err(|| "Report could not be opened automatically")?;
 
             if !status.success() {
                 return Err(format!("Report opening errored with status code: {}", status).into());
@@ -297,8 +300,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
             .join(package_name)
             .join("index.html");
 
-        let status =
-            open::that(report_path).chain_err(|| "Report could not be opened automatically")?;
+        let status = open::that(report_path)
+            .chain_err(|| "Report could not be opened automatically")?;
 
         if !status.success() {
             return Err(format!("Report opening errored with status code: {}", status).into());

@@ -242,44 +242,60 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut ser_struct = serializer.serialize_struct("Results",
+        let mut ser_struct = serializer
+            .serialize_struct("Results",
                               if cfg!(feature = "certificate") {
                                   22
                               } else {
                                   21
                               })?;
 
-        ser_struct.serialize_field("super_version", crate_version!())?;
+        ser_struct
+            .serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
-        ser_struct.serialize_field("now_rfc2822", &now.to_rfc2822())?;
-        ser_struct.serialize_field("now_rfc3339", &now.to_rfc3339())?;
+        ser_struct
+            .serialize_field("now_rfc2822", &now.to_rfc2822())?;
+        ser_struct
+            .serialize_field("now_rfc3339", &now.to_rfc3339())?;
 
-        ser_struct.serialize_field("app_package", &self.app_package)?;
-        ser_struct.serialize_field("app_version", &self.app_version)?;
-        ser_struct.serialize_field("app_version_number", &self.app_version_num)?;
-        ser_struct.serialize_field("app_fingerprint", &self.app_fingerprint)?;
+        ser_struct
+            .serialize_field("app_package", &self.app_package)?;
+        ser_struct
+            .serialize_field("app_version", &self.app_version)?;
+        ser_struct
+            .serialize_field("app_version_number", &self.app_version_num)?;
+        ser_struct
+            .serialize_field("app_fingerprint", &self.app_fingerprint)?;
 
         #[cfg(feature = "certificate")]
         {
-            ser_struct.serialize_field("certificate", &self.certificate)?;
+            ser_struct
+                .serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
-        ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;
+        ser_struct
+            .serialize_field("app_min_sdk", &self.app_min_sdk)?;
+        ser_struct
+            .serialize_field("app_target_sdk", &self.app_target_sdk)?;
 
-        ser_struct.serialize_field("total_vulnerabilities",
+        ser_struct
+            .serialize_field("total_vulnerabilities",
                              &(self.low.len() + self.medium.len() + self.high.len() +
                                self.critical.len()))?;
         ser_struct.serialize_field("criticals", &self.critical)?;
-        ser_struct.serialize_field("criticals_len", &self.critical.len())?;
+        ser_struct
+            .serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;
-        ser_struct.serialize_field("highs_len", &self.high.len())?;
+        ser_struct
+            .serialize_field("highs_len", &self.high.len())?;
         ser_struct.serialize_field("mediums", &self.medium)?;
-        ser_struct.serialize_field("mediums_len", &self.medium.len())?;
+        ser_struct
+            .serialize_field("mediums_len", &self.medium.len())?;
         ser_struct.serialize_field("lows", &self.low)?;
         ser_struct.serialize_field("lows_len", &self.low.len())?;
         ser_struct.serialize_field("warnings", &self.warnings)?;
-        ser_struct.serialize_field("warnings_len", &self.warnings.len())?;
+        ser_struct
+            .serialize_field("warnings_len", &self.warnings.len())?;
 
         ser_struct.end()
     }

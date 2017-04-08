@@ -752,7 +752,8 @@ mod tests {
                              "throws SystemException,Exception{",
                              "throws ApplicationException,Exception{",
                              "throws PepeException, Exception, IOException {"];
-        let should_not_match = &["throws IOException {", "throws PepeException, IOException {"];
+        let should_not_match = &["throws IOException {",
+                                 "throws PepeException, IOException {"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -792,7 +793,10 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(4).unwrap();
 
-        let should_match = &[" 192.168.1.1", " 0.0.0.0", " 255.255.255.255", " 13.0.130.23.52"];
+        let should_match = &[" 192.168.1.1",
+                             " 0.0.0.0",
+                             " 255.255.255.255",
+                             " 13.0.130.23.52"];
         let should_not_match = &["0000.000.000.000",
                                  "256.140.123.154",
                                  "135.260.120.0",
@@ -820,8 +824,11 @@ mod tests {
         let rule = rules.get(5).unwrap();
 
         let should_match = &["Math.random()", "Random()", "Math . random ()"];
-        let should_not_match =
-            &["math.random()", "MATH.random()", "Math.Randomize()", "Mathrandom()", "Math.random"];
+        let should_not_match = &["math.random()",
+                                 "MATH.random()",
+                                 "Math.Randomize()",
+                                 "Mathrandom()",
+                                 "Math.random"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -869,8 +876,10 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(7).unwrap();
 
-        let should_match =
-            &["C:\\", "C:\\Programs\\password.txt", "D:\\", "H:\\P\\o\\password.txt"];
+        let should_match = &["C:\\",
+                             "C:\\Programs\\password.txt",
+                             "D:\\",
+                             "H:\\P\\o\\password.txt"];
 
         let should_not_match = &["ome\\password.txt", "at:\\", "\\\\home\\sharedfile", "\\n"];
 
@@ -954,8 +963,10 @@ mod tests {
                              "openFileOutput(filepath, 1) ",
                              "openFileOutput(path_to_file, 1) "];
 
-        let should_not_match =
-            &["openFileOutput(\"file.txt\", 0) ", "openFileOutput(, 1) ", "openFileOutput() ", ""];
+        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
+                                 "openFileOutput(, 1) ",
+                                 "openFileOutput() ",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -978,8 +989,10 @@ mod tests {
                              "openFileOutput(filepath, 2) ",
                              "openFileOutput(path_to_file, 2) "];
 
-        let should_not_match =
-            &["openFileOutput(\"file.txt\", 0) ", "openFileOutput(, 2) ", "openFileOutput() ", ""];
+        let should_not_match = &["openFileOutput(\"file.txt\", 0) ",
+                                 "openFileOutput(, 2) ",
+                                 "openFileOutput() ",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1107,8 +1120,10 @@ mod tests {
                              "javax.net.ssl   .setDefaultHostnameVerifier()",
                              "javax.net.ssl   NullHostnameVerifier(')"];
 
-        let should_not_match =
-            &["NullHostnameVerifier(')", "javax.net.ssl", "AllTrustSSLSocketFactory", ""];
+        let should_not_match = &["NullHostnameVerifier(')",
+                                 "javax.net.ssl",
+                                 "AllTrustSSLSocketFactory",
+                                 ""];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1509,8 +1524,9 @@ mod tests {
         let should_match = &["finally {                      return;",
                              "finally {                      return;}"];
 
-        let should_not_match =
-            &["finally{}", "finally{ var;}", "finally { Printf (“Hello”); return true; }"];
+        let should_not_match = &["finally{}",
+                                 "finally{ var;}",
+                                 "finally { Printf (“Hello”); return true; }"];
 
         for m in should_match {
             assert!(check_match(m, rule));

@@ -61,7 +61,8 @@ impl HandlebarsReport {
                         })?;
 
 
-                    handlebars.register_template_file(template_file, dir_entry.path())
+                    handlebars
+                        .register_template_file(template_file, dir_entry.path())
                         .chain_err(|| "Error registering template file")?;
                 }
             }
@@ -208,7 +209,8 @@ impl HandlebarsReport {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        f_out.write_all(self.handler.render("code", &data)?.as_bytes())?;
+        f_out
+            .write_all(self.handler.render("code", &data)?.as_bytes())?;
 
         Ok(())
     }

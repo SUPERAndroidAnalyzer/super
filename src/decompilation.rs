@@ -37,7 +37,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref()).chain_err(|| "error loading apk file")?;
+        let mut apk = Apk::new(package.as_ref())
+            .chain_err(|| "error loading apk file")?;
         apk.export(&path, true)
             .chain_err(|| "could not decompress the apk file")?;
 
@@ -138,7 +139,8 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
 
         // Command to decompile the application using jd_cmd.
         // "-od path" to specify an output directory
-        let output = Command::new("java").arg("-jar")
+        let output = Command::new("java")
+            .arg("-jar")
             .arg(config.get_jd_cmd_file())
             .arg(config
                      .get_dist_folder()

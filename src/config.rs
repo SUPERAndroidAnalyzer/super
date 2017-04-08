@@ -94,14 +94,16 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                config.load_from_file(&config_path)
+                config
+                    .load_from_file(&config_path)
                     .chain_err(|| "The config.toml file does not have the correct formatting.")?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config.load_from_file(&config_path)
+            config
+                .load_from_file(&config_path)
                 .chain_err(|| "The config.toml file does not have the correct formatting.")?;
             config.loaded_files.push(config_path);
         }
@@ -109,7 +111,8 @@ impl Config {
         config.set_options(&cli);
 
         if cli.is_present("test-all") {
-            config.read_apks()
+            config
+                .read_apks()
                 .chain_err(|| "Error loading all the downloaded APKs")?;
         } else {
             config.add_app_package(cli.value_of("package").unwrap());
@@ -1038,7 +1041,8 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![Value::String("/some/invalid/rules.jpg".to_string()), Value::Integer(20)];
+        let values = vec![Value::String("/some/invalid/rules.jpg".to_string()),
+                          Value::Integer(20)];
 
         for value in values {
             final_config.load_rules_section(value);

@@ -269,7 +269,8 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                 .and_then(|n| n.as_str())
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
-                let _ = renderer.write(format!("<a href=\"#\" title=\"{0}\"><img \
+                let _ = renderer
+                    .write(format!("<a href=\"#\" title=\"{0}\"><img \
                                     src=\"../img/folder-icon.png\">{0}</a>",
                                    name)
                                    .as_bytes())?;
@@ -284,7 +285,8 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                 let file_type = item.get("type")
                     .and_then(|n| n.as_str())
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
-                let _ = renderer.write(format!("<a href=\"{1}.html\" title=\"{0}\" \
+                let _ = renderer
+                    .write(format!("<a href=\"{1}.html\" title=\"{0}\" \
                                                      target=\"code\"><img \
                                                      src=\"../img/{2}-icon.png\">{0}</a>",
                                    name,
