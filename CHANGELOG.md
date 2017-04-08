@@ -1,5 +1,33 @@
 # Changelog
 
+## SUPER 0.4.0
+
+### Features
+
+- Removed ApkTool dependency, analysis are now about 20% - 50% faster.
+- Removed all ApkTool related configuration and CLI directives.
+- The `--force` flag is now less aggressive. It won't remove a JSON report if only the HTML report
+  is being generated, and the othey way around: it won't remove the HTML report if only the JSON
+  report is being generated.
+
+### Internal Changes
+
+- Errors moved to their own module.
+- Upgraded dependencies:
+  - `clap`: 2.20 => **2.23**
+  - `xml-rs`: 0.3 => **0.4**
+  And some other minor upgrades.
+- Dependency in `yaml-rust` has been removed.
+- Dependency in `error-chain` 0.10 has been added.
+- Dependency in `rust-crypto` has been removed and dependencies in `md5`, `sha1` and `sha2` have
+  been added.
+- Dependency in `abxml` has been added to remove the ApkTool dependency.
+- Added more documentation for some modules.
+
+### Bug Fixes
+
+- Fixed error when adding `--open` flag on JSON-only reports.
+
 ## SUPER 0.3.1
 
 ### Bug Fixes
