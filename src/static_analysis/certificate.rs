@@ -1,3 +1,5 @@
+//! This module performs the static analysis of the certificate of the application.
+
 use std::fs;
 use std::process::Command;
 use std::borrow::Borrow;
@@ -10,6 +12,9 @@ use {Config, Criticality, Result, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 use error::*;
 
+/// Parses the given month string.
+///
+/// It will convert it to an integer representing the month number in the year.
 fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     match month_str.as_ref() {
         "Jan" => 1,
@@ -28,6 +33,9 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     }
 }
 
+/// Performs the certificate analysis.
+///
+/// *Note: This requires OpenSSL.*
 pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                            package: S,
                                            results: &mut Results)
@@ -36,6 +44,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         println!("Reading and analyzing the certificates…")
     }
 
+    // Gets the path to the certificate files.
     let path = config
         .get_dist_folder()
         .join(package.as_ref())
@@ -71,6 +80,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             }
         }
 
+        // We found a certificate, let's get its information.
         if is_cert {
             let output = Command::new("openssl").arg("pkcs7")
                 .arg("-inform")
@@ -100,6 +110,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             }
             results.set_certificate(cmd.borrow());
 
+            // Get the information we need.
             let mut issuer = String::new();
             let mut subject = String::new();
             let mut after = String::new();
@@ -119,6 +130,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             let mut subject = subject.split(": ");
             let mut after = after.split(": ");
 
+            // Detect Android debug certificate.
             if issuer.nth(1).unwrap().contains("Android Debug") {
                 let criticality = Criticality::Critical;
                 let description = "The application is signed with the Android Debug Certificate. \
@@ -138,6 +150,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 // TODO: This means it is self signed. Should we do something?
             }
 
+            // Check certificate expiration.
             let now = Local::now();
             let year = now.year();
             let month = now.month();

@@ -26,7 +26,7 @@ appveyor = { repository = "Razican/super", branch = "master", service = "github"
 name = "super"
 
 [dependencies]
-clap = "^2.21"
+clap = "^2.23"
 colored = "^1.4"
 xml-rs = "0.4"
 serde = "^0.9"
@@ -43,7 +43,7 @@ env_logger = "^0.4"
 error-chain = "^0.10"
 md5 = "^0.3"
 sha1 = "^0.2"
-sha2 = "^0.4"
+sha2 = "^0.5"
 abxml = "^0.1"
 
 [dependencies.handlebars]
@@ -51,7 +51,7 @@ version = "^0.25"
 features = ["serde_type"]
 
 [build-dependencies]
-clap = "^2.21"
+clap = "^2.23"
 
 [features]
 default = ["beta"]

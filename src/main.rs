@@ -11,7 +11,7 @@
     invalid_upcast_comparisons, items_after_statements, non_ascii_literal, nonminimal_bool,
     pub_enum_variant_names, shadow_reuse, shadow_same, shadow_unrelated, similar_names,
     single_match_else, string_add, string_add_assign, unicode_not_nfc, unseparated_literal_suffix,
-    use_debug, wrong_pub_self_convention)]
+    use_debug, wrong_pub_self_convention, doc_markdown)]
 // Allowing these at least for now.
 #![allow(missing_docs_in_private_items, unknown_lints, print_stdout, stutter, option_unwrap_used,
     result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
@@ -85,8 +85,7 @@ fn main() {
         }
 
         if !log_enabled!(LogLevel::Debug) {
-            println!("If you need more information, try to run the program again with the {} \
-                      flag.",
+            println!("If you need more information, try to run the program again with the {} flag.",
                      "-v".bold());
         }
 
@@ -122,8 +121,8 @@ fn run() -> Result<()> {
             error_string.push_str(&error);
             error_string.push('\n');
         }
-        error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration\n");
+        error_string.push_str("The configuration was loaded, in order, from the following files: \
+                               \n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
@@ -212,9 +211,8 @@ fn analyze_package<P: AsRef<Path>>(package: P,
 
     if config.is_verbose() {
         println!();
-        println!("Now it's time for the actual decompilation of the source code. We'll \
-                  translate Android JVM bytecode to Java, so that we can check the code \
-                  afterwards.");
+        println!("Now it's time for the actual decompilation of the source code. We'll translate
+                  Android JVM bytecode to Java, so that we can check the code afterwards.");
     }
 
     let decompile_start = Instant::now();
@@ -231,76 +229,64 @@ fn analyze_package<P: AsRef<Path>>(package: P,
                                  decompile_start.elapsed()));
     }
 
-    if let Some(mut results) = Results::init(config, &package) {
-        let static_start = Instant::now();
-        // Static application analysis
-        static_analysis(config, &package_name, &mut results);
+    let mut results = Results::init(config, &package)?;
+    let static_start = Instant::now();
+    // Static application analysis
+    static_analysis(config, &package_name, &mut results);
 
-        if config.is_bench() {
-            benchmarks
-                .get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Total static analysis", static_start.elapsed()));
-        }
+    if config.is_bench() {
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Total static analysis", static_start.elapsed()));
+    }
 
-        // TODO dynamic analysis
+    // TODO dynamic analysis
 
-        if !config.is_quiet() {
-            println!();
-        }
+    if !config.is_quiet() {
+        println!();
+    }
 
-        let report_start = Instant::now();
-        let report_generated =
-            results
-                .generate_report(config, &package_name)
-                .chain_err(|| "There was an error generating the results report")?;
+    let report_start = Instant::now();
+    results
+        .generate_report(config, &package_name)
+        .chain_err(|| "There was an error generating the results report")?;
 
-        if report_generated {
-            if config.is_verbose() {
-                println!("The results report has been saved. Everything went smoothly, \
-                              now you can check all the results.");
-                println!();
-                println!("I will now analyze myself for vulnerabilities…");
-                sleep(Duration::from_millis(1500));
-                println!("Nah, just kidding, I've been developed in {}!",
-                         "Rust".bold().green())
-            } else if !config.is_quiet() {
-                println!("Report generated.");
-            }
-        }
+    if config.is_verbose() {
+        println!("Everything went smoothly, now you can check all the results.");
+        println!();
+        println!("I will now analyze myself for vulnerabilities…");
+        sleep(Duration::from_millis(1500));
+        println!("Nah, just kidding, I've been developed in {}!",
+                 "Rust".bold().green())
+    }
 
-        if config.is_bench() {
-            benchmarks
-                .get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Report generation", report_start.elapsed()));
-            benchmarks
-                .get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new(format!("Total time for {}", package_name),
-                                     start_time.elapsed()));
-        }
+    if config.is_bench() {
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Report generation", report_start.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(format!("Total time for {}", package_name),
+                                 start_time.elapsed()));
+    }
 
-        if config.is_open() {
-            let report_path = config
+    if config.is_open() {
+        let open_path = if config.has_to_generate_html() {
+            config
                 .get_results_folder()
                 .join(results.get_app_package())
-                .join("index.html");
+                .join("index.html")
+        } else {
+            config
+                .get_results_folder()
+                .join(results.get_app_package())
+                .join("results.json")
+        };
 
-            let status = open::that(report_path)
-                .chain_err(|| "Report could not be opened automatically")?;
-
-            if !status.success() {
-                return Err(format!("Report opening errored with status code: {}", status).into());
-            }
-        }
-    } else if config.is_open() {
-        let report_path = config
-            .get_results_folder()
-            .join(package_name)
-            .join("index.html");
-
-        let status = open::that(report_path)
+        let status = open::that(open_path)
             .chain_err(|| "Report could not be opened automatically")?;
 
         if !status.success() {

@@ -22,10 +22,10 @@ use static_analysis::manifest::Permission;
 use error::*;
 use {Criticality, print_warning};
 
-/// Largest number of threads permitted.
+/// Largest number of threads allowed.
 const MAX_THREADS: i64 = u8::MAX as i64;
 
-/// Config struct
+/// Config structure.
 ///
 /// Contains configuration related fields. It is used for storing the configuration parameters and
 /// checking their values. Implements the `Default` trait.

@@ -1,3 +1,8 @@
+//! Utilities for results generation.
+//!
+//! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
+//! information for results.
+
 use std::result::Result as StdResult;
 use std::fs::File;
 use std::io::Read;
@@ -16,12 +21,19 @@ use Criticality;
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
 pub struct Vulnerability {
+    /// Vulnerability criticality.
     criticality: Criticality,
+    /// Name of the vulnerability.
     name: String,
+    /// Description of the vulnerability.
     description: String,
+    /// Optional file were the vulnerability was present.
     file: Option<PathBuf>,
+    /// Optional starting line in the given file.
     start_line: Option<usize>,
+    /// Optional ending line in the given file.
     end_line: Option<usize>,
+    /// The vulnerable code snippet.
     code: Option<String>,
 }
 
@@ -115,15 +127,20 @@ impl PartialOrd for Vulnerability {
     }
 }
 
-/// Structure to store.
+/// Structure to store the application fingerprint.
 pub struct FingerPrint {
+    /// MD5 hash.
     md5: md5::Digest,
+    /// SHA-1 hash.
     sha1: sha1::Digest,
+    /// SHA-256 hash.
     sha256: [u8; 32],
 }
 
 impl FingerPrint {
     /// Creates a new fingerprint.
+    ///
+    /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
     pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
         use sha2::Digest;
 
@@ -134,10 +151,10 @@ impl FingerPrint {
         let mut sha1 = sha1::Sha1::new();
         sha1.update(&buffer);
 
-        let mut sha256 = sha2::Sha256::new();
+        let mut sha256 = sha2::Sha256::default();
         sha256.input(&buffer);
 
-        let mut sha256_res = [0u8; 32];
+        let mut sha256_res = [0_u8; 32];
         sha256_res.clone_from_slice(&sha256.result()[..]);
         Ok(FingerPrint {
                md5: md5::compute(&buffer),
