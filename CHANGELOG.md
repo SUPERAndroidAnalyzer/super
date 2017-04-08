@@ -12,6 +12,7 @@
 
 ### Internal Changes
 
+- SUPER now requires Rust 1.16.0.
 - Errors moved to their own module.
 - Upgraded dependencies:
   - `clap`: 2.20 => **2.23**
