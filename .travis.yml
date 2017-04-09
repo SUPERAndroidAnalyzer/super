@@ -1,7 +1,7 @@
 language: rust
-cache: cargo
+# cache: cargo
 dist: trusty
-sudo: false
+sudo: true
 os:
   - linux
   - osx
@@ -9,73 +9,85 @@ addons:
   apt:
     packages:
       - libcurl4-openssl-dev
-      - zlib1g-dev
+      - libelf-dev
       - libdw-dev
+      - cmake
+      - gcc
       - binutils-dev
+      - libiberty-dev
+      - zlib1g-dev
 
 # Run builds for all the supported trains
 rust:
   - nightly
   - beta
   - stable
-  - 1.15.1
+  - 1.16.0
 
 # Load travis-cargo
 before_script:
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      pip install git+https://github.com/SUPERAndroidAnalyzer/travis-cargo.git@fix-coveralls --user &&
-      export PATH=$HOME/.local/bin:$PATH &&
-      ( cargo install rustfmt || true )
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+        ( cargo install rustfmt --force || true );
+        ( cargo install --git https://github.com/mmstick/cargo-deb.git || true );
       fi
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      ( cargo install --git https://github.com/mmstick/cargo-deb.git || true )
+      if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+        ( ( cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
       fi
   - export PATH=$PATH:~/.cargo/bin
 
 # The main build
 script:
-  # Turning of format checking due to several rustfmt bugs.
-  # - |
-  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-  #         cargo fmt -- --write-mode=diff
-  #     fi
+  - cargo build
+  - cargo package
+  - cargo test
+  - cargo build --features beta
+  - cargo test --features beta
+  - cargo build --features unstable
+  - cargo test --features unstable
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      travis-cargo build &&
-      travis-cargo test &&
-      travis-cargo build -- --features beta &&
-      travis-cargo test -- --features beta &&
-      travis-cargo build -- --features unstable &&
-      travis-cargo test -- --features unstable &&
-      cargo deb
+      if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
+        cargo clippy
       fi
   - |
-      if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      cargo build &&
-      cargo test &&
-      cargo build --features beta &&
-      cargo test --features beta &&
-      cargo build --features unstable &&
-      cargo test --features unstable
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+        cargo deb
       fi
+# Turning of format checking due to several rustfmt bugs.
+# - |
+#     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+#         cargo fmt -- --write-mode=diff
+#     fi
 
 # Send coverage reports and upload docs
 after_success:
+  # Coverage report
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      travis-cargo --only stable doc &&
-      travis-cargo --only stable doc-upload;
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
+        tar xzf master.tar.gz &&
+        cd kcov-master &&
+        mkdir build &&
+        cd build &&
+        cmake .. &&
+        make &&
+        sudo make install &&
+        cd ../.. &&
+        rm -rf kcov-master &&
+        for file in target/debug/super-*; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+        bash <(curl -s https://codecov.io/bash) &&
+        echo "Uploaded code coverage"
       fi
+  # Documentation upload
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      travis-cargo --only stable coveralls --no-sudo --verify;
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "master" ]]; then
+        cargo doc &&
+        echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html &&
+        git clone https://github.com/davisp/ghp-import.git &&
+        ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG.git" target/doc &&
+        echo "Uploaded documentation"
       fi
-
-env:
-  global:
-    - TRAVIS_CARGO_NIGHTLY_FEATURE=""
 
 notifications:
   email:

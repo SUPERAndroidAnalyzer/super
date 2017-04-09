@@ -13,11 +13,10 @@ use std::error::Error;
 use self::manifest::*;
 #[cfg(feature = "certificate")]
 use self::certificate::*;
-use self::code::*;
 use results::Results;
 use {Config, print_warning};
 #[cfg(not(feature = "certificate"))]
-use Result;
+use error::*;
 
 /// Runs the analysis for manifest, certificate and code files.
 ///
@@ -35,13 +34,13 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     if cfg!(feature = "certificate") {
         // Run analysis for cerificate file.
         if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
-            print_warning(format!("There was an error analysing the certificate: {:?}",
+            print_warning(format!("There was an error analysing the certificate: {}",
                                   e.description()))
         }
     }
 
     // Run analysis for source code files.
-    code_analysis(manifest, config, package.as_ref(), results);
+    code::analysis(manifest, config, package.as_ref(), results)
 }
 
 #[cfg(not(feature = "certificate"))]

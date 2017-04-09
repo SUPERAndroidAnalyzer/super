@@ -2,7 +2,7 @@
 
 [![Build Status][linux_mac_build_img]][linux_mac_build]
 [![Build status][windows_build_img]][windows_build]
-[![Coverage Status][coverage_img]][coverage]
+[![codecov][coverage_img]][coverage]
 
 <img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
@@ -93,12 +93,12 @@ This program is free software: you can redistribute it and/or modify it under th
 General Public License as published by the Free Software Foundation, either version 3 of the
 License, or (at your option) any later version.
 
-[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=develop
+[linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master
 [linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
-[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/develop?svg=true
-[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/develop
-[coverage_img]: https://coveralls.io/repos/github/SUPERAndroidAnalyzer/super/badge.svg?branch=develop
-[coverage]: https://coveralls.io/github/SUPERAndroidAnalyzer/super?branch=develop
+[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true
+[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/master
+[coverage_img]: https://codecov.io/gh/SUPERAndroidAnalyzer/super/branch/master/graph/badge.svg
+[coverage]: https://codecov.io/gh/SUPERAndroidAnalyzer/super
 [compile]: http://superanalyzer.rocks/download.html#compile-from-source
 [downloads]: http://superanalyzer.rocks/download.html
 [rustup]: https://www.rustup.rs/

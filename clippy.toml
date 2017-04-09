@@ -1,0 +1,4 @@
+cyclomatic-complexity-threshold = 20
+single-char-binding-names-threshold = 4
+too-many-arguments-threshold = 7
+type-complexity-threshold = 125

@@ -1,14 +1,20 @@
+//! This module performs the static analysis of the certificate of the application.
+
 use std::fs;
-use std::process::{Command, exit};
+use std::process::Command;
 use std::borrow::Borrow;
 use std::error::Error as StdError;
 
 use colored::Colorize;
 use chrono::{Local, Datelike};
 
-use {Error, Config, Criticality, Result, print_error, print_vulnerability, print_warning};
+use {Config, Criticality, Result, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
+use error::*;
 
+/// Parses the given month string.
+///
+/// It will convert it to an integer representing the month number in the year.
 fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     match month_str.as_ref() {
         "Jan" => 1,
@@ -27,6 +33,9 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
     }
 }
 
+/// Performs the certificate analysis.
+///
+/// *Note: This requires OpenSSL.*
 pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                                            package: S,
                                            results: &mut Results)
@@ -35,7 +44,9 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         println!("Reading and analyzing the certificates…")
     }
 
-    let path = config.get_dist_folder()
+    // Gets the path to the certificate files.
+    let path = config
+        .get_dist_folder()
         .join(package.as_ref())
         .join("original")
         .join("META-INF");
@@ -69,9 +80,9 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             }
         }
 
+        // We found a certificate, let's get its information.
         if is_cert {
-            let output = Command::new("openssl")
-                .arg("pkcs7")
+            let output = Command::new("openssl").arg("pkcs7")
                 .arg("-inform")
                 .arg("DER")
                 .arg("-in")
@@ -79,20 +90,15 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 .arg("-noout")
                 .arg("-print_certs")
                 .arg("-text")
-                .output();
+                .output()
+                .chain_err(|| {
+                    "There was an error when executing the openssl command to check the certificate"
+                })?;
 
-            if output.is_err() {
-                print_error(format!("There was an error when executing the openssl command to \
-                                     check the certificate: {}",
-                                    output.err().unwrap()));
-                exit(Error::Unknown.into());
-            }
-
-            let output = output.unwrap();
             if !output.status.success() {
-                print_error(format!("The openssl command returned an error. More info: {}",
-                                    String::from_utf8_lossy(&output.stderr[..])));
-                exit(Error::Unknown.into());
+                return Err(format!("The openssl command returned an error. More info: {}",
+                                   String::from_utf8_lossy(&output.stderr[..]))
+                                   .into());
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);
@@ -104,6 +110,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             }
             results.set_certificate(cmd.borrow());
 
+            // Get the information we need.
             let mut issuer = String::new();
             let mut subject = String::new();
             let mut after = String::new();
@@ -123,6 +130,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             let mut subject = subject.split(": ");
             let mut after = after.split(": ");
 
+            // Detect Android debug certificate.
             if issuer.nth(1).unwrap().contains("Android Debug") {
                 let criticality = Criticality::Critical;
                 let description = "The application is signed with the Android Debug Certificate. \
@@ -142,6 +150,7 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 // TODO: This means it is self signed. Should we do something?
             }
 
+            // Check certificate expiration.
             let now = Local::now();
             let year = now.year();
             let month = now.month();

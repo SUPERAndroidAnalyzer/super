@@ -9,7 +9,7 @@ use clap::Shell;
 mod cli;
 
 fn main() {
-    let mut cli = cli::generate_cli();
+    let mut cli = cli::generate();
     let mut out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
     out_dir.pop();
     out_dir.pop();

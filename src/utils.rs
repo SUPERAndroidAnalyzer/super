@@ -10,47 +10,37 @@ use xml::ParserConfig;
 use colored::Colorize;
 use log::LogLevel::Debug;
 
-use super::{Criticality, Result, Config};
+use error::*;
+use super::{Criticality, Config};
 
 /// Configuration for the XML parser.
-pub const PARSER_CONFIG: ParserConfig = ParserConfig {
-    trim_whitespace: true,
-    whitespace_to_characters: false,
-    cdata_to_characters: false,
-    ignore_comments: true,
-    coalesce_characters: true,
-};
-
-/// Prints an error to `stderr` in red.
-pub fn print_error<S: AsRef<str>>(error: S) {
-    if cfg!(not(test)) {
-        error!("{}", error.as_ref());
-
-        if !log_enabled!(Debug) {
-            println!("If you need more information, try to run the program again with the {} \
-                      flag.",
-                     "-v".bold());
-        } else {
-            sleep(Duration::from_millis(200));
-        }
-    }
+lazy_static! {
+    /// XML parser configuration.
+    pub static ref PARSER_CONFIG: ParserConfig = ParserConfig::new()
+    .trim_whitespace(true)
+    .whitespace_to_characters(true)
+    .cdata_to_characters(false)
+    .ignore_comments(true)
+    .coalesce_characters(true);
 }
 
 /// Prints a warning to `stderr` in yellow.
+#[allow(print_stdout)]
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
 
-        if !log_enabled!(Debug) {
+        if log_enabled!(Debug) {
+            sleep(Duration::from_millis(200));
+        } else {
             println!("If you need more information, try to run the program again with the {} flag.",
                      "-v".bold())
-        } else {
-            sleep(Duration::from_millis(200));
         }
     }
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
+#[allow(print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!("Possible {} criticality vulnerability found!: {}",
@@ -73,7 +63,11 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
 ///
 /// Note: it will panic if the path has no `file_stem`.
 pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
-    path.as_ref().file_stem().unwrap().to_string_lossy().into_owned()
+    path.as_ref()
+        .file_stem()
+        .unwrap()
+        .to_string_lossy()
+        .into_owned()
 }
 
 /// Gets the code snippet near the start and end lines.
@@ -98,28 +92,30 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
                                                 package: P)
                                                 -> Result<String> {
     let mut file = fs::File::open({
-        let path = config.get_dist_folder()
-            .join(package.as_ref())
-            .join("res")
-            .join("values-en")
-            .join("strings.xml");
+                                      let path = config
+                                          .get_dist_folder()
+                                          .join(package.as_ref())
+                                          .join("res")
+                                          .join("values-en")
+                                          .join("strings.xml");
 
-        if path.exists() {
-            path
-        } else {
-            config.get_dist_folder()
-                .join(package.as_ref())
-                .join("res")
-                .join("values")
-                .join("strings.xml")
-        }
-    })?;
+                                      if path.exists() {
+                                          path
+                                      } else {
+                                          config
+                                              .get_dist_folder()
+                                              .join(package.as_ref())
+                                              .join("res")
+                                              .join("values")
+                                              .join("strings.xml")
+                                      }
+                                  })?;
 
     let mut code = String::new();
     let _ = file.read_to_string(&mut code)?;
 
     let bytes = code.into_bytes();
-    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG);
+    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG.clone());
 
     let mut found = false;
     for e in parser {

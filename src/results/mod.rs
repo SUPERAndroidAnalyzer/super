@@ -14,7 +14,8 @@ mod report;
 pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
-use {Config, Result, Criticality, print_error, print_warning, get_package_name};
+use error::*;
+use {Config, Criticality, print_warning};
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -28,7 +29,7 @@ pub struct Results {
     app_min_sdk: u32,
     app_target_sdk: Option<u32>,
     app_fingerprint: FingerPrint,
-    #[allow(unused)]
+    #[cfg(feature = "certificate")]
     certificate: String,
     warnings: BTreeSet<Vulnerability>,
     low: BTreeSet<Vulnerability>,
@@ -38,58 +39,61 @@ pub struct Results {
 }
 
 impl Results {
-    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Option<Results> {
-        let path = config.get_results_folder().join(get_package_name(package.as_ref()));
-        if !path.exists() || config.is_force() {
-            if path.exists() {
-                if let Err(e) = fs::remove_dir_all(&path) {
-                    print_error(format!("An unknown error occurred when trying to delete the \
-                                         results folder: {}",
-                                        e));
-                    return None;
-                }
+    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Results> {
+        let fingerprint = match FingerPrint::new(package) {
+            Ok(f) => f,
+            Err(e) => {
+                print_warning(format!("An error occurred when trying to fingerprint the \
+                                       application: {}",
+                                      e));
+                return Err(e)?;
             }
-
-            let fingerprint = match FingerPrint::new(package) {
-                Ok(f) => f,
-                Err(e) => {
-                    print_error(format!("An error occurred when trying to fingerprint the \
-                                         application: {}",
-                                        e));
-                    return None;
-                }
-            };
-            if config.is_verbose() {
-                println!("The results struct has been created. All the vulnerabilitis will now \
+        };
+        if config.is_verbose() {
+            println!("The results struct has been created. All the vulnerabilitis will now \
                           be recorded and when the analysis ends, they will be written to result \
                           files.");
-            } else if !config.is_quiet() {
-                println!("Results struct created.");
-            }
-            Some(Results {
-                app_package: String::new(),
-                app_label: String::new(),
-                app_description: String::new(),
-                app_version: String::new(),
-                app_version_num: 0,
-                app_min_sdk: 0,
-                app_target_sdk: None,
-                app_fingerprint: fingerprint,
-                certificate: String::new(),
-                warnings: BTreeSet::new(),
-                low: BTreeSet::new(),
-                medium: BTreeSet::new(),
-                high: BTreeSet::new(),
-                critical: BTreeSet::new(),
-            })
-        } else {
-            if config.is_verbose() {
-                println!("The results for this application have already been generated. No need \
-                          to generate them again.");
-            } else {
-                println!("Skipping result generation.");
-            }
-            None
+        } else if !config.is_quiet() {
+            println!("Results struct created.");
+        }
+
+        #[cfg(feature = "certificate")]
+        {
+            Ok(Results {
+                   app_package: String::new(),
+                   app_label: String::new(),
+                   app_description: String::new(),
+                   app_version: String::new(),
+                   app_version_num: 0,
+                   app_min_sdk: 0,
+                   app_target_sdk: None,
+                   app_fingerprint: fingerprint,
+                   certificate: String::new(),
+                   warnings: BTreeSet::new(),
+                   low: BTreeSet::new(),
+                   medium: BTreeSet::new(),
+                   high: BTreeSet::new(),
+                   critical: BTreeSet::new(),
+               })
+        }
+
+        #[cfg(not(feature = "certificate"))]
+        {
+            Ok(Results {
+                   app_package: String::new(),
+                   app_label: String::new(),
+                   app_description: String::new(),
+                   app_version: String::new(),
+                   app_version_num: 0,
+                   app_min_sdk: 0,
+                   app_target_sdk: None,
+                   app_fingerprint: fingerprint,
+                   warnings: BTreeSet::new(),
+                   low: BTreeSet::new(),
+                   medium: BTreeSet::new(),
+                   high: BTreeSet::new(),
+                   critical: BTreeSet::new(),
+               })
         }
     }
 
@@ -150,42 +154,78 @@ impl Results {
         }
     }
 
-    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<bool> {
+    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
         let path = config.get_results_folder().join(&self.app_package);
-        if config.is_force() || !path.exists() {
-            if path.exists() {
-                if config.is_verbose() {
-                    println!("The application results folder exists. But no more…");
-                }
-
-                if let Err(e) = fs::remove_dir_all(&path) {
-                    print_warning(format!("There was an error when removing the results \
-                                           folder: {}",
-                                          e.description()));
-                }
-            }
+        if config.is_verbose() {
+            println!("Starting report generation.");
+        }
+        if !path.exists() {
             if config.is_verbose() {
-                println!("Starting report generation. First we'll create the results folder.");
+                println!("First we'll create the results folder.");
             }
             fs::create_dir_all(&path)?;
             if config.is_verbose() {
                 println!("Results folder created. Time to create the reports.");
             }
+        }
+        if config.has_to_generate_json() {
+            let path = path.join("results.json");
 
-            if config.has_to_generate_json() {
+            if config.is_force() || !path.exists() {
+                if path.exists() {
+                    if config.is_verbose() {
+                        println!("The application JSON results file exists. But no more…");
+                    }
+
+                    if let Err(e) = fs::remove_file(&path) {
+                        print_warning(format!("There was an error when removing the JSON results \
+                        file: {}",
+                                              e.description()));
+                    }
+                }
                 let mut json_reporter = Json::new();
 
                 if let Err(e) = json_reporter.generate(config, self) {
                     print_warning(format!("There was en error generating JSON report: {}", e));
                 }
 
-                if config.is_verbose() {
+                if !config.is_quiet() {
                     println!("JSON report generated.");
-                    println!();
+                }
+            } else {
+                if config.is_verbose() {
+                    println!("Seems that the JSON report has already been generated. There is no \
+                              need to do it again.");
+                } else {
+                    println!("Skipping JSON report generation.");
                 }
             }
+        }
 
-            if config.has_to_generate_html() {
+        if config.has_to_generate_html() {
+            let index_path = path.join("index.html");
+
+            if config.is_force() || !index_path.exists() {
+                if path.exists() {
+                    if config.is_verbose() {
+                        println!("The application HTML resulsts exist. But no more…");
+                    }
+
+                    for f in
+                        fs::read_dir(path)
+                            .chain_err(|| "there was an error when removing the HTML results")? {
+                        let f = f?;
+
+                        if f.file_type()?.is_dir() {
+                            fs::remove_dir_all(f.path())
+                                .chain_err(|| "there was an error when removing the HTML results")?;
+                        } else if &f.file_name() != "results.json" {
+                            fs::remove_file(f.path())
+                                .chain_err(|| "there was an error when removing the HTML results")?;
+                        }
+                    }
+                }
+
                 let handelbars_report_result = HandlebarsReport::new(config.get_template_path(),
                                                                      package.as_ref().to_owned());
 
@@ -194,22 +234,21 @@ impl Results {
                         print_warning(format!("There was en error generating HTML report: {}", e));
                     }
 
-                    if config.is_verbose() {
+                    if !config.is_quiet() {
                         println!("HTML report generated.");
                     }
                 }
-            }
-
-            Ok(true)
-        } else {
-            if config.is_verbose() {
-                println!("Seems that the report has already been generated. There is no need to \
-                          o it again.");
             } else {
-                println!("Skipping report generation.");
+                if config.is_verbose() {
+                    println!("Seems that the HTML report has already been generated. There is no
+                              need to do it again.");
+                } else {
+                    println!("Skipping HTML report generation.");
+                }
             }
-            Ok(false)
         }
+
+        Ok(())
     }
 }
 
@@ -218,35 +257,60 @@ impl Serialize for Results {
         where S: Serializer
     {
         let now = Local::now();
-        let mut ser_struct = serializer.serialize_struct("Results", 22)?;
+        let mut ser_struct = serializer
+            .serialize_struct("Results",
+                              if cfg!(feature = "certificate") {
+                                  22
+                              } else {
+                                  21
+                              })?;
 
-        ser_struct.serialize_field("super_version", crate_version!())?;
+        ser_struct
+            .serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
-        ser_struct.serialize_field("now_rfc2822", &now.to_rfc2822())?;
-        ser_struct.serialize_field("now_rfc3339", &now.to_rfc3339())?;
+        ser_struct
+            .serialize_field("now_rfc2822", &now.to_rfc2822())?;
+        ser_struct
+            .serialize_field("now_rfc3339", &now.to_rfc3339())?;
 
-        ser_struct.serialize_field("app_package", &self.app_package)?;
-        ser_struct.serialize_field("app_version", &self.app_version)?;
-        ser_struct.serialize_field("app_version_number", &self.app_version_num)?;
-        ser_struct.serialize_field("app_fingerprint", &self.app_fingerprint)?;
-        ser_struct.serialize_field("certificate", &self.certificate)?;
+        ser_struct
+            .serialize_field("app_package", &self.app_package)?;
+        ser_struct
+            .serialize_field("app_version", &self.app_version)?;
+        ser_struct
+            .serialize_field("app_version_number", &self.app_version_num)?;
+        ser_struct
+            .serialize_field("app_fingerprint", &self.app_fingerprint)?;
 
-        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
-        ser_struct.serialize_field("app_target_sdk", &self.app_target_sdk)?;
+        #[cfg(feature = "certificate")]
+        {
+            ser_struct
+                .serialize_field("certificate", &self.certificate)?;
+        }
 
-        ser_struct.serialize_field("total_vulnerabilities",
+        ser_struct
+            .serialize_field("app_min_sdk", &self.app_min_sdk)?;
+        ser_struct
+            .serialize_field("app_target_sdk", &self.app_target_sdk)?;
+
+        ser_struct
+            .serialize_field("total_vulnerabilities",
                              &(self.low.len() + self.medium.len() + self.high.len() +
                                self.critical.len()))?;
         ser_struct.serialize_field("criticals", &self.critical)?;
-        ser_struct.serialize_field("criticals_len", &self.critical.len())?;
+        ser_struct
+            .serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;
-        ser_struct.serialize_field("highs_len", &self.high.len())?;
+        ser_struct
+            .serialize_field("highs_len", &self.high.len())?;
         ser_struct.serialize_field("mediums", &self.medium)?;
-        ser_struct.serialize_field("mediums_len", &self.medium.len())?;
+        ser_struct
+            .serialize_field("mediums_len", &self.medium.len())?;
         ser_struct.serialize_field("lows", &self.low)?;
         ser_struct.serialize_field("lows_len", &self.low.len())?;
         ser_struct.serialize_field("warnings", &self.warnings)?;
-        ser_struct.serialize_field("warnings_len", &self.warnings.len())?;
+        ser_struct
+            .serialize_field("warnings_len", &self.warnings.len())?;
 
         ser_struct.end()
     }

@@ -1,27 +1,33 @@
 //! SUPER Android Analyzer
 
-// #![forbid(missing_docs, warnings)]
-#![deny(deprecated, improper_ctypes, non_shorthand_field_patterns, overflowing_literals,
-    plugin_as_library, private_no_mangle_fns, private_no_mangle_statics, stable_features,
-    unconditional_recursion, unknown_lints, unused, unused_allocation, unused_attributes,
-    unused_comparisons, unused_features, unused_parens, while_true)]
-#![warn(missing_docs, trivial_casts, trivial_numeric_casts, unused, unused_extern_crates,
-    unused_import_braces, unused_qualifications, unused_results, variant_size_differences)]
+#![forbid(deprecated, overflowing_literals, stable_features, trivial_casts, unconditional_recursion,
+    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_truem,
+    unused_parens, unused_comparisons, unused_extern_crates, unused_import_braces, unused_results,
+    improper_ctypes, non_shorthand_field_patterns, private_no_mangle_fns, private_no_mangle_statics,
+    filter_map, used_underscore_binding, option_map_unwrap_or, option_map_unwrap_or_else,
+    mutex_integer, mut_mut, mem_forget)]
+#![deny(unused_qualifications, unused, unused_attributes)]
+#![warn(missing_docs, variant_size_differences, enum_glob_use, if_not_else,
+    invalid_upcast_comparisons, items_after_statements, non_ascii_literal, nonminimal_bool,
+    pub_enum_variant_names, shadow_reuse, shadow_same, shadow_unrelated, similar_names,
+    single_match_else, string_add, string_add_assign, unicode_not_nfc, unseparated_literal_suffix,
+    use_debug, wrong_pub_self_convention, doc_markdown)]
+// Allowing these at least for now.
+#![allow(missing_docs_in_private_items, unknown_lints, print_stdout, stutter, option_unwrap_used,
+    result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
+    indexing_slicing, cast_precision_loss, cast_sign_loss)]
 
 #[macro_use]
 extern crate clap;
 extern crate colored;
-extern crate zip;
 extern crate xml;
 extern crate serde;
 extern crate serde_json;
-extern crate yaml_rust;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
 #[macro_use]
 extern crate lazy_static;
-extern crate crypto;
 extern crate rustc_serialize;
 extern crate open;
 extern crate bytecount;
@@ -29,7 +35,14 @@ extern crate handlebars;
 #[macro_use]
 extern crate log;
 extern crate env_logger;
+#[macro_use]
+extern crate error_chain;
+extern crate abxml;
+extern crate md5;
+extern crate sha1;
+extern crate sha2;
 
+mod error;
 mod cli;
 mod decompilation;
 mod static_analysis;
@@ -38,12 +51,11 @@ mod config;
 mod utils;
 
 use std::{fs, io, fmt, result};
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::fmt::Display;
 use std::str::FromStr;
 use std::error::Error as StdError;
 use std::io::Write;
-use std::process::exit;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
 use std::collections::BTreeMap;
@@ -54,18 +66,42 @@ use colored::Colorize;
 use log::{LogRecord, LogLevelFilter, LogLevel};
 use env_logger::LogBuilder;
 use std::env;
-
-use cli::generate_cli;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
+use error::*;
 pub use config::Config;
 pub use utils::*;
 
 static BANNER: &'static str = include_str!("banner.txt");
 
+#[allow(print_stdout)]
 fn main() {
-    let cli = generate_cli().get_matches();
+    if let Err(e) = run() {
+        error!("{}", e);
+
+        for e in e.iter().skip(1) {
+            println!("\t{}{}", "Caused by: ".bold(), e);
+        }
+
+        if !log_enabled!(LogLevel::Debug) {
+            println!("If you need more information, try to run the program again with the {} flag.",
+                     "-v".bold());
+        }
+
+        if let Some(backtrace) = e.backtrace() {
+            #[allow(use_debug)]
+            {
+                println!("backtrace: {:?}", backtrace);
+            }
+        }
+
+        ::std::process::exit(e.into());
+    }
+}
+
+fn run() -> Result<()> {
+    let cli = cli::generate().get_matches();
     let verbose = cli.is_present("verbose");
     initialize_logger(verbose);
 
@@ -74,6 +110,7 @@ fn main() {
         Err(e) => {
             print_warning(format!("There was an error when reading the config.toml file: {}",
                                   e.description()));
+
             Config::default()
         }
     };
@@ -84,13 +121,13 @@ fn main() {
             error_string.push_str(&error);
             error_string.push('\n');
         }
-        error_string.push_str("The configuration was loaded, in order, from the following \
-                               files:\n\t- Default built-in configuration\n");
+        error_string.push_str("The configuration was loaded, in order, from the following files: \
+                               \n\t- Default built-in configuration\n");
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
-        print_error(error_string);
-        exit(Error::Config.into());
+
+        return Err(ErrorKind::Config(error_string).into());
     }
 
     if config.is_verbose() {
@@ -112,7 +149,8 @@ fn main() {
     let total_start = Instant::now();
     for package in config.get_app_packages() {
         config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks);
+        analyze_package(package, &mut config, &mut benchmarks)
+            .chain_err(|| "Application analysis failed")?;
     }
 
     if config.is_bench() {
@@ -128,12 +166,15 @@ fn main() {
         }
         println!("{}", total_time);
     }
+
+    Ok(())
 }
 
 /// Analyzes the given package with the given config.
-fn analyze_package(package: PathBuf,
-                   config: &mut Config,
-                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>) {
+fn analyze_package<P: AsRef<Path>>(package: P,
+                                   config: &mut Config,
+                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
+                                   -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -144,232 +185,117 @@ fn analyze_package(package: PathBuf,
     }
     let start_time = Instant::now();
 
-    // APKTool app decompression
-    decompress(config, &package);
+    // Apk decompression
+    decompress(config, &package)
+        .chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
+        benchmarks
+            .get_mut(&package_name)
             .unwrap()
-            .push(Benchmark::new("ApkTool decompression", start_time.elapsed()));
+            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
     }
-
-    // Extracting the classes.dex from the .apk file
-    extract_dex(config, &package, benchmarks);
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package);
+    dex_to_jar(config, &package)
+        .chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
+        benchmarks
+            .get_mut(&package_name)
             .unwrap()
-            .push(Benchmark::new("Dex to Jar decompilation", dex_jar_time.elapsed()));
+            .push(Benchmark::new("Dex to Jar decompilation (dex2jar Java dependency)",
+                                 dex_jar_time.elapsed()));
     }
 
     if config.is_verbose() {
         println!();
-        println!("Now it's time for the actual decompilation of the source code. We'll \
-                  translate Android JVM bytecode to Java, so that we can check the code \
-                  afterwards.");
+        println!("Now it's time for the actual decompilation of the source code. We'll translate
+                  Android JVM bytecode to Java, so that we can check the code afterwards.");
     }
 
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package);
+    decompile(config, &package)
+        .chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name)
+        benchmarks
+            .get_mut(&package_name)
             .unwrap()
-            .push(Benchmark::new("Decompilation", decompile_start.elapsed()));
+            .push(Benchmark::new("Decompilation (jd-cli Java dependency)",
+                                 decompile_start.elapsed()));
     }
 
-    if let Some(mut results) = Results::init(config, &package) {
-        let static_start = Instant::now();
-        // Static application analysis
-        static_analysis(config, &package_name, &mut results);
+    let mut results = Results::init(config, &package)?;
+    let static_start = Instant::now();
+    // Static application analysis
+    static_analysis(config, &package_name, &mut results);
 
-        if config.is_bench() {
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Total static analysis", static_start.elapsed()));
-        }
+    if config.is_bench() {
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Total static analysis", static_start.elapsed()));
+    }
 
-        // TODO dynamic analysis
+    // TODO dynamic analysis
 
-        if !config.is_quiet() {
-            println!();
-        }
+    if !config.is_quiet() {
+        println!();
+    }
 
-        let report_start = Instant::now();
-        match results.generate_report(config, &package_name) {
-            Ok(true) => {
-                if config.is_verbose() {
-                    println!("The results report has been saved. Everything went smoothly, \
-                              now you can check all the results.");
-                    println!();
-                    println!("I will now analyze myself for vulnerabilities…");
-                    sleep(Duration::from_millis(1500));
-                    println!("Nah, just kidding, I've been developed in {}!",
-                             "Rust".bold().green())
-                } else if !config.is_quiet() {
-                    println!("Report generated.");
-                }
-            }
-            Ok(false) => {}
-            Err(e) => {
-                print_error(format!("There was an error generating the results report: {}",
-                                    e.description()));
-                exit(Error::Unknown.into())
-            }
-        }
+    let report_start = Instant::now();
+    results
+        .generate_report(config, &package_name)
+        .chain_err(|| "There was an error generating the results report")?;
 
+    if config.is_verbose() {
+        println!("Everything went smoothly, now you can check all the results.");
+        println!();
+        println!("I will now analyze myself for vulnerabilities…");
+        sleep(Duration::from_millis(1500));
+        println!("Nah, just kidding, I've been developed in {}!",
+                 "Rust".bold().green())
+    }
 
-        if config.is_bench() {
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new("Report generation", report_start.elapsed()));
-            benchmarks.get_mut(&package_name)
-                .unwrap()
-                .push(Benchmark::new(format!("Total time for {}", package_name),
-                                     start_time.elapsed()));
-        }
+    if config.is_bench() {
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Report generation", report_start.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(format!("Total time for {}", package_name),
+                                 start_time.elapsed()));
+    }
 
-        if config.is_open() {
-            let report_path = config.get_results_folder()
+    if config.is_open() {
+        let open_path = if config.has_to_generate_html() {
+            config
+                .get_results_folder()
                 .join(results.get_app_package())
-                .join("index.html");
-            if let Err(e) = open::that(report_path) {
-                print_error(format!("Report could not be opened automatically: {}",
-                                    e.description()));
-            }
-        }
-    } else if config.is_open() {
-        let report_path = config.get_results_folder()
-            .join(package_name)
-            .join("index.html");
-        if let Err(e) = open::that(report_path) {
-            print_error(format!("Report could not be opened automatically: {}",
-                                e.description()));
-        }
-    }
-}
+                .join("index.html")
+        } else {
+            config
+                .get_results_folder()
+                .join(results.get_app_package())
+                .join("results.json")
+        };
 
-#[derive(Debug)]
-/// Enum representing all error types of SUPER.
-pub enum Error {
-    /// The *.apk* file does not exist.
-    AppNotExists,
-    /// Parsing error.
-    Parse,
-    /// JSON error.
-    JSON(serde_json::error::Error),
-    /// The code was not found.
-    CodeNotFound,
-    /// Configuration error.
-    Config,
-    /// I/O error.
-    IO(io::Error),
-    /// Template name error.
-    TemplateName(String),
-    /// Template error.
-    Template(Box<handlebars::TemplateError>),
-    /// Template rendering error.
-    Render(Box<handlebars::RenderError>),
-    /// Unknown error.
-    Unknown,
-}
+        let status = open::that(open_path)
+            .chain_err(|| "Report could not be opened automatically")?;
 
-impl Into<i32> for Error {
-    fn into(self) -> i32 {
-        match self {
-            Error::AppNotExists => 10,
-            Error::Parse => 20,
-            Error::JSON(_) => 30,
-            Error::CodeNotFound => 40,
-            Error::Config => 50,
-            Error::IO(_) => 100,
-            Error::TemplateName(_) => 125,
-            Error::Template(_) => 150,
-            Error::Render(_) => 175,
-            Error::Unknown => 1,
-        }
-    }
-}
-
-impl From<io::Error> for Error {
-    fn from(err: io::Error) -> Error {
-        Error::IO(err)
-    }
-}
-
-impl From<handlebars::TemplateFileError> for Error {
-    fn from(err: handlebars::TemplateFileError) -> Error {
-        match err {
-            handlebars::TemplateFileError::TemplateError(e) => e.into(),
-            handlebars::TemplateFileError::IOError(e, _) => e.into(),
-        }
-    }
-}
-
-impl From<handlebars::TemplateError> for Error {
-    fn from(err: handlebars::TemplateError) -> Error {
-        Error::Template(Box::new(err))
-    }
-}
-
-impl From<handlebars::RenderError> for Error {
-    fn from(err: handlebars::RenderError) -> Error {
-        Error::Render(Box::new(err))
-    }
-}
-
-impl From<serde_json::error::Error> for Error {
-    fn from(err: serde_json::error::Error) -> Error {
-        Error::JSON(err)
-    }
-}
-
-impl From<yaml_rust::ScanError> for Error {
-    fn from(_: yaml_rust::ScanError) -> Error {
-        Error::Parse
-    }
-}
-
-impl Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.description())
-    }
-}
-
-impl StdError for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::AppNotExists => "the application has not been found",
-            Error::Parse => "there was an error in some parsing process",
-            Error::JSON(ref e) => e.description(),
-            Error::CodeNotFound => "the code was not found in the file",
-            Error::Config => "there was an error in the configuration",
-            Error::IO(ref e) => e.description(),
-            Error::TemplateName(ref e) => e,
-            Error::Template(ref e) => e.description(),
-            Error::Render(ref e) => e.description(),
-            Error::Unknown => "an unknown error occurred",
+        if !status.success() {
+            return Err(format!("Report opening errored with status code: {}", status).into());
         }
     }
 
-    fn cause(&self) -> Option<&StdError> {
-        match *self {
-            Error::IO(ref e) => Some(e),
-            Error::Template(ref e) => Some(e),
-            Error::Render(ref e) => Some(e),
-            _ => None,
-        }
-    }
+    Ok(())
 }
-
-/// SUPER result type.
-pub type Result<T> = std::result::Result<T, Error>;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -387,6 +313,7 @@ pub enum Criticality {
 }
 
 impl Display for Criticality {
+    #[allow(use_debug)]
     fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
@@ -409,7 +336,7 @@ impl FromStr for Criticality {
             "medium" => Ok(Criticality::Medium),
             "low" => Ok(Criticality::Low),
             "warning" => Ok(Criticality::Warning),
-            _ => Err(Error::Parse),
+            _ => Err(ErrorKind::Parse.into()),
         }
     }
 }
@@ -460,17 +387,13 @@ fn initialize_logger(is_verbose: bool) {
 
     let mut builder = LogBuilder::new();
 
-    let builder_state = match env::var("RUST_LOG") {
-        Ok(env_log) => {
-            builder.format(format)
-                .parse(&env_log)
-                .init()
-        }
-        Err(_) => {
-            builder.format(format)
-                .filter(Some("super"), log_level)
-                .init()
-        }
+    let builder_state = if let Ok(env_log) = env::var("RUST_LOG") {
+        builder.format(format).parse(&env_log).init()
+    } else {
+        builder
+            .format(format)
+            .filter(Some("super"), log_level)
+            .init()
     };
 
     if let Err(e) = builder_state {
