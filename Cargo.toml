@@ -1,6 +1,6 @@
 [package]
 name = "super-analyzer"
-version = "0.4.0-dev"
+version = "0.4.0"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
@@ -97,24 +97,24 @@ assets = [
     ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-writer-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
     ["vendor/dex2jar-2.1-SNAPSHOT/lib/dx-1.7.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
     #CSS
-    ["templates/super-analyzer/css/androidstudio.css", "usr/share/super-analyzer/templates/super-analyzer/css/", "644"],
-    ["templates/super-analyzer/css/style.css", "usr/share/super-analyzer/templates/super-analyzer/css/", "644"],
+    ["templates/super/css/androidstudio.css", "usr/share/super-analyzer/templates/super/css/", "644"],
+    ["templates/super/css/style.css", "usr/share/super-analyzer/templates/super/css/", "644"],
     # Images
-    ["templates/super-analyzer/img/folder-icon.png", "usr/share/super-analyzer/templates/super-analyzer/img/", "644"],
-    ["templates/super-analyzer/img/java-icon.png", "usr/share/super-analyzer/templates/super-analyzer/img/", "644"],
-    ["templates/super-analyzer/img/xml-icon.png", "usr/share/super-analyzer/templates/super-analyzer/img/", "644"],
-    ["templates/super-analyzer/img/report.png", "usr/share/super-analyzer/vendor/results_template/img/", "644"],
-    ["templates/super-analyzer/img/logo.png", "usr/share/super-analyzer/templates/super-analyzer/img/", "644"],
+    ["templates/super/img/folder-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/img/java-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/img/xml-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/img/report.png", "usr/share/super-analyzer/vendor/results_template/img/", "644"],
+    ["templates/super/img/logo.png", "usr/share/super-analyzer/templates/super/img/", "644"],
     # JavaScript
-    ["templates/super-analyzer/js/highlight.js.LICENSE", "usr/share/super-analyzer/templates/super-analyzer/js/", "644"],
-    ["templates/super-analyzer/js/highlight.pack.js", "usr/share/super-analyzer/templates/super-analyzer/js/", "644"],
-    ["templates/super-analyzer/js/jquery-3.2.0.slim.min.js", "usr/share/super-analyzer/templates/super-analyzer/js/", "644"],
-    ["templates/super-analyzer/js/src_nav.js", "usr/share/super-analyzer/templates/super-analyzer/js/", "644"],
+    ["templates/super/js/highlight.js.LICENSE", "usr/share/super-analyzer/templates/super/js/", "644"],
+    ["templates/super/js/highlight.pack.js", "usr/share/super-analyzer/templates/super/js/", "644"],
+    ["templates/super/js/jquery-3.2.0.slim.min.js", "usr/share/super-analyzer/templates/super/js/", "644"],
+    ["templates/super/js/src_nav.js", "usr/share/super-analyzer/templates/super/js/", "644"],
     # templates
-    ["templates/super-analyzer/code.hbs", "usr/share/super-analyzer/templates/super-analyzer/", "644"],
-    ["templates/super-analyzer/report.hbs", "usr/share/super-analyzer/templates/super-analyzer/", "644"],
-    ["templates/super-analyzer/src.hbs", "usr/share/super-analyzer/templates/super-analyzer/", "644"],
-    ["templates/super-analyzer/vulnerability.hbs", "usr/share/super-analyzer/templates/super-analyzer/", "644"],
+    ["templates/super/code.hbs", "usr/share/super-analyzer/templates/super/", "644"],
+    ["templates/super/report.hbs", "usr/share/super-analyzer/templates/super/", "644"],
+    ["templates/super/src.hbs", "usr/share/super-analyzer/templates/super/", "644"],
+    ["templates/super/vulnerability.hbs", "usr/share/super-analyzer/templates/super/", "644"],
     # Config
     ["rules.json", "etc/super-analyzer/", "644"],
     ["config.toml", "etc/super-analyzer/", "644"],

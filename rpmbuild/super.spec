@@ -38,10 +38,10 @@ install -p -m 755 target/release/_super %{buildroot}%{_datadir}/zsh/site-functio
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
-install -p -m 644 -D templates/%{name}/css/* %{buildroot}%{_datadir}/%{name}/templates/super/css/
-install -p -m 644 -D templates/%{name}/img/* %{buildroot}%{_datadir}/%{name}/templates/super/img/
-install -p -m 644 -D templates/%{name}/js/* %{buildroot}%{_datadir}/%{name}/templates/super/js/
-install -p -m 644 -D templates/%{name}/*.hbs %{buildroot}%{_datadir}/%{name}/templates/super/
+install -p -m 644 -D templates/super/css/* %{buildroot}%{_datadir}/%{name}/templates/super/css/
+install -p -m 644 -D templates/super/img/* %{buildroot}%{_datadir}/%{name}/templates/super/img/
+install -p -m 644 -D templates/super/js/* %{buildroot}%{_datadir}/%{name}/templates/super/js/
+install -p -m 644 -D templates/super/*.hbs %{buildroot}%{_datadir}/%{name}/templates/super/
 install -p -m 755 -D vendor/*.jar %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 -D vendor/*.txt %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 rules.json %{buildroot}%{_sysconfdir}/%{name}/
