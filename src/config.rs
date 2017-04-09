@@ -690,14 +690,14 @@ impl Default for Config {
     #[cfg(target_family = "unix")]
     fn default() -> Config {
         let mut config = Config::local_default();
-        let etc_rules = PathBuf::from("/etc/super/rules.json");
+        let etc_rules = PathBuf::from("/etc/super-analyzer/rules.json");
         if etc_rules.exists() {
             config.rules_json = etc_rules;
         }
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super"
+                                       "/usr/local/super-analyzer"
                                    } else {
-                                       "/usr/share/super"
+                                       "/usr/share/super-analyzer"
                                    });
         if share_path.exists() {
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
@@ -814,11 +814,11 @@ mod tests {
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super"
+                                       "/usr/local/super-analyzer"
                                    } else if cfg!(target_family = "windows") {
             ""
         } else {
-            "/usr/share/super"
+            "/usr/share/super-analyzer"
         });
         let share_path = if share_path.exists() {
             share_path
@@ -832,8 +832,9 @@ mod tests {
         assert_eq!(config.get_templates_folder(), share_path.join("templates"));
         assert_eq!(config.get_template_path(),
                    share_path.join("templates").join("super"));
-        if cfg!(target_family = "unix") && Path::new("/etc/super/rules.json").exists() {
-            assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
+        if cfg!(target_family = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
+            assert_eq!(config.get_rules_json(),
+                       Path::new("/etc/super-analyzer/rules.json"));
         } else {
             assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
@@ -906,15 +907,16 @@ mod tests {
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_dex2jar_folder(),
-                   Path::new("/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"));
+                   Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT"));
         assert_eq!(config.get_jd_cmd_file(),
-                   Path::new("/usr/share/super/vendor/jd-cmd.jar"));
+                   Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar"));
         assert_eq!(config.get_templates_folder(),
-                   Path::new("/usr/share/super/templates"));
+                   Path::new("/usr/share/super-analyzer/templates"));
         assert_eq!(config.get_template_path(),
-                   Path::new("/usr/share/super/templates/super"));
+                   Path::new("/usr/share/super-analyzer/templates/super"));
         assert_eq!(config.get_template_name(), "super");
-        assert_eq!(config.get_rules_json(), Path::new("/etc/super/rules.json"));
+        assert_eq!(config.get_rules_json(),
+                   Path::new("/etc/super-analyzer/rules.json"));
         assert_eq!(config.get_unknown_permission_criticality(),
                    Criticality::Low);
         assert_eq!(config.get_unknown_permission_description(),
