@@ -14,19 +14,19 @@
 # results_folder = "results"
 
 # Dex2Jar folder
-# dex2jar_folder = "/usr/share/super/vendor/dex2jar-2.1-SNAPSHOT"
+# dex2jar_folder = "/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT"
 
 # JD-cmd JAR file
-# jd_cmd_file = "/usr/share/super/vendor/jd-cmd.jar"
+# jd_cmd_file = "/usr/share/super-analyzer/vendor/jd-cmd.jar"
 
 # Templates folder
-# templates_folder = "/usr/share/super/templates"
+# templates_folder = "/usr/share/super-analyzer/templates"
 
 # Results template used
 # template = "super"
 
 # Vulnerability rules JSON
-# rules_json = "/etc/super/rules.json"
+# rules_json = "/etc/super-analyzer/rules.json"
 
 # Generates HTML report
 # html_report = true

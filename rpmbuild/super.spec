@@ -14,6 +14,7 @@ Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 %prep
 %autosetup
 /usr/bin/curl https://sh.rustup.rs -sSf | sh -s -- -y
+~/.cargo/bin/rustup update
 
 %build
 ~/.cargo/bin/cargo build --release
@@ -23,24 +24,24 @@ mkdir -p %{buildroot}%{_bindir}
 mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
 mkdir -p %{buildroot}%{_datadir}/fish/vendor_completions.d
 mkdir -p %{buildroot}%{_datadir}/zsh/site-functions
-mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/css
-mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/img
-mkdir -p %{buildroot}%{_datadir}/%{name}/templates/%{name}/js
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/css
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/img
+mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/js
 mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_defaultdocdir}/%{name}/
 install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
-install -p -m 755 target/release/%{name} %{buildroot}%{_bindir}/
-install -p -m 755 target/release/%{name}.bash-completion %{buildroot}%{_datadir}/bash-completion/completions/
-install -p -m 755 target/release/%{name}.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/
-install -p -m 755 target/release/_%{name} %{buildroot}%{_datadir}/zsh/site-functions/
+install -p -m 755 target/release/super %{buildroot}%{_bindir}/
+install -p -m 755 target/release/super.bash-completion %{buildroot}%{_datadir}/bash-completion/completions/
+install -p -m 755 target/release/super.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/
+install -p -m 755 target/release/_super %{buildroot}%{_datadir}/zsh/site-functions/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
-install -p -m 644 -D templates/%{name}/css/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/css/
-install -p -m 644 -D templates/%{name}/img/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/img/
-install -p -m 644 -D templates/%{name}/js/* %{buildroot}%{_datadir}/%{name}/templates/%{name}/js/
-install -p -m 644 -D templates/%{name}/*.hbs %{buildroot}%{_datadir}/%{name}/templates/%{name}/
+install -p -m 644 -D templates/%{name}/css/* %{buildroot}%{_datadir}/%{name}/templates/super/css/
+install -p -m 644 -D templates/%{name}/img/* %{buildroot}%{_datadir}/%{name}/templates/super/img/
+install -p -m 644 -D templates/%{name}/js/* %{buildroot}%{_datadir}/%{name}/templates/super/js/
+install -p -m 644 -D templates/%{name}/*.hbs %{buildroot}%{_datadir}/%{name}/templates/super/
 install -p -m 755 -D vendor/*.jar %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 -D vendor/*.txt %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 rules.json %{buildroot}%{_sysconfdir}/%{name}/
