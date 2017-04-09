@@ -67,7 +67,6 @@ FLAGS:
     -v, --verbose     If you'd like the auditor to talk more than necessary
 
 OPTIONS:
-        --apktool <apktool>                    Path to the apktool file
         --dex2jar <dex2jar>                    Where to store the jar files
         --dist <dist>                          Folder where distribution files will be extracted
         --downloads <downloads>                Folder where the downloads are stored
