@@ -23,6 +23,8 @@ extern crate colored;
 extern crate xml;
 extern crate serde;
 extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
 extern crate chrono;
 extern crate toml;
 extern crate regex;
@@ -50,7 +52,7 @@ mod results;
 mod config;
 mod utils;
 
-use std::{fs, io, fmt, result};
+use std::{fs, io, fmt};
 use std::path::Path;
 use std::fmt::Display;
 use std::str::FromStr;
@@ -59,8 +61,9 @@ use std::io::Write;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
 use std::collections::BTreeMap;
+use serde::{Serialize, Deserialize, Serializer, Deserializer};
+use std::result;
 
-use serde::ser::{Serialize, Serializer};
 use colored::Colorize;
 
 use log::{LogRecord, LogLevelFilter, LogLevel};
@@ -327,6 +330,27 @@ impl Serialize for Criticality {
         where S: Serializer
     {
         serializer.serialize_str(format!("{}", self).as_str())
+    }
+}
+
+impl Deserialize for Criticality {
+    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
+        where D: Deserializer
+    {
+        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+
+        match deser_result {
+            toml::value::Value::String(ref str) => {
+                match Criticality::from_str(&str) {
+                    Ok(criticality) => Ok(criticality),
+                    Err(_) => {
+                        Err(serde::de::Error::custom(format!("Unexpected value: {:?}",
+                                                             deser_result)))
+                    }
+                }
+            }
+            _ => Err(serde::de::Error::custom(format!("Unexpected value: {:?}", deser_result))),
+        }
     }
 }
 
