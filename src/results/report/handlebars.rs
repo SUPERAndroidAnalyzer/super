@@ -51,14 +51,15 @@ impl HandlebarsReport {
                     let template_file = path.file_stem()
                         .ok_or_else(|| {
                             ErrorKind::TemplateName("template files must have a file name"
-                                .to_string())
+                                                        .to_string())
                         })
                         .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| {
+                                      stem.to_str()
+                                          .ok_or_else(|| {
                                 ErrorKind::TemplateName("template names must be unicode"
-                                    .to_string())
+                                                            .to_string())
                             })
-                        })?;
+                                  })?;
 
 
                     handlebars
@@ -141,10 +142,7 @@ impl HandlebarsReport {
                         }
                     } else {
                         let mut object = Map::with_capacity(2);
-                        let name = path.file_name()
-                            .unwrap()
-                            .to_string_lossy()
-                            .into_owned();
+                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
 
                         let _ = object.insert("name".to_owned(), Value::String(name));
                         let _ = object.insert("menu".to_owned(), Value::Array(inner_menu));
@@ -155,10 +153,7 @@ impl HandlebarsReport {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
                         self.generate_code_html_for(&stripped, config, results, &self.package)?;
-                        let name = path.file_name()
-                            .unwrap()
-                            .to_string_lossy()
-                            .into_owned();
+                        let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = Map::with_capacity(3);
                         let _ = data.insert("name".to_owned(), Value::String(name));
                         let _ =

@@ -24,11 +24,12 @@ rust:
   - stable
   - 1.17.0
 
-# Load travis-cargo
+# Install clippy, rustfmt and cargo-deb, and set up PATH.
+# Using rustfmt git for now, released version has bugs.
 before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        ( cargo install rustfmt --force || true );
+        ( cargo install --git https://github.com/rust-lang-nursery/rustfmt.git --force || true );
         ( cargo install --git https://github.com/mmstick/cargo-deb.git || true );
       fi
   - |
@@ -54,11 +55,10 @@ script:
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
         cargo deb
       fi
-# Turning of format checking due to several rustfmt bugs.
-# - |
-#     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-#         cargo fmt -- --write-mode=diff
-#     fi
+  - |
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+          cargo fmt -- --write-mode=diff
+      fi
 
 # Send coverage reports and upload docs
 after_success:

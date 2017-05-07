@@ -112,10 +112,7 @@ pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
         }
     }
 
-    for vuln in Arc::try_unwrap(found_vulns)
-            .unwrap()
-            .into_inner()
-            .unwrap() {
+    for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
         results.add_vulnerability(vuln);
     }
 
@@ -265,10 +262,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(path: P,
        path.as_ref() == Path::new("smali") {
         return Ok(());
     }
-    let real_path = config
-        .get_dist_folder()
-        .join(package.as_ref())
-        .join(path);
+    let real_path = config.get_dist_folder().join(package.as_ref()).join(path);
     for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
@@ -718,16 +712,16 @@ mod tests {
         let rule = rules.get(1).unwrap();
 
         let should_match = &["catch (Exception e) {",
-                             "catch (Exception hello) {",
-                             "catch( Exception e ){",
-                             "catch (IOException|Exception e) {",
-                             "catch (Exception|IOException e) {",
-                             "catch (IOException | Exception e) {",
-                             "catch (IOException|Exception|PepeException e) {",
-                             "catch (SystemException|ApplicationException|PepeException e) {",
-                             "catch (IOException|Exception | PepeException e) {"];
+         "catch (Exception hello) {",
+         "catch( Exception e ){",
+         "catch (IOException|Exception e) {",
+         "catch (Exception|IOException e) {",
+         "catch (IOException | Exception e) {",
+         "catch (IOException|Exception|PepeException e) {",
+         "catch (SystemException|ApplicationException|PepeException e) {",
+         "catch (IOException|Exception | PepeException e) {"];
         let should_not_match = &["catch (IOException e) {",
-                                 "catch (IOException|PepeException e) {"];
+         "catch (IOException|PepeException e) {"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -745,15 +739,15 @@ mod tests {
         let rule = rules.get(2).unwrap();
 
         let should_match = &["throws Exception {",
-                             "throws Exception, IOException {",
-                             "throws IOException, Exception {",
-                             "throws Exception,IOException{",
-                             "throws IOException,Exception{",
-                             "throws SystemException,Exception{",
-                             "throws ApplicationException,Exception{",
-                             "throws PepeException, Exception, IOException {"];
+         "throws Exception, IOException {",
+         "throws IOException, Exception {",
+         "throws Exception,IOException{",
+         "throws IOException,Exception{",
+         "throws SystemException,Exception{",
+         "throws ApplicationException,Exception{",
+         "throws PepeException, Exception, IOException {"];
         let should_not_match = &["throws IOException {",
-                                 "throws PepeException, IOException {"];
+         "throws PepeException, IOException {"];
 
         for m in should_match {
             assert!(check_match(m, rule));
@@ -1524,11 +1518,11 @@ mod tests {
         let rule = rules.get(35).unwrap();
 
         let should_match = &["finally {                      return;",
-                             "finally {                      return;}"];
+         "finally {                      return;}"];
 
         let should_not_match = &["finally{}",
-                                 "finally{ var;}",
-                                 "finally { Printf (“Hello”); return true; }"];
+         "finally{ var;}",
+         "finally { Printf (“Hello”); return true; }"];
 
         for m in should_match {
             assert!(check_match(m, rule));

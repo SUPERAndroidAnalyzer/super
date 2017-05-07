@@ -301,8 +301,7 @@ impl Serialize for Results {
         ser_struct
             .serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;
-        ser_struct
-            .serialize_field("highs_len", &self.high.len())?;
+        ser_struct.serialize_field("highs_len", &self.high.len())?;
         ser_struct.serialize_field("mediums", &self.medium)?;
         ser_struct
             .serialize_field("mediums_len", &self.medium.len())?;

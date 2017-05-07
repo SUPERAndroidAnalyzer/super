@@ -32,16 +32,8 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         let line = l.as_i64().unwrap();
         (line, line)
     } else {
-        let start_line = vulnerability
-            .get("start_line")
-            .unwrap()
-            .as_i64()
-            .unwrap();
-        let end_line = vulnerability
-            .get("end_line")
-            .unwrap()
-            .as_i64()
-            .unwrap();
+        let start_line = vulnerability.get("start_line").unwrap().as_i64().unwrap();
+        let end_line = vulnerability.get("end_line").unwrap().as_i64().unwrap();
         (start_line, end_line)
     };
 
@@ -157,16 +149,8 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
         let line = l.as_i64().unwrap();
         (line, line)
     } else {
-        let start_line = vulnerability
-            .get("start_line")
-            .unwrap()
-            .as_i64()
-            .unwrap();
-        let end_line = vulnerability
-            .get("end_line")
-            .unwrap()
-            .as_i64()
-            .unwrap();
+        let start_line = vulnerability.get("start_line").unwrap().as_i64().unwrap();
+        let end_line = vulnerability.get("end_line").unwrap().as_i64().unwrap();
         (start_line, end_line)
     };
 
@@ -185,11 +169,7 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             let (indent, code) = split_indent(line);
             format!("<code class=\"vulnerable_line {}\">{}<span \
                      class=\"line_body\">{}</span></code>{}",
-                    vulnerability
-                        .get("criticality")
-                        .unwrap()
-                        .as_str()
-                        .unwrap(),
+                    vulnerability.get("criticality").unwrap().as_str().unwrap(),
                     indent,
                     html_escape(code),
                     line_separator)

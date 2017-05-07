@@ -171,10 +171,8 @@ impl Serialize for FingerPrint {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
         ser_struct
             .serialize_field("md5", &format!("{:x}", self.md5))?;
-        ser_struct
-            .serialize_field("sha1", &self.sha1.to_string())?;
-        ser_struct
-            .serialize_field("sha256", &self.sha256.to_hex())?;
+        ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
+        ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
         ser_struct.end()
     }
 }

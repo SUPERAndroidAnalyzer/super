@@ -72,23 +72,26 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 
         // Command to convert .dex to .jar. using dex2jar.
         // "-o path" to specify an output file
-        let output = Command::new(config.get_dex2jar_folder()
-                .join(if cfg!(target_family = "windows") {
-                    "d2j-dex2jar.bat"
-                } else {
-                    "d2j-dex2jar.sh"
-                })).arg(config.get_dist_folder()
-                .join(&package_name)
-                .join("classes.dex"))
-            .arg("-f")
-            .arg("-o")
-            .arg(&classes)
-            .output()
-            .chain_err(|| {
-                format!("There was an error when executing the {} to {} conversion command",
-                        ".dex".italic(),
-                        ".jar".italic())
-            })?;
+        let output = Command::new(config
+                                      .get_dex2jar_folder()
+                                      .join(if cfg!(target_family = "windows") {
+                                                "d2j-dex2jar.bat"
+                                            } else {
+                                                "d2j-dex2jar.sh"
+                                            }))
+                .arg(config
+                         .get_dist_folder()
+                         .join(&package_name)
+                         .join("classes.dex"))
+                .arg("-f")
+                .arg("-o")
+                .arg(&classes)
+                .output()
+                .chain_err(|| {
+                    format!("There was an error when executing the {} to {} conversion command",
+                            ".dex".italic(),
+                            ".jar".italic())
+                })?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -130,10 +133,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 /// Decompiles the application using _jd\_cmd_.
 pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
-    let out_path = config
-        .get_dist_folder()
-        .join(&package_name)
-        .join("classes");
+    let out_path = config.get_dist_folder().join(&package_name).join("classes");
     if config.is_force() || !out_path.exists() {
         config.set_force();
 
