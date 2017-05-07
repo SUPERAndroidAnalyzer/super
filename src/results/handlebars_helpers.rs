@@ -256,7 +256,7 @@ pub fn generate_menu(h: &Helper,
             RenderError::new("to generate the menu, the first parameter must be a menu array")
         })?;
     let _ = rc.writer.write(b"<ul>")?;
-    render_menu(menu, &mut rc.writer)?;
+    render_menu(&menu, &mut rc.writer)?;
     let _ = rc.writer.write(b"</ul>")?;
     Ok(())
 }

@@ -73,7 +73,7 @@ use error::*;
 pub use config::Config;
 pub use utils::*;
 
-static BANNER: &'static str = include_str!("banner.txt");
+static BANNER: &str = include_str!("banner.txt");
 
 #[allow(print_stdout)]
 fn main() {

@@ -538,8 +538,8 @@ impl Config {
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, value: Value) {
         if let Value::Array(permissions) = value {
-            let format_warning = format!("The permission configuration format must be the following:\n{}\nUsing \
-                         default.",
+            let format_warning = format!("The permission configuration format must be the \
+                        following:\n{}\nUsing default.",
                         "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
                          \"warning|low|medium|high|critical\"\nlabel = \"Permission \
                          label\"\ndescription = \"Long description to explain the vulnerability\""
@@ -756,8 +756,8 @@ impl PermissionConfig {
                                              description: D)
                                              -> PermissionConfig {
         PermissionConfig {
-            permission: permission,
-            criticality: criticality,
+            permission,
+            criticality,
             label: label.into(),
             description: description.into(),
         }

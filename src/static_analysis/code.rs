@@ -384,10 +384,10 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     };
 
     for rule in rules_json {
-        let format_warning = format!("Rules must be objects with the following structure:\n{}\nAn optional {} \
-                     attribute can be added: an array of regular expressions that if matched, \
-                     the found match will be discarded. You can also include an optional {} \
-                     attribute: an array of the permissions needed for this rule to be checked. \
+        let format_warning = format!("Rules must be objects with the following structure:\n{}\nAn \
+                     optional {} attribute can be added: an array of regular expressions that if \
+                     matched, the found match will be discarded. You can also include an optional \
+                     {} attribute: an array of the permissions needed for this rule to be checked. \
                      And finally, an optional {} attribute can be added where you can specify a \
                      second regular expression to check if the one in the {} attribute matches. \
                      You can add one or two capture groups with name from the match to this \
@@ -1140,11 +1140,13 @@ mod tests {
         let rules = load_rules(&config).unwrap();
         let rule = rules.get(18).unwrap();
 
-        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
-               scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
-               ArrayList<PendingIntent> deliveryIntents)",
-                             "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
-               scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
+        let should_match = &["telephony.SmsManager  sendMultipartTextMessage(String \
+                              destinationAddress, String scAddress, ArrayList<String> parts, \
+                              ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
+                              deliveryIntents)",
+                             "telephony.SmsManager  sendTextMessage(String destinationAddress, \
+                              String scAddress, String text, PendingIntent sentIntent, \
+                              PendingIntent deliveryIntent)",
                              "telephony.SmsManager  vnd.android-dir/mms-sms",
                              "telephony.SmsManager  vnd.android-dir/mms-sms"];
 
