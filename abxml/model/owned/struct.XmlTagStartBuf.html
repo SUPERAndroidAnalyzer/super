@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `XmlTagStartBuf` struct in crate `abxml`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, XmlTagStartBuf">
+
+    <title>abxml::model::owned::XmlTagStartBuf - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>abxml</a>::<wbr><a href='../index.html'>model</a>::<wbr><a href='index.html'>owned</a></p><script>window.sidebarCurrent = {name: 'XmlTagStartBuf', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>abxml</a>::<wbr><a href='../index.html'>model</a>::<wbr><a href='index.html'>owned</a>::<wbr><a class="struct" href=''>XmlTagStartBuf</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../src/abxml/model/owned/xml/tag_start.rs.html#10-25' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct XmlTagStartBuf { /* fields omitted */ }</pre><div class='docblock'><p>Representation of a XML Tag start chunk</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../../abxml/model/owned/struct.XmlTagStartBuf.html" title="struct abxml::model::owned::XmlTagStartBuf">XmlTagStartBuf</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/abxml/model/owned/xml/tag_start.rs.html#27-51' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(line: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; field1: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; namespace: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name_index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; field2: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; Self</code></span></h4>
+<div class='docblock'><p>Creates a new <code>XmlTagStartBuf</code> with the given data</p>
+</div><h4 id='method.add_attribute' class="method"><span id='add_attribute.v' class='invisible'><code>fn <a href='#method.add_attribute' class='fnname'>add_attribute</a>(&amp;mut self, attribute: <a class="struct" href="../../../abxml/model/owned/struct.AttributeBuf.html" title="struct abxml::model::owned::AttributeBuf">AttributeBuf</a>)</code></span></h4>
+<div class='docblock'><p>Adds a new attribute to the XML tag</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../../../abxml/model/trait.TagStart.html" title="trait abxml::model::TagStart">TagStart</a> for <a class="struct" href="../../../abxml/model/owned/struct.XmlTagStartBuf.html" title="struct abxml::model::owned::XmlTagStartBuf">XmlTagStartBuf</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/abxml/model/owned/xml/tag_start.rs.html#53-93' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Attribute' class="type"><span id='Attribute.t' class='invisible'><code>type <a href='../../../abxml/model/trait.TagStart.html#associatedtype.Attribute' class="type">Attribute</a> = <a class="struct" href="../../../abxml/model/owned/struct.AttributeBuf.html" title="struct abxml::model::owned::AttributeBuf">AttributeBuf</a></code></span></h4>
+<div class='docblock'><p>Type of the attributes</p>
+</div><h4 id='method.get_line' class="method"><span id='get_line.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_line' class='fnname'>get_line</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Return the ¿line in which the tag appear?</p>
+</div><h4 id='method.get_field1' class="method"><span id='get_field1.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_field1' class='fnname'>get_field1</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Return the content of the unknown field1</p>
+</div><h4 id='method.get_namespace_index' class="method"><span id='get_namespace_index.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_namespace_index' class='fnname'>get_namespace_index</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Return the namespace index. If there is no namespace, it will return 0xFFFFFFFF</p>
+</div><h4 id='method.get_element_name_index' class="method"><span id='get_element_name_index.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_element_name_index' class='fnname'>get_element_name_index</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Returns the index of the tag name on the string table</p>
+</div><h4 id='method.get_field2' class="method"><span id='get_field2.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_field2' class='fnname'>get_field2</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Return the content of the unknown field1</p>
+</div><h4 id='method.get_attributes_amount' class="method"><span id='get_attributes_amount.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_attributes_amount' class='fnname'>get_attributes_amount</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Return the amount of attributes this tag contains</p>
+</div><h4 id='method.get_class' class="method"><span id='get_class.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_class' class='fnname'>get_class</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<div class='docblock'><p>Returns the ¿class?</p>
+</div><h4 id='method.get_attribute' class="method"><span id='get_attribute.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.TagStart.html#tymethod.get_attribute' class='fnname'>get_attribute</a>(&amp;self, index: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;Self::<a class="trait" href="../../../abxml/model/trait.TagStart.html" title="trait abxml::model::TagStart">Attribute</a>&gt;</code></span></h4>
+<div class='docblock'><p>Returns the attribute on the <code>index</code> position or error if it is greater than <code>get_attributes_amount</code> <a href="../../../abxml/model/trait.TagStart.html#tymethod.get_attribute">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../../../abxml/model/owned/trait.OwnedBuf.html" title="trait abxml::model::owned::OwnedBuf">OwnedBuf</a> for <a class="struct" href="../../../abxml/model/owned/struct.XmlTagStartBuf.html" title="struct abxml::model::owned::XmlTagStartBuf">XmlTagStartBuf</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/abxml/model/owned/xml/tag_start.rs.html#95-128' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.get_token' class="method"><span id='get_token.v' class='invisible'><code>fn <a href='../../../abxml/model/owned/trait.OwnedBuf.html#tymethod.get_token' class='fnname'>get_token</a>(&amp;self) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a></code></span></h4>
+<div class='docblock'><p>Token that identifies the current chunk</p>
+</div><h4 id='method.get_body_data' class="method"><span id='get_body_data.v' class='invisible'><code>fn <a href='../../../abxml/model/owned/trait.OwnedBuf.html#tymethod.get_body_data' class='fnname'>get_body_data</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Return the bytes corresponding to chunk&#39;s body</p>
+</div><h4 id='method.get_header' class="method"><span id='get_header.v' class='invisible'><code>fn <a href='../../../abxml/model/owned/trait.OwnedBuf.html#method.get_header' class='fnname'>get_header</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Return the bytes corresponding to chunk&#39;s header</p>
+</div><h4 id='method.to_vec' class="method"><span id='to_vec.v' class='invisible'><code>fn <a href='../../../abxml/model/owned/trait.OwnedBuf.html#method.to_vec' class='fnname'>to_vec</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;</code></span></h4>
+<div class='docblock'><p>Convert the given <code>OwnedBuf</code> to a well formed chunk in form of vector of bytes</p>
+</div><h4 id='method.write_header' class="method"><span id='write_header.v' class='invisible'><code>fn <a href='../../../abxml/model/owned/trait.OwnedBuf.html#method.write_header' class='fnname'>write_header</a>(&amp;self, buffer: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;, body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>&gt;</code></span></h4>
+<div class='docblock'><p>Writes the header to the output buffer. It writes token, header size and chunk_size and then the data returned by <code>get_header</code>. <a href="../../../abxml/model/owned/trait.OwnedBuf.html#method.write_header">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "abxml";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>

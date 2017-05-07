@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `RenderContext` struct in crate `handlebars`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, RenderContext">
+
+    <title>handlebars::RenderContext - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>handlebars</a></p><script>window.sidebarCurrent = {name: 'RenderContext', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>handlebars</a>::<wbr><a class="struct" href=''>RenderContext</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/handlebars/render.rs.html#75-92' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct RenderContext&lt;'a&gt; {
+    pub writer: &amp;'a mut <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>,
+    pub current_template: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;,
+    pub root_template: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;,
+    pub disable_escape: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>,
+    // some fields omitted
+}</pre><div class='docblock'><p>The context of a render call</p>
+
+<p>this context stores information of a render and a writer where generated
+content is written to.</p>
+</div><h2 class='fields'>Fields</h2><span id='structfield.writer' class="structfield">
+                           <span id='writer.v' class='invisible'>
+                           <code>writer: &amp;'a mut <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a></code>
+                           </span></span><div class='docblock'><p>the <code>Write</code> where page is generated</p>
+</div><span id='structfield.current_template' class="structfield">
+                           <span id='current_template.v' class='invisible'>
+                           <code>current_template: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code>
+                           </span></span><div class='docblock'><p>current template name</p>
+</div><span id='structfield.root_template' class="structfield">
+                           <span id='root_template.v' class='invisible'>
+                           <code>root_template: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code>
+                           </span></span><div class='docblock'><p>root template name</p>
+</div><span id='structfield.disable_escape' class="structfield">
+                           <span id='disable_escape.v' class='invisible'>
+                           <code>disable_escape: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code>
+                           </span></span><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="struct" href="../handlebars/struct.RenderContext.html" title="struct handlebars::RenderContext">RenderContext</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/handlebars/render.rs.html#94-262' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(ctx: &amp;'a mut <a class="struct" href="../handlebars/struct.Context.html" title="struct handlebars::Context">Context</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; local_helpers: &amp;'a mut <a class="struct" href="https://doc.rust-lang.org/nightly/std/collections/hash/map/struct.HashMap.html" title="struct std::collections::hash::map::HashMap">HashMap</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html" title="struct alloc::rc::Rc">Rc</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="trait" href="../handlebars/trait.HelperDef.html" title="trait handlebars::HelperDef">HelperDef</a> + 'static&gt;&gt;&gt;,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; w: &amp;'a mut <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a>)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class="struct" href="../handlebars/struct.RenderContext.html" title="struct handlebars::RenderContext">RenderContext</a>&lt;'a&gt;</code></span></h4>
+<div class='docblock'><p>Create a render context from a <code>Write</code></p>
+</div><h4 id='method.derive' class="method"><span id='derive.v' class='invisible'><code>fn <a href='#method.derive' class='fnname'>derive</a>(&amp;mut self) -&gt; <a class="struct" href="../handlebars/struct.RenderContext.html" title="struct handlebars::RenderContext">RenderContext</a></code></span></h4>
+<h4 id='method.get_partial' class="method"><span id='get_partial.v' class='invisible'><code>fn <a href='#method.get_partial' class='fnname'>get_partial</a>(&amp;self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../handlebars/struct.Template.html" title="struct handlebars::Template">Template</a>&gt;</code></span></h4>
+<h4 id='method.set_partial' class="method"><span id='set_partial.v' class='invisible'><code>fn <a href='#method.set_partial' class='fnname'>set_partial</a>(&amp;mut self, name: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, result: <a class="struct" href="../handlebars/struct.Template.html" title="struct handlebars::Template">Template</a>)</code></span></h4>
+<h4 id='method.get_path' class="method"><span id='get_path.v' class='invisible'><code>fn <a href='#method.get_path' class='fnname'>get_path</a>(&amp;self) -&gt; &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<h4 id='method.set_path' class="method"><span id='set_path.v' class='invisible'><code>fn <a href='#method.set_path' class='fnname'>set_path</a>(&amp;mut self, path: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>)</code></span></h4>
+<h4 id='method.get_local_path_root' class="method"><span id='get_local_path_root.v' class='invisible'><code>fn <a href='#method.get_local_path_root' class='fnname'>get_local_path_root</a>(&amp;self) -&gt; &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec_deque/struct.VecDeque.html" title="struct collections::vec_deque::VecDeque">VecDeque</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code></span></h4>
+<h4 id='method.push_local_path_root' class="method"><span id='push_local_path_root.v' class='invisible'><code>fn <a href='#method.push_local_path_root' class='fnname'>push_local_path_root</a>(&amp;mut self, path: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>)</code></span></h4>
+<h4 id='method.pop_local_path_root' class="method"><span id='pop_local_path_root.v' class='invisible'><code>fn <a href='#method.pop_local_path_root' class='fnname'>pop_local_path_root</a>(&amp;mut self)</code></span></h4>
+<h4 id='method.set_local_var' class="method"><span id='set_local_var.v' class='invisible'><code>fn <a href='#method.set_local_var' class='fnname'>set_local_var</a>(&amp;mut self, name: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, value: <a class="enum" href="../serde_json/value/enum.Value.html" title="enum serde_json::value::Value">Json</a>)</code></span></h4>
+<h4 id='method.clear_local_vars' class="method"><span id='clear_local_vars.v' class='invisible'><code>fn <a href='#method.clear_local_vars' class='fnname'>clear_local_vars</a>(&amp;mut self)</code></span></h4>
+<h4 id='method.promote_local_vars' class="method"><span id='promote_local_vars.v' class='invisible'><code>fn <a href='#method.promote_local_vars' class='fnname'>promote_local_vars</a>(&amp;mut self)</code></span></h4>
+<h4 id='method.demote_local_vars' class="method"><span id='demote_local_vars.v' class='invisible'><code>fn <a href='#method.demote_local_vars' class='fnname'>demote_local_vars</a>(&amp;mut self)</code></span></h4>
+<h4 id='method.get_local_var' class="method"><span id='get_local_var.v' class='invisible'><code>fn <a href='#method.get_local_var' class='fnname'>get_local_var</a>(&amp;self, name: &amp;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="enum" href="../serde_json/value/enum.Value.html" title="enum serde_json::value::Value">Json</a>&gt;</code></span></h4>
+<h4 id='method.writer' class="method"><span id='writer.v-1' class='invisible'><code>fn <a href='#method.writer' class='fnname'>writer</a>(&amp;mut self) -&gt; &amp;mut <a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Write.html" title="trait std::io::Write">Write</a></code></span></h4>
+<h4 id='method.push_block_context' class="method"><span id='push_block_context.v' class='invisible'><code>fn <a href='#method.push_block_context' class='fnname'>push_block_context</a>&lt;T&gt;(&amp;mut self, ctx: &amp;T) <span class="where fmt-newline">where T: <a class="trait" href="../serde/ser/trait.Serialize.html" title="trait serde::ser::Serialize">Serialize</a></span></code></span></h4>
+<h4 id='method.pop_block_context' class="method"><span id='pop_block_context.v' class='invisible'><code>fn <a href='#method.pop_block_context' class='fnname'>pop_block_context</a>(&amp;mut self)</code></span></h4>
+<h4 id='method.evaluate_in_block_context' class="method"><span id='evaluate_in_block_context.v' class='invisible'><code>fn <a href='#method.evaluate_in_block_context' class='fnname'>evaluate_in_block_context</a>(&amp;self, local_path: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="enum" href="../serde_json/value/enum.Value.html" title="enum serde_json::value::Value">Json</a>&gt;</code></span></h4>
+<h4 id='method.is_current_template' class="method"><span id='is_current_template.v' class='invisible'><code>fn <a href='#method.is_current_template' class='fnname'>is_current_template</a>(&amp;self, p: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<h4 id='method.context' class="method"><span id='context.v' class='invisible'><code>fn <a href='#method.context' class='fnname'>context</a>(&amp;self) -&gt; &amp;<a class="struct" href="../handlebars/struct.Context.html" title="struct handlebars::Context">Context</a></code></span></h4>
+<h4 id='method.context_mut' class="method"><span id='context_mut.v' class='invisible'><code>fn <a href='#method.context_mut' class='fnname'>context_mut</a>(&amp;mut self) -&gt; &amp;mut <a class="struct" href="../handlebars/struct.Context.html" title="struct handlebars::Context">Context</a></code></span></h4>
+<h4 id='method.register_local_helper' class="method"><span id='register_local_helper.v' class='invisible'><code>fn <a href='#method.register_local_helper' class='fnname'>register_local_helper</a>(&amp;mut self,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; def: <a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="trait" href="../handlebars/trait.HelperDef.html" title="trait handlebars::HelperDef">HelperDef</a> + 'static&gt;)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html" title="struct alloc::rc::Rc">Rc</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="trait" href="../handlebars/trait.HelperDef.html" title="trait handlebars::HelperDef">HelperDef</a> + 'static&gt;&gt;&gt;</code></span></h4>
+<h4 id='method.unregister_local_helper' class="method"><span id='unregister_local_helper.v' class='invisible'><code>fn <a href='#method.unregister_local_helper' class='fnname'>unregister_local_helper</a>(&amp;mut self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>)</code></span></h4>
+<h4 id='method.get_local_helper' class="method"><span id='get_local_helper.v' class='invisible'><code>fn <a href='#method.get_local_helper' class='fnname'>get_local_helper</a>(&amp;self, name: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/rc/struct.Rc.html" title="struct alloc::rc::Rc">Rc</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;<a class="trait" href="../handlebars/trait.HelperDef.html" title="trait handlebars::HelperDef">HelperDef</a> + 'static&gt;&gt;&gt;</code></span></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../handlebars/struct.RenderContext.html" title="struct handlebars::RenderContext">RenderContext</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/handlebars/render.rs.html#264-277' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.tuple.html">()</a>, <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Error.html" title="struct core::fmt::Error">Error</a>&gt;</code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "handlebars";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

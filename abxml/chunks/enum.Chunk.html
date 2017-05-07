@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Chunk` enum in crate `abxml`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Chunk">
+
+    <title>abxml::chunks::Chunk - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc enum">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>abxml</a>::<wbr><a href='index.html'>chunks</a></p><script>window.sidebarCurrent = {name: 'Chunk', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Enum <a href='../index.html'>abxml</a>::<wbr><a href='index.html'>chunks</a>::<wbr><a class="enum" href=''>Chunk</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/abxml/chunks/mod.rs.html#49-61' title='goto source code'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum Chunk&lt;'a&gt; {
+    StringTable(<a class="struct" href="../../abxml/chunks/string_table/struct.StringTableWrapper.html" title="struct abxml::chunks::string_table::StringTableWrapper">StringTableWrapper</a>&lt;'a&gt;),
+    Package(<a class="struct" href="../../abxml/chunks/struct.PackageWrapper.html" title="struct abxml::chunks::PackageWrapper">PackageWrapper</a>&lt;'a&gt;),
+    TableTypeSpec(<a class="struct" href="../../abxml/chunks/struct.TypeSpecWrapper.html" title="struct abxml::chunks::TypeSpecWrapper">TypeSpecWrapper</a>&lt;'a&gt;),
+    TableType(<a class="struct" href="../../abxml/chunks/table_type/struct.TableTypeWrapper.html" title="struct abxml::chunks::table_type::TableTypeWrapper">TableTypeWrapper</a>&lt;'a&gt;),
+    XmlNamespaceStart(<a class="struct" href="../../abxml/chunks/struct.XmlNamespaceStartWrapper.html" title="struct abxml::chunks::XmlNamespaceStartWrapper">XmlNamespaceStartWrapper</a>&lt;'a&gt;),
+    XmlNamespaceEnd(<a class="struct" href="../../abxml/chunks/struct.XmlNamespaceEndWrapper.html" title="struct abxml::chunks::XmlNamespaceEndWrapper">XmlNamespaceEndWrapper</a>&lt;'a&gt;),
+    XmlTagStart(<a class="struct" href="../../abxml/chunks/struct.XmlTagStartWrapper.html" title="struct abxml::chunks::XmlTagStartWrapper">XmlTagStartWrapper</a>&lt;'a&gt;),
+    XmlTagEnd(<a class="struct" href="../../abxml/chunks/struct.XmlTagEndWrapper.html" title="struct abxml::chunks::XmlTagEndWrapper">XmlTagEndWrapper</a>&lt;'a&gt;),
+    XmlText(<a class="struct" href="../../abxml/chunks/struct.XmlTextWrapper.html" title="struct abxml::chunks::XmlTextWrapper">XmlTextWrapper</a>&lt;'a&gt;),
+    Resource(<a class="struct" href="../../abxml/chunks/struct.ResourceWrapper.html" title="struct abxml::chunks::ResourceWrapper">ResourceWrapper</a>&lt;'a&gt;),
+    Unknown,
+}</pre><h2 class='variants'>Variants</h2>
+<span id='variant.StringTable' class='variant'><span id='StringTable.v' class='invisible'><code>StringTable(<a class="struct" href="../../abxml/chunks/string_table/struct.StringTableWrapper.html" title="struct abxml::chunks::string_table::StringTableWrapper">StringTableWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.Package' class='variant'><span id='Package.v' class='invisible'><code>Package(<a class="struct" href="../../abxml/chunks/struct.PackageWrapper.html" title="struct abxml::chunks::PackageWrapper">PackageWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.TableTypeSpec' class='variant'><span id='TableTypeSpec.v' class='invisible'><code>TableTypeSpec(<a class="struct" href="../../abxml/chunks/struct.TypeSpecWrapper.html" title="struct abxml::chunks::TypeSpecWrapper">TypeSpecWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.TableType' class='variant'><span id='TableType.v' class='invisible'><code>TableType(<a class="struct" href="../../abxml/chunks/table_type/struct.TableTypeWrapper.html" title="struct abxml::chunks::table_type::TableTypeWrapper">TableTypeWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.XmlNamespaceStart' class='variant'><span id='XmlNamespaceStart.v' class='invisible'><code>XmlNamespaceStart(<a class="struct" href="../../abxml/chunks/struct.XmlNamespaceStartWrapper.html" title="struct abxml::chunks::XmlNamespaceStartWrapper">XmlNamespaceStartWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.XmlNamespaceEnd' class='variant'><span id='XmlNamespaceEnd.v' class='invisible'><code>XmlNamespaceEnd(<a class="struct" href="../../abxml/chunks/struct.XmlNamespaceEndWrapper.html" title="struct abxml::chunks::XmlNamespaceEndWrapper">XmlNamespaceEndWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.XmlTagStart' class='variant'><span id='XmlTagStart.v' class='invisible'><code>XmlTagStart(<a class="struct" href="../../abxml/chunks/struct.XmlTagStartWrapper.html" title="struct abxml::chunks::XmlTagStartWrapper">XmlTagStartWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.XmlTagEnd' class='variant'><span id='XmlTagEnd.v' class='invisible'><code>XmlTagEnd(<a class="struct" href="../../abxml/chunks/struct.XmlTagEndWrapper.html" title="struct abxml::chunks::XmlTagEndWrapper">XmlTagEndWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.XmlText' class='variant'><span id='XmlText.v' class='invisible'><code>XmlText(<a class="struct" href="../../abxml/chunks/struct.XmlTextWrapper.html" title="struct abxml::chunks::XmlTextWrapper">XmlTextWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.Resource' class='variant'><span id='Resource.v' class='invisible'><code>Resource(<a class="struct" href="../../abxml/chunks/struct.ResourceWrapper.html" title="struct abxml::chunks::ResourceWrapper">ResourceWrapper</a>&lt;'a&gt;)</code></span></span><span id='variant.Unknown' class='variant'><span id='Unknown.v' class='invisible'><code>Unknown</code></span></span></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "abxml";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `LittleEndian` enum in crate `podio`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, LittleEndian">
+
+    <title>podio::LittleEndian - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc enum">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>podio</a></p><script>window.sidebarCurrent = {name: 'LittleEndian', ty: 'enum', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Enum <a href='index.html'>podio</a>::<wbr><a class="enum" href=''>LittleEndian</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/podio/lib.rs.html#64' title='goto source code'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum LittleEndian {}</pre><div class='docblock'><p>Little endian. The number <code>0xABCD</code> is stored <code>[0xCD, 0xAB]</code></p>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a> for <a class="enum" href="../podio/enum.LittleEndian.html" title="enum podio::LittleEndian">LittleEndian</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../src/podio/lib.rs.html#138-147' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.int_to_target' class="method"><span id='int_to_target.v' class='invisible'><code>fn <a href='../podio/trait.Endianness.html#tymethod.int_to_target' class='fnname'>int_to_target</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.EndianConvert.html" title="trait podio::EndianConvert">EndianConvert</a>&gt;(val: T) -&gt; T</code></span></h4>
+<div class='docblock'><p>Converts a value from the platform type to the specified endianness</p>
+</div><h4 id='method.int_from_target' class="method"><span id='int_from_target.v' class='invisible'><code>fn <a href='../podio/trait.Endianness.html#tymethod.int_from_target' class='fnname'>int_from_target</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.EndianConvert.html" title="trait podio::EndianConvert">EndianConvert</a>&gt;(val: T) -&gt; T</code></span></h4>
+<div class='docblock'><p>Converts a value from the sepcified endianness to the platform type</p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "podio";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

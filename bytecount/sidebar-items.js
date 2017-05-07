@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["count","Count occurrences of a byte in a slice of bytes, fast"],["naive_count","Count occurrences of a byte in a slice of bytes, simple"]]});

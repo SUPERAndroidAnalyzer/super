@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["ZipArchive","Wrapper for reading the contents of a ZIP file."],["ZipFile","A struct for reading a zip file"]]});

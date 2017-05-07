@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `byte_tools` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, byte_tools">
+
+    <title>byte_tools - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'byte_tools', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>byte_tools</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/byte_tools/lib.rs.html#1-325' title='goto source code'>[src]</a></span></h1>
+<h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.add_bytes_to_bits.html"
+                                  title='fn byte_tools::add_bytes_to_bits'>add_bytes_to_bits</a></td>
+                           <td class='docblock-short'>
+                                <p>Adds the specified number of bytes to the bit count. panic!() if this
+would cause numeric overflow.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.add_bytes_to_bits_tuple.html"
+                                  title='fn byte_tools::add_bytes_to_bits_tuple'>add_bytes_to_bits_tuple</a></td>
+                           <td class='docblock-short'>
+                                <p>Adds the specified number of bytes to the bit count, which is a tuple where
+the first element is the high order value. panic!() if this would cause
+numeric overflow.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.copy_memory.html"
+                                  title='fn byte_tools::copy_memory'>copy_memory</a></td>
+                           <td class='docblock-short'>
+                                <p>Copy bytes from src to dest</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u32_be.html"
+                                  title='fn byte_tools::read_u32_be'>read_u32_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Read the value of a vector of bytes as a u32 value in big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u32_le.html"
+                                  title='fn byte_tools::read_u32_le'>read_u32_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Read the value of a vector of bytes as a u32 value in little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u32v_be.html"
+                                  title='fn byte_tools::read_u32v_be'>read_u32v_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Read a vector of bytes into a vector of u32s. The values are read in
+big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u32v_le.html"
+                                  title='fn byte_tools::read_u32v_le'>read_u32v_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Read a vector of bytes into a vector of u32s. The values are read in
+little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u64_be.html"
+                                  title='fn byte_tools::read_u64_be'>read_u64_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Read the value of a vector of bytes as a u64 value in big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u64_le.html"
+                                  title='fn byte_tools::read_u64_le'>read_u64_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Read the value of a vector of bytes as a u64 value in little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u64v_be.html"
+                                  title='fn byte_tools::read_u64v_be'>read_u64v_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Read a vector of bytes into a vector of u64s. The values are read in
+big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.read_u64v_le.html"
+                                  title='fn byte_tools::read_u64v_le'>read_u64v_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Read a vector of bytes into a vector of u64s. The values are read in
+little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u32_be.html"
+                                  title='fn byte_tools::write_u32_be'>write_u32_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a u32 into a vector, which must be 4 bytes long. The value is written
+in big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u32_le.html"
+                                  title='fn byte_tools::write_u32_le'>write_u32_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a u32 into a vector, which must be 4 bytes long. The value is written
+in little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u32v_be.html"
+                                  title='fn byte_tools::write_u32v_be'>write_u32v_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a vector of u32s into a vector of bytes. The values are written in
+big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u32v_le.html"
+                                  title='fn byte_tools::write_u32v_le'>write_u32v_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a vector of u32s into a vector of bytes. The values are written in
+little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u64_be.html"
+                                  title='fn byte_tools::write_u64_be'>write_u64_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a u64 into a vector, which must be 8 bytes long. The value is written
+in big-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u64_le.html"
+                                  title='fn byte_tools::write_u64_le'>write_u64_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a u64 into a vector, which must be 8 bytes long. The value is written
+in little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u64v_be.html"
+                                  title='fn byte_tools::write_u64v_be'>write_u64v_be</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a vector of u64s into a vector of bytes. The values are written in
+little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.write_u64v_le.html"
+                                  title='fn byte_tools::write_u64v_le'>write_u64v_le</a></td>
+                           <td class='docblock-short'>
+                                <p>Write a vector of u64s into a vector of bytes. The values are written in
+little-endian format.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.xor_keystream.html"
+                                  title='fn byte_tools::xor_keystream'>xor_keystream</a></td>
+                           <td class='docblock-short'>
+                                <p>XOR plaintext and keystream, storing the result in dst.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.zero.html"
+                                  title='fn byte_tools::zero'>zero</a></td>
+                           <td class='docblock-short'>
+                                <p>Zero all bytes in dst</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "byte_tools";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

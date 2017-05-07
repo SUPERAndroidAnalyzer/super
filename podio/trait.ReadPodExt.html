@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ReadPodExt` trait in crate `podio`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ReadPodExt">
+
+    <title>podio::ReadPodExt - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc trait">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>podio</a></p><script>window.sidebarCurrent = {name: 'ReadPodExt', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Trait <a href='index.html'>podio</a>::<wbr><a class="trait" href=''>ReadPodExt</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../src/podio/lib.rs.html#113-136' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait ReadPodExt {
+    fn <a href='#tymethod.read_u64' class='fnname'>read_u64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;;
+    fn <a href='#tymethod.read_u32' class='fnname'>read_u32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;;
+    fn <a href='#tymethod.read_u16' class='fnname'>read_u16</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;;
+    fn <a href='#tymethod.read_u8' class='fnname'>read_u8</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;;
+    fn <a href='#tymethod.read_i64' class='fnname'>read_i64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i64.html">i64</a>&gt;;
+    fn <a href='#tymethod.read_i32' class='fnname'>read_i32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a>&gt;;
+    fn <a href='#tymethod.read_i16' class='fnname'>read_i16</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i16.html">i16</a>&gt;;
+    fn <a href='#tymethod.read_i8' class='fnname'>read_i8</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i8.html">i8</a>&gt;;
+    fn <a href='#tymethod.read_f32' class='fnname'>read_f32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>&gt;;
+    fn <a href='#tymethod.read_f64' class='fnname'>read_f64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>&gt;;
+    fn <a href='#tymethod.read_exact' class='fnname'>read_exact</a>(&amp;mut self, _: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;;
+}</pre><div class='docblock'><p>Additional read methods for a io::Read</p>
+</div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.read_u64' class='method'><span id='read_u64.v' class='invisible'><code>fn <a href='#tymethod.read_u64' class='fnname'>read_u64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u64.html">u64</a>&gt;</code></span></h3><div class='docblock'><p>Read a u64</p>
+</div><h3 id='tymethod.read_u32' class='method'><span id='read_u32.v' class='invisible'><code>fn <a href='#tymethod.read_u32' class='fnname'>read_u32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h3><div class='docblock'><p>Read a u32</p>
+</div><h3 id='tymethod.read_u16' class='method'><span id='read_u16.v' class='invisible'><code>fn <a href='#tymethod.read_u16' class='fnname'>read_u16</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h3><div class='docblock'><p>Read a u16</p>
+</div><h3 id='tymethod.read_u8' class='method'><span id='read_u8.v' class='invisible'><code>fn <a href='#tymethod.read_u8' class='fnname'>read_u8</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h3><div class='docblock'><p>Read a u8</p>
+</div><h3 id='tymethod.read_i64' class='method'><span id='read_i64.v' class='invisible'><code>fn <a href='#tymethod.read_i64' class='fnname'>read_i64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i64.html">i64</a>&gt;</code></span></h3><div class='docblock'><p>Read a i64</p>
+</div><h3 id='tymethod.read_i32' class='method'><span id='read_i32.v' class='invisible'><code>fn <a href='#tymethod.read_i32' class='fnname'>read_i32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i32.html">i32</a>&gt;</code></span></h3><div class='docblock'><p>Read a i32</p>
+</div><h3 id='tymethod.read_i16' class='method'><span id='read_i16.v' class='invisible'><code>fn <a href='#tymethod.read_i16' class='fnname'>read_i16</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i16.html">i16</a>&gt;</code></span></h3><div class='docblock'><p>Read a i16</p>
+</div><h3 id='tymethod.read_i8' class='method'><span id='read_i8.v' class='invisible'><code>fn <a href='#tymethod.read_i8' class='fnname'>read_i8</a>(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.i8.html">i8</a>&gt;</code></span></h3><div class='docblock'><p>Read a i8</p>
+</div><h3 id='tymethod.read_f32' class='method'><span id='read_f32.v' class='invisible'><code>fn <a href='#tymethod.read_f32' class='fnname'>read_f32</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f32.html">f32</a>&gt;</code></span></h3><div class='docblock'><p>Read a f32</p>
+</div><h3 id='tymethod.read_f64' class='method'><span id='read_f64.v' class='invisible'><code>fn <a href='#tymethod.read_f64' class='fnname'>read_f64</a>&lt;T:&nbsp;<a class="trait" href="../podio/trait.Endianness.html" title="trait podio::Endianness">Endianness</a>&gt;(&amp;mut self) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.f64.html">f64</a>&gt;</code></span></h3><div class='docblock'><p>Read a f64</p>
+</div><h3 id='tymethod.read_exact' class='method'><span id='read_exact.v' class='invisible'><code>fn <a href='#tymethod.read_exact' class='fnname'>read_exact</a>(&amp;mut self, _: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.usize.html">usize</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/std/io/error/type.Result.html" title="type std::io::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;</code></span></h3><div class='docblock'><p>Read a specific number of bytes</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;R:&nbsp;<a class="trait" href="https://doc.rust-lang.org/nightly/std/io/trait.Read.html" title="trait std::io::Read">Read</a>&gt; ReadPodExt for R</code></li>
+</ul><script type="text/javascript" async
+                         src="../implementors/podio/trait.ReadPodExt.js">
+                 </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "podio";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    <script defer src="../search-index.js"></script>
+</body>
+</html>

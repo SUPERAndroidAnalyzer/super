@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `ConfigurationWrapper` struct in crate `abxml`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, ConfigurationWrapper">
+
+    <title>abxml::chunks::table_type::ConfigurationWrapper - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>abxml</a>::<wbr><a href='../index.html'>chunks</a>::<wbr><a href='index.html'>table_type</a></p><script>window.sidebarCurrent = {name: 'ConfigurationWrapper', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../../index.html'>abxml</a>::<wbr><a href='../index.html'>chunks</a>::<wbr><a href='index.html'>table_type</a>::<wbr><a class="struct" href=''>ConfigurationWrapper</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../src/abxml/chunks/table_type/configuration.rs.html#8-10' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct ConfigurationWrapper&lt;'a&gt; { /* fields omitted */ }</pre><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="struct" href="../../../abxml/chunks/struct.ConfigurationWrapper.html" title="struct abxml::chunks::ConfigurationWrapper">ConfigurationWrapper</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/abxml/chunks/table_type/configuration.rs.html#12-20' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.new' class="method"><span id='new.v' class='invisible'><code>fn <a href='#method.new' class='fnname'>new</a>(slice: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;'a [</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>) -&gt; Self</code></span></h4>
+<h4 id='method.to_owned' class="method"><span id='to_owned.v' class='invisible'><code>fn <a href='#method.to_owned' class='fnname'>to_owned</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="../../../abxml/model/owned/struct.ConfigurationBuf.html" title="struct abxml::model::owned::ConfigurationBuf">ConfigurationBuf</a>&gt;</code></span></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl&lt;'a&gt; <a class="trait" href="../../../abxml/model/trait.Configuration.html" title="trait abxml::model::Configuration">Configuration</a> for <a class="struct" href="../../../abxml/chunks/struct.ConfigurationWrapper.html" title="struct abxml::chunks::ConfigurationWrapper">ConfigurationWrapper</a>&lt;'a&gt;</code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../../src/abxml/chunks/table_type/configuration.rs.html#22-187' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.get_size' class="method"><span id='get_size.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_size' class='fnname'>get_size</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u32.html">u32</a>&gt;</code></span></h4>
+<h4 id='method.get_mcc' class="method"><span id='get_mcc.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_mcc' class='fnname'>get_mcc</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_mnc' class="method"><span id='get_mnc.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_mnc' class='fnname'>get_mnc</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_language' class="method"><span id='get_language.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_language' class='fnname'>get_language</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code></span></h4>
+<h4 id='method.get_region' class="method"><span id='get_region.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_region' class='fnname'>get_region</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code></span></h4>
+<h4 id='method.get_orientation' class="method"><span id='get_orientation.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_orientation' class='fnname'>get_orientation</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_touchscreen' class="method"><span id='get_touchscreen.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_touchscreen' class='fnname'>get_touchscreen</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_density' class="method"><span id='get_density.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_density' class='fnname'>get_density</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_keyboard' class="method"><span id='get_keyboard.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_keyboard' class='fnname'>get_keyboard</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_navigation' class="method"><span id='get_navigation.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_navigation' class='fnname'>get_navigation</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_input_flags' class="method"><span id='get_input_flags.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_input_flags' class='fnname'>get_input_flags</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_width' class="method"><span id='get_width.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_width' class='fnname'>get_width</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_height' class="method"><span id='get_height.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_height' class='fnname'>get_height</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_sdk_version' class="method"><span id='get_sdk_version.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_sdk_version' class='fnname'>get_sdk_version</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_min_sdk_version' class="method"><span id='get_min_sdk_version.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_min_sdk_version' class='fnname'>get_min_sdk_version</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_screen_layout' class="method"><span id='get_screen_layout.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_screen_layout' class='fnname'>get_screen_layout</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_ui_mode' class="method"><span id='get_ui_mode.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_ui_mode' class='fnname'>get_ui_mode</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;</code></span></h4>
+<h4 id='method.get_smallest_screen' class="method"><span id='get_smallest_screen.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_smallest_screen' class='fnname'>get_smallest_screen</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_screen_width' class="method"><span id='get_screen_width.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_screen_width' class='fnname'>get_screen_width</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_screen_height' class="method"><span id='get_screen_height.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_screen_height' class='fnname'>get_screen_height</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u16.html">u16</a>&gt;</code></span></h4>
+<h4 id='method.get_locale_script' class="method"><span id='get_locale_script.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_locale_script' class='fnname'>get_locale_script</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;&gt;</code></span></h4>
+<h4 id='method.get_locale_variant' class="method"><span id='get_locale_variant.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_locale_variant' class='fnname'>get_locale_variant</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;&gt;</code></span></h4>
+<h4 id='method.get_secondary_layout' class="method"><span id='get_secondary_layout.v' class='invisible'><code>fn <a href='../../../abxml/model/trait.Configuration.html#tymethod.get_secondary_layout' class='fnname'>get_secondary_layout</a>(&amp;self) -&gt; <a class="type" href="../../../abxml/errors/type.Result.html" title="type abxml::errors::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;&gt;</code></span></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "abxml";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>

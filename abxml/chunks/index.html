@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `chunks` mod in crate `abxml`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, chunks">
+
+    <title>abxml::chunks - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>abxml</a></p><script>window.sidebarCurrent = {name: 'chunks', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../index.html'>abxml</a>::<wbr><a class="mod" href=''>chunks</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/abxml/chunks/mod.rs.html#1-182' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Structs to represent chunks and iterate them</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use self::<a class="mod"
+                                           href="./string_table/index.html">string_table</a>::<a class="struct" href="../../abxml/chunks/string_table/struct.StringTableDecoder.html" title="struct abxml::chunks::string_table::StringTableDecoder">StringTableDecoder</a>;</code></td></tr><tr><td><code>pub use self::<a class="mod"
+                                           href="./string_table/index.html">string_table</a>::<a class="struct" href="../../abxml/chunks/string_table/struct.StringTableWrapper.html" title="struct abxml::chunks::string_table::StringTableWrapper">StringTableWrapper</a>;</code></td></tr><tr><td><code>pub use self::<a class="mod"
+                                           href="./string_table/index.html">string_table</a>::<a class="struct" href="../../abxml/chunks/string_table/struct.StringTableCache.html" title="struct abxml::chunks::string_table::StringTableCache">StringTableCache</a>;</code></td></tr><tr><td><code>pub use self::<a class="mod"
+                                           href="./table_type/index.html">table_type</a>::<a class="struct" href="../../abxml/chunks/table_type/struct.TableTypeWrapper.html" title="struct abxml::chunks::table_type::TableTypeWrapper">TableTypeWrapper</a>;</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="string_table/index.html"
+                                  title='mod abxml::chunks::string_table'>string_table</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="table_type/index.html"
+                                  title='mod abxml::chunks::table_type'>table_type</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ChunkHeader.html"
+                                  title='struct abxml::chunks::ChunkHeader'>ChunkHeader</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ChunkLoaderStream.html"
+                                  title='struct abxml::chunks::ChunkLoaderStream'>ChunkLoaderStream</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ConfigurationWrapper.html"
+                                  title='struct abxml::chunks::ConfigurationWrapper'>ConfigurationWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PackageWrapper.html"
+                                  title='struct abxml::chunks::PackageWrapper'>PackageWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.ResourceWrapper.html"
+                                  title='struct abxml::chunks::ResourceWrapper'>ResourceWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.TypeSpecWrapper.html"
+                                  title='struct abxml::chunks::TypeSpecWrapper'>TypeSpecWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlNamespaceEndWrapper.html"
+                                  title='struct abxml::chunks::XmlNamespaceEndWrapper'>XmlNamespaceEndWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlNamespaceStartWrapper.html"
+                                  title='struct abxml::chunks::XmlNamespaceStartWrapper'>XmlNamespaceStartWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlTagEndWrapper.html"
+                                  title='struct abxml::chunks::XmlTagEndWrapper'>XmlTagEndWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlTagStartWrapper.html"
+                                  title='struct abxml::chunks::XmlTagStartWrapper'>XmlTagStartWrapper</a></td>
+                           <td class='docblock-short'>
+                                <p>Contains a reference to the whole buffer and the chunk header of a <code>TagStart</code></p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlText.html"
+                                  title='struct abxml::chunks::XmlText'>XmlText</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.XmlTextWrapper.html"
+                                  title='struct abxml::chunks::XmlTextWrapper'>XmlTextWrapper</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Chunk.html"
+                                  title='enum abxml::chunks::Chunk'>Chunk</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_PACKAGE.html"
+                                  title='constant abxml::chunks::TOKEN_PACKAGE'>TOKEN_PACKAGE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_RESOURCE.html"
+                                  title='constant abxml::chunks::TOKEN_RESOURCE'>TOKEN_RESOURCE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_STRING_TABLE.html"
+                                  title='constant abxml::chunks::TOKEN_STRING_TABLE'>TOKEN_STRING_TABLE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_TABLE_SPEC.html"
+                                  title='constant abxml::chunks::TOKEN_TABLE_SPEC'>TOKEN_TABLE_SPEC</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_TABLE_TYPE.html"
+                                  title='constant abxml::chunks::TOKEN_TABLE_TYPE'>TOKEN_TABLE_TYPE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_XML_END_NAMESPACE.html"
+                                  title='constant abxml::chunks::TOKEN_XML_END_NAMESPACE'>TOKEN_XML_END_NAMESPACE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_XML_START_NAMESPACE.html"
+                                  title='constant abxml::chunks::TOKEN_XML_START_NAMESPACE'>TOKEN_XML_START_NAMESPACE</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_XML_TAG_END.html"
+                                  title='constant abxml::chunks::TOKEN_XML_TAG_END'>TOKEN_XML_TAG_END</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_XML_TAG_START.html"
+                                  title='constant abxml::chunks::TOKEN_XML_TAG_START'>TOKEN_XML_TAG_START</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="constant" href="constant.TOKEN_XML_TEXT.html"
+                                  title='constant abxml::chunks::TOKEN_XML_TEXT'>TOKEN_XML_TEXT</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "abxml";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

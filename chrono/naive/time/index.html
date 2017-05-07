@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `time` mod in crate `chrono`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, time">
+
+    <title>chrono::naive::time - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc mod">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>chrono</a>::<wbr><a href='../index.html'>naive</a></p><script>window.sidebarCurrent = {name: 'time', ty: 'mod', relpath: '../'};</script><script defer src="../sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Module <a href='../../index.html'>chrono</a>::<wbr><a href='../index.html'>naive</a>::<wbr><a class="mod" href=''>time</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../../src/chrono/naive/time.rs.html#4-1636' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>ISO 8601 time without timezone.</p>
+
+<h1 id='leap-second-handling' class='section-header'><a href='#leap-second-handling'>Leap Second Handling</a></h1>
+<p>Since 1960s, the manmade atomic clock has been so accurate that
+it is much more accurate than Earth&#39;s own motion.
+It became desirable to define the civil time in terms of the atomic clock,
+but that risks the desynchronization of the civil time from Earth.
+To account for this, the designers of the Coordinated Universal Time (UTC)
+made that the UTC should be kept within 0.9 seconds of the observed Earth-bound time.
+When the mean solar day is longer than the ideal (86,400 seconds),
+the error slowly accumulates and it is necessary to add a <strong>leap second</strong>
+to slow the UTC down a bit.
+(We may also remove a second to speed the UTC up a bit, but it never happened.)
+The leap second, if any, follows 23:59:59 of June 30 or December 31 in the UTC.</p>
+
+<p>Fast forward to the 21st century,
+we have seen 26 leap seconds from January 1972 to December 2015.
+Yes, 26 seconds. Probably you can read this paragraph within 26 seconds.
+But those 26 seconds, and possibly more in the future, are never predictable,
+and whether to add a leap second or not is known only before 6 months.
+Internet-based clocks (via NTP) do account for known leap seconds,
+but the system API normally doesn&#39;t (and often can&#39;t, with no network connection)
+and there is no reliable way to retrieve leap second information.</p>
+
+<p>Chrono does not try to accurately implement leap seconds; it is impossible.
+Rather, <strong>it allows for leap seconds but behaves as if there are <em>no other</em> leap seconds.</strong>
+Various operations will ignore any possible leap second(s)
+except when any of the operands were actually leap seconds.</p>
+
+<p>If you cannot tolerate this behavior,
+you must use a separate <code>TimeZone</code> for the International Atomic Time (TAI).
+TAI is like UTC but has no leap seconds, and thus slightly differs from UTC.
+Chrono 0.3 does not provide such implementation, but it is planned for 0.4.</p>
+
+<h2 id='representing-leap-seconds' class='section-header'><a href='#representing-leap-seconds'>Representing Leap Seconds</a></h2>
+<p>The leap second is indicated via fractional seconds more than 1 second.
+This makes possible to treat a leap second as the prior non-leap second
+if you don&#39;t care about sub-second accuracy.
+You should use the proper formatting to get the raw leap second.</p>
+
+<p>All methods accepting fractional seconds will accept such values.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">NaiveDate</span>, <span class="ident">NaiveTime</span>, <span class="ident">UTC</span>, <span class="ident">TimeZone</span>};
+
+<span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">NaiveTime</span>::<span class="ident">from_hms_milli</span>(<span class="number">8</span>, <span class="number">59</span>, <span class="number">59</span>, <span class="number">1_000</span>);
+
+<span class="kw">let</span> <span class="ident">dt1</span> <span class="op">=</span> <span class="ident">NaiveDate</span>::<span class="ident">from_ymd</span>(<span class="number">2015</span>, <span class="number">7</span>, <span class="number">1</span>).<span class="ident">and_hms_micro</span>(<span class="number">8</span>, <span class="number">59</span>, <span class="number">59</span>, <span class="number">1_000_000</span>);
+
+<span class="kw">let</span> <span class="ident">dt2</span> <span class="op">=</span> <span class="ident">UTC</span>.<span class="ident">ymd</span>(<span class="number">2015</span>, <span class="number">6</span>, <span class="number">30</span>).<span class="ident">and_hms_nano</span>(<span class="number">23</span>, <span class="number">59</span>, <span class="number">59</span>, <span class="number">1_000_000_000</span>);</pre>
+
+<p>Note that the leap second can happen anytime given an appropriate time zone;
+2015-07-01 01:23:60 would be a proper leap second if UTC+01:24 had existed.
+Practically speaking, though, by the time of the first leap second on 1972-06-30,
+every time zone offset around the world has standardized to the 5-minute alignment.</p>
+
+<h2 id='date-and-time-arithmetics' class='section-header'><a href='#date-and-time-arithmetics'>Date And Time Arithmetics</a></h2>
+<p>As a concrete example, let&#39;s assume that <code>03:00:60</code> and <code>04:00:60</code> are leap seconds.
+(In reality, of course, leap seconds are separated by at least 6 months.)</p>
+
+<p><code>Time + Duration</code>:</p>
+
+<ul>
+<li><code>03:00:00 + 1s = 03:00:01</code>.</li>
+<li><code>03:00:59 + 60s = 03:02:00</code>.</li>
+<li><code>03:00:59 + 1s = 03:01:00</code>.</li>
+<li><code>03:00:60 + 1s = 03:01:00</code>.
+Note that the sum is identical to the previous.</li>
+<li><code>03:00:60 + 60s = 03:01:59</code>.</li>
+<li><code>03:00:60 + 61s = 03:02:00</code>.</li>
+<li><code>03:00:60.1 + 0.8s = 03:00:60.9</code>.</li>
+</ul>
+
+<p><code>Time - Duration</code>:</p>
+
+<ul>
+<li><code>03:00:00 - 1s = 02:59:59</code>.</li>
+<li><code>03:01:00 - 1s = 03:00:59</code>.</li>
+<li><code>03:01:00 - 60s = 03:00:00</code>.</li>
+<li><code>03:00:60 - 60s = 03:00:00</code>.
+Note that the result is identical to the previous.</li>
+<li><code>03:00:60.7 - 0.4s = 03:00:60.3</code>.</li>
+<li><code>03:00:60.7 - 0.9s = 03:00:59.8</code>.</li>
+</ul>
+
+<p><code>Time - Time</code>:</p>
+
+<ul>
+<li><code>04:00:00 - 03:00:00 = 3600s</code>.</li>
+<li><code>03:01:00 - 03:00:00 = 60s</code>.</li>
+<li><code>03:00:60 - 03:00:00 = 60s</code>.
+Note that the difference is identical to the previous.</li>
+<li><code>03:00:60.6 - 03:00:59.4 = 1.2s</code>.</li>
+<li><code>03:01:00 - 03:00:59.8 = 0.2s</code>.</li>
+<li><code>03:01:00 - 03:00:60.5 = 0.5s</code>.
+Note that the difference is larger than the previous,
+even though the leap second clearly follows the previous whole second.</li>
+<li><code>04:00:60.9 - 03:00:60.1 = (04:00:60.9 - 04:00:00) + (04:00:00 - 03:01:00) + (03:01:00 - 03:00:60.1) = 60.9s + 3540s + 0.9s = 3601.8s</code>.</li>
+</ul>
+
+<p>In general,</p>
+
+<ul>
+<li><p><code>Time + Duration</code> unconditionally equals to <code>Duration + Time</code>.</p></li>
+<li><p><code>Time - Duration</code> unconditionally equals to <code>Time + (-Duration)</code>.</p></li>
+<li><p><code>Time1 - Time2</code> unconditionally equals to <code>-(Time2 - Time1)</code>.</p></li>
+<li><p>Associativity does not generally hold, because
+<code>(Time + Duration1) - Duration2</code> no longer equals to <code>Time + (Duration1 - Duration2)</code>
+for two positive durations.</p>
+
+<ul>
+<li><p>As a special case, <code>(Time + Duration) - Duration</code> also does not equal to <code>Time</code>.</p></li>
+<li><p>If you can assume that all durations have the same sign, however,
+then the associativity holds:
+<code>(Time + Duration1) + Duration2</code> equals to <code>Time + (Duration1 + Duration2)</code>
+for two positive durations.</p></li>
+</ul></li>
+</ul>
+
+<h2 id='reading-and-writing-leap-seconds' class='section-header'><a href='#reading-and-writing-leap-seconds'>Reading And Writing Leap Seconds</a></h2>
+<p>The &quot;typical&quot; leap seconds on the minute boundary are
+correctly handled both in the formatting and parsing.
+The leap second in the human-readable representation
+will be represented as the second part being 60, as required by ISO 8601.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">UTC</span>, <span class="ident">TimeZone</span>};
+
+<span class="kw">let</span> <span class="ident">dt</span> <span class="op">=</span> <span class="ident">UTC</span>.<span class="ident">ymd</span>(<span class="number">2015</span>, <span class="number">6</span>, <span class="number">30</span>).<span class="ident">and_hms_milli</span>(<span class="number">23</span>, <span class="number">59</span>, <span class="number">59</span>, <span class="number">1_000</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">dt</span>), <span class="string">&quot;2015-06-30T23:59:60Z&quot;</span>);</pre>
+
+<p>There are hypothetical leap seconds not on the minute boundary
+nevertheless supported by Chrono.
+They are allowed for the sake of completeness and consistency;
+there were several &quot;exotic&quot; time zone offsets with fractional minutes prior to UTC after all.
+For such cases the human-readable representation is ambiguous
+and would be read back to the next non-leap second.</p>
+
+<pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">chrono</span>::{<span class="ident">DateTime</span>, <span class="ident">UTC</span>, <span class="ident">TimeZone</span>};
+
+<span class="kw">let</span> <span class="ident">dt</span> <span class="op">=</span> <span class="ident">UTC</span>.<span class="ident">ymd</span>(<span class="number">2015</span>, <span class="number">6</span>, <span class="number">30</span>).<span class="ident">and_hms_milli</span>(<span class="number">23</span>, <span class="number">56</span>, <span class="number">4</span>, <span class="number">1_000</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">dt</span>), <span class="string">&quot;2015-06-30T23:56:05Z&quot;</span>);
+
+<span class="kw">let</span> <span class="ident">dt</span> <span class="op">=</span> <span class="ident">UTC</span>.<span class="ident">ymd</span>(<span class="number">2015</span>, <span class="number">6</span>, <span class="number">30</span>).<span class="ident">and_hms</span>(<span class="number">23</span>, <span class="number">56</span>, <span class="number">5</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">dt</span>), <span class="string">&quot;2015-06-30T23:56:05Z&quot;</span>);
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">DateTime</span>::<span class="ident">parse_from_rfc3339</span>(<span class="string">&quot;2015-06-30T23:56:05Z&quot;</span>).<span class="ident">unwrap</span>(), <span class="ident">dt</span>);</pre>
+
+<p>Since Chrono alone cannot determine any existence of leap seconds,
+<strong>there is absolutely no guarantee that the leap second read has actually happened</strong>.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.NaiveTime.html"
+                                  title='struct chrono::naive::time::NaiveTime'>NaiveTime</a></td>
+                           <td class='docblock-short'>
+                                <p>ISO 8601 time without timezone.
+Allows for the nanosecond precision and optional leap second representation.</p>
+                           </td>
+                       </tr></table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "chrono";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    <script defer src="../../../search-index.js"></script>
+</body>
+</html>
