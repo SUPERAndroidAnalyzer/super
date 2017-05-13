@@ -61,26 +61,26 @@ pub fn analysis<S: AsRef<str>>(manifest: Option<Manifest>,
             let thread_dist_folder = dist_folder.clone();
 
             thread::spawn(move || loop {
-                let f = {
-                    let mut files = thread_files.lock().unwrap();
-                    files.pop()
-                };
-                match f {
-                    Some(f) => {
-                        if let Err(e) = analyze_file(f.path(),
-                                                     &*thread_dist_folder,
-                                                     &thread_rules,
-                                                     &thread_manifest,
-                                                     &thread_vulns) {
-                            print_warning(format!("Error analyzing file {}. The analysis will \
+                              let f = {
+                                  let mut files = thread_files.lock().unwrap();
+                                  files.pop()
+                              };
+                              match f {
+                                  Some(f) => {
+                                      if let Err(e) = analyze_file(f.path(),
+                                                                   &*thread_dist_folder,
+                                                                   &thread_rules,
+                                                                   &thread_manifest,
+                                                                   &thread_vulns) {
+                    print_warning(format!("Error analyzing file {}. The analysis will \
                                                    continue, though. Error: {}",
-                                                  f.path().display(),
-                                                  e.description()))
-                        }
-                    }
-                    None => break,
+                                          f.path().display(),
+                                          e.description()))
                 }
-            })
+                                  }
+                                  None => break,
+                              }
+                          })
         })
         .collect();
 

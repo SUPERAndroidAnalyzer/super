@@ -381,13 +381,12 @@ impl Manifest {
                                         }
                                     }
                                     "label" => {
-                                        manifest
-                                            .set_label(if attr.value.starts_with("@string/") {
-                                                               match get_string(&attr.value[8..],
-                                                                                config,
-                                                                                package.as_ref()) {
-                                                                   Ok(s) => s,
-                                                                   Err(e) => {
+                                        manifest.set_label(if attr.value.starts_with("@string/") {
+                                            match get_string(&attr.value[8..],
+                                                             config,
+                                                             package.as_ref()) {
+                                                Ok(s) => s,
+                                                Err(e) => {
                                                     print_warning(format!("An error occurred when\
                                                                          trying to get the string\
                                                                          for the app label in the\
@@ -396,11 +395,11 @@ impl Manifest {
                                                                           e.description()));
                                                     break;
                                                 }
+                                            }
+                                        } else {
+                                                                   attr.value
                                                                }
-                                                           } else {
-                                                               attr.value
-                                                           }
-                                                           .as_str())
+                                                               .as_str())
                                     }
                                     _ => {}
                                 }

@@ -816,10 +816,10 @@ mod tests {
         let share_path = Path::new(if cfg!(target_os = "macos") {
                                        "/usr/local/super-analyzer"
                                    } else if cfg!(target_family = "windows") {
-            ""
-        } else {
-            "/usr/share/super-analyzer"
-        });
+                                       ""
+                                   } else {
+                                       "/usr/share/super-analyzer"
+                                   });
         let share_path = if share_path.exists() {
             share_path
         } else {

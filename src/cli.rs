@@ -24,7 +24,7 @@ pub fn generate() -> App<'static, 'static> {
                  .help("If you'd like the auditor to talk more than necessary"))
         .arg(Arg::with_name("force")
                  .long("force")
-                 .help("If you'd like to force the auditor to do everything from the beginning"))
+                 .help("If you'd like to force the auditor to do everything from the beginning",))
         .arg(Arg::with_name("bench")
                  .long("bench")
                  .help("Show benchmarks for the analysis"))

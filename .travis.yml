@@ -29,7 +29,7 @@ rust:
 before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        ( cargo install --git https://github.com/rust-lang-nursery/rustfmt.git --force || true );
+        ( cargo install rustfmt --force || true );
         ( cargo install --git https://github.com/mmstick/cargo-deb.git || true );
       fi
   - |
