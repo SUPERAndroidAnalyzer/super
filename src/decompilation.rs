@@ -40,7 +40,10 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         let mut apk = Apk::new(package.as_ref())
             .chain_err(|| "error loading apk file")?;
         apk.export(&path, true)
-            .chain_err(|| "could not decompress the apk file")?;
+            .chain_err(|| {
+                           format!("could not decompress the apk file. Tried to decompile at: {}",
+                                   path.display())
+                       })?;
 
         if config.is_verbose() {
             println!("{}",
