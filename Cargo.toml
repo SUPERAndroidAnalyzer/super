@@ -20,6 +20,9 @@ categories = ["command-line-utilities", "development-tools"]
 [badges]
 travis-ci = { repository = "SUPERAndroidAnalyzer/super", branch = "master" }
 appveyor = { repository = "Razican/super", branch = "master", service = "github" }
+codecov = { repository = "SUPERAndroidAnalyzer/super", branch = "master", service = "github" }
+is-it-maintained-issue-resolution = { repository = "SUPERAndroidAnalyzer/super" }
+is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
 
 [[bin]]
 name = "super"
@@ -27,7 +30,7 @@ name = "super"
 [dependencies]
 clap = "^2.24"
 colored = "^1.5"
-xml-rs = "0.4"
+xml-rs = "0.6"
 serde = "^1.0"
 serde_json = "^1.0"
 chrono = { version = "^0.3", features = ["serde"] }
