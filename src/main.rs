@@ -250,7 +250,10 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     let report_start = Instant::now();
     results
         .generate_report(config, &package_name)
-        .chain_err(|| "There was an error generating the results report")?;
+        .chain_err(|| {
+            format!("There was an error generating the results report. Tried to generate at: {}",
+                    config.get_results_folder().join(&package_name).display())
+        })?;
 
     if config.is_verbose() {
         println!("Everything went smoothly, now you can check all the results.");
