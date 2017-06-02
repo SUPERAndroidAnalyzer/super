@@ -51,10 +51,11 @@ script:
       if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
         cargo clippy
       fi
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        cargo deb
-      fi
+  # Won't work since our binary name is different from the crate name.
+  # - |
+  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  #       cargo deb
+  #     fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
           cargo fmt -- --write-mode=diff
