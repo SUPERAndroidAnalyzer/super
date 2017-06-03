@@ -53,16 +53,16 @@ mod config;
 mod utils;
 
 use std::{fs, io, fmt};
-use std::path::Path;
 use std::fmt::Display;
 use std::str::FromStr;
-use std::error::Error as StdError;
 use std::io::Write;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
 use std::collections::BTreeMap;
 use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use std::result;
+use std::path::{Path, PathBuf};
+use clap::ArgMatches;
 
 use colored::Colorize;
 
@@ -108,15 +108,7 @@ fn run() -> Result<()> {
     let verbose = cli.is_present("verbose");
     initialize_logger(verbose);
 
-    let mut config = match Config::from_cli(cli) {
-        Ok(c) => c,
-        Err(e) => {
-            print_warning(format!("There was an error when reading the config.toml file: {}",
-                                  e.description()));
-
-            Config::default()
-        }
-    };
+    let mut config = initialize_config(cli)?;
 
     if !config.check() {
         let mut error_string = String::from("Configuration errors were found:\n");
@@ -171,6 +163,31 @@ fn run() -> Result<()> {
     }
 
     Ok(())
+}
+
+/// Initialize the config with the config files and command line options
+/// On UNIX, if local file ('config.toml') does not exists, but the global one does ('/etc/config.toml')
+/// the latter is used.
+/// Otherwise, the local file is used.
+/// Finally, if non of the files could be loaded, the default config is used
+fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
+    let config_path = PathBuf::from("config.toml");
+    let global_config_path = PathBuf::from("/etc/config.toml");
+
+    let mut config = if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
+        Config::from_file(&global_config_path)
+            .chain_err(|| format!("There was an error when reading the /etc/config.toml file"))?
+    } else if config_path.exists() {
+        Config::from_file(&PathBuf::from("config.toml"))
+            .chain_err(|| format!("There was an error when reading the config.toml file"))?
+    } else {
+        print_warning("Config file not found. Using default configuration");
+        Config::default()
+    };
+
+    config.decorate_with_cli(cli).chain_err(|| "There was an error reading config from CLI")?;
+
+    Ok(config)
 }
 
 /// Analyzes the given package with the given config.

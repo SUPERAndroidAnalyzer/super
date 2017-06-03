@@ -14,8 +14,6 @@ use std::error::Error as StdError;
 use std::result;
 use std::str::FromStr;
 
-use utils::print_error_as_warning;
-
 use colored::Colorize;
 use clap::ArgMatches;
 use toml;
@@ -143,75 +141,52 @@ impl ConfigDeserializer {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
-        let mut config = Config::default();
-
-        if cfg!(target_family = "unix") {
-            let config_path = PathBuf::from("/etc/config.toml");
-            config = config.from_file(&config_path);
-        }
-
-        let config_path = PathBuf::from("config.toml");
-        config = config.from_file(&config_path);
-
-        config.set_options(&cli);
-
-        config.verbose = cli.is_present("verbose");
-        config.quiet = cli.is_present("quiet");
-        config.overall_force = cli.is_present("force");
-        config.force = config.overall_force;
-        config.bench = cli.is_present("bench");
-        config.open = cli.is_present("open");
-        config.json = cli.is_present("json");
-        config.html = cli.is_present("html");
-
-        if cli.is_present("test-all") {
-            config
-                .read_apks()
-                .chain_err(|| "Error loading all the downloaded APKs")?;
-        } else {
-            config.add_app_package(cli.value_of("package").unwrap());
-        }
-
-        Ok(config)
-    }
-
-    /// It loads the config from target file and returns the new config. If the loaded file
-    /// is not valid, it returns the current `Config` instead and prints a warning.
-    fn from_file(self, config_path: &PathBuf) -> Config {
-        if !config_path.exists() {
-            return self;
-        }
-
+    pub fn from_file(config_path: &PathBuf) -> Result<Config> {
         let cfg_result: Result<Config> = fs::File::open(config_path)
             .chain_err(|| "Could not open file")
             .and_then(|mut f| {
-                          let mut toml = String::new();
-                          let _ = f.read_to_string(&mut toml);
+                let mut toml = String::new();
+                let _ = f.read_to_string(&mut toml);
 
-                          Ok(toml)
-                      })
+                Ok(toml)
+            })
             .and_then(|file_content| {
-                          toml::from_str(&file_content).chain_err(|| {
+                toml::from_str(&file_content).chain_err(|| {
                     format!("Could not decode config file: {}. Using default.",
                             config_path.to_string_lossy())
                 })
-                      });
+            })
+            .and_then(|mut new_config: Config| {
+                new_config.loaded_files.push(config_path.clone());
 
-        match cfg_result {
-            Ok(mut new_config) => {
-                let mut loaded_files = self.loaded_files;
-                loaded_files.push(config_path.clone());
+                Ok(new_config)
+            });
 
-                new_config.loaded_files = loaded_files;
+        cfg_result
+    }
 
-                new_config
-            }
-            Err(e) => {
-                print_error_as_warning(e);
-                self
-            }
+    /// Decorates the loaded config with the given flags from CLI
+    pub fn decorate_with_cli(&mut self, cli: ArgMatches<'static>) -> Result<()> {
+        self.set_options(&cli);
+
+        self.verbose = cli.is_present("verbose");
+        self.quiet = cli.is_present("quiet");
+        self.overall_force = cli.is_present("force");
+        self.force = self.overall_force;
+        self.bench = cli.is_present("bench");
+        self.open = cli.is_present("open");
+        self.json = cli.is_present("json");
+        self.html = cli.is_present("html");
+
+        if cli.is_present("test-all") {
+            self
+                .read_apks()
+                .chain_err(|| "Error loading all the downloaded APKs")?;
+        } else {
+            self.add_app_package(cli.value_of("package").unwrap());
         }
+
+        Ok(())
     }
 
     /// Modifies the options from the CLI.
@@ -729,8 +704,7 @@ mod tests {
     #[test]
     fn it_config_sample() {
         // Create config object.
-        let mut config = Config::default();
-        config = config.from_file(&PathBuf::from("config.toml.sample"));
+        let mut config = Config::from_file(&PathBuf::from("config.toml.sample")).unwrap();
         config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.

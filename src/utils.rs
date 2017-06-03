@@ -39,15 +39,6 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
     }
 }
 
-/// Prints a warning to `stderr` in yellow.
-pub fn print_error_as_warning(error: Error) {
-    warn!("{}", error.description());
-
-    for e in error.iter().skip(1) {
-        warn!("\t{}{}", "Caused by: ".bold(), e);
-    }
-}
-
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
 #[allow(print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
