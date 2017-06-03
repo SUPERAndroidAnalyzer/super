@@ -166,17 +166,17 @@ fn run() -> Result<()> {
 }
 
 /// Initialize the config with the config files and command line options
-/// On UNIX, if local file ('config.toml') does not exists, but the global one does ('/etc/config.toml')
-/// the latter is used.
+/// On UNIX, if local file ('config.toml') does not exists, but the global one does
+/// ('/etc/super-analyzer/config.toml'), the latter is used.
 /// Otherwise, the local file is used.
 /// Finally, if non of the files could be loaded, the default config is used
 fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
     let config_path = PathBuf::from("config.toml");
-    let global_config_path = PathBuf::from("/etc/config.toml");
+    let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
     let mut config = if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
         Config::from_file(&global_config_path)
-            .chain_err(|| format!("There was an error when reading the /etc/config.toml file"))?
+            .chain_err(|| format!("There was an error when reading the /etc/super-analyzer/config.toml file"))?
     } else if config_path.exists() {
         Config::from_file(&PathBuf::from("config.toml"))
             .chain_err(|| format!("There was an error when reading the config.toml file"))?
