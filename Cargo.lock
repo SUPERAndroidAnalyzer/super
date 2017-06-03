@@ -2,7 +2,7 @@
 name = "super-analyzer"
 version = "0.4.0"
 dependencies = [
- "abxml 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "abxml 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.24.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -26,7 +26,7 @@ dependencies = [
 
 [[package]]
 name = "abxml"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -638,7 +638,7 @@ dependencies = [
 ]
 
 [metadata]
-"checksum abxml 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "4ee01a6747a9dede89d2b94191c976d849189b14b588be58f693020304d51c4e"
+"checksum abxml 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "414440395563bb56b4f38ae9aac160cab086492b42344a8f657dda0c46160867"
 "checksum aho-corasick 0.6.3 (registry+https://github.com/rust-lang/crates.io-index)" = "500909c4f87a9e52355b26626d890833e9e1d53ac566db76c36faa984b889699"
 "checksum ansi_term 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)" = "23ac7c30002a5accbf7e8987d0632fa6de155b7c3d39d0067317a391e00a2ef6"
 "checksum atty 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "d912da0db7fa85514874458ca3651fe2cddace8d0b0505571dbdcd41ab490159"
