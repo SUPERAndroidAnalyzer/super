@@ -46,7 +46,7 @@ error-chain = "^0.10"
 md5 = "^0.3"
 sha1 = "^0.2"
 sha2 = "^0.5"
-abxml = "^0.1"
+abxml = "^0.2"
 handlebars = "^0.26"
 
 [build-dependencies]
