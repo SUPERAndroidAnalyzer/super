@@ -145,22 +145,22 @@ impl Config {
         let cfg_result: Result<Config> = fs::File::open(config_path)
             .chain_err(|| "Could not open file")
             .and_then(|mut f| {
-                let mut toml = String::new();
-                let _ = f.read_to_string(&mut toml);
+                          let mut toml = String::new();
+                          let _ = f.read_to_string(&mut toml);
 
-                Ok(toml)
-            })
+                          Ok(toml)
+                      })
             .and_then(|file_content| {
-                toml::from_str(&file_content).chain_err(|| {
+                          toml::from_str(&file_content).chain_err(|| {
                     format!("Could not decode config file: {}. Using default.",
                             config_path.to_string_lossy())
                 })
-            })
+                      })
             .and_then(|mut new_config: Config| {
-                new_config.loaded_files.push(config_path.clone());
+                          new_config.loaded_files.push(config_path.clone());
 
-                Ok(new_config)
-            });
+                          Ok(new_config)
+                      });
 
         cfg_result
     }
@@ -179,8 +179,7 @@ impl Config {
         self.html = cli.is_present("html");
 
         if cli.is_present("test-all") {
-            self
-                .read_apks()
+            self.read_apks()
                 .chain_err(|| "Error loading all the downloaded APKs")?;
         } else {
             self.add_app_package(cli.value_of("package").unwrap());

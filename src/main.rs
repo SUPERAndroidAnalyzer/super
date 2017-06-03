@@ -174,9 +174,12 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
     let config_path = PathBuf::from("config.toml");
     let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
-    let mut config = if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
+    let mut config = if cfg!(target_family = "unix") && !config_path.exists() &&
+                        global_config_path.exists() {
         Config::from_file(&global_config_path)
-            .chain_err(|| format!("There was an error when reading the /etc/super-analyzer/config.toml file"))?
+            .chain_err(||
+                format!("There was an error when reading the /etc/super-analyzer/config.toml file")
+            )?
     } else if config_path.exists() {
         Config::from_file(&PathBuf::from("config.toml"))
             .chain_err(|| format!("There was an error when reading the config.toml file"))?
@@ -185,7 +188,9 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
         Config::default()
     };
 
-    config.decorate_with_cli(cli).chain_err(|| "There was an error reading config from CLI")?;
+    config
+        .decorate_with_cli(cli)
+        .chain_err(|| "There was an error reading config from CLI")?;
 
     Ok(config)
 }
