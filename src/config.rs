@@ -90,8 +90,8 @@ struct ConfigDeserializer;
 
 impl ConfigDeserializer {
     /// Deserialize `thread` field and checks that is on the proper bounds
-    pub fn deserialize_threads<D>(de: D) -> result::Result<u8, D::Error>
-        where D: Deserializer
+    pub fn deserialize_threads<'de, D>(de: D) -> result::Result<u8, D::Error>
+        where D: Deserializer<'de>
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
@@ -108,9 +108,10 @@ impl ConfigDeserializer {
     }
 
     /// Deserialize `unknown_permission` field
-    pub fn deserialize_unknown_permission<D>(de: D)
-                                             -> result::Result<(Criticality, String), D::Error>
-        where D: Deserializer
+    pub fn deserialize_unknown_permission<'de, D>
+        (de: D)
+         -> result::Result<(Criticality, String), D::Error>
+        where D: Deserializer<'de>
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
@@ -128,9 +129,10 @@ impl ConfigDeserializer {
                     ))?;
 
                 let criticality = Criticality::from_str(criticality_str)
-                    .map_err(|_| serde::de::Error::custom(
-                        format!("Invalid `criticality` value found: {}", criticality_str))
-                    )?;
+                    .map_err(|_| {
+                        serde::de::Error::custom(format!("Invalid `criticality` value found: {}",
+                                                         criticality_str))
+                    })?;
 
                 Ok((criticality, string.to_string()))
             }
@@ -181,16 +183,20 @@ impl Config {
             return self;
         }
 
-        let cfg_result: Result<Config> = fs::File::open(config_path).chain_err(|| "Could not open file")
+        let cfg_result: Result<Config> = fs::File::open(config_path)
+            .chain_err(|| "Could not open file")
             .and_then(|mut f| {
-                let mut toml = String::new();
-                let _ = f.read_to_string(&mut toml);
+                          let mut toml = String::new();
+                          let _ = f.read_to_string(&mut toml);
 
-                Ok(toml)
-            })
+                          Ok(toml)
+                      })
             .and_then(|file_content| {
-                toml::from_str(&file_content).chain_err(|| format!("Could not decode config file: {}. Using default.", config_path.to_string_lossy()))
-            });
+                          toml::from_str(&file_content).chain_err(|| {
+                    format!("Could not decode config file: {}. Using default.",
+                            config_path.to_string_lossy())
+                })
+                      });
 
         match cfg_result {
             Ok(mut new_config) => {

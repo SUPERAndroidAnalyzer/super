@@ -2865,9 +2865,9 @@ pub enum Permission {
     ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
 }
 
-impl Deserialize for Permission {
+impl<'de> Deserialize<'de> for Permission {
     fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
-        where D: Deserializer
+        where D: Deserializer<'de>
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 

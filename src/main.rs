@@ -333,9 +333,9 @@ impl Serialize for Criticality {
     }
 }
 
-impl Deserialize for Criticality {
+impl<'de> Deserialize<'de> for Criticality {
     fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
-        where D: Deserializer
+        where D: Deserializer<'de>
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
