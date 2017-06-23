@@ -15,19 +15,24 @@ use colored::Colorize;
 use {Config, Criticality, print_warning, print_vulnerability, get_code, get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
-pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
-                                        package: S,
-                                        results: &mut Results)
-                                        -> Option<Manifest> {
+pub fn manifest_analysis<S: AsRef<str>>(
+    config: &Config,
+    package: S,
+    results: &mut Results,
+) -> Option<Manifest> {
     if config.is_verbose() {
-        println!("Loading the manifest file. For this, we first parse the document and then we'll \
-                  analyze it.")
+        println!(
+            "Loading the manifest file. For this, we first parse the document and then we'll \
+                  analyze it."
+        )
     }
 
-    let manifest = match Manifest::load(config.get_dist_folder().join(package.as_ref()),
-                                        config,
-                                        package.as_ref(),
-                                        results) {
+    let manifest = match Manifest::load(
+        config.get_dist_folder().join(package.as_ref()),
+        config,
+        package.as_ref(),
+        results,
+    ) {
         Ok(m) => {
             if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
@@ -36,29 +41,37 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
             m
         }
         Err(e) => {
-            print_warning(format!("There was an error when loading the manifest: {}",
-                                  e.description()));
+            print_warning(format!(
+                "There was an error when loading the manifest: {}",
+                e.description()
+            ));
             if config.is_verbose() {
-                println!("The rest of the analysis will continue, but there will be no analysis \
+                println!(
+                    "The rest of the analysis will continue, but there will be no analysis \
                           of the AndroidManifest.xml file, and code analysis rules requiring \
-                          permissions will not run.");
+                          permissions will not run."
+                );
             }
             return None;
         }
     };
 
     if manifest.get_package() != package.as_ref() {
-        print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
+        print_warning(format!(
+            "Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              package.as_ref(),
-                              manifest.get_package()));
+            package.as_ref(),
+            manifest.get_package()
+        ));
 
         if config.is_verbose() {
-            println!("This does not mean that something went wrong, but it's supposed to have \
+            println!(
+                "This does not mean that something went wrong, but it's supposed to have \
                       the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     "downloads".italic());
+                "downloads".italic()
+            );
         }
     }
 
@@ -87,13 +100,15 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Manifest Debug",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Manifest Debug",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
 
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
@@ -114,13 +129,15 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Large heap",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Large heap",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
@@ -140,36 +157,41 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Allows Backup",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Allows Backup",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
     }
 
     for permission in config.get_permissions() {
-        if manifest
-               .get_permission_checklist()
-               .needs_permission(permission.get_permission()) &&
-           permission.get_criticality() >= config.get_min_criticality() {
+        if manifest.get_permission_checklist().needs_permission(
+            permission
+                .get_permission(),
+        ) && permission.get_criticality() >= config.get_min_criticality()
+        {
             let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
                 Some(l) => Some(get_code(manifest.get_code(), l, l)),
                 None => None,
             };
 
-            let vuln = Vulnerability::new(permission.get_criticality(),
-                                          permission.get_label(),
-                                          permission.get_description(),
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                permission.get_criticality(),
+                permission.get_label(),
+                permission.get_description(),
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(permission.get_description(), permission.get_criticality());
         }
@@ -204,11 +226,12 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn load<P: AsRef<Path>, S: AsRef<str>>(path: P,
-                                               config: &Config,
-                                               package: S,
-                                               results: &mut Results)
-                                               -> Result<Manifest> {
+    pub fn load<P: AsRef<Path>, S: AsRef<str>>(
+        path: P,
+        config: &Config,
+        package: S,
+        results: &mut Results,
+    ) -> Result<Manifest> {
         let mut file = File::open(path.as_ref().join("AndroidManifest.xml"))?;
         let mut manifest = Manifest::default();
 
@@ -248,14 +271,16 @@ impl Manifest {
                                             match InstallLocation::from_str(attr.value.as_str()) {
                                                 Ok(l) => l,
                                                 Err(e) => {
-                                                    print_warning(format!("An error occurred when \
+                                                    print_warning(format!(
+                                                        "An error occurred when \
                                                                        parsing the \
                                                                        installLocation \
                                                                        attribute in the \
                                                                        manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                          e.description()));
+                                                        e.description()
+                                                    ));
                                                     break;
                                                 }
                                             };
@@ -314,13 +339,15 @@ impl Manifest {
                                         let debug: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
-                                                print_warning(format!("An error occurred \
+                                                print_warning(format!(
+                                                    "An error occurred \
                                                                        when parsing the \
                                                                        debuggable attribute in \
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e.description()));
+                                                    e.description()
+                                                ));
                                                 break;
                                             }
                                         };
@@ -352,13 +379,15 @@ impl Manifest {
                                         let has_code: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
-                                                print_warning(format!("An error occurred \
+                                                print_warning(format!(
+                                                    "An error occurred \
                                                                         when parsing the \
                                                                     hasCode attribute in \
                                                                            the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e.description()));
+                                                    e.description()
+                                                ));
                                                 break;
                                             }
                                         };
@@ -385,25 +414,30 @@ impl Manifest {
                                         }
                                     }
                                     "label" => {
-                                        manifest.set_label(if attr.value.starts_with("@string/") {
-                                            match get_string(&attr.value[8..],
-                                                             config,
-                                                             package.as_ref()) {
-                                                Ok(s) => s,
-                                                Err(e) => {
-                                                    print_warning(format!("An error occurred when\
+                                        manifest.set_label(
+                                            if attr.value.starts_with("@string/") {
+                                                match get_string(
+                                                    &attr.value[8..],
+                                                    config,
+                                                    package.as_ref(),
+                                                ) {
+                                                    Ok(s) => s,
+                                                    Err(e) => {
+                                                        print_warning(format!(
+                                                            "An error occurred when\
                                                                          trying to get the string\
                                                                          for the app label in the\
                                                                        manifest: {}.\nThe process\
                                                                       will continue, though.",
-                                                                          e.description()));
-                                                    break;
+                                                            e.description()
+                                                        ));
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                        } else {
-                                                                   attr.value
-                                                               }
-                                                               .as_str())
+                                            } else {
+                                                attr.value
+                                            }.as_str(),
+                                        )
                                     }
                                     _ => {}
                                 }
@@ -412,8 +446,10 @@ impl Manifest {
                         "uses-permission" => {
                             for attr in attributes {
                                 if let "name" = attr.name.local_name.as_str() {
-                                    let permission = if let Ok(p) =
-                                        Permission::from_str(attr.value.as_str()) {
+                                    let permission = if let Ok(p) = Permission::from_str(
+                                        attr.value.as_str(),
+                                    )
+                                    {
                                         p
                                     } else {
                                         let line =
@@ -430,13 +466,15 @@ impl Manifest {
                                         let file = Some("AndroidManifest.xml");
 
                                         if criticality > config.get_min_criticality() {
-                                            let vuln = Vulnerability::new(criticality,
-                                                                          "Unknown permission",
-                                                                          description,
-                                                                          file,
-                                                                          line,
-                                                                          line,
-                                                                          code);
+                                            let vuln = Vulnerability::new(
+                                                criticality,
+                                                "Unknown permission",
+                                                description,
+                                                file,
+                                                line,
+                                                line,
+                                                code,
+                                            );
                                             results.add_vulnerability(vuln);
 
                                             print_vulnerability(description, criticality);
@@ -470,11 +508,13 @@ impl Manifest {
                             match exported {
                                 Some(true) | None => {
                                     if tag != "provider" || exported.is_some() ||
-                                       manifest.get_min_sdk() < 17 {
+                                        manifest.get_min_sdk() < 17
+                                    {
 
-                                        let line = get_line(manifest.get_code(),
-                                                            &format!("android:name=\"{}\"", name))
-                                                .ok();
+                                        let line = get_line(
+                                            manifest.get_code(),
+                                            &format!("android:name=\"{}\"", name),
+                                        ).ok();
                                         let code = match line {
                                             Some(l) => Some(get_code(manifest.get_code(), l, l)),
                                             None => None,
@@ -483,25 +523,32 @@ impl Manifest {
                                         let criticality = Criticality::Warning;
 
                                         if criticality >= config.get_min_criticality() {
-                                            let vuln =
-                                                Vulnerability::new(criticality,
-                                                                   format!("Exported {}", tag),
-                                                                   format!("Exported {} was \
+                                            let vuln = Vulnerability::new(
+                                                criticality,
+                                                format!("Exported {}", tag),
+                                                format!(
+                                                    "Exported {} was \
                                                                             found. It can be \
                                                                             used by other \
                                                                             applications.",
-                                                                           tag),
-                                                                   Some("AndroidManifest.xml"),
-                                                                   line,
-                                                                   line,
-                                                                   code);
+                                                    tag
+                                                ),
+                                                Some("AndroidManifest.xml"),
+                                                line,
+                                                line,
+                                                code,
+                                            );
                                             results.add_vulnerability(vuln);
 
-                                            print_vulnerability(format!("Exported {} was found. \
+                                            print_vulnerability(
+                                                format!(
+                                                    "Exported {} was found. \
                                                                          It can be used by \
                                                                          other applications.",
-                                                                        tag),
-                                                                Criticality::Warning);
+                                                    tag
+                                                ),
+                                                Criticality::Warning,
+                                            );
                                         }
                                     }
                                 }
@@ -513,10 +560,12 @@ impl Manifest {
                 }
                 Ok(_) => {}
                 Err(e) => {
-                    print_warning(format!("An error occurred when parsing the \
+                    print_warning(format!(
+                        "An error occurred when parsing the \
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
-                                          e.description()));
+                        e.description()
+                    ));
                 }
             }
         }
@@ -713,12 +762,18 @@ mod tests {
 
     #[test]
     fn it_install_loc_from_str() {
-        assert_eq!(InstallLocation::InternalOnly,
-                   InstallLocation::from_str("internalOnly").unwrap());
-        assert_eq!(InstallLocation::Auto,
-                   InstallLocation::from_str("auto").unwrap());
-        assert_eq!(InstallLocation::PreferExternal,
-                   InstallLocation::from_str("preferExternal").unwrap());
+        assert_eq!(
+            InstallLocation::InternalOnly,
+            InstallLocation::from_str("internalOnly").unwrap()
+        );
+        assert_eq!(
+            InstallLocation::Auto,
+            InstallLocation::from_str("auto").unwrap()
+        );
+        assert_eq!(
+            InstallLocation::PreferExternal,
+            InstallLocation::from_str("preferExternal").unwrap()
+        );
         assert!(InstallLocation::from_str("Razican").is_err());
     }
 
@@ -727,8 +782,12 @@ mod tests {
         let mut checklist: PermissionChecklist = Default::default();
         checklist.set_needs_permission(Permission::AndroidPermissionInternet);
 
-        assert!(checklist.needs_permission(Permission::AndroidPermissionInternet));
-        assert!(!checklist.needs_permission(Permission::AndroidPermissionWriteExternalStorage));
+        assert!(checklist.needs_permission(
+            Permission::AndroidPermissionInternet,
+        ));
+        assert!(!checklist.needs_permission(
+            Permission::AndroidPermissionWriteExternalStorage,
+        ));
     }
 
     #[test]
@@ -739,8 +798,10 @@ mod tests {
         assert_eq!(internet, Permission::AndroidPermissionInternet);
         assert_eq!(storage, Permission::AndroidPermissionWriteExternalStorage);
         assert_eq!(internet.as_str(), "android.permission.INTERNET");
-        assert_eq!(storage.as_str(),
-                   "android.permission.WRITE_EXTERNAL_STORAGE");
+        assert_eq!(
+            storage.as_str(),
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        );
         assert!(Permission::from_str("Razican").is_err());
     }
 }
@@ -2867,7 +2928,8 @@ pub enum Permission {
 
 impl<'de> Deserialize<'de> for Permission {
     fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
@@ -2876,12 +2938,15 @@ impl<'de> Deserialize<'de> for Permission {
                 match Permission::from_str(&str) {
                     Ok(permission) => Ok(permission),
                     Err(_) => {
-                        Err(serde::de::Error::custom(format!("Unexpected value: {:?}",
-                                                             deser_result)))
+                        Err(serde::de::Error::custom(
+                            format!("Unexpected value: {:?}", deser_result),
+                        ))
                     }
                 }
             }
-            _ => Err(serde::de::Error::custom(format!("Unexpected value: {:?}", deser_result))),
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
         }
     }
 }
@@ -3803,7 +3868,9 @@ impl FromStr for Permission {
             "android.permission.REMOVE_TASKS" => Ok(Permission::AndroidPermissionRemoveTasks),
             "android.permission.REORDER_TASKS" => Ok(Permission::AndroidPermissionReorderTasks),
             "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" => {
-                Ok(Permission::AndroidPermissionRequestIgnoreBatteryOptimizations)
+                Ok(
+                    Permission::AndroidPermissionRequestIgnoreBatteryOptimizations,
+                )
             }
             "android.permission.REQUEST_INSTALL_PACKAGES" => {
                 Ok(Permission::AndroidPermissionRequestInstallPackages)
@@ -3934,7 +4001,9 @@ impl FromStr for Permission {
                 Ok(Permission::ComAndroidVoicemailPermissionReadVoicemail)
             }
             "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail)
+                Ok(
+                    Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail,
+                )
             }
             "com.android.voicemail.permission.WRITE_VOICEMAIL" => {
                 Ok(Permission::ComAndroidVoicemailPermissionWriteVoicemail)
@@ -3952,31 +4021,47 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ah" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.android" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.cl" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl)
@@ -3985,115 +4070,185 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.finance" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.health" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ig" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.knol" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.local" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mail" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.news" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.print" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.reader" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speech" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.talk" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wise" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.writely" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube,
+                )
             }
             "com.google.android.gtalkservice.permission.GTALK_SERVICE" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionGtalkService)
+                Ok(
+                    Permission::ComGoogleAndroidGtalkservicePermissionGtalkService,
+                )
             }
             "com.google.android.gtalkservice.permission.SEND_HEARTBEAT" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat)
+                Ok(
+                    Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat,
+                )
             }
             "com.google.android.permission.BROADCAST_DATA_MESSAGE" => {
                 Ok(Permission::ComGoogleAndroidPermissionBroadcastDataMessage)
             }
             "com.google.android.providers.gsf.permission.READ_GSERVICES" => {
-                Ok(Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices)
+                Ok(
+                    Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices,
+                )
             }
             "com.google.android.providers.talk.permission.READ_ONLY" => {
                 Ok(Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly)
@@ -4111,7 +4266,9 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint)
             }
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
+                Ok(
+                    Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
+                )
             }
             _ => Err(ErrorKind::Parse.into()),
         }

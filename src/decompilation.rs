@@ -15,9 +15,12 @@ use {Config, print_warning, get_package_name};
 
 /// Decompresses the application using _Apktool_.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
-    let path = config
-        .get_dist_folder()
-        .join(package.as_ref().file_stem().unwrap());
+    let path = config.get_dist_folder().join(
+        package
+            .as_ref()
+            .file_stem()
+            .unwrap(),
+    );
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
@@ -25,9 +28,11 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             }
 
             if let Err(e) = fs::remove_dir_all(&path) {
-                print_warning(format!("There was an error when removing the decompression \
+                print_warning(format!(
+                    "There was an error when removing the decompression \
                                        folder: {}",
-                                      e.description()));
+                    e.description()
+                ));
             }
         }
         config.set_force();
@@ -37,25 +42,32 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref())
-            .chain_err(|| "error loading apk file")?;
-        apk.export(&path, true)
-            .chain_err(|| {
-                           format!("could not decompress the apk file. Tried to decompile at: {}",
-                                   path.display())
-                       })?;
+        let mut apk = Apk::new(package.as_ref()).chain_err(
+            || "error loading apk file",
+        )?;
+        apk.export(&path, true).chain_err(|| {
+            format!(
+                "could not decompress the apk file. Tried to decompile at: {}",
+                path.display()
+            )
+        })?;
 
         if config.is_verbose() {
-            println!("{}",
-                     format!("The application has been decompressed in {}.",
-                             path.display())
-                             .green());
+            println!(
+                "{}",
+                format!(
+                    "The application has been decompressed in {}.",
+                    path.display()
+                ).green()
+            );
         } else if !config.is_quiet() {
             println!("Application decompressed.");
         }
     } else if config.is_verbose() {
-        println!("Seems that the application has already been decompressed. There is no need to \
-                  do it again.");
+        println!(
+            "Seems that the application has already been decompressed. There is no need to \
+                  do it again."
+        );
     } else {
         println!("Skipping decompression.");
     }
@@ -66,35 +78,35 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 /// Converts _.dex_ files to _.jar_ using _Dex2jar_.
 pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
-    let classes = config
-        .get_dist_folder()
-        .join(&package_name)
-        .join("classes.jar");
+    let classes = config.get_dist_folder().join(&package_name).join(
+        "classes.jar",
+    );
     if config.is_force() || !classes.exists() {
         config.set_force();
 
         // Command to convert .dex to .jar. using dex2jar.
         // "-o path" to specify an output file
-        let output = Command::new(config
-                                      .get_dex2jar_folder()
-                                      .join(if cfg!(target_family = "windows") {
-                                                "d2j-dex2jar.bat"
-                                            } else {
-                                                "d2j-dex2jar.sh"
-                                            }))
-                .arg(config
-                         .get_dist_folder()
-                         .join(&package_name)
-                         .join("classes.dex"))
-                .arg("-f")
-                .arg("-o")
-                .arg(&classes)
-                .output()
-                .chain_err(|| {
-                    format!("There was an error when executing the {} to {} conversion command",
-                            ".dex".italic(),
-                            ".jar".italic())
-                })?;
+        let output = Command::new(config.get_dex2jar_folder().join(if cfg!(
+            target_family = "windows"
+        )
+        {
+            "d2j-dex2jar.bat"
+        } else {
+            "d2j-dex2jar.sh"
+        })).arg(config.get_dist_folder().join(&package_name).join(
+            "classes.dex",
+        ))
+            .arg("-f")
+            .arg("-o")
+            .arg(&classes)
+            .output()
+            .chain_err(|| {
+                format!(
+                    "There was an error when executing the {} to {} conversion command",
+                    ".dex".italic(),
+                    ".jar".italic()
+                )
+            })?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -102,30 +114,38 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         // exception that was produced. But, the thing is that in some cases it does not return an
         // exception, so we have to check if errors such as "use certain option" occur.
         if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) ||
-           stderr.contains("use") {
-            let message = format!("The {} to {} conversion command returned an error. More info: \
+            stderr.contains("use")
+        {
+            let message = format!(
+                "The {} to {} conversion command returned an error. More info: \
                                  {}",
-                                  ".dex".italic(),
-                                  ".jar".italic(),
-                                  stderr);
+                ".dex".italic(),
+                ".jar".italic(),
+                stderr
+            );
 
             return Err(message.into());
         }
 
         if config.is_verbose() {
-            println!("{}",
-                     format!("The application {} {} {}",
-                             ".jar".italic(),
-                             "file has been generated in".green(),
-                             format!("{}", classes.display()).green())
-                             .green());
+            println!(
+                "{}",
+                format!(
+                    "The application {} {} {}",
+                    ".jar".italic(),
+                    "file has been generated in".green(),
+                    format!("{}", classes.display()).green()
+                ).green()
+            );
         } else if !config.is_quiet() {
             println!("Jar file generated.");
         }
     } else if config.is_verbose() {
-        println!("Seems that there is already a {} file for the application. There is no need to \
+        println!(
+            "Seems that there is already a {} file for the application. There is no need to \
                   create it again.",
-                 ".jar".italic());
+            ".jar".italic()
+        );
     } else {
         println!("Skipping {} file generation.", ".jar".italic());
     }
@@ -145,30 +165,35 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
         let output = Command::new("java")
             .arg("-jar")
             .arg(config.get_jd_cmd_file())
-            .arg(config
-                     .get_dist_folder()
-                     .join(&package_name)
-                     .join("classes.jar"))
+            .arg(config.get_dist_folder().join(&package_name).join(
+                "classes.jar",
+            ))
             .arg("-od")
             .arg(&out_path)
             .output()
             .chain_err(|| "There was an unknown error decompiling the application")?;
 
         if !output.status.success() {
-            let message = format!("The decompilation command returned an error. More info:\n{}",
-                                  String::from_utf8_lossy(&output.stdout));
+            let message = format!(
+                "The decompilation command returned an error. More info:\n{}",
+                String::from_utf8_lossy(&output.stdout)
+            );
             return Err(message.into());
         }
 
         if config.is_verbose() {
-            println!("{}",
-                     "The application has been succesfully decompiled!".green());
+            println!(
+                "{}",
+                "The application has been succesfully decompiled!".green()
+            );
         } else if !config.is_quiet() {
             println!("Application decompiled.");
         }
     } else if config.is_verbose() {
-        println!("Seems that there is already a source folder for the application. There is no \
-                  need to decompile it again.");
+        println!(
+            "Seems that there is already a source folder for the application. There is no \
+                  need to decompile it again."
+        );
     } else {
         println!("Skipping decompilation.");
     }

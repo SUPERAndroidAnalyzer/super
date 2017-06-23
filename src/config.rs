@@ -89,7 +89,8 @@ struct ConfigDeserializer;
 impl ConfigDeserializer {
     /// Deserialize `thread` field and checks that is on the proper bounds
     pub fn deserialize_threads<'de, D>(de: D) -> result::Result<u8, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
@@ -98,43 +99,47 @@ impl ConfigDeserializer {
                 if threads > 0 && threads <= MAX_THREADS {
                     Ok(threads as u8)
                 } else {
-                    Err(serde::de::Error::custom("Threads is not in the valid range"))
+                    Err(serde::de::Error::custom(
+                        "Threads is not in the valid range",
+                    ))
                 }
             }
-            _ => Err(serde::de::Error::custom(format!("Unexpected value: {:?}", deser_result))),
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
         }
     }
 
     /// Deserialize `unknown_permission` field
-    pub fn deserialize_unknown_permission<'de, D>
-        (de: D)
-         -> result::Result<(Criticality, String), D::Error>
-        where D: Deserializer<'de>
+    pub fn deserialize_unknown_permission<'de, D>(
+        de: D,
+    ) -> result::Result<(Criticality, String), D::Error>
+    where
+        D: Deserializer<'de>,
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
         match deser_result {
             toml::value::Value::Table(ref table) => {
-                let criticality_str = table.get("criticality")
-                    .and_then(|v| v.as_str())
-                    .ok_or(serde::de::Error::custom(
-                        "Criticality field not found for unknown permission")
-                    )?;
-                let string = table.get("description")
-                    .and_then(|v| v.as_str())
-                    .ok_or(serde::de::Error::custom(
-                        "Description field not found for unknown permission"
-                    ))?;
+                let criticality_str = table.get("criticality").and_then(|v| v.as_str()).ok_or(
+                    serde::de::Error::custom("Criticality field not found for unknown permission"),
+                )?;
+                let string = table.get("description").and_then(|v| v.as_str()).ok_or(
+                    serde::de::Error::custom("Description field not found for unknown permission"),
+                )?;
 
-                let criticality = Criticality::from_str(criticality_str)
-                    .map_err(|_| {
-                        serde::de::Error::custom(format!("Invalid `criticality` value found: {}",
-                                                         criticality_str))
-                    })?;
+                let criticality = Criticality::from_str(criticality_str).map_err(|_| {
+                    serde::de::Error::custom(format!(
+                        "Invalid `criticality` value found: {}",
+                        criticality_str
+                    ))
+                })?;
 
                 Ok((criticality, string.to_string()))
             }
-            _ => Err(serde::de::Error::custom(format!("Unexpected value: {:?}", deser_result))),
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
         }
     }
 }
@@ -145,22 +150,24 @@ impl Config {
         let cfg_result: Result<Config> = fs::File::open(config_path)
             .chain_err(|| "Could not open file")
             .and_then(|mut f| {
-                          let mut toml = String::new();
-                          let _ = f.read_to_string(&mut toml);
+                let mut toml = String::new();
+                let _ = f.read_to_string(&mut toml);
 
-                          Ok(toml)
-                      })
+                Ok(toml)
+            })
             .and_then(|file_content| {
-                          toml::from_str(&file_content).chain_err(|| {
-                    format!("Could not decode config file: {}. Using default.",
-                            config_path.to_string_lossy())
+                toml::from_str(&file_content).chain_err(|| {
+                    format!(
+                        "Could not decode config file: {}. Using default.",
+                        config_path.to_string_lossy()
+                    )
                 })
-                      })
+            })
             .and_then(|mut new_config: Config| {
-                          new_config.loaded_files.push(config_path.clone());
+                new_config.loaded_files.push(config_path.clone());
 
-                          Ok(new_config)
-                      });
+                Ok(new_config)
+            });
 
         cfg_result
     }
@@ -179,8 +186,9 @@ impl Config {
         self.html = cli.is_present("html");
 
         if cli.is_present("test-all") {
-            self.read_apks()
-                .chain_err(|| "Error loading all the downloaded APKs")?;
+            self.read_apks().chain_err(
+                || "Error loading all the downloaded APKs",
+            )?;
         } else {
             self.add_app_package(cli.value_of("package").unwrap());
         }
@@ -195,13 +203,15 @@ impl Config {
 
                 self.min_criticality = m;
             } else {
-                print_warning(format!("The min_criticality option must be one of {}, {}, {}, {} \
+                print_warning(format!(
+                    "The min_criticality option must be one of {}, {}, {}, {} \
                                        or {}.\nUsing default.",
-                                      "warning".italic(),
-                                      "low".italic(),
-                                      "medium".italic(),
-                                      "high".italic(),
-                                      "critical".italic()));
+                    "warning".italic(),
+                    "low".italic(),
+                    "medium".italic(),
+                    "high".italic(),
+                    "critical".italic()
+                ));
             }
         }
         if let Some(threads) = cli.value_of("threads") {
@@ -210,9 +220,11 @@ impl Config {
                     self.threads = t;
                 }
                 _ => {
-                    print_warning(format!("The threads option must be an integer between 1 and \
+                    print_warning(format!(
+                        "The threads option must be an integer between 1 and \
                                            {}",
-                                          u8::MAX));
+                        u8::MAX
+                    ));
                 }
             }
         }
@@ -248,19 +260,23 @@ impl Config {
                 Ok(entry) => {
                     if let Some(ext) = entry.path().extension() {
                         if ext == "apk" {
-                            self.add_app_package(entry
-                                                     .path()
-                                                     .file_stem()
-                                                     .unwrap()
-                                                     .to_string_lossy()
-                                                     .into_owned())
+                            self.add_app_package(
+                                entry
+                                    .path()
+                                    .file_stem()
+                                    .unwrap()
+                                    .to_string_lossy()
+                                    .into_owned(),
+                            )
                         }
                     }
                 }
                 Err(e) => {
-                    print_warning(format!("There was an error when reading the \
+                    print_warning(format!(
+                        "There was an error when reading the \
                                                    downloads folder: {}",
-                                          e.description()));
+                        e.description()
+                    ));
                 }
             }
         }
@@ -271,9 +287,8 @@ impl Config {
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
         let check = self.downloads_folder.exists() && self.dex2jar_folder.exists() &&
-                    self.jd_cmd_file.exists() &&
-                    self.get_template_path().exists() &&
-                    self.rules_json.exists();
+            self.jd_cmd_file.exists() && self.get_template_path().exists() &&
+            self.rules_json.exists();
         if check {
             for package in &self.app_packages {
                 if !package.exists() {
@@ -290,34 +305,49 @@ impl Config {
     pub fn get_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
         if !self.downloads_folder.exists() {
-            errors.push(format!("The downloads folder `{}` does not exist",
-                                self.downloads_folder.display()));
+            errors.push(format!(
+                "The downloads folder `{}` does not exist",
+                self.downloads_folder.display()
+            ));
         }
         for package in &self.app_packages {
             if !package.exists() {
-                errors.push(format!("The APK file `{}` does not exist", package.display()));
+                errors.push(format!(
+                    "The APK file `{}` does not exist",
+                    package.display()
+                ));
             }
         }
         if !self.dex2jar_folder.exists() {
-            errors.push(format!("The Dex2Jar folder `{}` does not exist",
-                                self.dex2jar_folder.display()));
+            errors.push(format!(
+                "The Dex2Jar folder `{}` does not exist",
+                self.dex2jar_folder.display()
+            ));
         }
         if !self.jd_cmd_file.exists() {
-            errors.push(format!("The jd-cmd file `{}` does not exist",
-                                self.jd_cmd_file.display()));
+            errors.push(format!(
+                "The jd-cmd file `{}` does not exist",
+                self.jd_cmd_file.display()
+            ));
         }
         if !self.templates_folder.exists() {
-            errors.push(format!("the templates folder `{}` does not exist",
-                                self.templates_folder.display()));
+            errors.push(format!(
+                "the templates folder `{}` does not exist",
+                self.templates_folder.display()
+            ));
         }
         if !self.get_template_path().exists() {
-            errors.push(format!("the template `{}` does not exist in `{}`",
-                                self.template,
-                                self.templates_folder.display()));
+            errors.push(format!(
+                "the template `{}` does not exist in `{}`",
+                self.template,
+                self.templates_folder.display()
+            ));
         }
         if !self.rules_json.exists() {
-            errors.push(format!("The `{}` rule file does not exist",
-                                self.rules_json.display()));
+            errors.push(format!(
+                "The `{}` rule file does not exist",
+                self.rules_json.display()
+            ));
         }
         errors
     }
@@ -482,10 +512,14 @@ impl Config {
             templates_folder: PathBuf::from("templates"),
             template: String::from("super"),
             rules_json: PathBuf::from("rules.json"),
-            unknown_permission: (Criticality::Low,
-                                 String::from("Even if the application can create its own \
+            unknown_permission: (
+                Criticality::Low,
+                String::from(
+                    "Even if the application can create its own \
                                                permissions, it's discouraged, since it can \
-                                               lead to missunderstanding between developers.")),
+                                               lead to missunderstanding between developers.",
+                ),
+            ),
             permissions: BTreeSet::new(),
             loaded_files: Vec::new(),
         }
@@ -502,10 +536,10 @@ impl Default for Config {
             config.rules_json = etc_rules;
         }
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super-analyzer"
-                                   } else {
-                                       "/usr/share/super-analyzer"
-                                   });
+            "/usr/local/super-analyzer"
+        } else {
+            "/usr/share/super-analyzer"
+        });
         if share_path.exists() {
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
@@ -559,11 +593,12 @@ impl PartialOrd for PermissionConfig {
 impl PermissionConfig {
     /// Creates a new `PermissionConfig`.
     #[allow(unused)]
-    fn new<L: Into<String>, D: Into<String>>(permission: Permission,
-                                             criticality: Criticality,
-                                             label: L,
-                                             description: D)
-                                             -> PermissionConfig {
+    fn new<L: Into<String>, D: Into<String>>(
+        permission: Permission,
+        criticality: Criticality,
+        label: L,
+        description: D,
+    ) -> PermissionConfig {
         PermissionConfig {
             permission,
             criticality,
@@ -620,35 +655,47 @@ mod tests {
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super-analyzer"
-                                   } else if cfg!(target_family = "windows") {
-                                       ""
-                                   } else {
-                                       "/usr/share/super-analyzer"
-                                   });
+            "/usr/local/super-analyzer"
+        } else if cfg!(target_family = "windows") {
+            ""
+        } else {
+            "/usr/share/super-analyzer"
+        });
         let share_path = if share_path.exists() {
             share_path
         } else {
             Path::new("")
         };
-        assert_eq!(config.get_dex2jar_folder(),
-                   share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
-        assert_eq!(config.get_jd_cmd_file(),
-                   share_path.join("vendor").join("jd-cmd.jar"));
+        assert_eq!(
+            config.get_dex2jar_folder(),
+            share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT")
+        );
+        assert_eq!(
+            config.get_jd_cmd_file(),
+            share_path.join("vendor").join("jd-cmd.jar")
+        );
         assert_eq!(config.get_templates_folder(), share_path.join("templates"));
-        assert_eq!(config.get_template_path(),
-                   share_path.join("templates").join("super"));
+        assert_eq!(
+            config.get_template_path(),
+            share_path.join("templates").join("super")
+        );
         if cfg!(target_family = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
-            assert_eq!(config.get_rules_json(),
-                       Path::new("/etc/super-analyzer/rules.json"));
+            assert_eq!(
+                config.get_rules_json(),
+                Path::new("/etc/super-analyzer/rules.json")
+            );
         } else {
             assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
-        assert_eq!(config.get_unknown_permission_criticality(),
-                   Criticality::Low);
-        assert_eq!(config.get_unknown_permission_description(),
-                   "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers.");
+        assert_eq!(
+            config.get_unknown_permission_criticality(),
+            Criticality::Low
+        );
+        assert_eq!(
+            config.get_unknown_permission_description(),
+            "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers."
+        );
         assert_eq!(config.get_permissions().next(), None);
 
         if !config.downloads_folder.exists() {
@@ -711,33 +758,51 @@ mod tests {
         assert_eq!(config.downloads_folder, Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
-        assert_eq!(config.get_dex2jar_folder(),
-                   Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT"));
-        assert_eq!(config.get_jd_cmd_file(),
-                   Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar"));
-        assert_eq!(config.get_templates_folder(),
-                   Path::new("/usr/share/super-analyzer/templates"));
-        assert_eq!(config.get_template_path(),
-                   Path::new("/usr/share/super-analyzer/templates/super"));
+        assert_eq!(
+            config.get_dex2jar_folder(),
+            Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT")
+        );
+        assert_eq!(
+            config.get_jd_cmd_file(),
+            Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar")
+        );
+        assert_eq!(
+            config.get_templates_folder(),
+            Path::new("/usr/share/super-analyzer/templates")
+        );
+        assert_eq!(
+            config.get_template_path(),
+            Path::new("/usr/share/super-analyzer/templates/super")
+        );
         assert_eq!(config.get_template_name(), "super");
-        assert_eq!(config.get_rules_json(),
-                   Path::new("/etc/super-analyzer/rules.json"));
-        assert_eq!(config.get_unknown_permission_criticality(),
-                   Criticality::Low);
-        assert_eq!(config.get_unknown_permission_description(),
-                   "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers.");
+        assert_eq!(
+            config.get_rules_json(),
+            Path::new("/etc/super-analyzer/rules.json")
+        );
+        assert_eq!(
+            config.get_unknown_permission_criticality(),
+            Criticality::Low
+        );
+        assert_eq!(
+            config.get_unknown_permission_description(),
+            "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers."
+        );
 
         let permission = config.get_permissions().next().unwrap();
-        assert_eq!(permission.get_permission(),
-                   Permission::AndroidPermissionInternet);
+        assert_eq!(
+            permission.get_permission(),
+            Permission::AndroidPermissionInternet
+        );
         assert_eq!(permission.get_criticality(), Criticality::Warning);
         assert_eq!(permission.get_label(), "Internet permission");
-        assert_eq!(permission.get_description(),
-                   "Allows the app to create network sockets and use custom network protocols. \
+        assert_eq!(
+            permission.get_description(),
+            "Allows the app to create network sockets and use custom network protocols. \
                     The browser and other applications provide means to send data to the \
                     internet, so this permission is not required to send data to the internet. \
-                    Check if the permission is actually needed.");
+                    Check if the permission is actually needed."
+        );
     }
 
     /// Test to check the default reports to be generated

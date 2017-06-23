@@ -20,10 +20,12 @@ impl Report for Json {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }
-        let mut f = BufWriter::new(File::create(config
-                                                    .get_results_folder()
-                                                    .join(&results.get_app_package())
-                                                    .join("results.json"))?);
+        let mut f = BufWriter::new(File::create(
+            config
+                .get_results_folder()
+                .join(&results.get_app_package())
+                .join("results.json"),
+        )?);
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }

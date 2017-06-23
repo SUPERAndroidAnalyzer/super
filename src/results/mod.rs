@@ -43,16 +43,20 @@ impl Results {
         let fingerprint = match FingerPrint::new(package) {
             Ok(f) => f,
             Err(e) => {
-                print_warning(format!("An error occurred when trying to fingerprint the \
+                print_warning(format!(
+                    "An error occurred when trying to fingerprint the \
                                        application: {}",
-                                      e));
+                    e
+                ));
                 return Err(e)?;
             }
         };
         if config.is_verbose() {
-            println!("The results struct has been created. All the vulnerabilitis will now \
+            println!(
+                "The results struct has been created. All the vulnerabilitis will now \
                           be recorded and when the analysis ends, they will be written to result \
-                          files.");
+                          files."
+            );
         } else if !config.is_quiet() {
             println!("Results struct created.");
         }
@@ -60,40 +64,40 @@ impl Results {
         #[cfg(feature = "certificate")]
         {
             Ok(Results {
-                   app_package: String::new(),
-                   app_label: String::new(),
-                   app_description: String::new(),
-                   app_version: String::new(),
-                   app_version_num: 0,
-                   app_min_sdk: 0,
-                   app_target_sdk: None,
-                   app_fingerprint: fingerprint,
-                   certificate: String::new(),
-                   warnings: BTreeSet::new(),
-                   low: BTreeSet::new(),
-                   medium: BTreeSet::new(),
-                   high: BTreeSet::new(),
-                   critical: BTreeSet::new(),
-               })
+                app_package: String::new(),
+                app_label: String::new(),
+                app_description: String::new(),
+                app_version: String::new(),
+                app_version_num: 0,
+                app_min_sdk: 0,
+                app_target_sdk: None,
+                app_fingerprint: fingerprint,
+                certificate: String::new(),
+                warnings: BTreeSet::new(),
+                low: BTreeSet::new(),
+                medium: BTreeSet::new(),
+                high: BTreeSet::new(),
+                critical: BTreeSet::new(),
+            })
         }
 
         #[cfg(not(feature = "certificate"))]
         {
             Ok(Results {
-                   app_package: String::new(),
-                   app_label: String::new(),
-                   app_description: String::new(),
-                   app_version: String::new(),
-                   app_version_num: 0,
-                   app_min_sdk: 0,
-                   app_target_sdk: None,
-                   app_fingerprint: fingerprint,
-                   warnings: BTreeSet::new(),
-                   low: BTreeSet::new(),
-                   medium: BTreeSet::new(),
-                   high: BTreeSet::new(),
-                   critical: BTreeSet::new(),
-               })
+                app_package: String::new(),
+                app_label: String::new(),
+                app_description: String::new(),
+                app_version: String::new(),
+                app_version_num: 0,
+                app_min_sdk: 0,
+                app_target_sdk: None,
+                app_fingerprint: fingerprint,
+                warnings: BTreeSet::new(),
+                low: BTreeSet::new(),
+                medium: BTreeSet::new(),
+                high: BTreeSet::new(),
+                critical: BTreeSet::new(),
+            })
         }
     }
 
@@ -178,9 +182,11 @@ impl Results {
                     }
 
                     if let Err(e) = fs::remove_file(&path) {
-                        print_warning(format!("There was an error when removing the JSON results \
+                        print_warning(format!(
+                            "There was an error when removing the JSON results \
                         file: {}",
-                                              e.description()));
+                            e.description()
+                        ));
                     }
                 }
                 let mut json_reporter = Json::new();
@@ -194,8 +200,10 @@ impl Results {
                 }
             } else {
                 if config.is_verbose() {
-                    println!("Seems that the JSON report has already been generated. There is no \
-                              need to do it again.");
+                    println!(
+                        "Seems that the JSON report has already been generated. There is no \
+                              need to do it again."
+                    );
                 } else {
                     println!("Skipping JSON report generation.");
                 }
@@ -211,23 +219,26 @@ impl Results {
                         println!("The application HTML resulsts exist. But no more…");
                     }
 
-                    for f in
-                        fs::read_dir(path)
-                            .chain_err(|| "there was an error when removing the HTML results")? {
+                    for f in fs::read_dir(path).chain_err(
+                        || "there was an error when removing the HTML results",
+                    )?
+                    {
                         let f = f?;
 
                         if f.file_type()?.is_dir() {
-                            fs::remove_dir_all(f.path())
-                                .chain_err(|| "there was an error when removing the HTML results")?;
+                            fs::remove_dir_all(f.path()).chain_err(
+                                || "there was an error when removing the HTML results",
+                            )?;
                         } else if &f.file_name() != "results.json" {
-                            fs::remove_file(f.path())
-                                .chain_err(|| "there was an error when removing the HTML results")?;
+                            fs::remove_file(f.path()).chain_err(
+                                || "there was an error when removing the HTML results",
+                            )?;
                         }
                     }
                 }
 
-                let handelbars_report_result = HandlebarsReport::new(config.get_template_path(),
-                                                                     package.as_ref().to_owned());
+                let handelbars_report_result =
+                    HandlebarsReport::new(config.get_template_path(), package.as_ref().to_owned());
 
                 if let Ok(mut handlebars_reporter) = handelbars_report_result {
                     if let Err(e) = handlebars_reporter.generate(config, self) {
@@ -240,8 +251,10 @@ impl Results {
                 }
             } else {
                 if config.is_verbose() {
-                    println!("Seems that the HTML report has already been generated. There is no
-                              need to do it again.");
+                    println!(
+                        "Seems that the HTML report has already been generated. There is no
+                              need to do it again."
+                    );
                 } else {
                     println!("Skipping HTML report generation.");
                 }
@@ -254,62 +267,73 @@ impl Results {
 
 impl Serialize for Results {
     fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         let now = Local::now();
-        let mut ser_struct = serializer
-            .serialize_struct("Results",
-                              if cfg!(feature = "certificate") {
-                                  22
-                              } else {
-                                  21
-                              })?;
+        let mut ser_struct = serializer.serialize_struct(
+            "Results",
+            if cfg!(feature = "certificate") {
+                22
+            } else {
+                21
+            },
+        )?;
 
-        ser_struct
-            .serialize_field("super_version", crate_version!())?;
+        ser_struct.serialize_field(
+            "super_version",
+            crate_version!(),
+        )?;
         ser_struct.serialize_field("now", &now)?;
-        ser_struct
-            .serialize_field("now_rfc2822", &now.to_rfc2822())?;
-        ser_struct
-            .serialize_field("now_rfc3339", &now.to_rfc3339())?;
+        ser_struct.serialize_field("now_rfc2822", &now.to_rfc2822())?;
+        ser_struct.serialize_field("now_rfc3339", &now.to_rfc3339())?;
 
-        ser_struct
-            .serialize_field("app_package", &self.app_package)?;
-        ser_struct
-            .serialize_field("app_version", &self.app_version)?;
-        ser_struct
-            .serialize_field("app_version_number", &self.app_version_num)?;
-        ser_struct
-            .serialize_field("app_fingerprint", &self.app_fingerprint)?;
+        ser_struct.serialize_field("app_package", &self.app_package)?;
+        ser_struct.serialize_field("app_version", &self.app_version)?;
+        ser_struct.serialize_field(
+            "app_version_number",
+            &self.app_version_num,
+        )?;
+        ser_struct.serialize_field(
+            "app_fingerprint",
+            &self.app_fingerprint,
+        )?;
 
         #[cfg(feature = "certificate")]
         {
-            ser_struct
-                .serialize_field("certificate", &self.certificate)?;
+            ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct
-            .serialize_field("app_min_sdk", &self.app_min_sdk)?;
-        ser_struct
-            .serialize_field("app_target_sdk", &self.app_target_sdk)?;
+        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
+        ser_struct.serialize_field(
+            "app_target_sdk",
+            &self.app_target_sdk,
+        )?;
 
-        ser_struct
-            .serialize_field("total_vulnerabilities",
-                             &(self.low.len() + self.medium.len() + self.high.len() +
-                               self.critical.len()))?;
+        ser_struct.serialize_field(
+            "total_vulnerabilities",
+            &(self.low.len() + self.medium.len() + self.high.len() +
+                  self.critical.len()),
+        )?;
         ser_struct.serialize_field("criticals", &self.critical)?;
-        ser_struct
-            .serialize_field("criticals_len", &self.critical.len())?;
+        ser_struct.serialize_field(
+            "criticals_len",
+            &self.critical.len(),
+        )?;
         ser_struct.serialize_field("highs", &self.high)?;
         ser_struct.serialize_field("highs_len", &self.high.len())?;
         ser_struct.serialize_field("mediums", &self.medium)?;
-        ser_struct
-            .serialize_field("mediums_len", &self.medium.len())?;
+        ser_struct.serialize_field(
+            "mediums_len",
+            &self.medium.len(),
+        )?;
         ser_struct.serialize_field("lows", &self.low)?;
         ser_struct.serialize_field("lows_len", &self.low.len())?;
         ser_struct.serialize_field("warnings", &self.warnings)?;
-        ser_struct
-            .serialize_field("warnings_len", &self.warnings.len())?;
+        ser_struct.serialize_field(
+            "warnings_len",
+            &self.warnings.len(),
+        )?;
 
         ser_struct.end()
     }

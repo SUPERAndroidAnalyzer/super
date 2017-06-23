@@ -33,8 +33,10 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
         if log_enabled!(Debug) {
             sleep(Duration::from_millis(200));
         } else {
-            println!("If you need more information, try to run the program again with the {} flag.",
-                     "-v".bold())
+            println!(
+                "If you need more information, try to run the program again with the {} flag.",
+                "-v".bold()
+            )
         }
     }
 }
@@ -43,9 +45,11 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 #[allow(print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
-        let message = format!("Possible {} criticality vulnerability found!: {}",
-                              criticality,
-                              text.as_ref());
+        let message = format!(
+            "Possible {} criticality vulnerability found!: {}",
+            criticality,
+            text.as_ref()
+        );
 
         let formatted_message = match criticality {
             Criticality::Low => message.cyan(),
@@ -87,29 +91,30 @@ pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String 
 }
 
 /// Gets a string from the strings XML file.
-pub fn get_string<L: AsRef<str>, P: AsRef<str>>(label: L,
-                                                config: &Config,
-                                                package: P)
-                                                -> Result<String> {
+pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
+    label: L,
+    config: &Config,
+    package: P,
+) -> Result<String> {
     let mut file = fs::File::open({
-                                      let path = config
-                                          .get_dist_folder()
-                                          .join(package.as_ref())
-                                          .join("res")
-                                          .join("values-en")
-                                          .join("strings.xml");
+        let path = config
+            .get_dist_folder()
+            .join(package.as_ref())
+            .join("res")
+            .join("values-en")
+            .join("strings.xml");
 
-                                      if path.exists() {
-                                          path
-                                      } else {
-                                          config
-                                              .get_dist_folder()
-                                              .join(package.as_ref())
-                                              .join("res")
-                                              .join("values")
-                                              .join("strings.xml")
-                                      }
-                                  })?;
+        if path.exists() {
+            path
+        } else {
+            config
+                .get_dist_folder()
+                .join(package.as_ref())
+                .join("res")
+                .join("values")
+                .join("strings.xml")
+        }
+    })?;
 
     let mut code = String::new();
     let _ = file.read_to_string(&mut code)?;
@@ -158,11 +163,13 @@ impl Benchmark {
 
 impl fmt::Display for Benchmark {
     fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
-        write!(f,
-               "{}: {}.{}s",
-               self.label,
-               self.duration.as_secs(),
-               self.duration.subsec_nanos())
+        write!(
+            f,
+            "{}: {}.{}s",
+            self.label,
+            self.duration.as_secs(),
+            self.duration.subsec_nanos()
+        )
     }
 }
 
@@ -186,24 +193,29 @@ mod test {
                     mattis, tortor neque adipiscing\nVestibulum ante ipsum primis in faucibus \
                     orci luctus et ultrices";
 
-        assert_eq!(get_code(code, 1, 1),
-                   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
+        assert_eq!(
+            get_code(code, 1, 1),
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
                     Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
                     Sed lacinia, urna non tincidunt mattis, tortor neque\n\
                     Praesent blandit dolor. Sed non quam. In vel mi\n\
                     Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n");
+                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n"
+        );
 
-        assert_eq!(get_code(code, 13, 13),
-                   "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
+        assert_eq!(
+            get_code(code, 13, 13),
+            "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
                     Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
                     Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
-                    Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n");
+                    Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n"
+        );
 
-        assert_eq!(get_code(code, 7, 7),
-                   "Praesent blandit dolor. Sed non quam. In vel mi\n\
+        assert_eq!(
+            get_code(code, 7, 7),
+            "Praesent blandit dolor. Sed non quam. In vel mi\n\
                     Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
                     Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
                     Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
@@ -211,10 +223,12 @@ mod test {
                     Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
                     Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n");
+                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n"
+        );
 
-        assert_eq!(get_code(code, 7, 9),
-                   "Praesent blandit dolor. Sed non quam. In vel mi\n\
+        assert_eq!(
+            get_code(code, 7, 9),
+            "Praesent blandit dolor. Sed non quam. In vel mi\n\
                     Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
                     Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
                     Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
@@ -224,6 +238,7 @@ mod test {
                     Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
                     Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
                     Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n");
+                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n"
+        );
     }
 }

@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::env;
 use clap::Shell;
 
-#[path="src/cli.rs"]
+#[path = "src/cli.rs"]
 mod cli;
 
 fn main() {

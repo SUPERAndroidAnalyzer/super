@@ -23,9 +23,11 @@ use error::*;
 /// * Benchmarking support.
 pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut Results) {
     if config.is_verbose() {
-        println!("It's time to analyze the application. First, a static analysis will be \
+        println!(
+            "It's time to analyze the application. First, a static analysis will be \
                   performed, starting with the AndroidManifest.xml file and then going through \
-                  the actual code. Let's start!");
+                  the actual code. Let's start!"
+        );
     }
 
     // Run analysis for manifest file.
@@ -34,8 +36,10 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     if cfg!(feature = "certificate") {
         // Run analysis for cerificate file.
         if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
-            print_warning(format!("There was an error analysing the certificate: {}",
-                                  e.description()))
+            print_warning(format!(
+                "There was an error analysing the certificate: {}",
+                e.description()
+            ))
         }
     }
 

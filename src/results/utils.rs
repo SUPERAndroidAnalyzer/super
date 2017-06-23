@@ -39,15 +39,15 @@ pub struct Vulnerability {
 
 impl Vulnerability {
     /// Creates a new vulnerability.
-    pub fn new<N: Into<String>, D: Into<String>, P: AsRef<Path>, C: Into<String>>
-        (criticality: Criticality,
-         name: N,
-         description: D,
-         file: Option<P>,
-         start_line: Option<usize>,
-         end_line: Option<usize>,
-         code: Option<C>)
-         -> Vulnerability {
+    pub fn new<N: Into<String>, D: Into<String>, P: AsRef<Path>, C: Into<String>>(
+        criticality: Criticality,
+        name: N,
+        description: D,
+        file: Option<P>,
+        start_line: Option<usize>,
+        end_line: Option<usize>,
+        code: Option<C>,
+    ) -> Vulnerability {
         Vulnerability {
             criticality,
             name: name.into(),
@@ -73,42 +73,52 @@ impl Vulnerability {
 
 impl Serialize for Vulnerability {
     fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
-        let mut ser_struct = serializer
-            .serialize_struct("Vulnerability",
-                              if self.code.is_some() {
-                                  if self.start_line == self.end_line {
-                                      7
-                                  } else {
-                                      8
-                                  }
-                              } else {
-                                  4
-                              })?;
-        ser_struct
-            .serialize_field("criticality", &self.criticality)?;
+        let mut ser_struct = serializer.serialize_struct(
+            "Vulnerability",
+            if self.code.is_some() {
+                if self.start_line == self.end_line {
+                    7
+                } else {
+                    8
+                }
+            } else {
+                4
+            },
+        )?;
+        ser_struct.serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
-        ser_struct
-            .serialize_field("description", self.description.as_str())?;
+        ser_struct.serialize_field(
+            "description",
+            self.description.as_str(),
+        )?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
-            ser_struct
-                .serialize_field("language",
-                                 &self.file
-                                      .as_ref()
-                                      .unwrap()
-                                      .extension()
-                                      .unwrap()
-                                      .to_string_lossy())?;
+            ser_struct.serialize_field(
+                "language",
+                &self.file
+                    .as_ref()
+                    .unwrap()
+                    .extension()
+                    .unwrap()
+                    .to_string_lossy(),
+            )?;
             if self.start_line == self.end_line {
-                ser_struct
-                    .serialize_field("line", &(self.start_line.unwrap() + 1))?;
+                ser_struct.serialize_field(
+                    "line",
+                    &(self.start_line.unwrap() + 1),
+                )?;
             } else {
-                ser_struct
-                    .serialize_field("start_line", &(self.start_line.unwrap() + 1))?;
-                ser_struct
-                    .serialize_field("end_line", &(self.end_line.unwrap() + 1))?;
+                ser_struct.serialize_field(
+                    "start_line",
+                    &(self.start_line.unwrap() + 1),
+                )?;
+                ser_struct.serialize_field(
+                    "end_line",
+                    &(self.end_line.unwrap() + 1),
+                )?;
             }
             ser_struct.serialize_field("code", &self.code)?;
         }
@@ -118,12 +128,21 @@ impl Serialize for Vulnerability {
 
 impl PartialOrd for Vulnerability {
     fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
-        Some((&self.criticality, &self.file, &self.start_line, &self.end_line, &self.name)
-                 .cmp(&(&other.criticality,
-                        &other.file,
-                        &other.start_line,
-                        &other.end_line,
-                        &other.name)))
+        Some(
+            (
+                &self.criticality,
+                &self.file,
+                &self.start_line,
+                &self.end_line,
+                &self.name,
+            ).cmp(&(
+                    &other.criticality,
+                    &other.file,
+                    &other.start_line,
+                    &other.end_line,
+                    &other.name,
+                )),
+        )
     }
 }
 
@@ -157,20 +176,23 @@ impl FingerPrint {
         let mut sha256_res = [0_u8; 32];
         sha256_res.clone_from_slice(&sha256.result()[..]);
         Ok(FingerPrint {
-               md5: md5::compute(&buffer),
-               sha1: sha1.digest(),
-               sha256: sha256_res,
-           })
+            md5: md5::compute(&buffer),
+            sha1: sha1.digest(),
+            sha256: sha256_res,
+        })
     }
 }
 
 impl Serialize for FingerPrint {
     fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
-        ser_struct
-            .serialize_field("md5", &format!("{:x}", self.md5))?;
+        ser_struct.serialize_field(
+            "md5",
+            &format!("{:x}", self.md5),
+        )?;
         ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
         ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
         ser_struct.end()

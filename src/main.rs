@@ -88,8 +88,10 @@ fn main() {
         }
 
         if !log_enabled!(LogLevel::Debug) {
-            println!("If you need more information, try to run the program again with the {} flag.",
-                     "-v".bold());
+            println!(
+                "If you need more information, try to run the program again with the {} flag.",
+                "-v".bold()
+            );
         }
 
         if let Some(backtrace) = e.backtrace() {
@@ -116,8 +118,10 @@ fn run() -> Result<()> {
             error_string.push_str(&error);
             error_string.push('\n');
         }
-        error_string.push_str("The configuration was loaded, in order, from the following files: \
-                               \n\t- Default built-in configuration\n");
+        error_string.push_str(
+            "The configuration was loaded, in order, from the following files: \
+                               \n\t- Default built-in configuration\n",
+        );
         for file in config.get_loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
@@ -131,10 +135,14 @@ fn run() -> Result<()> {
             io::stdout().flush().unwrap();
             sleep(Duration::from_millis(3));
         }
-        println!("Welcome to the SUPER Android Analyzer. We will now try to audit the given \
-                  application.");
-        println!("You activated the verbose mode. {}",
-                 "May Tux be with you!".bold());
+        println!(
+            "Welcome to the SUPER Android Analyzer. We will now try to audit the given \
+                  application."
+        );
+        println!(
+            "You activated the verbose mode. {}",
+            "May Tux be with you!".bold()
+        );
         println!();
         sleep(Duration::from_millis(1250));
     }
@@ -174,32 +182,35 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
     let config_path = PathBuf::from("config.toml");
     let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
-    let mut config = if cfg!(target_family = "unix") && !config_path.exists() &&
-                        global_config_path.exists() {
-        Config::from_file(&global_config_path)
-            .chain_err(||
+    let mut config =
+        if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
+            Config::from_file(&global_config_path).chain_err(|| {
                 format!("There was an error when reading the /etc/super-analyzer/config.toml file")
+            })?
+        } else if config_path.exists() {
+            Config::from_file(&PathBuf::from("config.toml")).chain_err(
+                || {
+                    format!("There was an error when reading the config.toml file")
+                },
             )?
-    } else if config_path.exists() {
-        Config::from_file(&PathBuf::from("config.toml"))
-            .chain_err(|| format!("There was an error when reading the config.toml file"))?
-    } else {
-        print_warning("Config file not found. Using default configuration");
-        Config::default()
-    };
+        } else {
+            print_warning("Config file not found. Using default configuration");
+            Config::default()
+        };
 
-    config
-        .decorate_with_cli(cli)
-        .chain_err(|| "There was an error reading config from CLI")?;
+    config.decorate_with_cli(cli).chain_err(
+        || "There was an error reading config from CLI",
+    )?;
 
     Ok(config)
 }
 
 /// Analyzes the given package with the given config.
-fn analyze_package<P: AsRef<Path>>(package: P,
-                                   config: &mut Config,
-                                   benchmarks: &mut BTreeMap<String, Vec<Benchmark>>)
-                                   -> Result<()> {
+fn analyze_package<P: AsRef<Path>>(
+    package: P,
+    config: &mut Config,
+    benchmarks: &mut BTreeMap<String, Vec<Benchmark>>,
+) -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -211,47 +222,59 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     let start_time = Instant::now();
 
     // Apk decompression
-    decompress(config, &package)
-        .chain_err(|| "apk decompression failed")?;
+    decompress(config, &package).chain_err(
+        || "apk decompression failed",
+    )?;
 
     if config.is_bench() {
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                "Apk decompression",
+                start_time
+                    .elapsed(),
+            ),
+        );
     }
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package)
-        .chain_err(|| "Conversion from DEX to JAR failed")?;
+    dex_to_jar(config, &package).chain_err(
+        || "Conversion from DEX to JAR failed",
+    )?;
 
     if config.is_bench() {
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Dex to Jar decompilation (dex2jar Java dependency)",
-                                 dex_jar_time.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                "Dex to Jar decompilation (dex2jar Java dependency)",
+                dex_jar_time
+                    .elapsed(),
+            ),
+        );
     }
 
     if config.is_verbose() {
         println!();
-        println!("Now it's time for the actual decompilation of the source code. We'll translate
-                  Android JVM bytecode to Java, so that we can check the code afterwards.");
+        println!(
+            "Now it's time for the actual decompilation of the source code. We'll translate
+                  Android JVM bytecode to Java, so that we can check the code afterwards."
+        );
     }
 
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package)
-        .chain_err(|| "JAR decompression failed")?;
+    decompile(config, &package).chain_err(
+        || "JAR decompression failed",
+    )?;
 
     if config.is_bench() {
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Decompilation (jd-cli Java dependency)",
-                                 decompile_start.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                "Decompilation (jd-cli Java dependency)",
+                decompile_start
+                    .elapsed(),
+            ),
+        );
     }
 
     let mut results = Results::init(config, &package)?;
@@ -260,10 +283,13 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     static_analysis(config, &package_name, &mut results);
 
     if config.is_bench() {
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Total static analysis", static_start.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                "Total static analysis",
+                static_start
+                    .elapsed(),
+            ),
+        );
     }
 
     // TODO dynamic analysis
@@ -273,32 +299,44 @@ fn analyze_package<P: AsRef<Path>>(package: P,
     }
 
     let report_start = Instant::now();
-    results
-        .generate_report(config, &package_name)
-        .chain_err(|| {
-            format!("There was an error generating the results report. Tried to generate at: {}",
-                    config.get_results_folder().join(&package_name).display())
-        })?;
+    results.generate_report(config, &package_name).chain_err(
+        || {
+            format!(
+                "There was an error generating the results report. Tried to generate at: {}",
+                config.get_results_folder().join(&package_name).display()
+            )
+        },
+    )?;
 
     if config.is_verbose() {
         println!("Everything went smoothly, now you can check all the results.");
         println!();
         println!("I will now analyze myself for vulnerabilities…");
         sleep(Duration::from_millis(1500));
-        println!("Nah, just kidding, I've been developed in {}!",
-                 "Rust".bold().green())
+        println!(
+            "Nah, just kidding, I've been developed in {}!",
+            "Rust".bold().green()
+        )
     }
 
     if config.is_bench() {
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new("Report generation", report_start.elapsed()));
-        benchmarks
-            .get_mut(&package_name)
-            .unwrap()
-            .push(Benchmark::new(format!("Total time for {}", package_name),
-                                 start_time.elapsed()));
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                "Report generation",
+                report_start
+                    .elapsed(),
+            ),
+        );
+        benchmarks.get_mut(&package_name).unwrap().push(
+            Benchmark::new(
+                format!(
+                    "Total time for {}",
+                    package_name
+                ),
+                start_time
+                    .elapsed(),
+            ),
+        );
     }
 
     if config.is_open() {
@@ -314,11 +352,14 @@ fn analyze_package<P: AsRef<Path>>(package: P,
                 .join("results.json")
         };
 
-        let status = open::that(open_path)
-            .chain_err(|| "Report could not be opened automatically")?;
+        let status = open::that(open_path).chain_err(
+            || "Report could not be opened automatically",
+        )?;
 
         if !status.success() {
-            return Err(format!("Report opening errored with status code: {}", status).into());
+            return Err(
+                format!("Report opening errored with status code: {}", status).into(),
+            );
         }
     }
 
@@ -349,7 +390,8 @@ impl Display for Criticality {
 
 impl Serialize for Criticality {
     fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
-        where S: Serializer
+    where
+        S: Serializer,
     {
         serializer.serialize_str(format!("{}", self).as_str())
     }
@@ -357,7 +399,8 @@ impl Serialize for Criticality {
 
 impl<'de> Deserialize<'de> for Criticality {
     fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
-        where D: Deserializer<'de>
+    where
+        D: Deserializer<'de>,
     {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
@@ -366,12 +409,15 @@ impl<'de> Deserialize<'de> for Criticality {
                 match Criticality::from_str(&str) {
                     Ok(criticality) => Ok(criticality),
                     Err(_) => {
-                        Err(serde::de::Error::custom(format!("Unexpected value: {:?}",
-                                                             deser_result)))
+                        Err(serde::de::Error::custom(
+                            format!("Unexpected value: {:?}", deser_result),
+                        ))
                     }
                 }
             }
-            _ => Err(serde::de::Error::custom(format!("Unexpected value: {:?}", deser_result))),
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
         }
     }
 }
@@ -414,14 +460,18 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 fn initialize_logger(is_verbose: bool) {
     let format = |record: &LogRecord| match record.level() {
         LogLevel::Warn => {
-            format!("{}{}",
-                    "Warning: ".bold().yellow(),
-                    record.args().to_string().yellow())
+            format!(
+                "{}{}",
+                "Warning: ".bold().yellow(),
+                record.args().to_string().yellow()
+            )
         }
         LogLevel::Error => {
-            format!("{}{}",
-                    "Error: ".bold().red(),
-                    record.args().to_string().red())
+            format!(
+                "{}{}",
+                "Error: ".bold().red(),
+                record.args().to_string().red()
+            )
         }
         LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
         LogLevel::Info => format!("{}", record.args()),
@@ -457,34 +507,52 @@ mod tests {
 
     #[test]
     fn it_criticality() {
-        assert_eq!(Criticality::from_str("warning").unwrap(),
-                   Criticality::Warning);
-        assert_eq!(Criticality::from_str("Warning").unwrap(),
-                   Criticality::Warning);
-        assert_eq!(Criticality::from_str("WARNING").unwrap(),
-                   Criticality::Warning);
+        assert_eq!(
+            Criticality::from_str("warning").unwrap(),
+            Criticality::Warning
+        );
+        assert_eq!(
+            Criticality::from_str("Warning").unwrap(),
+            Criticality::Warning
+        );
+        assert_eq!(
+            Criticality::from_str("WARNING").unwrap(),
+            Criticality::Warning
+        );
 
         assert_eq!(Criticality::from_str("low").unwrap(), Criticality::Low);
         assert_eq!(Criticality::from_str("Low").unwrap(), Criticality::Low);
         assert_eq!(Criticality::from_str("LOW").unwrap(), Criticality::Low);
 
-        assert_eq!(Criticality::from_str("medium").unwrap(),
-                   Criticality::Medium);
-        assert_eq!(Criticality::from_str("Medium").unwrap(),
-                   Criticality::Medium);
-        assert_eq!(Criticality::from_str("MEDIUM").unwrap(),
-                   Criticality::Medium);
+        assert_eq!(
+            Criticality::from_str("medium").unwrap(),
+            Criticality::Medium
+        );
+        assert_eq!(
+            Criticality::from_str("Medium").unwrap(),
+            Criticality::Medium
+        );
+        assert_eq!(
+            Criticality::from_str("MEDIUM").unwrap(),
+            Criticality::Medium
+        );
 
         assert_eq!(Criticality::from_str("high").unwrap(), Criticality::High);
         assert_eq!(Criticality::from_str("High").unwrap(), Criticality::High);
         assert_eq!(Criticality::from_str("HIGH").unwrap(), Criticality::High);
 
-        assert_eq!(Criticality::from_str("critical").unwrap(),
-                   Criticality::Critical);
-        assert_eq!(Criticality::from_str("Critical").unwrap(),
-                   Criticality::Critical);
-        assert_eq!(Criticality::from_str("CRITICAL").unwrap(),
-                   Criticality::Critical);
+        assert_eq!(
+            Criticality::from_str("critical").unwrap(),
+            Criticality::Critical
+        );
+        assert_eq!(
+            Criticality::from_str("Critical").unwrap(),
+            Criticality::Critical
+        );
+        assert_eq!(
+            Criticality::from_str("CRITICAL").unwrap(),
+            Criticality::Critical
+        );
 
         assert!(Criticality::Warning < Criticality::Low);
         assert!(Criticality::Warning < Criticality::Medium);
