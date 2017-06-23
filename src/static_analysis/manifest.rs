@@ -11,19 +11,24 @@ use colored::Colorize;
 use {Config, Criticality, print_warning, print_vulnerability, get_code, get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
 
-pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
-                                        package: S,
-                                        results: &mut Results)
-                                        -> Option<Manifest> {
+pub fn manifest_analysis<S: AsRef<str>>(
+    config: &Config,
+    package: S,
+    results: &mut Results,
+) -> Option<Manifest> {
     if config.is_verbose() {
-        println!("Loading the manifest file. For this, we first parse the document and then we'll \
-                  analyze it.")
+        println!(
+            "Loading the manifest file. For this, we first parse the document and then we'll \
+                  analyze it."
+        )
     }
 
-    let manifest = match Manifest::load(config.get_dist_folder().join(package.as_ref()),
-                                        config,
-                                        package.as_ref(),
-                                        results) {
+    let manifest = match Manifest::load(
+        config.get_dist_folder().join(package.as_ref()),
+        config,
+        package.as_ref(),
+        results,
+    ) {
         Ok(m) => {
             if config.is_verbose() {
                 println!("{}", "The manifest was loaded successfully!".green());
@@ -32,29 +37,37 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
             m
         }
         Err(e) => {
-            print_warning(format!("There was an error when loading the manifest: {}",
-                                  e.description()));
+            print_warning(format!(
+                "There was an error when loading the manifest: {}",
+                e.description()
+            ));
             if config.is_verbose() {
-                println!("The rest of the analysis will continue, but there will be no analysis \
+                println!(
+                    "The rest of the analysis will continue, but there will be no analysis \
                           of the AndroidManifest.xml file, and code analysis rules requiring \
-                          permissions will not run.");
+                          permissions will not run."
+                );
             }
             return None;
         }
     };
 
     if manifest.get_package() != package.as_ref() {
-        print_warning(format!("Seems that the package in the AndroidManifest.xml is not the \
+        print_warning(format!(
+            "Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
-                              package.as_ref(),
-                              manifest.get_package()));
+            package.as_ref(),
+            manifest.get_package()
+        ));
 
         if config.is_verbose() {
-            println!("This does not mean that something went wrong, but it's supposed to have \
+            println!(
+                "This does not mean that something went wrong, but it's supposed to have \
                       the application in the format {{package}}.apk in the {} folder and use the \
                       package as the application ID for this auditor.",
-                     "downloads".italic());
+                "downloads".italic()
+            );
         }
     }
 
@@ -83,13 +96,15 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Manifest Debug",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Manifest Debug",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
 
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
@@ -110,13 +125,15 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Large heap",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Large heap",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
@@ -136,36 +153,41 @@ pub fn manifest_analysis<S: AsRef<str>>(config: &Config,
                 None => None,
             };
 
-            let vuln = Vulnerability::new(criticality,
-                                          "Allows Backup",
-                                          description,
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                criticality,
+                "Allows Backup",
+                description,
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
     }
 
     for permission in config.get_permissions() {
-        if manifest
-               .get_permission_checklist()
-               .needs_permission(permission.get_permission()) &&
-           permission.get_criticality() >= config.get_min_criticality() {
+        if manifest.get_permission_checklist().needs_permission(
+            permission
+                .get_permission(),
+        ) && permission.get_criticality() >= config.get_min_criticality()
+        {
             let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
             let code = match line {
                 Some(l) => Some(get_code(manifest.get_code(), l, l)),
                 None => None,
             };
 
-            let vuln = Vulnerability::new(permission.get_criticality(),
-                                          permission.get_label(),
-                                          permission.get_description(),
-                                          Some("AndroidManifest.xml"),
-                                          line,
-                                          line,
-                                          code);
+            let vuln = Vulnerability::new(
+                permission.get_criticality(),
+                permission.get_label(),
+                permission.get_description(),
+                Some("AndroidManifest.xml"),
+                line,
+                line,
+                code,
+            );
             results.add_vulnerability(vuln);
             print_vulnerability(permission.get_description(), permission.get_criticality());
         }
@@ -200,11 +222,12 @@ pub struct Manifest {
 }
 
 impl Manifest {
-    pub fn load<P: AsRef<Path>, S: AsRef<str>>(path: P,
-                                               config: &Config,
-                                               package: S,
-                                               results: &mut Results)
-                                               -> Result<Manifest> {
+    pub fn load<P: AsRef<Path>, S: AsRef<str>>(
+        path: P,
+        config: &Config,
+        package: S,
+        results: &mut Results,
+    ) -> Result<Manifest> {
         let mut file = File::open(path.as_ref().join("AndroidManifest.xml"))?;
         let mut manifest = Manifest::default();
 
@@ -244,14 +267,16 @@ impl Manifest {
                                             match InstallLocation::from_str(attr.value.as_str()) {
                                                 Ok(l) => l,
                                                 Err(e) => {
-                                                    print_warning(format!("An error occurred when \
+                                                    print_warning(format!(
+                                                        "An error occurred when \
                                                                        parsing the \
                                                                        installLocation \
                                                                        attribute in the \
                                                                        manifest: {}.\nThe \
                                                                        process will continue, \
                                                                        though.",
-                                                                          e.description()));
+                                                        e.description()
+                                                    ));
                                                     break;
                                                 }
                                             };
@@ -310,13 +335,15 @@ impl Manifest {
                                         let debug: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
-                                                print_warning(format!("An error occurred \
+                                                print_warning(format!(
+                                                    "An error occurred \
                                                                        when parsing the \
                                                                        debuggable attribute in \
                                                                        the manifest: \
                                                                        {}.\nThe process \
                                                                        will continue, though.",
-                                                                      e.description()));
+                                                    e.description()
+                                                ));
                                                 break;
                                             }
                                         };
@@ -348,13 +375,15 @@ impl Manifest {
                                         let has_code: bool = match attr.value.as_str().parse() {
                                             Ok(b) => b,
                                             Err(e) => {
-                                                print_warning(format!("An error occurred \
+                                                print_warning(format!(
+                                                    "An error occurred \
                                                                         when parsing the \
                                                                     hasCode attribute in \
                                                                            the manifest: \
                                                                         {}.\nThe process \
                                                                     will continue, though.",
-                                                                      e.description()));
+                                                    e.description()
+                                                ));
                                                 break;
                                             }
                                         };
@@ -381,26 +410,30 @@ impl Manifest {
                                         }
                                     }
                                     "label" => {
-                                        manifest
-                                            .set_label(if attr.value.starts_with("@string/") {
-                                                               match get_string(&attr.value[8..],
-                                                                                config,
-                                                                                package.as_ref()) {
-                                                                   Ok(s) => s,
-                                                                   Err(e) => {
-                                                    print_warning(format!("An error occurred when\
+                                        manifest.set_label(
+                                            if attr.value.starts_with("@string/") {
+                                                match get_string(
+                                                    &attr.value[8..],
+                                                    config,
+                                                    package.as_ref(),
+                                                ) {
+                                                    Ok(s) => s,
+                                                    Err(e) => {
+                                                        print_warning(format!(
+                                                            "An error occurred when\
                                                                          trying to get the string\
                                                                          for the app label in the\
                                                                        manifest: {}.\nThe process\
                                                                       will continue, though.",
-                                                                          e.description()));
-                                                    break;
+                                                            e.description()
+                                                        ));
+                                                        break;
+                                                    }
                                                 }
-                                                               }
-                                                           } else {
-                                                               attr.value
-                                                           }
-                                                           .as_str())
+                                            } else {
+                                                attr.value
+                                            }.as_str(),
+                                        )
                                     }
                                     _ => {}
                                 }
@@ -409,8 +442,10 @@ impl Manifest {
                         "uses-permission" => {
                             for attr in attributes {
                                 if let "name" = attr.name.local_name.as_str() {
-                                    let permission = if let Ok(p) =
-                                        Permission::from_str(attr.value.as_str()) {
+                                    let permission = if let Ok(p) = Permission::from_str(
+                                        attr.value.as_str(),
+                                    )
+                                    {
                                         p
                                     } else {
                                         let line =
@@ -427,13 +462,15 @@ impl Manifest {
                                         let file = Some("AndroidManifest.xml");
 
                                         if criticality > config.get_min_criticality() {
-                                            let vuln = Vulnerability::new(criticality,
-                                                                          "Unknown permission",
-                                                                          description,
-                                                                          file,
-                                                                          line,
-                                                                          line,
-                                                                          code);
+                                            let vuln = Vulnerability::new(
+                                                criticality,
+                                                "Unknown permission",
+                                                description,
+                                                file,
+                                                line,
+                                                line,
+                                                code,
+                                            );
                                             results.add_vulnerability(vuln);
 
                                             print_vulnerability(description, criticality);
@@ -467,11 +504,13 @@ impl Manifest {
                             match exported {
                                 Some(true) | None => {
                                     if tag != "provider" || exported.is_some() ||
-                                       manifest.get_min_sdk() < 17 {
+                                        manifest.get_min_sdk() < 17
+                                    {
 
-                                        let line = get_line(manifest.get_code(),
-                                                            &format!("android:name=\"{}\"", name))
-                                                .ok();
+                                        let line = get_line(
+                                            manifest.get_code(),
+                                            &format!("android:name=\"{}\"", name),
+                                        ).ok();
                                         let code = match line {
                                             Some(l) => Some(get_code(manifest.get_code(), l, l)),
                                             None => None,
@@ -480,25 +519,32 @@ impl Manifest {
                                         let criticality = Criticality::Warning;
 
                                         if criticality >= config.get_min_criticality() {
-                                            let vuln = Vulnerability::new(criticality,
-                                                                          format!("Exported {}",
-                                                                                  tag),
-                                                                          format!("Exported {} was \
+                                            let vuln = Vulnerability::new(
+                                                criticality,
+                                                format!("Exported {}", tag),
+                                                format!(
+                                                    "Exported {} was \
                                                                             found. It can be \
                                                                             used by other \
                                                                             applications.",
-                                                                                  tag),
-                                                                          Some("AndroidManifest.xml"),
-                                                                          line,
-                                                                          line,
-                                                                          code);
+                                                    tag
+                                                ),
+                                                Some("AndroidManifest.xml"),
+                                                line,
+                                                line,
+                                                code,
+                                            );
                                             results.add_vulnerability(vuln);
 
-                                            print_vulnerability(format!("Exported {} was found. \
+                                            print_vulnerability(
+                                                format!(
+                                                    "Exported {} was found. \
                                                                          It can be used by \
                                                                          other applications.",
-                                                                        tag),
-                                                                Criticality::Warning);
+                                                    tag
+                                                ),
+                                                Criticality::Warning,
+                                            );
                                         }
                                     }
                                 }
@@ -510,10 +556,12 @@ impl Manifest {
                 }
                 Ok(_) => {}
                 Err(e) => {
-                    print_warning(format!("An error occurred when parsing the \
+                    print_warning(format!(
+                        "An error occurred when parsing the \
                                            AndroidManifest.xml file: {}.\nThe process will \
                                            continue, though.",
-                                          e.description()));
+                        e.description()
+                    ));
                 }
             }
         }
@@ -710,12 +758,18 @@ mod tests {
 
     #[test]
     fn it_install_loc_from_str() {
-        assert_eq!(InstallLocation::InternalOnly,
-                   InstallLocation::from_str("internalOnly").unwrap());
-        assert_eq!(InstallLocation::Auto,
-                   InstallLocation::from_str("auto").unwrap());
-        assert_eq!(InstallLocation::PreferExternal,
-                   InstallLocation::from_str("preferExternal").unwrap());
+        assert_eq!(
+            InstallLocation::InternalOnly,
+            InstallLocation::from_str("internalOnly").unwrap()
+        );
+        assert_eq!(
+            InstallLocation::Auto,
+            InstallLocation::from_str("auto").unwrap()
+        );
+        assert_eq!(
+            InstallLocation::PreferExternal,
+            InstallLocation::from_str("preferExternal").unwrap()
+        );
         assert!(InstallLocation::from_str("Razican").is_err());
     }
 
@@ -724,8 +778,12 @@ mod tests {
         let mut checklist: PermissionChecklist = Default::default();
         checklist.set_needs_permission(Permission::AndroidPermissionInternet);
 
-        assert!(checklist.needs_permission(Permission::AndroidPermissionInternet));
-        assert!(!checklist.needs_permission(Permission::AndroidPermissionWriteExternalStorage));
+        assert!(checklist.needs_permission(
+            Permission::AndroidPermissionInternet,
+        ));
+        assert!(!checklist.needs_permission(
+            Permission::AndroidPermissionWriteExternalStorage,
+        ));
     }
 
     #[test]
@@ -736,8 +794,10 @@ mod tests {
         assert_eq!(internet, Permission::AndroidPermissionInternet);
         assert_eq!(storage, Permission::AndroidPermissionWriteExternalStorage);
         assert_eq!(internet.as_str(), "android.permission.INTERNET");
-        assert_eq!(storage.as_str(),
-                   "android.permission.WRITE_EXTERNAL_STORAGE");
+        assert_eq!(
+            storage.as_str(),
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+        );
         assert!(Permission::from_str("Razican").is_err());
     }
 }
@@ -2865,264 +2925,588 @@ pub enum Permission {
 impl Permission {
     pub fn as_str(&self) -> &str {
         match *self {
-            Permission::AndroidPermissionAccessAllExternalStorage => "android.permission.ACCESS_ALL_EXTERNAL_STORAGE",
-            Permission::AndroidPermissionAccessCheckinProperties => "android.permission.ACCESS_CHECKIN_PROPERTIES",
-            Permission::AndroidPermissionAccessCoarseLocation => "android.permission.ACCESS_COARSE_LOCATION",
-            Permission::AndroidPermissionAccessFineLocation => "android.permission.ACCESS_FINE_LOCATION",
-            Permission::AndroidPermissionAccessLocationExtraCommands => "android.permission.ACCESS_LOCATION_EXTRA_COMMANDS",
-            Permission::AndroidPermissionAccessMockLocation => "android.permission.ACCESS_MOCK_LOCATION",
+            Permission::AndroidPermissionAccessAllExternalStorage => {
+                "android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
+            }
+            Permission::AndroidPermissionAccessCheckinProperties => {
+                "android.permission.ACCESS_CHECKIN_PROPERTIES"
+            }
+            Permission::AndroidPermissionAccessCoarseLocation => {
+                "android.permission.ACCESS_COARSE_LOCATION"
+            }
+            Permission::AndroidPermissionAccessFineLocation => {
+                "android.permission.ACCESS_FINE_LOCATION"
+            }
+            Permission::AndroidPermissionAccessLocationExtraCommands => {
+                "android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"
+            }
+            Permission::AndroidPermissionAccessMockLocation => {
+                "android.permission.ACCESS_MOCK_LOCATION"
+            }
             Permission::AndroidPermissionAccessMtp => "android.permission.ACCESS_MTP",
-            Permission::AndroidPermissionAccessNetworkState => "android.permission.ACCESS_NETWORK_STATE",
-            Permission::AndroidPermissionAccessNotificationPolicy => "android.permission.ACCESS_NOTIFICATION_POLICY",
-            Permission::AndroidPermissionAccessWimaxState => "android.permission.ACCESS_WIMAX_STATE",
+            Permission::AndroidPermissionAccessNetworkState => {
+                "android.permission.ACCESS_NETWORK_STATE"
+            }
+            Permission::AndroidPermissionAccessNotificationPolicy => {
+                "android.permission.ACCESS_NOTIFICATION_POLICY"
+            }
+            Permission::AndroidPermissionAccessWimaxState => {
+                "android.permission.ACCESS_WIMAX_STATE"
+            }
             Permission::AndroidPermissionAccessWifiState => "android.permission.ACCESS_WIFI_STATE",
             Permission::AndroidPermissionAccountManager => "android.permission.ACCOUNT_MANAGER",
             Permission::AndroidPermissionAsecAccess => "android.permission.ASEC_ACCESS",
             Permission::AndroidPermissionAsecCreate => "android.permission.ASEC_CREATE",
             Permission::AndroidPermissionAsecDestroy => "android.permission.ASEC_DESTROY",
-            Permission::AndroidPermissionAsecMountUnmount => "android.permission.ASEC_MOUNT_UNMOUNT",
+            Permission::AndroidPermissionAsecMountUnmount => {
+                "android.permission.ASEC_MOUNT_UNMOUNT"
+            }
             Permission::AndroidPermissionAsecRename => "android.permission.ASEC_RENAME",
-            Permission::AndroidPermissionAuthenticateAccounts => "android.permission.AUTHENTICATE_ACCOUNTS",
+            Permission::AndroidPermissionAuthenticateAccounts => {
+                "android.permission.AUTHENTICATE_ACCOUNTS"
+            }
             Permission::AndroidPermissionBatteryStats => "android.permission.BATTERY_STATS",
-            Permission::AndroidPermissionBindAccessibilityService => "android.permission.BIND_ACCESSIBILITY_SERVICE",
+            Permission::AndroidPermissionBindAccessibilityService => {
+                "android.permission.BIND_ACCESSIBILITY_SERVICE"
+            }
             Permission::AndroidPermissionBindAppwidget => "android.permission.BIND_APPWIDGET",
             Permission::AndroidPermissionBindCallService => "android.permission.BIND_CALL_SERVICE",
-            Permission::AndroidPermissionBindCarrierMessagingService => "android.permission.BIND_CARRIER_MESSAGING_SERVICE",
-            Permission::AndroidPermissionBindCarrierServices => "android.permission.BIND_CARRIER_SERVICES",
-            Permission::AndroidPermissionBindChooserTargetService => "android.permission.BIND_CHOOSER_TARGET_SERVICE",
+            Permission::AndroidPermissionBindCarrierMessagingService => {
+                "android.permission.BIND_CARRIER_MESSAGING_SERVICE"
+            }
+            Permission::AndroidPermissionBindCarrierServices => {
+                "android.permission.BIND_CARRIER_SERVICES"
+            }
+            Permission::AndroidPermissionBindChooserTargetService => {
+                "android.permission.BIND_CHOOSER_TARGET_SERVICE"
+            }
             Permission::AndroidPermissionBindDeviceAdmin => "android.permission.BIND_DEVICE_ADMIN",
-            Permission::AndroidPermissionBindDirectorySearch => "android.permission.BIND_DIRECTORY_SEARCH",
-            Permission::AndroidPermissionBindDreamService => "android.permission.BIND_DREAM_SERVICE",
-            Permission::AndroidPermissionBindIncallService => "android.permission.BIND_INCALL_SERVICE",
+            Permission::AndroidPermissionBindDirectorySearch => {
+                "android.permission.BIND_DIRECTORY_SEARCH"
+            }
+            Permission::AndroidPermissionBindDreamService => {
+                "android.permission.BIND_DREAM_SERVICE"
+            }
+            Permission::AndroidPermissionBindIncallService => {
+                "android.permission.BIND_INCALL_SERVICE"
+            }
             Permission::AndroidPermissionBindInputMethod => "android.permission.BIND_INPUT_METHOD",
-            Permission::AndroidPermissionBindKeyguardAppwidget => "android.permission.BIND_KEYGUARD_APPWIDGET",
-            Permission::AndroidPermissionBindMidiDeviceService => "android.permission.BIND_MIDI_DEVICE_SERVICE",
+            Permission::AndroidPermissionBindKeyguardAppwidget => {
+                "android.permission.BIND_KEYGUARD_APPWIDGET"
+            }
+            Permission::AndroidPermissionBindMidiDeviceService => {
+                "android.permission.BIND_MIDI_DEVICE_SERVICE"
+            }
             Permission::AndroidPermissionBindNfcService => "android.permission.BIND_NFC_SERVICE",
-            Permission::AndroidPermissionBindNotificationListenerService => "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE",
-            Permission::AndroidPermissionBindPrintService => "android.permission.BIND_PRINT_SERVICE",
+            Permission::AndroidPermissionBindNotificationListenerService => {
+                "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
+            }
+            Permission::AndroidPermissionBindPrintService => {
+                "android.permission.BIND_PRINT_SERVICE"
+            }
             Permission::AndroidPermissionBindRemoteviews => "android.permission.BIND_REMOTEVIEWS",
-            Permission::AndroidPermissionBindTelecomConnectionService => "android.permission.BIND_TELECOM_CONNECTION_SERVICE",
+            Permission::AndroidPermissionBindTelecomConnectionService => {
+                "android.permission.BIND_TELECOM_CONNECTION_SERVICE"
+            }
             Permission::AndroidPermissionBindTextService => "android.permission.BIND_TEXT_SERVICE",
             Permission::AndroidPermissionBindTvInput => "android.permission.BIND_TV_INPUT",
-            Permission::AndroidPermissionBindVoiceInteraction => "android.permission.BIND_VOICE_INTERACTION",
+            Permission::AndroidPermissionBindVoiceInteraction => {
+                "android.permission.BIND_VOICE_INTERACTION"
+            }
             Permission::AndroidPermissionBindVpnService => "android.permission.BIND_VPN_SERVICE",
             Permission::AndroidPermissionBindWallpaper => "android.permission.BIND_WALLPAPER",
             Permission::AndroidPermissionBluetooth => "android.permission.BLUETOOTH",
             Permission::AndroidPermissionBluetoothAdmin => "android.permission.BLUETOOTH_ADMIN",
-            Permission::AndroidPermissionBluetoothPrivileged => "android.permission.BLUETOOTH_PRIVILEGED",
+            Permission::AndroidPermissionBluetoothPrivileged => {
+                "android.permission.BLUETOOTH_PRIVILEGED"
+            }
             Permission::AndroidPermissionBluetoothStack => "android.permission.BLUETOOTH_STACK",
             Permission::AndroidPermissionBodySensors => "android.permission.BODY_SENSORS",
-            Permission::AndroidPermissionBroadcastPackageRemoved => "android.permission.BROADCAST_PACKAGE_REMOVED",
+            Permission::AndroidPermissionBroadcastPackageRemoved => {
+                "android.permission.BROADCAST_PACKAGE_REMOVED"
+            }
             Permission::AndroidPermissionBroadcastSms => "android.permission.BROADCAST_SMS",
             Permission::AndroidPermissionBroadcastSticky => "android.permission.BROADCAST_STICKY",
-            Permission::AndroidPermissionBroadcastWapPush => "android.permission.BROADCAST_WAP_PUSH",
+            Permission::AndroidPermissionBroadcastWapPush => {
+                "android.permission.BROADCAST_WAP_PUSH"
+            }
             Permission::AndroidPermissionCallPhone => "android.permission.CALL_PHONE",
             Permission::AndroidPermissionCallPrivileged => "android.permission.CALL_PRIVILEGED",
             Permission::AndroidPermissionCamera => "android.permission.CAMERA",
-            Permission::AndroidPermissionCameraDisableTransmitLed => "android.permission.CAMERA_DISABLE_TRANSMIT_LED",
-            Permission::AndroidPermissionCaptureAudioOutput => "android.permission.CAPTURE_AUDIO_OUTPUT",
-            Permission::AndroidPermissionCaptureSecureVideoOutput => "android.permission.CAPTURE_SECURE_VIDEO_OUTPUT",
-            Permission::AndroidPermissionCaptureVideoOutput => "android.permission.CAPTURE_VIDEO_OUTPUT",
-            Permission::AndroidPermissionChangeBackgroundDataSetting => "android.permission.CHANGE_BACKGROUND_DATA_SETTING",
-            Permission::AndroidPermissionChangeComponentEnabledState => "android.permission.CHANGE_COMPONENT_ENABLED_STATE",
-            Permission::AndroidPermissionChangeConfiguration => "android.permission.CHANGE_CONFIGURATION",
-            Permission::AndroidPermissionChangeNetworkState => "android.permission.CHANGE_NETWORK_STATE",
-            Permission::AndroidPermissionChangeWimaxState => "android.permission.CHANGE_WIMAX_STATE",
-            Permission::AndroidPermissionChangeWifiMulticastState => "android.permission.CHANGE_WIFI_MULTICAST_STATE",
+            Permission::AndroidPermissionCameraDisableTransmitLed => {
+                "android.permission.CAMERA_DISABLE_TRANSMIT_LED"
+            }
+            Permission::AndroidPermissionCaptureAudioOutput => {
+                "android.permission.CAPTURE_AUDIO_OUTPUT"
+            }
+            Permission::AndroidPermissionCaptureSecureVideoOutput => {
+                "android.permission.CAPTURE_SECURE_VIDEO_OUTPUT"
+            }
+            Permission::AndroidPermissionCaptureVideoOutput => {
+                "android.permission.CAPTURE_VIDEO_OUTPUT"
+            }
+            Permission::AndroidPermissionChangeBackgroundDataSetting => {
+                "android.permission.CHANGE_BACKGROUND_DATA_SETTING"
+            }
+            Permission::AndroidPermissionChangeComponentEnabledState => {
+                "android.permission.CHANGE_COMPONENT_ENABLED_STATE"
+            }
+            Permission::AndroidPermissionChangeConfiguration => {
+                "android.permission.CHANGE_CONFIGURATION"
+            }
+            Permission::AndroidPermissionChangeNetworkState => {
+                "android.permission.CHANGE_NETWORK_STATE"
+            }
+            Permission::AndroidPermissionChangeWimaxState => {
+                "android.permission.CHANGE_WIMAX_STATE"
+            }
+            Permission::AndroidPermissionChangeWifiMulticastState => {
+                "android.permission.CHANGE_WIFI_MULTICAST_STATE"
+            }
             Permission::AndroidPermissionChangeWifiState => "android.permission.CHANGE_WIFI_STATE",
             Permission::AndroidPermissionClearAppCache => "android.permission.CLEAR_APP_CACHE",
-            Permission::AndroidPermissionConnectivityInternal => "android.permission.CONNECTIVITY_INTERNAL",
-            Permission::AndroidPermissionControlLocationUpdates => "android.permission.CONTROL_LOCATION_UPDATES",
-            Permission::AndroidPermissionDeleteCacheFiles => "android.permission.DELETE_CACHE_FILES",
+            Permission::AndroidPermissionConnectivityInternal => {
+                "android.permission.CONNECTIVITY_INTERNAL"
+            }
+            Permission::AndroidPermissionControlLocationUpdates => {
+                "android.permission.CONTROL_LOCATION_UPDATES"
+            }
+            Permission::AndroidPermissionDeleteCacheFiles => {
+                "android.permission.DELETE_CACHE_FILES"
+            }
             Permission::AndroidPermissionDeletePackages => "android.permission.DELETE_PACKAGES",
             Permission::AndroidPermissionDiagnostic => "android.permission.DIAGNOSTIC",
             Permission::AndroidPermissionDisableKeyguard => "android.permission.DISABLE_KEYGUARD",
-            Permission::AndroidPermissionDownloadWithoutNotification => "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION",
+            Permission::AndroidPermissionDownloadWithoutNotification => {
+                "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"
+            }
             Permission::AndroidPermissionDump => "android.permission.DUMP",
             Permission::AndroidPermissionExpandStatusBar => "android.permission.EXPAND_STATUS_BAR",
             Permission::AndroidPermissionFactoryTest => "android.permission.FACTORY_TEST",
             Permission::AndroidPermissionFlashlight => "android.permission.FLASHLIGHT",
-            Permission::AndroidPermissionForceStopPackages => "android.permission.FORCE_STOP_PACKAGES",
+            Permission::AndroidPermissionForceStopPackages => {
+                "android.permission.FORCE_STOP_PACKAGES"
+            }
             Permission::AndroidPermissionGetAccounts => "android.permission.GET_ACCOUNTS",
-            Permission::AndroidPermissionGetAccountsPrivileged => "android.permission.GET_ACCOUNTS_PRIVILEGED",
+            Permission::AndroidPermissionGetAccountsPrivileged => {
+                "android.permission.GET_ACCOUNTS_PRIVILEGED"
+            }
             Permission::AndroidPermissionGetAppOpsStats => "android.permission.GET_APP_OPS_STATS",
-            Permission::AndroidPermissionGetDetailedTasks => "android.permission.GET_DETAILED_TASKS",
+            Permission::AndroidPermissionGetDetailedTasks => {
+                "android.permission.GET_DETAILED_TASKS"
+            }
             Permission::AndroidPermissionGetPackageSize => "android.permission.GET_PACKAGE_SIZE",
             Permission::AndroidPermissionGetTasks => "android.permission.GET_TASKS",
             Permission::AndroidPermissionGlobalSearch => "android.permission.GLOBAL_SEARCH",
-            Permission::AndroidPermissionGlobalSearchControl => "android.permission.GLOBAL_SEARCH_CONTROL",
+            Permission::AndroidPermissionGlobalSearchControl => {
+                "android.permission.GLOBAL_SEARCH_CONTROL"
+            }
             Permission::AndroidPermissionHardwareTest => "android.permission.HARDWARE_TEST",
-            Permission::AndroidPermissionInstallLocationProvider => "android.permission.INSTALL_LOCATION_PROVIDER",
+            Permission::AndroidPermissionInstallLocationProvider => {
+                "android.permission.INSTALL_LOCATION_PROVIDER"
+            }
             Permission::AndroidPermissionInstallPackages => "android.permission.INSTALL_PACKAGES",
-            Permission::AndroidPermissionInteractAcrossUsers => "android.permission.INTERACT_ACROSS_USERS",
-            Permission::AndroidPermissionInteractAcrossUsersFull => "android.permission.INTERACT_ACROSS_USERS_FULL",
+            Permission::AndroidPermissionInteractAcrossUsers => {
+                "android.permission.INTERACT_ACROSS_USERS"
+            }
+            Permission::AndroidPermissionInteractAcrossUsersFull => {
+                "android.permission.INTERACT_ACROSS_USERS_FULL"
+            }
             Permission::AndroidPermissionInternet => "android.permission.INTERNET",
-            Permission::AndroidPermissionKillBackgroundProcesses => "android.permission.KILL_BACKGROUND_PROCESSES",
+            Permission::AndroidPermissionKillBackgroundProcesses => {
+                "android.permission.KILL_BACKGROUND_PROCESSES"
+            }
             Permission::AndroidPermissionLocationHardware => "android.permission.LOCATION_HARDWARE",
             Permission::AndroidPermissionLoopRadio => "android.permission.LOOP_RADIO",
             Permission::AndroidPermissionManageAccounts => "android.permission.MANAGE_ACCOUNTS",
-            Permission::AndroidPermissionManageActivityStacks => "android.permission.MANAGE_ACTIVITY_STACKS",
+            Permission::AndroidPermissionManageActivityStacks => {
+                "android.permission.MANAGE_ACTIVITY_STACKS"
+            }
             Permission::AndroidPermissionManageDocuments => "android.permission.MANAGE_DOCUMENTS",
             Permission::AndroidPermissionManageUsb => "android.permission.MANAGE_USB",
             Permission::AndroidPermissionManageUsers => "android.permission.MANAGE_USERS",
             Permission::AndroidPermissionMasterClear => "android.permission.MASTER_CLEAR",
-            Permission::AndroidPermissionMediaContentControl => "android.permission.MEDIA_CONTENT_CONTROL",
-            Permission::AndroidPermissionModifyAppwidgetBindPermissions => "android.permission.MODIFY_APPWIDGET_BIND_PERMISSIONS",
-            Permission::AndroidPermissionModifyAudioSettings => "android.permission.MODIFY_AUDIO_SETTINGS",
-            Permission::AndroidPermissionModifyPhoneState => "android.permission.MODIFY_PHONE_STATE",
-            Permission::AndroidPermissionMountFormatFilesystems => "android.permission.MOUNT_FORMAT_FILESYSTEMS",
-            Permission::AndroidPermissionMountUnmountFilesystems => "android.permission.MOUNT_UNMOUNT_FILESYSTEMS",
+            Permission::AndroidPermissionMediaContentControl => {
+                "android.permission.MEDIA_CONTENT_CONTROL"
+            }
+            Permission::AndroidPermissionModifyAppwidgetBindPermissions => {
+                "android.permission.MODIFY_APPWIDGET_BIND_PERMISSIONS"
+            }
+            Permission::AndroidPermissionModifyAudioSettings => {
+                "android.permission.MODIFY_AUDIO_SETTINGS"
+            }
+            Permission::AndroidPermissionModifyPhoneState => {
+                "android.permission.MODIFY_PHONE_STATE"
+            }
+            Permission::AndroidPermissionMountFormatFilesystems => {
+                "android.permission.MOUNT_FORMAT_FILESYSTEMS"
+            }
+            Permission::AndroidPermissionMountUnmountFilesystems => {
+                "android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+            }
             Permission::AndroidPermissionNetAdmin => "android.permission.NET_ADMIN",
             Permission::AndroidPermissionNetTunneling => "android.permission.NET_TUNNELING",
             Permission::AndroidPermissionNfc => "android.permission.NFC",
-            Permission::AndroidPermissionPackageUsageStats => "android.permission.PACKAGE_USAGE_STATS",
-            Permission::AndroidPermissionPersistentActivity => "android.permission.PERSISTENT_ACTIVITY",
-            Permission::AndroidPermissionProcessOutgoingCalls => "android.permission.PROCESS_OUTGOING_CALLS",
+            Permission::AndroidPermissionPackageUsageStats => {
+                "android.permission.PACKAGE_USAGE_STATS"
+            }
+            Permission::AndroidPermissionPersistentActivity => {
+                "android.permission.PERSISTENT_ACTIVITY"
+            }
+            Permission::AndroidPermissionProcessOutgoingCalls => {
+                "android.permission.PROCESS_OUTGOING_CALLS"
+            }
             Permission::AndroidPermissionReadCalendar => "android.permission.READ_CALENDAR",
             Permission::AndroidPermissionReadCallLog => "android.permission.READ_CALL_LOG",
-            Permission::AndroidPermissionReadCellBroadcasts => "android.permission.READ_CELL_BROADCASTS",
+            Permission::AndroidPermissionReadCellBroadcasts => {
+                "android.permission.READ_CELL_BROADCASTS"
+            }
             Permission::AndroidPermissionReadContacts => "android.permission.READ_CONTACTS",
             Permission::AndroidPermissionReadDreamState => "android.permission.READ_DREAM_STATE",
-            Permission::AndroidPermissionReadExternalStorage => "android.permission.READ_EXTERNAL_STORAGE",
+            Permission::AndroidPermissionReadExternalStorage => {
+                "android.permission.READ_EXTERNAL_STORAGE"
+            }
             Permission::AndroidPermissionReadFrameBuffer => "android.permission.READ_FRAME_BUFFER",
             Permission::AndroidPermissionReadInputState => "android.permission.READ_INPUT_STATE",
             Permission::AndroidPermissionReadLogs => "android.permission.READ_LOGS",
             Permission::AndroidPermissionReadPhoneState => "android.permission.READ_PHONE_STATE",
-            Permission::AndroidPermissionReadPrivilegedPhoneState => "android.permission.READ_PRIVILEGED_PHONE_STATE",
+            Permission::AndroidPermissionReadPrivilegedPhoneState => {
+                "android.permission.READ_PRIVILEGED_PHONE_STATE"
+            }
             Permission::AndroidPermissionReadProfile => "android.permission.READ_PROFILE",
             Permission::AndroidPermissionReadSms => "android.permission.READ_SMS",
-            Permission::AndroidPermissionReadSocialStream => "android.permission.READ_SOCIAL_STREAM",
-            Permission::AndroidPermissionReadSyncSettings => "android.permission.READ_SYNC_SETTINGS",
+            Permission::AndroidPermissionReadSocialStream => {
+                "android.permission.READ_SOCIAL_STREAM"
+            }
+            Permission::AndroidPermissionReadSyncSettings => {
+                "android.permission.READ_SYNC_SETTINGS"
+            }
             Permission::AndroidPermissionReadSyncStats => "android.permission.READ_SYNC_STATS",
-            Permission::AndroidPermissionReadUserDictionary => "android.permission.READ_USER_DICTIONARY",
+            Permission::AndroidPermissionReadUserDictionary => {
+                "android.permission.READ_USER_DICTIONARY"
+            }
             Permission::AndroidPermissionReboot => "android.permission.REBOOT",
-            Permission::AndroidPermissionReceiveBootCompleted => "android.permission.RECEIVE_BOOT_COMPLETED",
-            Permission::AndroidPermissionReceiveDataActivityChange => "android.permission.RECEIVE_DATA_ACTIVITY_CHANGE",
-            Permission::AndroidPermissionReceiveEmergencyBroadcast => "android.permission.RECEIVE_EMERGENCY_BROADCAST",
+            Permission::AndroidPermissionReceiveBootCompleted => {
+                "android.permission.RECEIVE_BOOT_COMPLETED"
+            }
+            Permission::AndroidPermissionReceiveDataActivityChange => {
+                "android.permission.RECEIVE_DATA_ACTIVITY_CHANGE"
+            }
+            Permission::AndroidPermissionReceiveEmergencyBroadcast => {
+                "android.permission.RECEIVE_EMERGENCY_BROADCAST"
+            }
             Permission::AndroidPermissionReceiveMms => "android.permission.RECEIVE_MMS",
             Permission::AndroidPermissionReceiveSms => "android.permission.RECEIVE_SMS",
             Permission::AndroidPermissionReceiveWapPush => "android.permission.RECEIVE_WAP_PUSH",
             Permission::AndroidPermissionRecordAudio => "android.permission.RECORD_AUDIO",
-            Permission::AndroidPermissionRemoteAudioPlayback => "android.permission.REMOTE_AUDIO_PLAYBACK",
+            Permission::AndroidPermissionRemoteAudioPlayback => {
+                "android.permission.REMOTE_AUDIO_PLAYBACK"
+            }
             Permission::AndroidPermissionRemoveTasks => "android.permission.REMOVE_TASKS",
             Permission::AndroidPermissionReorderTasks => "android.permission.REORDER_TASKS",
-            Permission::AndroidPermissionRequestIgnoreBatteryOptimizations => "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
-            Permission::AndroidPermissionRequestInstallPackages => "android.permission.REQUEST_INSTALL_PACKAGES",
+            Permission::AndroidPermissionRequestIgnoreBatteryOptimizations => {
+                "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
+            }
+            Permission::AndroidPermissionRequestInstallPackages => {
+                "android.permission.REQUEST_INSTALL_PACKAGES"
+            }
             Permission::AndroidPermissionRestartPackages => "android.permission.RESTART_PACKAGES",
-            Permission::AndroidPermissionRetrieveWindowContent => "android.permission.RETRIEVE_WINDOW_CONTENT",
-            Permission::AndroidPermissionSendRespondViaMessage => "android.permission.SEND_RESPOND_VIA_MESSAGE",
+            Permission::AndroidPermissionRetrieveWindowContent => {
+                "android.permission.RETRIEVE_WINDOW_CONTENT"
+            }
+            Permission::AndroidPermissionSendRespondViaMessage => {
+                "android.permission.SEND_RESPOND_VIA_MESSAGE"
+            }
             Permission::AndroidPermissionSendSms => "android.permission.SEND_SMS",
             Permission::AndroidPermissionSetAlwaysFinish => "android.permission.SET_ALWAYS_FINISH",
-            Permission::AndroidPermissionSetAnimationScale => "android.permission.SET_ANIMATION_SCALE",
+            Permission::AndroidPermissionSetAnimationScale => {
+                "android.permission.SET_ANIMATION_SCALE"
+            }
             Permission::AndroidPermissionSetDebugApp => "android.permission.SET_DEBUG_APP",
-            Permission::AndroidPermissionSetPreferredApplications => "android.permission.SET_PREFERRED_APPLICATIONS",
+            Permission::AndroidPermissionSetPreferredApplications => {
+                "android.permission.SET_PREFERRED_APPLICATIONS"
+            }
             Permission::AndroidPermissionSetProcessLimit => "android.permission.SET_PROCESS_LIMIT",
-            Permission::AndroidPermissionSetScreenCompatibility => "android.permission.SET_SCREEN_COMPATIBILITY",
+            Permission::AndroidPermissionSetScreenCompatibility => {
+                "android.permission.SET_SCREEN_COMPATIBILITY"
+            }
             Permission::AndroidPermissionSetTime => "android.permission.SET_TIME",
             Permission::AndroidPermissionSetTimeZone => "android.permission.SET_TIME_ZONE",
             Permission::AndroidPermissionSetWallpaper => "android.permission.SET_WALLPAPER",
-            Permission::AndroidPermissionSetWallpaperComponent => "android.permission.SET_WALLPAPER_COMPONENT",
-            Permission::AndroidPermissionSetWallpaperHints => "android.permission.SET_WALLPAPER_HINTS",
-            Permission::AndroidPermissionSignalPersistentProcesses => "android.permission.SIGNAL_PERSISTENT_PROCESSES",
-            Permission::AndroidPermissionStartAnyActivity => "android.permission.START_ANY_ACTIVITY",
+            Permission::AndroidPermissionSetWallpaperComponent => {
+                "android.permission.SET_WALLPAPER_COMPONENT"
+            }
+            Permission::AndroidPermissionSetWallpaperHints => {
+                "android.permission.SET_WALLPAPER_HINTS"
+            }
+            Permission::AndroidPermissionSignalPersistentProcesses => {
+                "android.permission.SIGNAL_PERSISTENT_PROCESSES"
+            }
+            Permission::AndroidPermissionStartAnyActivity => {
+                "android.permission.START_ANY_ACTIVITY"
+            }
             Permission::AndroidPermissionStatusBar => "android.permission.STATUS_BAR",
-            Permission::AndroidPermissionSubscribedFeedsRead => "android.permission.SUBSCRIBED_FEEDS_READ",
-            Permission::AndroidPermissionSystemAlertWindow => "android.permission.SYSTEM_ALERT_WINDOW",
-            Permission::AndroidPermissionSubscribedFeedsWrite => "android.permission.SUBSCRIBED_FEEDS_WRITE",
+            Permission::AndroidPermissionSubscribedFeedsRead => {
+                "android.permission.SUBSCRIBED_FEEDS_READ"
+            }
+            Permission::AndroidPermissionSystemAlertWindow => {
+                "android.permission.SYSTEM_ALERT_WINDOW"
+            }
+            Permission::AndroidPermissionSubscribedFeedsWrite => {
+                "android.permission.SUBSCRIBED_FEEDS_WRITE"
+            }
             Permission::AndroidPermissionTransmitIr => "android.permission.TRANSMIT_IR",
-            Permission::AndroidPermissionUpdateDeviceStats => "android.permission.UPDATE_DEVICE_STATS",
+            Permission::AndroidPermissionUpdateDeviceStats => {
+                "android.permission.UPDATE_DEVICE_STATS"
+            }
             Permission::AndroidPermissionUseCredentials => "android.permission.USE_CREDENTIALS",
             Permission::AndroidPermissionUseFingerprint => "android.permission.USE_FINGERPRINT",
             Permission::AndroidPermissionUseSip => "android.permission.USE_SIP",
             Permission::AndroidPermissionVibrate => "android.permission.VIBRATE",
             Permission::AndroidPermissionWakeLock => "android.permission.WAKE_LOCK",
-            Permission::AndroidPermissionWriteApnSettings => "android.permission.WRITE_APN_SETTINGS",
+            Permission::AndroidPermissionWriteApnSettings => {
+                "android.permission.WRITE_APN_SETTINGS"
+            }
             Permission::AndroidPermissionWriteCalendar => "android.permission.WRITE_CALENDAR",
             Permission::AndroidPermissionWriteCallLog => "android.permission.WRITE_CALL_LOG",
             Permission::AndroidPermissionWriteContacts => "android.permission.WRITE_CONTACTS",
             Permission::AndroidPermissionWriteDreamState => "android.permission.WRITE_DREAM_STATE",
-            Permission::AndroidPermissionWriteExternalStorage => "android.permission.WRITE_EXTERNAL_STORAGE",
+            Permission::AndroidPermissionWriteExternalStorage => {
+                "android.permission.WRITE_EXTERNAL_STORAGE"
+            }
             Permission::AndroidPermissionWriteGservices => "android.permission.WRITE_GSERVICES",
-            Permission::AndroidPermissionWriteMediaStorage => "android.permission.WRITE_MEDIA_STORAGE",
+            Permission::AndroidPermissionWriteMediaStorage => {
+                "android.permission.WRITE_MEDIA_STORAGE"
+            }
             Permission::AndroidPermissionWriteProfile => "android.permission.WRITE_PROFILE",
-            Permission::AndroidPermissionWriteSecureSettings => "android.permission.WRITE_SECURE_SETTINGS",
+            Permission::AndroidPermissionWriteSecureSettings => {
+                "android.permission.WRITE_SECURE_SETTINGS"
+            }
             Permission::AndroidPermissionWriteSettings => "android.permission.WRITE_SETTINGS",
             Permission::AndroidPermissionWriteSms => "android.permission.WRITE_SMS",
-            Permission::AndroidPermissionWriteSocialStream => "android.permission.WRITE_SOCIAL_STREAM",
-            Permission::AndroidPermissionWriteSyncSettings => "android.permission.WRITE_SYNC_SETTINGS",
-            Permission::AndroidPermissionWriteUserDictionary => "android.permission.WRITE_USER_DICTIONARY",
-            Permission::ComAndroidAlarmPermissionSetAlarm => "com.android.alarm.permission.SET_ALARM",
-            Permission::ComAndroidBrowserPermissionReadHistoryBookmarks => "com.android.browser.permission.READ_HISTORY_BOOKMARKS",
-            Permission::ComAndroidBrowserPermissionWriteHistoryBookmarks => "com.android.browser.permission.WRITE_HISTORY_BOOKMARKS",
-            Permission::ComAndroidEmailPermissionReadAttachment => "com.android.email.permission.READ_ATTACHMENT",
-            Permission::ComAndroidLauncherPermissionInstallShortcut => "com.android.launcher.permission.INSTALL_SHORTCUT",
-            Permission::ComAndroidLauncherPermissionPreloadWorkspace => "com.android.launcher.permission.PRELOAD_WORKSPACE",
-            Permission::ComAndroidLauncherPermissionReadSettings => "com.android.launcher.permission.READ_SETTINGS",
-            Permission::ComAndroidLauncherPermissionUninstallShortcut => "com.android.launcher.permission.UNINSTALL_SHORTCUT",
-            Permission::ComAndroidLauncherPermissionWriteSettings => "com.android.launcher.permission.WRITE_SETTINGS",
+            Permission::AndroidPermissionWriteSocialStream => {
+                "android.permission.WRITE_SOCIAL_STREAM"
+            }
+            Permission::AndroidPermissionWriteSyncSettings => {
+                "android.permission.WRITE_SYNC_SETTINGS"
+            }
+            Permission::AndroidPermissionWriteUserDictionary => {
+                "android.permission.WRITE_USER_DICTIONARY"
+            }
+            Permission::ComAndroidAlarmPermissionSetAlarm => {
+                "com.android.alarm.permission.SET_ALARM"
+            }
+            Permission::ComAndroidBrowserPermissionReadHistoryBookmarks => {
+                "com.android.browser.permission.READ_HISTORY_BOOKMARKS"
+            }
+            Permission::ComAndroidBrowserPermissionWriteHistoryBookmarks => {
+                "com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"
+            }
+            Permission::ComAndroidEmailPermissionReadAttachment => {
+                "com.android.email.permission.READ_ATTACHMENT"
+            }
+            Permission::ComAndroidLauncherPermissionInstallShortcut => {
+                "com.android.launcher.permission.INSTALL_SHORTCUT"
+            }
+            Permission::ComAndroidLauncherPermissionPreloadWorkspace => {
+                "com.android.launcher.permission.PRELOAD_WORKSPACE"
+            }
+            Permission::ComAndroidLauncherPermissionReadSettings => {
+                "com.android.launcher.permission.READ_SETTINGS"
+            }
+            Permission::ComAndroidLauncherPermissionUninstallShortcut => {
+                "com.android.launcher.permission.UNINSTALL_SHORTCUT"
+            }
+            Permission::ComAndroidLauncherPermissionWriteSettings => {
+                "com.android.launcher.permission.WRITE_SETTINGS"
+            }
             Permission::ComAndroidVendingCheckLicense => "com.android.vending.CHECK_LICENSE",
-            Permission::ComAndroidVoicemailPermissionAddVoicemail => "com.android.voicemail.permission.ADD_VOICEMAIL",
-            Permission::ComAndroidVoicemailPermissionReadVoicemail => "com.android.voicemail.permission.READ_VOICEMAIL",
-            Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail => "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL",
-            Permission::ComAndroidVoicemailPermissionWriteVoicemail => "com.android.voicemail.permission.WRITE_VOICEMAIL",
-            Permission::ComGoogleAndroidC2dmPermissionReceive => "com.google.android.c2dm.permission.RECEIVE",
-            Permission::ComGoogleAndroidC2dmPermissionSend => "com.google.android.c2dm.permission.SEND",
-            Permission::ComGoogleAndroidGmsPermissionActivityRecognition => "com.google.android.gms.permission.ACTIVITY_RECOGNITION",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth => "com.google.android.googleapps.permission.GOOGLE_AUTH",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices => "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices => "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser => "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense => "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords => "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh => "com.google.android.googleapps.permission.GOOGLE_AUTH.ah",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid => "com.google.android.googleapps.permission.GOOGLE_AUTH.android",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure => "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger => "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl => "com.google.android.googleapps.permission.GOOGLE_AUTH.cl",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp => "com.google.android.googleapps.permission.GOOGLE_AUTH.cp",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball => "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon => "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance => "com.google.android.googleapps.permission.GOOGLE_AUTH.finance",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase => "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki => "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile => "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral => "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2 => "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth => "com.google.android.googleapps.permission.GOOGLE_AUTH.health",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg => "com.google.android.googleapps.permission.GOOGLE_AUTH.ig",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot => "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol => "com.google.android.googleapps.permission.GOOGLE_AUTH.knol",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2 => "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal => "com.google.android.googleapps.permission.GOOGLE_AUTH.local",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail => "com.google.android.googleapps.permission.GOOGLE_AUTH.mail",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile => "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews => "com.google.android.googleapps.permission.GOOGLE_AUTH.news",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook => "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut => "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio => "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint => "com.google.android.googleapps.permission.GOOGLE_AUTH.print",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader => "com.google.android.googleapps.permission.GOOGLE_AUTH.reader",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra => "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa => "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox => "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps => "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech => "com.google.android.googleapps.permission.GOOGLE_AUTH.speech",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization => "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk => "com.google.android.googleapps.permission.GOOGLE_AUTH.talk",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi => "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise => "com.google.android.googleapps.permission.GOOGLE_AUTH.wise",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely => "com.google.android.googleapps.permission.GOOGLE_AUTH.writely",
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube => "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube",
-            Permission::ComGoogleAndroidGtalkservicePermissionGtalkService => "com.google.android.gtalkservice.permission.GTALK_SERVICE",
-            Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat => "com.google.android.gtalkservice.permission.SEND_HEARTBEAT",
-            Permission::ComGoogleAndroidPermissionBroadcastDataMessage => "com.google.android.permission.BROADCAST_DATA_MESSAGE",
-            Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices => "com.google.android.providers.gsf.permission.READ_GSERVICES",
-            Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly => "com.google.android.providers.talk.permission.READ_ONLY",
-            Permission::ComGoogleAndroidProvidersTalkPermissionWriteOnly => "com.google.android.providers.talk.permission.WRITE_ONLY",
-            Permission::ComGoogleAndroidXmppPermissionBroadcast => "com.google.android.xmpp.permission.BROADCAST",
-            Permission::ComGoogleAndroidXmppPermissionSendReceive => "com.google.android.xmpp.permission.SEND_RECEIVE",
-            Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint => "com.google.android.xmpp.permission.USE_XMPP_ENDPOINT",
-            Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast => "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST",
+            Permission::ComAndroidVoicemailPermissionAddVoicemail => {
+                "com.android.voicemail.permission.ADD_VOICEMAIL"
+            }
+            Permission::ComAndroidVoicemailPermissionReadVoicemail => {
+                "com.android.voicemail.permission.READ_VOICEMAIL"
+            }
+            Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail => {
+                "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL"
+            }
+            Permission::ComAndroidVoicemailPermissionWriteVoicemail => {
+                "com.android.voicemail.permission.WRITE_VOICEMAIL"
+            }
+            Permission::ComGoogleAndroidC2dmPermissionReceive => {
+                "com.google.android.c2dm.permission.RECEIVE"
+            }
+            Permission::ComGoogleAndroidC2dmPermissionSend => {
+                "com.google.android.c2dm.permission.SEND"
+            }
+            Permission::ComGoogleAndroidGmsPermissionActivityRecognition => {
+                "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.ah"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.android"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.cl"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.cp"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.finance"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2 => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.health"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.ig"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.knol"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2 => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.local"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.mail"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.news"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.print"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.reader"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.speech"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.talk"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.wise"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.writely"
+            }
+            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube => {
+                "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube"
+            }
+            Permission::ComGoogleAndroidGtalkservicePermissionGtalkService => {
+                "com.google.android.gtalkservice.permission.GTALK_SERVICE"
+            }
+            Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat => {
+                "com.google.android.gtalkservice.permission.SEND_HEARTBEAT"
+            }
+            Permission::ComGoogleAndroidPermissionBroadcastDataMessage => {
+                "com.google.android.permission.BROADCAST_DATA_MESSAGE"
+            }
+            Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices => {
+                "com.google.android.providers.gsf.permission.READ_GSERVICES"
+            }
+            Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly => {
+                "com.google.android.providers.talk.permission.READ_ONLY"
+            }
+            Permission::ComGoogleAndroidProvidersTalkPermissionWriteOnly => {
+                "com.google.android.providers.talk.permission.WRITE_ONLY"
+            }
+            Permission::ComGoogleAndroidXmppPermissionBroadcast => {
+                "com.google.android.xmpp.permission.BROADCAST"
+            }
+            Permission::ComGoogleAndroidXmppPermissionSendReceive => {
+                "com.google.android.xmpp.permission.SEND_RECEIVE"
+            }
+            Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint => {
+                "com.google.android.xmpp.permission.USE_XMPP_ENDPOINT"
+            }
+            Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast => {
+                "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST"
+            }
         }
     }
 }
@@ -3455,7 +3839,9 @@ impl FromStr for Permission {
             "android.permission.REMOVE_TASKS" => Ok(Permission::AndroidPermissionRemoveTasks),
             "android.permission.REORDER_TASKS" => Ok(Permission::AndroidPermissionReorderTasks),
             "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" => {
-                Ok(Permission::AndroidPermissionRequestIgnoreBatteryOptimizations)
+                Ok(
+                    Permission::AndroidPermissionRequestIgnoreBatteryOptimizations,
+                )
             }
             "android.permission.REQUEST_INSTALL_PACKAGES" => {
                 Ok(Permission::AndroidPermissionRequestInstallPackages)
@@ -3586,7 +3972,9 @@ impl FromStr for Permission {
                 Ok(Permission::ComAndroidVoicemailPermissionReadVoicemail)
             }
             "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail)
+                Ok(
+                    Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail,
+                )
             }
             "com.android.voicemail.permission.WRITE_VOICEMAIL" => {
                 Ok(Permission::ComAndroidVoicemailPermissionWriteVoicemail)
@@ -3604,31 +3992,47 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ah" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.android" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.cl" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl)
@@ -3637,115 +4041,185 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.finance" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.health" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ig" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.knol" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.local" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mail" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.news" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.print" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.reader" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speech" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.talk" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wise" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.writely" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely,
+                )
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube)
+                Ok(
+                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube,
+                )
             }
             "com.google.android.gtalkservice.permission.GTALK_SERVICE" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionGtalkService)
+                Ok(
+                    Permission::ComGoogleAndroidGtalkservicePermissionGtalkService,
+                )
             }
             "com.google.android.gtalkservice.permission.SEND_HEARTBEAT" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat)
+                Ok(
+                    Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat,
+                )
             }
             "com.google.android.permission.BROADCAST_DATA_MESSAGE" => {
                 Ok(Permission::ComGoogleAndroidPermissionBroadcastDataMessage)
             }
             "com.google.android.providers.gsf.permission.READ_GSERVICES" => {
-                Ok(Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices)
+                Ok(
+                    Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices,
+                )
             }
             "com.google.android.providers.talk.permission.READ_ONLY" => {
                 Ok(Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly)
@@ -3763,7 +4237,9 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint)
             }
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
+                Ok(
+                    Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
+                )
             }
             _ => Err(ErrorKind::Parse.into()),
         }

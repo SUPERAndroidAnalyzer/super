@@ -36,10 +36,11 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
 /// Performs the certificate analysis.
 ///
 /// *Note: This requires OpenSSL.*
-pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
-                                           package: S,
-                                           results: &mut Results)
-                                           -> Result<()> {
+pub fn certificate_analysis<S: AsRef<str>>(
+    config: &Config,
+    package: S,
+    results: &mut Results,
+) -> Result<()> {
     if config.is_verbose() {
         println!("Reading and analyzing the certificates…")
     }
@@ -56,11 +57,13 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
         let f = match f {
             Ok(f) => f,
             Err(e) => {
-                print_warning(format!("An error occurred when reading the \
+                print_warning(format!(
+                    "An error occurred when reading the \
                                        {} dir searching certificates. \
                                        Certificate analysis will be skipped. More info: {}",
-                                      path.display(),
-                                      e.description()));
+                    path.display(),
+                    e.description()
+                ));
                 break;
             }
         };
@@ -96,15 +99,20 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 })?;
 
             if !output.status.success() {
-                return Err(format!("The openssl command returned an error. More info: {}",
-                                   String::from_utf8_lossy(&output.stderr[..]))
-                                   .into());
+                return Err(
+                    format!(
+                        "The openssl command returned an error. More info: {}",
+                        String::from_utf8_lossy(&output.stderr[..])
+                    ).into(),
+                );
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);
             if config.is_verbose() {
-                println!("The application is signed with the following certificate: {}",
-                         path_file.bold());
+                println!(
+                    "The application is signed with the following certificate: {}",
+                    path_file.bold()
+                );
 
                 println!("{}", cmd);
             }
@@ -136,13 +144,15 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
                 let description = "The application is signed with the Android Debug Certificate. \
                                    This certificate should never be used for publishing an app.";
 
-                let vuln = Vulnerability::new(criticality,
-                                              "Android Debug Certificate",
-                                              description,
-                                              None::<String>,
-                                              None,
-                                              None,
-                                              None::<String>);
+                let vuln = Vulnerability::new(
+                    criticality,
+                    "Android Debug Certificate",
+                    description,
+                    None::<String>,
+                    None,
+                    None,
+                    None::<String>,
+                );
                 results.add_vulnerability(vuln);
                 print_vulnerability(description, criticality);
             }
@@ -165,19 +175,22 @@ pub fn certificate_analysis<S: AsRef<str>>(config: &Config,
             };
 
             if year > cert_year || (year == cert_year && month > cert_month) ||
-               (year == cert_year && month == cert_month && day > cert_day) {
+                (year == cert_year && month == cert_month && day > cert_day)
+            {
                 let criticality = Criticality::High;
                 let description = "The certificate of the application has expired. You should not \
                                    use applications with expired certificates since the app is \
                                    not secure anymore.";
 
-                let vuln = Vulnerability::new(criticality,
-                                              "Expired certificate",
-                                              description,
-                                              None::<String>,
-                                              None,
-                                              None,
-                                              None::<String>);
+                let vuln = Vulnerability::new(
+                    criticality,
+                    "Expired certificate",
+                    description,
+                    None::<String>,
+                    None,
+                    None,
+                    None::<String>,
+                );
                 results.add_vulnerability(vuln);
                 print_vulnerability(description, criticality);
             }

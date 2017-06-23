@@ -94,26 +94,26 @@ impl Config {
         if cfg!(target_family = "unix") {
             let config_path = PathBuf::from("/etc/config.toml");
             if config_path.exists() {
-                config
-                    .load_from_file(&config_path)
-                    .chain_err(|| "The config.toml file does not have the correct formatting.")?;
+                config.load_from_file(&config_path).chain_err(
+                    || "The config.toml file does not have the correct formatting.",
+                )?;
                 config.loaded_files.push(config_path);
             }
         }
         let config_path = PathBuf::from("config.toml");
         if config_path.exists() {
-            config
-                .load_from_file(&config_path)
-                .chain_err(|| "The config.toml file does not have the correct formatting.")?;
+            config.load_from_file(&config_path).chain_err(
+                || "The config.toml file does not have the correct formatting.",
+            )?;
             config.loaded_files.push(config_path);
         }
 
         config.set_options(&cli);
 
         if cli.is_present("test-all") {
-            config
-                .read_apks()
-                .chain_err(|| "Error loading all the downloaded APKs")?;
+            config.read_apks().chain_err(
+                || "Error loading all the downloaded APKs",
+            )?;
         } else {
             config.add_app_package(cli.value_of("package").unwrap());
         }
@@ -128,13 +128,15 @@ impl Config {
 
                 self.min_criticality = m;
             } else {
-                print_warning(format!("The min_criticality option must be one of {}, {}, {}, {} \
+                print_warning(format!(
+                    "The min_criticality option must be one of {}, {}, {}, {} \
                                        or {}.\nUsing default.",
-                                      "warning".italic(),
-                                      "low".italic(),
-                                      "medium".italic(),
-                                      "high".italic(),
-                                      "critical".italic()));
+                    "warning".italic(),
+                    "low".italic(),
+                    "medium".italic(),
+                    "high".italic(),
+                    "critical".italic()
+                ));
             }
         }
         if let Some(threads) = cli.value_of("threads") {
@@ -143,9 +145,11 @@ impl Config {
                     self.threads = t;
                 }
                 _ => {
-                    print_warning(format!("The threads option must be an integer between 1 and \
+                    print_warning(format!(
+                        "The threads option must be an integer between 1 and \
                                            {}",
-                                          u8::MAX));
+                        u8::MAX
+                    ));
                 }
             }
         }
@@ -181,19 +185,23 @@ impl Config {
                 Ok(entry) => {
                     if let Some(ext) = entry.path().extension() {
                         if ext == "apk" {
-                            self.add_app_package(entry
-                                                     .path()
-                                                     .file_stem()
-                                                     .unwrap()
-                                                     .to_string_lossy()
-                                                     .into_owned())
+                            self.add_app_package(
+                                entry
+                                    .path()
+                                    .file_stem()
+                                    .unwrap()
+                                    .to_string_lossy()
+                                    .into_owned(),
+                            )
                         }
                     }
                 }
                 Err(e) => {
-                    print_warning(format!("There was an error when reading the \
+                    print_warning(format!(
+                        "There was an error when reading the \
                                                    downloads folder: {}",
-                                          e.description()));
+                        e.description()
+                    ));
                 }
             }
         }
@@ -204,9 +212,8 @@ impl Config {
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
         let check = self.downloads_folder.exists() && self.dex2jar_folder.exists() &&
-                    self.jd_cmd_file.exists() &&
-                    self.get_template_path().exists() &&
-                    self.rules_json.exists();
+            self.jd_cmd_file.exists() && self.get_template_path().exists() &&
+            self.rules_json.exists();
         if check {
             for package in &self.app_packages {
                 if !package.exists() {
@@ -223,34 +230,49 @@ impl Config {
     pub fn get_errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
         if !self.downloads_folder.exists() {
-            errors.push(format!("The downloads folder `{}` does not exist",
-                                self.downloads_folder.display()));
+            errors.push(format!(
+                "The downloads folder `{}` does not exist",
+                self.downloads_folder.display()
+            ));
         }
         for package in &self.app_packages {
             if !package.exists() {
-                errors.push(format!("The APK file `{}` does not exist", package.display()));
+                errors.push(format!(
+                    "The APK file `{}` does not exist",
+                    package.display()
+                ));
             }
         }
         if !self.dex2jar_folder.exists() {
-            errors.push(format!("The Dex2Jar folder `{}` does not exist",
-                                self.dex2jar_folder.display()));
+            errors.push(format!(
+                "The Dex2Jar folder `{}` does not exist",
+                self.dex2jar_folder.display()
+            ));
         }
         if !self.jd_cmd_file.exists() {
-            errors.push(format!("The jd-cmd file `{}` does not exist",
-                                self.jd_cmd_file.display()));
+            errors.push(format!(
+                "The jd-cmd file `{}` does not exist",
+                self.jd_cmd_file.display()
+            ));
         }
         if !self.templates_folder.exists() {
-            errors.push(format!("the templates folder `{}` does not exist",
-                                self.templates_folder.display()));
+            errors.push(format!(
+                "the templates folder `{}` does not exist",
+                self.templates_folder.display()
+            ));
         }
         if !self.get_template_path().exists() {
-            errors.push(format!("the template `{}` does not exist in `{}`",
-                                self.template,
-                                self.templates_folder.display()));
+            errors.push(format!(
+                "the template `{}` does not exist in `{}`",
+                self.template,
+                self.templates_folder.display()
+            ));
         }
         if !self.rules_json.exists() {
-            errors.push(format!("The `{}` rule file does not exist",
-                                self.rules_json.display()));
+            errors.push(format!(
+                "The `{}` rule file does not exist",
+                self.rules_json.display()
+            ));
         }
         errors
     }
@@ -401,8 +423,10 @@ impl Config {
 
         // Parse the configuration file.
         let toml = if let Value::Table(toml) =
-            toml.parse::<Value>()
-                .chain_err(|| "there was an error parsing the config.toml file")? {
+            toml.parse::<Value>().chain_err(
+                || "there was an error parsing the config.toml file",
+            )?
+        {
             toml
         } else {
             return Err(ErrorKind::Parse.into());
@@ -438,9 +462,11 @@ impl Config {
                 self.threads = t as u8;
             }
         } else {
-            print_warning(format!("The 'threads' option in config.toml must be an integer \
+            print_warning(format!(
+                "The 'threads' option in config.toml must be an integer \
                                    between 1 and {}.\nUsing default.",
-                                  MAX_THREADS))
+                MAX_THREADS
+            ))
         }
     }
 
@@ -449,8 +475,10 @@ impl Config {
         if let Value::String(s) = value {
             self.downloads_folder = s.into();
         } else {
-            print_warning("The 'downloads_folder' option in config.toml must be an string.\nUsing \
-                           default.")
+            print_warning(
+                "The 'downloads_folder' option in config.toml must be an string.\nUsing \
+                           default.",
+            )
         }
     }
 
@@ -459,8 +487,10 @@ impl Config {
         if let Value::String(s) = value {
             self.dist_folder = s.into();
         } else {
-            print_warning("The 'dist_folder' option in config.toml must be an string.\nUsing \
-                           default.");
+            print_warning(
+                "The 'dist_folder' option in config.toml must be an string.\nUsing \
+                           default.",
+            );
         }
     }
 
@@ -469,8 +499,10 @@ impl Config {
         if let Value::String(s) = value {
             self.results_folder = s.into();
         } else {
-            print_warning("The 'results_folder' option in config.toml must be an string.\nUsing \
-                           default.");
+            print_warning(
+                "The 'results_folder' option in config.toml must be an string.\nUsing \
+                           default.",
+            );
         }
     }
 
@@ -479,8 +511,10 @@ impl Config {
         if let Value::String(s) = value {
             self.dex2jar_folder = s.into();
         } else {
-            print_warning("The 'dex2jar_folder' option in config.toml should be an string.\nUsing \
-                           default.")
+            print_warning(
+                "The 'dex2jar_folder' option in config.toml should be an string.\nUsing \
+                           default.",
+            )
         }
     }
 
@@ -494,8 +528,10 @@ impl Config {
                 print_warning("The JD-CMD file must be a JAR file.\nUsing default.");
             }
         } else {
-            print_warning("The 'jd_cmd_file' option in config.toml must be an string.\nUsing \
-                           default.")
+            print_warning(
+                "The 'jd_cmd_file' option in config.toml must be an string.\nUsing \
+                           default.",
+            )
         }
     }
 
@@ -504,8 +540,10 @@ impl Config {
         if let Value::String(ref s) = value {
             self.templates_folder = s.into();
         } else {
-            print_warning("The 'templates_folder' option in config.toml should be an string.\n\
-                           Using default.")
+            print_warning(
+                "The 'templates_folder' option in config.toml should be an string.\n\
+                           Using default.",
+            )
         }
     }
 
@@ -514,8 +552,10 @@ impl Config {
         if let Value::String(s) = value {
             self.template = s;
         } else {
-            print_warning("The 'template' option in config.toml should be an string.\nUsing \
-                           default.")
+            print_warning(
+                "The 'template' option in config.toml should be an string.\nUsing \
+                           default.",
+            )
         }
     }
 
@@ -526,24 +566,30 @@ impl Config {
             if extension.is_some() && extension.unwrap() == "json" {
                 self.rules_json = PathBuf::from(s.clone());
             } else {
-                print_warning("The rules.json file must be a JSON \
-                                   file.\nUsing default.")
+                print_warning(
+                    "The rules.json file must be a JSON \
+                                   file.\nUsing default.",
+                )
             }
         } else {
-            print_warning("The 'rules_json' option in config.toml must be an string.\nUsing \
-                           default.")
+            print_warning(
+                "The 'rules_json' option in config.toml must be an string.\nUsing \
+                           default.",
+            )
         }
     }
 
     /// Loads permissions from the TOML configuration vector.
     fn load_permissions(&mut self, value: Value) {
         if let Value::Array(permissions) = value {
-            let format_warning = format!("The permission configuration format must be the following:\n{}\nUsing \
+            let format_warning = format!(
+                "The permission configuration format must be the following:\n{}\nUsing \
                          default.",
-                        "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
+                "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
                          \"warning|low|medium|high|critical\"\nlabel = \"Permission \
                          label\"\ndescription = \"Long description to explain the vulnerability\""
-                            .italic());
+                    .italic()
+            );
 
             for cfg in permissions {
                 let cfg = if let Some(t) = cfg.as_table() {
@@ -564,13 +610,15 @@ impl Config {
                     if let Ok(c) = Criticality::from_str(c) {
                         c
                     } else {
-                        print_warning(format!("Criticality must be one of {}, {}, {}, {} or \
+                        print_warning(format!(
+                            "Criticality must be one of {}, {}, {}, {} or \
                                                {}.\nUsing default.",
-                                              "warning".italic(),
-                                              "low".italic(),
-                                              "medium".italic(),
-                                              "high".italic(),
-                                              "critical".italic()));
+                            "warning".italic(),
+                            "low".italic(),
+                            "medium".italic(),
+                            "high".italic(),
+                            "critical".italic()
+                        ));
                         break;
                     }
                 } else {
@@ -587,14 +635,16 @@ impl Config {
 
                 if name == "unknown" {
                     if cfg.len() != 3 {
-                        print_warning(format!("The format for the unknown \
+                        print_warning(format!(
+                            "The format for the unknown \
                              permissions is the following:\n{}\nUsing default.",
-                                              "[[permissions]]\nname = \
+                            "[[permissions]]\nname = \
                                                    \"unknown\"\ncriticality = \
                                                     \"warning|low|medium|high|criticality\"\n\
                                                     description = \"Long description to explain \
                                                     the vulnerability\""
-                                                      .italic()));
+                                .italic()
+                        ));
                         break;
                     }
 
@@ -608,13 +658,15 @@ impl Config {
                     let permission = if let Ok(p) = Permission::from_str(name) {
                         p
                     } else {
-                        print_warning(format!("Unknown permission: {}\nTo set the default \
+                        print_warning(format!(
+                            "Unknown permission: {}\nTo set the default \
                                                vulnerability level for an unknown permission, \
                                                please, use the {} permission name, under the {} \
                                                section.",
-                                              name.italic(),
-                                              "unknown".italic(),
-                                              "[[permissions]]".italic()));
+                            name.italic(),
+                            "unknown".italic(),
+                            "[[permissions]]".italic()
+                        ));
                         break;
                     };
 
@@ -624,12 +676,18 @@ impl Config {
                         print_warning(format_warning);
                         break;
                     };
-                    self.permissions
-                        .insert(PermissionConfig::new(permission, criticality, label, description));
+                    self.permissions.insert(PermissionConfig::new(
+                        permission,
+                        criticality,
+                        label,
+                        description,
+                    ));
                 }
             }
         } else {
-            print_warning("You must specify the permissions you want to select as vulnerable.");
+            print_warning(
+                "You must specify the permissions you want to select as vulnerable.",
+            );
         }
     }
 
@@ -638,8 +696,10 @@ impl Config {
         if let Value::Boolean(b) = value {
             self.html = b
         } else {
-            print_warning("The 'html_report' option in config.toml should be a boolean.\nUsing \
-                           default.");
+            print_warning(
+                "The 'html_report' option in config.toml should be a boolean.\nUsing \
+                           default.",
+            );
         }
     }
 
@@ -648,8 +708,10 @@ impl Config {
         if let Value::Boolean(b) = value {
             self.json = b;
         } else {
-            print_warning("The 'json_report' option in config.toml should be a boolean.\nUsing \
-                           default.");
+            print_warning(
+                "The 'json_report' option in config.toml should be a boolean.\nUsing \
+                           default.",
+            );
         }
     }
 
@@ -675,10 +737,14 @@ impl Config {
             templates_folder: PathBuf::from("templates"),
             template: String::from("super"),
             rules_json: PathBuf::from("rules.json"),
-            unknown_permission: (Criticality::Low,
-                                 String::from("Even if the application can create its own \
+            unknown_permission: (
+                Criticality::Low,
+                String::from(
+                    "Even if the application can create its own \
                                                permissions, it's discouraged, since it can \
-                                               lead to missunderstanding between developers.")),
+                                               lead to missunderstanding between developers.",
+                ),
+            ),
             permissions: BTreeSet::new(),
             loaded_files: Vec::new(),
         }
@@ -695,10 +761,10 @@ impl Default for Config {
             config.rules_json = etc_rules;
         }
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super-analyzer"
-                                   } else {
-                                       "/usr/share/super-analyzer"
-                                   });
+            "/usr/local/super-analyzer"
+        } else {
+            "/usr/share/super-analyzer"
+        });
         if share_path.exists() {
             config.dex2jar_folder = share_path.join("vendor/dex2jar-2.1-SNAPSHOT");
             config.jd_cmd_file = share_path.join("vendor/jd-cmd.jar");
@@ -750,11 +816,12 @@ impl PartialOrd for PermissionConfig {
 
 impl PermissionConfig {
     /// Creates a new `PermissionConfig`.
-    fn new<L: Into<String>, D: Into<String>>(permission: Permission,
-                                             criticality: Criticality,
-                                             label: L,
-                                             description: D)
-                                             -> PermissionConfig {
+    fn new<L: Into<String>, D: Into<String>>(
+        permission: Permission,
+        criticality: Criticality,
+        label: L,
+        description: D,
+    ) -> PermissionConfig {
         PermissionConfig {
             permission: permission,
             criticality: criticality,
@@ -814,8 +881,8 @@ mod tests {
         assert_eq!(config.get_results_folder(), Path::new("results"));
         assert_eq!(config.get_template_name(), "super");
         let share_path = Path::new(if cfg!(target_os = "macos") {
-                                       "/usr/local/super-analyzer"
-                                   } else if cfg!(target_family = "windows") {
+            "/usr/local/super-analyzer"
+        } else if cfg!(target_family = "windows") {
             ""
         } else {
             "/usr/share/super-analyzer"
@@ -825,24 +892,36 @@ mod tests {
         } else {
             Path::new("")
         };
-        assert_eq!(config.get_dex2jar_folder(),
-                   share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT"));
-        assert_eq!(config.get_jd_cmd_file(),
-                   share_path.join("vendor").join("jd-cmd.jar"));
+        assert_eq!(
+            config.get_dex2jar_folder(),
+            share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT")
+        );
+        assert_eq!(
+            config.get_jd_cmd_file(),
+            share_path.join("vendor").join("jd-cmd.jar")
+        );
         assert_eq!(config.get_templates_folder(), share_path.join("templates"));
-        assert_eq!(config.get_template_path(),
-                   share_path.join("templates").join("super"));
+        assert_eq!(
+            config.get_template_path(),
+            share_path.join("templates").join("super")
+        );
         if cfg!(target_family = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
-            assert_eq!(config.get_rules_json(),
-                       Path::new("/etc/super-analyzer/rules.json"));
+            assert_eq!(
+                config.get_rules_json(),
+                Path::new("/etc/super-analyzer/rules.json")
+            );
         } else {
             assert_eq!(config.get_rules_json(), Path::new("rules.json"));
         }
-        assert_eq!(config.get_unknown_permission_criticality(),
-                   Criticality::Low);
-        assert_eq!(config.get_unknown_permission_description(),
-                   "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers.");
+        assert_eq!(
+            config.get_unknown_permission_criticality(),
+            Criticality::Low
+        );
+        assert_eq!(
+            config.get_unknown_permission_description(),
+            "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers."
+        );
         assert_eq!(config.get_permissions().next(), None);
 
         if !config.downloads_folder.exists() {
@@ -906,33 +985,51 @@ mod tests {
         assert_eq!(config.downloads_folder, Path::new("downloads"));
         assert_eq!(config.get_dist_folder(), Path::new("dist"));
         assert_eq!(config.get_results_folder(), Path::new("results"));
-        assert_eq!(config.get_dex2jar_folder(),
-                   Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT"));
-        assert_eq!(config.get_jd_cmd_file(),
-                   Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar"));
-        assert_eq!(config.get_templates_folder(),
-                   Path::new("/usr/share/super-analyzer/templates"));
-        assert_eq!(config.get_template_path(),
-                   Path::new("/usr/share/super-analyzer/templates/super"));
+        assert_eq!(
+            config.get_dex2jar_folder(),
+            Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT")
+        );
+        assert_eq!(
+            config.get_jd_cmd_file(),
+            Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar")
+        );
+        assert_eq!(
+            config.get_templates_folder(),
+            Path::new("/usr/share/super-analyzer/templates")
+        );
+        assert_eq!(
+            config.get_template_path(),
+            Path::new("/usr/share/super-analyzer/templates/super")
+        );
         assert_eq!(config.get_template_name(), "super");
-        assert_eq!(config.get_rules_json(),
-                   Path::new("/etc/super-analyzer/rules.json"));
-        assert_eq!(config.get_unknown_permission_criticality(),
-                   Criticality::Low);
-        assert_eq!(config.get_unknown_permission_description(),
-                   "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers.");
+        assert_eq!(
+            config.get_rules_json(),
+            Path::new("/etc/super-analyzer/rules.json")
+        );
+        assert_eq!(
+            config.get_unknown_permission_criticality(),
+            Criticality::Low
+        );
+        assert_eq!(
+            config.get_unknown_permission_description(),
+            "Even if the application can create its own permissions, it's discouraged, \
+                    since it can lead to missunderstanding between developers."
+        );
 
         let permission = config.get_permissions().next().unwrap();
-        assert_eq!(permission.get_permission(),
-                   Permission::AndroidPermissionInternet);
+        assert_eq!(
+            permission.get_permission(),
+            Permission::AndroidPermissionInternet
+        );
         assert_eq!(permission.get_criticality(), Criticality::Warning);
         assert_eq!(permission.get_label(), "Internet permission");
-        assert_eq!(permission.get_description(),
-                   "Allows the app to create network sockets and use custom network protocols. \
+        assert_eq!(
+            permission.get_description(),
+            "Allows the app to create network sockets and use custom network protocols. \
                     The browser and other applications provide means to send data to the \
                     internet, so this permission is not required to send data to the internet. \
-                    Check if the permission is actually needed.");
+                    Check if the permission is actually needed."
+        );
     }
 
     /// Test to check a valid jd cmd file section is loaded
@@ -943,8 +1040,10 @@ mod tests {
 
         final_config.load_jd_cmd_file_section(value);
 
-        assert_eq!(PathBuf::from("/some/path/to/jd-cmd.jar"),
-                   final_config.jd_cmd_file)
+        assert_eq!(
+            PathBuf::from("/some/path/to/jd-cmd.jar"),
+            final_config.jd_cmd_file
+        )
     }
 
     /// Test to check an invalid jd cmd file section is not loaded
@@ -953,8 +1052,10 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![Value::String("/some/invalid/js_cmd.jpg".to_string()),
-                          Value::Integer(20)];
+        let values = vec![
+            Value::String("/some/invalid/js_cmd.jpg".to_string()),
+            Value::Integer(20),
+        ];
 
         for value in values {
             final_config.load_jd_cmd_file_section(value);
@@ -1001,15 +1102,23 @@ mod tests {
         final_config.load_templates_folder_section(Value::String(str_value.clone()));
         final_config.load_template_section(Value::String(str_value.clone()));
 
-        assert_eq!(final_config.downloads_folder,
-                   PathBuf::from(str_value.clone()));
+        assert_eq!(
+            final_config.downloads_folder,
+            PathBuf::from(str_value.clone())
+        );
         assert_eq!(final_config.dist_folder, PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.results_folder,
-                   PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.dex2jar_folder,
-                   PathBuf::from(str_value.clone()));
-        assert_eq!(final_config.templates_folder,
-                   PathBuf::from(str_value.clone()));
+        assert_eq!(
+            final_config.results_folder,
+            PathBuf::from(str_value.clone())
+        );
+        assert_eq!(
+            final_config.dex2jar_folder,
+            PathBuf::from(str_value.clone())
+        );
+        assert_eq!(
+            final_config.templates_folder,
+            PathBuf::from(str_value.clone())
+        );
         assert_eq!(final_config.template, str_value.clone());
     }
 
@@ -1033,8 +1142,10 @@ mod tests {
 
         final_config.load_rules_section(value);
 
-        assert_eq!(PathBuf::from("/some/path/to/rules.json"),
-                   final_config.rules_json)
+        assert_eq!(
+            PathBuf::from("/some/path/to/rules.json"),
+            final_config.rules_json
+        )
     }
 
     /// Test to check an invalid rules section is not loaded
@@ -1043,8 +1154,10 @@ mod tests {
         let default_config = Config::default();
         let mut final_config = Config::default();
 
-        let values = vec![Value::String("/some/invalid/rules.jpg".to_string()),
-                          Value::Integer(20)];
+        let values = vec![
+            Value::String("/some/invalid/rules.jpg".to_string()),
+            Value::Integer(20),
+        ];
 
         for value in values {
             final_config.load_rules_section(value);
@@ -1061,31 +1174,41 @@ mod tests {
 
         let mut permission_invalid_criticality: BTreeMap<String, Value> = BTreeMap::new();
         permission_invalid_criticality
-            .insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("permission_name".to_string()),
+            )
             .is_some();
         permission_invalid_criticality
-            .insert("criticality".to_string(),
-                    Value::String("invalid_level".to_string()))
+            .insert(
+                "criticality".to_string(),
+                Value::String("invalid_level".to_string()),
+            )
             .is_some();
 
         let mut permission_without_criticality: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_criticality
-            .insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("permission_name".to_string()),
+            )
             .is_some();
 
         let mut permission_without_description: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_description
-            .insert("name".to_string(),
-                    Value::String("permission_name".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("permission_name".to_string()),
+            )
             .is_some();
         permission_without_description
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_without_description
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
 
         let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
@@ -1096,45 +1219,59 @@ mod tests {
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_unknown_too_much_values
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
         permission_unknown_too_much_values
-            .insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+            .insert(
+                "additional_field".to_string(),
+                Value::String("additional field data".to_string()),
+            )
             .is_some();
 
         let mut permission_known_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
         permission_known_too_much_values
-            .insert("name".to_string(),
-                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()),
+            )
             .is_some();
         permission_known_too_much_values
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_known_too_much_values
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
         permission_known_too_much_values
             .insert("label".to_string(), Value::String("label".to_string()))
             .is_some();
         permission_known_too_much_values
-            .insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+            .insert(
+                "additional_field".to_string(),
+                Value::String("additional field data".to_string()),
+            )
             .is_some();
 
         let mut permission_known_name_not_found: BTreeMap<String, Value> = BTreeMap::new();
         permission_known_name_not_found
-            .insert("name".to_string(),
-                    Value::String("invalid name".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("invalid name".to_string()),
+            )
             .is_some();
         permission_known_name_not_found
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_known_name_not_found
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
         permission_known_name_not_found
             .insert("label".to_string(), Value::String("label".to_string()))
@@ -1142,37 +1279,47 @@ mod tests {
 
         let mut permission_without_label: BTreeMap<String, Value> = BTreeMap::new();
         permission_without_label
-            .insert("name".to_string(),
-                    Value::String("invalid name".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("invalid name".to_string()),
+            )
             .is_some();
         permission_without_label
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         permission_without_label
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
         permission_without_label
-            .insert("additional_field".to_string(),
-                    Value::String("additional field data".to_string()))
+            .insert(
+                "additional_field".to_string(),
+                Value::String("additional field data".to_string()),
+            )
             .is_some();
 
-        let permissions = vec![Value::Integer(20),
-                               Value::Table(permission_without_name),
-                               Value::Table(permission_invalid_criticality),
-                               Value::Table(permission_without_criticality),
-                               Value::Table(permission_without_description),
-                               Value::Table(permission_unknown_too_much_values),
-                               Value::Table(permission_known_too_much_values),
-                               Value::Table(permission_known_name_not_found),
-                               Value::Table(permission_without_label)];
+        let permissions = vec![
+            Value::Integer(20),
+            Value::Table(permission_without_name),
+            Value::Table(permission_invalid_criticality),
+            Value::Table(permission_without_criticality),
+            Value::Table(permission_without_description),
+            Value::Table(permission_unknown_too_much_values),
+            Value::Table(permission_known_too_much_values),
+            Value::Table(permission_known_name_not_found),
+            Value::Table(permission_without_label),
+        ];
 
         for p in permissions {
             final_config.load_permissions(Value::Array(vec![p]));
 
             assert_eq!(default_config.permissions, final_config.permissions);
-            assert_eq!(default_config.unknown_permission,
-                       final_config.unknown_permission);
+            assert_eq!(
+                default_config.unknown_permission,
+                final_config.unknown_permission
+            );
         }
     }
 
@@ -1189,15 +1336,21 @@ mod tests {
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
 
         final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
-        assert_eq!(final_config.get_unknown_permission_criticality(),
-                   Criticality::from_str("low").unwrap());
-        assert_eq!(final_config.get_unknown_permission_description(),
-                   "permission description");
+        assert_eq!(
+            final_config.get_unknown_permission_criticality(),
+            Criticality::from_str("low").unwrap()
+        );
+        assert_eq!(
+            final_config.get_unknown_permission_description(),
+            "permission description"
+        );
     }
 
     #[test]
@@ -1206,15 +1359,19 @@ mod tests {
 
         let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
         unknown_permission
-            .insert("name".to_string(),
-                    Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()))
+            .insert(
+                "name".to_string(),
+                Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()),
+            )
             .is_some();
         unknown_permission
             .insert("criticality".to_string(), Value::String("low".to_string()))
             .is_some();
         unknown_permission
-            .insert("description".to_string(),
-                    Value::String("permission description".to_string()))
+            .insert(
+                "description".to_string(),
+                Value::String("permission description".to_string()),
+            )
             .is_some();
         unknown_permission
             .insert("label".to_string(), Value::String("label".to_string()))
