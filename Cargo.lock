@@ -1,6 +1,6 @@
 [root]
 name = "super-analyzer"
-version = "0.4.0"
+version = "0.4.1"
 dependencies = [
  "abxml 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytecount 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",

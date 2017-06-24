@@ -591,22 +591,6 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    /// Creates a new `PermissionConfig`.
-    #[allow(unused)]
-    fn new<L: Into<String>, D: Into<String>>(
-        permission: Permission,
-        criticality: Criticality,
-        label: L,
-        description: D,
-    ) -> PermissionConfig {
-        PermissionConfig {
-            permission,
-            criticality,
-            label: label.into(),
-            description: description.into(),
-        }
-    }
-
     /// Returns the enum that represents the `permission`.
     pub fn get_permission(&self) -> Permission {
         self.permission
