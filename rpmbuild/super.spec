@@ -1,5 +1,5 @@
 Name:    super-analyzer
-Version: 0.4.0
+Version: 0.4.1
 Release: 1%{?dist}
 Summary: Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 URL:     http://superanalyzer.rocks/
