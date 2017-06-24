@@ -1,5 +1,15 @@
 # Changelog
 
+## SUPER 0.4.1
+
+### Internal Changes
+
+- Upgraded `abxml` to **0.2.0**.
+
+### Bug Fixes
+
+- SUPER now properly creates `dist` and `results` directories if they do not exist.
+
 ## SUPER 0.4.0
 
 ### Features
