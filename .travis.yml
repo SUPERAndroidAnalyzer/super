@@ -24,21 +24,10 @@ rust:
   - stable
   - 1.17.0
 
-# Install clippy, rustfmt and cargo-deb, and set up PATH.
-# Using rustfmt git for now, released version has bugs.
 before_script:
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        ( cargo install rustfmt --force || true );
-        ( cargo install --git https://github.com/mmstick/cargo-deb.git || true );
-      fi
-  - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-        ( ( cargo install clippy && export CLIPPY=true ) || export CLIPPY=false );
-      fi
   - export PATH=$PATH:~/.cargo/bin
+  - ./travis-helper.sh install_deps
 
-# The main build
 script:
   - cargo build
   - cargo package
@@ -47,48 +36,14 @@ script:
   - cargo test --features beta
   - cargo build --features unstable
   - cargo test --features unstable
-  - |
-      if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
-        cargo clippy
-      fi
+  - ./travis-helper.sh clippy_run
   # Won't work since our binary name is different from the crate name.
-  # - |
-  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-  #       cargo deb
-  #     fi
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-          cargo fmt -- --write-mode=diff
-      fi
+  # - ./travis-helper.sh dep_run
+  - ./travis-helper.sh fmt_run
 
-# Send coverage reports and upload docs
 after_success:
-  # Coverage report
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
-        tar xzf master.tar.gz &&
-        cd kcov-master &&
-        mkdir build &&
-        cd build &&
-        cmake .. &&
-        make &&
-        sudo make install &&
-        cd ../.. &&
-        rm -rf kcov-master &&
-        for file in target/debug/super-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
-        bash <(curl -s https://codecov.io/bash) &&
-        echo "Uploaded code coverage"
-      fi
-  # Documentation upload
-  - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
-        cargo doc &&
-        echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html &&
-        git clone https://github.com/davisp/ghp-import.git &&
-        ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG.git" target/doc &&
-        echo "Uploaded documentation"
-      fi
+  - ./travis-helper.sh upload_code_coverage
+  - ./travis-helper.sh upload_documentation
 
 notifications:
   email:
