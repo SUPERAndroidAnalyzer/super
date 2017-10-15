@@ -104,7 +104,7 @@ assets = [
     ["templates/super/img/java-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
     ["templates/super/img/xml-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
     ["templates/super/img/report.png", "usr/share/super-analyzer/vendor/results_template/img/", "644"],
-    ["templates/super/img/logo.png", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/img/logo.svg", "usr/share/super-analyzer/templates/super/img/", "644"],
     # JavaScript
     ["templates/super/js/highlight.js.LICENSE", "usr/share/super-analyzer/templates/super/js/", "644"],
     ["templates/super/js/highlight.pack.js", "usr/share/super-analyzer/templates/super/js/", "644"],
