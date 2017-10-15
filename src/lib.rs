@@ -337,7 +337,7 @@ pub fn initialize_logger(is_verbose: bool) {
 
 #[cfg(test)]
 mod tests {
-    use Criticality;
+    use criticality::Criticality;
     use std::str::FromStr;
 
     #[test]

@@ -615,7 +615,7 @@ impl PermissionConfig {
 
 #[cfg(test)]
 mod tests {
-    use Criticality;
+    use criticality::Criticality;
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;

@@ -659,7 +659,7 @@ mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
     use config::Config;
-    use Criticality;
+    use criticality::Criticality;
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
         if rule.get_regex().is_match(text.as_ref()) {
