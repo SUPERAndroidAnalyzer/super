@@ -20,7 +20,8 @@ use clap::ArgMatches;
 use static_analysis::manifest::Permission;
 
 use error::*;
-use {Criticality, print_warning};
+use criticality::Criticality;
+use print_warning;
 
 /// Largest number of threads allowed.
 const MAX_THREADS: i64 = u8::MAX as i64;

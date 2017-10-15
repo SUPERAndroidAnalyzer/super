@@ -8,8 +8,9 @@ use error::*;
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
 
-use {Config, Criticality, print_warning, print_vulnerability, get_code, get_string, PARSER_CONFIG};
+use {Config, print_warning, print_vulnerability, get_code, get_string, PARSER_CONFIG};
 use results::{Results, Vulnerability};
+use criticality::Criticality;
 
 pub fn manifest_analysis<S: AsRef<str>>(
     config: &Config,

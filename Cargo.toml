@@ -24,6 +24,7 @@ appveyor = { repository = "Razican/super", branch = "master", service = "github"
 
 [[bin]]
 name = "super"
+path = "src/main.rs"
 
 [dependencies]
 clap = "^2.23"

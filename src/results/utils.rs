@@ -16,7 +16,7 @@ use rustc_serialize::hex::ToHex;
 use regex::Regex;
 
 use error::*;
-use Criticality;
+use criticality::Criticality;
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]

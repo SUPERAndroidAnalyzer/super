@@ -11,7 +11,8 @@ use colored::Colorize;
 use log::LogLevel::Debug;
 
 use error::*;
-use super::{Criticality, Config};
+use config::Config;
+use criticality::Criticality;
 
 /// Configuration for the XML parser.
 lazy_static! {

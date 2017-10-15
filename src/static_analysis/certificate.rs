@@ -8,9 +8,10 @@ use std::error::Error as StdError;
 use colored::Colorize;
 use chrono::{Local, Datelike};
 
-use {Config, Criticality, Result, print_vulnerability, print_warning};
+use {Config, Result, print_vulnerability, print_warning};
 use results::{Results, Vulnerability};
 use error::*;
+use criticality::Criticality;
 
 /// Parses the given month string.
 ///
