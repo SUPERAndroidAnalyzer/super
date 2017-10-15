@@ -56,6 +56,12 @@ colored = { version = "^1.4", features = ["no-color"] }
 [target.'cfg(not(windows))'.dependencies]
 colored = "^1.4"
 
+[target.'cfg(windows)'.dependencies]
+colored = { version: "^1.4", features: ["no-color"] }
+
+[target.'cfg(not(windows))'.dependencies]
+colored = "^1.4"
+
 [build-dependencies]
 clap = "^2.26"
 
