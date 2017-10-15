@@ -69,11 +69,11 @@ use env_logger::LogBuilder;
 use std::env;
 use decompilation::*;
 use static_analysis::*;
-pub use results::*;
+use results::*;
 pub use error::*;
-// use criticality::*;
 pub use config::Config;
 pub use utils::*;
+// use criticality::*;
 
 pub static BANNER: &str = include_str!("banner.txt");
 
