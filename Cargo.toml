@@ -26,6 +26,7 @@ is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
 
 [[bin]]
 name = "super"
+path = "src/main.rs"
 
 [dependencies]
 clap = "^2.25"
