@@ -1,13 +1,14 @@
+extern crate toml;
+extern crate serde;
+
 use std;
 use std::fmt;
 use std::fmt::Display;
-use std::result;
 use std::str::FromStr;
-use ErrorKind;
-use Serialize;
-use Serializer;
-pub use error::*;
+use serde::{Serialize, Deserialize, Serializer, Deserializer};
+use std::result;
 
+use error::*;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -37,6 +38,31 @@ impl Serialize for Criticality {
         S: Serializer,
     {
         serializer.serialize_str(format!("{}", self).as_str())
+    }
+}
+
+impl<'de> Deserialize<'de> for Criticality {
+    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+
+        match deser_result {
+            toml::value::Value::String(ref str) => {
+                match Criticality::from_str(&str) {
+                    Ok(criticality) => Ok(criticality),
+                    Err(_) => {
+                        Err(serde::de::Error::custom(
+                            format!("Unexpected value: {:?}", deser_result),
+                        ))
+                    }
+                }
+            }
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
+        }
     }
 }
 
