@@ -16,6 +16,7 @@ use self::utils::FingerPrint;
 
 use error::*;
 use {Config, Criticality, print_warning};
+use sdk_version::SDKVersion;
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -304,11 +305,16 @@ impl Serialize for Results {
             ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
-        ser_struct.serialize_field(
-            "app_target_sdk",
-            &self.app_target_sdk,
-        )?;
+
+        ser_struct.serialize_field("app_min_sdk", &SDKVersion::from(self.app_min_sdk))?;
+
+        let app_target_sdk = if let Some(ats) = self.app_target_sdk {
+            Some(SDKVersion::from(ats))
+        } else {
+            None
+        };
+
+        ser_struct.serialize_field("app_target_sdk", &app_target_sdk)?;
 
         ser_struct.serialize_field(
             "total_vulnerabilities",
