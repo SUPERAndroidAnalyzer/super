@@ -368,9 +368,11 @@ impl Config {
     fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
-            if ! package_path.set_extension("apk") {
-                println!("Failed to set extension, please try again or send an issue");
-            }
+            let updated = package_path.set_extension("apk");
+            debug_assert!(
+                updated,
+                "did not update package path extension, no file name"
+            );
         } else if package_path.extension().unwrap() != "apk" {
             let mut file_name = package_path
                 .file_name()
