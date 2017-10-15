@@ -62,11 +62,11 @@ pub fn analysis<S: AsRef<str>>(
 
     let handles: Vec<_> = (0..config.get_threads())
         .map(|_| {
-            let thread_manifest = manifest.clone();
-            let thread_files = files.clone();
-            let thread_rules = rules.clone();
-            let thread_vulns = found_vulns.clone();
-            let thread_dist_folder = dist_folder.clone();
+            let thread_manifest = Arc::clone(&manifest);
+            let thread_files = Arc::clone(&files);
+            let thread_rules = Arc::clone(&rules);
+            let thread_vulns = Arc::clone(&found_vulns);
+            let thread_dist_folder = Arc::clone(&dist_folder);
 
             thread::spawn(move || loop {
                 let f = {
@@ -129,7 +129,7 @@ pub fn analysis<S: AsRef<str>>(
     }
 
     for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
-        results.add_vulnerability(vuln);
+        results.add_vulnerability(config, vuln);
     }
 
     if config.is_verbose() {

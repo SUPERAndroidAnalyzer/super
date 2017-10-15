@@ -185,14 +185,12 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
 
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(|| {
-                format!("There was an error when reading the /etc/super-analyzer/config.toml file")
-            })?
+            Config::from_file(&global_config_path).chain_err(
+                || "There was an error when reading the /etc/super-analyzer/config.toml file"
+            )?
         } else if config_path.exists() {
             Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || {
-                    format!("There was an error when reading the config.toml file")
-                },
+                || "There was an error when reading the config.toml file"
             )?
         } else {
             print_warning("Config file not found. Using default configuration");
@@ -407,7 +405,7 @@ impl<'de> Deserialize<'de> for Criticality {
 
         match deser_result {
             toml::value::Value::String(ref str) => {
-                match Criticality::from_str(&str) {
+                match Criticality::from_str(str) {
                     Ok(criticality) => Ok(criticality),
                     Err(_) => {
                         Err(serde::de::Error::custom(
