@@ -404,8 +404,8 @@ impl<'de> Deserialize<'de> for Criticality {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
         match deser_result {
-            toml::value::Value::String(ref str) => {
-                match Criticality::from_str(str) {
+            toml::value::Value::String(ref deser_result_string) => {
+                match Criticality::from_str(deser_result_string) {
                     Ok(criticality) => Ok(criticality),
                     Err(_) => {
                         Err(serde::de::Error::custom(

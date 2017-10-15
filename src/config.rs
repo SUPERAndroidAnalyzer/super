@@ -98,7 +98,7 @@ impl ConfigDeserializer {
 
         match deser_result {
             toml::value::Value::Integer(threads) => {
-                if threads > 0 && threads <= i64::from(MAX_THREADS) {
+                if threads > 0 && threads <= MAX_THREADS as i64 {
                     Ok(threads as u8)
                 } else {
                     Err(serde::de::Error::custom(
