@@ -138,22 +138,28 @@ impl Results {
         self.app_target_sdk = Some(sdk);
     }
 
-    pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
-        match vuln.get_criticality() {
+    pub fn add_vulnerability(&mut self, config: &Config, vuln: Vulnerability) {
+        if ! match vuln.get_criticality() {
             Criticality::Warning => {
-                self.warnings.insert(vuln);
+                self.warnings.insert(vuln)
             }
             Criticality::Low => {
-                self.low.insert(vuln);
+                self.low.insert(vuln)
             }
             Criticality::Medium => {
-                self.medium.insert(vuln);
+                self.medium.insert(vuln)
             }
             Criticality::High => {
-                self.high.insert(vuln);
+                self.high.insert(vuln)
             }
             Criticality::Critical => {
-                self.critical.insert(vuln);
+                self.critical.insert(vuln)
+            }
+        } {
+            if config.is_verbose() {
+                println!("Failed to insert vulnerability into category, try again or open an issue");
+            } else {
+                println!("A rare issue occured. Please try again");
             }
         }
     }
@@ -198,15 +204,13 @@ impl Results {
                 if !config.is_quiet() {
                     println!("JSON report generated.");
                 }
+            } else if config.is_verbose() {
+                println!(
+                    "Seems that the JSON report has already been generated. There is no \
+                          need to do it again."
+                );
             } else {
-                if config.is_verbose() {
-                    println!(
-                        "Seems that the JSON report has already been generated. There is no \
-                              need to do it again."
-                    );
-                } else {
-                    println!("Skipping JSON report generation.");
-                }
+                println!("Skipping JSON report generation.");
             }
         }
 
@@ -249,15 +253,13 @@ impl Results {
                         println!("HTML report generated.");
                     }
                 }
+            } else if config.is_verbose() {
+                println!(
+                    "Seems that the HTML report has already been generated. There is no
+                          need to do it again."
+                );
             } else {
-                if config.is_verbose() {
-                    println!(
-                        "Seems that the HTML report has already been generated. There is no
-                              need to do it again."
-                    );
-                } else {
-                    println!("Skipping HTML report generation.");
-                }
+                println!("Skipping HTML report generation.");
             }
         }
 

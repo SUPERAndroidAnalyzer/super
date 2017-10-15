@@ -110,7 +110,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 code,
             );
 
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(config, vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -138,7 +138,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(config, vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -166,7 +166,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(config, vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -192,7 +192,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(config, vuln);
             print_vulnerability(permission.get_description(), permission.get_criticality());
         }
     }
@@ -475,7 +475,7 @@ impl Manifest {
                                                 line,
                                                 code,
                                             );
-                                            results.add_vulnerability(vuln);
+                                            results.add_vulnerability(config, vuln);
 
                                             print_vulnerability(description, criticality);
                                         }
@@ -538,7 +538,7 @@ impl Manifest {
                                                 line,
                                                 code,
                                             );
-                                            results.add_vulnerability(vuln);
+                                            results.add_vulnerability(config, vuln);
 
                                             print_vulnerability(
                                                 format!(
@@ -2935,7 +2935,7 @@ impl<'de> Deserialize<'de> for Permission {
 
         match deser_result {
             toml::value::Value::String(ref str) => {
-                match Permission::from_str(&str) {
+                match Permission::from_str(str) {
                     Ok(permission) => Ok(permission),
                     Err(_) => {
                         Err(serde::de::Error::custom(
