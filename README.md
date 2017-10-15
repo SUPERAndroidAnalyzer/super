@@ -4,7 +4,7 @@
 [![Build status][windows_build_img]][windows_build]
 [![codecov][coverage_img]][coverage]
 
-<img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
+<img src="templates/super/img/logo.svg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
 *Secure, Unified, Powerful and Extensible Rust Android Analyzer*
 
@@ -86,6 +86,8 @@ ARGS:
 Everybody is welcome to contribute to SUPER. Please check out the
 [SUPER Contribution Guidelines][contributing] for instructions about how to proceed.
 
+[Development documentation][documentation]
+
 ## License ##
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU
@@ -102,3 +104,4 @@ License, or (at your option) any later version.
 [downloads]: http://superanalyzer.rocks/download.html
 [rustup]: https://www.rustup.rs/
 [contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/master/contributing.md
+[documentation]: https://superandroidanalyzer.github.io/super/

@@ -9,7 +9,7 @@
     <body>
         <section class="report">
             <a href="http://superanalyzer.rocks" title="SUPER Android Analyzer">
-                <img src="img/logo.png" alt="SUPER Android Analyzer logo">
+                <img src="img/logo.svg" alt="SUPER Android Analyzer logo">
             </a>
             <h1 id="title">SUPER Android Analyzer Report</h1>
             <p>This is the vulnerability report for the android application <em>{{ app_package }}</em>. Report generated on <time datetime="now_rfc3339">{{ now_rfc2822 }}</time> with SUPER Android Analyzer {{ super_version }}.</p>
@@ -72,7 +72,7 @@
         <footer><p>Copyright © 2016 - SUPER Android Analyzer</p></footer>
         <script src="js/highlight.pack.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
-        <script src="js/jquery-3.2.0.slim.min.js"></script>
+        <script src="js/jquery-3.2.1.slim.min.js"></script>
         <script>
             $('.vulnerability h4 a.collapse').click(function(event) {
                 event.preventDefault();

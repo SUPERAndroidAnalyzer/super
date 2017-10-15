@@ -5,17 +5,20 @@
 use std::{u8, fs};
 use std::path::{Path, PathBuf};
 use std::convert::From;
-use std::str::FromStr;
 use std::io::Read;
 use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
 use std::cmp::{PartialOrd, Ordering};
 use std::error::Error as StdError;
+use std::result;
+use std::str::FromStr;
 
 use colored::Colorize;
-use toml::Value;
 use clap::ArgMatches;
+use toml;
+use serde::Deserializer;
+use serde;
 
 use static_analysis::manifest::Permission;
 
@@ -29,7 +32,8 @@ const MAX_THREADS: i64 = u8::MAX as i64;
 ///
 /// Contains configuration related fields. It is used for storing the configuration parameters and
 /// checking their values. Implements the `Default` trait.
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
+#[serde(default)]
 pub struct Config {
     /// Application packages to analyze.
     app_packages: Vec<PathBuf>,
@@ -52,6 +56,7 @@ pub struct Config {
     /// Minimum criticality to analyze
     min_criticality: Criticality,
     /// Number of threads.
+    #[serde(deserialize_with = "ConfigDeserializer::deserialize_threads")]
     threads: u8,
     /// Folder where the applications are stored.
     downloads_folder: PathBuf,
@@ -70,6 +75,7 @@ pub struct Config {
     /// The name of the template to use.
     template: String,
     /// Represents an unknow permission.
+    #[serde(deserialize_with = "ConfigDeserializer::deserialize_unknown_permission")]
     unknown_permission: (Criticality, String),
     /// List of permissions to analyze.
     permissions: BTreeSet<PermissionConfig>,
@@ -77,48 +83,117 @@ pub struct Config {
     loaded_files: Vec<PathBuf>,
 }
 
+/// Helper struct that handles some specific field deserialization for `Config` struct
+struct ConfigDeserializer;
+
+impl ConfigDeserializer {
+    /// Deserialize `thread` field and checks that is on the proper bounds
+    pub fn deserialize_threads<'de, D>(de: D) -> result::Result<u8, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+
+        match deser_result {
+            toml::value::Value::Integer(threads) => {
+                if threads > 0 && threads <= MAX_THREADS {
+                    Ok(threads as u8)
+                } else {
+                    Err(serde::de::Error::custom(
+                        "Threads is not in the valid range",
+                    ))
+                }
+            }
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
+        }
+    }
+
+    /// Deserialize `unknown_permission` field
+    pub fn deserialize_unknown_permission<'de, D>(
+        de: D,
+    ) -> result::Result<(Criticality, String), D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+
+        match deser_result {
+            toml::value::Value::Table(ref table) => {
+                let criticality_str = table.get("criticality").and_then(|v| v.as_str()).ok_or(
+                    serde::de::Error::custom("Criticality field not found for unknown permission"),
+                )?;
+                let string = table.get("description").and_then(|v| v.as_str()).ok_or(
+                    serde::de::Error::custom("Description field not found for unknown permission"),
+                )?;
+
+                let criticality = Criticality::from_str(criticality_str).map_err(|_| {
+                    serde::de::Error::custom(format!(
+                        "Invalid `criticality` value found: {}",
+                        criticality_str
+                    ))
+                })?;
+
+                Ok((criticality, string.to_string()))
+            }
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
+        }
+    }
+}
+
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn from_cli(cli: ArgMatches<'static>) -> Result<Config> {
-        let mut config = Config::default();
+    pub fn from_file(config_path: &PathBuf) -> Result<Config> {
+        let cfg_result: Result<Config> = fs::File::open(config_path)
+            .chain_err(|| "Could not open file")
+            .and_then(|mut f| {
+                let mut toml = String::new();
+                let _ = f.read_to_string(&mut toml);
 
-        config.verbose = cli.is_present("verbose");
-        config.quiet = cli.is_present("quiet");
-        config.overall_force = cli.is_present("force");
-        config.force = config.overall_force;
-        config.bench = cli.is_present("bench");
-        config.open = cli.is_present("open");
-        config.json = cli.is_present("json");
-        config.html = cli.is_present("html");
+                Ok(toml)
+            })
+            .and_then(|file_content| {
+                toml::from_str(&file_content).chain_err(|| {
+                    format!(
+                        "Could not decode config file: {}. Using default.",
+                        config_path.to_string_lossy()
+                    )
+                })
+            })
+            .and_then(|mut new_config: Config| {
+                new_config.loaded_files.push(config_path.clone());
 
-        if cfg!(target_family = "unix") {
-            let config_path = PathBuf::from("/etc/config.toml");
-            if config_path.exists() {
-                config.load_from_file(&config_path).chain_err(
-                    || "The config.toml file does not have the correct formatting.",
-                )?;
-                config.loaded_files.push(config_path);
-            }
-        }
-        let config_path = PathBuf::from("config.toml");
-        if config_path.exists() {
-            config.load_from_file(&config_path).chain_err(
-                || "The config.toml file does not have the correct formatting.",
-            )?;
-            config.loaded_files.push(config_path);
-        }
+                Ok(new_config)
+            });
 
-        config.set_options(&cli);
+        cfg_result
+    }
+
+    /// Decorates the loaded config with the given flags from CLI
+    pub fn decorate_with_cli(&mut self, cli: ArgMatches<'static>) -> Result<()> {
+        self.set_options(&cli);
+
+        self.verbose = cli.is_present("verbose");
+        self.quiet = cli.is_present("quiet");
+        self.overall_force = cli.is_present("force");
+        self.force = self.overall_force;
+        self.bench = cli.is_present("bench");
+        self.open = cli.is_present("open");
+        self.json = cli.is_present("json");
+        self.html = cli.is_present("html");
 
         if cli.is_present("test-all") {
-            config.read_apks().chain_err(
+            self.read_apks().chain_err(
                 || "Error loading all the downloaded APKs",
             )?;
         } else {
-            config.add_app_package(cli.value_of("package").unwrap());
+            self.add_app_package(cli.value_of("package").unwrap());
         }
 
-        Ok(config)
+        Ok(())
     }
 
     /// Modifies the options from the CLI.
@@ -291,7 +366,11 @@ impl Config {
     fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
-            package_path.set_extension("apk");
+            let updated = package_path.set_extension("apk");
+            debug_assert!(
+                updated,
+                "did not update package path extension, no file name"
+            );
         } else if package_path.extension().unwrap() != "apk" {
             let mut file_name = package_path
                 .file_name()
@@ -415,306 +494,6 @@ impl Config {
         self.permissions.iter()
     }
 
-    /// Loads a configuration file into the `Config` struct.
-    fn load_from_file<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
-        let mut f = fs::File::open(path)?;
-        let mut toml = String::new();
-        let _ = f.read_to_string(&mut toml)?;
-
-        // Parse the configuration file.
-        let toml = if let Value::Table(toml) =
-            toml.parse::<Value>().chain_err(
-                || "there was an error parsing the config.toml file",
-            )?
-        {
-            toml
-        } else {
-            return Err(ErrorKind::Parse.into());
-        };
-
-        // Read the values from the configuration file.
-        for (key, value) in toml {
-            match key.as_str() {
-                "threads" => self.load_threads_section(value),
-                "downloads_folder" => self.load_downloads_folder_section(value),
-                "dist_folder" => self.load_dist_folder_section(value),
-                "results_folder" => self.load_results_folder_section(value),
-                "dex2jar_folder" => self.load_dex2jar_folder_section(value),
-                "jd_cmd_file" => self.load_jd_cmd_file_section(value),
-                "templates_folder" => self.load_templates_folder_section(value),
-                "template" => self.load_template_section(value),
-                "rules_json" => self.load_rules_section(value),
-                "permissions" => self.load_permissions(value),
-                "html_report" => self.load_html_report_section(value),
-                "json_report" => self.load_json_report_section(value),
-                _ => print_warning(format!("Unknown configuration option {}.", key)),
-
-            }
-        }
-        Ok(())
-    }
-
-    /// Loads threads section from the TOML value.
-    fn load_threads_section(&mut self, value: Value) {
-        if let Value::Integer(t @ 1...MAX_THREADS) = value {
-            #[allow(cast_sign_loss)]
-            {
-                self.threads = t as u8;
-            }
-        } else {
-            print_warning(format!(
-                "The 'threads' option in config.toml must be an integer \
-                                   between 1 and {}.\nUsing default.",
-                MAX_THREADS
-            ))
-        }
-    }
-
-    /// Loads downloads section from the TOML value.
-    fn load_downloads_folder_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            self.downloads_folder = s.into();
-        } else {
-            print_warning(
-                "The 'downloads_folder' option in config.toml must be an string.\nUsing \
-                           default.",
-            )
-        }
-    }
-
-    /// Loads dist folder section from the TOML value.
-    fn load_dist_folder_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            self.dist_folder = s.into();
-        } else {
-            print_warning(
-                "The 'dist_folder' option in config.toml must be an string.\nUsing \
-                           default.",
-            );
-        }
-    }
-
-    /// Loads results folder section from the TOML value.
-    fn load_results_folder_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            self.results_folder = s.into();
-        } else {
-            print_warning(
-                "The 'results_folder' option in config.toml must be an string.\nUsing \
-                           default.",
-            );
-        }
-    }
-
-    /// Loads dex2jar folder section from the TOML value.
-    fn load_dex2jar_folder_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            self.dex2jar_folder = s.into();
-        } else {
-            print_warning(
-                "The 'dex2jar_folder' option in config.toml should be an string.\nUsing \
-                           default.",
-            )
-        }
-    }
-
-    /// Loads jd cmd file section from the TOML value.
-    fn load_jd_cmd_file_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            let extension = Path::new(&s).extension();
-            if extension.is_some() && extension.unwrap() == "jar" {
-                self.jd_cmd_file = PathBuf::from(s.clone());
-            } else {
-                print_warning("The JD-CMD file must be a JAR file.\nUsing default.");
-            }
-        } else {
-            print_warning(
-                "The 'jd_cmd_file' option in config.toml must be an string.\nUsing \
-                           default.",
-            )
-        }
-    }
-
-    /// Loads templated folder section from the TOML value.
-    fn load_templates_folder_section(&mut self, value: Value) {
-        if let Value::String(ref s) = value {
-            self.templates_folder = s.into();
-        } else {
-            print_warning(
-                "The 'templates_folder' option in config.toml should be an string.\n\
-                           Using default.",
-            )
-        }
-    }
-
-    /// Loads template section from the TOML value.
-    fn load_template_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            self.template = s;
-        } else {
-            print_warning(
-                "The 'template' option in config.toml should be an string.\nUsing \
-                           default.",
-            )
-        }
-    }
-
-    /// Loads rules section from the TOML value.
-    fn load_rules_section(&mut self, value: Value) {
-        if let Value::String(s) = value {
-            let extension = Path::new(&s).extension();
-            if extension.is_some() && extension.unwrap() == "json" {
-                self.rules_json = PathBuf::from(s.clone());
-            } else {
-                print_warning(
-                    "The rules.json file must be a JSON \
-                                   file.\nUsing default.",
-                )
-            }
-        } else {
-            print_warning(
-                "The 'rules_json' option in config.toml must be an string.\nUsing \
-                           default.",
-            )
-        }
-    }
-
-    /// Loads permissions from the TOML configuration vector.
-    fn load_permissions(&mut self, value: Value) {
-        if let Value::Array(permissions) = value {
-            let format_warning = format!(
-                "The permission configuration format must be the following:\n{}\nUsing \
-                         default.",
-                "[[permissions]]\nname=\"unknown|permission.name\"\ncriticality = \
-                         \"warning|low|medium|high|critical\"\nlabel = \"Permission \
-                         label\"\ndescription = \"Long description to explain the vulnerability\""
-                    .italic()
-            );
-
-            for cfg in permissions {
-                let cfg = if let Some(t) = cfg.as_table() {
-                    t
-                } else {
-                    print_warning(format_warning);
-                    break;
-                };
-
-                let name = if let Some(&Value::String(ref n)) = cfg.get("name") {
-                    n
-                } else {
-                    print_warning(format_warning);
-                    break;
-                };
-
-                let criticality = if let Some(&Value::String(ref c)) = cfg.get("criticality") {
-                    if let Ok(c) = Criticality::from_str(c) {
-                        c
-                    } else {
-                        print_warning(format!(
-                            "Criticality must be one of {}, {}, {}, {} or \
-                                               {}.\nUsing default.",
-                            "warning".italic(),
-                            "low".italic(),
-                            "medium".italic(),
-                            "high".italic(),
-                            "critical".italic()
-                        ));
-                        break;
-                    }
-                } else {
-                    print_warning(format_warning);
-                    break;
-                };
-
-                let description = if let Some(&Value::String(ref d)) = cfg.get("description") {
-                    d.to_owned()
-                } else {
-                    print_warning(format_warning);
-                    break;
-                };
-
-                if name == "unknown" {
-                    if cfg.len() != 3 {
-                        print_warning(format!(
-                            "The format for the unknown \
-                             permissions is the following:\n{}\nUsing default.",
-                            "[[permissions]]\nname = \
-                                                   \"unknown\"\ncriticality = \
-                                                    \"warning|low|medium|high|criticality\"\n\
-                                                    description = \"Long description to explain \
-                                                    the vulnerability\""
-                                .italic()
-                        ));
-                        break;
-                    }
-
-                    self.unknown_permission = (criticality, description.clone());
-                } else {
-                    if cfg.len() != 4 {
-                        print_warning(format_warning);
-                        break;
-                    }
-
-                    let permission = if let Ok(p) = Permission::from_str(name) {
-                        p
-                    } else {
-                        print_warning(format!(
-                            "Unknown permission: {}\nTo set the default \
-                                               vulnerability level for an unknown permission, \
-                                               please, use the {} permission name, under the {} \
-                                               section.",
-                            name.italic(),
-                            "unknown".italic(),
-                            "[[permissions]]".italic()
-                        ));
-                        break;
-                    };
-
-                    let label = if let Some(&Value::String(ref l)) = cfg.get("label") {
-                        l.to_owned()
-                    } else {
-                        print_warning(format_warning);
-                        break;
-                    };
-                    self.permissions.insert(PermissionConfig::new(
-                        permission,
-                        criticality,
-                        label,
-                        description,
-                    ));
-                }
-            }
-        } else {
-            print_warning(
-                "You must specify the permissions you want to select as vulnerable.",
-            );
-        }
-    }
-
-    /// Loads html report section from the TOML value.
-    fn load_html_report_section(&mut self, value: Value) {
-        if let Value::Boolean(b) = value {
-            self.html = b
-        } else {
-            print_warning(
-                "The 'html_report' option in config.toml should be a boolean.\nUsing \
-                           default.",
-            );
-        }
-    }
-
-    /// Loads json report section from the TOML value.
-    fn load_json_report_section(&mut self, value: Value) {
-        if let Value::Boolean(b) = value {
-            self.json = b;
-        } else {
-            print_warning(
-                "The 'json_report' option in config.toml should be a boolean.\nUsing \
-                           default.",
-            );
-        }
-    }
-
     /// Returns the default `Config` struct.
     fn local_default() -> Config {
         Config {
@@ -784,9 +563,10 @@ impl Default for Config {
 ///
 /// Represents a Permission with all its fields. Implements the `PartialEq` and `PartialOrd`
 /// traits.
-#[derive(Debug, Ord, Eq)]
+#[derive(Debug, Ord, Eq, Deserialize)]
 pub struct PermissionConfig {
     /// Permission name.
+    #[serde(rename = "name")]
     permission: Permission,
     /// Permission criticality.
     criticality: Criticality,
@@ -815,21 +595,6 @@ impl PartialOrd for PermissionConfig {
 }
 
 impl PermissionConfig {
-    /// Creates a new `PermissionConfig`.
-    fn new<L: Into<String>, D: Into<String>>(
-        permission: Permission,
-        criticality: Criticality,
-        label: L,
-        description: D,
-    ) -> PermissionConfig {
-        PermissionConfig {
-            permission: permission,
-            criticality: criticality,
-            label: label.into(),
-            description: description.into(),
-        }
-    }
-
     /// Returns the enum that represents the `permission`.
     pub fn get_permission(&self) -> Permission {
         self.permission
@@ -858,9 +623,6 @@ mod tests {
     use super::Config;
     use std::fs;
     use std::path::{Path, PathBuf};
-    use std::collections::BTreeMap;
-    use std::str::FromStr;
-    use toml::*;
 
     /// Test for the default configuration function.
     #[test]
@@ -976,8 +738,7 @@ mod tests {
     #[test]
     fn it_config_sample() {
         // Create config object.
-        let mut config = Config::default();
-        config.load_from_file("config.toml.sample").unwrap();
+        let mut config = Config::from_file(&PathBuf::from("config.toml.sample")).unwrap();
         config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.
@@ -1030,356 +791,6 @@ mod tests {
                     internet, so this permission is not required to send data to the internet. \
                     Check if the permission is actually needed."
         );
-    }
-
-    /// Test to check a valid jd cmd file section is loaded
-    #[test]
-    fn it_loads_jd_cmd_file_section_if_it_is_well_formed() {
-        let mut final_config = Config::default();
-        let value = Value::String("/some/path/to/jd-cmd.jar".to_string());
-
-        final_config.load_jd_cmd_file_section(value);
-
-        assert_eq!(
-            PathBuf::from("/some/path/to/jd-cmd.jar"),
-            final_config.jd_cmd_file
-        )
-    }
-
-    /// Test to check an invalid jd cmd file section is not loaded
-    #[test]
-    fn it_do_not_load_jd_cmd_file_section_if_it_is_not_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-
-        let values = vec![
-            Value::String("/some/invalid/js_cmd.jpg".to_string()),
-            Value::Integer(20),
-        ];
-
-        for value in values {
-            final_config.load_jd_cmd_file_section(value);
-            assert_eq!(default_config.jd_cmd_file, final_config.jd_cmd_file)
-        }
-    }
-
-    /// Test to check a valid threads section is loaded
-    #[test]
-    fn it_loads_threads_section_if_it_is_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-        let value = Value::Integer((default_config.threads + 1) as i64);
-
-        final_config.load_threads_section(value);
-
-        assert_eq!(default_config.threads + 1, final_config.threads)
-    }
-
-    /// Test to check an invalid threads section is not loaded
-    #[test]
-    fn it_do_not_loads_threads_section_if_it_is_not_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-
-        let values = vec![Value::Integer(super::MAX_THREADS + 1), Value::Float(2.4)];
-
-        for value in values {
-            final_config.load_threads_section(value);
-            assert_eq!(default_config.threads, final_config.threads)
-        }
-    }
-
-    /// Test to check mixed sections that should receive string data
-    #[test]
-    fn it_loads_string_data_on_some_sections() {
-        let mut final_config = Config::default();
-        let str_value = "Valid string".to_string();
-
-        final_config.load_downloads_folder_section(Value::String(str_value.clone()));
-        final_config.load_dist_folder_section(Value::String(str_value.clone()));
-        final_config.load_results_folder_section(Value::String(str_value.clone()));
-        final_config.load_dex2jar_folder_section(Value::String(str_value.clone()));
-        final_config.load_templates_folder_section(Value::String(str_value.clone()));
-        final_config.load_template_section(Value::String(str_value.clone()));
-
-        assert_eq!(
-            final_config.downloads_folder,
-            PathBuf::from(str_value.clone())
-        );
-        assert_eq!(final_config.dist_folder, PathBuf::from(str_value.clone()));
-        assert_eq!(
-            final_config.results_folder,
-            PathBuf::from(str_value.clone())
-        );
-        assert_eq!(
-            final_config.dex2jar_folder,
-            PathBuf::from(str_value.clone())
-        );
-        assert_eq!(
-            final_config.templates_folder,
-            PathBuf::from(str_value.clone())
-        );
-        assert_eq!(final_config.template, str_value.clone());
-    }
-
-    /// Test to check mixed sections that should receive boolean data
-    #[test]
-    fn it_loads_boolean_data_on_some_sections() {
-        let mut final_config = Config::default();
-
-        final_config.load_html_report_section(Value::Boolean(false));
-        final_config.load_json_report_section(Value::Boolean(true));
-
-        assert_eq!(final_config.html, false);
-        assert_eq!(final_config.json, true);
-    }
-
-    /// Test to check a valid rules section is loaded
-    #[test]
-    fn it_loads_rules_section_if_it_is_well_formed() {
-        let mut final_config = Config::default();
-        let value = Value::String("/some/path/to/rules.json".to_string());
-
-        final_config.load_rules_section(value);
-
-        assert_eq!(
-            PathBuf::from("/some/path/to/rules.json"),
-            final_config.rules_json
-        )
-    }
-
-    /// Test to check an invalid rules section is not loaded
-    #[test]
-    fn it_do_not_load_rules_section_if_it_is_not_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-
-        let values = vec![
-            Value::String("/some/invalid/rules.jpg".to_string()),
-            Value::Integer(20),
-        ];
-
-        for value in values {
-            final_config.load_rules_section(value);
-            assert_eq!(default_config.rules_json, final_config.rules_json)
-        }
-    }
-
-    #[test]
-    fn it_do_not_load_permissions_if_they_are_not_well_formed() {
-        let default_config = Config::default();
-        let mut final_config = Config::default();
-
-        let permission_without_name: BTreeMap<String, Value> = BTreeMap::new();
-
-        let mut permission_invalid_criticality: BTreeMap<String, Value> = BTreeMap::new();
-        permission_invalid_criticality
-            .insert(
-                "name".to_string(),
-                Value::String("permission_name".to_string()),
-            )
-            .is_some();
-        permission_invalid_criticality
-            .insert(
-                "criticality".to_string(),
-                Value::String("invalid_level".to_string()),
-            )
-            .is_some();
-
-        let mut permission_without_criticality: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_criticality
-            .insert(
-                "name".to_string(),
-                Value::String("permission_name".to_string()),
-            )
-            .is_some();
-
-        let mut permission_without_description: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_description
-            .insert(
-                "name".to_string(),
-                Value::String("permission_name".to_string()),
-            )
-            .is_some();
-        permission_without_description
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        permission_without_description
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-
-        let mut permission_unknown_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_unknown_too_much_values
-            .insert("name".to_string(), Value::String("unknown".to_string()))
-            .is_some();
-        permission_unknown_too_much_values
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        permission_unknown_too_much_values
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-        permission_unknown_too_much_values
-            .insert(
-                "additional_field".to_string(),
-                Value::String("additional field data".to_string()),
-            )
-            .is_some();
-
-        let mut permission_known_too_much_values: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_too_much_values
-            .insert(
-                "name".to_string(),
-                Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()),
-            )
-            .is_some();
-        permission_known_too_much_values
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        permission_known_too_much_values
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-        permission_known_too_much_values
-            .insert("label".to_string(), Value::String("label".to_string()))
-            .is_some();
-        permission_known_too_much_values
-            .insert(
-                "additional_field".to_string(),
-                Value::String("additional field data".to_string()),
-            )
-            .is_some();
-
-        let mut permission_known_name_not_found: BTreeMap<String, Value> = BTreeMap::new();
-        permission_known_name_not_found
-            .insert(
-                "name".to_string(),
-                Value::String("invalid name".to_string()),
-            )
-            .is_some();
-        permission_known_name_not_found
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        permission_known_name_not_found
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-        permission_known_name_not_found
-            .insert("label".to_string(), Value::String("label".to_string()))
-            .is_some();
-
-        let mut permission_without_label: BTreeMap<String, Value> = BTreeMap::new();
-        permission_without_label
-            .insert(
-                "name".to_string(),
-                Value::String("invalid name".to_string()),
-            )
-            .is_some();
-        permission_without_label
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        permission_without_label
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-        permission_without_label
-            .insert(
-                "additional_field".to_string(),
-                Value::String("additional field data".to_string()),
-            )
-            .is_some();
-
-        let permissions = vec![
-            Value::Integer(20),
-            Value::Table(permission_without_name),
-            Value::Table(permission_invalid_criticality),
-            Value::Table(permission_without_criticality),
-            Value::Table(permission_without_description),
-            Value::Table(permission_unknown_too_much_values),
-            Value::Table(permission_known_too_much_values),
-            Value::Table(permission_known_name_not_found),
-            Value::Table(permission_without_label),
-        ];
-
-        for p in permissions {
-            final_config.load_permissions(Value::Array(vec![p]));
-
-            assert_eq!(default_config.permissions, final_config.permissions);
-            assert_eq!(
-                default_config.unknown_permission,
-                final_config.unknown_permission
-            );
-        }
-    }
-
-
-    #[test]
-    fn it_loads_an_unknown_permission() {
-        let mut final_config = Config::default();
-
-        let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission
-            .insert("name".to_string(), Value::String("unknown".to_string()))
-            .is_some();
-        unknown_permission
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        unknown_permission
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-
-        final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
-        assert_eq!(
-            final_config.get_unknown_permission_criticality(),
-            Criticality::from_str("low").unwrap()
-        );
-        assert_eq!(
-            final_config.get_unknown_permission_description(),
-            "permission description"
-        );
-    }
-
-    #[test]
-    fn it_loads_an_known_permission() {
-        let mut final_config = Config::default();
-
-        let mut unknown_permission: BTreeMap<String, Value> = BTreeMap::new();
-        unknown_permission
-            .insert(
-                "name".to_string(),
-                Value::String("android.permission.ACCESS_ALL_EXTERNAL_STORAGE".to_string()),
-            )
-            .is_some();
-        unknown_permission
-            .insert("criticality".to_string(), Value::String("low".to_string()))
-            .is_some();
-        unknown_permission
-            .insert(
-                "description".to_string(),
-                Value::String("permission description".to_string()),
-            )
-            .is_some();
-        unknown_permission
-            .insert("label".to_string(), Value::String("label".to_string()))
-            .is_some();
-
-        final_config.load_permissions(Value::Array(vec![Value::Table(unknown_permission)]));
-
-        assert_eq!(final_config.get_permissions().len(), 1)
     }
 
     /// Test to check the default reports to be generated

@@ -4,6 +4,10 @@ use std::path::Path;
 use std::str::FromStr;
 use std::error::Error as StdError;
 use error::*;
+use serde::{Deserialize, Deserializer};
+use std::result;
+use toml;
+use serde;
 
 use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
@@ -2920,6 +2924,31 @@ pub enum Permission {
     ComGoogleAndroidXmppPermissionSendReceive,
     ComGoogleAndroidXmppPermissionUseXmppEndpoint,
     ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
+}
+
+impl<'de> Deserialize<'de> for Permission {
+    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+
+        match deser_result {
+            toml::value::Value::String(ref str) => {
+                match Permission::from_str(&str) {
+                    Ok(permission) => Ok(permission),
+                    Err(_) => {
+                        Err(serde::de::Error::custom(
+                            format!("Unexpected value: {:?}", deser_result),
+                        ))
+                    }
+                }
+            }
+            _ => Err(serde::de::Error::custom(
+                format!("Unexpected value: {:?}", deser_result),
+            )),
+        }
+    }
 }
 
 impl Permission {

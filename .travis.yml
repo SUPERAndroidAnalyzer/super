@@ -22,9 +22,14 @@ rust:
   - nightly
   - beta
   - stable
-  - 1.16.0
+  - 1.21.0
+  - 1.20.0
+  - 1.19.0
+  - 1.18.0
+  - 1.17.0
 
-# Load travis-cargo
+# Install clippy, rustfmt and cargo-deb, and set up PATH.
+# Using rustfmt git for now, released version has bugs.
 before_script:
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
@@ -50,15 +55,15 @@ script:
       if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
         cargo clippy
       fi
+  # Won't work since our binary name is different from the crate name.
+  # - |
+  #     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  #       cargo deb
+  #     fi
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-        cargo deb
+          cargo fmt -- --write-mode=diff
       fi
-# Turning of format checking due to several rustfmt bugs.
-# - |
-#     if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-#         cargo fmt -- --write-mode=diff
-#     fi
 
 # Send coverage reports and upload docs
 after_success:
@@ -75,13 +80,13 @@ after_success:
         sudo make install &&
         cd ../.. &&
         rm -rf kcov-master &&
-        for file in target/debug/super-*; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+        for file in target/debug/super-*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
         bash <(curl -s https://codecov.io/bash) &&
         echo "Uploaded code coverage"
       fi
   # Documentation upload
   - |
-      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "master" ]]; then
+      if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
         cargo doc &&
         echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html &&
         git clone https://github.com/davisp/ghp-import.git &&

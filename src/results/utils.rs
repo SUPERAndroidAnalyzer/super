@@ -49,15 +49,15 @@ impl Vulnerability {
         code: Option<C>,
     ) -> Vulnerability {
         Vulnerability {
-            criticality: criticality,
+            criticality,
             name: name.into(),
             description: description.into(),
             file: match file {
                 Some(p) => Some(p.as_ref().to_path_buf()),
                 None => None,
             },
-            start_line: start_line,
-            end_line: end_line,
+            start_line,
+            end_line,
             code: match code {
                 Some(c) => Some(c.into()),
                 None => None,

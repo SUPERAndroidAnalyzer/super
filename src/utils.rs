@@ -156,7 +156,7 @@ impl Benchmark {
     pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
         Benchmark {
             label: label.into(),
-            duration: duration,
+            duration,
         }
     }
 }
