@@ -27,7 +27,6 @@ name = "super"
 
 [dependencies]
 clap = "^2.23"
-colored = { version: "^1.4", features: ["no-color"] }
 xml-rs = "0.4"
 serde = "^0.9"
 serde_json = "^0.9"
@@ -49,6 +48,12 @@ abxml = "^0.2"
 [dependencies.handlebars]
 version = "^0.25"
 features = ["serde_type"]
+
+[target.'cfg(windows)'.dependencies]
+colored = { version: "^1.4", features: ["no-color"] }
+
+[target.'cfg(not(windows))'.dependencies]
+colored = "^1.4"
 
 [build-dependencies]
 clap = "^2.23"
