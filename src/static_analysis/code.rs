@@ -129,7 +129,7 @@ pub fn analysis<S: AsRef<str>>(
     }
 
     for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
-        results.add_vulnerability(config, vuln);
+        results.add_vulnerability(vuln);
     }
 
     if config.is_verbose() {
