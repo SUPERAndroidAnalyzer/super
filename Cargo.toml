@@ -47,7 +47,7 @@ error-chain = "0.11"
 md5 = "0.3"
 sha1 = "0.2"
 sha2 = "0.6"
-abxml = "0.2"
+abxml = "0.2.1"
 handlebars = "0.29"
 
 [target.'cfg(windows)'.dependencies]
