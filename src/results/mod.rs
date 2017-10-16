@@ -142,19 +142,36 @@ impl Results {
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticality() {
             Criticality::Warning => {
-                self.warnings.insert(vuln);
+                let present = self.warnings.insert(vuln);
+                debug_assert!(!present, "trying to insert the same warning twice");
             }
             Criticality::Low => {
-                self.low.insert(vuln);
+                let present = self.low.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same low criticality vulnerability twice"
+                );
             }
             Criticality::Medium => {
-                self.medium.insert(vuln);
+                let present = self.medium.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same medium criticalityvulnerability twice"
+                );
             }
             Criticality::High => {
-                self.high.insert(vuln);
+                let present = self.high.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same high criticality vulnerability twice"
+                );
             }
             Criticality::Critical => {
-                self.critical.insert(vuln);
+                let present = self.critical.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same critical vulnerability twice"
+                );
             }
         }
     }

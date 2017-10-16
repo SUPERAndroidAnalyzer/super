@@ -1,7 +1,11 @@
 //! SUPER Android Analyzer
 
+// Allowing these at least for now.
+#![allow(unknown_lints, missing_docs_in_private_items, print_stdout, stutter, option_unwrap_used,
+    result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
+    indexing_slicing, cast_precision_loss, cast_sign_loss)]
 #![forbid(deprecated, overflowing_literals, stable_features, trivial_casts, unconditional_recursion,
-    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_truem,
+    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_true,
     unused_parens, unused_comparisons, unused_extern_crates, unused_import_braces, unused_results,
     improper_ctypes, non_shorthand_field_patterns, private_no_mangle_fns, private_no_mangle_statics,
     filter_map, used_underscore_binding, option_map_unwrap_or, option_map_unwrap_or_else,
@@ -12,10 +16,7 @@
     pub_enum_variant_names, shadow_reuse, shadow_same, shadow_unrelated, similar_names,
     single_match_else, string_add, string_add_assign, unicode_not_nfc, unseparated_literal_suffix,
     use_debug, wrong_pub_self_convention, doc_markdown)]
-// Allowing these at least for now.
-#![allow(missing_docs_in_private_items, unknown_lints, print_stdout, stutter, option_unwrap_used,
-    result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
-    indexing_slicing, cast_precision_loss, cast_sign_loss)]
+
 
 extern crate super_analyzer;
 
