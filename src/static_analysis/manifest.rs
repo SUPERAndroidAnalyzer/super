@@ -110,7 +110,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 code,
             );
 
-            results.add_vulnerability(config, vuln);
+            results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -138,7 +138,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(config, vuln);
+            results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -166,7 +166,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(config, vuln);
+            results.add_vulnerability(vuln);
             print_vulnerability(description, criticality);
         }
     }
@@ -192,7 +192,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(config, vuln);
+            results.add_vulnerability(vuln);
             print_vulnerability(permission.get_description(), permission.get_criticality());
         }
     }
@@ -475,7 +475,7 @@ impl Manifest {
                                                 line,
                                                 code,
                                             );
-                                            results.add_vulnerability(config, vuln);
+                                            results.add_vulnerability(vuln);
 
                                             print_vulnerability(description, criticality);
                                         }
@@ -538,7 +538,7 @@ impl Manifest {
                                                 line,
                                                 code,
                                             );
-                                            results.add_vulnerability(config, vuln);
+                                            results.add_vulnerability(vuln);
 
                                             print_vulnerability(
                                                 format!(

@@ -138,8 +138,8 @@ impl Results {
         self.app_target_sdk = Some(sdk);
     }
 
-    pub fn add_vulnerability(&mut self, config: &Config, vuln: Vulnerability) {
-        if ! match vuln.get_criticality() {
+    pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
+        match vuln.get_criticality() {
             Criticality::Warning => {
                 let present = self.warnings.insert(vuln);
                 debug_assert!(!present, "trying to insert the same warning twice");
