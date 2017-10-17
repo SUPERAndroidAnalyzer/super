@@ -15,7 +15,8 @@ pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
 use error::*;
-use {Config, Criticality, print_warning};
+use {Config, print_warning};
+use criticality::Criticality;
 use sdk_number::SDKNumber;
 
 use results::report::{Json, HandlebarsReport};

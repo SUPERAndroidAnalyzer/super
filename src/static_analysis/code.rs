@@ -14,10 +14,11 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, Criticality, print_warning, print_vulnerability, get_code};
+use {Config, print_warning, print_vulnerability, get_code};
 use results::{Results, Vulnerability};
 use super::manifest::{Permission, Manifest};
 use error::*;
+use criticality::Criticality;
 
 pub fn analysis<S: AsRef<str>>(
     manifest: Option<Manifest>,
@@ -658,7 +659,7 @@ mod tests {
     use regex::Regex;
     use super::{Rule, load_rules};
     use config::Config;
-    use Criticality;
+    use criticality::Criticality;
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
         if rule.get_regex().is_match(text.as_ref()) {
