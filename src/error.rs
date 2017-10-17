@@ -48,6 +48,7 @@ impl Into<i32> for Error {
             ErrorKind::Template(_) => 150,
             ErrorKind::TemplateRender(_) => 175,
             ErrorKind::Msg(_) => 1,
+            _ => -1,
         }
     }
 }
