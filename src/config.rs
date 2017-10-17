@@ -124,10 +124,6 @@ impl ConfigDeserializer {
 
         match deser_result {
             toml::value::Value::Table(ref table) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> Formatting
                 let criticality_str = table
                     .get("criticality")
                     .and_then(|v| v.as_str())
@@ -144,17 +140,6 @@ impl ConfigDeserializer {
                             "Description field not found for unknown permission",
                         )
                     })?;
-<<<<<<< HEAD
-=======
-                let criticality_str = table.get("criticality").and_then(|v| v.as_str()).ok_or_else(
-                    || serde::de::Error::custom("Criticality field not found for unknown permission"),
-                )?;
-                let string = table.get("description").and_then(|v| v.as_str()).ok_or_else(
-                    || serde::de::Error::custom("Description field not found for unknown permission"),
-                )?;
->>>>>>> Make clippy happier
-=======
->>>>>>> Formatting
 
                 let criticality = Criticality::from_str(criticality_str).map_err(|_| {
                     serde::de::Error::custom(format!(
