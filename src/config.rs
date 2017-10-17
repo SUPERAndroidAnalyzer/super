@@ -23,7 +23,8 @@ use serde;
 use static_analysis::manifest::Permission;
 
 use error::*;
-use {Criticality, print_warning};
+use criticality::Criticality;
+use print_warning;
 
 /// Largest number of threads allowed.
 const MAX_THREADS: u8 = u8::MAX;
@@ -378,9 +379,11 @@ impl Config {
     fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
-            if !package_path.set_extension("apk") {
-                panic!("Failed to set extension. Please try again");
-            }
+            let updated = package_path.set_extension("apk");
+            debug_assert!(
+                updated,
+                "did not update package path extension, no file name"
+            );
         } else if package_path.extension().unwrap() != "apk" {
             let mut file_name = package_path
                 .file_name()
@@ -628,7 +631,7 @@ impl PermissionConfig {
 
 #[cfg(test)]
 mod tests {
-    use Criticality;
+    use criticality::Criticality;
     use static_analysis::manifest::Permission;
     use super::Config;
     use std::fs;

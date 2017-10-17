@@ -4,7 +4,7 @@
 [![Build status][windows_build_img]][windows_build]
 [![codecov][coverage_img]][coverage]
 
-<img src="templates/super/img/logo.png" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
+<img src="templates/super/img/logo.svg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
 
 *Secure, Unified, Powerful and Extensible Rust Android Analyzer*
 

@@ -15,7 +15,9 @@ pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
 use error::*;
-use {Config, Criticality, print_warning};
+use {Config, print_warning};
+use criticality::Criticality;
+use sdk_number::SDKNumber;
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -141,19 +143,36 @@ impl Results {
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticality() {
             Criticality::Warning => {
-                self.warnings.insert(vuln);
+                let present = self.warnings.insert(vuln);
+                debug_assert!(!present, "trying to insert the same warning twice");
             }
             Criticality::Low => {
-                self.low.insert(vuln);
+                let present = self.low.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same low criticality vulnerability twice"
+                );
             }
             Criticality::Medium => {
-                self.medium.insert(vuln);
+                let present = self.medium.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same medium criticalityvulnerability twice"
+                );
             }
             Criticality::High => {
-                self.high.insert(vuln);
+                let present = self.high.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same high criticality vulnerability twice"
+                );
             }
             Criticality::Critical => {
-                self.critical.insert(vuln);
+                let present = self.critical.insert(vuln);
+                debug_assert!(
+                    !present,
+                    "trying to insert the same critical vulnerability twice"
+                );
             }
         }
     }
@@ -300,10 +319,17 @@ impl Serialize for Results {
             ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
+
+        ser_struct.serialize_field(
+            "app_min_sdk",
+            &SDKNumber::from(self.app_min_sdk),
+        )?;
+
+        let app_target_sdk = SDKNumber::from(self.app_target_sdk.unwrap_or(0));
+
         ser_struct.serialize_field(
             "app_target_sdk",
-            &self.app_target_sdk,
+            &app_target_sdk,
         )?;
 
         ser_struct.serialize_field(

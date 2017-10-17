@@ -26,32 +26,38 @@ is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
 
 [[bin]]
 name = "super"
+path = "src/main.rs"
 
 [dependencies]
-clap = "^2.25"
-colored = "^1.5"
+clap = "2.26"
 xml-rs = "0.6"
-serde = "^1.0"
-serde_derive = "^1.0"
-serde_json = "^1.0"
-chrono = { version = "^0.4", features = ["serde"] }
-toml = "^0.4"
-regex = "^0.2"
-lazy_static = "^0.2"
-rustc-serialize = "^0.3"
-open = "^1.2"
-bytecount = "^0.1"
-log = "^0.3"
-env_logger = "^0.4"
-error-chain = "^0.10"
-md5 = "^0.3"
-sha1 = "^0.2"
-sha2 = "^0.6"
-abxml = "^0.2"
-handlebars = "0.27"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+toml = "0.4"
+regex = "0.2"
+lazy_static = "0.2"
+rustc-serialize = "0.3"
+open = "1.2"
+bytecount = "0.2"
+log = "0.3"
+env_logger = "0.4"
+error-chain = "0.11"
+md5 = "0.3"
+sha1 = "0.2"
+sha2 = "0.6"
+abxml = "0.2.1"
+handlebars = "0.29"
+
+[target.'cfg(windows)'.dependencies]
+colored = { version = "^1.4", features = ["no-color"] }
+
+[target.'cfg(not(windows))'.dependencies]
+colored = "^1.4"
 
 [build-dependencies]
-clap = "^2.25"
+clap = "^2.26"
 
 [features]
 default = ["beta"]
@@ -104,7 +110,7 @@ assets = [
     ["templates/super/img/java-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
     ["templates/super/img/xml-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
     ["templates/super/img/report.png", "usr/share/super-analyzer/vendor/results_template/img/", "644"],
-    ["templates/super/img/logo.png", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/img/logo.svg", "usr/share/super-analyzer/templates/super/img/", "644"],
     # JavaScript
     ["templates/super/js/highlight.js.LICENSE", "usr/share/super-analyzer/templates/super/js/", "644"],
     ["templates/super/js/highlight.pack.js", "usr/share/super-analyzer/templates/super/js/", "644"],
