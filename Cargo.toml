@@ -30,7 +30,6 @@ path = "src/main.rs"
 
 [dependencies]
 clap = "2.26"
-colored = "1.5"
 xml-rs = "0.6"
 serde = "1.0"
 serde_derive = "1.0"
@@ -50,6 +49,12 @@ sha1 = "0.2"
 sha2 = "0.6"
 abxml = "0.2.1"
 handlebars = "0.29"
+
+[target.'cfg(windows)'.dependencies]
+colored = { version = "^1.4", features = ["no-color"] }
+
+[target.'cfg(not(windows))'.dependencies]
+colored = "^1.4"
 
 [build-dependencies]
 clap = "^2.26"
