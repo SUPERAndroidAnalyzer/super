@@ -123,12 +123,22 @@ impl ConfigDeserializer {
 
         match deser_result {
             toml::value::Value::Table(ref table) => {
-                let criticality_str = table.get("criticality").and_then(|v| v.as_str()).ok_or_else(
-                    || serde::de::Error::custom("Criticality field not found for unknown permission"),
-                )?;
-                let string = table.get("description").and_then(|v| v.as_str()).ok_or_else(
-                    || serde::de::Error::custom("Description field not found for unknown permission"),
-                )?;
+                let criticality_str = table
+                    .get("criticality")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| {
+                        serde::de::Error::custom(
+                            "Criticality field not found for unknown permission",
+                        )
+                    })?;
+                let string = table
+                    .get("description")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| {
+                        serde::de::Error::custom(
+                            "Description field not found for unknown permission",
+                        )
+                    })?;
 
                 let criticality = Criticality::from_str(criticality_str).map_err(|_| {
                     serde::de::Error::custom(format!(
@@ -368,7 +378,7 @@ impl Config {
     fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
-            if ! package_path.set_extension("apk") {
+            if !package_path.set_extension("apk") {
                 panic!("Failed to set extension. Please try again");
             }
         } else if package_path.extension().unwrap() != "apk" {

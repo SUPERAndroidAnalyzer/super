@@ -185,11 +185,11 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
             Config::from_file(&global_config_path).chain_err(
-                || "There was an error when reading the /etc/super-analyzer/config.toml file"
+                || "There was an error when reading the /etc/super-analyzer/config.toml file",
             )?
         } else if config_path.exists() {
             Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || "There was an error when reading the config.toml file"
+                || "There was an error when reading the config.toml file",
             )?
         } else {
             print_warning("Config file not found. Using default configuration");
