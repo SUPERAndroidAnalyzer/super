@@ -2935,8 +2935,8 @@ impl<'de> Deserialize<'de> for Permission {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
         match deser_result {
-            toml::value::Value::String(ref str) => {
-                match Permission::from_str(&str) {
+            toml::value::Value::String(ref deser_result_string) => {
+                match Permission::from_str(deser_result_string) {
                     Ok(permission) => Ok(permission),
                     Err(_) => {
                         Err(serde::de::Error::custom(

@@ -153,7 +153,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
     Ok(())
 }
 
-/// Decompiles the application using _jd\_cmd_.
+/// Decompiles the application using `_jd\_cmd_`.
 pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.get_dist_folder().join(&package_name).join("classes");
