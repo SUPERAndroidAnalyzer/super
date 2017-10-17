@@ -1,7 +1,7 @@
 //! SUPER Android Analyzer
 
 #![forbid(deprecated, overflowing_literals, stable_features, trivial_casts, unconditional_recursion,
-    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_truem,
+    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_true,
     unused_parens, unused_comparisons, unused_extern_crates, unused_import_braces, unused_results,
     improper_ctypes, non_shorthand_field_patterns, private_no_mangle_fns, private_no_mangle_statics,
     filter_map, used_underscore_binding, option_map_unwrap_or, option_map_unwrap_or_else,
@@ -184,14 +184,12 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
 
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(|| {
-                format!("There was an error when reading the /etc/super-analyzer/config.toml file")
-            })?
+            Config::from_file(&global_config_path).chain_err(
+                || "There was an error when reading the /etc/super-analyzer/config.toml file"
+            )?
         } else if config_path.exists() {
             Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || {
-                    format!("There was an error when reading the config.toml file")
-                },
+                || "There was an error when reading the config.toml file"
             )?
         } else {
             print_warning("Config file not found. Using default configuration");
@@ -405,8 +403,8 @@ impl<'de> Deserialize<'de> for Criticality {
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
         match deser_result {
-            toml::value::Value::String(ref str) => {
-                match Criticality::from_str(&str) {
+            toml::value::Value::String(ref deser_result_string) => {
+                match Criticality::from_str(deser_result_string) {
                     Ok(criticality) => Ok(criticality),
                     Err(_) => {
                         Err(serde::de::Error::custom(

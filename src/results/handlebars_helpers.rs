@@ -259,7 +259,7 @@ pub fn generate_menu(
         },
     )?;
     let _ = rc.writer.write(b"<ul>")?;
-    render_menu(&menu, &mut rc.writer)?;
+    render_menu(menu, &mut rc.writer)?;
     let _ = rc.writer.write(b"</ul>")?;
     Ok(())
 }

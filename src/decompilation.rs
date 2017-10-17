@@ -1,6 +1,6 @@
 //! Decompilation module.
 //!
-//! Handles the extraction, decompression and  decompilation of _.apks_
+//! Handles the extraction, decompression and  decompilation of `_.apks_`
 
 use std::fs;
 use std::path::Path;
@@ -13,7 +13,7 @@ use abxml::apk::Apk;
 use error::*;
 use {Config, print_warning, get_package_name};
 
-/// Decompresses the application using _Apktool_.
+/// Decompresses the application using `_Apktool_`.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let path = config.get_dist_folder().join(
         package
@@ -75,7 +75,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
     Ok(())
 }
 
-/// Converts _.dex_ files to _.jar_ using _Dex2jar_.
+/// Converts `_.dex_` files to `_.jar_` using `_Dex2jar_`.
 pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let classes = config.get_dist_folder().join(&package_name).join(
@@ -153,14 +153,14 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
     Ok(())
 }
 
-/// Decompiles the application using _jd\_cmd_.
+/// Decompiles the application using `_jd\_cmd_`.
 pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.get_dist_folder().join(&package_name).join("classes");
     if config.is_force() || !out_path.exists() {
         config.set_force();
 
-        // Command to decompile the application using jd_cmd.
+        // Command to decompile the application using `jd_cmd`.
         // "-od path" to specify an output directory
         let output = Command::new("java")
             .arg("-jar")

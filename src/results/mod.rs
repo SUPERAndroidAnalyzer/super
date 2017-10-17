@@ -198,15 +198,13 @@ impl Results {
                 if !config.is_quiet() {
                     println!("JSON report generated.");
                 }
+            } else if config.is_verbose() {
+                println!(
+                    "Seems that the JSON report has already been generated. There is no \
+                          need to do it again."
+                );
             } else {
-                if config.is_verbose() {
-                    println!(
-                        "Seems that the JSON report has already been generated. There is no \
-                              need to do it again."
-                    );
-                } else {
-                    println!("Skipping JSON report generation.");
-                }
+                println!("Skipping JSON report generation.");
             }
         }
 
@@ -249,15 +247,13 @@ impl Results {
                         println!("HTML report generated.");
                     }
                 }
+            } else if config.is_verbose() {
+                println!(
+                    "Seems that the HTML report has already been generated. There is no
+                          need to do it again."
+                );
             } else {
-                if config.is_verbose() {
-                    println!(
-                        "Seems that the HTML report has already been generated. There is no
-                              need to do it again."
-                    );
-                } else {
-                    println!("Skipping HTML report generation.");
-                }
+                println!("Skipping HTML report generation.");
             }
         }
 
