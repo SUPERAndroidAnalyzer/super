@@ -18,116 +18,65 @@
     use_debug, wrong_pub_self_convention, doc_markdown)]
 
 
-extern crate super_analyzer;
-
+#[macro_use]
+extern crate clap;
 extern crate colored;
+extern crate xml;
+extern crate serde;
+extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
+extern crate chrono;
+extern crate toml;
+extern crate regex;
+#[macro_use]
+extern crate lazy_static;
+extern crate rustc_serialize;
+extern crate open;
+extern crate bytecount;
+extern crate handlebars;
 #[macro_use]
 extern crate log;
+extern crate env_logger;
+#[macro_use]
+extern crate error_chain;
+extern crate abxml;
+extern crate md5;
+extern crate sha1;
+extern crate sha2;
 
-use std::io::{self, Write};
+mod error;
+/// Command Line Interface
+pub mod cli;
+mod decompilation;
+mod static_analysis;
+mod results;
+mod config;
+mod utils;
+mod criticality;
+mod sdk_number;
+
+use std::fs;
 use std::time::{Instant, Duration};
 use std::thread::sleep;
 use std::collections::BTreeMap;
+use std::path::{Path, PathBuf};
+use clap::ArgMatches;
 
 use colored::Colorize;
-use log::LogLevel;
-use super_analyzer::*;
 
+use log::{LogRecord, LogLevelFilter, LogLevel};
+use env_logger::LogBuilder;
+use std::env;
+use decompilation::*;
+use static_analysis::*;
+use results::*;
+pub use error::*;
+pub use config::Config;
+pub use utils::*;
+// use criticality::*;
 
-#[allow(print_stdout)]
-fn main() {
-    if let Err(e) = run() {
-        error!("{}", e);
-
-        for e in e.iter().skip(1) {
-            println!("\t{}{}", "Caused by: ".bold(), e);
-        }
-
-        if !log_enabled!(LogLevel::Debug) {
-            println!(
-                "If you need more information, try to run the program again with the {} flag.",
-                "-v".bold()
-            );
-        }
-
-        if let Some(backtrace) = e.backtrace() {
-            #[allow(use_debug)]
-            {
-                println!("backtrace: {:?}", backtrace);
-            }
-        }
-
-        ::std::process::exit(e.into());
-    }
-}
-
-fn run() -> Result<()> {
-    let cli = cli::generate().get_matches();
-    let verbose = cli.is_present("verbose");
-    initialize_logger(verbose);
-
-    let mut config = initialize_config(cli)?;
-
-    if !config.check() {
-        let mut error_string = String::from("Configuration errors were found:\n");
-        for error in config.get_errors() {
-            error_string.push_str(&error);
-            error_string.push('\n');
-        }
-        error_string.push_str(
-            "The configuration was loaded, in order, from the following files: \
-                               \n\t- Default built-in configuration\n",
-        );
-        for file in config.get_loaded_config_files() {
-            error_string.push_str(&format!("\t- {}\n", file.display()));
-        }
-
-        return Err(ErrorKind::Config(error_string).into());
-    }
-
-    if config.is_verbose() {
-        for c in BANNER.chars() {
-            print!("{}", c);
-            io::stdout().flush().unwrap();
-            sleep(Duration::from_millis(3));
-        }
-        println!(
-            "Welcome to the SUPER Android Analyzer. We will now try to audit the given \
-                  application."
-        );
-        println!(
-            "You activated the verbose mode. {}",
-            "May Tux be with you!".bold()
-        );
-        println!();
-        sleep(Duration::from_millis(1250));
-    }
-
-    let mut benchmarks = BTreeMap::new();
-
-    let total_start = Instant::now();
-    for package in config.get_app_packages() {
-        config.reset_force();
-        analyze_package(package, &mut config, &mut benchmarks)
-            .chain_err(|| "Application analysis failed")?;
-    }
-
-    if config.is_bench() {
-        let total_time = Benchmark::new("Total time", total_start.elapsed());
-        println!();
-        println!("{}", "Benchmarks:".bold());
-        for (package_name, benchmarks) in benchmarks {
-            println!("{}:", package_name.italic());
-            for bench in benchmarks {
-                println!("{}", bench);
-            }
-            println!();
-        }
-        println!("{}", total_time);
-    }
-
-    Ok(())
-}
+pub static BANNER: &str = include_str!("banner.txt");
 
 
 /// Initialize the config with the config files and command line options
@@ -135,18 +84,20 @@ fn run() -> Result<()> {
 /// ('/etc/super-analyzer/config.toml'), the latter is used.
 /// Otherwise, the local file is used.
 /// Finally, if non of the files could be loaded, the default config is used
-fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
+pub fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
     let config_path = PathBuf::from("config.toml");
     let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(
-                || "There was an error when reading the /etc/super-analyzer/config.toml file",
-            )?
+            Config::from_file(&global_config_path).chain_err(|| {
+                format!("There was an error when reading the /etc/super-analyzer/config.toml file")
+            })?
         } else if config_path.exists() {
             Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || "There was an error when reading the config.toml file",
+                || {
+                    format!("There was an error when reading the config.toml file")
+                },
             )?
         } else {
             print_warning("Config file not found. Using default configuration");
@@ -161,7 +112,7 @@ fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
 }
 
 /// Analyzes the given package with the given config.
-fn analyze_package<P: AsRef<Path>>(
+pub fn analyze_package<P: AsRef<Path>>(
     package: P,
     config: &mut Config,
     benchmarks: &mut BTreeMap<String, Vec<Benchmark>>,
@@ -321,76 +272,6 @@ fn analyze_package<P: AsRef<Path>>(
     Ok(())
 }
 
-/// Vulnerability criticality
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
-pub enum Criticality {
-    /// Warning.
-    Warning,
-    /// Low criticality vulnerability.
-    Low,
-    /// Medium criticality vulnerability.
-    Medium,
-    /// High criticality vulnerability.
-    High,
-    /// Critical vulnerability.
-    Critical,
-}
-
-impl Display for Criticality {
-    #[allow(use_debug)]
-    fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
-        write!(f, "{}", format!("{:?}", self).to_lowercase())
-    }
-}
-
-impl Serialize for Criticality {
-    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(format!("{}", self).as_str())
-    }
-}
-
-impl<'de> Deserialize<'de> for Criticality {
-    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
-
-        match deser_result {
-            toml::value::Value::String(ref deser_result_string) => {
-                match Criticality::from_str(deser_result_string) {
-                    Ok(criticality) => Ok(criticality),
-                    Err(_) => {
-                        Err(serde::de::Error::custom(
-                            format!("Unexpected value: {:?}", deser_result),
-                        ))
-                    }
-                }
-            }
-            _ => Err(serde::de::Error::custom(
-                format!("Unexpected value: {:?}", deser_result),
-            )),
-        }
-    }
-}
-
-impl FromStr for Criticality {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Criticality> {
-        match s.to_lowercase().as_str() {
-            "critical" => Ok(Criticality::Critical),
-            "high" => Ok(Criticality::High),
-            "medium" => Ok(Criticality::Medium),
-            "low" => Ok(Criticality::Low),
-            "warning" => Ok(Criticality::Warning),
-            _ => Err(ErrorKind::Parse.into()),
-        }
-    }
-}
-
 /// Copies the contents of `from` to `to`
 ///
 /// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
@@ -412,7 +293,7 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     Ok(())
 }
 
-fn initialize_logger(is_verbose: bool) {
+pub fn initialize_logger(is_verbose: bool) {
     let format = |record: &LogRecord| match record.level() {
         LogLevel::Warn => {
             format!(
@@ -457,7 +338,7 @@ fn initialize_logger(is_verbose: bool) {
 
 #[cfg(test)]
 mod tests {
-    use Criticality;
+    use criticality::Criticality;
     use std::str::FromStr;
 
     #[test]

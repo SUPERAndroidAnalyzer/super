@@ -15,7 +15,9 @@ pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
 
 use error::*;
-use {Config, Criticality, print_warning};
+use {Config, print_warning};
+use criticality::Criticality;
+use sdk_number::SDKNumber;
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -317,10 +319,17 @@ impl Serialize for Results {
             ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct.serialize_field("app_min_sdk", &self.app_min_sdk)?;
+
+        ser_struct.serialize_field(
+            "app_min_sdk",
+            &SDKNumber::from(self.app_min_sdk),
+        )?;
+
+        let app_target_sdk = SDKNumber::from(self.app_target_sdk.unwrap_or(0));
+
         ser_struct.serialize_field(
             "app_target_sdk",
-            &self.app_target_sdk,
+            &app_target_sdk,
         )?;
 
         ser_struct.serialize_field(
