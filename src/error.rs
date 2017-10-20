@@ -1,6 +1,7 @@
 //! Module containing the definition of error chain types.
 #![allow(large_enum_variant)]
 
+#![allow(unused_doc_comment)]
 error_chain! {
     foreign_links {
         IO(::std::io::Error);

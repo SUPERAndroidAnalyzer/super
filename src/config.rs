@@ -27,7 +27,7 @@ use criticality::Criticality;
 use print_warning;
 
 /// Largest number of threads allowed.
-const MAX_THREADS: i64 = u8::MAX as i64;
+const MAX_THREADS: u8 = u8::MAX;
 
 /// Config structure.
 ///
@@ -87,6 +87,8 @@ pub struct Config {
 /// Helper struct that handles some specific field deserialization for `Config` struct
 struct ConfigDeserializer;
 
+type CriticalityString = (Criticality, String);
+
 impl ConfigDeserializer {
     /// Deserialize `thread` field and checks that is on the proper bounds
     pub fn deserialize_threads<'de, D>(de: D) -> result::Result<u8, D::Error>
@@ -97,7 +99,7 @@ impl ConfigDeserializer {
 
         match deser_result {
             toml::value::Value::Integer(threads) => {
-                if threads > 0 && threads <= MAX_THREADS {
+                if threads > 0 && threads <= i64::from(MAX_THREADS) {
                     Ok(threads as u8)
                 } else {
                     Err(serde::de::Error::custom(
@@ -114,7 +116,7 @@ impl ConfigDeserializer {
     /// Deserialize `unknown_permission` field
     pub fn deserialize_unknown_permission<'de, D>(
         de: D,
-    ) -> result::Result<(Criticality, String), D::Error>
+    ) -> result::Result<CriticalityString, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -122,12 +124,22 @@ impl ConfigDeserializer {
 
         match deser_result {
             toml::value::Value::Table(ref table) => {
-                let criticality_str = table.get("criticality").and_then(|v| v.as_str()).ok_or(
-                    serde::de::Error::custom("Criticality field not found for unknown permission"),
-                )?;
-                let string = table.get("description").and_then(|v| v.as_str()).ok_or(
-                    serde::de::Error::custom("Description field not found for unknown permission"),
-                )?;
+                let criticality_str = table
+                    .get("criticality")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| {
+                        serde::de::Error::custom(
+                            "Criticality field not found for unknown permission",
+                        )
+                    })?;
+                let string = table
+                    .get("description")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| {
+                        serde::de::Error::custom(
+                            "Description field not found for unknown permission",
+                        )
+                    })?;
 
                 let criticality = Criticality::from_str(criticality_str).map_err(|_| {
                     serde::de::Error::custom(format!(
