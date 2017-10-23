@@ -1,5 +1,6 @@
 use clap::{Arg, App};
 
+/// Generates the command line interface.
 pub fn generate() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())

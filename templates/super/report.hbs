@@ -18,8 +18,8 @@
                 <li><strong>Package:</strong> {{ app_package }}</li>
                 <li><strong>Version:</strong> {{ app_version }}</li>
                 <li><strong>Version number:</strong> {{ app_version_number }}</li>
-                <li><strong>Minimum SDK version:</strong> {{ app_min_sdk }}</li>
-                <li><strong>Target SDK:</strong> {{ app_target_sdk }}</li>
+                <li><strong>Minimum SDK version:</strong> {{ app_min_sdk_number }} (Android {{ app_min_sdk_version }} <em>{{ app_min_sdk_name }}</em>)</li>
+                <li><strong>Target SDK:</strong> {{#if app_target_sdk }}{{ app_min_sdk_number }} (Android {{ app_min_sdk_version }} <em>{{ app_min_sdk_name }}</em>){{else}}None{{/if}}</li>
                 <li><strong>Fingerprints:</strong>
                     <ul>
                         <li>MD5: {{ app_fingerprint.md5 }}</li>
