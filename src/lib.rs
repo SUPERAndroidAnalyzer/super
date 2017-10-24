@@ -44,6 +44,7 @@ extern crate abxml;
 extern crate md5;
 extern crate sha1;
 extern crate sha2;
+extern crate semver;
 
 mod error;
 /// Command Line Interface
@@ -54,7 +55,6 @@ mod results;
 mod config;
 mod utils;
 mod criticality;
-mod sdk_number;
 
 use std::fs;
 use std::time::{Instant, Duration};
@@ -74,8 +74,8 @@ use results::*;
 pub use error::*;
 pub use config::Config;
 pub use utils::*;
-// use criticality::*;
 
+/// Logo ASCII art.
 pub static BANNER: &str = include_str!("banner.txt");
 
 

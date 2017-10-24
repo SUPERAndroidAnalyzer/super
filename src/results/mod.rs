@@ -10,14 +10,15 @@ use chrono::Local;
 mod utils;
 mod handlebars_helpers;
 mod report;
+mod sdk_number;
 
 pub use self::utils::{Vulnerability, split_indent, html_escape};
 use self::utils::FingerPrint;
+use self::sdk_number::{SdkNumber, prettify_android_version};
 
 use error::*;
 use {Config, print_warning};
 use criticality::Criticality;
-use sdk_number::SDKNumber;
 
 use results::report::{Json, HandlebarsReport};
 use results::report::Report;
@@ -28,8 +29,8 @@ pub struct Results {
     app_description: String,
     app_version: String,
     app_version_num: u32,
-    app_min_sdk: u32,
-    app_target_sdk: Option<u32>,
+    app_min_sdk: SdkNumber,
+    app_target_sdk: Option<SdkNumber>,
     app_fingerprint: FingerPrint,
     #[cfg(feature = "certificate")]
     certificate: String,
@@ -71,7 +72,7 @@ impl Results {
                 app_description: String::new(),
                 app_version: String::new(),
                 app_version_num: 0,
-                app_min_sdk: 0,
+                app_min_sdk: SdkNumber::Unknown(0),
                 app_target_sdk: None,
                 app_fingerprint: fingerprint,
                 certificate: String::new(),
@@ -91,7 +92,7 @@ impl Results {
                 app_description: String::new(),
                 app_version: String::new(),
                 app_version_num: 0,
-                app_min_sdk: 0,
+                app_min_sdk: SdkNumber::Unknown(0),
                 app_target_sdk: None,
                 app_fingerprint: fingerprint,
                 warnings: BTreeSet::new(),
@@ -133,11 +134,11 @@ impl Results {
     }
 
     pub fn set_app_min_sdk(&mut self, sdk: u32) {
-        self.app_min_sdk = sdk;
+        self.app_min_sdk = SdkNumber::from(sdk);
     }
 
     pub fn set_app_target_sdk(&mut self, sdk: u32) {
-        self.app_target_sdk = Some(sdk);
+        self.app_target_sdk = Some(SdkNumber::from(sdk));
     }
 
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
@@ -286,14 +287,24 @@ impl Serialize for Results {
         S: Serializer,
     {
         let now = Local::now();
-        let mut ser_struct = serializer.serialize_struct(
-            "Results",
+        let len = {
+            let mut len = 21;
             if cfg!(feature = "certificate") {
-                22
-            } else {
-                21
-            },
-        )?;
+                len += 1;
+            }
+            if self.app_min_sdk.get_version().is_some() {
+                len += 1;
+            }
+            if let Some(target) = self.app_target_sdk {
+                if target.get_version().is_some() {
+                    len += 3;
+                } else {
+                    len += 2;
+                }
+            }
+            len
+        };
+        let mut ser_struct = serializer.serialize_struct("Results", len)?;
 
         ser_struct.serialize_field(
             "super_version",
@@ -319,18 +330,41 @@ impl Serialize for Results {
             ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-
         ser_struct.serialize_field(
-            "app_min_sdk",
-            &SDKNumber::from(self.app_min_sdk),
+            "app_min_sdk_number",
+            &self.app_min_sdk.get_number(),
         )?;
 
-        let app_target_sdk = SDKNumber::from(self.app_target_sdk.unwrap_or(0));
-
         ser_struct.serialize_field(
-            "app_target_sdk",
-            &app_target_sdk,
+            "app_min_sdk_name",
+            self.app_min_sdk.get_name(),
         )?;
+
+        if let Some(version) = self.app_min_sdk.get_version() {
+            ser_struct.serialize_field(
+                "app_min_sdk_version",
+                &prettify_android_version(version),
+            )?;
+        }
+
+        if let Some(sdk) = self.app_target_sdk {
+            ser_struct.serialize_field(
+                "app_target_sdk_number",
+                &sdk.get_number(),
+            )?;
+
+            ser_struct.serialize_field(
+                "app_target_sdk_name",
+                sdk.get_name(),
+            )?;
+
+            if let Some(version) = sdk.get_version() {
+                ser_struct.serialize_field(
+                    "app_target_sdk_version",
+                    &prettify_android_version(version),
+                )?;
+            }
+        }
 
         ser_struct.serialize_field(
             "total_vulnerabilities",

@@ -49,6 +49,7 @@ sha1 = "0.2"
 sha2 = "0.6"
 abxml = "0.2.1"
 handlebars = "0.29"
+semver = "0.9.0"
 
 [target.'cfg(windows)'.dependencies]
 colored = { version = "^1.4", features = ["no-color"] }
