@@ -37,7 +37,8 @@ script:
   - cargo build --verbose --features unstable
   - cargo test --verbose --features unstable
   - ./travis-helper.sh clippy_run
-  - ./travis-helper.sh dep_run
+  # Won't work since our binary name is different from the crate name.
+  # - ./travis-helper.sh dep_run
   - ./travis-helper.sh fmt_run
 
 after_success:
