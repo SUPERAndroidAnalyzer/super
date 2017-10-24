@@ -25,8 +25,12 @@ is-it-maintained-issue-resolution = { repository = "SUPERAndroidAnalyzer/super" 
 is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
 
 [[bin]]
-name = "super"
+name = "super-analyzer"
 path = "src/main.rs"
+
+[lib]
+name = "super_analyzer_core"
+path = "src/lib.rs"
 
 [dependencies]
 clap = "2.26"
@@ -77,7 +81,7 @@ section = "devel"
 priority = "optional"
 assets = [
     # Executable
-    ["target/release/super", "usr/bin/", "755"],
+    ["target/release/super-analyzer", "usr/bin/", "755"],
     # Completion scripts
     ["target/release/super.bash-completion", "usr/share/bash-completion/completions/", "755"],
     ["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],

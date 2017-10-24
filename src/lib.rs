@@ -1,4 +1,4 @@
-//! SUPER Android Analyzer
+//! SUPER Android Analyzer core library.
 
 // Allowing these at least for now.
 #![allow(unknown_lints, missing_docs_in_private_items, print_stdout, stutter, option_unwrap_used,
