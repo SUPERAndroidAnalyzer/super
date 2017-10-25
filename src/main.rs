@@ -1,4 +1,4 @@
-//! SUPER Android Analyzer
+//! SUPER Android Analyzer launcher.
 
 // Allowing these at least for now.
 #![allow(unknown_lints, missing_docs_in_private_items, print_stdout, stutter, option_unwrap_used,
@@ -18,7 +18,7 @@
     use_debug, wrong_pub_self_convention, doc_markdown)]
 
 
-extern crate super_analyzer;
+extern crate super_analyzer_core;
 
 extern crate colored;
 #[macro_use]
@@ -31,8 +31,7 @@ use std::collections::BTreeMap;
 
 use colored::Colorize;
 use log::LogLevel;
-use super_analyzer::*;
-
+use super_analyzer_core::*;
 
 #[allow(print_stdout)]
 fn main() {
