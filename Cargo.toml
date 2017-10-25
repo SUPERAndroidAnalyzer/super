@@ -33,8 +33,8 @@ name = "super_analyzer_core"
 path = "src/lib.rs"
 
 [dependencies]
-clap = "2.26"
-xml-rs = "0.6"
+clap = "2.27"
+xml-rs = "0.7"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
@@ -56,13 +56,13 @@ handlebars = "0.29"
 semver = "0.9.0"
 
 [target.'cfg(windows)'.dependencies]
-colored = { version = "^1.4", features = ["no-color"] }
+colored = { version = "^1.5", features = ["no-color"] }
 
 [target.'cfg(not(windows))'.dependencies]
-colored = "^1.4"
+colored = "1.5"
 
 [build-dependencies]
-clap = "^2.26"
+clap = "2.27"
 
 [features]
 default = ["beta"]
