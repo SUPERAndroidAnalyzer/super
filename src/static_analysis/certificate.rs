@@ -48,7 +48,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
 
     // Gets the path to the certificate files.
     let path = config
-        .get_dist_folder()
+        .dist_folder()
         .join(package.as_ref())
         .join("original")
         .join("META-INF");

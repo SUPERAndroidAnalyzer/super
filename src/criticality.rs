@@ -1,12 +1,12 @@
-extern crate toml;
-extern crate serde;
+//! Criticality module.
 
-use std;
 use std::fmt;
 use std::fmt::Display;
 use std::str::FromStr;
-use serde::{Serialize, Deserialize, Serializer, Deserializer};
 use std::result;
+
+use serde::{de, Serialize, Deserialize, Serializer, Deserializer};
+use toml::value::Value;
 
 use error::*;
 
@@ -26,8 +26,8 @@ pub enum Criticality {
 }
 
 impl Display for Criticality {
-    #[allow(use_debug)]
-    fn fmt(&self, f: &mut fmt::Formatter) -> std::result::Result<(), fmt::Error> {
+    #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
+    fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
 }
@@ -46,21 +46,22 @@ impl<'de> Deserialize<'de> for Criticality {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+        let deser_result: Value = Deserialize::deserialize(de)?;
 
+        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
         match deser_result {
-            toml::value::Value::String(ref str) => {
-                match Criticality::from_str(&str) {
+            Value::String(ref criticality_str) => {
+                match Self::from_str(criticality_str) {
                     Ok(criticality) => Ok(criticality),
                     Err(_) => {
-                        Err(serde::de::Error::custom(
-                            format!("Unexpected value: {:?}", deser_result),
+                        Err(de::Error::custom(
+                            format!("unexpected value: `{}`", criticality_str),
                         ))
                     }
                 }
             }
-            _ => Err(serde::de::Error::custom(
-                format!("Unexpected value: {:?}", deser_result),
+            _ => Err(de::Error::custom(
+                format!("unexpected value: `{:?}`", deser_result),
             )),
         }
     }
@@ -68,7 +69,7 @@ impl<'de> Deserialize<'de> for Criticality {
 
 impl FromStr for Criticality {
     type Err = Error;
-    fn from_str(s: &str) -> Result<Criticality> {
+    fn from_str(s: &str) -> Result<Self> {
         match s.to_lowercase().as_str() {
             "critical" => Ok(Criticality::Critical),
             "high" => Ok(Criticality::High),

@@ -1,3 +1,5 @@
+//! Results generation module.
+
 use std::fs;
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -21,28 +23,45 @@ use {Config, print_warning};
 use criticality::Criticality;
 
 use results::report::{Json, HandlebarsReport};
-use results::report::Report;
+use results::report::Generator;
 
+/// Results representation structure.
 pub struct Results {
+    /// Application package name.
     app_package: String,
+    /// Application label.
     app_label: String,
+    /// Application description.
     app_description: String,
+    /// Application version string.
     app_version: String,
+    /// Application version number.
     app_version_num: u32,
+    /// Application minimum SDK.
     app_min_sdk: SdkNumber,
+    /// Target SDK for the application.
     app_target_sdk: Option<SdkNumber>,
+    /// Fingerprint of the application,
     app_fingerprint: FingerPrint,
+    /// Certificate of the application.
     #[cfg(feature = "certificate")]
     certificate: String,
+    /// List of warnings found in the application.
     warnings: BTreeSet<Vulnerability>,
+    /// List of the potential low criticality vulnerabilities in the application.
     low: BTreeSet<Vulnerability>,
+    /// List of the potential medium criticality vulnerabilities in the application.
     medium: BTreeSet<Vulnerability>,
+    /// List of the potential high criticality vulnerabilities in the application.
     high: BTreeSet<Vulnerability>,
+    /// List of the potential critical vulnerabilities in the application.
     critical: BTreeSet<Vulnerability>,
 }
 
 impl Results {
-    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Results> {
+    /// Initializes the results structure.
+    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self> {
         let fingerprint = match FingerPrint::new(package) {
             Ok(f) => f,
             Err(e) => {
@@ -66,7 +85,7 @@ impl Results {
 
         #[cfg(feature = "certificate")]
         {
-            Ok(Results {
+            Ok(Self {
                 app_package: String::new(),
                 app_label: String::new(),
                 app_description: String::new(),
@@ -86,7 +105,7 @@ impl Results {
 
         #[cfg(not(feature = "certificate"))]
         {
-            Ok(Results {
+            Ok(Self {
                 app_package: String::new(),
                 app_label: String::new(),
                 app_description: String::new(),
@@ -104,43 +123,53 @@ impl Results {
         }
     }
 
+    /// Sets the application's package.
     pub fn set_app_package<S: Into<String>>(&mut self, package: S) {
         self.app_package = package.into();
     }
 
-    pub fn get_app_package(&self) -> &str {
+    /// Gets the application package.
+    pub fn app_package(&self) -> &str {
         &self.app_package
     }
 
+    /// Sets the certificate string.
     #[cfg(feature = "certificate")]
     pub fn set_certificate<S: Into<String>>(&mut self, certificate: S) {
         self.certificate = certificate.into();
     }
 
+    /// Sets the application's label.
     pub fn set_app_label<S: Into<String>>(&mut self, label: S) {
         self.app_label = label.into();
     }
 
+    /// Sets the application description
     pub fn set_app_description<S: Into<String>>(&mut self, description: S) {
         self.app_description = description.into();
     }
 
+    /// Sets the application version string.
     pub fn set_app_version<S: Into<String>>(&mut self, version: S) {
         self.app_version = version.into();
     }
 
+    /// Sets the application version number.
     pub fn set_app_version_num(&mut self, version: u32) {
         self.app_version_num = version;
     }
 
+    /// Sets the application's minimum SDK number.
     pub fn set_app_min_sdk(&mut self, sdk: u32) {
         self.app_min_sdk = SdkNumber::from(sdk);
     }
 
+    /// Sets the application's target SDK number.
     pub fn set_app_target_sdk(&mut self, sdk: u32) {
         self.app_target_sdk = Some(SdkNumber::from(sdk));
     }
 
+    /// Adds a vulnerability to the results.
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticality() {
             Criticality::Warning => {
@@ -178,8 +207,10 @@ impl Results {
         }
     }
 
+    /// Generates the report.
+    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
     pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
-        let path = config.get_results_folder().join(&self.app_package);
+        let path = config.results_folder().join(&self.app_package);
         if config.is_verbose() {
             println!("Starting report generation.");
         }
@@ -256,7 +287,7 @@ impl Results {
                 }
 
                 let handelbars_report_result =
-                    HandlebarsReport::new(config.get_template_path(), package.as_ref().to_owned());
+                    HandlebarsReport::new(config.template_path(), package.as_ref().to_owned());
 
                 if let Ok(mut handlebars_reporter) = handelbars_report_result {
                     if let Err(e) = handlebars_reporter.generate(config, self) {
@@ -292,11 +323,11 @@ impl Serialize for Results {
             if cfg!(feature = "certificate") {
                 len += 1;
             }
-            if self.app_min_sdk.get_version().is_some() {
+            if self.app_min_sdk.version().is_some() {
                 len += 1;
             }
             if let Some(target) = self.app_target_sdk {
-                if target.get_version().is_some() {
+                if target.version().is_some() {
                     len += 3;
                 } else {
                     len += 2;
@@ -332,36 +363,36 @@ impl Serialize for Results {
 
         ser_struct.serialize_field(
             "app_min_sdk_number",
-            &self.app_min_sdk.get_number(),
+            &self.app_min_sdk.number(),
         )?;
 
         ser_struct.serialize_field(
             "app_min_sdk_name",
-            self.app_min_sdk.get_name(),
+            self.app_min_sdk.name(),
         )?;
 
-        if let Some(version) = self.app_min_sdk.get_version() {
+        if let Some(version) = self.app_min_sdk.version() {
             ser_struct.serialize_field(
                 "app_min_sdk_version",
-                &prettify_android_version(version),
+                &prettify_android_version(&version),
             )?;
         }
 
         if let Some(sdk) = self.app_target_sdk {
             ser_struct.serialize_field(
                 "app_target_sdk_number",
-                &sdk.get_number(),
+                &sdk.number(),
             )?;
 
             ser_struct.serialize_field(
                 "app_target_sdk_name",
-                sdk.get_name(),
+                sdk.name(),
             )?;
 
-            if let Some(version) = sdk.get_version() {
+            if let Some(version) = sdk.version() {
                 ser_struct.serialize_field(
                     "app_target_sdk_version",
-                    &prettify_android_version(version),
+                    &prettify_android_version(&version),
                 )?;
             }
         }

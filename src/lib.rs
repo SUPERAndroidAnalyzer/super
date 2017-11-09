@@ -1,22 +1,12 @@
 //! SUPER Android Analyzer core library.
 
-// Allowing these at least for now.
-#![allow(unknown_lints, missing_docs_in_private_items, print_stdout, stutter, option_unwrap_used,
-    result_unwrap_used, integer_arithmetic, cast_possible_truncation, cast_possible_wrap,
-    indexing_slicing, cast_precision_loss, cast_sign_loss)]
-#![forbid(deprecated, overflowing_literals, stable_features, trivial_casts, unconditional_recursion,
-    plugin_as_library, unused_allocation, trivial_numeric_casts, unused_features, while_true,
-    unused_parens, unused_comparisons, unused_extern_crates, unused_import_braces, unused_results,
-    improper_ctypes, non_shorthand_field_patterns, private_no_mangle_fns, private_no_mangle_statics,
-    filter_map, used_underscore_binding, option_map_unwrap_or, option_map_unwrap_or_else,
-    mutex_integer, mut_mut, mem_forget)]
-#![deny(unused_qualifications, unused, unused_attributes)]
-#![warn(missing_docs, variant_size_differences, enum_glob_use, if_not_else,
-    invalid_upcast_comparisons, items_after_statements, non_ascii_literal, nonminimal_bool,
-    pub_enum_variant_names, shadow_reuse, shadow_same, shadow_unrelated, similar_names,
-    single_match_else, string_add, string_add_assign, unicode_not_nfc, unseparated_literal_suffix,
-    use_debug, wrong_pub_self_convention, doc_markdown)]
-
+#![cfg_attr(feature = "cargo-clippy", deny(clippy))]
+#![forbid(anonymous_parameters)]
+//#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
+#![deny(variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
+        unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs,
+        missing_debug_implementations, missing_copy_implementations, box_pointers,
+        unused_extern_crates)]
 
 #[macro_use]
 extern crate clap;
@@ -78,26 +68,24 @@ pub use utils::*;
 /// Logo ASCII art.
 pub static BANNER: &str = include_str!("banner.txt");
 
-
-/// Initialize the config with the config files and command line options
+/// Initialize the config with the config files and command line options.
+///
 /// On UNIX, if local file ('config.toml') does not exists, but the global one does
 /// ('/etc/super-analyzer/config.toml'), the latter is used.
 /// Otherwise, the local file is used.
 /// Finally, if non of the files could be loaded, the default config is used
-pub fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
+pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config> {
     let config_path = PathBuf::from("config.toml");
     let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(|| {
-                format!("There was an error when reading the /etc/super-analyzer/config.toml file")
-            })?
+            Config::from_file(&global_config_path).chain_err(
+                || "There was an error when reading the /etc/super-analyzer/config.toml file",
+            )?
         } else if config_path.exists() {
             Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || {
-                    format!("There was an error when reading the config.toml file")
-                },
+                || "There was an error when reading the config.toml file",
             )?
         } else {
             print_warning("Config file not found. Using default configuration");
@@ -112,6 +100,7 @@ pub fn initialize_config(cli: ArgMatches<'static>) -> Result<Config> {
 }
 
 /// Analyzes the given package with the given config.
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn analyze_package<P: AsRef<Path>>(
     package: P,
     config: &mut Config,
@@ -209,7 +198,7 @@ pub fn analyze_package<P: AsRef<Path>>(
         || {
             format!(
                 "There was an error generating the results report. Tried to generate at: {}",
-                config.get_results_folder().join(&package_name).display()
+                config.results_folder().join(&package_name).display()
             )
         },
     )?;
@@ -247,15 +236,13 @@ pub fn analyze_package<P: AsRef<Path>>(
 
     if config.is_open() {
         let open_path = if config.has_to_generate_html() {
-            config
-                .get_results_folder()
-                .join(results.get_app_package())
-                .join("index.html")
+            config.results_folder().join(results.app_package()).join(
+                "index.html",
+            )
         } else {
-            config
-                .get_results_folder()
-                .join(results.get_app_package())
-                .join("results.json")
+            config.results_folder().join(results.app_package()).join(
+                "results.json",
+            )
         };
 
         let status = open::that(open_path).chain_err(
@@ -285,14 +272,26 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     for f in fs::read_dir(from)? {
         let f = f?;
         if f.path().is_dir() {
-            copy_folder(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
+            copy_folder(
+                f.path(),
+                to.as_ref().join(
+                    f.path().file_name().expect("expected file name"),
+                ),
+            )?;
         } else {
-            let _ = fs::copy(f.path(), to.as_ref().join(f.path().file_name().unwrap()))?;
+            let _ = fs::copy(
+                f.path(),
+                to.as_ref().join(
+                    f.path().file_name().expect("expected file name"),
+                ),
+            )?;
         }
     }
     Ok(())
 }
 
+/// Initializes the logger.
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn initialize_logger(is_verbose: bool) {
     let format = |record: &LogRecord| match record.level() {
         LogLevel::Warn => {

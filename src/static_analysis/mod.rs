@@ -10,7 +10,6 @@ pub mod code;
 
 use std::error::Error;
 
-use self::manifest::*;
 #[cfg(feature = "certificate")]
 use self::certificate::*;
 use results::Results;
@@ -31,7 +30,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     }
 
     // Run analysis for manifest file.
-    let manifest = manifest_analysis(config, package.as_ref(), results);
+    let manifest = manifest::analysis(config, package.as_ref(), results);
 
     if cfg!(feature = "certificate") {
         // Run analysis for cerificate file.

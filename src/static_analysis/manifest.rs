@@ -1,3 +1,5 @@
+//! Module containing the manifest analysis logic.
+
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
@@ -16,7 +18,9 @@ use {Config, print_warning, print_vulnerability, get_code, get_string, PARSER_CO
 use results::{Results, Vulnerability};
 use criticality::Criticality;
 
-pub fn manifest_analysis<S: AsRef<str>>(
+
+/// Performs the manifest analysis.
+pub fn analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
@@ -29,7 +33,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
     }
 
     let manifest = match Manifest::load(
-        config.get_dist_folder().join(package.as_ref()),
+        config.dist_folder().join(package.as_ref()),
         config,
         package.as_ref(),
         results,
@@ -57,13 +61,13 @@ pub fn manifest_analysis<S: AsRef<str>>(
         }
     };
 
-    if manifest.get_package() != package.as_ref() {
+    if manifest.package() != package.as_ref() {
         print_warning(format!(
             "Seems that the package in the AndroidManifest.xml is not the \
                                same as the application ID provided. Provided application id: \
                                {}, manifest package: {}",
             package.as_ref(),
-            manifest.get_package()
+            manifest.package()
         ));
 
         if config.is_verbose() {
@@ -76,28 +80,28 @@ pub fn manifest_analysis<S: AsRef<str>>(
         }
     }
 
-    results.set_app_package(manifest.get_package());
-    results.set_app_label(manifest.get_label());
-    results.set_app_description(manifest.get_description());
-    results.set_app_version(manifest.get_version_str());
-    results.set_app_version_num(manifest.get_version_number());
-    results.set_app_min_sdk(manifest.get_min_sdk());
-    if manifest.get_target_sdk().is_some() {
-        results.set_app_target_sdk(manifest.get_target_sdk().unwrap());
+    results.set_app_package(manifest.package());
+    results.set_app_label(manifest.label());
+    results.set_app_description(manifest.description());
+    results.set_app_version(manifest.version_str());
+    results.set_app_version_num(manifest.version_number());
+    results.set_app_min_sdk(manifest.min_sdk());
+    if manifest.target_sdk().is_some() {
+        results.set_app_target_sdk(manifest.target_sdk().unwrap());
     }
 
     if manifest.is_debug() {
         let criticality = Criticality::Critical;
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
 
             let description = "The application is in debug mode. \
                                This allows any malicious person to inject arbitrary code in the \
                                application. This option should only be used while in development.";
 
-            let line = get_line(manifest.get_code(), "android:debuggable=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:debuggable=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -119,14 +123,14 @@ pub fn manifest_analysis<S: AsRef<str>>(
     if manifest.needs_large_heap() {
         let criticality = Criticality::Warning;
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
             let description = "The application needs a large heap. This is not a vulnerability \
                                  as such, but could be in devices with small heap. Check if the \
                                  large heap is actually needed.";
 
-            let line = get_line(manifest.get_code(), "android:largeHeap=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:largeHeap=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -147,14 +151,14 @@ pub fn manifest_analysis<S: AsRef<str>>(
     if manifest.allows_backup() {
         let criticality = Criticality::Medium;
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
             let description = "This option allows backups of the application data via adb. \
                                Malicious people with physical access could use adb to get private \
                                data of your app into their PC.";
 
-            let line = get_line(manifest.get_code(), "android:allowBackup=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:allowBackup=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -172,29 +176,28 @@ pub fn manifest_analysis<S: AsRef<str>>(
         }
     }
 
-    for permission in config.get_permissions() {
-        if manifest.get_permission_checklist().needs_permission(
-            permission
-                .get_permission(),
-        ) && permission.get_criticality() >= config.get_min_criticality()
+    for permission in config.permissions() {
+        if manifest.permission_checklist().needs_permission(
+            permission.name(),
+        ) && permission.criticality() >= config.min_criticality()
         {
-            let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
+            let line = get_line(manifest.code(), permission.name().as_str()).ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
             let vuln = Vulnerability::new(
-                permission.get_criticality(),
-                permission.get_label(),
-                permission.get_description(),
+                permission.criticality(),
+                permission.label(),
+                permission.description(),
                 Some("AndroidManifest.xml"),
                 line,
                 line,
                 code,
             );
             results.add_vulnerability(vuln);
-            print_vulnerability(permission.get_description(), permission.get_criticality());
+            print_vulnerability(permission.description(), permission.criticality());
         }
     }
 
@@ -209,6 +212,7 @@ pub fn manifest_analysis<S: AsRef<str>>(
     Some(manifest)
 }
 
+/// Manifest analysis representation structure.
 pub struct Manifest {
     code: String,
     package: String,
@@ -227,6 +231,8 @@ pub struct Manifest {
 }
 
 impl Manifest {
+    /// Loads the given manifest in memory and analyzes it.
+    #[cfg_attr(feature = "cargo-clippy", warn(cyclomatic_complexity))]
     pub fn load<P: AsRef<Path>, S: AsRef<str>>(
         path: P,
         config: &Config,
@@ -453,20 +459,18 @@ impl Manifest {
                                     {
                                         p
                                     } else {
-                                        let line =
-                                            get_line(manifest.get_code(), attr.value.as_str()).ok();
+                                        let line = get_line(manifest.code(), attr.value.as_str())
+                                            .ok();
                                         let code = match line {
-                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                                            Some(l) => Some(get_code(manifest.code(), l, l)),
                                             None => None,
                                         };
 
-                                        let criticality = config
-                                            .get_unknown_permission_criticality();
-                                        let description = config
-                                            .get_unknown_permission_description();
+                                        let criticality = config.unknown_permission_criticality();
+                                        let description = config.unknown_permission_description();
                                         let file = Some("AndroidManifest.xml");
 
-                                        if criticality > config.get_min_criticality() {
+                                        if criticality > config.min_criticality() {
                                             let vuln = Vulnerability::new(
                                                 criticality,
                                                 "Unknown permission",
@@ -482,9 +486,9 @@ impl Manifest {
                                         }
                                         break;
                                     };
-                                    manifest
-                                        .get_mut_permission_checklist()
-                                        .set_needs_permission(permission);
+                                    manifest.mut_permission_checklist().set_needs_permission(
+                                        permission,
+                                    );
                                 }
                             }
                         }
@@ -509,21 +513,21 @@ impl Manifest {
                             match exported {
                                 Some(true) | None => {
                                     if tag != "provider" || exported.is_some() ||
-                                        manifest.get_min_sdk() < 17
+                                        manifest.min_sdk() < 17
                                     {
 
                                         let line = get_line(
-                                            manifest.get_code(),
+                                            manifest.code(),
                                             &format!("android:name=\"{}\"", name),
                                         ).ok();
                                         let code = match line {
-                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                                            Some(l) => Some(get_code(manifest.code(), l, l)),
                                             None => None,
                                         };
 
                                         let criticality = Criticality::Warning;
 
-                                        if criticality >= config.get_min_criticality() {
+                                        if criticality >= config.min_criticality() {
                                             let vuln = Vulnerability::new(
                                                 criticality,
                                                 format!("Exported {}", tag),
@@ -578,11 +582,11 @@ impl Manifest {
         self.code = code.into();
     }
 
-    pub fn get_code(&self) -> &str {
+    pub fn code(&self) -> &str {
         &self.code
     }
 
-    pub fn get_package(&self) -> &str {
+    pub fn package(&self) -> &str {
         &self.package
     }
 
@@ -590,7 +594,7 @@ impl Manifest {
         self.package = package.into();
     }
 
-    pub fn get_version_number(&self) -> u32 {
+    pub fn version_number(&self) -> u32 {
         self.version_number
     }
 
@@ -598,7 +602,7 @@ impl Manifest {
         self.version_number = version_number;
     }
 
-    pub fn get_version_str(&self) -> &str {
+    pub fn version_str(&self) -> &str {
         &self.version_str
     }
 
@@ -606,7 +610,7 @@ impl Manifest {
         self.version_str = version_str.into();
     }
 
-    pub fn get_label(&self) -> &str {
+    pub fn label(&self) -> &str {
         &self.label
     }
 
@@ -614,7 +618,7 @@ impl Manifest {
         self.label = label.into();
     }
 
-    pub fn get_description(&self) -> &str {
+    pub fn description(&self) -> &str {
         &self.description
     }
 
@@ -622,7 +626,7 @@ impl Manifest {
         self.description = description.into();
     }
 
-    pub fn get_min_sdk(&self) -> u32 {
+    pub fn min_sdk(&self) -> u32 {
         self.min_sdk
     }
 
@@ -630,7 +634,7 @@ impl Manifest {
         self.min_sdk = min_sdk;
     }
 
-    pub fn get_target_sdk(&self) -> Option<u32> {
+    pub fn target_sdk(&self) -> Option<u32> {
         self.target_sdk
     }
 
@@ -670,11 +674,11 @@ impl Manifest {
         self.debug = true;
     }
 
-    pub fn get_permission_checklist(&self) -> &PermissionChecklist {
+    pub fn permission_checklist(&self) -> &PermissionChecklist {
         &self.permissions
     }
 
-    fn get_mut_permission_checklist(&mut self) -> &mut PermissionChecklist {
+    fn mut_permission_checklist(&mut self) -> &mut PermissionChecklist {
         &mut self.permissions
     }
 }
@@ -2665,6 +2669,7 @@ impl Default for PermissionChecklist {
     }
 }
 
+/// Enumeration describing all the known permissions.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum Permission {
     AndroidPermissionAccessAllExternalStorage,
@@ -2953,6 +2958,7 @@ impl<'de> Deserialize<'de> for Permission {
 }
 
 impl Permission {
+    /// Gets the string representation of the permission.
     pub fn as_str(&self) -> &str {
         match *self {
             Permission::AndroidPermissionAccessAllExternalStorage => {

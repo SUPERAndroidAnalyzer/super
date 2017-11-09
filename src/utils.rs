@@ -1,3 +1,5 @@
+//! General utilities module.
+
 use std::{fs, fmt};
 use std::io::Read;
 use std::path::Path;
@@ -17,6 +19,7 @@ use criticality::Criticality;
 /// Configuration for the XML parser.
 lazy_static! {
     /// XML parser configuration.
+    #[allow(missing_debug_implementations)]
     pub static ref PARSER_CONFIG: ParserConfig = ParserConfig::new()
     .trim_whitespace(true)
     .whitespace_to_characters(true)
@@ -26,7 +29,7 @@ lazy_static! {
 }
 
 /// Prints a warning to `stderr` in yellow.
-#[allow(print_stdout)]
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
@@ -43,7 +46,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
-#[allow(print_stdout)]
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!(
@@ -70,7 +73,7 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
 pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
     path.as_ref()
         .file_stem()
-        .unwrap()
+        .expect("expected package name")
         .to_string_lossy()
         .into_owned()
 }
@@ -99,7 +102,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
 ) -> Result<String> {
     let mut file = fs::File::open({
         let path = config
-            .get_dist_folder()
+            .dist_folder()
             .join(package.as_ref())
             .join("res")
             .join("values-en")
@@ -109,7 +112,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
             path
         } else {
             config
-                .get_dist_folder()
+                .dist_folder()
                 .join(package.as_ref())
                 .join("res")
                 .join("values")
@@ -147,15 +150,18 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
 }
 
 /// Structure to store a benchmark information.
+#[derive(Debug)]
 pub struct Benchmark {
+    /// The label for the benchmark.
     label: String,
+    /// The benchmark duration.
     duration: Duration,
 }
 
 impl Benchmark {
     /// Creates a new benchmark.
-    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
-        Benchmark {
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Self {
+        Self {
             label: label.into(),
             duration,
         }

@@ -15,11 +15,8 @@ use {Config, print_warning, get_package_name};
 
 /// Decompresses the application using `_Apktool_`.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
-    let path = config.get_dist_folder().join(
-        package
-            .as_ref()
-            .file_stem()
-            .unwrap(),
+    let path = config.dist_folder().join(
+        package.as_ref().file_stem().unwrap(),
     );
     if !path.exists() || config.is_force() {
         if path.exists() {
@@ -78,24 +75,19 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 /// Converts `_.dex_` files to `_.jar_` using `_Dex2jar_`.
 pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
-    let classes = config.get_dist_folder().join(&package_name).join(
-        "classes.jar",
-    );
+    let classes = config.dist_folder().join(&package_name).join("classes.jar");
     if config.is_force() || !classes.exists() {
         config.set_force();
 
         // Command to convert .dex to .jar. using dex2jar.
         // "-o path" to specify an output file
-        let output = Command::new(config.get_dex2jar_folder().join(if cfg!(
-            target_family = "windows"
-        )
-        {
-            "d2j-dex2jar.bat"
-        } else {
-            "d2j-dex2jar.sh"
-        })).arg(config.get_dist_folder().join(&package_name).join(
-            "classes.dex",
-        ))
+        let output = Command::new(config.dex2jar_folder().join(
+            if cfg!(target_family = "windows") {
+                "d2j-dex2jar.bat"
+            } else {
+                "d2j-dex2jar.sh"
+            },
+        )).arg(config.dist_folder().join(&package_name).join("classes.dex"))
             .arg("-f")
             .arg("-o")
             .arg(&classes)
@@ -156,7 +148,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 /// Decompiles the application using `_jd\_cmd_`.
 pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
-    let out_path = config.get_dist_folder().join(&package_name).join("classes");
+    let out_path = config.dist_folder().join(&package_name).join("classes");
     if config.is_force() || !out_path.exists() {
         config.set_force();
 
@@ -164,10 +156,8 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
         // "-od path" to specify an output directory
         let output = Command::new("java")
             .arg("-jar")
-            .arg(config.get_jd_cmd_file())
-            .arg(config.get_dist_folder().join(&package_name).join(
-                "classes.jar",
-            ))
+            .arg(config.jd_cmd_file())
+            .arg(config.dist_folder().join(&package_name).join("classes.jar"))
             .arg("-od")
             .arg(&out_path)
             .output()

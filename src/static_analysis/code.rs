@@ -20,6 +20,7 @@ use super::manifest::{Permission, Manifest};
 use error::*;
 use criticality::Criticality;
 
+/// Analyzes the whole codebase of the application.
 pub fn analysis<S: AsRef<str>>(
     manifest: Option<Manifest>,
     config: &Config,
@@ -51,17 +52,17 @@ pub fn analysis<S: AsRef<str>>(
     let manifest = Arc::new(manifest);
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
-    let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
+    let dist_folder = Arc::new(config.dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
         println!(
             "Starting analysis of the code with {} threads. {} files to go!",
-            format!("{}", config.get_threads()).bold(),
+            format!("{}", config.threads()).bold(),
             format!("{}", total_files).bold()
         );
     }
 
-    let handles: Vec<_> = (0..config.get_threads())
+    let handles: Vec<_> = (0..config.threads())
         .map(|_| {
             let thread_manifest = Arc::clone(&manifest);
             let thread_files = Arc::clone(&files);
@@ -119,9 +120,10 @@ pub fn analysis<S: AsRef<str>>(
         }
     }
 
+    #[allow(box_pointers)]
     for t in handles {
         if let Err(e) = t.join() {
-            #[allow(use_debug)]
+            #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
             print_warning(format!(
                 "An error occurred when joining analysis threads: Error: {:?}",
                 e
@@ -141,6 +143,7 @@ pub fn analysis<S: AsRef<str>>(
     }
 }
 
+/// Analyzes the given file.
 fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     path: P,
     dist_folder: T,
@@ -153,8 +156,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     let _ = f.read_to_string(&mut code)?;
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.get_max_sdk().is_some() &&
-            rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk()
+        if manifest.is_some() && rule.max_sdk().is_some() &&
+            rule.max_sdk().unwrap() < manifest.as_ref().unwrap().min_sdk()
         {
             continue 'check;
         }
@@ -167,45 +170,43 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
             }
         }
 
-        for permission in rule.get_permissions() {
+        for permission in rule.permissions() {
             if manifest.is_none() ||
                 !manifest
                     .as_ref()
                     .unwrap()
-                    .get_permission_checklist()
+                    .permission_checklist()
                     .needs_permission(*permission)
             {
                 continue 'check;
             }
         }
 
-        'rule: for m in rule.get_regex().find_iter(code.as_str()) {
-            for white in rule.get_whitelist() {
+        'rule: for m in rule.regex().find_iter(code.as_str()) {
+            for white in rule.whitelist() {
                 if white.is_match(&code[m.start()..m.end()]) {
                     continue 'rule;
                 }
             }
-            match rule.get_forward_check() {
+            match rule.forward_check() {
                 None => {
                     let start_line = get_line_for(m.start(), code.as_str());
                     let end_line = get_line_for(m.end(), code.as_str());
                     let mut results = results.lock().unwrap();
                     results.push(Vulnerability::new(
-                        rule.get_criticality(),
-                        rule.get_label(),
-                        rule.get_description(),
+                        rule.criticality(),
+                        rule.label(),
+                        rule.description(),
                         Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
                         Some(start_line),
                         Some(end_line),
                         Some(get_code(code.as_str(), start_line, end_line)),
                     ));
 
-                    print_vulnerability(rule.get_description(), rule.get_criticality());
+                    print_vulnerability(rule.description(), rule.criticality());
                 }
                 Some(check) => {
-                    let caps = rule.get_regex()
-                        .captures(&code[m.start()..m.end()])
-                        .unwrap();
+                    let caps = rule.regex().captures(&code[m.start()..m.end()]).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -238,16 +239,16 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                         let end_line = get_line_for(m.end(), code.as_str());
                         let mut results = results.lock().unwrap();
                         results.push(Vulnerability::new(
-                            rule.get_criticality(),
-                            rule.get_label(),
-                            rule.get_description(),
+                            rule.criticality(),
+                            rule.label(),
+                            rule.description(),
                             Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
                             Some(start_line),
                             Some(end_line),
                             Some(get_code(code.as_str(), start_line, end_line)),
                         ));
 
-                        print_vulnerability(rule.get_description(), rule.get_criticality());
+                        print_vulnerability(rule.description(), rule.criticality());
                     }
                 }
             }
@@ -282,7 +283,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     {
         return Ok(());
     }
-    let real_path = config.get_dist_folder().join(package.as_ref()).join(path);
+    let real_path = config.dist_folder().join(package.as_ref()).join(path);
     for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
@@ -301,7 +302,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
         if f_type.is_dir() && f_path != real_path.join("original") {
             add_files_to_vec(
                 f.path()
-                    .strip_prefix(&config.get_dist_folder().join(package.as_ref()))
+                    .strip_prefix(&config.dist_folder().join(package.as_ref()))
                     .unwrap(),
                 vec,
                 package.as_ref(),
@@ -322,6 +323,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     Ok(())
 }
 
+/// Vulnerability searching rule.
 struct Rule {
     regex: Regex,
     permissions: Vec<Permission>,
@@ -336,35 +338,43 @@ struct Rule {
 }
 
 impl Rule {
-    pub fn get_regex(&self) -> &Regex {
+    /// Gets the regex of the rule.
+    pub fn regex(&self) -> &Regex {
         &self.regex
     }
 
-    pub fn get_permissions(&self) -> Iter<Permission> {
+    /// Gets the permissions required for this rule to be checked.
+    pub fn permissions(&self) -> Iter<Permission> {
         self.permissions.iter()
     }
 
-    pub fn get_forward_check(&self) -> Option<&String> {
+    /// Gets the potential forward check of the rule.
+    pub fn forward_check(&self) -> Option<&String> {
         self.forward_check.as_ref()
     }
 
-    pub fn get_max_sdk(&self) -> Option<u32> {
+    /// Gets the maximum SDK affected by this vulnerability.
+    pub fn max_sdk(&self) -> Option<u32> {
         self.max_sdk
     }
 
-    pub fn get_label(&self) -> &str {
+    /// Gets the label of the vulnerability.
+    pub fn label(&self) -> &str {
         self.label.as_str()
     }
 
-    pub fn get_description(&self) -> &str {
+    /// Gets the description of the vulnerability.
+    pub fn description(&self) -> &str {
         self.description.as_str()
     }
 
-    pub fn get_criticality(&self) -> Criticality {
+    /// Gets the criticality for the vulnerabilities found by the rule.
+    pub fn criticality(&self) -> Criticality {
         self.criticality
     }
 
-    pub fn get_whitelist(&self) -> Iter<Regex> {
+    /// Gets the whitelist regex list.
+    pub fn whitelist(&self) -> Iter<Regex> {
         self.whitelist.iter()
     }
 
@@ -389,7 +399,7 @@ impl Rule {
 }
 
 fn load_rules(config: &Config) -> Result<Vec<Rule>> {
-    let f = File::open(config.get_rules_json())?;
+    let f = File::open(config.rules_json())?;
     let rules_json: Value = serde_json::from_reader(f)?;
 
     let mut rules = Vec::new();
@@ -635,7 +645,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
             });
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
             rules.push(Rule {
                 regex: regex,
                 permissions: permissions,
@@ -662,8 +672,8 @@ mod tests {
     use criticality::Criticality;
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
-        if rule.get_regex().is_match(text.as_ref()) {
-            for white in rule.get_whitelist() {
+        if rule.regex().is_match(text.as_ref()) {
+            for white in rule.whitelist() {
                 if white.is_match(text.as_ref()) {
                     let m = white.find(text.as_ref()).unwrap();
                     println!(
@@ -675,19 +685,19 @@ mod tests {
                     return false;
                 }
             }
-            match rule.get_forward_check() {
+            match rule.forward_check() {
                 None => {
-                    let m = rule.get_regex().find(text.as_ref()).unwrap();
+                    let m = rule.regex().find(text.as_ref()).unwrap();
                     println!(
                         "The regular expression '{}' matches the text '{}' in '{}'",
-                        rule.get_regex(),
+                        rule.regex(),
                         text.as_ref(),
                         &text.as_ref()[m.start()..m.end()]
                     );
                     true
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(text.as_ref()).unwrap();
+                    let caps = rule.regex().captures(text.as_ref()).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -724,7 +734,7 @@ mod tests {
         } else {
             println!(
                 "The regular expression '{}' does not match the text '{}'",
-                rule.get_regex(),
+                rule.regex(),
                 text.as_ref()
             );
             false

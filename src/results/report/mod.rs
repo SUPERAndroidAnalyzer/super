@@ -1,3 +1,5 @@
+//! Report generation module.
+
 mod json;
 mod handlebars;
 
@@ -6,8 +8,10 @@ use config::Config;
 use error::*;
 
 pub use self::json::Json;
-pub use self::handlebars::HandlebarsReport;
+pub use self::handlebars::Report as HandlebarsReport;
 
-pub trait Report {
+/// Trait that represents a type that can generate a report.
+pub trait Generator {
+    /// Generates an actual report.
     fn generate(&mut self, config: &Config, result: &Results) -> Result<()>;
 }

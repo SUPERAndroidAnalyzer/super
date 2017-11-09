@@ -2,45 +2,74 @@
 
 use semver::{Version, Identifier};
 
+/// Android SDK number representation.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SdkNumber {
+    /// API version 1.
     Api1,
+    /// API version 2.
     Api2,
+    /// API version 3.
     Api3,
+    /// API version 4.
     Api4,
+    /// API version 5.
     Api5,
+    /// API version 6.
     Api6,
+    /// API version 7.
     Api7,
+    /// API version 8.
     Api8,
+    /// API version 9.
     Api9,
+    /// API version 10.
     Api10,
+    /// API version 11.
     Api11,
+    /// API version 12.
     Api12,
+    /// API version 13.
     Api13,
+    /// API version 14.
     Api14,
+    /// API version 15.
     Api15,
+    /// API version 16.
     Api16,
+    /// API version 17.
     Api17,
+    /// API version 18.
     Api18,
+    /// API version 19.
     Api19,
+    /// API version 20.
     Api20,
+    /// API version 21.
     Api21,
+    /// API version 22.
     Api22,
+    /// API version 23.
     Api23,
+    /// API version 24.
     Api24,
+    /// API version 25.
     Api25,
+    /// API version 26.
     Api26,
 
+    /// Development API version.
     Development,
+    /// Unknown API version.
     Unknown(u32),
 }
 
 /// Main implementation of the SDK numbers.
 ///
-/// As per: https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+/// As per: <https://developer.android.com/reference/android/os/Build.VERSION_CODES.html>
 impl SdkNumber {
     /// Gets the SDK API version number.
-    pub fn get_number(&self) -> u32 {
+    pub fn number(&self) -> u32 {
         match *self {
             SdkNumber::Api1 => 1,
             SdkNumber::Api2 => 2,
@@ -75,7 +104,8 @@ impl SdkNumber {
     }
 
     /// Gets the Android version number.
-    pub fn get_version(&self) -> Option<Version> {
+    #[allow(box_pointers)]
+    pub fn version(&self) -> Option<Version> {
         match *self {
             SdkNumber::Api1 => Some(Version {
                 major: 1,
@@ -260,20 +290,18 @@ impl SdkNumber {
                 build: vec![],
             }),
 
-            SdkNumber::Development => None,
+            SdkNumber::Development |
             SdkNumber::Unknown(_) => None,
         }
     }
 
     /// Gets the name of the Android release.
-    pub fn get_name(&self) -> &str {
+    pub fn name(&self) -> &str {
         match *self {
-            SdkNumber::Api1 => "Base",
-            SdkNumber::Api2 => "Base",
+            SdkNumber::Api1 | SdkNumber::Api2 => "Base",
             SdkNumber::Api3 => "Cupcake",
             SdkNumber::Api4 => "Donut",
-            SdkNumber::Api5 => "Eclair",
-            SdkNumber::Api6 => "Eclair",
+            SdkNumber::Api5 | SdkNumber::Api6 => "Eclair",
             SdkNumber::Api7 => "Eclair MR1",
             SdkNumber::Api8 => "Froyo",
             SdkNumber::Api9 => "Gingerbread",
@@ -302,7 +330,7 @@ impl SdkNumber {
 }
 
 impl From<u32> for SdkNumber {
-    fn from(version: u32) -> SdkNumber {
+    fn from(version: u32) -> Self {
         match version {
             1 => SdkNumber::Api1,
             2 => SdkNumber::Api2,
@@ -337,15 +365,16 @@ impl From<u32> for SdkNumber {
     }
 }
 
-pub fn prettify_android_version(version: Version) -> String {
+/// Prettifies the android version number so that it's shown as the official version.
+pub fn prettify_android_version(version: &Version) -> String {
     format!(
         "{}.{}{}{}",
         version.major,
         version.minor,
-        if version.patch != 0 {
-            format!(".{}", version.patch)
-        } else {
+        if version.patch == 0 {
             String::new()
+        } else {
+            format!(".{}", version.patch)
         },
         if let Some(b) = version.build.get(0) {
             format!("{}", b)
@@ -401,123 +430,124 @@ mod tests {
     /// Checks the correctnes back from the SDK to its number.
     #[test]
     fn it_get_number() {
-        assert_eq!(SdkNumber::Api1.get_number(), 1);
-        assert_eq!(SdkNumber::Api2.get_number(), 2);
-        assert_eq!(SdkNumber::Api3.get_number(), 3);
-        assert_eq!(SdkNumber::Api4.get_number(), 4);
-        assert_eq!(SdkNumber::Api5.get_number(), 5);
-        assert_eq!(SdkNumber::Api6.get_number(), 6);
-        assert_eq!(SdkNumber::Api7.get_number(), 7);
-        assert_eq!(SdkNumber::Api8.get_number(), 8);
-        assert_eq!(SdkNumber::Api9.get_number(), 9);
-        assert_eq!(SdkNumber::Api10.get_number(), 10);
-        assert_eq!(SdkNumber::Api11.get_number(), 11);
-        assert_eq!(SdkNumber::Api12.get_number(), 12);
-        assert_eq!(SdkNumber::Api13.get_number(), 13);
-        assert_eq!(SdkNumber::Api14.get_number(), 14);
-        assert_eq!(SdkNumber::Api15.get_number(), 15);
-        assert_eq!(SdkNumber::Api16.get_number(), 16);
-        assert_eq!(SdkNumber::Api17.get_number(), 17);
-        assert_eq!(SdkNumber::Api18.get_number(), 18);
-        assert_eq!(SdkNumber::Api19.get_number(), 19);
-        assert_eq!(SdkNumber::Api20.get_number(), 20);
-        assert_eq!(SdkNumber::Api21.get_number(), 21);
-        assert_eq!(SdkNumber::Api22.get_number(), 22);
-        assert_eq!(SdkNumber::Api23.get_number(), 23);
-        assert_eq!(SdkNumber::Api24.get_number(), 24);
-        assert_eq!(SdkNumber::Api25.get_number(), 25);
-        assert_eq!(SdkNumber::Api26.get_number(), 26);
+        assert_eq!(SdkNumber::Api1.number(), 1);
+        assert_eq!(SdkNumber::Api2.number(), 2);
+        assert_eq!(SdkNumber::Api3.number(), 3);
+        assert_eq!(SdkNumber::Api4.number(), 4);
+        assert_eq!(SdkNumber::Api5.number(), 5);
+        assert_eq!(SdkNumber::Api6.number(), 6);
+        assert_eq!(SdkNumber::Api7.number(), 7);
+        assert_eq!(SdkNumber::Api8.number(), 8);
+        assert_eq!(SdkNumber::Api9.number(), 9);
+        assert_eq!(SdkNumber::Api10.number(), 10);
+        assert_eq!(SdkNumber::Api11.number(), 11);
+        assert_eq!(SdkNumber::Api12.number(), 12);
+        assert_eq!(SdkNumber::Api13.number(), 13);
+        assert_eq!(SdkNumber::Api14.number(), 14);
+        assert_eq!(SdkNumber::Api15.number(), 15);
+        assert_eq!(SdkNumber::Api16.number(), 16);
+        assert_eq!(SdkNumber::Api17.number(), 17);
+        assert_eq!(SdkNumber::Api18.number(), 18);
+        assert_eq!(SdkNumber::Api19.number(), 19);
+        assert_eq!(SdkNumber::Api20.number(), 20);
+        assert_eq!(SdkNumber::Api21.number(), 21);
+        assert_eq!(SdkNumber::Api22.number(), 22);
+        assert_eq!(SdkNumber::Api23.number(), 23);
+        assert_eq!(SdkNumber::Api24.number(), 24);
+        assert_eq!(SdkNumber::Api25.number(), 25);
+        assert_eq!(SdkNumber::Api26.number(), 26);
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::Unknown(27).get_number(), 27);
-        assert_eq!(SdkNumber::Unknown(133).get_number(), 133);
-        assert_eq!(SdkNumber::Unknown(4392).get_number(), 4392);
+        assert_eq!(SdkNumber::Unknown(27).number(), 27);
+        assert_eq!(SdkNumber::Unknown(133).number(), 133);
+        assert_eq!(SdkNumber::Unknown(4392).number(), 4392);
 
         // Development API.
-        assert_eq!(SdkNumber::Development.get_number(), 10_000);
+        assert_eq!(SdkNumber::Development.number(), 10_000);
     }
 
     /// Checks that the Android version number is correct for each API.
     #[test]
+    #[allow(box_pointers)]
     fn it_get_version() {
         assert_eq!(
-            SdkNumber::Api1.get_version().unwrap(),
+            SdkNumber::Api1.version().unwrap(),
             Version::parse("1.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api2.get_version().unwrap(),
+            SdkNumber::Api2.version().unwrap(),
             Version::parse("1.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api3.get_version().unwrap(),
+            SdkNumber::Api3.version().unwrap(),
             Version::parse("1.5.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api4.get_version().unwrap(),
+            SdkNumber::Api4.version().unwrap(),
             Version::parse("1.6.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api5.get_version().unwrap(),
+            SdkNumber::Api5.version().unwrap(),
             Version::parse("2.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api6.get_version().unwrap(),
+            SdkNumber::Api6.version().unwrap(),
             Version::parse("2.0.1").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api7.get_version().unwrap(),
+            SdkNumber::Api7.version().unwrap(),
             Version::parse("2.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api8.get_version().unwrap(),
+            SdkNumber::Api8.version().unwrap(),
             Version::parse("2.2.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api9.get_version().unwrap(),
+            SdkNumber::Api9.version().unwrap(),
             Version::parse("2.3.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api10.get_version().unwrap(),
+            SdkNumber::Api10.version().unwrap(),
             Version::parse("2.3.3").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api11.get_version().unwrap(),
+            SdkNumber::Api11.version().unwrap(),
             Version::parse("3.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api12.get_version().unwrap(),
+            SdkNumber::Api12.version().unwrap(),
             Version::parse("3.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api13.get_version().unwrap(),
+            SdkNumber::Api13.version().unwrap(),
             Version::parse("3.2.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api14.get_version().unwrap(),
+            SdkNumber::Api14.version().unwrap(),
             Version::parse("4.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api15.get_version().unwrap(),
+            SdkNumber::Api15.version().unwrap(),
             Version::parse("4.0.3").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api16.get_version().unwrap(),
+            SdkNumber::Api16.version().unwrap(),
             Version::parse("4.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api17.get_version().unwrap(),
+            SdkNumber::Api17.version().unwrap(),
             Version::parse("4.2.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api18.get_version().unwrap(),
+            SdkNumber::Api18.version().unwrap(),
             Version::parse("4.3.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api19.get_version().unwrap(),
+            SdkNumber::Api19.version().unwrap(),
             Version::parse("4.4.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api20.get_version().unwrap(),
+            SdkNumber::Api20.version().unwrap(),
             Version {
                 major: 4,
                 minor: 4,
@@ -527,183 +557,183 @@ mod tests {
             }
         );
         assert_eq!(
-            SdkNumber::Api21.get_version().unwrap(),
+            SdkNumber::Api21.version().unwrap(),
             Version::parse("5.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api22.get_version().unwrap(),
+            SdkNumber::Api22.version().unwrap(),
             Version::parse("5.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api23.get_version().unwrap(),
+            SdkNumber::Api23.version().unwrap(),
             Version::parse("6.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api24.get_version().unwrap(),
+            SdkNumber::Api24.version().unwrap(),
             Version::parse("7.0.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api25.get_version().unwrap(),
+            SdkNumber::Api25.version().unwrap(),
             Version::parse("7.1.0").unwrap()
         );
         assert_eq!(
-            SdkNumber::Api26.get_version().unwrap(),
+            SdkNumber::Api26.version().unwrap(),
             Version::parse("8.0.0").unwrap()
         );
 
         // Unknown APIs.
-        assert!(SdkNumber::Unknown(27).get_version().is_none());
-        assert!(SdkNumber::Unknown(201).get_version().is_none());
-        assert!(SdkNumber::Unknown(5602).get_version().is_none());
+        assert!(SdkNumber::Unknown(27).version().is_none());
+        assert!(SdkNumber::Unknown(201).version().is_none());
+        assert!(SdkNumber::Unknown(5602).version().is_none());
 
         // Development API.
-        assert!(SdkNumber::Development.get_version().is_none());
+        assert!(SdkNumber::Development.version().is_none());
     }
 
     /// Checks that the names associated with API versions are correct.
     #[test]
     fn it_get_name() {
-        assert_eq!(SdkNumber::Api1.get_name(), "Base");
-        assert_eq!(SdkNumber::Api2.get_name(), "Base");
-        assert_eq!(SdkNumber::Api3.get_name(), "Cupcake");
-        assert_eq!(SdkNumber::Api4.get_name(), "Donut");
-        assert_eq!(SdkNumber::Api5.get_name(), "Eclair");
-        assert_eq!(SdkNumber::Api6.get_name(), "Eclair");
-        assert_eq!(SdkNumber::Api7.get_name(), "Eclair MR1");
-        assert_eq!(SdkNumber::Api8.get_name(), "Froyo");
-        assert_eq!(SdkNumber::Api9.get_name(), "Gingerbread");
-        assert_eq!(SdkNumber::Api10.get_name(), "Gingerbread MR1");
-        assert_eq!(SdkNumber::Api11.get_name(), "Honeycomb");
-        assert_eq!(SdkNumber::Api12.get_name(), "Honeycomb MR1");
-        assert_eq!(SdkNumber::Api13.get_name(), "Honeycomb MR2");
-        assert_eq!(SdkNumber::Api14.get_name(), "Ice Cream Sandwich");
-        assert_eq!(SdkNumber::Api15.get_name(), "Ice Cream Sandwich MR1");
-        assert_eq!(SdkNumber::Api16.get_name(), "Jelly Bean");
-        assert_eq!(SdkNumber::Api17.get_name(), "Jelly Bean MR1");
-        assert_eq!(SdkNumber::Api18.get_name(), "Jelly Bean MR2");
-        assert_eq!(SdkNumber::Api19.get_name(), "KitKat");
-        assert_eq!(SdkNumber::Api20.get_name(), "KitKat Watch");
-        assert_eq!(SdkNumber::Api21.get_name(), "Lollipop");
-        assert_eq!(SdkNumber::Api22.get_name(), "Lollipop MR1");
-        assert_eq!(SdkNumber::Api23.get_name(), "Marshmallow");
-        assert_eq!(SdkNumber::Api24.get_name(), "Nougat");
-        assert_eq!(SdkNumber::Api25.get_name(), "Nougat MR1");
-        assert_eq!(SdkNumber::Api26.get_name(), "Oreo");
+        assert_eq!(SdkNumber::Api1.name(), "Base");
+        assert_eq!(SdkNumber::Api2.name(), "Base");
+        assert_eq!(SdkNumber::Api3.name(), "Cupcake");
+        assert_eq!(SdkNumber::Api4.name(), "Donut");
+        assert_eq!(SdkNumber::Api5.name(), "Eclair");
+        assert_eq!(SdkNumber::Api6.name(), "Eclair");
+        assert_eq!(SdkNumber::Api7.name(), "Eclair MR1");
+        assert_eq!(SdkNumber::Api8.name(), "Froyo");
+        assert_eq!(SdkNumber::Api9.name(), "Gingerbread");
+        assert_eq!(SdkNumber::Api10.name(), "Gingerbread MR1");
+        assert_eq!(SdkNumber::Api11.name(), "Honeycomb");
+        assert_eq!(SdkNumber::Api12.name(), "Honeycomb MR1");
+        assert_eq!(SdkNumber::Api13.name(), "Honeycomb MR2");
+        assert_eq!(SdkNumber::Api14.name(), "Ice Cream Sandwich");
+        assert_eq!(SdkNumber::Api15.name(), "Ice Cream Sandwich MR1");
+        assert_eq!(SdkNumber::Api16.name(), "Jelly Bean");
+        assert_eq!(SdkNumber::Api17.name(), "Jelly Bean MR1");
+        assert_eq!(SdkNumber::Api18.name(), "Jelly Bean MR2");
+        assert_eq!(SdkNumber::Api19.name(), "KitKat");
+        assert_eq!(SdkNumber::Api20.name(), "KitKat Watch");
+        assert_eq!(SdkNumber::Api21.name(), "Lollipop");
+        assert_eq!(SdkNumber::Api22.name(), "Lollipop MR1");
+        assert_eq!(SdkNumber::Api23.name(), "Marshmallow");
+        assert_eq!(SdkNumber::Api24.name(), "Nougat");
+        assert_eq!(SdkNumber::Api25.name(), "Nougat MR1");
+        assert_eq!(SdkNumber::Api26.name(), "Oreo");
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::Unknown(27).get_name(), "Unknown");
-        assert_eq!(SdkNumber::Unknown(302).get_name(), "Unknown");
-        assert_eq!(SdkNumber::Unknown(7302).get_name(), "Unknown");
+        assert_eq!(SdkNumber::Unknown(27).name(), "Unknown");
+        assert_eq!(SdkNumber::Unknown(302).name(), "Unknown");
+        assert_eq!(SdkNumber::Unknown(7302).name(), "Unknown");
 
         // Development API.
-        assert_eq!(SdkNumber::Development.get_name(), "Development");
+        assert_eq!(SdkNumber::Development.name(), "Development");
     }
 
     /// Checks that Android versions are properly printed.
     #[test]
     fn it_prettify_android_version() {
         assert_eq!(
-            prettify_android_version(SdkNumber::Api1.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api1.version().unwrap()),
             "1.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api2.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api2.version().unwrap()),
             "1.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api3.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api3.version().unwrap()),
             "1.5"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api4.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api4.version().unwrap()),
             "1.6"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api5.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api5.version().unwrap()),
             "2.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api6.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api6.version().unwrap()),
             "2.0.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api7.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api7.version().unwrap()),
             "2.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api8.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api8.version().unwrap()),
             "2.2"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api9.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api9.version().unwrap()),
             "2.3"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api10.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api10.version().unwrap()),
             "2.3.3"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api11.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api11.version().unwrap()),
             "3.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api12.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api12.version().unwrap()),
             "3.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api13.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api13.version().unwrap()),
             "3.2"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api14.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api14.version().unwrap()),
             "4.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api15.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api15.version().unwrap()),
             "4.0.3"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api16.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api16.version().unwrap()),
             "4.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api17.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api17.version().unwrap()),
             "4.2"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api18.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api18.version().unwrap()),
             "4.3"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api19.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api19.version().unwrap()),
             "4.4"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api20.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api20.version().unwrap()),
             "4.4W"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api21.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api21.version().unwrap()),
             "5.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api22.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api22.version().unwrap()),
             "5.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api23.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api23.version().unwrap()),
             "6.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api24.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api24.version().unwrap()),
             "7.0"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api25.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api25.version().unwrap()),
             "7.1"
         );
         assert_eq!(
-            prettify_android_version(SdkNumber::Api26.get_version().unwrap()),
+            prettify_android_version(&SdkNumber::Api26.version().unwrap()),
             "8.0"
         );
     }

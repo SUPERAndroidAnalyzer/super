@@ -1,14 +1,15 @@
 //! Module containing the definition of error chain types.
-#![allow(large_enum_variant)]
+#![allow(box_pointers)]
+#![cfg_attr(feature = "cargo-clippy", allow(large_enum_variant))]
 
 #![allow(unused_doc_comment)]
 error_chain! {
     foreign_links {
-        IO(::std::io::Error);
-        Template(::handlebars::TemplateFileError);
-        TemplateRender(::handlebars::RenderError);
-        JSON(::serde_json::error::Error);
-        TOML(::toml::de::Error);
+        IO(::std::io::Error) #[doc = "I/O error."];
+        Template(::handlebars::TemplateFileError) #[doc = "Template error."];
+        TemplateRender(::handlebars::RenderError) #[doc = "Template rendering error."];
+        JSON(::serde_json::error::Error) #[doc = "JSON error."];
+        TOML(::toml::de::Error) #[doc = "TOML error."];
     }
 
     errors {

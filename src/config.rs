@@ -17,10 +17,10 @@ use std::str::FromStr;
 use colored::Colorize;
 use clap::ArgMatches;
 use toml;
-use serde::Deserializer;
-use serde;
+use toml::value::Value;
+use serde::{de, Deserialize, Deserializer};
 
-use static_analysis::manifest::Permission;
+use static_analysis::manifest;
 
 use error::*;
 use criticality::Criticality;
@@ -79,7 +79,7 @@ pub struct Config {
     #[serde(deserialize_with = "ConfigDeserializer::deserialize_unknown_permission")]
     unknown_permission: (Criticality, String),
     /// List of permissions to analyze.
-    permissions: BTreeSet<PermissionConfig>,
+    permissions: BTreeSet<Permission>,
     /// Checker for the loaded files
     loaded_files: Vec<PathBuf>,
 }
@@ -87,6 +87,7 @@ pub struct Config {
 /// Helper struct that handles some specific field deserialization for `Config` struct
 struct ConfigDeserializer;
 
+/// `Criticality` and `String` tuple, used to shorten some return types.
 type CriticalityString = (Criticality, String);
 
 impl ConfigDeserializer {
@@ -95,19 +96,20 @@ impl ConfigDeserializer {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+        let deser_result: Value = Deserialize::deserialize(de)?;
 
+        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
         match deser_result {
-            toml::value::Value::Integer(threads) => {
+            Value::Integer(threads) => {
                 if threads > 0 && threads <= i64::from(MAX_THREADS) {
+                    #[cfg_attr(feature = "cargo-clippy",
+                               allow(cast_sign_loss, cast_possible_truncation))]
                     Ok(threads as u8)
                 } else {
-                    Err(serde::de::Error::custom(
-                        "Threads is not in the valid range",
-                    ))
+                    Err(de::Error::custom("Threads is not in the valid range"))
                 }
             }
-            _ => Err(serde::de::Error::custom(
+            _ => Err(de::Error::custom(
                 format!("Unexpected value: {:?}", deser_result),
             )),
         }
@@ -120,29 +122,26 @@ impl ConfigDeserializer {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+        let deser_result: Value = Deserialize::deserialize(de)?;
 
+        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
         match deser_result {
-            toml::value::Value::Table(ref table) => {
+            Value::Table(ref table) => {
                 let criticality_str = table
                     .get("criticality")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| {
-                        serde::de::Error::custom(
-                            "Criticality field not found for unknown permission",
-                        )
+                        de::Error::custom("Criticality field not found for unknown permission")
                     })?;
                 let string = table
                     .get("description")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| {
-                        serde::de::Error::custom(
-                            "Description field not found for unknown permission",
-                        )
+                        de::Error::custom("Description field not found for unknown permission")
                     })?;
 
                 let criticality = Criticality::from_str(criticality_str).map_err(|_| {
-                    serde::de::Error::custom(format!(
+                    de::Error::custom(format!(
                         "Invalid `criticality` value found: {}",
                         criticality_str
                     ))
@@ -150,7 +149,7 @@ impl ConfigDeserializer {
 
                 Ok((criticality, string.to_string()))
             }
-            _ => Err(serde::de::Error::custom(
+            _ => Err(de::Error::custom(
                 format!("Unexpected value: {:?}", deser_result),
             )),
         }
@@ -159,8 +158,8 @@ impl ConfigDeserializer {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn from_file(config_path: &PathBuf) -> Result<Config> {
-        let cfg_result: Result<Config> = fs::File::open(config_path)
+    pub fn from_file(config_path: &PathBuf) -> Result<Self> {
+        let cfg_result: Result<Self> = fs::File::open(config_path)
             .chain_err(|| "Could not open file")
             .and_then(|mut f| {
                 let mut toml = String::new();
@@ -176,7 +175,7 @@ impl Config {
                     )
                 })
             })
-            .and_then(|mut new_config: Config| {
+            .and_then(|mut new_config: Self| {
                 new_config.loaded_files.push(config_path.clone());
 
                 Ok(new_config)
@@ -186,8 +185,8 @@ impl Config {
     }
 
     /// Decorates the loaded config with the given flags from CLI
-    pub fn decorate_with_cli(&mut self, cli: ArgMatches<'static>) -> Result<()> {
-        self.set_options(&cli);
+    pub fn decorate_with_cli(&mut self, cli: &ArgMatches<'static>) -> Result<()> {
+        self.set_options(cli);
 
         self.verbose = cli.is_present("verbose");
         self.quiet = cli.is_present("quiet");
@@ -200,10 +199,12 @@ impl Config {
 
         if cli.is_present("test-all") {
             self.read_apks().chain_err(
-                || "Error loading all the downloaded APKs",
+                || "error loading all the downloaded APKs",
             )?;
         } else {
-            self.add_app_package(cli.value_of("package").unwrap());
+            self.add_app_package(cli.value_of("package").expect(
+                "expected a value for the package CLI attribute",
+            ));
         }
 
         Ok(())
@@ -277,7 +278,7 @@ impl Config {
                                 entry
                                     .path()
                                     .file_stem()
-                                    .unwrap()
+                                    .expect("expected file stem for apk file")
                                     .to_string_lossy()
                                     .into_owned(),
                             )
@@ -300,7 +301,7 @@ impl Config {
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
         let check = self.downloads_folder.exists() && self.dex2jar_folder.exists() &&
-            self.jd_cmd_file.exists() && self.get_template_path().exists() &&
+            self.jd_cmd_file.exists() && self.template_path().exists() &&
             self.rules_json.exists();
         if check {
             for package in &self.app_packages {
@@ -315,7 +316,7 @@ impl Config {
     }
 
     /// Returns the folders and files that do not exist.
-    pub fn get_errors(&self) -> Vec<String> {
+    pub fn errors(&self) -> Vec<String> {
         let mut errors = Vec::new();
         if !self.downloads_folder.exists() {
             errors.push(format!(
@@ -349,7 +350,7 @@ impl Config {
                 self.templates_folder.display()
             ));
         }
-        if !self.get_template_path().exists() {
+        if !self.template_path().exists() {
             errors.push(format!(
                 "the template `{}` does not exist in `{}`",
                 self.template,
@@ -366,12 +367,12 @@ impl Config {
     }
 
     /// Returns the currently loaded config files.
-    pub fn get_loaded_config_files(&self) -> VecIter<PathBuf> {
+    pub fn loaded_config_files(&self) -> VecIter<PathBuf> {
         self.loaded_files.iter()
     }
 
     /// Returns the app package.
-    pub fn get_app_packages(&self) -> Vec<PathBuf> {
+    pub fn app_packages(&self) -> Vec<PathBuf> {
         self.app_packages.clone()
     }
 
@@ -384,10 +385,13 @@ impl Config {
                 updated,
                 "did not update package path extension, no file name"
             );
-        } else if package_path.extension().unwrap() != "apk" {
+        } else if package_path.extension().expect(
+            "expected extension in package path",
+        ) != "apk"
+        {
             let mut file_name = package_path
                 .file_name()
-                .unwrap()
+                .expect("expected file name in package path")
                 .to_string_lossy()
                 .into_owned();
             file_name.push_str(".apk");
@@ -443,73 +447,73 @@ impl Config {
     }
 
     /// Returns the `min_criticality` field.
-    pub fn get_min_criticality(&self) -> Criticality {
+    pub fn min_criticality(&self) -> Criticality {
         self.min_criticality
     }
 
     /// Returns the `threads` field.
-    pub fn get_threads(&self) -> u8 {
+    pub fn threads(&self) -> u8 {
         self.threads
     }
 
     /// Returns the path to the `dist_folder`.
-    pub fn get_dist_folder(&self) -> &Path {
+    pub fn dist_folder(&self) -> &Path {
         &self.dist_folder
     }
 
     /// Returns the path to the `results_folder`.
-    pub fn get_results_folder(&self) -> &Path {
+    pub fn results_folder(&self) -> &Path {
         &self.results_folder
     }
 
     /// Returns the path to the `dex2jar_folder`.
-    pub fn get_dex2jar_folder(&self) -> &Path {
+    pub fn dex2jar_folder(&self) -> &Path {
         &self.dex2jar_folder
     }
 
     /// Returns the path to the `jd_cmd_file`.
-    pub fn get_jd_cmd_file(&self) -> &Path {
+    pub fn jd_cmd_file(&self) -> &Path {
         &self.jd_cmd_file
     }
 
     /// Gets the path to the template.
-    pub fn get_template_path(&self) -> PathBuf {
+    pub fn template_path(&self) -> PathBuf {
         self.templates_folder.join(&self.template)
     }
 
     /// Gets the path to the templates folder.
-    pub fn get_templates_folder(&self) -> &Path {
+    pub fn templates_folder(&self) -> &Path {
         &self.templates_folder
     }
 
     /// Gets the name of the template.
-    pub fn get_template_name(&self) -> &str {
+    pub fn template_name(&self) -> &str {
         &self.template
     }
 
     /// Returns the path to the `rules_json`.
-    pub fn get_rules_json(&self) -> &Path {
+    pub fn rules_json(&self) -> &Path {
         &self.rules_json
     }
 
     /// Returns the criticality of the `unknown_permission` field.
-    pub fn get_unknown_permission_criticality(&self) -> Criticality {
+    pub fn unknown_permission_criticality(&self) -> Criticality {
         self.unknown_permission.0
     }
 
     /// Returns the description of the `unknown_permission` field.
-    pub fn get_unknown_permission_description(&self) -> &str {
+    pub fn unknown_permission_description(&self) -> &str {
         self.unknown_permission.1.as_str()
     }
 
     /// Returns the loaded `permissions`.
-    pub fn get_permissions(&self) -> Iter<PermissionConfig> {
+    pub fn permissions(&self) -> Iter<Permission> {
         self.permissions.iter()
     }
 
     /// Returns the default `Config` struct.
-    fn local_default() -> Config {
-        Config {
+    fn local_default() -> Self {
+        Self {
             app_packages: Vec::new(),
             verbose: false,
             quiet: false,
@@ -546,13 +550,13 @@ impl Config {
 impl Default for Config {
     /// Creates the default `Config` struct in Unix systems.
     #[cfg(target_family = "unix")]
-    fn default() -> Config {
-        let mut config = Config::local_default();
+    fn default() -> Self {
+        let mut config = Self::local_default();
         let etc_rules = PathBuf::from("/etc/super-analyzer/rules.json");
         if etc_rules.exists() {
             config.rules_json = etc_rules;
         }
-        let share_path = Path::new(if cfg!(target_os = "macos") {
+        let share_path = Path::new(if cfg!(taros = "macos") {
             "/usr/local/super-analyzer"
         } else {
             "/usr/share/super-analyzer"
@@ -567,7 +571,7 @@ impl Default for Config {
 
     /// Creates the default `Config` struct in Windows systems.
     #[cfg(target_family = "windows")]
-    fn default() -> Config {
+    fn default() -> Self {
         Config::local_default()
     }
 }
@@ -577,10 +581,9 @@ impl Default for Config {
 /// Represents a Permission with all its fields. Implements the `PartialEq` and `PartialOrd`
 /// traits.
 #[derive(Debug, Ord, Eq, Deserialize)]
-pub struct PermissionConfig {
+pub struct Permission {
     /// Permission name.
-    #[serde(rename = "name")]
-    permission: Permission,
+    name: manifest::Permission,
     /// Permission criticality.
     criticality: Criticality,
     /// Permission label.
@@ -589,50 +592,45 @@ pub struct PermissionConfig {
     description: String,
 }
 
-impl PartialEq for PermissionConfig {
-    fn eq(&self, other: &PermissionConfig) -> bool {
-        self.permission == other.permission
+impl PartialEq for Permission {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
     }
 }
 
-impl PartialOrd for PermissionConfig {
-    fn partial_cmp(&self, other: &PermissionConfig) -> Option<Ordering> {
-        if self.permission < other.permission {
-            Some(Ordering::Less)
-        } else if self.permission > other.permission {
-            Some(Ordering::Greater)
-        } else {
-            Some(Ordering::Equal)
-        }
+impl PartialOrd for Permission {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.name.cmp(&other.name))
     }
 }
 
-impl PermissionConfig {
-    /// Returns the enum that represents the `permission`.
-    pub fn get_permission(&self) -> Permission {
-        self.permission
+impl Permission {
+    /// Returns the enum that represents the `name`.
+    pub fn name(&self) -> manifest::Permission {
+        self.name
     }
 
     /// Returns the permission's `criticality`.
-    pub fn get_criticality(&self) -> Criticality {
+    pub fn criticality(&self) -> Criticality {
         self.criticality
     }
 
     /// Returns the permission's `label`.
-    pub fn get_label(&self) -> &str {
+    pub fn label(&self) -> &str {
         self.label.as_str()
     }
 
     /// Returns the permission's `description`.
-    pub fn get_description(&self) -> &str {
+    pub fn description(&self) -> &str {
         self.description.as_str()
     }
 }
 
+/// Test module for the configuration.
 #[cfg(test)]
 mod tests {
     use criticality::Criticality;
-    use static_analysis::manifest::Permission;
+    use static_analysis::manifest;
     use super::Config;
     use std::fs;
     use std::path::{Path, PathBuf};
@@ -644,20 +642,20 @@ mod tests {
         let mut config = Config::default();
 
         // Check that the properties of the config object are correct.
-        assert!(config.get_app_packages().is_empty());
+        assert!(config.app_packages().is_empty());
         assert!(!config.is_verbose());
         assert!(!config.is_quiet());
         assert!(!config.is_force());
         assert!(!config.is_bench());
         assert!(!config.is_open());
-        assert_eq!(config.get_threads(), 2);
+        assert_eq!(config.threads(), 2);
         assert_eq!(config.downloads_folder, Path::new("."));
-        assert_eq!(config.get_dist_folder(), Path::new("dist"));
-        assert_eq!(config.get_results_folder(), Path::new("results"));
-        assert_eq!(config.get_template_name(), "super");
-        let share_path = Path::new(if cfg!(target_os = "macos") {
+        assert_eq!(config.dist_folder(), Path::new("dist"));
+        assert_eq!(config.results_folder(), Path::new("results"));
+        assert_eq!(config.template_name(), "super");
+        let share_path = Path::new(if cfg!(taros = "macos") {
             "/usr/local/super-analyzer"
-        } else if cfg!(target_family = "windows") {
+        } else if cfg!(tarfamily = "windows") {
             ""
         } else {
             "/usr/share/super-analyzer"
@@ -668,45 +666,42 @@ mod tests {
             Path::new("")
         };
         assert_eq!(
-            config.get_dex2jar_folder(),
+            config.dex2jar_folder(),
             share_path.join("vendor").join("dex2jar-2.1-SNAPSHOT")
         );
         assert_eq!(
-            config.get_jd_cmd_file(),
+            config.jd_cmd_file(),
             share_path.join("vendor").join("jd-cmd.jar")
         );
-        assert_eq!(config.get_templates_folder(), share_path.join("templates"));
+        assert_eq!(config.templates_folder(), share_path.join("templates"));
         assert_eq!(
-            config.get_template_path(),
+            config.template_path(),
             share_path.join("templates").join("super")
         );
-        if cfg!(target_family = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
+        if cfg!(tarfamily = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
             assert_eq!(
-                config.get_rules_json(),
+                config.rules_json(),
                 Path::new("/etc/super-analyzer/rules.json")
             );
         } else {
-            assert_eq!(config.get_rules_json(), Path::new("rules.json"));
+            assert_eq!(config.rules_json(), Path::new("rules.json"));
         }
+        assert_eq!(config.unknown_permission_criticality(), Criticality::Low);
         assert_eq!(
-            config.get_unknown_permission_criticality(),
-            Criticality::Low
-        );
-        assert_eq!(
-            config.get_unknown_permission_description(),
+            config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
                     since it can lead to missunderstanding between developers."
         );
-        assert_eq!(config.get_permissions().next(), None);
+        assert_eq!(config.permissions().next(), None);
 
         if !config.downloads_folder.exists() {
             fs::create_dir(&config.downloads_folder).unwrap();
         }
-        if !config.get_dist_folder().exists() {
-            fs::create_dir(config.get_dist_folder()).unwrap();
+        if !config.dist_folder().exists() {
+            fs::create_dir(config.dist_folder()).unwrap();
         }
-        if !config.get_results_folder().exists() {
-            fs::create_dir(config.get_results_folder()).unwrap();
+        if !config.results_folder().exists() {
+            fs::create_dir(config.results_folder()).unwrap();
         }
 
         // Change properties.
@@ -718,7 +713,7 @@ mod tests {
         config.open = true;
 
         // Check that the new properties are correct.
-        let packages = config.get_app_packages();
+        let packages = config.app_packages();
         assert_eq!(&packages[0], &config.downloads_folder.join("test_app.apk"));
         assert!(config.is_verbose());
         assert!(config.is_quiet());
@@ -755,50 +750,47 @@ mod tests {
         config.add_app_package("test_app");
 
         // Check that the properties of the config object are correct.
-        assert_eq!(config.get_threads(), 2);
+        assert_eq!(config.threads(), 2);
         assert_eq!(config.downloads_folder, Path::new("downloads"));
-        assert_eq!(config.get_dist_folder(), Path::new("dist"));
-        assert_eq!(config.get_results_folder(), Path::new("results"));
+        assert_eq!(config.dist_folder(), Path::new("dist"));
+        assert_eq!(config.results_folder(), Path::new("results"));
         assert_eq!(
-            config.get_dex2jar_folder(),
+            config.dex2jar_folder(),
             Path::new("/usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT")
         );
         assert_eq!(
-            config.get_jd_cmd_file(),
+            config.jd_cmd_file(),
             Path::new("/usr/share/super-analyzer/vendor/jd-cmd.jar")
         );
         assert_eq!(
-            config.get_templates_folder(),
+            config.templates_folder(),
             Path::new("/usr/share/super-analyzer/templates")
         );
         assert_eq!(
-            config.get_template_path(),
+            config.template_path(),
             Path::new("/usr/share/super-analyzer/templates/super")
         );
-        assert_eq!(config.get_template_name(), "super");
+        assert_eq!(config.template_name(), "super");
         assert_eq!(
-            config.get_rules_json(),
+            config.rules_json(),
             Path::new("/etc/super-analyzer/rules.json")
         );
+        assert_eq!(config.unknown_permission_criticality(), Criticality::Low);
         assert_eq!(
-            config.get_unknown_permission_criticality(),
-            Criticality::Low
-        );
-        assert_eq!(
-            config.get_unknown_permission_description(),
+            config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
                     since it can lead to missunderstanding between developers."
         );
 
-        let permission = config.get_permissions().next().unwrap();
+        let permission = config.permissions().next().unwrap();
         assert_eq!(
-            permission.get_permission(),
-            Permission::AndroidPermissionInternet
+            permission.name(),
+            manifest::Permission::AndroidPermissionInternet
         );
-        assert_eq!(permission.get_criticality(), Criticality::Warning);
-        assert_eq!(permission.get_label(), "Internet permission");
+        assert_eq!(permission.criticality(), Criticality::Warning);
+        assert_eq!(permission.label(), "Internet permission");
         assert_eq!(
-            permission.get_description(),
+            permission.description(),
             "Allows the app to create network sockets and use custom network protocols. \
                     The browser and other applications provide means to send data to the \
                     internet, so this permission is not required to send data to the internet. \

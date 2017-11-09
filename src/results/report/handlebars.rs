@@ -1,5 +1,7 @@
+//! Handlebars report generation module.
+
 use std::path::PathBuf;
-use results::report::Report;
+use results::report::Generator;
 use results::Results;
 use config::Config;
 use std::io::{Read, Write};
@@ -16,18 +18,22 @@ use std::collections::BTreeMap;
 use std::path::Path;
 use error::*;
 
-pub struct HandlebarsReport {
+/// Handlebars report generator.
+pub struct Report {
+    /// Handlebars template structure.
     handler: Handlebars,
+    /// Package name.
     package: String,
 }
 
-impl HandlebarsReport {
+impl Report {
+    /// Creates a new handlebars report generator.
     pub fn new(template_path: PathBuf, package: String) -> Result<Self> {
         let handlebars_handler = Self::load_templates(template_path).chain_err(
             || "Could not load handlebars templates",
         )?;
 
-        let report = HandlebarsReport {
+        let report = Self {
             handler: handlebars_handler,
             package: package,
         };
@@ -35,6 +41,8 @@ impl HandlebarsReport {
         Ok(report)
     }
 
+    /// Loads templates from the given path.
+    #[allow(box_pointers)]
     fn load_templates(template_path: PathBuf) -> Result<Handlebars> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());
@@ -88,13 +96,14 @@ impl HandlebarsReport {
         }
     }
 
+    /// Generates the HTML files for the code.
     fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<()> {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
         let mut f = File::create(
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join("index.html"),
         )?;
@@ -106,6 +115,7 @@ impl HandlebarsReport {
         Ok(())
     }
 
+    /// Generates a folder with HTML files with the source code of the application.
     fn generate_code_html_folder<P: AsRef<Path>>(
         &self,
         path: P,
@@ -118,14 +128,12 @@ impl HandlebarsReport {
         {
             return Ok(Vec::new());
         }
-        let dir_iter = fs::read_dir(config.get_dist_folder().join(&self.package).join(
-            path.as_ref(),
-        ))?;
+        let dir_iter = fs::read_dir(config.dist_folder().join(&self.package).join(path.as_ref()))?;
 
         fs::create_dir_all(
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join(path.as_ref()),
         )?;
@@ -135,7 +143,7 @@ impl HandlebarsReport {
             let entry = entry?;
             let path = entry.path();
 
-            let prefix = config.get_dist_folder().join(&self.package);
+            let prefix = config.dist_folder().join(&self.package);
             let stripped = path.strip_prefix(&prefix).unwrap();
 
             if path.is_dir() {
@@ -143,8 +151,8 @@ impl HandlebarsReport {
                     let inner_menu = self.generate_code_html_folder(stripped, config, results)?;
                     if inner_menu.is_empty() {
                         let path = config
-                            .get_results_folder()
-                            .join(&results.get_app_package())
+                            .results_folder()
+                            .join(&results.app_package())
                             .join("src")
                             .join(stripped);
                         if path.exists() {
@@ -189,6 +197,7 @@ impl HandlebarsReport {
         Ok(menu)
     }
 
+    /// Generates an HTML file with source code for the given path.
     fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(
         &self,
         path: P,
@@ -196,17 +205,14 @@ impl HandlebarsReport {
         results: &Results,
         cli_package_name: S,
     ) -> Result<()> {
-        let mut f_in = File::open(
-            config
-                .get_dist_folder()
-                .join(cli_package_name.as_ref())
-                .join(path.as_ref()),
-        )?;
+        let mut f_in = File::open(config.dist_folder().join(cli_package_name.as_ref()).join(
+            path.as_ref(),
+        ))?;
         let mut f_out = File::create(format!(
             "{}.html",
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join(path.as_ref())
                 .display()
@@ -236,17 +242,15 @@ impl HandlebarsReport {
     }
 }
 
-impl Report for HandlebarsReport {
+impl Generator for Report {
+    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
     fn generate(&mut self, config: &Config, results: &Results) -> Result<()> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = File::create(
-            config
-                .get_results_folder()
-                .join(&results.app_package)
-                .join("index.html"),
-        )?;
+        let mut f = File::create(config.results_folder().join(&results.app_package).join(
+            "index.html",
+        ))?;
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
@@ -255,16 +259,15 @@ impl Report for HandlebarsReport {
             self.handler.render("report", results)?.as_bytes(),
         )?;
 
-        for entry in fs::read_dir(config.get_template_path())? {
+        for entry in fs::read_dir(config.template_path())? {
             let entry = entry?;
             let entry_path = entry.path();
             if entry.file_type()?.is_dir() {
                 copy_folder(
                     &entry_path,
-                    &config
-                        .get_results_folder()
-                        .join(&results.get_app_package())
-                        .join(entry_path.file_name().unwrap()),
+                    &config.results_folder().join(&results.app_package()).join(
+                        entry_path.file_name().unwrap(),
+                    ),
                 )?;
             } else {
                 match entry_path.as_path().extension() {
@@ -273,7 +276,7 @@ impl Report for HandlebarsReport {
                     _ => {
                         let _ = fs::copy(
                             &entry_path,
-                            &config.get_results_folder().join(&results.get_app_package()),
+                            &config.results_folder().join(&results.app_package()),
                         )?;
                     }
                 }
