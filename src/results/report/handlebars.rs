@@ -1,6 +1,5 @@
 //! Handlebars report generation module.
 
-use std::path::PathBuf;
 use results::report::Generator;
 use results::Results;
 use config::Config;
@@ -28,14 +27,14 @@ pub struct Report {
 
 impl Report {
     /// Creates a new handlebars report generator.
-    pub fn new(template_path: PathBuf, package: String) -> Result<Self> {
+    pub fn new<P: AsRef<Path>, S: Into<String>>(template_path: P, package: S) -> Result<Self> {
         let handlebars_handler = Self::load_templates(template_path).chain_err(
             || "Could not load handlebars templates",
         )?;
 
         let report = Self {
             handler: handlebars_handler,
-            package: package,
+            package: package.into(),
         };
 
         Ok(report)
@@ -43,7 +42,7 @@ impl Report {
 
     /// Loads templates from the given path.
     #[allow(box_pointers)]
-    fn load_templates(template_path: PathBuf) -> Result<Handlebars> {
+    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());
         let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
@@ -286,5 +285,24 @@ impl Generator for Report {
         self.generate_code_html_files(config, results)?;
 
         Ok(())
+    }
+}
+
+/// Handlebars templates testing module.
+#[cfg(test)]
+mod test {
+    use super::*;
+    use config::Config;
+
+    /// Test the creation of a new report.
+    #[test]
+    fn it_new() {
+        let _ = Report::new(&Config::default().template_path(), "test".to_owned()).unwrap();
+    }
+
+    /// Tests handlebars template loading.
+    #[test]
+    fn it_load_templates() {
+        let _ = Report::load_templates(&Config::default().template_path()).unwrap();
     }
 }

@@ -158,8 +158,8 @@ impl ConfigDeserializer {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn from_file(config_path: &PathBuf) -> Result<Self> {
-        let cfg_result: Result<Self> = fs::File::open(config_path)
+    pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self> {
+        let cfg_result: Result<Self> = fs::File::open(config_path.as_ref())
             .chain_err(|| "Could not open file")
             .and_then(|mut f| {
                 let mut toml = String::new();
@@ -171,12 +171,14 @@ impl Config {
                 toml::from_str(&file_content).chain_err(|| {
                     format!(
                         "Could not decode config file: {}. Using default.",
-                        config_path.to_string_lossy()
+                        config_path.as_ref().to_string_lossy()
                     )
                 })
             })
             .and_then(|mut new_config: Self| {
-                new_config.loaded_files.push(config_path.clone());
+                new_config.loaded_files.push(
+                    config_path.as_ref().to_path_buf(),
+                );
 
                 Ok(new_config)
             });
