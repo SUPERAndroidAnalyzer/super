@@ -32,12 +32,10 @@ impl Report {
             || "Could not load handlebars templates",
         )?;
 
-        let report = Self {
+        Ok(Self {
             handler: handlebars_handler,
             package: package.into(),
-        };
-
-        Ok(report)
+        })
     }
 
     /// Loads templates from the given path.
@@ -297,7 +295,13 @@ mod test {
     /// Test the creation of a new report.
     #[test]
     fn it_new() {
-        let _ = Report::new(&Config::default().template_path(), "test".to_owned()).unwrap();
+        let _ = Report::new(&Config::default().template_path(), "test").unwrap();
+    }
+
+    /// Test the failure of the creation of an invalid new report.
+    #[test]
+    fn it_new_failure() {
+        assert!(Report::new("random path", "test").is_err());
     }
 
     /// Tests handlebars template loading.
