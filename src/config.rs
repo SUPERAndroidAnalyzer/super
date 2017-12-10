@@ -379,7 +379,7 @@ impl Config {
     }
 
     /// Adds a package to check.
-    fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
+    pub(crate) fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
             let updated = package_path.set_extension("apk");

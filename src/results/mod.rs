@@ -170,39 +170,45 @@ impl Results {
     }
 
     /// Adds a vulnerability to the results.
+    #[allow(unused_variables)] // Until we remove the debug assertions
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticality() {
             Criticality::Warning => {
-                let present = self.warnings.insert(vuln);
-                debug_assert!(!present, "trying to insert the same warning twice");
+                let new = self.warnings.insert(vuln);
+                // FIXME should we maintain it?
+                //debug_assert!(new, "trying to insert the same warning twice");
             }
             Criticality::Low => {
-                let present = self.low.insert(vuln);
-                debug_assert!(
-                    !present,
-                    "trying to insert the same low criticality vulnerability twice"
-                );
+                let new = self.low.insert(vuln);
+                // FIXME should we maintain it?
+                // debug_assert!(
+                //     new,
+                //     "trying to insert the same low criticality vulnerability twice"
+                // );
             }
             Criticality::Medium => {
-                let present = self.medium.insert(vuln);
-                debug_assert!(
-                    !present,
-                    "trying to insert the same medium criticalityvulnerability twice"
-                );
+                let new = self.medium.insert(vuln);
+                // FIXME should we maintain it?
+                // debug_assert!(
+                //     new,
+                //     "trying to insert the same medium criticalityvulnerability twice"
+                // );
             }
             Criticality::High => {
-                let present = self.high.insert(vuln);
-                debug_assert!(
-                    !present,
-                    "trying to insert the same high criticality vulnerability twice"
-                );
+                let new = self.high.insert(vuln);
+                // FIXME should we maintain it?
+                // debug_assert!(
+                //     new,
+                //     "trying to insert the same high criticality vulnerability twice"
+                // );
             }
             Criticality::Critical => {
-                let present = self.critical.insert(vuln);
-                debug_assert!(
-                    !present,
-                    "trying to insert the same critical vulnerability twice"
-                );
+                let new = self.critical.insert(vuln.clone());
+                // FIXME should we maintain it?
+                // debug_assert!(
+                //     new,
+                //     "trying to insert the same critical vulnerability twice"
+                // );
             }
         }
     }

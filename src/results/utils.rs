@@ -12,7 +12,7 @@ use std::borrow::Cow;
 
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use {md5, sha1, sha2};
-use rustc_serialize::hex::ToHex;
+use hex::ToHex;
 use regex::Regex;
 
 use error::*;
@@ -194,7 +194,13 @@ impl Serialize for FingerPrint {
             &format!("{:x}", self.md5),
         )?;
         ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
-        ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
+        let mut sha256_hex = String::new();
+        // It should never fail, we are writing directly to memory, without I/O access
+        // That's why the `expect()` should never panic.
+        self.sha256.write_hex(&mut sha256_hex).expect(
+            "the SHA-256 fingerprinting of the application failed",
+        );
+        ser_struct.serialize_field("sha256", &sha256_hex)?;
         ser_struct.end()
     }
 }

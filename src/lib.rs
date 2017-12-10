@@ -21,7 +21,6 @@ extern crate toml;
 extern crate regex;
 #[macro_use]
 extern crate lazy_static;
-extern crate rustc_serialize;
 extern crate open;
 extern crate bytecount;
 extern crate handlebars;
@@ -35,6 +34,7 @@ extern crate md5;
 extern crate sha1;
 extern crate sha2;
 extern crate semver;
+extern crate hex;
 
 mod error;
 /// Command Line Interface
@@ -337,8 +337,16 @@ pub fn initialize_logger(is_verbose: bool) {
 
 #[cfg(test)]
 mod tests {
+    extern crate reqwest;
+
+    use super::*;
+    use config::Config;
     use criticality::Criticality;
+
     use std::str::FromStr;
+    use std::fs;
+    use std::path::Path;
+    use std::collections::BTreeMap;
 
     #[test]
     fn it_criticality() {
@@ -411,5 +419,37 @@ mod tests {
         assert_eq!(format!("{:?}", Criticality::Medium).as_str(), "Medium");
         assert_eq!(format!("{:?}", Criticality::High).as_str(), "High");
         assert_eq!(format!("{:?}", Criticality::Critical).as_str(), "Critical");
+    }
+
+    /// General package analysis test.
+    #[test]
+    #[ignore]
+    fn it_analyze_package() {
+        let need_to_create = !Path::new("downloads").exists();
+        if need_to_create {
+            fs::create_dir("downloads").unwrap();
+        }
+        let mut apk_file = fs::File::create("downloads/test_app.apk").unwrap();
+
+        let _ = reqwest::get(
+            "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
+             com.javiersantos.mlmanager_1.0.4.1.apk",
+        ).unwrap()
+            .copy_to(&mut apk_file)
+            .unwrap();
+
+        let mut benchmarks = BTreeMap::new();
+        let mut config = Config::from_file("config.toml").unwrap();
+        config.add_app_package("downloads/test_app");
+
+        analyze_package("downloads/test_app.apk", &mut config, &mut benchmarks).unwrap();
+
+        if need_to_create {
+            fs::remove_dir_all("downloads").unwrap();
+        } else {
+            fs::remove_file("downloads/test_app.apk").unwrap();
+        }
+        fs::remove_dir_all("dist").unwrap();
+        fs::remove_dir_all("results").unwrap();
     }
 }
