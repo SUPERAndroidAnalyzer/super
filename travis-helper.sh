@@ -28,7 +28,7 @@ elif [ "$action" = "dep_run" ]; then
 
 elif [ "$action" = "fmt_run" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-      cargo fmt --all --verbose -- --write-mode=diff
+      cargo fmt --verbose -- --write-mode=diff
   fi
 
 elif [ "$action" = "upload_code_coverage" ]; then
