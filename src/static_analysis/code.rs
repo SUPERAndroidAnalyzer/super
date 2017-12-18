@@ -1,5 +1,5 @@
 use std::fs;
-use std::fs::{File, DirEntry};
+use std::fs::{DirEntry, File};
 use std::io::Read;
 use std::str::FromStr;
 use std::path::Path;
@@ -14,9 +14,9 @@ use serde_json::value::Value;
 use regex::Regex;
 use colored::Colorize;
 
-use {Config, print_warning, print_vulnerability, get_code};
+use {get_code, print_vulnerability, print_warning, Config};
 use results::{Results, Vulnerability};
-use super::manifest::{Permission, Manifest};
+use super::manifest::{Manifest, Permission};
 use error::*;
 use criticality::Criticality;
 
@@ -42,7 +42,7 @@ pub fn analysis<S: AsRef<str>>(
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!(
             "An error occurred when reading files for analysis, the results \
-                               might be incomplete. Error: {}",
+             might be incomplete. Error: {}",
             e.description()
         ));
     }
@@ -83,11 +83,10 @@ pub fn analysis<S: AsRef<str>>(
                             &thread_rules,
                             &thread_manifest,
                             &thread_vulns,
-                        )
-                        {
+                        ) {
                             print_warning(format!(
                                 "Error analyzing file {}. The analysis will \
-                                                   continue, though. Error: {}",
+                                 continue, though. Error: {}",
                                 f.path().display(),
                                 e.description()
                             ))
@@ -107,7 +106,6 @@ pub fn analysis<S: AsRef<str>>(
             Err(_) => 1,
         } > 0
         {
-
             let left = match files.lock() {
                 Ok(f) => f.len(),
                 Err(_) => continue,
@@ -156,8 +154,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     let _ = f.read_to_string(&mut code)?;
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.max_sdk().is_some() &&
-            rule.max_sdk().unwrap() < manifest.as_ref().unwrap().min_sdk()
+        if manifest.is_some() && rule.max_sdk().is_some()
+            && rule.max_sdk().unwrap() < manifest.as_ref().unwrap().min_sdk()
         {
             continue 'check;
         }
@@ -171,8 +169,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
         }
 
         for permission in rule.permissions() {
-            if manifest.is_none() ||
-                !manifest
+            if manifest.is_none()
+                || !manifest
                     .as_ref()
                     .unwrap()
                     .permission_checklist()
@@ -225,8 +223,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                         Err(e) => {
                             print_warning(format!(
                                 "There was an error creating the \
-                                                   forward_check '{}'. The rule will be \
-                                                   skipped. {}",
+                                 forward_check '{}'. The rule will be \
+                                 skipped. {}",
                                 r,
                                 e.description()
                             ));
@@ -277,9 +275,9 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     package: S,
     config: &Config,
 ) -> Result<()> {
-    if path.as_ref() == Path::new("classes/android") ||
-        path.as_ref() == Path::new("classes/com/google/android/gms") ||
-        path.as_ref() == Path::new("smali")
+    if path.as_ref() == Path::new("classes/android")
+        || path.as_ref() == Path::new("classes/com/google/android/gms")
+        || path.as_ref() == Path::new("smali")
     {
         return Ok(());
     }
@@ -310,8 +308,8 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
             )?;
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
-            if filename != "AndroidManifest.xml" && filename != "R.java" &&
-                !filename.starts_with("R$")
+            if filename != "AndroidManifest.xml" && filename != "R.java"
+                && !filename.starts_with("R$")
             {
                 match f_ext.unwrap().to_string_lossy().borrow() {
                     "xml" | "java" => vec.push(f),
@@ -413,18 +411,18 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     for rule in rules_json {
         let format_warning = format!(
             "Rules must be objects with the following structure:\n{}\nAn \
-                     optional {} attribute can be added: an array of regular expressions that if \
-                     matched, the found match will be discarded. You can also include an optional \
-                     {} attribute: an array of the permissions needed for this rule to be checked. \
-                     And finally, an optional {} attribute can be added where you can specify a \
-                     second regular expression to check if the one in the {} attribute matches. \
-                     You can add one or two capture groups with name from the match to this \
-                     check, with names {} and {}. To use them you have to include {} or {} in \
-                     the forward check.",
+             optional {} attribute can be added: an array of regular expressions that if \
+             matched, the found match will be discarded. You can also include an optional \
+             {} attribute: an array of the permissions needed for this rule to be checked. \
+             And finally, an optional {} attribute can be added where you can specify a \
+             second regular expression to check if the one in the {} attribute matches. \
+             You can add one or two capture groups with name from the match to this \
+             check, with names {} and {}. To use them you have to include {} or {} in \
+             the forward check.",
             "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
-                     description for this rule\"\n\t\"criticality\": \
-                     \"warning|low|medium|high|critical\"\n\t\"regex\": \
-                     \"regex_to_find_vulnerability\"\n}"
+             description for this rule\"\n\t\"criticality\": \
+             \"warning|low|medium|high|critical\"\n\t\"regex\": \
+             \"regex_to_find_vulnerability\"\n}"
                 .italic(),
             "whitelist".italic(),
             "permissions".italic(),
@@ -453,7 +451,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 Err(e) => {
                     print_warning(format!(
                         "An error occurred when compiling the regular \
-                                           expresion: {}",
+                         expresion: {}",
                         e.description()
                     ));
                     return Err(ErrorKind::Parse.into());
@@ -507,8 +505,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             if !s.contains("{fc1}") {
                                 print_warning(
                                     "You must provide the '{fc1}' string where you \
-                                               want the 'fc1' capture to be inserted in the \
-                                               forward check.",
+                                     want the 'fc1' capture to be inserted in the \
+                                     forward check.",
                                 );
                                 return Err(ErrorKind::Parse.into());
                             }
@@ -517,8 +515,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             if !s.contains("{fc2}") {
                                 print_warning(
                                     "You must provide the '{fc2}' string where you \
-                                               want the 'fc2' capture to be inserted in the \
-                                               forward check.",
+                                     want the 'fc2' capture to be inserted in the \
+                                     forward check.",
                                 );
                                 return Err(ErrorKind::Parse.into());
                             }
@@ -528,12 +526,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 }
 
                 let mut capture_names = regex.capture_names();
-                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2") &&
-                    !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1")
+                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2")
+                    && !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1")
                 {
                     print_warning(
                         "You must have a capture group named fc1 to use the capture \
-                                   fc2.",
+                         fc2.",
                     );
                     return Err(ErrorKind::Parse.into());
                 }
@@ -591,7 +589,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             Err(e) => {
                                 print_warning(format!(
                                     "An error occurred when compiling the \
-                                                       regular expresion: {}",
+                                     regular expresion: {}",
                                     e.description()
                                 ));
                                 return Err(ErrorKind::Parse.into());
@@ -620,7 +618,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!(
                             "An error ocurred when compiling the inclusion \
-                                               regular expresion: {}",
+                             regular expresion: {}",
                             e.description()
                         ));
                         None
@@ -637,7 +635,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Err(e) => {
                         print_warning(format!(
                             "An error ocurred when compiling the exclusion \
-                                               regular expresion: {}",
+                             regular expresion: {}",
                             e.description()
                         ));
                         None
@@ -667,7 +665,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 #[cfg(test)]
 mod tests {
     use regex::Regex;
-    use super::{Rule, load_rules};
+    use super::{load_rules, Rule};
     use config::Config;
     use criticality::Criticality;
 
@@ -922,13 +920,13 @@ mod tests {
 
         let should_match = &[
             "Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
-                              \" + messageToShow);",
+             \" + messageToShow);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
         ];
 
         let should_not_match = &[
@@ -1163,7 +1161,7 @@ mod tests {
 
         let should_match = &[
             "onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
-                              error)             .proceed();",
+             error)             .proceed();",
         ];
 
         let should_not_match = &["", "", "", ""];
@@ -1185,11 +1183,11 @@ mod tests {
 
         let should_match = &[
             "android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
-                              ('\" + paramView.getText().toString() + \"', '\" + \
-                              localEditText.getText().toString() + \"');\");",
+             ('\" + paramView.getText().toString() + \"', '\" + \
+             localEditText.getText().toString() + \"');\");",
             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES \
-                              ('\" + paramView.getText().toString() + \"', '\" + \
-                              localEditText.getText().toString() + \"');\");",
+             ('\" + paramView.getText().toString() + \"', '\" + \
+             localEditText.getText().toString() + \"');\");",
         ];
 
         let should_not_match = &[
@@ -1247,12 +1245,12 @@ mod tests {
 
         let should_match = &[
             "telephony.SmsManager  sendMultipartTextMessage(String \
-                              destinationAddress, String scAddress, ArrayList<String> parts, \
-                              ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
-                              deliveryIntents)",
+             destinationAddress, String scAddress, ArrayList<String> parts, \
+             ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
+             deliveryIntents)",
             "telephony.SmsManager  sendTextMessage(String destinationAddress, \
-                              String scAddress, String text, PendingIntent sentIntent, \
-                              PendingIntent deliveryIntent)",
+             String scAddress, String text, PendingIntent sentIntent, \
+             PendingIntent deliveryIntent)",
             "telephony.SmsManager  vnd.android-dir/mms-sms",
             "telephony.SmsManager  vnd.android-dir/mms-sms",
         ];
@@ -1260,11 +1258,11 @@ mod tests {
         let should_not_match = &[
             "vnd.android-dir/mms-sms",
             "sendTextMessage(String destinationAddress, String scAddress, \
-                                  String text, PendingIntent sentIntent, PendingIntent \
-                                  deliveryIntent)",
+             String text, PendingIntent sentIntent, PendingIntent \
+             deliveryIntent)",
             " sendMultipartTextMessage(String destinationAddress, String \
-                                  scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
-                                  sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+             scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
+             sentIntents, ArrayList<PendingIntent> deliveryIntents)",
             "telephony.SmsManager ",
         ];
 
@@ -1512,7 +1510,7 @@ mod tests {
             "\"    key.pub    ",
             "\"    cert.pub   ",
             "     throw new IllegalArgumentException(\"translateAPI.key is not \
-                              specified\");",
+             specified\");",
         ];
 
         let should_not_match = &[
@@ -1635,7 +1633,7 @@ mod tests {
 
         let should_match = &[
             " javax.net.ssl.SSLSocketFactory                 \
-                              SSLSocketFactory.getInsecure()",
+             SSLSocketFactory.getInsecure()",
         ];
 
         let should_not_match = &[

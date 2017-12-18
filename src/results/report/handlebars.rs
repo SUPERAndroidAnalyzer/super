@@ -28,9 +28,8 @@ pub struct Report {
 impl Report {
     /// Creates a new handlebars report generator.
     pub fn new<P: AsRef<Path>, S: Into<String>>(template_path: P, package: S) -> Result<Self> {
-        let handlebars_handler = Self::load_templates(template_path).chain_err(
-            || "Could not load handlebars templates",
-        )?;
+        let handlebars_handler = Self::load_templates(template_path)
+            .chain_err(|| "Could not load handlebars templates")?;
 
         Ok(Self {
             handler: handlebars_handler,
@@ -68,7 +67,6 @@ impl Report {
                             })
                         })?;
 
-
                     handlebars
                         .register_template_file(template_file, dir_entry.path())
                         .chain_err(|| "Error registering template file")?;
@@ -76,9 +74,8 @@ impl Report {
             }
         }
 
-        if handlebars.get_template("report").is_none() ||
-            handlebars.get_template("src").is_none() ||
-            handlebars.get_template("code").is_none()
+        if handlebars.get_template("report").is_none() || handlebars.get_template("src").is_none()
+            || handlebars.get_template("code").is_none()
         {
             let message = format!(
                 "templates must include {}, {} and {} templates",
@@ -119,9 +116,9 @@ impl Report {
         config: &Config,
         results: &Results,
     ) -> Result<Vec<Value>> {
-        if path.as_ref() == Path::new("classes/android") ||
-            path.as_ref() == Path::new("classes/com/google/android/gms") ||
-            path.as_ref() == Path::new("smali")
+        if path.as_ref() == Path::new("classes/android")
+            || path.as_ref() == Path::new("classes/com/google/android/gms")
+            || path.as_ref() == Path::new("smali")
         {
             return Ok(Vec::new());
         }
@@ -167,12 +164,7 @@ impl Report {
             } else {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
-                        self.generate_code_html_for(
-                            &stripped,
-                            config,
-                            results,
-                            &self.package,
-                        )?;
+                        self.generate_code_html_for(&stripped, config, results, &self.package)?;
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = Map::with_capacity(3);
                         let _ = data.insert("name".to_owned(), Value::String(name));
@@ -202,9 +194,12 @@ impl Report {
         results: &Results,
         cli_package_name: S,
     ) -> Result<()> {
-        let mut f_in = File::open(config.dist_folder().join(cli_package_name.as_ref()).join(
-            path.as_ref(),
-        ))?;
+        let mut f_in = File::open(
+            config
+                .dist_folder()
+                .join(cli_package_name.as_ref())
+                .join(path.as_ref()),
+        )?;
         let mut f_out = File::create(format!(
             "{}.html",
             config
@@ -231,9 +226,7 @@ impl Report {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        f_out.write_all(
-            self.handler.render("code", &data)?.as_bytes(),
-        )?;
+        f_out.write_all(self.handler.render("code", &data)?.as_bytes())?;
 
         Ok(())
     }
@@ -245,16 +238,17 @@ impl Generator for Report {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
-        let mut f = File::create(config.results_folder().join(&results.app_package).join(
-            "index.html",
-        ))?;
+        let mut f = File::create(
+            config
+                .results_folder()
+                .join(&results.app_package)
+                .join("index.html"),
+        )?;
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        f.write_all(
-            self.handler.render("report", results)?.as_bytes(),
-        )?;
+        f.write_all(self.handler.render("report", results)?.as_bytes())?;
 
         for entry in fs::read_dir(config.template_path())? {
             let entry = entry?;
@@ -262,9 +256,10 @@ impl Generator for Report {
             if entry.file_type()?.is_dir() {
                 copy_folder(
                     &entry_path,
-                    &config.results_folder().join(&results.app_package()).join(
-                        entry_path.file_name().unwrap(),
-                    ),
+                    &config
+                        .results_folder()
+                        .join(&results.app_package())
+                        .join(entry_path.file_name().unwrap()),
                 )?;
             } else {
                 match entry_path.as_path().extension() {

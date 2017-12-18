@@ -1,6 +1,6 @@
 //! Android SDK numbering scheme.
 
-use semver::{Version, Identifier};
+use semver::{Identifier, Version};
 
 /// Android SDK number representation.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -290,8 +290,7 @@ impl SdkNumber {
                 build: vec![],
             }),
 
-            SdkNumber::Development |
-            SdkNumber::Unknown(_) => None,
+            SdkNumber::Development | SdkNumber::Unknown(_) => None,
         }
     }
 

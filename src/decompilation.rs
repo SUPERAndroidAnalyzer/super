@@ -11,13 +11,13 @@ use colored::Colorize;
 use abxml::apk::Apk;
 
 use error::*;
-use {Config, print_warning, get_package_name};
+use {get_package_name, print_warning, Config};
 
 /// Decompresses the application using `_Apktool_`.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
-    let path = config.dist_folder().join(
-        package.as_ref().file_stem().unwrap(),
-    );
+    let path = config
+        .dist_folder()
+        .join(package.as_ref().file_stem().unwrap());
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
@@ -27,7 +27,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             if let Err(e) = fs::remove_dir_all(&path) {
                 print_warning(format!(
                     "There was an error when removing the decompression \
-                                       folder: {}",
+                     folder: {}",
                     e.description()
                 ));
             }
@@ -39,9 +39,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref()).chain_err(
-            || "error loading apk file",
-        )?;
+        let mut apk = Apk::new(package.as_ref()).chain_err(|| "error loading apk file")?;
         apk.export(&path, true).chain_err(|| {
             format!(
                 "could not decompress the apk file. Tried to decompile at: {}",
@@ -63,7 +61,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
     } else if config.is_verbose() {
         println!(
             "Seems that the application has already been decompressed. There is no need to \
-                  do it again."
+             do it again."
         );
     } else {
         println!("Skipping decompression.");
@@ -105,12 +103,12 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         // and the status is always success. So the only difference is if we detect the actual
         // exception that was produced. But, the thing is that in some cases it does not return an
         // exception, so we have to check if errors such as "use certain option" occur.
-        if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1) ||
-            stderr.contains("use")
+        if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1)
+            || stderr.contains("use")
         {
             let message = format!(
                 "The {} to {} conversion command returned an error. More info: \
-                                 {}",
+                 {}",
                 ".dex".italic(),
                 ".jar".italic(),
                 stderr
@@ -135,7 +133,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
     } else if config.is_verbose() {
         println!(
             "Seems that there is already a {} file for the application. There is no need to \
-                  create it again.",
+             create it again.",
             ".jar".italic()
         );
     } else {
@@ -182,7 +180,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
     } else if config.is_verbose() {
         println!(
             "Seems that there is already a source folder for the application. There is no \
-                  need to decompile it again."
+             need to decompile it again."
         );
     } else {
         println!("Skipping decompilation.");

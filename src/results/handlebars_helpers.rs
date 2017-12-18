@@ -1,24 +1,24 @@
 use std::io::Write;
 
-use handlebars::{Helper, Handlebars, RenderContext, RenderError};
+use handlebars::{Handlebars, Helper, RenderContext, RenderError};
 use serde_json::Value;
 use bytecount::count;
 
-use super::utils::{split_indent, html_escape};
+use super::utils::{html_escape, split_indent};
 
 /// Generates a list of line numbers for the given vulnerability.
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
-    let vulnerability = h.param(0).and_then(|v| v.value().as_object()).ok_or_else(
-        || {
+    let vulnerability = h.param(0)
+        .and_then(|v| v.value().as_object())
+        .ok_or_else(|| {
             RenderError::new(
                 "to generate the vulnerability index, the first parameter must be a \
-                              vulnerability",
+                 vulnerability",
             )
-        },
-    )?;
+        })?;
     let line_separator = match h.param(1) {
         Some(s) => {
             if let Value::String(ref s) = *s.value() {
@@ -26,7 +26,7 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
             } else {
                 return Err(RenderError::new(
                     "the provided line separator for the code lines was \
-                                             not a string",
+                     not a string",
                 ));
             }
         }
@@ -44,9 +44,8 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
     let iter_start = if start_line > 5 { start_line - 4 } else { 1 };
     let iter_end = end_line + 5;
 
-    let mut rendered = String::with_capacity(
-        (line_separator.len() + 1) * (iter_end - iter_start) as usize,
-    );
+    let mut rendered =
+        String::with_capacity((line_separator.len() + 1) * (iter_end - iter_start) as usize);
     for l in iter_start..iter_end {
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
@@ -61,9 +60,9 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
-    let code = h.param(0).and_then(|v| v.value().as_str()).ok_or_else(|| {
-        RenderError::new("the code must be a string")
-    })?;
+    let code = h.param(0)
+        .and_then(|v| v.value().as_str())
+        .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
             if let Value::String(ref s) = *s.value() {
@@ -71,7 +70,7 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             } else {
                 return Err(RenderError::new(
                     "the provided line separator for the code lines was \
-                                             not a string",
+                     not a string",
                 ));
             }
         }
@@ -94,9 +93,9 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
-    let code = h.param(0).and_then(|v| v.value().as_str()).ok_or_else(|| {
-        RenderError::new("the code must be a string")
-    })?;
+    let code = h.param(0)
+        .and_then(|v| v.value().as_str())
+        .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
         Some(s) => {
             if let Value::String(ref s) = *s.value() {
@@ -104,7 +103,7 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
             } else {
                 return Err(RenderError::new(
                     "the provided line separator for the code lines was \
-                                             not a string",
+                     not a string",
                 ));
             }
         }
@@ -115,7 +114,7 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
         let (indent, line) = split_indent(line);
         let line = format!(
             "<code id=\"code-line-{}\">{}<span \
-                            class=\"line_body\">{}</span></code>{}",
+             class=\"line_body\">{}</span></code>{}",
             i + 1,
             indent,
             html_escape(line),
@@ -139,14 +138,14 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
 ///
 /// This enables easy styling of the code in templates.
 pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
-    let vulnerability = h.param(0).and_then(|v| v.value().as_object()).ok_or_else(
-        || {
+    let vulnerability = h.param(0)
+        .and_then(|v| v.value().as_object())
+        .ok_or_else(|| {
             RenderError::new(
                 "to generate the vulnerability index, the first parameter must be a \
-                              vulnerability",
+                 vulnerability",
             )
-        },
-    )?;
+        })?;
     let line_separator = match h.param(1) {
         Some(s) => {
             if let Value::String(ref s) = *s.value() {
@@ -154,7 +153,7 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             } else {
                 return Err(RenderError::new(
                     "the provided line separator for the code lines was \
-                                             not a string",
+                     not a string",
                 ));
             }
         }
@@ -185,7 +184,7 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             let (indent, code) = split_indent(line);
             format!(
                 "<code class=\"vulnerable_line {}\">{}<span \
-                     class=\"line_body\">{}</span></code>{}",
+                 class=\"line_body\">{}</span></code>{}",
                 vulnerability.get("criticality").unwrap().as_str().unwrap(),
                 indent,
                 html_escape(code),
@@ -206,18 +205,18 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 /// E.g.: for a critical vulnerability in an application with between 100 and 200 vulnerability,
 /// for the critical vulnerability number 12 it would produce `C012`.
 pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
-    let vulnerability = h.param(0).and_then(|v| v.value().as_object()).ok_or_else(
-        || {
+    let vulnerability = h.param(0)
+        .and_then(|v| v.value().as_object())
+        .ok_or_else(|| {
             RenderError::new(
                 "to generate the vulnerability index, the first parameter must be a \
-                              vulnerability",
+                 vulnerability",
             )
-        },
-    )?;
+        })?;
     let index = h.param(1).and_then(|v| v.value().as_u64()).ok_or_else(|| {
         RenderError::new(
             "the index of the vulnerability in the current list must be the \
-                              second parameter",
+             second parameter",
         )
     })? as usize + 1;
 
@@ -251,13 +250,11 @@ pub fn generate_menu(
     _: &Handlebars,
     rc: &mut RenderContext,
 ) -> Result<(), RenderError> {
-    let menu = h.param(0).and_then(|m| m.value().as_array()).ok_or_else(
-        || {
-            RenderError::new(
-                "to generate the menu, the first parameter must be a menu array",
-            )
-        },
-    )?;
+    let menu = h.param(0)
+        .and_then(|m| m.value().as_array())
+        .ok_or_else(|| {
+            RenderError::new("to generate the menu, the first parameter must be a menu array")
+        })?;
     let _ = rc.writer.write(b"<ul>")?;
     render_menu(menu, &mut rc.writer)?;
     let _ = rc.writer.write(b"</ul>")?;
@@ -268,14 +265,14 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
     for value in menu {
         if let Value::Object(ref item) = *value {
             let _ = renderer.write(b"<li>")?;
-            let name = item.get("name").and_then(|n| n.as_str()).ok_or_else(|| {
-                RenderError::new("invalid menu object type")
-            })?;
+            let name = item.get("name")
+                .and_then(|n| n.as_str())
+                .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
                 let _ = renderer.write(
                     format!(
                         "<a href=\"#\" title=\"{0}\"><img \
-                                    src=\"../img/folder-icon.png\">{0}</a>",
+                         src=\"../img/folder-icon.png\">{0}</a>",
                         name
                     ).as_bytes(),
                 )?;
@@ -284,20 +281,18 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                 render_menu(menu, renderer)?;
                 let _ = renderer.write(b"</ul>")?;
             } else {
-                let path = item.get("path").and_then(|n| n.as_str()).ok_or_else(|| {
-                    RenderError::new("invalid menu object type")
-                })?;
-                let file_type = item.get("type").and_then(|n| n.as_str()).ok_or_else(|| {
-                    RenderError::new("invalid menu object type")
-                })?;
+                let path = item.get("path")
+                    .and_then(|n| n.as_str())
+                    .ok_or_else(|| RenderError::new("invalid menu object type"))?;
+                let file_type = item.get("type")
+                    .and_then(|n| n.as_str())
+                    .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 let _ = renderer.write(
                     format!(
                         "<a href=\"{1}.html\" title=\"{0}\" \
-                                                     target=\"code\"><img \
-                                                     src=\"../img/{2}-icon.png\">{0}</a>",
-                        name,
-                        path,
-                        file_type
+                         target=\"code\"><img \
+                         src=\"../img/{2}-icon.png\">{0}</a>",
+                        name, path, file_type
                     ).as_bytes(),
                 )?;
             }

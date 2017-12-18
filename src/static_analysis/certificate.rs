@@ -6,9 +6,9 @@ use std::borrow::Borrow;
 use std::error::Error as StdError;
 
 use colored::Colorize;
-use chrono::{Local, Datelike};
+use chrono::{Datelike, Local};
 
-use {Config, Result, print_vulnerability, print_warning};
+use {print_vulnerability, print_warning, Config, Result};
 use results::{Results, Vulnerability};
 use error::*;
 use criticality::Criticality;
@@ -60,8 +60,8 @@ pub fn certificate_analysis<S: AsRef<str>>(
             Err(e) => {
                 print_warning(format!(
                     "An error occurred when reading the \
-                                       {} dir searching certificates. \
-                                       Certificate analysis will be skipped. More info: {}",
+                     {} dir searching certificates. \
+                     Certificate analysis will be skipped. More info: {}",
                     path.display(),
                     e.description()
                 ));
@@ -86,7 +86,8 @@ pub fn certificate_analysis<S: AsRef<str>>(
 
         // We found a certificate, let's get its information.
         if is_cert {
-            let output = Command::new("openssl").arg("pkcs7")
+            let output = Command::new("openssl")
+                .arg("pkcs7")
                 .arg("-inform")
                 .arg("DER")
                 .arg("-in")
@@ -100,12 +101,10 @@ pub fn certificate_analysis<S: AsRef<str>>(
                 })?;
 
             if !output.status.success() {
-                return Err(
-                    format!(
-                        "The openssl command returned an error. More info: {}",
-                        String::from_utf8_lossy(&output.stderr[..])
-                    ).into(),
-                );
+                return Err(format!(
+                    "The openssl command returned an error. More info: {}",
+                    String::from_utf8_lossy(&output.stderr[..])
+                ).into());
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);
@@ -170,13 +169,14 @@ pub fn certificate_analysis<S: AsRef<str>>(
             let after = after.nth(1).unwrap();
             let cert_year = after[16..20].parse::<i32>().unwrap();
             let cert_month = parse_month(&after[0..3]);
-            let cert_day = match after[4..6].parse::<u32>() { //if day<10 parse 1 number
+            let cert_day = match after[4..6].parse::<u32>() {
+                //if day<10 parse 1 number
                 Ok(n) => n,
                 Err(_) => after[5..6].parse::<u32>().unwrap(),
             };
 
-            if year > cert_year || (year == cert_year && month > cert_month) ||
-                (year == cert_year && month == cert_month && day > cert_day)
+            if year > cert_year || (year == cert_year && month > cert_month)
+                || (year == cert_year && month == cert_month && day > cert_day)
             {
                 let criticality = Criticality::High;
                 let description = "The certificate of the application has expired. You should not \

@@ -15,7 +15,7 @@ extern crate colored;
 extern crate log;
 
 use std::io::{self, Write};
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::BTreeMap;
 
@@ -66,7 +66,7 @@ fn run() -> Result<()> {
         }
         error_string.push_str(
             "The configuration was loaded, in order, from the following files: \
-                               \n\t- Default built-in configuration\n",
+             \n\t- Default built-in configuration\n",
         );
         for file in config.loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));

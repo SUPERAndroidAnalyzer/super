@@ -26,9 +26,10 @@ impl Generator for Json {
             println!("Starting JSON report generation. First we create the file.")
         }
         let mut f = BufWriter::new(File::create(
-            config.results_folder().join(&results.app_package()).join(
-                "results.json",
-            ),
+            config
+                .results_folder()
+                .join(&results.app_package())
+                .join("results.json"),
         )?);
         if config.is_verbose() {
             println!("The report file has been created. Now it's time to fill it.")

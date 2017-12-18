@@ -14,15 +14,15 @@ mod handlebars_helpers;
 mod report;
 mod sdk_number;
 
-pub use self::utils::{Vulnerability, split_indent, html_escape};
+pub use self::utils::{html_escape, split_indent, Vulnerability};
 use self::utils::FingerPrint;
-use self::sdk_number::{SdkNumber, prettify_android_version};
+use self::sdk_number::{prettify_android_version, SdkNumber};
 
 use error::*;
-use {Config, print_warning};
+use {print_warning, Config};
 use criticality::Criticality;
 
-use results::report::{Json, HandlebarsReport};
+use results::report::{HandlebarsReport, Json};
 use results::report::Generator;
 
 /// Results representation structure.
@@ -67,7 +67,7 @@ impl Results {
             Err(e) => {
                 print_warning(format!(
                     "An error occurred when trying to fingerprint the \
-                                       application: {}",
+                     application: {}",
                     e
                 ));
                 return Err(e)?;
@@ -76,8 +76,8 @@ impl Results {
         if config.is_verbose() {
             println!(
                 "The results struct has been created. All the vulnerabilitis will now \
-                          be recorded and when the analysis ends, they will be written to result \
-                          files."
+                 be recorded and when the analysis ends, they will be written to result \
+                 files."
             );
         } else if !config.is_quiet() {
             println!("Results struct created.");
@@ -241,7 +241,7 @@ impl Results {
                     if let Err(e) = fs::remove_file(&path) {
                         print_warning(format!(
                             "There was an error when removing the JSON results \
-                        file: {}",
+                             file: {}",
                             e.description()
                         ));
                     }
@@ -258,7 +258,7 @@ impl Results {
             } else if config.is_verbose() {
                 println!(
                     "Seems that the JSON report has already been generated. There is no \
-                          need to do it again."
+                     need to do it again."
                 );
             } else {
                 println!("Skipping JSON report generation.");
@@ -274,20 +274,17 @@ impl Results {
                         println!("The application HTML resulsts exist. But no more…");
                     }
 
-                    for f in fs::read_dir(path).chain_err(
-                        || "there was an error when removing the HTML results",
-                    )?
+                    for f in fs::read_dir(path)
+                        .chain_err(|| "there was an error when removing the HTML results")?
                     {
                         let f = f?;
 
                         if f.file_type()?.is_dir() {
-                            fs::remove_dir_all(f.path()).chain_err(
-                                || "there was an error when removing the HTML results",
-                            )?;
+                            fs::remove_dir_all(f.path())
+                                .chain_err(|| "there was an error when removing the HTML results")?;
                         } else if &f.file_name() != "results.json" {
-                            fs::remove_file(f.path()).chain_err(
-                                || "there was an error when removing the HTML results",
-                            )?;
+                            fs::remove_file(f.path())
+                                .chain_err(|| "there was an error when removing the HTML results")?;
                         }
                     }
                 }
@@ -343,57 +340,33 @@ impl Serialize for Results {
         };
         let mut ser_struct = serializer.serialize_struct("Results", len)?;
 
-        ser_struct.serialize_field(
-            "super_version",
-            crate_version!(),
-        )?;
+        ser_struct.serialize_field("super_version", crate_version!())?;
         ser_struct.serialize_field("now", &now)?;
         ser_struct.serialize_field("now_rfc2822", &now.to_rfc2822())?;
         ser_struct.serialize_field("now_rfc3339", &now.to_rfc3339())?;
 
         ser_struct.serialize_field("app_package", &self.app_package)?;
         ser_struct.serialize_field("app_version", &self.app_version)?;
-        ser_struct.serialize_field(
-            "app_version_number",
-            &self.app_version_num,
-        )?;
-        ser_struct.serialize_field(
-            "app_fingerprint",
-            &self.app_fingerprint,
-        )?;
+        ser_struct.serialize_field("app_version_number", &self.app_version_num)?;
+        ser_struct.serialize_field("app_fingerprint", &self.app_fingerprint)?;
 
         #[cfg(feature = "certificate")]
         {
             ser_struct.serialize_field("certificate", &self.certificate)?;
         }
 
-        ser_struct.serialize_field(
-            "app_min_sdk_number",
-            &self.app_min_sdk.number(),
-        )?;
+        ser_struct.serialize_field("app_min_sdk_number", &self.app_min_sdk.number())?;
 
-        ser_struct.serialize_field(
-            "app_min_sdk_name",
-            self.app_min_sdk.name(),
-        )?;
+        ser_struct.serialize_field("app_min_sdk_name", self.app_min_sdk.name())?;
 
         if let Some(version) = self.app_min_sdk.version() {
-            ser_struct.serialize_field(
-                "app_min_sdk_version",
-                &prettify_android_version(&version),
-            )?;
+            ser_struct.serialize_field("app_min_sdk_version", &prettify_android_version(&version))?;
         }
 
         if let Some(sdk) = self.app_target_sdk {
-            ser_struct.serialize_field(
-                "app_target_sdk_number",
-                &sdk.number(),
-            )?;
+            ser_struct.serialize_field("app_target_sdk_number", &sdk.number())?;
 
-            ser_struct.serialize_field(
-                "app_target_sdk_name",
-                sdk.name(),
-            )?;
+            ser_struct.serialize_field("app_target_sdk_name", sdk.name())?;
 
             if let Some(version) = sdk.version() {
                 ser_struct.serialize_field(
@@ -405,28 +378,18 @@ impl Serialize for Results {
 
         ser_struct.serialize_field(
             "total_vulnerabilities",
-            &(self.low.len() + self.medium.len() + self.high.len() +
-                  self.critical.len()),
+            &(self.low.len() + self.medium.len() + self.high.len() + self.critical.len()),
         )?;
         ser_struct.serialize_field("criticals", &self.critical)?;
-        ser_struct.serialize_field(
-            "criticals_len",
-            &self.critical.len(),
-        )?;
+        ser_struct.serialize_field("criticals_len", &self.critical.len())?;
         ser_struct.serialize_field("highs", &self.high)?;
         ser_struct.serialize_field("highs_len", &self.high.len())?;
         ser_struct.serialize_field("mediums", &self.medium)?;
-        ser_struct.serialize_field(
-            "mediums_len",
-            &self.medium.len(),
-        )?;
+        ser_struct.serialize_field("mediums_len", &self.medium.len())?;
         ser_struct.serialize_field("lows", &self.low)?;
         ser_struct.serialize_field("lows_len", &self.low.len())?;
         ser_struct.serialize_field("warnings", &self.warnings)?;
-        ser_struct.serialize_field(
-            "warnings_len",
-            &self.warnings.len(),
-        )?;
+        ser_struct.serialize_field("warnings_len", &self.warnings.len())?;
 
         ser_struct.end()
     }

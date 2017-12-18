@@ -1,4 +1,4 @@
-use clap::{Arg, App};
+use clap::{App, Arg};
 
 /// Generates the command line interface.
 pub fn generate() -> App<'static, 'static> {
@@ -29,20 +29,22 @@ pub fn generate() -> App<'static, 'static> {
                 .conflicts_with("quiet")
                 .help("If you'd like the auditor to talk more than necessary"),
         )
-        .arg(Arg::with_name("force").long("force").help(
-            "If you'd like to force the auditor to do everything from the beginning",
-        ))
-        .arg(Arg::with_name("bench").long("bench").help(
-            "Show benchmarks for the analysis",
-        ))
+        .arg(
+            Arg::with_name("force")
+                .long("force")
+                .help("If you'd like to force the auditor to do everything from the beginning"),
+        )
+        .arg(
+            Arg::with_name("bench")
+                .long("bench")
+                .help("Show benchmarks for the analysis"),
+        )
         .arg(
             Arg::with_name("quiet")
                 .short("q")
                 .long("quiet")
                 .conflicts_with("verbose")
-                .help(
-                    "If you'd like a zen auditor that won't output anything in stdout",
-                ),
+                .help("If you'd like a zen auditor that won't output anything in stdout"),
         )
         .arg(
             Arg::with_name("open")
@@ -50,18 +52,20 @@ pub fn generate() -> App<'static, 'static> {
                 .conflicts_with("test-all")
                 .help("Open the report in a browser once it is complete"),
         )
-        .arg(Arg::with_name("json").long("json").help(
-            "Generates the reults in JSON format",
-        ))
-        .arg(Arg::with_name("html").long("html").help(
-            "Generates the reults in HTML format",
-        ))
+        .arg(
+            Arg::with_name("json")
+                .long("json")
+                .help("Generates the reults in JSON format"),
+        )
+        .arg(
+            Arg::with_name("html")
+                .long("html")
+                .help("Generates the reults in HTML format"),
+        )
         .arg(
             Arg::with_name("min_criticality")
                 .long("min-criticality")
-                .help(
-                    "Set a minimum criticality to analyze (Critical, High, Medium, Low)",
-                )
+                .help("Set a minimum criticality to analyze (Critical, High, Medium, Low)")
                 .takes_value(true),
         )
         .arg(

@@ -4,16 +4,15 @@ action="$1"
 
 if [ "$action" = "install_deps" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-    # Install rustfmt
-    cargo install rustfmt --force --verbose &&
-
     # Install cargo-deb
     # Using the git version since the release has bugs
     cargo install --git https://github.com/mmstick/cargo-deb.git --force --verbose
   fi
 
-  # Install clippy
+  # Install rustfmt and clippy
   if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+    # Install rustfmt
+    cargo install rustfmt-nightly --force --verbose &&
     cargo install clippy --force --verbose
   fi
 
@@ -28,8 +27,8 @@ elif [ "$action" = "dep_run" ]; then
   fi
 
 elif [ "$action" = "fmt_run" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-      cargo fmt --verbose -- --write-mode=diff
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+      cargo fmt --all --verbose -- --write-mode=diff
   fi
 
 elif [ "$action" = "upload_code_coverage" ]; then

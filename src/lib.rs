@@ -8,33 +8,33 @@
         missing_debug_implementations, missing_copy_implementations, box_pointers,
         unused_extern_crates)]
 
+extern crate abxml;
+extern crate bytecount;
+extern crate chrono;
 #[macro_use]
 extern crate clap;
 extern crate colored;
-extern crate xml;
-extern crate serde;
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-extern crate chrono;
-extern crate toml;
-extern crate regex;
-#[macro_use]
-extern crate lazy_static;
-extern crate open;
-extern crate bytecount;
-extern crate handlebars;
-#[macro_use]
-extern crate log;
 extern crate env_logger;
 #[macro_use]
 extern crate error_chain;
-extern crate abxml;
+extern crate handlebars;
+extern crate hex;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate log;
 extern crate md5;
+extern crate open;
+extern crate regex;
+extern crate semver;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 extern crate sha1;
 extern crate sha2;
-extern crate semver;
-extern crate hex;
+extern crate toml;
+extern crate xml;
 
 mod error;
 /// Command Line Interface
@@ -47,7 +47,7 @@ mod utils;
 mod criticality;
 
 use std::fs;
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
@@ -55,7 +55,7 @@ use clap::ArgMatches;
 
 use colored::Colorize;
 
-use log::{LogRecord, LogLevelFilter, LogLevel};
+use log::{LogLevel, LogLevelFilter, LogRecord};
 use env_logger::LogBuilder;
 use std::env;
 use decompilation::*;
@@ -80,21 +80,20 @@ pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config> {
 
     let mut config =
         if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(
-                || "There was an error when reading the /etc/super-analyzer/config.toml file",
-            )?
+            Config::from_file(&global_config_path).chain_err(|| {
+                "There was an error when reading the /etc/super-analyzer/config.toml file"
+            })?
         } else if config_path.exists() {
-            Config::from_file(&PathBuf::from("config.toml")).chain_err(
-                || "There was an error when reading the config.toml file",
-            )?
+            Config::from_file(&PathBuf::from("config.toml"))
+                .chain_err(|| "There was an error when reading the config.toml file")?
         } else {
             print_warning("Config file not found. Using default configuration");
             Config::default()
         };
 
-    config.decorate_with_cli(cli).chain_err(
-        || "There was an error reading config from CLI",
-    )?;
+    config
+        .decorate_with_cli(cli)
+        .chain_err(|| "There was an error reading config from CLI")?;
 
     Ok(config)
 }
@@ -117,34 +116,27 @@ pub fn analyze_package<P: AsRef<Path>>(
     let start_time = Instant::now();
 
     // Apk decompression
-    decompress(config, &package).chain_err(
-        || "apk decompression failed",
-    )?;
+    decompress(config, &package).chain_err(|| "apk decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
-                "Apk decompression",
-                start_time
-                    .elapsed(),
-            ),
-        );
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Apk decompression", start_time.elapsed()));
     }
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package).chain_err(
-        || "Conversion from DEX to JAR failed",
-    )?;
+    dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(
                 "Dex to Jar decompilation (dex2jar Java dependency)",
-                dex_jar_time
-                    .elapsed(),
-            ),
-        );
+                dex_jar_time.elapsed(),
+            ));
     }
 
     if config.is_verbose() {
@@ -158,18 +150,16 @@ pub fn analyze_package<P: AsRef<Path>>(
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package).chain_err(
-        || "JAR decompression failed",
-    )?;
+    decompile(config, &package).chain_err(|| "JAR decompression failed")?;
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(
                 "Decompilation (jd-cli Java dependency)",
-                decompile_start
-                    .elapsed(),
-            ),
-        );
+                decompile_start.elapsed(),
+            ));
     }
 
     let mut results = Results::init(config, &package)?;
@@ -178,13 +168,13 @@ pub fn analyze_package<P: AsRef<Path>>(
     static_analysis(config, &package_name, &mut results);
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(
                 "Total static analysis",
-                static_start
-                    .elapsed(),
-            ),
-        );
+                static_start.elapsed(),
+            ));
     }
 
     // TODO dynamic analysis
@@ -194,14 +184,14 @@ pub fn analyze_package<P: AsRef<Path>>(
     }
 
     let report_start = Instant::now();
-    results.generate_report(config, &package_name).chain_err(
-        || {
+    results
+        .generate_report(config, &package_name)
+        .chain_err(|| {
             format!(
                 "There was an error generating the results report. Tried to generate at: {}",
                 config.results_folder().join(&package_name).display()
             )
-        },
-    )?;
+        })?;
 
     if config.is_verbose() {
         println!("Everything went smoothly, now you can check all the results.");
@@ -215,44 +205,37 @@ pub fn analyze_package<P: AsRef<Path>>(
     }
 
     if config.is_bench() {
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
-                "Report generation",
-                report_start
-                    .elapsed(),
-            ),
-        );
-        benchmarks.get_mut(&package_name).unwrap().push(
-            Benchmark::new(
-                format!(
-                    "Total time for {}",
-                    package_name
-                ),
-                start_time
-                    .elapsed(),
-            ),
-        );
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new("Report generation", report_start.elapsed()));
+        benchmarks
+            .get_mut(&package_name)
+            .unwrap()
+            .push(Benchmark::new(
+                format!("Total time for {}", package_name),
+                start_time.elapsed(),
+            ));
     }
 
     if config.is_open() {
         let open_path = if config.has_to_generate_html() {
-            config.results_folder().join(results.app_package()).join(
-                "index.html",
-            )
+            config
+                .results_folder()
+                .join(results.app_package())
+                .join("index.html")
         } else {
-            config.results_folder().join(results.app_package()).join(
-                "results.json",
-            )
+            config
+                .results_folder()
+                .join(results.app_package())
+                .join("results.json")
         };
 
-        let status = open::that(open_path).chain_err(
-            || "Report could not be opened automatically",
-        )?;
+        let status =
+            open::that(open_path).chain_err(|| "Report could not be opened automatically")?;
 
         if !status.success() {
-            return Err(
-                format!("Report opening errored with status code: {}", status).into(),
-            );
+            return Err(format!("Report opening errored with status code: {}", status).into());
         }
     }
 
@@ -274,16 +257,14 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
         if f.path().is_dir() {
             copy_folder(
                 f.path(),
-                to.as_ref().join(
-                    f.path().file_name().expect("expected file name"),
-                ),
+                to.as_ref()
+                    .join(f.path().file_name().expect("expected file name")),
             )?;
         } else {
             let _ = fs::copy(
                 f.path(),
-                to.as_ref().join(
-                    f.path().file_name().expect("expected file name"),
-                ),
+                to.as_ref()
+                    .join(f.path().file_name().expect("expected file name")),
             )?;
         }
     }
@@ -294,20 +275,16 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn initialize_logger(is_verbose: bool) {
     let format = |record: &LogRecord| match record.level() {
-        LogLevel::Warn => {
-            format!(
-                "{}{}",
-                "Warning: ".bold().yellow(),
-                record.args().to_string().yellow()
-            )
-        }
-        LogLevel::Error => {
-            format!(
-                "{}{}",
-                "Error: ".bold().red(),
-                record.args().to_string().red()
-            )
-        }
+        LogLevel::Warn => format!(
+            "{}{}",
+            "Warning: ".bold().yellow(),
+            record.args().to_string().yellow()
+        ),
+        LogLevel::Error => format!(
+            "{}{}",
+            "Error: ".bold().red(),
+            record.args().to_string().red()
+        ),
         LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
         LogLevel::Info => format!("{}", record.args()),
         _ => format!("{}: {}", record.level(), record.args()),

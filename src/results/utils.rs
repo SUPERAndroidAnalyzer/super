@@ -90,10 +90,7 @@ impl Serialize for Vulnerability {
         )?;
         ser_struct.serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
-        ser_struct.serialize_field(
-            "description",
-            self.description.as_str(),
-        )?;
+        ser_struct.serialize_field("description", self.description.as_str())?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
             ser_struct.serialize_field(
@@ -106,19 +103,10 @@ impl Serialize for Vulnerability {
                     .to_string_lossy(),
             )?;
             if self.start_line == self.end_line {
-                ser_struct.serialize_field(
-                    "line",
-                    &(self.start_line.unwrap() + 1),
-                )?;
+                ser_struct.serialize_field("line", &(self.start_line.unwrap() + 1))?;
             } else {
-                ser_struct.serialize_field(
-                    "start_line",
-                    &(self.start_line.unwrap() + 1),
-                )?;
-                ser_struct.serialize_field(
-                    "end_line",
-                    &(self.end_line.unwrap() + 1),
-                )?;
+                ser_struct.serialize_field("start_line", &(self.start_line.unwrap() + 1))?;
+                ser_struct.serialize_field("end_line", &(self.end_line.unwrap() + 1))?;
             }
             ser_struct.serialize_field("code", &self.code)?;
         }
@@ -136,12 +124,12 @@ impl PartialOrd for Vulnerability {
                 &self.end_line,
                 &self.name,
             ).cmp(&(
-                    &other.criticality,
-                    &other.file,
-                    &other.start_line,
-                    &other.end_line,
-                    &other.name,
-                )),
+                &other.criticality,
+                &other.file,
+                &other.start_line,
+                &other.end_line,
+                &other.name,
+            )),
         )
     }
 }
@@ -189,17 +177,14 @@ impl Serialize for FingerPrint {
         S: Serializer,
     {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
-        ser_struct.serialize_field(
-            "md5",
-            &format!("{:x}", self.md5),
-        )?;
+        ser_struct.serialize_field("md5", &format!("{:x}", self.md5))?;
         ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
         let mut sha256_hex = String::new();
         // It should never fail, we are writing directly to memory, without I/O access
         // That's why the `expect()` should never panic.
-        self.sha256.write_hex(&mut sha256_hex).expect(
-            "the SHA-256 fingerprinting of the application failed",
-        );
+        self.sha256
+            .write_hex(&mut sha256_hex)
+            .expect("the SHA-256 fingerprinting of the application failed");
         ser_struct.serialize_field("sha256", &sha256_hex)?;
         ser_struct.end()
     }

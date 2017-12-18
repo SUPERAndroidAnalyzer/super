@@ -39,8 +39,7 @@ impl Into<i32> for Error {
         let kind = self.kind();
 
         match *kind {
-            ErrorKind::Parse |
-            ErrorKind::TOML(_) => 20,
+            ErrorKind::Parse | ErrorKind::TOML(_) => 20,
             ErrorKind::JSON(_) => 30,
             ErrorKind::CodeNotFound => 40,
             ErrorKind::Config(_) => 50,

@@ -13,7 +13,7 @@ use std::error::Error;
 #[cfg(feature = "certificate")]
 use self::certificate::*;
 use results::Results;
-use {Config, print_warning};
+use {print_warning, Config};
 #[cfg(not(feature = "certificate"))]
 use error::*;
 
@@ -24,8 +24,8 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     if config.is_verbose() {
         println!(
             "It's time to analyze the application. First, a static analysis will be \
-                  performed, starting with the AndroidManifest.xml file and then going through \
-                  the actual code. Let's start!"
+             performed, starting with the AndroidManifest.xml file and then going through \
+             the actual code. Let's start!"
         );
     }
 

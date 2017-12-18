@@ -2,14 +2,14 @@
 //!
 //! Handles and configures the initial settings and variables needed to run the program.
 
-use std::{u8, fs};
+use std::{fs, u8};
 use std::path::{Path, PathBuf};
 use std::convert::From;
 use std::io::Read;
 use std::collections::btree_set::Iter;
 use std::slice::Iter as VecIter;
 use std::collections::BTreeSet;
-use std::cmp::{PartialOrd, Ordering};
+use std::cmp::{Ordering, PartialOrd};
 use std::error::Error as StdError;
 use std::result;
 use std::str::FromStr;
@@ -109,9 +109,10 @@ impl ConfigDeserializer {
                     Err(de::Error::custom("Threads is not in the valid range"))
                 }
             }
-            _ => Err(de::Error::custom(
-                format!("Unexpected value: {:?}", deser_result),
-            )),
+            _ => Err(de::Error::custom(format!(
+                "Unexpected value: {:?}",
+                deser_result
+            ))),
         }
     }
 
@@ -149,9 +150,10 @@ impl ConfigDeserializer {
 
                 Ok((criticality, string.to_string()))
             }
-            _ => Err(de::Error::custom(
-                format!("Unexpected value: {:?}", deser_result),
-            )),
+            _ => Err(de::Error::custom(format!(
+                "Unexpected value: {:?}",
+                deser_result
+            ))),
         }
     }
 }
@@ -176,9 +178,9 @@ impl Config {
                 })
             })
             .and_then(|mut new_config: Self| {
-                new_config.loaded_files.push(
-                    config_path.as_ref().to_path_buf(),
-                );
+                new_config
+                    .loaded_files
+                    .push(config_path.as_ref().to_path_buf());
 
                 Ok(new_config)
             });
@@ -200,13 +202,13 @@ impl Config {
         self.html = cli.is_present("html");
 
         if cli.is_present("test-all") {
-            self.read_apks().chain_err(
-                || "error loading all the downloaded APKs",
-            )?;
+            self.read_apks()
+                .chain_err(|| "error loading all the downloaded APKs")?;
         } else {
-            self.add_app_package(cli.value_of("package").expect(
-                "expected a value for the package CLI attribute",
-            ));
+            self.add_app_package(
+                cli.value_of("package")
+                    .expect("expected a value for the package CLI attribute"),
+            );
         }
 
         Ok(())
@@ -216,12 +218,11 @@ impl Config {
     fn set_options(&mut self, cli: &ArgMatches<'static>) {
         if let Some(min_criticality) = cli.value_of("min_criticality") {
             if let Ok(m) = min_criticality.parse() {
-
                 self.min_criticality = m;
             } else {
                 print_warning(format!(
                     "The min_criticality option must be one of {}, {}, {}, {} \
-                                       or {}.\nUsing default.",
+                     or {}.\nUsing default.",
                     "warning".italic(),
                     "low".italic(),
                     "medium".italic(),
@@ -238,7 +239,7 @@ impl Config {
                 _ => {
                     print_warning(format!(
                         "The threads option must be an integer between 1 and \
-                                           {}",
+                         {}",
                         u8::MAX
                     ));
                 }
@@ -290,7 +291,7 @@ impl Config {
                 Err(e) => {
                     print_warning(format!(
                         "There was an error when reading the \
-                                                   downloads folder: {}",
+                         downloads folder: {}",
                         e.description()
                     ));
                 }
@@ -302,9 +303,9 @@ impl Config {
 
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        let check = self.downloads_folder.exists() && self.dex2jar_folder.exists() &&
-            self.jd_cmd_file.exists() && self.template_path().exists() &&
-            self.rules_json.exists();
+        let check = self.downloads_folder.exists() && self.dex2jar_folder.exists()
+            && self.jd_cmd_file.exists() && self.template_path().exists()
+            && self.rules_json.exists();
         if check {
             for package in &self.app_packages {
                 if !package.exists() {
@@ -387,9 +388,9 @@ impl Config {
                 updated,
                 "did not update package path extension, no file name"
             );
-        } else if package_path.extension().expect(
-            "expected extension in package path",
-        ) != "apk"
+        } else if package_path
+            .extension()
+            .expect("expected extension in package path") != "apk"
         {
             let mut file_name = package_path
                 .file_name()
@@ -539,8 +540,8 @@ impl Config {
                 Criticality::Low,
                 String::from(
                     "Even if the application can create its own \
-                                               permissions, it's discouraged, since it can \
-                                               lead to missunderstanding between developers.",
+                     permissions, it's discouraged, since it can \
+                     lead to missunderstanding between developers.",
                 ),
             ),
             permissions: BTreeSet::new(),
@@ -692,7 +693,7 @@ mod tests {
         assert_eq!(
             config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers."
+             since it can lead to missunderstanding between developers."
         );
         assert_eq!(config.permissions().next(), None);
 
@@ -781,7 +782,7 @@ mod tests {
         assert_eq!(
             config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
-                    since it can lead to missunderstanding between developers."
+             since it can lead to missunderstanding between developers."
         );
 
         let permission = config.permissions().next().unwrap();
@@ -794,9 +795,9 @@ mod tests {
         assert_eq!(
             permission.description(),
             "Allows the app to create network sockets and use custom network protocols. \
-                    The browser and other applications provide means to send data to the \
-                    internet, so this permission is not required to send data to the internet. \
-                    Check if the permission is actually needed."
+             The browser and other applications provide means to send data to the \
+             internet, so this permission is not required to send data to the internet. \
+             Check if the permission is actually needed."
         );
     }
 
