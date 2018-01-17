@@ -20,7 +20,8 @@ use std::thread::sleep;
 use std::collections::BTreeMap;
 
 use colored::Colorize;
-use log::LogLevel;
+use log::Level;
+
 use super_analyzer_core::*;
 
 /// Program entry point.
@@ -32,7 +33,7 @@ fn main() {
             println!("\t{}{}", "Caused by: ".bold(), e);
         }
 
-        if !log_enabled!(LogLevel::Debug) {
+        if !log_enabled!(Level::Debug) {
             println!(
                 "If you need more information, try to run the program again with the {} flag.",
                 "-v".bold()

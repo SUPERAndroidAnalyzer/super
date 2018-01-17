@@ -10,7 +10,7 @@ use std::result::Result as StdResult;
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
 use colored::Colorize;
-use log::LogLevel::Debug;
+use log::Level::Debug;
 
 use error::*;
 use config::Config;

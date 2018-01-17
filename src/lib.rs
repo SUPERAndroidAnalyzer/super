@@ -46,18 +46,15 @@ mod config;
 mod utils;
 mod criticality;
 
-use std::fs;
+use std::{env, fs};
 use std::time::{Duration, Instant};
 use std::thread::sleep;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
-use clap::ArgMatches;
 
+use clap::ArgMatches;
 use colored::Colorize;
 
-use log::{LogLevel, LogLevelFilter, LogRecord};
-use env_logger::LogBuilder;
-use std::env;
 use decompilation::*;
 use static_analysis::*;
 use results::*;
@@ -274,37 +271,49 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 /// Initializes the logger.
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn initialize_logger(is_verbose: bool) {
-    let format = |record: &LogRecord| match record.level() {
-        LogLevel::Warn => format!(
-            "{}{}",
-            "Warning: ".bold().yellow(),
-            record.args().to_string().yellow()
-        ),
-        LogLevel::Error => format!(
-            "{}{}",
-            "Error: ".bold().red(),
-            record.args().to_string().red()
-        ),
-        LogLevel::Debug => format!("{}{}", "Debug: ".bold(), record.args().to_string().bold()),
-        LogLevel::Info => format!("{}", record.args()),
-        _ => format!("{}: {}", record.level(), record.args()),
+    use std::io::Write;
+    use log::{Level, LevelFilter, Record};
+    use env_logger::Builder;
+    use env_logger::fmt::{Color, Formatter};
+
+    let format = |buf: &mut Formatter, record: &Record| {
+        let mut level_style = buf.style();
+        match record.level() {
+            Level::Warn => {
+                let _ = level_style.set_color(Color::Yellow).set_bold(true);
+            }
+            Level::Error => {
+                let _ = level_style.set_color(Color::Red).set_bold(true);
+            }
+            Level::Debug => {
+                let _ = level_style.set_bold(true);
+            }
+            _ => {}
+        }
+
+        writeln!(
+            buf,
+            "{}: {}",
+            level_style.value(record.level()),
+            record.args()
+        )
     };
 
     let log_level = if is_verbose {
-        LogLevelFilter::Debug
+        LevelFilter::Debug
     } else {
-        LogLevelFilter::Info
+        LevelFilter::Info
     };
 
-    let mut builder = LogBuilder::new();
+    let mut builder = Builder::new();
 
     let builder_state = if let Ok(env_log) = env::var("RUST_LOG") {
-        builder.format(format).parse(&env_log).init()
+        builder.format(format).parse(&env_log).try_init()
     } else {
         builder
             .format(format)
             .filter(Some("super"), log_level)
-            .init()
+            .try_init()
     };
 
     if let Err(e) = builder_state {
