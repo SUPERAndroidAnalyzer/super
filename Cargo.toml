@@ -48,10 +48,10 @@ log = "0.4.1"
 env_logger = "0.5.0"
 error-chain = "0.11.0"
 md5 = "0.3.6"
-sha1 = "0.4.0"
+sha1 = "0.6.0"
 sha2 = "0.7.0"
 abxml = "0.3.0"
-handlebars = "0.30.0"
+handlebars = "0.31.0"
 semver = "0.9.0"
 hex = "0.3.1"
 
@@ -139,19 +139,21 @@ assets = [
 
 # The release profile, used for `cargo build`.
 [profile.dev]
-opt-level = 0
+incremental = true
+opt-level = 1
 debug = true
 rpath = false
 lto = false
 debug-assertions = true
-codegen-units = 1
 panic = 'unwind'
 
 # The release profile, used for `cargo build --release`.
 [profile.release]
+incremental = false
 opt-level = 3
 debug = false
 rpath = false
+codegen-units = 1
 lto = true
 debug-assertions = false
 panic = 'unwind'
