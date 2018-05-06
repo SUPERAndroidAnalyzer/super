@@ -1,18 +1,17 @@
 //! General utilities module.
 
-use std::{fmt, fs};
 use std::io::Read;
 use std::path::Path;
-use std::time::Duration;
 use std::thread::sleep;
-use std::result::Result as StdResult;
+use std::time::Duration;
+use std::{fmt, fs};
 
+use colored::Colorize;
+use failure::Error;
+use log::Level::Debug;
 use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
-use colored::Colorize;
-use log::Level::Debug;
 
-use error::*;
 use config::Config;
 use criticality::Criticality;
 
@@ -99,7 +98,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
     label: L,
     config: &Config,
     package: P,
-) -> Result<String> {
+) -> Result<String, Error> {
     let mut file = fs::File::open({
         let path = config
             .dist_folder()
@@ -171,7 +170,7 @@ impl Benchmark {
 }
 
 impl fmt::Display for Benchmark {
-    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(
             f,
             "{}: {}.{}s",

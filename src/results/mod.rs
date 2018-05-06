@@ -1,29 +1,27 @@
 //! Results generation module.
 
-use std::fs;
 use std::collections::BTreeSet;
+use std::fs;
 use std::path::Path;
-use std::result::Result as StdResult;
-use std::error::Error as StdError;
 
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 use chrono::Local;
+use failure::{Error, ResultExt};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
-mod utils;
 mod handlebars_helpers;
 mod report;
 mod sdk_number;
+mod utils;
 
-pub use self::utils::{html_escape, split_indent, Vulnerability};
-use self::utils::FingerPrint;
 use self::sdk_number::{prettify_android_version, SdkNumber};
+use self::utils::FingerPrint;
+pub use self::utils::{html_escape, split_indent, Vulnerability};
 
-use error::*;
-use {print_warning, Config};
 use criticality::Criticality;
+use {print_warning, Config};
 
-use results::report::{HandlebarsReport, Json};
 use results::report::Generator;
+use results::report::{HandlebarsReport, Json};
 
 /// Results representation structure.
 pub struct Results {
@@ -61,7 +59,7 @@ pub struct Results {
 impl Results {
     /// Initializes the results structure.
     #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self> {
+    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self, Error> {
         let fingerprint = match FingerPrint::new(package) {
             Ok(f) => f,
             Err(e) => {
@@ -215,7 +213,7 @@ impl Results {
 
     /// Generates the report.
     #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
+    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<(), Error> {
         let path = config.results_folder().join(&self.app_package);
         if config.is_verbose() {
             println!("Starting report generation.");
@@ -240,16 +238,15 @@ impl Results {
 
                     if let Err(e) = fs::remove_file(&path) {
                         print_warning(format!(
-                            "There was an error when removing the JSON results \
-                             file: {}",
-                            e.description()
+                            "there was an error when removing the JSON results file: {}",
+                            e
                         ));
                     }
                 }
                 let mut json_reporter = Json::new();
 
                 if let Err(e) = json_reporter.generate(config, self) {
-                    print_warning(format!("There was en error generating JSON report: {}", e));
+                    print_warning(format!("there was en error generating JSON report: {}", e));
                 }
 
                 if !config.is_quiet() {
@@ -275,16 +272,16 @@ impl Results {
                     }
 
                     for f in fs::read_dir(path)
-                        .chain_err(|| "there was an error when removing the HTML results")?
+                        .context("there was an error when removing the HTML results")?
                     {
                         let f = f?;
 
                         if f.file_type()?.is_dir() {
                             fs::remove_dir_all(f.path())
-                                .chain_err(|| "there was an error when removing the HTML results")?;
+                                .context("there was an error when removing the HTML results")?;
                         } else if &f.file_name() != "results.json" {
                             fs::remove_file(f.path())
-                                .chain_err(|| "there was an error when removing the HTML results")?;
+                                .context("there was an error when removing the HTML results")?;
                         }
                     }
                 }
@@ -316,7 +313,7 @@ impl Results {
 }
 
 impl Serialize for Results {
-    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {

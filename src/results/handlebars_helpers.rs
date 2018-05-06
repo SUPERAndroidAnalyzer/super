@@ -1,8 +1,8 @@
 use std::io::Write;
 
+use bytecount::count;
 use handlebars::{Handlebars, Helper, RenderContext, RenderError};
 use serde_json::Value;
-use bytecount::count;
 
 use super::utils::{html_escape, split_indent};
 
@@ -243,7 +243,7 @@ pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
 
 /// Generates the menu for the source tree.
 ///
-/// It will generaten unordered HTML list (`<ul>...</ul>`) where all files and folders of the given
+/// It will generate an unordered HTML list (`<ul>…</ul>`) where all files and folders of the given
 /// menu object.
 pub fn generate_menu(
     h: &Helper,

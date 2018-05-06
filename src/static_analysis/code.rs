@@ -1,24 +1,26 @@
+//! Code analysis module.
+
+use std::borrow::Borrow;
 use std::fs;
 use std::fs::{DirEntry, File};
 use std::io::Read;
-use std::str::FromStr;
 use std::path::Path;
-use std::borrow::Borrow;
-use std::thread;
-use std::sync::{Arc, Mutex};
 use std::slice::Iter;
-use std::error::Error as StdError;
+use std::str::FromStr;
+use std::sync::{Arc, Mutex};
+use std::thread;
 
+use colored::Colorize;
+use failure::{Error, Fail};
+use regex::Regex;
 use serde_json;
 use serde_json::value::Value;
-use regex::Regex;
-use colored::Colorize;
 
-use {get_code, print_vulnerability, print_warning, Config};
-use results::{Results, Vulnerability};
 use super::manifest::{Manifest, Permission};
-use error::*;
 use criticality::Criticality;
+use error;
+use results::{Results, Vulnerability};
+use {get_code, print_vulnerability, print_warning, Config};
 
 /// Analyzes the whole codebase of the application.
 pub fn analysis<S: AsRef<str>>(
@@ -32,7 +34,7 @@ pub fn analysis<S: AsRef<str>>(
         Err(e) => {
             print_warning(format!(
                 "An error occurred when loading code analysis rules. Error: {}",
-                e.description()
+                e
             ));
             return;
         }
@@ -41,9 +43,9 @@ pub fn analysis<S: AsRef<str>>(
     let mut files: Vec<DirEntry> = Vec::new();
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!(
-            "An error occurred when reading files for analysis, the results \
-             might be incomplete. Error: {}",
-            e.description()
+            "An error occurred when reading files for analysis, the results might be incomplete. \
+             Error: {}",
+            e
         ));
     }
     let total_files = files.len();
@@ -85,10 +87,10 @@ pub fn analysis<S: AsRef<str>>(
                             &thread_vulns,
                         ) {
                             print_warning(format!(
-                                "Error analyzing file {}. The analysis will \
-                                 continue, though. Error: {}",
+                                "could not analyze `{}`. The analysis will continue, though. \
+                                 Error: {}",
                                 f.path().display(),
-                                e.description()
+                                e
                             ))
                         }
                     }
@@ -123,7 +125,7 @@ pub fn analysis<S: AsRef<str>>(
         if let Err(e) = t.join() {
             #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
             print_warning(format!(
-                "An error occurred when joining analysis threads: Error: {:?}",
+                "an error occurred when joining analysis threads: Error: {:?}",
                 e
             ));
         }
@@ -148,7 +150,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     rules: &[Rule],
     manifest: &Option<Manifest>,
     results: &Mutex<Vec<Vulnerability>>,
-) -> Result<()> {
+) -> Result<(), Error> {
     let mut f = File::open(&path)?;
     let mut code = String::new();
     let _ = f.read_to_string(&mut code)?;
@@ -222,11 +224,10 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                         Ok(r) => r,
                         Err(e) => {
                             print_warning(format!(
-                                "There was an error creating the \
-                                 forward_check '{}'. The rule will be \
-                                 skipped. {}",
+                                "there was an error creating the forward_check '{}'. The rule will \
+                                 be skipped. {}",
                                 r,
-                                e.description()
+                                e
                             ));
                             break 'rule;
                         }
@@ -274,7 +275,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     vec: &mut Vec<DirEntry>,
     package: S,
     config: &Config,
-) -> Result<()> {
+) -> Result<(), Error> {
     if path.as_ref() == Path::new("classes/android")
         || path.as_ref() == Path::new("classes/com/google/android/gms")
         || path.as_ref() == Path::new("smali")
@@ -287,9 +288,9 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
-                    "There was an error reading the directory {}: {}",
+                    "there was an error reading the directory {}: {}",
                     real_path.display(),
-                    e.description()
+                    e
                 ));
                 return Err(e.into());
             }
@@ -396,7 +397,7 @@ impl Rule {
     }
 }
 
-fn load_rules(config: &Config) -> Result<Vec<Rule>> {
+fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
     let f = File::open(config.rules_json())?;
     let rules_json: Value = serde_json::from_reader(f)?;
 
@@ -404,26 +405,23 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     let rules_json = if let Some(a) = rules_json.as_array() {
         a
     } else {
-        print_warning("Rules must be a JSON array.");
-        return Err(ErrorKind::Parse.into());
+        print_warning("rules must be a JSON array.");
+        return Err(error::Kind::Parse.context("could not parse rules").into());
     };
 
     for rule in rules_json {
         let format_warning = format!(
-            "Rules must be objects with the following structure:\n{}\nAn \
-             optional {} attribute can be added: an array of regular expressions that if \
-             matched, the found match will be discarded. You can also include an optional \
-             {} attribute: an array of the permissions needed for this rule to be checked. \
-             And finally, an optional {} attribute can be added where you can specify a \
-             second regular expression to check if the one in the {} attribute matches. \
-             You can add one or two capture groups with name from the match to this \
-             check, with names {} and {}. To use them you have to include {} or {} in \
-             the forward check.",
-            "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
-             description for this rule\"\n\t\"criticality\": \
-             \"warning|low|medium|high|critical\"\n\t\"regex\": \
-             \"regex_to_find_vulnerability\"\n}"
-                .italic(),
+            "rules must be objects with the following structure:\n{}\nAn optional {} attribute can \
+             be added: an array of regular expressions that if matched, the found match will be \
+             discarded. You can also include an optional {} attribute: an array of the permissions \
+             needed for this rule to be checked. And finally, an optional {} attribute can be \
+             added where you can specify a second regular expression to check if the one in the {} \
+             attribute matches. You can add one or two capture groups with name from the match to \
+             this check, with names {} and {}. To use them you have to include {} or {} in the \
+             forward check.",
+            "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for \
+             this rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
+             \"regex_to_find_vulnerability\"\n}".italic(),
             "whitelist".italic(),
             "permissions".italic(),
             "forward_check".italic(),
@@ -437,12 +435,12 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             o
         } else {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse.context("invalid rule structure").into());
         };
 
         if rule.len() < 4 || rule.len() > 8 {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse.context("rule fields don't match").into());
         }
 
         let regex = if let Some(&Value::String(ref r)) = rule.get("regex") {
@@ -450,16 +448,19 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                 Ok(r) => r,
                 Err(e) => {
                     print_warning(format!(
-                        "An error occurred when compiling the regular \
-                         expresion: {}",
-                        e.description()
+                        "an error occurred when compiling the regular expresion: {}",
+                        e
                     ));
-                    return Err(ErrorKind::Parse.into());
+                    return Err(e.context(error::Kind::Parse)
+                        .context("could not parse main regular expression")
+                        .into());
                 }
             }
         } else {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse
+                .context("there was no regular expression in the rule")
+                .into());
         };
 
         let max_sdk = match rule.get("max_sdk") {
@@ -467,7 +468,9 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
+                return Err(error::Kind::Parse
+                    .context("invalid maximum SDK value")
+                    .into());
             }
         };
 
@@ -480,20 +483,26 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             p
                         } else {
                             print_warning(format!("the permission {} is unknown", p.italic()));
-                            return Err(ErrorKind::Parse.into());
+                            return Err(error::Kind::Parse
+                                .context(format_err!("unknown {} permission", p))
+                                .into());
                         }
                     } else {
                         print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
+                        return Err(error::Kind::Parse
+                            .context("non-string permission found")
+                            .into());
                     });
                 }
                 list
             }
             Some(_) => {
                 print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
+                return Err(error::Kind::Parse
+                    .context("permissions must be a list")
+                    .into());
             }
-            None => Vec::with_capacity(0),
+            None => Vec::new(),
         };
 
         let forward_check = match rule.get("forward_check") {
@@ -504,21 +513,23 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                         Some("fc1") => {
                             if !s.contains("{fc1}") {
                                 print_warning(
-                                    "You must provide the '{fc1}' string where you \
-                                     want the 'fc1' capture to be inserted in the \
-                                     forward check.",
+                                    "You must provide the '{fc1}' string where you want the 'fc1' \
+                                     capture to be inserted in the forward check.",
                                 );
-                                return Err(ErrorKind::Parse.into());
+                                return Err(error::Kind::Parse
+                                    .context("fc2 capture group used but no placeholder found")
+                                    .into());
                             }
                         }
                         Some("fc2") => {
                             if !s.contains("{fc2}") {
                                 print_warning(
-                                    "You must provide the '{fc2}' string where you \
-                                     want the 'fc2' capture to be inserted in the \
-                                     forward check.",
+                                    "you must provide the '{fc2}' string where you want the 'fc2' \
+                                     capture to be inserted in the forward check.",
                                 );
-                                return Err(ErrorKind::Parse.into());
+                                return Err(error::Kind::Parse
+                                    .context("fc2 capture group used but no placeholder found")
+                                    .into());
                             }
                         }
                         _ => {}
@@ -530,10 +541,11 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     && !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1")
                 {
                     print_warning(
-                        "You must have a capture group named fc1 to use the capture \
-                         fc2.",
+                        "you must have a capture group named fc1 to use the fc2 capture group.",
                     );
-                    return Err(ErrorKind::Parse.into());
+                    return Err(error::Kind::Parse
+                        .context("used the fc2 capture group without using the fc1 capture group")
+                        .into());
                 }
 
                 Some(s.clone())
@@ -541,7 +553,9 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             None => None,
             _ => {
                 print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
+                return Err(error::Kind::Parse
+                    .context("non-string forward check found")
+                    .into());
             }
         };
 
@@ -549,14 +563,16 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
             l
         } else {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse.context("non-string label found").into());
         };
 
         let description = if let Some(&Value::String(ref d)) = rule.get("description") {
             d
         } else {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse
+                .context("non-string description found")
+                .into());
         };
 
         let criticality = if let Some(&Value::String(ref c)) = rule.get("criticality") {
@@ -571,12 +587,16 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                         "high".italic(),
                         "critical".italic()
                     ));
-                    return Err(e);
+                    return Err(e.context(error::Kind::Parse)
+                        .context("invalid criticality found")
+                        .into());
                 }
             }
         } else {
             print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+            return Err(error::Kind::Parse
+                .context("non-string criticality found")
+                .into());
         };
 
         let whitelist = match rule.get("whitelist") {
@@ -588,25 +608,33 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                             Ok(r) => r,
                             Err(e) => {
                                 print_warning(format!(
-                                    "An error occurred when compiling the \
-                                     regular expresion: {}",
-                                    e.description()
+                                    "an error occurred when compiling the regular expresion: {}",
+                                    e
                                 ));
-                                return Err(ErrorKind::Parse.into());
+                                return Err(e.context(error::Kind::Parse)
+                                    .context(
+                                        "an error occurred when compiling the whitelist regular \
+                                         expresion",
+                                    )
+                                    .into());
                             }
                         }
                     } else {
                         print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
+                        return Err(error::Kind::Parse
+                            .context("non-string whitelist found")
+                            .into());
                     });
                 }
                 list
             }
             Some(_) => {
                 print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
+                return Err(error::Kind::Parse
+                    .context("whitelist must be a list")
+                    .into());
             }
-            None => Vec::with_capacity(0),
+            None => Vec::new(),
         };
 
         let inclusion_regex = rule.get("include_file_regex")
@@ -617,9 +645,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Ok(regex) => Some(regex),
                     Err(e) => {
                         print_warning(format!(
-                            "An error ocurred when compiling the inclusion \
-                             regular expresion: {}",
-                            e.description()
+                            "an error ocurred when compiling the inclusion regular expresion: {}",
+                            e
                         ));
                         None
                     }
@@ -634,9 +661,8 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
                     Ok(regex) => Some(regex),
                     Err(e) => {
                         print_warning(format!(
-                            "An error ocurred when compiling the exclusion \
-                             regular expresion: {}",
-                            e.description()
+                            "an error ocurred when compiling the exclusion regular expresion: {}",
+                            e
                         ));
                         None
                     }
@@ -664,10 +690,21 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
 #[cfg(test)]
 mod tests {
+    use failure::Error;
     use regex::Regex;
+
     use super::{load_rules, Rule};
     use config::Config;
     use criticality::Criticality;
+
+    /// Prints information about the given error.
+    fn print_error(e: Error) {
+        eprintln!("Error: {}", e);
+
+        for e in e.causes().skip(1) {
+            eprintln!("\tCaused by: {}", e);
+        }
+    }
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
         if rule.regex().is_match(text.as_ref()) {
@@ -742,7 +779,13 @@ mod tests {
     #[test]
     fn it_url_regex() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(0).unwrap();
 
         let should_match = &[
@@ -771,7 +814,13 @@ mod tests {
     #[test]
     fn it_catch_exception() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(1).unwrap();
 
         let should_match = &[
@@ -802,7 +851,13 @@ mod tests {
     #[test]
     fn it_throws_exception() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(2).unwrap();
 
         let should_match = &[
@@ -832,7 +887,13 @@ mod tests {
     #[test]
     fn it_hidden_fields() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(3).unwrap();
 
         let should_match = &[
@@ -857,7 +918,13 @@ mod tests {
     #[test]
     fn it_ipv4_disclosure() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(4).unwrap();
 
         let should_match = &[
@@ -891,7 +958,13 @@ mod tests {
     #[test]
     fn it_math_random() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(5).unwrap();
 
         let should_match = &["Math.random()", "Random()", "Math . random ()"];
@@ -915,7 +988,13 @@ mod tests {
     #[test]
     fn it_log() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(6).unwrap();
 
         let should_match = &[
@@ -950,7 +1029,13 @@ mod tests {
     #[test]
     fn it_file_separator() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(7).unwrap();
 
         let should_match = &[
@@ -974,7 +1059,13 @@ mod tests {
     #[test]
     fn it_weak_algs() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(8).unwrap();
 
         let should_match = &[
@@ -1008,7 +1099,13 @@ mod tests {
     #[test]
     fn it_sleep_method() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(9).unwrap();
 
         let should_match = &[
@@ -1039,7 +1136,13 @@ mod tests {
     #[test]
     fn it_world_readable_permissions() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(10).unwrap();
 
         let should_match = &[
@@ -1069,7 +1172,13 @@ mod tests {
     #[test]
     fn it_world_writable_permissions() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(11).unwrap();
 
         let should_match = &[
@@ -1099,7 +1208,13 @@ mod tests {
     #[test]
     fn it_external_storage_write_read() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(12).unwrap();
 
         let should_match = &[".getExternalStorage", ".getExternalFilesDir()"];
@@ -1118,7 +1233,13 @@ mod tests {
     #[test]
     fn it_temp_file() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(13).unwrap();
 
         let should_match = &[".createTempFile()", ".createTempFile()"];
@@ -1137,7 +1258,13 @@ mod tests {
     #[test]
     fn it_webview_xss() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(14).unwrap();
 
         let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"];
@@ -1156,7 +1283,13 @@ mod tests {
     #[test]
     fn it_webview_ssl_errors() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(15).unwrap();
 
         let should_match = &[
@@ -1178,7 +1311,13 @@ mod tests {
     #[test]
     fn it_sql_injection() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(16).unwrap();
 
         let should_match = &[
@@ -1209,7 +1348,13 @@ mod tests {
     #[test]
     fn it_ssl_accepting_all_certificates() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(17).unwrap();
 
         let should_match = &[
@@ -1240,7 +1385,13 @@ mod tests {
     #[test]
     fn it_sms_mms_sending() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(18).unwrap();
 
         let should_match = &[
@@ -1278,7 +1429,13 @@ mod tests {
     #[test]
     fn it_superuser_privileges() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(19).unwrap();
 
         let should_match = &[
@@ -1303,7 +1460,13 @@ mod tests {
     #[test]
     fn it_superuser_device_detection() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(20).unwrap();
 
         let should_match = &[
@@ -1330,7 +1493,13 @@ mod tests {
     #[test]
     fn it_base_station_location() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(21).unwrap();
 
         let should_match = &["telephony.TelephonyManager    getCellLocation"];
@@ -1349,7 +1518,13 @@ mod tests {
     #[test]
     fn it_get_device_id() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(22).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getDeviceId()"];
@@ -1368,7 +1543,13 @@ mod tests {
     #[test]
     fn it_get_sim_serial() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(23).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getSimSerialNumber()"];
@@ -1387,7 +1568,13 @@ mod tests {
     #[test]
     fn it_gps_location() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(24).unwrap();
 
         let should_match = &[
@@ -1417,7 +1604,13 @@ mod tests {
     #[test]
     fn it_base64_encode() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(25).unwrap();
 
         let should_match = &[
@@ -1439,7 +1632,13 @@ mod tests {
     #[test]
     fn it_base64_decoding() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(26).unwrap();
 
         let should_match = &["android.util.Base64   .decode()"];
@@ -1458,7 +1657,13 @@ mod tests {
     #[test]
     fn it_infinite_loop() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(27).unwrap();
 
         let should_match = &["while(true)"];
@@ -1477,7 +1682,13 @@ mod tests {
     #[test]
     fn it_email_disclosure() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(28).unwrap();
 
         let should_match = &[
@@ -1501,7 +1712,13 @@ mod tests {
     #[test]
     fn it_hardcoded_certificate() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(29).unwrap();
 
         let should_match = &[
@@ -1532,7 +1749,13 @@ mod tests {
     #[test]
     fn it_get_sim_operator() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(30).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getSimOperator()"];
@@ -1551,7 +1774,13 @@ mod tests {
     #[test]
     fn it_get_sim_operatorname() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(31).unwrap();
 
         let should_match = &["telephony.TelephonyManager      getSimOperatorName()"];
@@ -1570,7 +1799,13 @@ mod tests {
     #[test]
     fn it_obfuscation() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(32).unwrap();
 
         let should_match = &[
@@ -1599,7 +1834,13 @@ mod tests {
     #[test]
     fn it_command_exec() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(33).unwrap();
 
         let should_match = &[
@@ -1628,7 +1869,13 @@ mod tests {
     #[test]
     fn it_ssl_getinsecure_method() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(34).unwrap();
 
         let should_match = &[
@@ -1655,7 +1902,13 @@ mod tests {
     #[test]
     fn it_finally_with_return() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(35).unwrap();
 
         let should_match = &[
@@ -1681,7 +1934,13 @@ mod tests {
     #[test]
     fn it_sleep_method_notvalidated() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(e);
+                panic!()
+            }
+        };
         let rule = rules.get(36).unwrap();
 
         let should_match = &[

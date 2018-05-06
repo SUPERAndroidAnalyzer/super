@@ -1,13 +1,14 @@
 //! JSON report generation module.
 
+use std::io::BufWriter;
+use std::fs::File;
+
+use failure::Error;
+use serde_json::ser;
+
 use results::report::Generator;
 use results::Results;
 use config::Config;
-use std::io::BufWriter;
-use std::fs::File;
-use serde_json::ser;
-
-use error::*;
 
 /// JSON report generator.
 pub struct Json;
@@ -21,7 +22,7 @@ impl Json {
 
 impl Generator for Json {
     #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-    fn generate(&mut self, config: &Config, results: &Results) -> Result<()> {
+    fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")
         }

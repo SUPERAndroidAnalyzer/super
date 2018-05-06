@@ -11,15 +11,17 @@
 extern crate super_analyzer_core;
 
 extern crate colored;
+extern crate failure;
 #[macro_use]
 extern crate log;
 
-use std::io::{self, Write};
-use std::time::{Duration, Instant};
-use std::thread::sleep;
 use std::collections::BTreeMap;
+use std::io::{self, Write};
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 
 use colored::Colorize;
+use failure::{Error, ResultExt};
 use log::Level;
 
 use super_analyzer_core::*;
@@ -29,7 +31,7 @@ fn main() {
     if let Err(e) = run() {
         error!("{}", e);
 
-        for e in e.iter().skip(1) {
+        for e in e.causes().skip(1) {
             println!("\t{}{}", "Caused by: ".bold(), e);
         }
 
@@ -40,19 +42,12 @@ fn main() {
             );
         }
 
-        if let Some(backtrace) = e.backtrace() {
-            #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
-            {
-                println!("backtrace: {:?}", backtrace);
-            }
-        }
-
-        ::std::process::exit(e.into());
+        ::std::process::exit(1);
     }
 }
 
 /// Analyzer executable code.
-fn run() -> Result<()> {
+fn run() -> Result<(), Error> {
     let cli = cli::generate().get_matches();
     let verbose = cli.is_present("verbose");
     initialize_logger(verbose);
@@ -73,7 +68,9 @@ fn run() -> Result<()> {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
 
-        return Err(ErrorKind::Config(error_string).into());
+        return Err(error::Kind::Config {
+            message: error_string,
+        }.into());
     }
 
     if config.is_verbose() {
@@ -99,7 +96,7 @@ fn run() -> Result<()> {
     for package in config.app_packages() {
         config.reset_force();
         analyze_package(package, &mut config, &mut benchmarks)
-            .chain_err(|| "Application analysis failed")?;
+            .context("application analysis failed")?;
     }
 
     if config.is_bench() {

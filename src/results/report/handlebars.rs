@@ -1,21 +1,24 @@
 //! Handlebars report generation module.
 
-use results::report::Generator;
-use results::Results;
-use config::Config;
+use std::collections::BTreeMap;
+use std::path::Path;
+use std::fs;
 use std::io::{Read, Write};
 use std::fs::File;
+
+use failure::{Error, ResultExt};
 use handlebars::Handlebars;
-use results::utils::html_escape;
-use results::handlebars_helpers::*;
-use std::fs;
-use copy_folder;
 use colored::Colorize;
 use serde_json::Map;
 use serde_json::value::Value;
-use std::collections::BTreeMap;
-use std::path::Path;
-use error::*;
+
+use copy_folder;
+use config::Config;
+use results::report::Generator;
+use results::Results;
+use results::utils::html_escape;
+use results::handlebars_helpers::*;
+use error;
 
 /// Handlebars report generator.
 pub struct Report {
@@ -27,9 +30,12 @@ pub struct Report {
 
 impl Report {
     /// Creates a new handlebars report generator.
-    pub fn new<P: AsRef<Path>, S: Into<String>>(template_path: P, package: S) -> Result<Self> {
-        let handlebars_handler = Self::load_templates(template_path)
-            .chain_err(|| "Could not load handlebars templates")?;
+    pub fn new<P: AsRef<Path>, S: Into<String>>(
+        template_path: P,
+        package: S,
+    ) -> Result<Self, Error> {
+        let handlebars_handler =
+            Self::load_templates(template_path).context("Could not load handlebars templates")?;
 
         Ok(Self {
             handler: handlebars_handler,
@@ -39,7 +45,7 @@ impl Report {
 
     /// Loads templates from the given path.
     #[allow(box_pointers)]
-    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars> {
+    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars, Error> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());
         let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
@@ -54,22 +60,18 @@ impl Report {
                 if ext == "hbs" {
                     let path = dir_entry.path();
                     let template_file = path.file_stem()
-                        .ok_or_else(|| {
-                            ErrorKind::TemplateName(
-                                "template files must have a file name".to_string(),
-                            )
+                        .ok_or_else(|| error::Kind::TemplateName {
+                            message: "template files must have a file name".to_owned(),
                         })
                         .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| {
-                                ErrorKind::TemplateName(
-                                    "template names must be unicode".to_string(),
-                                )
+                            stem.to_str().ok_or_else(|| error::Kind::TemplateName {
+                                message: "template names must be unicode".to_string(),
                             })
                         })?;
 
                     handlebars
                         .register_template_file(template_file, dir_entry.path())
-                        .chain_err(|| "Error registering template file")?;
+                        .context("error registering template file")?;
                 }
             }
         }
@@ -84,14 +86,14 @@ impl Report {
                 "code".italic()
             );
 
-            Err(ErrorKind::TemplateName(message).into())
+            Err(error::Kind::TemplateName { message }.into())
         } else {
             Ok(handlebars)
         }
     }
 
     /// Generates the HTML files for the code.
-    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<()> {
+    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<(), Error> {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
         let mut f = File::create(
@@ -115,7 +117,7 @@ impl Report {
         path: P,
         config: &Config,
         results: &Results,
-    ) -> Result<Vec<Value>> {
+    ) -> Result<Vec<Value>, Error> {
         if path.as_ref() == Path::new("classes/android")
             || path.as_ref() == Path::new("classes/com/google/android/gms")
             || path.as_ref() == Path::new("smali")
@@ -193,7 +195,7 @@ impl Report {
         config: &Config,
         results: &Results,
         cli_package_name: S,
-    ) -> Result<()> {
+    ) -> Result<(), Error> {
         let mut f_in = File::open(
             config
                 .dist_folder()
@@ -234,7 +236,7 @@ impl Report {
 
 impl Generator for Report {
     #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-    fn generate(&mut self, config: &Config, results: &Results) -> Result<()> {
+    fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }

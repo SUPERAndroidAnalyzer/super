@@ -3,12 +3,11 @@
 use std::fmt;
 use std::fmt::Display;
 use std::str::FromStr;
-use std::result;
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 use toml::value::Value;
 
-use error::*;
+use error;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -27,13 +26,13 @@ pub enum Criticality {
 
 impl Display for Criticality {
     #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
-    fn fmt(&self, f: &mut fmt::Formatter) -> result::Result<(), fmt::Error> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
 }
 
 impl Serialize for Criticality {
-    fn serialize<S>(&self, serializer: S) -> result::Result<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
@@ -42,7 +41,7 @@ impl Serialize for Criticality {
 }
 
 impl<'de> Deserialize<'de> for Criticality {
-    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -66,15 +65,15 @@ impl<'de> Deserialize<'de> for Criticality {
 }
 
 impl FromStr for Criticality {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Self> {
+    type Err = error::Kind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "critical" => Ok(Criticality::Critical),
             "high" => Ok(Criticality::High),
             "medium" => Ok(Criticality::Medium),
             "low" => Ok(Criticality::Low),
             "warning" => Ok(Criticality::Warning),
-            _ => Err(ErrorKind::Parse.into()),
+            _ => Err(error::Kind::Parse),
         }
     }
 }

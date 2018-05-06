@@ -3,19 +3,18 @@
 //! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
 //! information for results.
 
-use std::result::Result as StdResult;
+use std::borrow::Cow;
+use std::cmp::Ordering;
 use std::fs::File;
 use std::io::Read;
-use std::cmp::Ordering;
 use std::path::{Path, PathBuf};
-use std::borrow::Cow;
 
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-use {md5, sha1, sha2};
+use failure::Error;
 use hex::ToHex;
 use regex::Regex;
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+use {md5, sha1, sha2};
 
-use error::*;
 use criticality::Criticality;
 
 /// Structure to store information about a vulnerability.
@@ -72,7 +71,7 @@ impl Vulnerability {
 }
 
 impl Serialize for Vulnerability {
-    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
@@ -148,7 +147,7 @@ impl FingerPrint {
     /// Creates a new fingerprint.
     ///
     /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
-    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
+    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint, Error> {
         use sha2::Digest;
 
         let mut f = File::open(package)?;
@@ -172,7 +171,7 @@ impl FingerPrint {
 }
 
 impl Serialize for FingerPrint {
-    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {

@@ -16,7 +16,9 @@ extern crate clap;
 extern crate colored;
 extern crate env_logger;
 #[macro_use]
-extern crate error_chain;
+extern crate failure;
+#[macro_use]
+extern crate failure_derive;
 extern crate handlebars;
 extern crate hex;
 #[macro_use]
@@ -24,6 +26,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate log;
 extern crate md5;
+extern crate num_cpus;
 extern crate open;
 extern crate regex;
 extern crate semver;
@@ -36,30 +39,30 @@ extern crate sha2;
 extern crate toml;
 extern crate xml;
 
-mod error;
 /// Command Line Interface
 pub mod cli;
-mod decompilation;
-mod static_analysis;
-mod results;
 mod config;
-mod utils;
 mod criticality;
+mod decompilation;
+pub mod error;
+mod results;
+mod static_analysis;
+mod utils;
 
-use std::{env, fs};
-use std::time::{Duration, Instant};
-use std::thread::sleep;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+use std::thread::sleep;
+use std::time::{Duration, Instant};
+use std::{env, fs};
 
 use clap::ArgMatches;
 use colored::Colorize;
+use failure::{Error, ResultExt};
 
+pub use config::*;
 use decompilation::*;
-use static_analysis::*;
 use results::*;
-pub use error::*;
-pub use config::Config;
+use static_analysis::*;
 pub use utils::*;
 
 /// Logo ASCII art.
@@ -71,26 +74,26 @@ pub static BANNER: &str = include_str!("banner.txt");
 /// ('/etc/super-analyzer/config.toml'), the latter is used.
 /// Otherwise, the local file is used.
 /// Finally, if non of the files could be loaded, the default config is used
-pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config> {
+pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
     let config_path = PathBuf::from("config.toml");
     let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
 
-    let mut config =
-        if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
-            Config::from_file(&global_config_path).chain_err(|| {
-                "There was an error when reading the /etc/super-analyzer/config.toml file"
-            })?
-        } else if config_path.exists() {
-            Config::from_file(&PathBuf::from("config.toml"))
-                .chain_err(|| "There was an error when reading the config.toml file")?
-        } else {
-            print_warning("Config file not found. Using default configuration");
-            Config::default()
-        };
+    let mut config = if cfg!(target_family = "unix") && !config_path.exists()
+        && global_config_path.exists()
+    {
+        Config::from_file(&global_config_path)
+            .context("there was an error when reading the /etc/super-analyzer/config.toml file")?
+    } else if config_path.exists() {
+        Config::from_file(&PathBuf::from("config.toml"))
+            .context("there was an error when reading the config.toml file")?
+    } else {
+        print_warning("config file not found. Using default configuration");
+        Config::default()
+    };
 
     config
         .decorate_with_cli(cli)
-        .chain_err(|| "There was an error reading config from CLI")?;
+        .context("there was an error reading the configuration from the CLI")?;
 
     Ok(config)
 }
@@ -101,7 +104,7 @@ pub fn analyze_package<P: AsRef<Path>>(
     package: P,
     config: &mut Config,
     benchmarks: &mut BTreeMap<String, Vec<Benchmark>>,
-) -> Result<()> {
+) -> Result<(), Error> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -113,7 +116,7 @@ pub fn analyze_package<P: AsRef<Path>>(
     let start_time = Instant::now();
 
     // Apk decompression
-    decompress(config, &package).chain_err(|| "apk decompression failed")?;
+    decompress(config, &package).context("apk decompression failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -124,7 +127,7 @@ pub fn analyze_package<P: AsRef<Path>>(
 
     let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package).chain_err(|| "Conversion from DEX to JAR failed")?;
+    dex_to_jar(config, &package).context("Conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -147,7 +150,7 @@ pub fn analyze_package<P: AsRef<Path>>(
     let decompile_start = Instant::now();
 
     // Decompiling the app
-    decompile(config, &package).chain_err(|| "JAR decompression failed")?;
+    decompile(config, &package).context("JAR decompression failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -183,12 +186,10 @@ pub fn analyze_package<P: AsRef<Path>>(
     let report_start = Instant::now();
     results
         .generate_report(config, &package_name)
-        .chain_err(|| {
-            format!(
-                "There was an error generating the results report. Tried to generate at: {}",
-                config.results_folder().join(&package_name).display()
-            )
-        })?;
+        .context(format_err!(
+            "There was an error generating the results report. Tried to generate at: {}",
+            config.results_folder().join(&package_name).display()
+        ))?;
 
     if config.is_verbose() {
         println!("Everything went smoothly, now you can check all the results.");
@@ -228,11 +229,10 @@ pub fn analyze_package<P: AsRef<Path>>(
                 .join("results.json")
         };
 
-        let status =
-            open::that(open_path).chain_err(|| "Report could not be opened automatically")?;
+        let status = open::that(open_path).context("Report could not be opened automatically")?;
 
         if !status.success() {
-            return Err(format!("Report opening errored with status code: {}", status).into());
+            bail!("Report opening errored with status code: {}", status);
         }
     }
 
@@ -244,7 +244,7 @@ pub fn analyze_package<P: AsRef<Path>>(
 /// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
 /// files in the destination folder exist with the same name as in the origin folder, they will be
 /// overwriten.
-pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
+pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
     if !to.as_ref().exists() {
         fs::create_dir(to.as_ref())?;
     }
@@ -271,10 +271,10 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 /// Initializes the logger.
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn initialize_logger(is_verbose: bool) {
-    use std::io::Write;
-    use log::{Level, LevelFilter, Record};
-    use env_logger::Builder;
     use env_logger::fmt::{Color, Formatter};
+    use env_logger::Builder;
+    use log::{Level, LevelFilter, Record};
+    use std::io::Write;
 
     let format = |buf: &mut Formatter, record: &Record| {
         let mut level_style = buf.style();
@@ -329,10 +329,10 @@ mod tests {
     use config::Config;
     use criticality::Criticality;
 
-    use std::str::FromStr;
+    use std::collections::BTreeMap;
     use std::fs;
     use std::path::Path;
-    use std::collections::BTreeMap;
+    use std::str::FromStr;
 
     #[test]
     fn it_criticality() {
