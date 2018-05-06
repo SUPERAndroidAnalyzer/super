@@ -5,16 +5,15 @@
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use std::error::Error as StdError;
 
-use colored::Colorize;
 use abxml::apk::Apk;
+use colored::Colorize;
+use failure::{Error, ResultExt};
 
-use error::*;
 use {get_package_name, print_warning, Config};
 
 /// Decompresses the application using `_Apktool_`.
-pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
+pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
     let path = config
         .dist_folder()
         .join(package.as_ref().file_stem().unwrap());
@@ -26,9 +25,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 
             if let Err(e) = fs::remove_dir_all(&path) {
                 print_warning(format!(
-                    "There was an error when removing the decompression \
-                     folder: {}",
-                    e.description()
+                    "there was an error when removing the decompression folder: {}",
+                    e
                 ));
             }
         }
@@ -39,13 +37,11 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref()).chain_err(|| "error loading apk file")?;
-        apk.export(&path, true).chain_err(|| {
-            format!(
-                "could not decompress the apk file. Tried to decompile at: {}",
-                path.display()
-            )
-        })?;
+        let mut apk = Apk::new(package.as_ref()).context("error loading apk file")?;
+        apk.export(&path, true).context(format_err!(
+            "could not decompress the apk file. Tried to decompile at: {}",
+            path.display()
+        ))?;
 
         if config.is_verbose() {
             println!(
@@ -60,8 +56,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         }
     } else if config.is_verbose() {
         println!(
-            "Seems that the application has already been decompressed. There is no need to \
-             do it again."
+            "Seems that the application has already been decompressed. There is no need to do it \
+             again."
         );
     } else {
         println!("Skipping decompression.");
@@ -71,7 +67,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 }
 
 /// Converts `_.dex_` files to `_.jar_` using `_Dex2jar_`.
-pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
+pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
     let package_name = get_package_name(package.as_ref());
     let classes = config.dist_folder().join(&package_name).join("classes.jar");
     if config.is_force() || !classes.exists() {
@@ -90,13 +86,11 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             .arg("-o")
             .arg(&classes)
             .output()
-            .chain_err(|| {
-                format!(
-                    "There was an error when executing the {} to {} conversion command",
-                    ".dex".italic(),
-                    ".jar".italic()
-                )
-            })?;
+            .context(format_err!(
+                "there was an error when executing the {} to {} conversion command",
+                ".dex".italic(),
+                ".jar".italic()
+            ))?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -106,15 +100,12 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
         if !output.status.success() || stderr.find('\n') != Some(stderr.len() - 1)
             || stderr.contains("use")
         {
-            let message = format!(
-                "The {} to {} conversion command returned an error. More info: \
-                 {}",
+            bail!(
+                "the {} to {} conversion command returned an error. More info: {}",
                 ".dex".italic(),
                 ".jar".italic(),
                 stderr
             );
-
-            return Err(message.into());
         }
 
         if config.is_verbose() {
@@ -144,7 +135,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
 }
 
 /// Decompiles the application using `_jd\_cmd_`.
-pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
+pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.dist_folder().join(&package_name).join("classes");
     if config.is_force() || !out_path.exists() {
@@ -159,14 +150,13 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
             .arg("-od")
             .arg(&out_path)
             .output()
-            .chain_err(|| "There was an unknown error decompiling the application")?;
+            .context("there was an unknown error decompiling the application")?;
 
         if !output.status.success() {
-            let message = format!(
-                "The decompilation command returned an error. More info:\n{}",
+            bail!(
+                "the decompilation command returned an error. More info:\n{}",
                 String::from_utf8_lossy(&output.stdout)
             );
-            return Err(message.into());
         }
 
         if config.is_verbose() {
@@ -179,8 +169,8 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> 
         }
     } else if config.is_verbose() {
         println!(
-            "Seems that there is already a source folder for the application. There is no \
-             need to decompile it again."
+            "Seems that there is already a source folder for the application. There is no need to \
+             decompile it again."
         );
     } else {
         println!("Skipping decompilation.");

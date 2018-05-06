@@ -75,7 +75,7 @@ OPTIONS:
         --results <results>                    Folder where to store the results
         --rules <rules>                        Path to a JSON rules file
         --template <template>                  Path to a results template file
-    -t, --threads <threads>                    Number of threads to use
+    -t, --threads <threads>                    Number of threads to use, by default it will use one thread per logical CPU core
 
 ARGS:
     <package>    The package string of the application to test

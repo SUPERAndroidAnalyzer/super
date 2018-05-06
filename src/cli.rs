@@ -72,7 +72,10 @@ pub fn generate() -> App<'static, 'static> {
             Arg::with_name("threads")
                 .short("t")
                 .long("threads")
-                .help("Number of threads to use")
+                .help(
+                    "Number of threads to use, by default it will use one thread per logical CPU \
+                     core",
+                )
                 .takes_value(true),
         )
         .arg(

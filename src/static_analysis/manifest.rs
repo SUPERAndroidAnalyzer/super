@@ -4,19 +4,17 @@ use std::fs::File;
 use std::io::Read;
 use std::path::Path;
 use std::str::FromStr;
-use std::error::Error as StdError;
-use error::*;
-use serde::{Deserialize, Deserializer};
-use std::result;
-use toml;
-use serde;
 
-use xml::reader::{EventReader, XmlEvent};
 use colored::Colorize;
+use failure::Error;
+use serde::{self, Deserialize, Deserializer};
+use toml;
+use xml::reader::{EventReader, XmlEvent};
 
-use {get_code, get_string, print_vulnerability, print_warning, Config, PARSER_CONFIG};
-use results::{Results, Vulnerability};
 use criticality::Criticality;
+use error;
+use results::{Results, Vulnerability};
+use {get_code, get_string, print_vulnerability, print_warning, Config, PARSER_CONFIG};
 
 /// Performs the manifest analysis.
 pub fn analysis<S: AsRef<str>>(
@@ -47,13 +45,13 @@ pub fn analysis<S: AsRef<str>>(
         Err(e) => {
             print_warning(format!(
                 "There was an error when loading the manifest: {}",
-                e.description()
+                e
             ));
             if config.is_verbose() {
                 println!(
-                    "The rest of the analysis will continue, but there will be no analysis \
-                     of the AndroidManifest.xml file, and code analysis rules requiring \
-                     permissions will not run."
+                    "The rest of the analysis will continue, but there will be no analysis of the \
+                     AndroidManifest.xml file, and code analysis rules requiring permissions will \
+                     not run."
                 );
             }
             return None;
@@ -62,18 +60,17 @@ pub fn analysis<S: AsRef<str>>(
 
     if manifest.package() != package.as_ref() {
         print_warning(format!(
-            "Seems that the package in the AndroidManifest.xml is not the \
-             same as the application ID provided. Provided application id: \
-             {}, manifest package: {}",
+            "Seems that the package in the AndroidManifest.xml is not the same as the application \
+             ID provided. Provided application id: {}, manifest package: {}",
             package.as_ref(),
             manifest.package()
         ));
 
         if config.is_verbose() {
             println!(
-                "This does not mean that something went wrong, but it's supposed to have \
-                 the application in the format {{package}}.apk in the {} folder and use the \
-                 package as the application ID for this auditor.",
+                "This does not mean that something went wrong, but it's supposed to have the \
+                 application in the format {{package}}.apk in the {} folder and use the package as \
+                 the application ID for this auditor.",
                 "downloads".italic()
             );
         }
@@ -93,9 +90,9 @@ pub fn analysis<S: AsRef<str>>(
         let criticality = Criticality::Critical;
 
         if criticality >= config.min_criticality() {
-            let description = "The application is in debug mode. \
-                               This allows any malicious person to inject arbitrary code in the \
-                               application. This option should only be used while in development.";
+            let description = "The application is in debug mode. This allows any malicious person \
+                               to inject arbitrary code in the application. This option should \
+                               only be used while in development.";
 
             let line = get_line(manifest.code(), "android:debuggable=\"true\"").ok();
             let code = match line {
@@ -122,9 +119,9 @@ pub fn analysis<S: AsRef<str>>(
         let criticality = Criticality::Warning;
 
         if criticality >= config.min_criticality() {
-            let description = "The application needs a large heap. This is not a vulnerability \
-                               as such, but could be in devices with small heap. Check if the \
-                               large heap is actually needed.";
+            let description = "The application needs a large heap. This is not a vulnerability as \
+                               such, but could be in devices with small heap. Check if the large \
+                               heap is actually needed.";
 
             let line = get_line(manifest.code(), "android:largeHeap=\"true\"").ok();
             let code = match line {
@@ -237,7 +234,7 @@ impl Manifest {
         config: &Config,
         package: S,
         results: &mut Results,
-    ) -> Result<Manifest> {
+    ) -> Result<Manifest, Error> {
         let mut file = File::open(path.as_ref().join("AndroidManifest.xml"))?;
         let mut manifest = Manifest::default();
 
@@ -261,12 +258,9 @@ impl Manifest {
                                     Ok(n) => n,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred when \
-                                             parsing the version in \
-                                             the manifest: {}.\nThe \
-                                             process will continue, \
-                                             though.",
-                                            e.description()
+                                            "An error occurred when parsing the version in the \
+                                             manifest: {}.\nThe process will continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -280,14 +274,10 @@ impl Manifest {
                                     Ok(l) => l,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred when \
-                                             parsing the \
-                                             installLocation \
-                                             attribute in the \
-                                             manifest: {}.\nThe \
-                                             process will continue, \
-                                             though.",
-                                            e.description()
+                                            "An error occurred when parsing the `installLocation` \
+                                             attribute in the manifest: {}.\nThe process will \
+                                             continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -304,13 +294,10 @@ impl Manifest {
                                     Ok(m) => m,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred when \
-                                             parsing the \
-                                             minSdkVersion attribute \
-                                             in the manifest: \
-                                             {}.\nThe process will \
+                                            "An error occurred when parsing the `minSdkVersion` \
+                                             attribute in the manifest: {}.\nThe process will \
                                              continue, though.",
-                                            e.description()
+                                            e
                                         ));
                                         break;
                                     }
@@ -322,14 +309,10 @@ impl Manifest {
                                     Ok(t) => t,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred \
-                                             when parsing the \
-                                             targetSdkVersion \
-                                             attribute in the \
-                                             manifest: {}.\nThe \
-                                             process will \
+                                            "An error occurred when parsing the `targetSdkVersion` \
+                                             attribute in the manifest: {}.\nThe process will \
                                              continue, though.",
-                                            e.description()
+                                            e
                                         ));
                                         break;
                                     }
@@ -346,13 +329,10 @@ impl Manifest {
                                     Ok(b) => b,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred \
-                                             when parsing the \
-                                             debuggable attribute in \
-                                             the manifest: \
-                                             {}.\nThe process \
-                                             will continue, though.",
-                                            e.description()
+                                            "An error occurred when parsing the `debuggable` \
+                                             attribute in the manifest: {}.\nThe process will \
+                                             continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -366,13 +346,10 @@ impl Manifest {
                                     Ok(b) => b,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred \
-                                             when parsing the \
-                                             allowBackup attribute in \
-                                             the manifest: \
-                                             {}.\nThe process \
-                                             will continue, though.",
-                                            e.description()
+                                            "An error occurred when parsing the `allowBackup` \
+                                             attribute in the manifest: {}.\nThe process will \
+                                             continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -387,13 +364,10 @@ impl Manifest {
                                     Ok(b) => b,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred \
-                                             when parsing the \
-                                             hasCode attribute in \
-                                             the manifest: \
-                                             {}.\nThe process \
-                                             will continue, though.",
-                                            e.description()
+                                            "An error occurred when parsing the `hasCode` \
+                                             attribute in the manifest: {}.\nThe process will \
+                                             continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -407,13 +381,10 @@ impl Manifest {
                                     Ok(b) => b,
                                     Err(e) => {
                                         print_warning(format!(
-                                            "An error occurred \
-                                             when parsing the \
-                                             largeHeap attribute in \
-                                             the manifest: \
-                                             {}.\nThe process \
-                                             will continue, though.",
-                                            e.description()
+                                            "An error occurred when parsing the `largeHeap` \
+                                             attribute in the manifest: {}.\nThe process will \
+                                             continue, though.",
+                                            e
                                         ));
                                         break;
                                     }
@@ -428,12 +399,10 @@ impl Manifest {
                                         Ok(s) => s,
                                         Err(e) => {
                                             print_warning(format!(
-                                                "An error occurred when\
-                                                 trying to get the string\
-                                                 for the app label in the\
-                                                 manifest: {}.\nThe process\
-                                                 will continue, though.",
-                                                e.description()
+                                                "An error occurred when trying to get the string \
+                                                 for the app label in the manifest: {}.\nThe \
+                                                 process will continue, though.",
+                                                e
                                             ));
                                             break;
                                         }
@@ -521,9 +490,7 @@ impl Manifest {
                                             criticality,
                                             format!("Exported {}", tag),
                                             format!(
-                                                "Exported {} was \
-                                                 found. It can be \
-                                                 used by other \
+                                                "Exported {} was found. It can be used by other \
                                                  applications.",
                                                 tag
                                             ),
@@ -536,9 +503,8 @@ impl Manifest {
 
                                         print_vulnerability(
                                             format!(
-                                                "Exported {} was found. \
-                                                 It can be used by \
-                                                 other applications.",
+                                                "Exported {} was found. It can be used by other \
+                                                 applications.",
                                                 tag
                                             ),
                                             Criticality::Warning,
@@ -554,10 +520,9 @@ impl Manifest {
                 Ok(_) => {}
                 Err(e) => {
                     print_warning(format!(
-                        "An error occurred when parsing the \
-                         AndroidManifest.xml file: {}.\nThe process will \
-                         continue, though.",
-                        e.description()
+                        "An error occurred when parsing the `AndroidManifest.xml` file: {}.\nThe \
+                         process will continue, though.",
+                        e
                     ));
                 }
             }
@@ -700,25 +665,25 @@ pub enum InstallLocation {
 }
 
 impl FromStr for InstallLocation {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<InstallLocation> {
+    type Err = error::Kind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "internalOnly" => Ok(InstallLocation::InternalOnly),
             "auto" => Ok(InstallLocation::Auto),
             "preferExternal" => Ok(InstallLocation::PreferExternal),
-            _ => Err(ErrorKind::Parse.into()),
+            _ => Err(error::Kind::Parse),
         }
     }
 }
 
-fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
+fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize, error::Kind> {
     for (i, line) in code.as_ref().lines().enumerate() {
         if line.contains(haystack.as_ref()) {
             return Ok(i);
         }
     }
 
-    Err(ErrorKind::CodeNotFound.into())
+    Err(error::Kind::CodeNotFound)
 }
 
 #[cfg(test)]
@@ -2917,24 +2882,26 @@ pub enum Permission {
 }
 
 impl<'de> Deserialize<'de> for Permission {
-    fn deserialize<D>(de: D) -> result::Result<Self, D::Error>
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
+        use serde::de::Error;
+
         let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
 
         match deser_result {
             toml::value::Value::String(ref deser_result_string) => {
                 match Permission::from_str(deser_result_string) {
                     Ok(permission) => Ok(permission),
-                    Err(_) => Err(serde::de::Error::custom(format!(
-                        "Unexpected value: {:?}",
+                    Err(_) => Err(Error::custom(format!(
+                        "unexpected value: {:?}",
                         deser_result
                     ))),
                 }
             }
-            _ => Err(serde::de::Error::custom(format!(
-                "Unexpected value: {:?}",
+            _ => Err(Error::custom(format!(
+                "unexpected value: {:?}",
                 deser_result
             ))),
         }
@@ -3532,8 +3499,8 @@ impl Permission {
 }
 
 impl FromStr for Permission {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Permission> {
+    type Err = error::Kind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "android.permission.ACCESS_ALL_EXTERNAL_STORAGE" => {
                 Ok(Permission::AndroidPermissionAccessAllExternalStorage)
@@ -4169,7 +4136,7 @@ impl FromStr for Permission {
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
                 Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
-            _ => Err(ErrorKind::Parse.into()),
+            _ => Err(error::Kind::Parse),
         }
     }
 }

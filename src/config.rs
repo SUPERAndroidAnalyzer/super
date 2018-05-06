@@ -2,32 +2,27 @@
 //!
 //! Handles and configures the initial settings and variables needed to run the program.
 
-use std::{fs, u8};
-use std::path::{Path, PathBuf};
+use std::cmp::{Ordering, PartialOrd};
+use std::collections::btree_set::Iter;
+use std::collections::BTreeSet;
 use std::convert::From;
 use std::io::Read;
-use std::collections::btree_set::Iter;
+use std::path::{Path, PathBuf};
 use std::slice::Iter as VecIter;
-use std::collections::BTreeSet;
-use std::cmp::{Ordering, PartialOrd};
-use std::error::Error as StdError;
-use std::result;
 use std::str::FromStr;
+use std::{fs, usize, i64};
 
-use colored::Colorize;
 use clap::ArgMatches;
+use colored::Colorize;
+use failure::{Error, ResultExt};
+use num_cpus;
+use serde::{de, Deserialize, Deserializer};
 use toml;
 use toml::value::Value;
-use serde::{de, Deserialize, Deserializer};
 
-use static_analysis::manifest;
-
-use error::*;
 use criticality::Criticality;
 use print_warning;
-
-/// Largest number of threads allowed.
-const MAX_THREADS: u8 = u8::MAX;
+use static_analysis::manifest;
 
 /// Config structure.
 ///
@@ -58,7 +53,7 @@ pub struct Config {
     min_criticality: Criticality,
     /// Number of threads.
     #[serde(deserialize_with = "ConfigDeserializer::deserialize_threads")]
-    threads: u8,
+    threads: usize,
     /// Folder where the applications are stored.
     downloads_folder: PathBuf,
     /// Folder with files from analyzed applications.
@@ -92,7 +87,7 @@ type CriticalityString = (Criticality, String);
 
 impl ConfigDeserializer {
     /// Deserialize `thread` field and checks that is on the proper bounds
-    pub fn deserialize_threads<'de, D>(de: D) -> result::Result<u8, D::Error>
+    pub fn deserialize_threads<'de, D>(de: D) -> Result<usize, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -101,25 +96,29 @@ impl ConfigDeserializer {
         #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
         match deser_result {
             Value::Integer(threads) => {
-                if threads > 0 && threads <= i64::from(MAX_THREADS) {
-                    #[cfg_attr(feature = "cargo-clippy",
-                               allow(cast_sign_loss, cast_possible_truncation))]
-                    Ok(threads as u8)
+                if threads > 0 && threads <= {
+                    if (usize::MAX as i64) < 0 {
+                        // 64-bit machine
+                        i64::MAX
+                    } else {
+                        // Smaller than 64 bit words.
+                        usize::MAX as i64
+                    }
+                } {
+                    Ok(threads as usize)
                 } else {
-                    Err(de::Error::custom("Threads is not in the valid range"))
+                    Err(de::Error::custom("threads is not in the valid range"))
                 }
             }
             _ => Err(de::Error::custom(format!(
-                "Unexpected value: {:?}",
+                "unexpected value: {:?}",
                 deser_result
             ))),
         }
     }
 
     /// Deserialize `unknown_permission` field
-    pub fn deserialize_unknown_permission<'de, D>(
-        de: D,
-    ) -> result::Result<CriticalityString, D::Error>
+    pub fn deserialize_unknown_permission<'de, D>(de: D) -> Result<CriticalityString, D::Error>
     where
         D: Deserializer<'de>,
     {
@@ -132,18 +131,18 @@ impl ConfigDeserializer {
                     .get("criticality")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| {
-                        de::Error::custom("Criticality field not found for unknown permission")
+                        de::Error::custom("criticality field not found for unknown permission")
                     })?;
                 let string = table
                     .get("description")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| {
-                        de::Error::custom("Description field not found for unknown permission")
+                        de::Error::custom("description field not found for unknown permission")
                     })?;
 
                 let criticality = Criticality::from_str(criticality_str).map_err(|_| {
                     de::Error::custom(format!(
-                        "Invalid `criticality` value found: {}",
+                        "invalid `criticality` value found: {}",
                         criticality_str
                     ))
                 })?;
@@ -160,22 +159,21 @@ impl ConfigDeserializer {
 
 impl Config {
     /// Creates a new `Config` struct.
-    pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self> {
-        let cfg_result: Result<Self> = fs::File::open(config_path.as_ref())
-            .chain_err(|| "Could not open file")
+    pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self, Error> {
+        let cfg_result: Result<Self, Error> = fs::File::open(config_path.as_ref())
+            .context("could not open configuration file")
+            .map_err(|e| Error::from(e))
             .and_then(|mut f| {
                 let mut toml = String::new();
-                let _ = f.read_to_string(&mut toml);
+                let _ = f.read_to_string(&mut toml)?;
 
                 Ok(toml)
             })
             .and_then(|file_content| {
-                toml::from_str(&file_content).chain_err(|| {
-                    format!(
-                        "Could not decode config file: {}. Using default.",
-                        config_path.as_ref().to_string_lossy()
-                    )
-                })
+                Ok(toml::from_str(&file_content).context(format_err!(
+                    "could not decode config file: {}, using default",
+                    config_path.as_ref().to_string_lossy()
+                ))?)
             })
             .and_then(|mut new_config: Self| {
                 new_config
@@ -189,7 +187,7 @@ impl Config {
     }
 
     /// Decorates the loaded config with the given flags from CLI
-    pub fn decorate_with_cli(&mut self, cli: &ArgMatches<'static>) -> Result<()> {
+    pub fn decorate_with_cli(&mut self, cli: &ArgMatches<'static>) -> Result<(), Error> {
         self.set_options(cli);
 
         self.verbose = cli.is_present("verbose");
@@ -203,7 +201,7 @@ impl Config {
 
         if cli.is_present("test-all") {
             self.read_apks()
-                .chain_err(|| "error loading all the downloaded APKs")?;
+                .context("error loading all the downloaded APKs")?;
         } else {
             self.add_app_package(
                 cli.value_of("package")
@@ -221,8 +219,8 @@ impl Config {
                 self.min_criticality = m;
             } else {
                 print_warning(format!(
-                    "The min_criticality option must be one of {}, {}, {}, {} \
-                     or {}.\nUsing default.",
+                    "The min_criticality option must be one of {}, {}, {}, {} or {}.\nUsing \
+                     default.",
                     "warning".italic(),
                     "low".italic(),
                     "medium".italic(),
@@ -233,14 +231,13 @@ impl Config {
         }
         if let Some(threads) = cli.value_of("threads") {
             match threads.parse() {
-                Ok(t) if t > 0_u8 => {
+                Ok(t) if t > 0_usize => {
                     self.threads = t;
                 }
                 _ => {
                     print_warning(format!(
-                        "The threads option must be an integer between 1 and \
-                         {}",
-                        u8::MAX
+                        "The threads option must be an integer between 1 and {}",
+                        usize::MAX
                     ));
                 }
             }
@@ -269,7 +266,7 @@ impl Config {
     }
 
     /// Reads all the apk files in the downloads folder and adds them to the configuration.
-    fn read_apks(&mut self) -> Result<()> {
+    fn read_apks(&mut self) -> Result<(), Error> {
         let iter = fs::read_dir(&self.downloads_folder)?;
 
         for entry in iter {
@@ -290,9 +287,8 @@ impl Config {
                 }
                 Err(e) => {
                     print_warning(format!(
-                        "There was an error when reading the \
-                         downloads folder: {}",
-                        e.description()
+                        "there was an error when reading the downloads folder: {}",
+                        e
                     ));
                 }
             }
@@ -455,7 +451,7 @@ impl Config {
     }
 
     /// Returns the `threads` field.
-    pub fn threads(&self) -> u8 {
+    pub fn threads(&self) -> usize {
         self.threads
     }
 
@@ -526,7 +522,7 @@ impl Config {
             open: false,
             json: false,
             html: false,
-            threads: 2,
+            threads: num_cpus::get(),
             min_criticality: Criticality::Warning,
             downloads_folder: PathBuf::from("."),
             dist_folder: PathBuf::from("dist"),
@@ -632,11 +628,14 @@ impl Permission {
 /// Test module for the configuration.
 #[cfg(test)]
 mod tests {
-    use criticality::Criticality;
-    use static_analysis::manifest;
-    use super::Config;
     use std::fs;
     use std::path::{Path, PathBuf};
+
+    use num_cpus;
+
+    use super::Config;
+    use criticality::Criticality;
+    use static_analysis::manifest;
 
     /// Test for the default configuration function.
     #[test]
@@ -651,7 +650,7 @@ mod tests {
         assert!(!config.is_force());
         assert!(!config.is_bench());
         assert!(!config.is_open());
-        assert_eq!(config.threads(), 2);
+        assert_eq!(config.threads(), num_cpus::get());
         assert_eq!(config.downloads_folder, Path::new("."));
         assert_eq!(config.dist_folder(), Path::new("dist"));
         assert_eq!(config.results_folder(), Path::new("results"));

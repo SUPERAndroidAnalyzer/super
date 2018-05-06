@@ -42,7 +42,7 @@ script:
       cargo test -- --ignored
     fi
   # Won't work since our binary name is different from the crate name.
-  # - ./travis-helper.sh dep_run
+  # - ./travis-helper.sh dist
   - ./travis-helper.sh fmt_run
 
 after_success:

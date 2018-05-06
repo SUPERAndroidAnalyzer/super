@@ -1,17 +1,16 @@
 //! This module performs the static analysis of the certificate of the application.
 
+use std::borrow::Borrow;
 use std::fs;
 use std::process::Command;
-use std::borrow::Borrow;
-use std::error::Error as StdError;
 
-use colored::Colorize;
 use chrono::{Datelike, Local};
+use colored::Colorize;
+use failure::{Error, ResultExt};
 
-use {print_vulnerability, print_warning, Config, Result};
-use results::{Results, Vulnerability};
-use error::*;
 use criticality::Criticality;
+use results::{Results, Vulnerability};
+use {print_vulnerability, print_warning, Config};
 
 /// Parses the given month string.
 ///
@@ -41,7 +40,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
-) -> Result<()> {
+) -> Result<(), Error> {
     if config.is_verbose() {
         println!("Reading and analyzing the certificates…")
     }
@@ -59,11 +58,10 @@ pub fn certificate_analysis<S: AsRef<str>>(
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
-                    "An error occurred when reading the \
-                     {} dir searching certificates. \
-                     Certificate analysis will be skipped. More info: {}",
+                    "An error occurred when reading the {} dir searching certificates. Certificate \
+                     analysis will be skipped. More info: {}",
                     path.display(),
-                    e.description()
+                    e
                 ));
                 break;
             }
@@ -96,15 +94,13 @@ pub fn certificate_analysis<S: AsRef<str>>(
                 .arg("-print_certs")
                 .arg("-text")
                 .output()
-                .chain_err(|| {
-                    "There was an error when executing the openssl command to check the certificate"
-                })?;
+                .context("there was an error when executing the openssl command to check the certificate")?;
 
             if !output.status.success() {
-                return Err(format!(
-                    "The openssl command returned an error. More info: {}",
+                bail!(
+                    "the openssl command returned an error. More info: {}",
                     String::from_utf8_lossy(&output.stderr[..])
-                ).into());
+                );
             };
 
             let cmd = String::from_utf8_lossy(&output.stdout);
