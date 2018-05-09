@@ -5,7 +5,6 @@ use std::fmt::Display;
 use std::str::FromStr;
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
-use toml::value::Value;
 
 use error;
 
@@ -45,20 +44,13 @@ impl<'de> Deserialize<'de> for Criticality {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: Value = Deserialize::deserialize(de)?;
+        let criticality_str: String = Deserialize::deserialize(de)?;
 
-        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
-        match deser_result {
-            Value::String(ref criticality_str) => match Self::from_str(criticality_str) {
-                Ok(criticality) => Ok(criticality),
-                Err(_) => Err(de::Error::custom(format!(
-                    "unexpected value: `{}`",
-                    criticality_str
-                ))),
-            },
-            _ => Err(de::Error::custom(format!(
-                "unexpected value: `{:?}`",
-                deser_result
+        match Self::from_str(criticality_str.as_str()) {
+            Ok(criticality) => Ok(criticality),
+            Err(_) => Err(de::Error::custom(format!(
+                "unknown criticality: `{}`",
+                criticality_str
             ))),
         }
     }

@@ -44,7 +44,6 @@ impl Report {
     }
 
     /// Loads templates from the given path.
-    #[allow(box_pointers)]
     fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars, Error> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());

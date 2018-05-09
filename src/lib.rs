@@ -3,10 +3,11 @@
 #![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
 //#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
-#![deny(variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
-        unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs,
-        missing_debug_implementations, missing_copy_implementations, box_pointers,
-        unused_extern_crates)]
+#![deny(
+    variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
+    unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs, unused_extern_crates,
+    missing_debug_implementations, missing_copy_implementations
+)]
 
 extern crate abxml;
 extern crate bytecount;
@@ -429,6 +430,8 @@ mod tests {
         config.add_app_package("downloads/test_app");
 
         analyze_package("downloads/test_app.apk", &mut config, &mut benchmarks).unwrap();
+
+        // TODO, check results.
 
         if need_to_create {
             fs::remove_dir_all("downloads").unwrap();

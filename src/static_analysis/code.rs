@@ -1,20 +1,18 @@
 //! Code analysis module.
 
 use std::borrow::Borrow;
-use std::fs;
 use std::fs::{DirEntry, File};
 use std::io::Read;
 use std::path::Path;
 use std::slice::Iter;
-use std::str::FromStr;
 use std::sync::{Arc, Mutex};
-use std::thread;
+use std::{fmt, fs, thread};
 
 use colored::Colorize;
-use failure::{Error, Fail};
+use failure::{Error, Fail, ResultExt};
 use regex::Regex;
+use serde::de::{self, Deserializer, SeqAccess, Visitor};
 use serde_json;
-use serde_json::value::Value;
 
 use super::manifest::{Manifest, Permission};
 use criticality::Criticality;
@@ -120,7 +118,6 @@ pub fn analysis<S: AsRef<str>>(
         }
     }
 
-    #[allow(box_pointers)]
     for t in handles {
         if let Err(e) = t.join() {
             #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
@@ -323,16 +320,25 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
 }
 
 /// Vulnerability searching rule.
+#[derive(Debug, Deserialize)]
 struct Rule {
+    #[serde(deserialize_with = "deserialize_main_regex")]
     regex: Regex,
-    permissions: Vec<Permission>,
+    #[serde(default)]
+    permissions: Box<[Permission]>,
     forward_check: Option<String>,
     max_sdk: Option<u32>,
-    whitelist: Vec<Regex>,
+    #[serde(deserialize_with = "deserialize_whitelist_regex")]
+    #[serde(default)]
+    whitelist: Box<[Regex]>,
     label: String,
     description: String,
     criticality: Criticality,
+    #[serde(deserialize_with = "deserialize_file_regex")]
+    #[serde(default)]
     include_file_regex: Option<Regex>,
+    #[serde(deserialize_with = "deserialize_file_regex")]
+    #[serde(default)]
     exclude_file_regex: Option<Regex>,
 }
 
@@ -397,293 +403,207 @@ impl Rule {
     }
 }
 
-fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
-    let f = File::open(config.rules_json())?;
-    let rules_json: Value = serde_json::from_reader(f)?;
+/// Regular expression serde visitor.
+struct RegexVisitor;
 
-    let mut rules = Vec::new();
-    let rules_json = if let Some(a) = rules_json.as_array() {
-        a
-    } else {
-        print_warning("rules must be a JSON array.");
-        return Err(error::Kind::Parse.context("could not parse rules").into());
-    };
+impl<'de> Visitor<'de> for RegexVisitor {
+    type Value = Regex;
 
-    for rule in rules_json {
-        let format_warning = format!(
-            "rules must be objects with the following structure:\n{}\nAn optional {} attribute can \
-             be added: an array of regular expressions that if matched, the found match will be \
-             discarded. You can also include an optional {} attribute: an array of the permissions \
-             needed for this rule to be checked. And finally, an optional {} attribute can be \
-             added where you can specify a second regular expression to check if the one in the {} \
-             attribute matches. You can add one or two capture groups with name from the match to \
-             this check, with names {} and {}. To use them you have to include {} or {} in the \
-             forward check.",
-            "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for \
-             this rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
-             \"regex_to_find_vulnerability\"\n}".italic(),
-            "whitelist".italic(),
-            "permissions".italic(),
-            "forward_check".italic(),
-            "regex".italic(),
-            "fc1".italic(),
-            "fc2".italic(),
-            "{fc1}".italic(),
-            "{fc2}".italic()
-        );
-        let rule = if let Some(o) = rule.as_object() {
-            o
-        } else {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse.context("invalid rule structure").into());
-        };
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a valid regular expression")
+    }
 
-        if rule.len() < 4 || rule.len() > 8 {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse.context("rule fields don't match").into());
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Regex::new(value).map_err(E::custom)
+    }
+
+    fn visit_borrowed_str<E>(self, value: &'de str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        self.visit_str(value)
+    }
+
+    fn visit_string<E>(self, value: String) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        self.visit_str(&value)
+    }
+}
+
+/// Deserializes the main regular expression of a rule.
+fn deserialize_main_regex<'de, D>(deserializer: D) -> Result<Regex, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    deserializer.deserialize_str(RegexVisitor)
+}
+
+/// Deserializes the list of whitelist regular expressions.
+fn deserialize_whitelist_regex<'de, D>(deserializer: D) -> Result<Box<[Regex]>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    /// Visitor that deserializes a sequence of regular expressions.
+    struct RegexSeqVisitor;
+
+    impl<'de> Visitor<'de> for RegexSeqVisitor {
+        type Value = Box<[Regex]>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a list of valid regular expressions")
         }
 
-        let regex = if let Some(&Value::String(ref r)) = rule.get("regex") {
-            match Regex::new(r) {
-                Ok(r) => r,
-                Err(e) => {
-                    print_warning(format!(
-                        "an error occurred when compiling the regular expresion: {}",
-                        e
-                    ));
-                    return Err(e.context(error::Kind::Parse)
-                        .context("could not parse main regular expression")
-                        .into());
-                }
+        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'de>,
+        {
+            use serde::de::Error as SerdeError;
+
+            let mut list = Vec::with_capacity(seq.size_hint().unwrap_or(0));
+
+            // While there are entries remaining in the input, add them into our vector.
+            while let Some(regex_str) = seq.next_element::<String>()? {
+                list.push(Regex::new(regex_str.as_str()).map_err(A::Error::custom)?)
             }
-        } else {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse
-                .context("there was no regular expression in the rule")
-                .into());
-        };
 
-        let max_sdk = match rule.get("max_sdk") {
-            Some(&Value::Number(ref sdk)) if sdk.is_u64() => Some(sdk.as_u64().unwrap() as u32),
-            None => None,
-            _ => {
-                print_warning(format_warning);
-                return Err(error::Kind::Parse
-                    .context("invalid maximum SDK value")
-                    .into());
-            }
-        };
-
-        let permissions = match rule.get("permissions") {
-            Some(&Value::Array(ref v)) => {
-                let mut list = Vec::with_capacity(v.len());
-                for p in v {
-                    list.push(if let Value::String(ref p) = *p {
-                        if let Ok(p) = Permission::from_str(p) {
-                            p
-                        } else {
-                            print_warning(format!("the permission {} is unknown", p.italic()));
-                            return Err(error::Kind::Parse
-                                .context(format_err!("unknown {} permission", p))
-                                .into());
-                        }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(error::Kind::Parse
-                            .context("non-string permission found")
-                            .into());
-                    });
-                }
-                list
-            }
-            Some(_) => {
-                print_warning(format_warning);
-                return Err(error::Kind::Parse
-                    .context("permissions must be a list")
-                    .into());
-            }
-            None => Vec::new(),
-        };
-
-        let forward_check = match rule.get("forward_check") {
-            Some(&Value::String(ref s)) => {
-                let capture_names = regex.capture_names();
-                for cap in capture_names {
-                    match cap {
-                        Some("fc1") => {
-                            if !s.contains("{fc1}") {
-                                print_warning(
-                                    "You must provide the '{fc1}' string where you want the 'fc1' \
-                                     capture to be inserted in the forward check.",
-                                );
-                                return Err(error::Kind::Parse
-                                    .context("fc2 capture group used but no placeholder found")
-                                    .into());
-                            }
-                        }
-                        Some("fc2") => {
-                            if !s.contains("{fc2}") {
-                                print_warning(
-                                    "you must provide the '{fc2}' string where you want the 'fc2' \
-                                     capture to be inserted in the forward check.",
-                                );
-                                return Err(error::Kind::Parse
-                                    .context("fc2 capture group used but no placeholder found")
-                                    .into());
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-
-                let mut capture_names = regex.capture_names();
-                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2")
-                    && !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1")
-                {
-                    print_warning(
-                        "you must have a capture group named fc1 to use the fc2 capture group.",
-                    );
-                    return Err(error::Kind::Parse
-                        .context("used the fc2 capture group without using the fc1 capture group")
-                        .into());
-                }
-
-                Some(s.clone())
-            }
-            None => None,
-            _ => {
-                print_warning(format_warning);
-                return Err(error::Kind::Parse
-                    .context("non-string forward check found")
-                    .into());
-            }
-        };
-
-        let label = if let Some(&Value::String(ref l)) = rule.get("label") {
-            l
-        } else {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse.context("non-string label found").into());
-        };
-
-        let description = if let Some(&Value::String(ref d)) = rule.get("description") {
-            d
-        } else {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse
-                .context("non-string description found")
-                .into());
-        };
-
-        let criticality = if let Some(&Value::String(ref c)) = rule.get("criticality") {
-            match Criticality::from_str(c) {
-                Ok(c) => c,
-                Err(e) => {
-                    print_warning(format!(
-                        "Criticality must be  one of {}, {}, {}, {} or {}.",
-                        "warning".italic(),
-                        "low".italic(),
-                        "medium".italic(),
-                        "high".italic(),
-                        "critical".italic()
-                    ));
-                    return Err(e.context(error::Kind::Parse)
-                        .context("invalid criticality found")
-                        .into());
-                }
-            }
-        } else {
-            print_warning(format_warning);
-            return Err(error::Kind::Parse
-                .context("non-string criticality found")
-                .into());
-        };
-
-        let whitelist = match rule.get("whitelist") {
-            Some(&Value::Array(ref v)) => {
-                let mut list = Vec::with_capacity(v.len());
-                for r in v {
-                    list.push(if let Value::String(ref r) = *r {
-                        match Regex::new(r) {
-                            Ok(r) => r,
-                            Err(e) => {
-                                print_warning(format!(
-                                    "an error occurred when compiling the regular expresion: {}",
-                                    e
-                                ));
-                                return Err(e.context(error::Kind::Parse)
-                                    .context(
-                                        "an error occurred when compiling the whitelist regular \
-                                         expresion",
-                                    )
-                                    .into());
-                            }
-                        }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(error::Kind::Parse
-                            .context("non-string whitelist found")
-                            .into());
-                    });
-                }
-                list
-            }
-            Some(_) => {
-                print_warning(format_warning);
-                return Err(error::Kind::Parse
-                    .context("whitelist must be a list")
-                    .into());
-            }
-            None => Vec::new(),
-        };
-
-        let inclusion_regex = rule.get("include_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
-                let include_regex = Regex::new(r);
-                match include_regex {
-                    Ok(regex) => Some(regex),
-                    Err(e) => {
-                        print_warning(format!(
-                            "an error ocurred when compiling the inclusion regular expresion: {}",
-                            e
-                        ));
-                        None
-                    }
-                }
-            });
-
-        let exclusion_regex = rule.get("exclude_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
-                let exclude_regex = Regex::new(r);
-                match exclude_regex {
-                    Ok(regex) => Some(regex),
-                    Err(e) => {
-                        print_warning(format!(
-                            "an error ocurred when compiling the exclusion regular expresion: {}",
-                            e
-                        ));
-                        None
-                    }
-                }
-            });
-
-        if criticality >= config.min_criticality() {
-            rules.push(Rule {
-                regex: regex,
-                permissions: permissions,
-                forward_check: forward_check,
-                max_sdk: max_sdk,
-                label: label.clone(),
-                description: description.clone(),
-                criticality: criticality,
-                whitelist: whitelist,
-                include_file_regex: inclusion_regex,
-                exclude_file_regex: exclusion_regex,
-            })
+            Ok(list.into_boxed_slice())
         }
     }
+
+    deserializer.deserialize_seq(RegexSeqVisitor)
+}
+
+/// Deserializes file regular expressions.
+fn deserialize_file_regex<'de, D>(deserializer: D) -> Result<Option<Regex>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    /// Optional regular expression serde visitor.
+    struct RegexOptionVisitor;
+
+    impl<'de> Visitor<'de> for RegexOptionVisitor {
+        type Value = Option<Regex>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a valid regular expression")
+        }
+
+        fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            deserializer
+                .deserialize_str(RegexVisitor)
+                .and_then(|regex| Ok(Some(regex)))
+        }
+
+        fn visit_none<E>(self) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(None)
+        }
+    }
+
+    deserializer.deserialize_option(RegexOptionVisitor)
+}
+
+fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
+    let f = File::open(config.rules_json())?;
+    let format_error = format!(
+        "rules must be objects with the following structure:\n{}\nAn optional {} attribute can be \
+         added: an array of regular expressions that if matched, the found match will be \
+         discarded. You can also include an optional {} attribute: an array of the permissions \
+         needed for this rule to be checked. And finally, an optional {} attribute can be added \
+         where you can specify a second regular expression to check if the one in the {} attribute \
+         matches. You can add one or two capture groups with name from the match to this check, \
+         with names {} and {}. To use them you have to include {} or {} in the forward check.",
+        "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for this \
+         rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
+         \"regex_to_find_vulnerability\"\n}"
+            .italic(),
+        "whitelist".italic(),
+        "permissions".italic(),
+        "forward_check".italic(),
+        "regex".italic(),
+        "fc1".italic(),
+        "fc2".italic(),
+        "{fc1}".italic(),
+        "{fc2}".italic()
+    );
+
+    let rules: Vec<Rule> = serde_json::from_reader(f).context(format_error.clone())?;
+    let fc1_check_regex = Regex::new("\\{fc1\\}")
+        .expect("could not compile the first forward check regular expression");
+    let fc2_check_regex = Regex::new("\\{fc2\\}")
+        .expect("could not compile the second forward check regular expression");
+    let rules = rules
+        .into_iter()
+        .filter_map(|rule| {
+            if rule.criticality >= config.min_criticality() {
+                let fc1_in_regex = rule.regex().capture_names().any(|c| c == Some("fc1"));
+                let fc2_in_regex = rule.regex().capture_names().any(|c| c == Some("fc2"));
+
+                let forward_check = rule.forward_check().map(|c| c.clone());
+                if let Some(forward_check) = forward_check {
+                    let fc1_in_fc = fc1_check_regex.is_match(&forward_check);
+                    let fc2_in_fc = fc2_check_regex.is_match(&forward_check);
+
+                    if fc1_in_regex && !fc1_in_fc {
+                        Some(Err(error::Kind::Parse
+                            .context(
+                                "fc1 capture group used but no placeholder found in the forward \
+                                 check",
+                            )
+                            .into()))
+                    } else if fc2_in_regex && !fc2_in_fc {
+                        Some(Err(error::Kind::Parse
+                            .context(
+                                "fc2 capture group used but no placeholder found in the forward \
+                                 check",
+                            )
+                            .into()))
+                    } else {
+                        if fc2_in_regex && !fc1_in_regex {
+                            print_warning(format!(
+                                "fc2 capture group used in the `{}` rule's forward check, but no \
+                                 fc1 capture group used",
+                                rule.label()
+                            ));
+                        }
+
+                        if fc1_in_fc && !fc1_in_regex {
+                            print_warning(format!(
+                                "{{fc1}} used in the `{}` rule's forward check, but no capture \
+                                 group is checking for it",
+                                rule.label()
+                            ));
+                        }
+
+                        if fc2_in_fc && !fc2_in_regex {
+                            print_warning(format!(
+                                "{{fc2}} used in the `{}` rule's forward check, but no capture \
+                                 group is checking for it",
+                                rule.label()
+                            ));
+                        }
+
+                        Some(Ok(rule))
+                    }
+                } else {
+                    Some(Ok(rule))
+                }
+            } else {
+                None
+            }
+        })
+        .collect::<Result<Vec<Rule>, Error>>()
+        .context(format_error)?;
 
     Ok(rules)
 }
@@ -1878,10 +1798,8 @@ mod tests {
         };
         let rule = rules.get(34).unwrap();
 
-        let should_match = &[
-            " javax.net.ssl.SSLSocketFactory                 \
-             SSLSocketFactory.getInsecure()",
-        ];
+        let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
+                              SSLSocketFactory.getInsecure()"];
 
         let should_not_match = &[
             "getInsecure()",
@@ -1968,10 +1886,10 @@ mod tests {
     fn it_has_to_check_rule_if_exclude_and_include_regexp_are_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1986,10 +1904,10 @@ mod tests {
     fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -2004,10 +1922,10 @@ mod tests {
     fn it_does_not_have_to_check_rule_if_include_regexp_is_non_match_and_exlcude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -2022,10 +1940,10 @@ mod tests {
     fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -2040,10 +1958,10 @@ mod tests {
     fn it_does_not_have_to_check_rule_if_exclude_is_match() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -2058,10 +1976,10 @@ mod tests {
     fn it_does_not_have_to_check_if_both_regexps_matches() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,

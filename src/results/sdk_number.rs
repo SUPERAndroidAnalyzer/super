@@ -104,7 +104,6 @@ impl SdkNumber {
     }
 
     /// Gets the Android version number.
-    #[allow(box_pointers)]
     pub fn version(&self) -> Option<Version> {
         match *self {
             SdkNumber::Api1 => Some(Version {
@@ -467,7 +466,6 @@ mod tests {
 
     /// Checks that the Android version number is correct for each API.
     #[test]
-    #[allow(box_pointers)]
     fn it_get_version() {
         assert_eq!(
             SdkNumber::Api1.version().unwrap(),

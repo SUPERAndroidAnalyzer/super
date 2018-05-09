@@ -8,7 +8,6 @@ use std::str::FromStr;
 use colored::Colorize;
 use failure::Error;
 use serde::{self, Deserialize, Deserializer};
-use toml;
 use xml::reader::{EventReader, XmlEvent};
 
 use criticality::Criticality;
@@ -2886,24 +2885,17 @@ impl<'de> Deserialize<'de> for Permission {
     where
         D: Deserializer<'de>,
     {
+        use failure::Fail;
         use serde::de::Error;
 
-        let deser_result: toml::value::Value = serde::Deserialize::deserialize(de)?;
+        let deser_result_str: String = serde::Deserialize::deserialize(de)?;
 
-        match deser_result {
-            toml::value::Value::String(ref deser_result_string) => {
-                match Permission::from_str(deser_result_string) {
-                    Ok(permission) => Ok(permission),
-                    Err(_) => Err(Error::custom(format!(
-                        "unexpected value: {:?}",
-                        deser_result
-                    ))),
-                }
-            }
-            _ => Err(Error::custom(format!(
-                "unexpected value: {:?}",
-                deser_result
-            ))),
+        match Self::from_str(&deser_result_str) {
+            Ok(permission) => Ok(permission),
+            Err(e) => Err(Error::custom(e.context(format!(
+                "unknown permission `{}`",
+                deser_result_str
+            )))),
         }
     }
 }
