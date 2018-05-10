@@ -124,7 +124,7 @@ assets = [
 # The release profile, used for `cargo build`.
 [profile.dev]
 incremental = true
-opt-level = 1
+opt-level = 0
 debug = true
 rpath = false
 lto = false
