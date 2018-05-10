@@ -2,7 +2,7 @@ Name:    super-analyzer
 Version: 0.4.1
 Release: 1%{?dist}
 Summary: Secure, Unified, Powerful and Extensible Rust Android Analyzer.
-URL:     http://superanalyzer.rocks/
+URL:     https://superanalyzer.rocks/
 License: GPLv3+
 
 Source0: https://github.com/SUPERAndroidAnalyzer/super/archive/%{version}.tar.gz

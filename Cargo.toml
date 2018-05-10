@@ -9,7 +9,7 @@ authors = [
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/SUPERAndroidAnalyzer/super"
-homepage = "http://superanalyzer.rocks"
+homepage = "https://superanalyzer.rocks"
 description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI.\
@@ -77,8 +77,8 @@ unstable = ["beta", "certificate"]
 certificate = []
 
 [package.metadata.deb]
-maintainer = "Iban Eguia <razican@protonmail.ch>"
-copyright = "2016, Iban Eguia <razican@protonmail.ch>"
+maintainer = "SUPER Team <contact@superanalyzer.rocks>"
+copyright = "2016 - 2018, SUPER Team <contact@superanalyzer.rocks>"
 license-file = ["LICENSE", "0"]
 extended-description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
