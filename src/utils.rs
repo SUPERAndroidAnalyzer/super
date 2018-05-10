@@ -1,6 +1,5 @@
 //! General utilities module.
 
-use std::io::Read;
 use std::path::Path;
 use std::thread::sleep;
 use std::time::Duration;
@@ -9,8 +8,8 @@ use std::{fmt, fs};
 use colored::Colorize;
 use failure::Error;
 use log::Level::Debug;
-use xml::reader::{EventReader, XmlEvent};
 use xml::ParserConfig;
+use xml::reader::{EventReader, XmlEvent};
 
 use config::Config;
 use criticality::Criticality;
@@ -100,7 +99,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
     config: &Config,
     package: P,
 ) -> Result<String, Error> {
-    let mut file = fs::File::open({
+    let code = fs::read_to_string({
         let path = config
             .dist_folder()
             .join(package.as_ref())
@@ -119,9 +118,6 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
                 .join("strings.xml")
         }
     })?;
-
-    let mut code = String::new();
-    let _ = file.read_to_string(&mut code)?;
 
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG.clone());

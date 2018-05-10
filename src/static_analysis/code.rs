@@ -2,7 +2,6 @@
 
 use std::borrow::Borrow;
 use std::fs::{DirEntry, File};
-use std::io::Read;
 use std::path::Path;
 use std::slice::Iter;
 use std::sync::{Arc, Mutex};
@@ -148,9 +147,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     manifest: &Option<Manifest>,
     results: &Mutex<Vec<Vulnerability>>,
 ) -> Result<(), Error> {
-    let mut f = File::open(&path)?;
-    let mut code = String::new();
-    let _ = f.read_to_string(&mut code)?;
+    let code = fs::read_to_string(&path)?;
 
     'check: for rule in rules {
         if manifest.is_some() && rule.max_sdk().is_some()

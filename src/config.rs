@@ -3,10 +3,9 @@
 //! Handles and configures the initial settings and variables needed to run the program.
 
 use std::cmp::{Ordering, PartialOrd};
-use std::collections::btree_set::Iter;
 use std::collections::BTreeSet;
+use std::collections::btree_set::Iter;
 use std::convert::From;
-use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::slice::Iter as VecIter;
 use std::str::FromStr;
@@ -97,12 +96,13 @@ impl ConfigDeserializer {
         match deser_result {
             Value::Integer(threads) => {
                 if threads > 0 && threads <= {
-                    if (usize::MAX as i64) < 0 {
+                    // TODO: change it for compile-time check.
+                    if (usize::max_value() as i64) < 0 {
                         // 64-bit machine
-                        i64::MAX
+                        i64::max_value()
                     } else {
                         // Smaller than 64 bit words.
-                        usize::MAX as i64
+                        usize::max_value() as i64
                     }
                 } {
                     Ok(threads as usize)
@@ -160,15 +160,9 @@ impl ConfigDeserializer {
 impl Config {
     /// Creates a new `Config` struct.
     pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self, Error> {
-        let cfg_result: Result<Self, Error> = fs::File::open(config_path.as_ref())
+        let cfg_result: Result<Self, Error> = fs::read_to_string(config_path.as_ref())
             .context("could not open configuration file")
             .map_err(Error::from)
-            .and_then(|mut f| {
-                let mut toml = String::new();
-                let _ = f.read_to_string(&mut toml)?;
-
-                Ok(toml)
-            })
             .and_then(|file_content| {
                 Ok(toml::from_str(&file_content).context(format_err!(
                     "could not decode config file: {}, using default",
@@ -237,7 +231,7 @@ impl Config {
                 _ => {
                     print_warning(format!(
                         "The threads option must be an integer between 1 and {}",
-                        usize::MAX
+                        usize::max_value()
                     ));
                 }
             }

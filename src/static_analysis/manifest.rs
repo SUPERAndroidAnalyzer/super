@@ -1,7 +1,6 @@
 //! Module containing the manifest analysis logic.
 
-use std::fs::File;
-use std::io::Read;
+use std::fs;
 use std::path::Path;
 use std::str::FromStr;
 
@@ -208,6 +207,7 @@ pub fn analysis<S: AsRef<str>>(
 }
 
 /// Manifest analysis representation structure.
+#[derive(Debug, Default)]
 pub struct Manifest {
     code: String,
     package: String,
@@ -233,12 +233,10 @@ impl Manifest {
         config: &Config,
         package: S,
         results: &mut Results,
-    ) -> Result<Manifest, Error> {
-        let mut file = File::open(path.as_ref().join("AndroidManifest.xml"))?;
-        let mut manifest = Manifest::default();
+    ) -> Result<Self, Error> {
+        let code = fs::read_to_string(path.as_ref().join("AndroidManifest.xml"))?;
+        let mut manifest = Self::default();
 
-        let mut code = String::new();
-        let _ = file.read_to_string(&mut code)?;
         manifest.set_code(code.as_str());
 
         let bytes = code.into_bytes();
@@ -635,32 +633,17 @@ impl Manifest {
     }
 }
 
-impl Default for Manifest {
-    fn default() -> Manifest {
-        Manifest {
-            code: String::new(),
-            package: String::new(),
-            label: String::new(),
-            description: String::new(),
-            allows_backup: false,
-            has_code: false,
-            large_heap: false,
-            install_location: InstallLocation::InternalOnly,
-            permissions: Default::default(),
-            debug: false,
-            min_sdk: 0,
-            target_sdk: None,
-            version_number: 0,
-            version_str: String::new(),
-        }
-    }
-}
-
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum InstallLocation {
     InternalOnly,
     Auto,
     PreferExternal,
+}
+
+impl Default for InstallLocation {
+    fn default() -> Self {
+        InstallLocation::InternalOnly
+    }
 }
 
 impl FromStr for InstallLocation {
@@ -2353,8 +2336,8 @@ impl PermissionChecklist {
 }
 
 impl Default for PermissionChecklist {
-    fn default() -> PermissionChecklist {
-        PermissionChecklist {
+    fn default() -> Self {
+        Self {
             android_permission_access_all_external_storage: false,
             android_permission_access_checkin_properties: false,
             android_permission_access_coarse_location: false,
@@ -2903,7 +2886,7 @@ impl<'de> Deserialize<'de> for Permission {
 impl Permission {
     /// Gets the string representation of the permission.
     pub fn as_str(&self) -> &str {
-        match *self {
+        match self {
             Permission::AndroidPermissionAccessAllExternalStorage => {
                 "android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
             }

@@ -79,7 +79,7 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 
     let line_count = count(code.as_bytes(), b'\n');
     let mut rendered = String::with_capacity((line_separator.len() + 1) * line_count);
-    for l in 1..line_count + 1 {
+    for l in 1..=line_count {
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
     }

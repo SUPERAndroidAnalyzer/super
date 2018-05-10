@@ -46,8 +46,8 @@ impl Vulnerability {
         start_line: Option<usize>,
         end_line: Option<usize>,
         code: Option<C>,
-    ) -> Vulnerability {
-        Vulnerability {
+    ) -> Self {
+        Self {
             criticality,
             name: name.into(),
             description: description.into(),
@@ -114,7 +114,7 @@ impl Serialize for Vulnerability {
 }
 
 impl PartialOrd for Vulnerability {
-    fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(
             (
                 &self.criticality,
@@ -147,7 +147,7 @@ impl FingerPrint {
     /// Creates a new fingerprint.
     ///
     /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
-    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint, Error> {
+    pub fn new<P: AsRef<Path>>(package: P) -> Result<Self, Error> {
         use sha2::Digest;
 
         let mut f = File::open(package)?;
@@ -162,7 +162,7 @@ impl FingerPrint {
 
         let mut sha256_res = [0_u8; 32];
         sha256_res.clone_from_slice(&sha256.result()[..]);
-        Ok(FingerPrint {
+        Ok(Self {
             md5: md5::compute(&buffer),
             sha1: sha1.digest(),
             sha256: sha256_res,

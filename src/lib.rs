@@ -2,10 +2,14 @@
 
 #![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
-//#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
+#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
 #![deny(variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
         unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs, unused_extern_crates,
         missing_debug_implementations, missing_copy_implementations)]
+// Allowing these for now.
+#![cfg_attr(feature = "cargo-clippy",
+            allow(stutter, similar_names, cast_possible_truncation, cast_possible_wrap,
+                  cast_precision_loss, cast_sign_loss))]
 
 extern crate abxml;
 extern crate bytecount;
@@ -270,8 +274,8 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
 /// Initializes the logger.
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn initialize_logger(is_verbose: bool) {
-    use env_logger::fmt::{Color, Formatter};
     use env_logger::Builder;
+    use env_logger::fmt::{Color, Formatter};
     use log::{Level, LevelFilter, Record};
     use std::io::Write;
 

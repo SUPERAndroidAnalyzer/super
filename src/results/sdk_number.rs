@@ -70,7 +70,7 @@ pub enum SdkNumber {
 impl SdkNumber {
     /// Gets the SDK API version number.
     pub fn number(&self) -> u32 {
-        match *self {
+        match self {
             SdkNumber::Api1 => 1,
             SdkNumber::Api2 => 2,
             SdkNumber::Api3 => 3,
@@ -99,13 +99,13 @@ impl SdkNumber {
             SdkNumber::Api26 => 26,
 
             SdkNumber::Development => 10_000,
-            SdkNumber::Unknown(v) => v,
+            SdkNumber::Unknown(v) => *v,
         }
     }
 
     /// Gets the Android version number.
     pub fn version(&self) -> Option<Version> {
-        match *self {
+        match self {
             SdkNumber::Api1 => Some(Version {
                 major: 1,
                 minor: 0,
@@ -295,7 +295,7 @@ impl SdkNumber {
 
     /// Gets the name of the Android release.
     pub fn name(&self) -> &str {
-        match *self {
+        match self {
             SdkNumber::Api1 | SdkNumber::Api2 => "Base",
             SdkNumber::Api3 => "Cupcake",
             SdkNumber::Api4 => "Donut",

@@ -1,24 +1,24 @@
 //! Handlebars report generation module.
 
 use std::collections::BTreeMap;
-use std::path::Path;
 use std::fs;
-use std::io::{Read, Write};
 use std::fs::File;
+use std::io::Write;
+use std::path::Path;
 
+use colored::Colorize;
 use failure::{Error, ResultExt};
 use handlebars::Handlebars;
-use colored::Colorize;
 use serde_json::Map;
 use serde_json::value::Value;
 
-use copy_folder;
 use config::Config;
-use results::report::Generator;
-use results::Results;
-use results::utils::html_escape;
-use results::handlebars_helpers::*;
+use copy_folder;
 use error;
+use results::Results;
+use results::handlebars_helpers::*;
+use results::report::Generator;
+use results::utils::html_escape;
 
 /// Handlebars report generator.
 pub struct Report {
@@ -196,7 +196,7 @@ impl Report {
         results: &Results,
         cli_package_name: S,
     ) -> Result<(), Error> {
-        let mut f_in = File::open(
+        let code = fs::read_to_string(
             config
                 .dist_folder()
                 .join(cli_package_name.as_ref())
@@ -211,9 +211,6 @@ impl Report {
                 .join(path.as_ref())
                 .display()
         ))?;
-
-        let mut code = String::new();
-        let _ = f_in.read_to_string(&mut code)?;
 
         let mut back_path = String::new();
         for _ in path.as_ref().components() {

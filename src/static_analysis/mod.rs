@@ -10,10 +10,10 @@ pub mod manifest;
 
 #[cfg(feature = "certificate")]
 use self::certificate::*;
+use Config;
 #[cfg(feature = "certificate")]
 use print_warning;
 use results::Results;
-use Config;
 
 /// Runs the analysis for manifest, certificate and code files.
 ///

@@ -1,14 +1,14 @@
 //! JSON report generation module.
 
-use std::io::BufWriter;
 use std::fs::File;
+use std::io::BufWriter;
 
 use failure::Error;
 use serde_json::ser;
 
-use results::report::Generator;
-use results::Results;
 use config::Config;
+use results::Results;
+use results::report::Generator;
 
 /// JSON report generator.
 pub struct Json;

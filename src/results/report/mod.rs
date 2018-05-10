@@ -1,15 +1,15 @@
 //! Report generation module.
 
-mod json;
 mod handlebars;
+mod json;
 
 use failure::Error;
 
-use results::Results;
 use config::Config;
+use results::Results;
 
-pub use self::json::Json;
 pub use self::handlebars::Report as HandlebarsReport;
+pub use self::json::Json;
 
 /// Trait that represents a type that can generate a report.
 pub trait Generator {
