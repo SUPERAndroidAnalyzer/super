@@ -20,8 +20,7 @@ pub use self::utils::{html_escape, split_indent, Vulnerability};
 use criticality::Criticality;
 use {print_warning, Config};
 
-use results::report::Generator;
-use results::report::{HandlebarsReport, Json};
+use results::report::{Generator, HandlebarsReport, Json};
 
 /// Results representation structure.
 pub struct Results {
@@ -78,7 +77,7 @@ impl Results {
                  files."
             );
         } else if !config.is_quiet() {
-            println!("Results struct created.");
+            println!("Results structure created.");
         }
 
         #[cfg(feature = "certificate")]

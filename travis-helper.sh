@@ -48,7 +48,7 @@ elif [ "$action" = "upload_code_coverage" ]; then
 
 elif [ "$action" = "upload_documentation" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
-    cargo doc &&
+    cargo rustdoc -- --document-private-items &&
     echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html &&
     git clone https://github.com/davisp/ghp-import.git &&
     ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG.git" target/doc &&

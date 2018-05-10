@@ -139,7 +139,8 @@ impl Report {
             let path = entry.path();
 
             let prefix = config.dist_folder().join(&self.package);
-            let stripped = path.strip_prefix(&prefix).unwrap();
+            let stripped = path.strip_prefix(&prefix)
+                .expect("could not remove path prefix");
 
             if path.is_dir() {
                 if stripped != Path::new("original") {
