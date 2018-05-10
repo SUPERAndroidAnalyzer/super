@@ -5,10 +5,8 @@ action="$1"
 if [ "$action" = "install_deps" ]; then
   # Install cargo-deb and rustfmt.
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-    # Install cargo-deb
-    # Using the git version since the release has bugs
-    cargo install --git https://github.com/mmstick/cargo-deb.git --force --verbose &&
-    rustup component add rustfmt-preview
+    rustup component add rustfmt-preview &&
+    cargo install cargo-deb
   fi
 
   # Install Clippy

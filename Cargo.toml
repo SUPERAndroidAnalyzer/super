@@ -79,8 +79,8 @@ certificate = []
 [package.metadata.deb]
 maintainer = "Iban Eguia <razican@protonmail.ch>"
 copyright = "2016, Iban Eguia <razican@protonmail.ch>"
-license_file = ["LICENSE", "0"]
-extended_description = """\
+license-file = ["LICENSE", "0"]
+extended-description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
 with CLI."""
 depends = "libc6, libgcc1, default-jre-headless, bash"
@@ -89,53 +89,34 @@ priority = "optional"
 assets = [
     # Executable
     ["target/release/super-analyzer", "usr/bin/", "755"],
+
     # Completion scripts
-    ["target/release/super.bash-completion", "usr/share/bash-completion/completions/", "755"],
+    ["target/release/super.bash", "usr/share/bash-completion/completions/", "755"],
     ["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],
     ["target/release/_super", "usr/share/zsh/vendor-completions/", "755"],
+
     # JD-CMD
     ["vendor/jd-cmd.jar", "usr/share/super-analyzer/vendor/", "755"],
     ["vendor/jd-cmd.LICENSE.txt", "usr/share/super-analyzer/vendor/", "644"],
+
     # Dex2Jar
     ["vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "644"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/NOTICE.txt", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "644"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/d2j-dex2jar.sh", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/d2j_invoke.sh", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/antlr-runtime-3.5.2.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/asm-debug-all-4.1.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-base-cmd-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-jasmin-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/d2j-smali-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-ir-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-reader-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-reader-api-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-tools-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-translator-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dex-writer-2.1-SNAPSHOT.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    ["vendor/dex2jar-2.1-SNAPSHOT/lib/dx-1.7.jar", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
-    #CSS
-    ["templates/super/css/androidstudio.css", "usr/share/super-analyzer/templates/super/css/", "644"],
-    ["templates/super/css/style.css", "usr/share/super-analyzer/templates/super/css/", "644"],
-    # Images
-    ["templates/super/img/folder-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
-    ["templates/super/img/java-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
-    ["templates/super/img/xml-icon.png", "usr/share/super-analyzer/templates/super/img/", "644"],
-    ["templates/super/img/report.png", "usr/share/super-analyzer/vendor/results_template/img/", "644"],
-    ["templates/super/img/logo.svg", "usr/share/super-analyzer/templates/super/img/", "644"],
-    # JavaScript
-    ["templates/super/js/highlight.js.LICENSE", "usr/share/super-analyzer/templates/super/js/", "644"],
-    ["templates/super/js/highlight.pack.js", "usr/share/super-analyzer/templates/super/js/", "644"],
-    ["templates/super/js/jquery-3.2.0.slim.min.js", "usr/share/super-analyzer/templates/super/js/", "644"],
-    ["templates/super/js/src_nav.js", "usr/share/super-analyzer/templates/super/js/", "644"],
-    # templates
-    ["templates/super/code.hbs", "usr/share/super-analyzer/templates/super/", "644"],
-    ["templates/super/report.hbs", "usr/share/super-analyzer/templates/super/", "644"],
-    ["templates/super/src.hbs", "usr/share/super-analyzer/templates/super/", "644"],
-    ["templates/super/vulnerability.hbs", "usr/share/super-analyzer/templates/super/", "644"],
-    # Config
+    ["vendor/dex2jar-2.1-SNAPSHOT/*.sh", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/lib/*", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+
+    # Web assets
+    ["templates/super/css/*", "usr/share/super-analyzer/templates/super/css/", "644"],
+    ["templates/super/img/*", "usr/share/super-analyzer/templates/super/img/", "644"],
+    ["templates/super/js/*", "usr/share/super-analyzer/templates/super/js/", "644"],
+
+    # Templates
+    ["templates/super/*", "usr/share/super-analyzer/templates/super/", "644"],
+
+    # Configuration
     ["rules.json", "etc/super-analyzer/", "644"],
     ["config.toml", "etc/super-analyzer/", "644"],
     ["config.toml.sample", "etc/super-analyzer/", "644"],
+
     # README
     ["README.md", "usr/share/doc/super-analyzer/README.md", "644"],
 ]
@@ -148,6 +129,7 @@ debug = true
 rpath = false
 lto = false
 debug-assertions = true
+overflow-checks = true
 panic = 'unwind'
 
 # The release profile, used for `cargo build --release`.
@@ -159,4 +141,5 @@ rpath = false
 codegen-units = 1
 lto = true
 debug-assertions = false
+overflow-checks = false
 panic = 'unwind'

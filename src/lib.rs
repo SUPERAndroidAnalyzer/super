@@ -3,11 +3,9 @@
 #![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
 //#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
-#![deny(
-    variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
-    unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs, unused_extern_crates,
-    missing_debug_implementations, missing_copy_implementations
-)]
+#![deny(variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
+        unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs, unused_extern_crates,
+        missing_debug_implementations, missing_copy_implementations)]
 
 extern crate abxml;
 extern crate bytecount;

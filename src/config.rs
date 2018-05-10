@@ -162,7 +162,7 @@ impl Config {
     pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self, Error> {
         let cfg_result: Result<Self, Error> = fs::File::open(config_path.as_ref())
             .context("could not open configuration file")
-            .map_err(|e| Error::from(e))
+            .map_err(Error::from)
             .and_then(|mut f| {
                 let mut toml = String::new();
                 let _ = f.read_to_string(&mut toml)?;

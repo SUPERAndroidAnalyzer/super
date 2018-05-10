@@ -32,7 +32,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_defaultdocdir}/%{name}/
 install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
 install -p -m 755 target/release/%{name} %{buildroot}%{_bindir}/
-install -p -m 755 target/release/super.bash-completion %{buildroot}%{_datadir}/bash-completion/completions/
+install -p -m 755 target/release/super.bash %{buildroot}%{_datadir}/bash-completion/completions/
 install -p -m 755 target/release/super.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/
 install -p -m 755 target/release/_super %{buildroot}%{_datadir}/zsh/site-functions/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
@@ -42,8 +42,8 @@ install -p -m 644 -D templates/super/css/* %{buildroot}%{_datadir}/%{name}/templ
 install -p -m 644 -D templates/super/img/* %{buildroot}%{_datadir}/%{name}/templates/super/img/
 install -p -m 644 -D templates/super/js/* %{buildroot}%{_datadir}/%{name}/templates/super/js/
 install -p -m 644 -D templates/super/*.hbs %{buildroot}%{_datadir}/%{name}/templates/super/
-install -p -m 755 -D vendor/*.jar %{buildroot}%{_datadir}/%{name}/vendor/
-install -p -m 644 -D vendor/*.txt %{buildroot}%{_datadir}/%{name}/vendor/
+install -p -m 755 -D vendor/jd-cmd.jar %{buildroot}%{_datadir}/%{name}/vendor/
+install -p -m 644 -D vendor/jd-cmd.LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/
 install -p -m 644 rules.json %{buildroot}%{_sysconfdir}/%{name}/
 install -p -m 644 config.toml %{buildroot}%{_sysconfdir}/%{name}/
 install -p -m 644 config.toml.sample %{buildroot}%{_sysconfdir}/%{name}/

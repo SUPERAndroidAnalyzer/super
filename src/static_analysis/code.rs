@@ -538,10 +538,6 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
     );
 
     let rules: Vec<Rule> = serde_json::from_reader(f).context(format_error.clone())?;
-    let fc1_check_regex = Regex::new("\\{fc1\\}")
-        .expect("could not compile the first forward check regular expression");
-    let fc2_check_regex = Regex::new("\\{fc2\\}")
-        .expect("could not compile the second forward check regular expression");
     let rules = rules
         .into_iter()
         .filter_map(|rule| {
@@ -549,10 +545,10 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
                 let fc1_in_regex = rule.regex().capture_names().any(|c| c == Some("fc1"));
                 let fc2_in_regex = rule.regex().capture_names().any(|c| c == Some("fc2"));
 
-                let forward_check = rule.forward_check().map(|c| c.clone());
+                let forward_check = rule.forward_check().cloned();
                 if let Some(forward_check) = forward_check {
-                    let fc1_in_fc = fc1_check_regex.is_match(&forward_check);
-                    let fc2_in_fc = fc2_check_regex.is_match(&forward_check);
+                    let fc1_in_fc = forward_check.contains("{fc1}");
+                    let fc2_in_fc = forward_check.contains("{fc2}");
 
                     if fc1_in_regex && !fc1_in_fc {
                         Some(Err(error::Kind::Parse
@@ -1798,8 +1794,10 @@ mod tests {
         };
         let rule = rules.get(34).unwrap();
 
-        let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
-                              SSLSocketFactory.getInsecure()"];
+        let should_match = &[
+            " javax.net.ssl.SSLSocketFactory                 \
+             SSLSocketFactory.getInsecure()",
+        ];
 
         let should_not_match = &[
             "getInsecure()",
