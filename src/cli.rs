@@ -1,3 +1,9 @@
+//! Command line interface module.
+//!
+//! This module contains the `generate()` function, that generates the complet command line
+//! for the SUPER launcher. It's also used to generate command line completion scripts in the
+//! `build.rs` file.
+
 use clap::{App, Arg};
 
 /// Generates the command line interface.

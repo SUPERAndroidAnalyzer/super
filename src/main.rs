@@ -66,8 +66,8 @@ fn run() -> Result<(), Error> {
     // Check the CLI arguments.
     let cli = cli::generate().get_matches();
     let verbose = cli.is_present("verbose");
-    // Initialize all loggers, specifying if the user wanted verbose mode.
-    initialize_logger(verbose);
+    // Initialize all logger, specifying if the user wanted verbose mode.
+    initialize_logger(verbose).context("could not initialize the logger")?;
 
     // Load the configuration.
     let mut config = initialize_config(&cli)?;

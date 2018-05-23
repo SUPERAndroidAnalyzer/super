@@ -1,4 +1,8 @@
 //! SUPER Android Analyzer core library.
+//!
+//! This library contains the code for analyzing Android applications. It's called by the
+//! launcher and contains the main logic of the analysis, with the configuration management,
+//! the logger initialization and some utility functions.
 
 #![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
@@ -42,7 +46,6 @@ extern crate sha2;
 extern crate toml;
 extern crate xml;
 
-/// Command Line Interface
 pub mod cli;
 mod config;
 mod criticality;
@@ -53,7 +56,7 @@ mod static_analysis;
 mod utils;
 
 use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 use std::{env, fs};
@@ -62,24 +65,27 @@ use clap::ArgMatches;
 use colored::Colorize;
 use failure::{Error, ResultExt};
 
-pub use config::*;
-use decompilation::*;
-use results::*;
-use static_analysis::*;
+pub use config::Config;
+use decompilation::{decompile, decompress, dex_to_jar};
+use results::Results;
+use static_analysis::static_analysis;
 pub use utils::*;
 
-/// Logo ASCII art.
+/// Logo ASCII art, used in verbose mode.
 pub static BANNER: &str = include_str!("banner.txt");
 
 /// Initialize the config with the config files and command line options.
 ///
-/// On UNIX, if local file ('config.toml') does not exists, but the global one does
-/// ('/etc/super-analyzer/config.toml'), the latter is used.
-/// Otherwise, the local file is used.
-/// Finally, if non of the files could be loaded, the default config is used
+/// On UNIX, if local file, `config.toml`, does not exist, but the global one does
+/// `/etc/super-analyzer/config.toml`, the latter is used. Otherwise, the local file
+/// is used. Finally, if non of the files could be loaded, the default configuration
+/// is used. This default configuration contains the minimal setup for running the
+/// analysis.
+///
+/// It will then add the configuration selected with the command line interface options.
 pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
-    let config_path = PathBuf::from("config.toml");
-    let global_config_path = PathBuf::from("/etc/super-analyzer/config.toml");
+    let config_path = Path::new("config.toml");
+    let global_config_path = Path::new("/etc/super-analyzer/config.toml");
 
     let mut config = if cfg!(target_family = "unix") && !config_path.exists()
         && global_config_path.exists()
@@ -87,7 +93,7 @@ pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
         Config::from_file(&global_config_path)
             .context("there was an error when reading the /etc/super-analyzer/config.toml file")?
     } else if config_path.exists() {
-        Config::from_file(&PathBuf::from("config.toml"))
+        Config::from_file(&config_path)
             .context("there was an error when reading the config.toml file")?
     } else {
         print_warning("config file not found. Using default configuration");
@@ -101,7 +107,7 @@ pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
     Ok(config)
 }
 
-/// Analyzes the given package with the given config.
+/// Analyzes the given package with the given configuration.
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn analyze_package<P: AsRef<Path>>(
     package: P,
@@ -116,9 +122,9 @@ pub fn analyze_package<P: AsRef<Path>>(
         println!();
         println!("Starting analysis of {}.", package_name.italic());
     }
-    let start_time = Instant::now();
 
-    // Apk decompression
+    // Apk decompression.
+    let start_time = Instant::now();
     decompress(config, &package).context("apk decompression failed")?;
 
     if config.is_bench() {
@@ -128,9 +134,9 @@ pub fn analyze_package<P: AsRef<Path>>(
             .push(Benchmark::new("Apk decompression", start_time.elapsed()));
     }
 
-    let dex_jar_time = Instant::now();
     // Converting the .dex to .jar.
-    dex_to_jar(config, &package).context("Conversion from DEX to JAR failed")?;
+    let dex_jar_time = Instant::now();
+    dex_to_jar(config, &package).context("conversion from DEX to JAR failed")?;
 
     if config.is_bench() {
         benchmarks
@@ -146,13 +152,12 @@ pub fn analyze_package<P: AsRef<Path>>(
         println!();
         println!(
             "Now it's time for the actual decompilation of the source code. We'll translate
-                  Android JVM bytecode to Java, so that we can check the code afterwards."
+             Android JVM bytecode to Java, so that we can check the code afterwards."
         );
     }
 
-    let decompile_start = Instant::now();
-
     // Decompiling the app
+    let decompile_start = Instant::now();
     decompile(config, &package).context("JAR decompression failed")?;
 
     if config.is_bench() {
@@ -165,9 +170,11 @@ pub fn analyze_package<P: AsRef<Path>>(
             ));
     }
 
+    // Initialize results structure
     let mut results = Results::init(config, &package)?;
-    let static_start = Instant::now();
+
     // Static application analysis
+    let static_start = Instant::now();
     static_analysis(config, &package_name, &mut results);
 
     if config.is_bench() {
@@ -180,22 +187,21 @@ pub fn analyze_package<P: AsRef<Path>>(
             ));
     }
 
-    // TODO dynamic analysis
-
     if !config.is_quiet() {
         println!();
     }
 
+    // Generate results report.
     let report_start = Instant::now();
     results
         .generate_report(config, &package_name)
         .context(format_err!(
-            "There was an error generating the results report. Tried to generate at: {}",
+            "there was an error generating the results report at: {}",
             config.results_folder().join(&package_name).display()
         ))?;
 
     if config.is_verbose() {
-        println!("Everything went smoothly, now you can check all the results.");
+        println!("Everything went smoothly, you can now check all the results.");
         println!();
         println!("I will now analyze myself for vulnerabilities…");
         sleep(Duration::from_millis(1500));
@@ -232,10 +238,10 @@ pub fn analyze_package<P: AsRef<Path>>(
                 .join("results.json")
         };
 
-        let status = open::that(open_path).context("Report could not be opened automatically")?;
+        let status = open::that(open_path).context("the report could not be opened automatically")?;
 
         if !status.success() {
-            bail!("Report opening errored with status code: {}", status);
+            bail!("report opening errored with status code: {}", status);
         }
     }
 
@@ -272,13 +278,17 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
 }
 
 /// Initializes the logger.
+///
+/// This will initialize the environment logger structure so that it generates the
+/// proper messages using the right colors. It's called from the launcher.
 #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-pub fn initialize_logger(is_verbose: bool) {
+pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
     use env_logger::Builder;
     use env_logger::fmt::{Color, Formatter};
     use log::{Level, LevelFilter, Record};
     use std::io::Write;
 
+    // Define the style of the formatting.
     let format = |buf: &mut Formatter, record: &Record| {
         let mut level_style = buf.style();
         match record.level() {
@@ -302,6 +312,7 @@ pub fn initialize_logger(is_verbose: bool) {
         )
     };
 
+    // Define the logging level for the messages.
     let log_level = if is_verbose {
         LevelFilter::Debug
     } else {
@@ -310,20 +321,21 @@ pub fn initialize_logger(is_verbose: bool) {
 
     let mut builder = Builder::new();
 
-    let builder_state = if let Ok(env_log) = env::var("RUST_LOG") {
+    // Initialize the logger.
+    if let Ok(env_log) = env::var("RUST_LOG") {
         builder.format(format).parse(&env_log).try_init()
     } else {
         builder
             .format(format)
             .filter(Some("super"), log_level)
             .try_init()
-    };
-
-    if let Err(e) = builder_state {
-        println!("Could not initialize logger: {}", e);
     }
 }
 
+/// Integration and unit tests module.
+///
+/// This module includes tests for the analyzer. It includes both unit tests and
+/// integration tests.
 #[cfg(test)]
 mod tests {
     extern crate reqwest;
@@ -337,8 +349,13 @@ mod tests {
     use std::path::Path;
     use std::str::FromStr;
 
+    /// This tests checks that the `Criticality` enumeration works as expected.
+    ///
+    /// It checks the conversion both from and to strings, the comparisons between
+    /// criticality levels and the debug format.
     #[test]
     fn it_criticality() {
+        // Check "warnings" from strings
         assert_eq!(
             Criticality::from_str("warning").unwrap(),
             Criticality::Warning
@@ -352,10 +369,12 @@ mod tests {
             Criticality::Warning
         );
 
+        // Check low criticality from strings.
         assert_eq!(Criticality::from_str("low").unwrap(), Criticality::Low);
         assert_eq!(Criticality::from_str("Low").unwrap(), Criticality::Low);
         assert_eq!(Criticality::from_str("LOW").unwrap(), Criticality::Low);
 
+        // Check medium criticality from strings.
         assert_eq!(
             Criticality::from_str("medium").unwrap(),
             Criticality::Medium
@@ -369,10 +388,12 @@ mod tests {
             Criticality::Medium
         );
 
+        // Check high criticality from strings.
         assert_eq!(Criticality::from_str("high").unwrap(), Criticality::High);
         assert_eq!(Criticality::from_str("High").unwrap(), Criticality::High);
         assert_eq!(Criticality::from_str("HIGH").unwrap(), Criticality::High);
 
+        // Check critical criticality from strings.
         assert_eq!(
             Criticality::from_str("critical").unwrap(),
             Criticality::Critical
@@ -386,6 +407,7 @@ mod tests {
             Criticality::Critical
         );
 
+        // Check that the comparisions between criticalities is correct.
         assert!(Criticality::Warning < Criticality::Low);
         assert!(Criticality::Warning < Criticality::Medium);
         assert!(Criticality::Warning < Criticality::High);
@@ -397,12 +419,14 @@ mod tests {
         assert!(Criticality::Medium < Criticality::Critical);
         assert!(Criticality::High < Criticality::Critical);
 
+        // Check that the criticalities are printed correctly with the `Display` trait.
         assert_eq!(format!("{}", Criticality::Warning).as_str(), "warning");
         assert_eq!(format!("{}", Criticality::Low).as_str(), "low");
         assert_eq!(format!("{}", Criticality::Medium).as_str(), "medium");
         assert_eq!(format!("{}", Criticality::High).as_str(), "high");
         assert_eq!(format!("{}", Criticality::Critical).as_str(), "critical");
 
+        // Check that the criticalities are printed correctly with the `Debug` trait.
         assert_eq!(format!("{:?}", Criticality::Warning).as_str(), "Warning");
         assert_eq!(format!("{:?}", Criticality::Low).as_str(), "Low");
         assert_eq!(format!("{:?}", Criticality::Medium).as_str(), "Medium");
@@ -410,7 +434,11 @@ mod tests {
         assert_eq!(format!("{:?}", Criticality::Critical).as_str(), "Critical");
     }
 
-    /// General package analysis test.
+    /// General package analysis test, ignored by default.
+    ///
+    /// This will download an apk from a public repository, analyze it and
+    /// generate the results. It will check that no error gets generated.
+    /// It still does not check that the results are the expected results.
     #[test]
     #[ignore]
     fn it_analyze_package() {
@@ -418,8 +446,11 @@ mod tests {
         if need_to_create {
             fs::create_dir("downloads").unwrap();
         }
+        // Create the destination file.
         let mut apk_file = fs::File::create("downloads/test_app.apk").unwrap();
 
+        // TODO: use an application that we control.
+        // Download the .apk fie
         let _ = reqwest::get(
             "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
@@ -427,19 +458,23 @@ mod tests {
             .copy_to(&mut apk_file)
             .unwrap();
 
+        // Initialize minimum configuration.
         let mut benchmarks = BTreeMap::new();
         let mut config = Config::from_file("config.toml").unwrap();
         config.add_app_package("downloads/test_app");
 
+        // Run the analysis
         analyze_package("downloads/test_app.apk", &mut config, &mut benchmarks).unwrap();
 
-        // TODO, check results.
+        // TODO: check results.
 
+        // Remove generated files.
         if need_to_create {
             fs::remove_dir_all("downloads").unwrap();
         } else {
             fs::remove_file("downloads/test_app.apk").unwrap();
         }
+        // TODO: maybe we should only remove the application specific files.
         fs::remove_dir_all("dist").unwrap();
         fs::remove_dir_all("results").unwrap();
     }
