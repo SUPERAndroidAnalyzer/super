@@ -1,39 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
         <title>Source - {{ path }}</title>
         <link rel="stylesheet" href="{{ back_path }}css/androidstudio.css">
         <link rel="stylesheet" href="{{ back_path }}css/style.css">
     </head>
+
     <body>
-        <div><div class="line_numbers">{{ all_lines code }}</div>
-            <div class="code"><pre><code>{{ all_code code }}</code></pre></div>
+        <div>
+            <div class="line_numbers">{{ all_lines code }}</div>
+            <div class="code">
+                <pre><code>{{ all_code code }}</code></pre>
+            </div>
         </div>
-        <script src="{{ back_path }}js/jquery-3.2.1.slim.min.js"></script>
+        <script src="{{ back_path }}js/jquery-3.3.1.slim.min.js"></script>
         <script src="{{ back_path }}js/highlight.pack.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
         <script>
-        var query_params = decodeURIComponent(window.location.search.substring(1)),
-            variables = query_params.split('&'),
-            start_line,
-            end_line,
-            criticality;
-        for(var i = 0; i < variables.length; i++) {
-            var pair = variables[i].split('=');
-            if (pair[0] == "start_line") {
-                start_line = pair[1];
+            var query_params = decodeURIComponent(window.location.search.substring(1)),
+                variables = query_params.split('&'),
+                start_line,
+                end_line,
+                criticality;
+            for (var i = 0; i < variables.length; i++) {
+                var pair = variables[i].split('=');
+                if (pair[0] == "start_line") {
+                    start_line = pair[1];
+                }
+                if (pair[0] == "end_line") {
+                    end_line = pair[1];
+                }
+                if (pair[0] == "criticality") {
+                    criticality = pair[1];
+                }
             }
-            if (pair[0] == "end_line") {
-                end_line = pair[1];
+            for (var i = start_line; i <= end_line; i++) {
+                $("#code-line-" + i).addClass("vulnerable_line " + criticality);
             }
-            if (pair[0] == "criticality") {
-                criticality = pair[1];
-            }
-        }
-        for (var i = start_line; i <= end_line; i++) {
-            $("#code-line-"+i).addClass("vulnerable_line "+criticality);
-        }
         </script>
     </body>
+
 </html>

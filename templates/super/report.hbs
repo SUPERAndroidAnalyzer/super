@@ -1,86 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <title>Vulnerability report</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/androidstudio.css">
     </head>
+
     <body>
         <section class="report">
-            <a href="http://superanalyzer.rocks" title="SUPER Android Analyzer">
+            <a href="https://superanalyzer.rocks" title="SUPER Android Analyzer">
                 <img src="img/logo.svg" alt="SUPER Android Analyzer logo">
             </a>
             <h1 id="title">SUPER Android Analyzer Report</h1>
-            <p>This is the vulnerability report for the android application <em>{{ app_package }}</em>. Report generated on <time datetime="now_rfc3339">{{ now_rfc2822 }}</time> with SUPER Android Analyzer {{ super_version }}.</p>
+            <p>This is the vulnerability report for the android application
+                <em>{{ app_package }}</em>. Report generated on
+                <time datetime="now_rfc3339">{{ now_rfc2822 }}</time> with SUPER Android Analyzer {{ super_version }}.</p>
             <h2>Application data:</h2>
             <ul>
-                <li><strong>Package:</strong> {{ app_package }}</li>
-                <li><strong>Version:</strong> {{ app_version }}</li>
-                <li><strong>Version number:</strong> {{ app_version_number }}</li>
-                <li><strong>Minimum SDK version:</strong> {{ app_min_sdk_number }} (Android {{ app_min_sdk_version }} <em>{{ app_min_sdk_name }}</em>)</li>
-                <li><strong>Target SDK:</strong> {{#if app_target_sdk }}{{ app_min_sdk_number }} (Android {{ app_min_sdk_version }} <em>{{ app_min_sdk_name }}</em>){{else}}None{{/if}}</li>
-                <li><strong>Fingerprints:</strong>
+                <li>
+                    <strong>Package:</strong> {{ app_package }}</li>
+                <li>
+                    <strong>Version:</strong> {{ app_version }}</li>
+                <li>
+                    <strong>Version number:</strong> {{ app_version_number }}</li>
+                <li>
+                    <strong>Minimum SDK version:</strong> {{ app_min_sdk_number }} (Android {{ app_min_sdk_version }}
+                    <em>{{ app_min_sdk_name }}</em>)</li>
+                <li>
+                    <strong>Target SDK:</strong>
+                    {{#if app_target_sdk }}{{ app_min_sdk_number }} (Android {{ app_min_sdk_version }}
+                        <em>{{ app_min_sdk_name }}</em>)
+                    {{else}}None{{/if}}
+                </li>
+                <li>
+                    <strong>Fingerprints:</strong>
                     <ul>
                         <li>MD5: {{ app_fingerprint.md5 }}</li>
                         <li>SHA-1: {{ app_fingerprint.sha1 }}</li>
                         <li>SHA-256: {{ app_fingerprint.sha256 }}</li>
                     </ul>
                 </li>
-                <li><a href="src/index.html" title="Source code">Check source code</a></li>
+                <li>
+                    <a href="src/index.html" title="Source code">Check source code</a>
+                </li>
             </ul>
             <h3>Total vulnerabilities found: {{ total_vulnerabilities }}</h3>
             <ul>
-                <li>Critical: {{#if criticals }}<span class="critical">{{ criticals_len }}</span> <a href="#critical" title="Critical">⇒</a>{{else}}0{{/if}}</li>
-                <li>High: {{#if highs }}<span class="high">{{ highs_len }}</span> <a href="#high" title="High">⇒</a>{{else}}0{{/if}}</li>
-                <li>Medium: {{#if mediums }}<span class="medium">{{ mediums_len }}</span> <a href="#medium" title="Medium">⇒</a>{{else}}0{{/if}}</li>
-                <li>Low: {{#if lows }}<span class="low">{{ lows_len }}</span> <a href="#low" title="Low">⇒</a>{{else}}0{{/if}}</li>
-                <li>Warnings: {{#if warnings }}<span class="warning">{{ warnings_len }}</span> <a href="#warnings" title="Warnings">⇒</a>{{else}}0{{/if}}</li>
+                <li>Critical:
+                    {{#if criticals }}
+                        <span class="critical">{{ criticals_len }}</span>
+                        <a href="#critical" title="Critical">⇒</a>
+                    {{else}}0{{/if}}
+                </li>
+                <li>High:
+                    {{#if highs }}
+                        <span class="high">{{ highs_len }}</span>
+                        <a href="#high" title="High">⇒</a>
+                    {{else}}0{{/if}}
+                </li>
+                <li>Medium:
+                    {{#if mediums }}
+                        <span class="medium">{{ mediums_len }}</span>
+                        <a href="#medium" title="Medium">⇒</a>
+                    {{else}}0{{/if}}
+                </li>
+                <li>Low:
+                    {{#if lows }}
+                        <span class="low">{{ lows_len }}</span>
+                        <a href="#low" title="Low">⇒</a>
+                    {{else}}0{{/if}}
+                </li>
+                <li>Warnings:
+                    {{#if warnings }}
+                        <span class="warning">{{ warnings_len }}</span>
+                        <a href="#warnings" title="Warnings">⇒</a>
+                    {{else}}0{{/if}}
+                </li>
             </ul>
             <h2>Vulnerabilities:</h2>
             {{#if criticals }}
-            <h3 id="critical">Critical vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
-            {{#each criticals }}
-            {{> vulnerability list_len=../criticals_len }}
-            {{/each}}
+                <h3 id="critical">Critical vulnerabilities:
+                    <a href="#title" title="Top">⇮</a>
+                </h3>
+                {{#each criticals }}
+                    {{> vulnerability list_len=../criticals_len }}
+                {{/each}}
             {{/if}}
             {{#if highs }}
-            <h3 id="high">High criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
-            {{#each highs }}
-            {{> vulnerability list_len=../highs_len }}
-            {{/each}}
+                <h3 id="high">High criticality vulnerabilities:
+                    <a href="#title" title="Top">⇮</a>
+                </h3>
+                {{#each highs }}
+                    {{> vulnerability list_len=../highs_len }}
+                {{/each}}
             {{/if}}
             {{#if mediums }}
-            <h3 id="medium">Medium criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
-            {{#each mediums }}
-            {{> vulnerability list_len=../mediums_len}}
-            {{/each}}
+                <h3 id="medium">Medium criticality vulnerabilities:
+                    <a href="#title" title="Top">⇮</a>
+                </h3>
+                {{#each mediums }}
+                    {{> vulnerability list_len=../mediums_len}}
+                {{/each}}
             {{/if}}
             {{#if lows }}
-            <h3 id="low">Low criticality vulnerabilities: <a href="#title" title="Top">⇮</a></h3>
-            {{#each lows }}
-            {{> vulnerability list_len=../lows_len }}
-            {{/each}}
+                <h3 id="low">Low criticality vulnerabilities:
+                    <a href="#title" title="Top">⇮</a>
+                </h3>
+                {{#each lows }}
+                    {{> vulnerability list_len=../lows_len }}
+                {{/each}}
             {{/if}}
             {{#if warnings }}
-            <h3 id="warning">Warnings: <a href="#title" title="Top">⇮</a></h3>
-            {{#each warnings }}
-            {{> vulnerability list_len=../warnings_len }}
-            {{/each}}
+                <h3 id="warning">Warnings:
+                    <a href="#title" title="Top">⇮</a>
+                </h3>
+                {{#each warnings }}
+                    {{> vulnerability list_len=../warnings_len }}
+                {{/each}}
             {{/if}}
         </section>
-        <footer><p>Copyright © 2016 - SUPER Android Analyzer</p></footer>
+        <footer>
+            <p>Copyright © 2016 - 2018 SUPER Android Analyzer</p>
+        </footer>
         <script src="js/highlight.pack.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
         <script src="js/jquery-3.3.1.slim.min.js"></script>
         <script>
-            $('.vulnerability h4 a.collapse').click(function(event) {
+            $('.vulnerability h4 a.collapse').click(function (event) {
                 event.preventDefault();
                 $(this).parents('section.vulnerability').find('ul div').hide('slow');
                 $(this).hide('fast');
                 $(this).prev('a').show('fast');
             });
-            $('.vulnerability h4 a.show').click(function(event) {
+            $('.vulnerability h4 a.show').click(function (event) {
                 event.preventDefault();
                 $(this).parents('section.vulnerability').find('ul div').show('slow');
                 $(this).hide('fast');
@@ -88,4 +142,5 @@
             });
         </script>
     </body>
+
 </html>
