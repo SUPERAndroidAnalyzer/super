@@ -48,7 +48,6 @@ elif [ "$action" = "upload_documentation" ]; then
     ./ghp-import/ghp_import.py -n -p -f -m "Documentation upload" -r https://"$GH_TOKEN"@github.com/"$TRAVIS_REPO_SLUG.git" target/doc &&
     echo "Uploaded documentation"
   fi
-fi
 
 elif [ "$action" = "setup_docker" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
