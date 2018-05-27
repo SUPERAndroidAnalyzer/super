@@ -20,10 +20,12 @@ cd /root/super/rpmbuild &&
   cd /root/super/rpmbuild)
 ) &&
 
+echo "TAG: $TAG"
 # The tag won't be defined in a normal build.
-if [[ $TAG == false ]]; then
+if [[ $TAG == "false" ]]; then
   export TAG="0.4.1"; # TODO: change when bumping version.
 fi &&
+echo "TAG: $TAG"
 
 # We need to rename the contained folder from super-X.Y.Z to super-analyzer-X.Y.Z
 tar -xzvf $TAG.tar.gz &&

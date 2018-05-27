@@ -16,10 +16,12 @@ source ~/.cargo/env &&
 # Install cargo-deb
 cargo install cargo-deb &&
 
+echo "TAG: $TAG"
 # The tag won't be defined in a normal build.
-if [[ $TAG == false ]]; then
+if [[ $TAG == "false" ]]; then
   export TAG="0.4.1"; # TODO: change when bumping version.
 fi &&
+echo "TAG: $TAG"
 
 # Generate the .deb file
 cd /root/super &&
