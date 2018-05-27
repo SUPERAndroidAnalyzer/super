@@ -34,4 +34,4 @@ rm -fr super-analyzer-$TAG &&
 
 # Build the RPM
 fedpkg --release f28 local &&
-mv x86_64/*.rpm ../releases/
+mv x86_64/super-analyzer-$TAG-1.fc28.x86_64.rpm ../releases/
