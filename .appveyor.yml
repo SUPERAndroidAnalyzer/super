@@ -30,8 +30,8 @@ install:
   - cargo -vV
 
 build_script:
-  - cargo build
-  - cargo package
+  - cargo build --features no-color
+  - cargo package --feature no-color
 
 test_script:
-  - cargo test
+  - cargo test --features no-color

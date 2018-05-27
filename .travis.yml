@@ -31,13 +31,17 @@ before_script:
 - export PATH=$PATH:~/.cargo/bin
 - "./travis-helper.sh install_deps"
 - "./travis-helper.sh setup_docker"
+- |
+  if [[ $TRAVIS_TAG ]]; then
+    export TAG=$TRAVIS_TAG;
+  else
+    export TAG=false;
+  fi
 
 script:
 - cargo build --verbose
 - cargo package --verbose
 - cargo test --verbose
-- cargo build --verbose --features beta
-- cargo test --verbose --features beta
 - cargo build --verbose --features unstable
 - cargo test --verbose --features unstable
 - "./travis-helper.sh clippy_run"
