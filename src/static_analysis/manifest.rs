@@ -7,6 +7,7 @@ use std::str::FromStr;
 use colored::Colorize;
 use failure::Error;
 use serde::{self, Deserialize, Deserializer};
+use xml::attribute::OwnedAttribute;
 use xml::reader::{EventReader, XmlEvent};
 
 use criticality::Criticality;
@@ -247,270 +248,20 @@ impl Manifest {
                 Ok(XmlEvent::StartElement {
                     name, attributes, ..
                 }) => match name.local_name.as_str() {
-                    "manifest" => for attr in attributes {
-                        match attr.name.local_name.as_str() {
-                            "package" => manifest.set_package(attr.value.as_str()),
-                            "versionCode" => {
-                                let version_number: u32 = match attr.value.parse() {
-                                    Ok(n) => n,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the version in the \
-                                             manifest: {}.\nThe process will continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                manifest.set_version_number(version_number);
-                            }
-                            "versionName" => manifest.set_version_str(attr.value.as_str()),
-                            "installLocation" => {
-                                let location = match InstallLocation::from_str(attr.value.as_str())
-                                {
-                                    Ok(l) => l,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `installLocation` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                manifest.set_install_location(location)
-                            }
-                            _ => {}
-                        }
-                    },
-                    "uses-sdk" => for attr in attributes {
-                        match attr.name.local_name.as_str() {
-                            "minSdkVersion" => {
-                                let min_sdk_version: u32 = match attr.value.as_str().parse() {
-                                    Ok(m) => m,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `minSdkVersion` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                manifest.set_min_sdk(min_sdk_version);
-                            }
-                            "targetSdkVersion" => {
-                                let target_sdk_version: u32 = match attr.value.as_str().parse() {
-                                    Ok(t) => t,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `targetSdkVersion` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                manifest.set_target_sdk(target_sdk_version);
-                            }
-                            _ => {}
-                        }
-                    },
-                    "application" => for attr in attributes {
-                        match attr.name.local_name.as_str() {
-                            "debuggable" => {
-                                let debug: bool = match attr.value.as_str().parse() {
-                                    Ok(b) => b,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `debuggable` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                if debug {
-                                    manifest.set_debug();
-                                }
-                            }
-                            "allowBackup" => {
-                                let allows_backup: bool = match attr.value.as_str().parse() {
-                                    Ok(b) => b,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `allowBackup` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                if allows_backup {
-                                    manifest.set_allows_backup();
-                                }
-                            }
-                            "description" => manifest.set_description(attr.value.as_str()),
-                            "hasCode" => {
-                                let has_code: bool = match attr.value.as_str().parse() {
-                                    Ok(b) => b,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `hasCode` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                if has_code {
-                                    manifest.set_has_code();
-                                }
-                            }
-                            "largeHeap" => {
-                                let large_heap: bool = match attr.value.as_str().parse() {
-                                    Ok(b) => b,
-                                    Err(e) => {
-                                        print_warning(format!(
-                                            "An error occurred when parsing the `largeHeap` \
-                                             attribute in the manifest: {}.\nThe process will \
-                                             continue, though.",
-                                            e
-                                        ));
-                                        break;
-                                    }
-                                };
-                                if large_heap {
-                                    manifest.set_large_heap();
-                                }
-                            }
-                            "label" => manifest.set_label(
-                                if attr.value.starts_with("@string/") {
-                                    match get_string(&attr.value[8..], config, package.as_ref()) {
-                                        Ok(s) => s,
-                                        Err(e) => {
-                                            print_warning(format!(
-                                                "An error occurred when trying to get the string \
-                                                 for the app label in the manifest: {}.\nThe \
-                                                 process will continue, though.",
-                                                e
-                                            ));
-                                            break;
-                                        }
-                                    }
-                                } else {
-                                    attr.value
-                                }.as_str(),
-                            ),
-                            _ => {}
-                        }
-                    },
-                    "uses-permission" => for attr in attributes {
-                        if let "name" = attr.name.local_name.as_str() {
-                            let permission =
-                                if let Ok(p) = Permission::from_str(attr.value.as_str()) {
-                                    p
-                                } else {
-                                    let line = get_line(manifest.code(), attr.value.as_str()).ok();
-                                    let code = match line {
-                                        Some(l) => Some(get_code(manifest.code(), l, l)),
-                                        None => None,
-                                    };
-
-                                    let criticality = config.unknown_permission_criticality();
-                                    let description = config.unknown_permission_description();
-                                    let file = Some("AndroidManifest.xml");
-
-                                    if criticality > config.min_criticality() {
-                                        let vuln = Vulnerability::new(
-                                            criticality,
-                                            "Unknown permission",
-                                            description,
-                                            file,
-                                            line,
-                                            line,
-                                            code,
-                                        );
-                                        results.add_vulnerability(vuln);
-
-                                        print_vulnerability(description, criticality);
-                                    }
-                                    break;
-                                };
-                            manifest
-                                .mut_permission_checklist()
-                                .set_needs_permission(permission);
-                        }
-                    },
+                    "manifest" => manifest.parse_manifest_attributes(attributes),
+                    "uses-sdk" => manifest.parse_sdk_attributes(attributes),
+                    "application" => {
+                        manifest.parse_application_attributes(attributes, config, package.as_ref())
+                    }
+                    "uses-permission" => {
+                        manifest.parse_permission_attributes(attributes, config, results)
+                    }
                     tag @ "provider"
                     | tag @ "receiver"
                     | tag @ "activity"
                     | tag @ "activity-alias"
                     | tag @ "service" => {
-                        let mut exported = None;
-                        let mut name = String::new();
-                        for attr in attributes {
-                            match attr.name.local_name.as_str() {
-                                "exported" => {
-                                    if let Ok(found_exported) = attr.value.as_str().parse() {
-                                        exported = Some(found_exported);
-                                    }
-                                }
-                                "name" => name = attr.value,
-                                _ => {}
-                            }
-                        }
-                        match exported {
-                            Some(true) | None => {
-                                if tag != "provider" || exported.is_some()
-                                    || manifest.min_sdk() < 17
-                                {
-                                    let line = get_line(
-                                        manifest.code(),
-                                        &format!("android:name=\"{}\"", name),
-                                    ).ok();
-                                    let code = match line {
-                                        Some(l) => Some(get_code(manifest.code(), l, l)),
-                                        None => None,
-                                    };
-
-                                    let criticality = Criticality::Warning;
-
-                                    if criticality >= config.min_criticality() {
-                                        let vuln = Vulnerability::new(
-                                            criticality,
-                                            format!("Exported {}", tag),
-                                            format!(
-                                                "Exported {} was found. It can be used by other \
-                                                 applications.",
-                                                tag
-                                            ),
-                                            Some("AndroidManifest.xml"),
-                                            line,
-                                            line,
-                                            code,
-                                        );
-                                        results.add_vulnerability(vuln);
-
-                                        print_vulnerability(
-                                            format!(
-                                                "Exported {} was found. It can be used by other \
-                                                 applications.",
-                                                tag
-                                            ),
-                                            Criticality::Warning,
-                                        );
-                                    }
-                                }
-                            }
-                            _ => {}
-                        }
+                        manifest.check_exported_atttributes(tag, attributes, config, results)
                     }
                     _ => {}
                 },
@@ -526,6 +277,289 @@ impl Manifest {
         }
 
         Ok(manifest)
+    }
+
+    fn parse_manifest_attributes<A>(&mut self, attributes: A)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "package" => self.set_package(attr.value.as_str()),
+                "versionCode" => {
+                    let version_number: u32 = match attr.value.parse() {
+                        Ok(n) => n,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the version in the manifest: {}.\
+                                 \nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_version_number(version_number);
+                }
+                "versionName" => self.set_version_str(attr.value.as_str()),
+                "installLocation" => {
+                    let location = match InstallLocation::from_str(attr.value.as_str()) {
+                        Ok(l) => l,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `installLocation` attribute \
+                                 in the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_install_location(location)
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_sdk_attributes<A>(&mut self, attributes: A)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "minSdkVersion" => {
+                    let min_sdk_version: u32 = match attr.value.as_str().parse() {
+                        Ok(m) => m,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `minSdkVersion` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_min_sdk(min_sdk_version);
+                }
+                "targetSdkVersion" => {
+                    let target_sdk_version: u32 = match attr.value.as_str().parse() {
+                        Ok(t) => t,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `targetSdkVersion` attribute \
+                                 in the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_target_sdk(target_sdk_version);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_application_attributes<A, S>(&mut self, attributes: A, config: &Config, package: S)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+        S: AsRef<str>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "debuggable" => {
+                    let debug: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `debuggable` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if debug {
+                        self.set_debug();
+                    }
+                }
+                "allowBackup" => {
+                    let allows_backup: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `allowBackup` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if allows_backup {
+                        self.set_allows_backup();
+                    }
+                }
+                "description" => self.set_description(attr.value.as_str()),
+                "hasCode" => {
+                    let has_code: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `hasCode` attribute in the \
+                                 manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if has_code {
+                        self.set_has_code();
+                    }
+                }
+                "largeHeap" => {
+                    let large_heap: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `largeHeap` attribute in the \
+                                 manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if large_heap {
+                        self.set_large_heap();
+                    }
+                }
+                "label" => self.set_label(
+                    if attr.value.starts_with("@string/") {
+                        match get_string(&attr.value[8..], config, package.as_ref()) {
+                            Ok(s) => s,
+                            Err(e) => {
+                                print_warning(format!(
+                                    "An error occurred when trying to get the string for the app \
+                                     label in the manifest: {}.\nThe process will continue, though.",
+                                    e
+                                ));
+                                break;
+                            }
+                        }
+                    } else {
+                        attr.value
+                    }.as_str(),
+                ),
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_permission_attributes<A>(
+        &mut self,
+        attributes: A,
+        config: &Config,
+        results: &mut Results,
+    ) where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            if let "name" = attr.name.local_name.as_str() {
+                let permission = if let Ok(p) = Permission::from_str(attr.value.as_str()) {
+                    p
+                } else {
+                    let line = get_line(self.code(), attr.value.as_str()).ok();
+                    let code = match line {
+                        Some(l) => Some(get_code(self.code(), l, l)),
+                        None => None,
+                    };
+
+                    let criticality = config.unknown_permission_criticality();
+                    let description = config.unknown_permission_description();
+                    let file = Some("AndroidManifest.xml");
+
+                    if criticality > config.min_criticality() {
+                        let vuln = Vulnerability::new(
+                            criticality,
+                            "Unknown permission",
+                            description,
+                            file,
+                            line,
+                            line,
+                            code,
+                        );
+                        results.add_vulnerability(vuln);
+
+                        print_vulnerability(description, criticality);
+                    }
+                    break;
+                };
+                self.permissions.set_needs_permission(permission);
+            }
+        }
+    }
+
+    fn check_exported_atttributes<A>(
+        &mut self,
+        tag: &str,
+        attributes: A,
+        config: &Config,
+        results: &mut Results,
+    ) where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        {
+            let mut exported = None;
+            let mut name = String::new();
+            for attr in attributes {
+                match attr.name.local_name.as_str() {
+                    "exported" => {
+                        if let Ok(found_exported) = attr.value.as_str().parse() {
+                            exported = Some(found_exported);
+                        }
+                    }
+                    "name" => name = attr.value,
+                    _ => {}
+                }
+            }
+            match exported {
+                Some(true) | None => {
+                    if tag != "provider" || exported.is_some() || self.min_sdk() < 17 {
+                        let line =
+                            get_line(self.code(), &format!("android:name=\"{}\"", name)).ok();
+                        let code = match line {
+                            Some(l) => Some(get_code(self.code(), l, l)),
+                            None => None,
+                        };
+
+                        let criticality = Criticality::Warning;
+
+                        if criticality >= config.min_criticality() {
+                            let vuln = Vulnerability::new(
+                                criticality,
+                                format!("Exported {}", tag),
+                                format!(
+                                    "Exported {} was found. It can be used by other applications.",
+                                    tag
+                                ),
+                                Some("AndroidManifest.xml"),
+                                line,
+                                line,
+                                code,
+                            );
+                            results.add_vulnerability(vuln);
+
+                            print_vulnerability(
+                                format!(
+                                    "Exported {} was found. It can be used by other applications.",
+                                    tag
+                                ),
+                                Criticality::Warning,
+                            );
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
     }
 
     fn set_code<S: Into<String>>(&mut self, code: S) {
@@ -626,10 +660,6 @@ impl Manifest {
 
     pub fn permission_checklist(&self) -> &PermissionChecklist {
         &self.permissions
-    }
-
-    fn mut_permission_checklist(&mut self) -> &mut PermissionChecklist {
-        &mut self.permissions
     }
 }
 
