@@ -58,20 +58,19 @@ elif [ "$action" = "setup_docker" ]; then
 
 elif [ "$action" = "dist_test" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+    echo $TRAVIS_BUILD_DIR &&
+    ls $TRAVIS_BUILD_DIR &&
     docker run -d ubuntu:latest &&
-    docker run -d -v $TRAVIS_BUILD_DIR:/root/super ubuntu:latest ./debian_build.sh &&
-    docker run -d -v $TRAVIS_BUILD_DIR:/root/super fedora:latest ./centos_build.sh
+    docker run -d -v $TRAVIS_BUILD_DIR:/root/super --name "ubuntu" ubuntu:latest "/bin/bash" &&
+    docker exec ubuntu "./ubuntu_build.sh"
+    docker run -d -v $TRAVIS_BUILD_DIR:/root/super fedora:latest ./fedora_build.sh
   fi
 
-elif [ "$action" = "deploy" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && TRAVIS_TAG != "" ]]; then
-    docker pull debian:latest &&
-    docker pull centos:latest &&
-    docker run -d -v $TRAVIS_BUILD_DIR:/root/super debian:latest ./debian_build.sh &&
-    docker run -d -v $TRAVIS_BUILD_DIR:/root/super centos:latest ./centos_build.sh &&
-    ./deploy.sh
-  fi
-
+elif [ "$action" = "before_deploy" ]; then
+  docker pull debian:latest &&
+  docker pull centos:latest &&
+  docker run -d -v $TRAVIS_BUILD_DIR:/root/super debian:latest ./debian_build.sh &&
+  docker run -d -v $TRAVIS_BUILD_DIR:/root/super centos:latest ./centos_build.sh
 fi
 
 exit $?

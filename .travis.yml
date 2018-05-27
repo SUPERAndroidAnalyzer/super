@@ -52,6 +52,9 @@ after_success:
 - "./travis-helper.sh upload_code_coverage"
 - "./travis-helper.sh upload_documentation"
 
+before_deploy:
+- "./travis-helper.sh before_deploy"
+
 deploy:
   provider: releases
   api_key:
@@ -62,6 +65,8 @@ deploy:
   on:
     repo: SUPERAndroidAnalyzer/super
     tags: true
+    rust: stable
+    os: linux
 
 notifications:
   email:

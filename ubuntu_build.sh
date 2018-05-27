@@ -8,13 +8,13 @@ apt-get autoremove;
 
 # Install Rust
 curl https://sh.rustup.rs -sSf | sh -s -- -y &&
-source ~/.cargo/env
+source ~/.cargo/env;
 
 # Install cargo-deb
-cargo install cargo-deb
+cargo install cargo-deb;
 
 # Generate the .deb file
-cd /root/super &&
+cd /root/super && ls &&
 cargo deb &&
 for file in target/debian/*.deb; do
     mv "$file" `echo "$file" | sed -e 's/_amd64/_ubuntu_amd64/g'`;

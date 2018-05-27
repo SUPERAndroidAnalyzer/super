@@ -18,7 +18,7 @@ Here you can find the rest of the changes for this version.
 - SUPER now requires Rust 1.26.0 to be built.
 - Removed `error-chain` dependency in favor of `failure`.
 - Upgraded dependencies:
-  - `clap`: 2.25 => **2.30**
+  - `clap`: 2.25 => **2.31**
   - `xml-rs`: 0.4 => **0.8**
   - `serde`: 0.9 => **1.0**
   - `chrono`: 0.3 => **0.4**
