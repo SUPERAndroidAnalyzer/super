@@ -91,9 +91,9 @@ assets = [
     ["target/release/super-analyzer", "usr/bin/", "755"],
 
     # Completion scripts
-    ["target/release/super.bash", "usr/share/bash-completion/completions/", "755"],
-    ["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],
-    ["target/release/_super", "usr/share/zsh/vendor-completions/", "755"],
+    #["target/release/super.bash", "usr/share/bash-completion/completions/", "755"],
+    #["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],
+    #["target/release/_super", "usr/share/zsh/vendor-completions/", "755"],
 
     # JD-CMD
     ["vendor/jd-cmd.jar", "usr/share/super-analyzer/vendor/", "755"],
