@@ -65,7 +65,7 @@ elif [ "$action" = "dist_test" ]; then
     # TODO: remove this
     docker pull debian:latest &&
     docker pull centos:latest &&
-    docker run -d -t -e TAG="0.3.0" -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
+    docker run -d -t -e TAG="0.4.1" -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
     docker exec debian /root/super/debian_build.sh &&
     docker run -d -t -e TAG="0.3.0" -v $TRAVIS_BUILD_DIR:/root/super --name "centos" --privileged centos:latest "/bin/bash" &&
     docker exec centos /root/super/centos_build.sh &&
