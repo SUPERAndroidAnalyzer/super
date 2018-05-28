@@ -41,6 +41,7 @@ elif [ "$action" = "upload_code_coverage" ]; then
     echo "Uploaded code coverage"
   fi
 
+# Upload development documentation for the develop branch.
 elif [ "$action" = "upload_documentation" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" && "$TRAVIS_BRANCH" == "develop" ]]; then
     cargo rustdoc -- --document-private-items &&
@@ -50,31 +51,24 @@ elif [ "$action" = "upload_documentation" ]; then
     echo "Uploaded documentation"
   fi
 
-
+# Sets docker up for pull requests, new releases or release preparations.
 elif [ "$action" = "setup_docker" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then # && ("$TRAVIS_BRANCH" == "release"* || $TRAVIS_TAG) ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && ("$TRAVIS_BRANCH" == "release"* || "$TRAVIS_PULL_REQUEST" = "true" || $TRAVIS_TAG) ]]; then
     mkdir releases &&
     docker pull ubuntu:latest &&
     docker pull fedora:latest
   fi
 
+# Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.
 elif [ "$action" = "dist_test" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then # && ("$TRAVIS_BRANCH" == "release"* || $TRAVIS_TAG) ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && ("$TRAVIS_BRANCH" == "release"* || "$TRAVIS_PULL_REQUEST" = "true" || $TRAVIS_TAG) ]]; then
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "ubuntu" --privileged ubuntu:latest "/bin/bash" &&
     docker exec ubuntu /root/super/ubuntu_build.sh &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "fedora" --privileged fedora:latest "/bin/bash" &&
     docker exec fedora /root/super/fedora_build.sh &&
-    # TODO: remove this
-    docker pull debian:latest &&
-    docker pull centos:latest &&
-    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
-    docker exec debian /root/super/debian_build.sh &&
-    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "centos" --privileged centos:latest "/bin/bash" &&
-    docker exec centos /root/super/centos_build.sh &&
-    ls -la releases/
-    # removal end
   fi
 
+# Creates Debian and CentOS packages before a new release deployment.
 elif [ "$action" = "before_deploy" ]; then
   docker pull debian:latest &&
   docker pull centos:latest &&
