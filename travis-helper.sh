@@ -23,6 +23,7 @@ elif [ "$action" = "fmt_run" ]; then
       cargo fmt --verbose -- --write-mode=diff
   fi
 
+# Upload code coverage report for stable builds in Linux.
 elif [ "$action" = "upload_code_coverage" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
     wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
@@ -49,15 +50,16 @@ elif [ "$action" = "upload_documentation" ]; then
     echo "Uploaded documentation"
   fi
 
+
 elif [ "$action" = "setup_docker" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then # && ("$TRAVIS_BRANCH" == "release"* || $TRAVIS_TAG) ]]; then
     mkdir releases &&
     docker pull ubuntu:latest &&
     docker pull fedora:latest
   fi
 
 elif [ "$action" = "dist_test" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_PULL_REQUEST" = "false" ]]; then # && ("$TRAVIS_BRANCH" == "release"* || $TRAVIS_TAG) ]]; then
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "ubuntu" --privileged ubuntu:latest "/bin/bash" &&
     docker exec ubuntu /root/super/ubuntu_build.sh &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "fedora" --privileged fedora:latest "/bin/bash" &&
@@ -65,9 +67,9 @@ elif [ "$action" = "dist_test" ]; then
     # TODO: remove this
     docker pull debian:latest &&
     docker pull centos:latest &&
-    docker run -d -t -e TAG="0.4.1" -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
+    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
     docker exec debian /root/super/debian_build.sh &&
-    docker run -d -t -e TAG="0.3.0" -v $TRAVIS_BUILD_DIR:/root/super --name "centos" --privileged centos:latest "/bin/bash" &&
+    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "centos" --privileged centos:latest "/bin/bash" &&
     docker exec centos /root/super/centos_build.sh &&
     ls -la releases/
     # removal end

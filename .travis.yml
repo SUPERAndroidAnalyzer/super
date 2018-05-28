@@ -31,11 +31,12 @@ before_script:
 - export PATH=$PATH:~/.cargo/bin
 - "./travis-helper.sh install_deps"
 - "./travis-helper.sh setup_docker"
+  # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
 - |
   if [[ $TRAVIS_TAG ]]; then
     export TAG=$TRAVIS_TAG;
   else
-    export TAG=false;
+    export TAG="0.4.1";
   fi
 
 script:

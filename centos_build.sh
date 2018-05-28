@@ -11,16 +11,12 @@ yum install -y wget gcc make rpm-build redhat-rpm-config &&
 mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} &&
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros &&
 
-# Download the package
-cd /root/rpmbuild/SOURCES &&
-wget https://github.com/SUPERAndroidAnalyzer/super/archive/$TAG.tar.gz &&
-
-# We need to rename the contained folder from super-X.Y.Z to super-analyzer-X.Y.Z
-tar -xzvf $TAG.tar.gz &&
-mv super-$TAG super-analyzer-$TAG &&
-rm $TAG.tar.gz &&
-tar -czvf $TAG.tar.gz super-analyzer-$TAG &&
-rm -fr super-analyzer-$TAG &&
+# Create the package
+cd /root &&
+mkdir super-analyzer-$TAG &&
+cp -r super/* super-analyzer-$TAG/ &&
+rm -fr super-analyzer-$TAG/target super-analyzer-$TAG/rpmbuild super-analyzer-$TAG/.git super-analyzer-$TAG/dist super-analyzer-$TAG/downloads super-analyzer-$TAG/results &&
+tar -czvf root/rpmbuild/SOURCES/$TAG.tar.gz super-analyzer-$TAG &&
 
 # Build the RPM
 cp /root/super/rpmbuild/super.spec /root/rpmbuild/SPECS/ &&
