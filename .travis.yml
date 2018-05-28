@@ -37,7 +37,6 @@ before_script:
   else
     export TAG=false;
   fi
-- echo "TAG: $TAG"
 
 script:
 - cargo build --verbose
