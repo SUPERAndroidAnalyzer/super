@@ -9,12 +9,12 @@ if [ "$action" = "install_deps" ]; then
   fi
 
   # Install Clippy
-  if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
     cargo install clippy --force --verbose || true
   fi
 
 elif [ "$action" = "clippy_run" ]; then
-  if [ "$TRAVIS_RUST_VERSION" == "nightly" ] && cargo clippy --version; then
+  if [[ "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" == "linux" ]] && cargo clippy --version; then
     cargo clippy --verbose
   fi
 
