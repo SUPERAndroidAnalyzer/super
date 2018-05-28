@@ -65,7 +65,7 @@ elif [ "$action" = "dist_test" ]; then
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "ubuntu" --privileged ubuntu:latest "/bin/bash" &&
     docker exec ubuntu /root/super/ubuntu_build.sh &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "fedora" --privileged fedora:latest "/bin/bash" &&
-    docker exec fedora /root/super/fedora_build.sh &&
+    docker exec fedora /root/super/fedora_build.sh
   fi
 
 # Creates Debian and CentOS packages before a new release deployment.
