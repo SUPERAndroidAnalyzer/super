@@ -3,13 +3,13 @@
 //! Handles and configures the initial settings and variables needed to run the program.
 
 use std::cmp::{Ordering, PartialOrd};
-use std::collections::BTreeSet;
 use std::collections::btree_set::Iter;
+use std::collections::BTreeSet;
 use std::convert::From;
 use std::path::{Path, PathBuf};
 use std::slice::Iter as VecIter;
 use std::str::FromStr;
-use std::{fs, usize, i64};
+use std::{fs, i64, usize};
 
 use clap::ArgMatches;
 use colored::Colorize;

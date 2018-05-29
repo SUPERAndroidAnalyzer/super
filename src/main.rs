@@ -7,9 +7,11 @@
 #![forbid(anonymous_parameters)]
 #![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
 #![cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
-#![deny(variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
-        unsafe_code, trivial_numeric_casts, trivial_casts, missing_debug_implementations,
-        missing_docs, missing_copy_implementations)]
+#![deny(
+    variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
+    unsafe_code, trivial_numeric_casts, trivial_casts, missing_debug_implementations, missing_docs,
+    missing_copy_implementations
+)]
 
 extern crate super_analyzer_core;
 

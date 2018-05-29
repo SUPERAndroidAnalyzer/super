@@ -9,16 +9,16 @@ use std::path::Path;
 use colored::Colorize;
 use failure::{Error, ResultExt};
 use handlebars::Handlebars;
-use serde_json::Map;
 use serde_json::value::Value;
+use serde_json::Map;
 
 use config::Config;
 use copy_folder;
 use error;
-use results::Results;
 use results::handlebars_helpers::*;
 use results::report::Generator;
 use results::utils::html_escape;
+use results::Results;
 
 /// Handlebars report generator.
 pub struct Report {

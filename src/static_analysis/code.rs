@@ -1791,10 +1791,8 @@ mod tests {
         };
         let rule = rules.get(34).unwrap();
 
-        let should_match = &[
-            " javax.net.ssl.SSLSocketFactory                 \
-             SSLSocketFactory.getInsecure()",
-        ];
+        let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
+                              SSLSocketFactory.getInsecure()"];
 
         let should_not_match = &[
             "getInsecure()",
