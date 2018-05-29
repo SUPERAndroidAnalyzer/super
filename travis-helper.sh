@@ -8,16 +8,54 @@ if [ "$action" = "install_deps" ]; then
     rustup component add rustfmt-preview
   fi
 
-  # Install Clippy
+  # Install Clippy.
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
     cargo install clippy --force --verbose || true
   fi
 
+# Build the project with default features.
+elif [ "$action" = "build" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo build --verbose
+  fi
+
+# Package the crate for crates.io distribution.
+elif [ "$action" = "package" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo package --verbose
+  fi
+
+# Run unit and integration tests.
+elif [ "$action" = "test" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo test --verbose
+  fi
+
+# Build the project with unstable features.
+elif [ "$action" = "build_unstable" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo build --verbose --features unstable
+  fi
+
+# Package the project for crates.io with unstable features.
+elif [ "$action" = "package_unstable" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo package --verbose --features unstable
+  fi
+
+# Run unit and integration tests with unstable features.
+elif [ "$action" = "test_unstable" ]; then
+  if [[ !$PACKAGE ]]; then
+    cargo test --verbose --features unstable
+  fi
+
+# Run Clippy.
 elif [ "$action" = "clippy_run" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" == "linux" ]] && cargo clippy --version; then
     cargo clippy --verbose
   fi
 
+# Check formatting.
 elif [ "$action" = "fmt_run" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
       cargo fmt --verbose -- --write-mode=diff
@@ -54,28 +92,17 @@ elif [ "$action" = "upload_documentation" ]; then
 # Sets docker up for pull requests, new releases or release preparations.
 elif [ "$action" = "setup_docker" ]; then
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && ("$TRAVIS_BRANCH" == "release"* || "$TRAVIS_PULL_REQUEST" = "true" || $TRAVIS_TAG) ]]; then
-    mkdir releases &&
-    docker pull ubuntu:latest &&
+
     docker pull fedora:latest
   fi
 
 # Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.
 elif [ "$action" = "dist_test" ]; then
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" && ("$TRAVIS_BRANCH" == "release"* || "$TRAVIS_PULL_REQUEST" = "true" || $TRAVIS_TAG) ]]; then
-    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "ubuntu" --privileged ubuntu:latest "/bin/bash" &&
-    docker exec ubuntu /root/super/ubuntu_build.sh &&
-    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "fedora" --privileged fedora:latest "/bin/bash" &&
-    docker exec fedora /root/super/fedora_build.sh
+  if [[ $PACKAGE ]]; then
+    mkdir releases &&
+    docker pull "$PACKAGE:latest" &&
+    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
+    docker exec "$PACKAGE" /root/super/`echo $PACKAGE`_build.sh
   fi
-
-# Creates Debian and CentOS packages before a new release deployment.
-elif [ "$action" = "before_deploy" ]; then
-  docker pull debian:latest &&
-  docker pull centos:latest &&
-  docker run -d -t -e TAG=$TRAVIS_TAG -v $TRAVIS_BUILD_DIR:/root/super --name "debian" --privileged debian:latest "/bin/bash" &&
-  docker exec debian /root/super/debian_build.sh &&
-  docker run -d -t -e TAG=$TRAVIS_TAG -v $TRAVIS_BUILD_DIR:/root/super --name "centos" --privileged centos:latest "/bin/bash" &&
-  docker exec centos /root/super/centos_build.sh
-fi
 
 exit $?

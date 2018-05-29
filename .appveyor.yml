@@ -31,7 +31,7 @@ install:
 
 build_script:
   - cargo build --features no-color
-  - cargo package --feature no-color
+  - cargo package --features no-color
 
 test_script:
   - cargo test --features no-color

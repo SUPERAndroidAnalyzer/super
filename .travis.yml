@@ -27,10 +27,25 @@ rust:
 - stable
 - 1.26.0
 
+# Generate packages for multiple distributions.
+matrix:
+  include:
+  - os: linux
+    rust: stable
+    env: PACKAGE="debian"
+  - os: linux
+    rust: stable
+    env: PACKAGE="ubuntu"
+  - os: linux
+    rust: stable
+    env: PACKAGE="fedora"
+  - os: linux
+    rust: stable
+    env: PACKAGE="centos"
+
 before_script:
 - export PATH=$PATH:~/.cargo/bin
 - "./travis-helper.sh install_deps"
-- "./travis-helper.sh setup_docker"
   # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
 - |
   if [[ $TRAVIS_TAG ]]; then
@@ -39,12 +54,14 @@ before_script:
     export TAG="0.4.1";
   fi
 
+# Run the multiple tests.
 script:
-- cargo build --verbose
-- cargo package --verbose
-- cargo test --verbose
-- cargo build --verbose --features unstable
-- cargo test --verbose --features unstable
+- "./travis-helper.sh build"
+- "./travis-helper.sh package"
+- "./travis-helper.sh test"
+- "./travis-helper.sh build_unstable"
+- "./travis-helper.sh package_unstable"
+- "./travis-helper.sh test_unstable"
 - "./travis-helper.sh clippy_run"
 - |
   if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
@@ -53,12 +70,10 @@ script:
 - "./travis-helper.sh dist_test"
 - "./travis-helper.sh fmt_run"
 
+# Upload code coverage report and documentation.
 after_success:
 - "./travis-helper.sh upload_code_coverage"
 - "./travis-helper.sh upload_documentation"
-
-before_deploy:
-- "./travis-helper.sh before_deploy"
 
 deploy:
   provider: releases
