@@ -98,11 +98,11 @@ elif [ "$action" = "upload_documentation" ]; then
 
 # Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.
 elif [ "$action" = "dist_test" ]; then
-  if [ -n $PACKAGE ]; then
+  if ! [ -z $PACKAGE ]; then
     mkdir releases &&
     docker pull "$PACKAGE:latest" &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
-    docker exec "$PACKAGE" /root/super/`echo $PACKAGE`_build.sh
+    docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
   fi
 
 fi
