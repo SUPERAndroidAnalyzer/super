@@ -43,12 +43,6 @@ elif [ "$action" = "build_unstable" ]; then
     cargo build --verbose --features unstable
   fi
 
-# Package the project for crates.io with unstable features.
-elif [ "$action" = "package_unstable" ]; then
-  if [[ !$PACKAGE ]]; then
-    cargo package --verbose --features unstable
-  fi
-
 # Run unit and integration tests with unstable features.
 elif [ "$action" = "test_unstable" ]; then
   if [[ !$PACKAGE && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then

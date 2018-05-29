@@ -61,7 +61,6 @@ script:
 - "./travis-helper.sh test"
 - "./travis-helper.sh test_ignored"
 - "./travis-helper.sh build_unstable"
-- "./travis-helper.sh package_unstable"
 - "./travis-helper.sh test_unstable"
 - "./travis-helper.sh test_unstable_ignored"
 - "./travis-helper.sh clippy_run"
