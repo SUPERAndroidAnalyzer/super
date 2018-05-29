@@ -59,14 +59,12 @@ script:
 - "./travis-helper.sh build"
 - "./travis-helper.sh package"
 - "./travis-helper.sh test"
+- "./travis-helper.sh test_ignored"
 - "./travis-helper.sh build_unstable"
 - "./travis-helper.sh package_unstable"
 - "./travis-helper.sh test_unstable"
+- "./travis-helper.sh test_unstable_ignored"
 - "./travis-helper.sh clippy_run"
-- |
-  if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-    cargo test -- --ignored
-  fi
 - "./travis-helper.sh dist_test"
 - "./travis-helper.sh fmt_run"
 
