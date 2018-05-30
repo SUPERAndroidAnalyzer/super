@@ -1,60 +1,97 @@
 language: rust
-# cache: cargo
+cache: cargo
 dist: trusty
 sudo: true
+services:
+- docker
+
 os:
-  - linux
-  - osx
+- linux
+- osx
+
 addons:
   apt:
     packages:
-      - libcurl4-openssl-dev
-      - libelf-dev
-      - libdw-dev
-      - cmake
-      - gcc
-      - binutils-dev
-      - libiberty-dev
-      - zlib1g-dev
+    - libcurl4-openssl-dev
+    - libelf-dev
+    - libdw-dev
+    - cmake
+    - gcc
+    - binutils-dev
+    - libiberty-dev
+    - zlib1g-dev
 
 # Run builds for all the supported trains
 rust:
-  - nightly
-  - beta
-  - stable
-  - 1.26.0
+- nightly
+- beta
+- stable
+- 1.26.1
+
+# Generate packages for multiple distributions.
+matrix:
+  include:
+  - os: linux
+    rust: "stable"
+    env: PACKAGE="debian"
+  - os: linux
+    rust: "stable"
+    env: PACKAGE="ubuntu"
+  - os: linux
+    rust: "stable"
+    env: PACKAGE="fedora"
+  - os: linux
+    rust: "stable"
+    env: PACKAGE="centos"
 
 before_script:
-  - export PATH=$PATH:~/.cargo/bin
-  - ./travis-helper.sh install_deps
+- export PATH=$PATH:~/.cargo/bin
+- "./travis-helper.sh install_deps"
+  # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
+- |
+  if [[ $TRAVIS_TAG ]]; then
+    export TAG=$TRAVIS_TAG;
+  else
+    export TAG="0.4.1";
+  fi
 
+# Run the multiple tests.
 script:
-  - cargo build --verbose
-  - cargo package --verbose
-  - cargo test --verbose
-  - cargo build --verbose --features beta
-  - cargo test --verbose --features beta
-  - cargo build --verbose --features unstable
-  - cargo test --verbose --features unstable
-  - ./travis-helper.sh clippy_run
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-      cargo test -- --ignored
-    fi
-  # Won't work since our binary name is different from the crate name.
-  # - ./travis-helper.sh dist
-  - ./travis-helper.sh fmt_run
+- "./travis-helper.sh build"
+- "./travis-helper.sh package"
+- "./travis-helper.sh test"
+- "./travis-helper.sh test_ignored"
+- "./travis-helper.sh build_unstable"
+- "./travis-helper.sh test_unstable"
+- "./travis-helper.sh test_unstable_ignored"
+- "./travis-helper.sh clippy_run"
+- "./travis-helper.sh dist_test"
+- "./travis-helper.sh fmt_run"
 
+# Upload code coverage report and documentation.
 after_success:
-  - ./travis-helper.sh upload_code_coverage
-  - ./travis-helper.sh upload_documentation
+- "./travis-helper.sh upload_code_coverage"
+- "./travis-helper.sh upload_documentation"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: n19EgLXHFh8pXBulAfOFtzIMFPSm0yM0yi/sXY1bQgr+QztAHwxkGKaCU/y4yqYwDNH0hCFQn+P8X//Yucz/Cvw2Ng2G040hMJqsu/RztX5svq+pjmTNYX9QuwOg/6AnFoQs2zxRMZia4npVDA66q78G5GA+2eKZ/cDc5/6M32uh7RH8d6yYDnyCJ1lOk35tFu7DLZtfC5xQvOeC+iD4QIiKtVitcjRLQPiV71cG42a0wYYjX3sVKCjqF7NX/q5VHLxG0EofaLeyAI2NdK9RkuAfd6y8YyR0XNwlvq0qX8j5iDtc6ljzOtytlPYUlvyF3AqOJdVt+rBiI2/tZDtVkOobO+hS/+Tl680PpiX+m/HaHErgV0pMYCavYQkjPyMVE0DJCMTMCoHFhGMB+gC/piagVBZ9lKFHRgxXYBFhJVoco2vqMZDm85avI7IzL9YNtJqRt0h2JJZ4/42/Hn0+52CtXJI86HwUU4hD0eUsm9yyWNOsrDahmra1H28vxS7fjEb1Sozol3fMRWKMllKqsUr8Xd06wePqtfYow0ufdHTcumQte9Ls11hgZhDSMd7g6P9tPL5P0UeWa3x8xjNk6Lx3ghAVfzF2CePkeg4VQSHMonZEhaIxShdkCl3Z30F4DOe0p6Pq6ZsG6RRA4/qoIYGPvchfAC4L+VaWjC7yQ0k=
+  file: releases/*
+  skip_cleanup: true
+  prerelease: true # TODO: remove on 1.0
+  on:
+    repo: SUPERAndroidAnalyzer/super
+    tags: true
+    rust: stable
+    os: linux
 
 notifications:
   email:
     recipients:
-      - razican@protonmail.ch
-      - brunoop@protonmail.ch
-      - sergiodlo@protonmail.com
-      - jaimesr@protonmail.ch
+    - razican@protonmail.ch
+    - brunoop@protonmail.ch
+    - sergiodlo@protonmail.com
+    - jaimesr@protonmail.ch
     on_success: change
     on_failure: always

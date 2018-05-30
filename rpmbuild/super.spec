@@ -11,6 +11,8 @@ Requires: java-1.8.0-openjdk-headless, bash
 %description
 Secure, Unified, Powerful and Extensible Rust Android Analyzer.
 
+%global debug_package %{nil}
+
 %prep
 %autosetup
 /usr/bin/curl https://sh.rustup.rs -sSf | sh -s -- -y

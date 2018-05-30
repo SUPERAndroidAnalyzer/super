@@ -8,8 +8,8 @@ use std::{fmt, fs};
 use colored::Colorize;
 use failure::Error;
 use log::Level::Debug;
-use xml::ParserConfig;
 use xml::reader::{EventReader, XmlEvent};
+use xml::ParserConfig;
 
 use config::Config;
 use criticality::Criticality;

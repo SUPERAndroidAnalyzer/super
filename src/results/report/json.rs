@@ -7,8 +7,8 @@ use failure::Error;
 use serde_json::ser;
 
 use config::Config;
-use results::Results;
 use results::report::Generator;
+use results::Results;
 
 /// JSON report generator.
 pub struct Json;
