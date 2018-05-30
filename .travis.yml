@@ -32,16 +32,12 @@ rust:
 matrix:
   include:
   - os: linux
-    rust: stable
     env: PACKAGE="debian"
   - os: linux
-    rust: stable
     env: PACKAGE="ubuntu"
   - os: linux
-    rust: stable
     env: PACKAGE="fedora"
   - os: linux
-    rust: stable
     env: PACKAGE="centos"
 
 before_script:

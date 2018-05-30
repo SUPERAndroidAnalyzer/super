@@ -7,7 +7,7 @@ apt-get dist-upgrade -y &&
 apt-get autoremove -y &&
 
 # Install build dependencies
-apt-get install -y curl build-essential dpkg ldd liblzma-dev &&
+apt-get install -y curl build-essential dpkg libc-bin liblzma-dev &&
 
 # Install Rust
 curl https://sh.rustup.rs -sSf | sh -s -- -y &&
