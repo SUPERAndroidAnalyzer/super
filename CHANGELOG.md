@@ -4,7 +4,8 @@
 
 This release contains multiple improvements that have been accumulated in the last year. We also
 improved our repository by adding a Code of Conduct and templates for issues and pull requests.
-Here you can find the rest of the changes for this version.
+Packages for Ubuntu, Debian, Fedora and CentOS are now generated automatically in each build, and
+deployed in each release. Here you can find the rest of the changes for this version.
 
 ### Features
 
@@ -15,7 +16,7 @@ Here you can find the rest of the changes for this version.
 
 ### Internal Changes
 
-- SUPER now requires Rust 1.26.0 to be built.
+- SUPER now requires Rust 1.26.1 to be built.
 - Removed `error-chain` dependency in favor of `failure`.
 - Upgraded dependencies:
   - `clap`: 2.25 => **2.31**
