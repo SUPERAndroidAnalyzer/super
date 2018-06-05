@@ -98,6 +98,7 @@ assets = [
     ["vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "644"],
     ["vendor/dex2jar-2.1-SNAPSHOT/*.sh", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/", "755"],
     ["vendor/dex2jar-2.1-SNAPSHOT/lib/*", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/lib/", "755"],
+    ["vendor/dex2jar-2.1-SNAPSHOT/bin/dex-tools", "usr/share/super-analyzer/vendor/dex2jar-2.1-SNAPSHOT/bin/", "755"],
 
     # Web assets
     ["templates/super/css/*", "usr/share/super-analyzer/templates/super/css/", "644"],

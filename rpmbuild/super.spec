@@ -38,6 +38,7 @@ install -p -m 755 target/release/super.bash %{buildroot}%{_datadir}/bash-complet
 install -p -m 755 target/release/super.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/
 install -p -m 755 target/release/_super %{buildroot}%{_datadir}/zsh/site-functions/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/lib/* %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib/
+install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/bin/dex-tools %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/bin/
 install -p -m 755 -D vendor/dex2jar-2.1-SNAPSHOT/*.sh %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D vendor/dex2jar-2.1-SNAPSHOT/LICENSE.txt %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/
 install -p -m 644 -D templates/super/css/* %{buildroot}%{_datadir}/%{name}/templates/super/css/
