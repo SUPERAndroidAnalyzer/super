@@ -30,6 +30,7 @@ mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/css
 mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/img
 mkdir -p %{buildroot}%{_datadir}/%{name}/templates/super/js
 mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/lib
+mkdir -p %{buildroot}%{_datadir}/%{name}/vendor/dex2jar-2.1-SNAPSHOT/bin
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/
 mkdir -p %{buildroot}%{_defaultdocdir}/%{name}/
 install -p -d -m 755 %{buildroot}%{_datadir}/%{name}
