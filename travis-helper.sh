@@ -10,7 +10,7 @@ if [ "$action" = "install_deps" ]; then
 
   # Install Clippy.
   if [[ -z $PACKAGE && "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-    cargo install clippy --force --verbose || true
+    cargo install clippy --force --verbose && export CLIPPY=true || export CLIPPY=false
   fi
 
 # Build the project with default features.
@@ -58,7 +58,7 @@ elif [ "$action" = "test_unstable_ignored" ]; then
 
 # Run Clippy.
 elif [ "$action" = "clippy_run" ]; then
-  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" == "linux" ]] && cargo clippy --version; then
+  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" == "linux" && $CLIPPY ]]; then
     cargo clippy --verbose
   fi
 
