@@ -150,7 +150,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     let code = fs::read_to_string(&path)?;
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.max_sdk().is_some()
+        if manifest.is_some()
+            && rule.max_sdk().is_some()
             && rule.max_sdk().unwrap() < manifest.as_ref().unwrap().min_sdk()
         {
             continue 'check;
@@ -303,7 +304,8 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
             )?;
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
-            if filename != "AndroidManifest.xml" && filename != "R.java"
+            if filename != "AndroidManifest.xml"
+                && filename != "R.java"
                 && !filename.starts_with("R$")
             {
                 match f_ext.unwrap().to_string_lossy().borrow() {

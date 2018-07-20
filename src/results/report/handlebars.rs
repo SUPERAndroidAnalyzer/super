@@ -75,7 +75,8 @@ impl Report {
             }
         }
 
-        if handlebars.get_template("report").is_none() || handlebars.get_template("src").is_none()
+        if handlebars.get_template("report").is_none()
+            || handlebars.get_template("src").is_none()
             || handlebars.get_template("code").is_none()
         {
             let message = format!(

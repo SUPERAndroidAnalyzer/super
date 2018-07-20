@@ -293,8 +293,10 @@ impl Config {
 
     /// Checks if all the needed folders and files exist.
     pub fn check(&self) -> bool {
-        let check = self.downloads_folder.exists() && self.dex2jar_folder.exists()
-            && self.jd_cmd_file.exists() && self.template_path().exists()
+        let check = self.downloads_folder.exists()
+            && self.dex2jar_folder.exists()
+            && self.jd_cmd_file.exists()
+            && self.template_path().exists()
             && self.rules_json.exists();
         if check {
             for package in &self.app_packages {

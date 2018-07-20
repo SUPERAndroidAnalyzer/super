@@ -93,18 +93,18 @@ pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
     let config_path = Path::new("config.toml");
     let global_config_path = Path::new("/etc/super-analyzer/config.toml");
 
-    let mut config = if cfg!(target_family = "unix") && !config_path.exists()
-        && global_config_path.exists()
-    {
-        Config::from_file(&global_config_path)
-            .context("there was an error when reading the /etc/super-analyzer/config.toml file")?
-    } else if config_path.exists() {
-        Config::from_file(&config_path)
-            .context("there was an error when reading the config.toml file")?
-    } else {
-        print_warning("config file not found. Using default configuration");
-        Config::default()
-    };
+    let mut config =
+        if cfg!(target_family = "unix") && !config_path.exists() && global_config_path.exists() {
+            Config::from_file(&global_config_path).context(
+                "there was an error when reading the /etc/super-analyzer/config.toml file",
+            )?
+        } else if config_path.exists() {
+            Config::from_file(&config_path)
+                .context("there was an error when reading the config.toml file")?
+        } else {
+            print_warning("config file not found. Using default configuration");
+            Config::default()
+        };
 
     config
         .decorate_with_cli(cli)

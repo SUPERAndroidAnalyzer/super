@@ -171,7 +171,8 @@ pub fn certificate_analysis<S: AsRef<str>>(
                 Err(_) => after[5..6].parse::<u32>().unwrap(),
             };
 
-            if year > cert_year || (year == cert_year && month > cert_month)
+            if year > cert_year
+                || (year == cert_year && month > cert_month)
                 || (year == cert_year && month == cert_month && day > cert_day)
             {
                 let criticality = Criticality::High;
