@@ -1,7 +1,5 @@
-use std::io::Write;
-
 use bytecount::count;
-use handlebars::{Handlebars, Helper, RenderContext, RenderError};
+use handlebars::{Context, Handlebars as Registry, Helper, Output, RenderContext, RenderError};
 use serde_json::Value;
 
 use super::utils::{html_escape, split_indent};
@@ -10,7 +8,13 @@ use super::utils::{html_escape, split_indent};
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
+pub fn line_numbers(
+    h: &Helper,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
+) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -50,7 +54,7 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
     }
-    let _ = rc.writer.write(rendered.as_bytes())?;
+    let _ = out.write(&rendered)?;
 
     Ok(())
 }
@@ -59,7 +63,13 @@ pub fn line_numbers(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
+pub fn all_lines(
+    h: &Helper,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
+) -> Result<(), RenderError> {
     let code = h.param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
@@ -80,10 +90,10 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
     let line_count = count(code.as_bytes(), b'\n');
     let mut rendered = String::with_capacity((line_separator.len() + 1) * line_count);
     for l in 1..=line_count {
-        rendered.push_str(&format!("{}", l));
+        rendered.push_str(format!("{}", l).as_str());
         rendered.push_str(line_separator);
     }
-    let _ = rc.writer.write(rendered.as_bytes())?;
+    let _ = out.write(&rendered)?;
 
     Ok(())
 }
@@ -92,7 +102,13 @@ pub fn all_lines(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 ///
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
-pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
+pub fn all_code(
+    h: &Helper,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
+) -> Result<(), RenderError> {
     let code = h.param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
@@ -120,7 +136,7 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
             html_escape(line),
             line_separator
         );
-        let _ = rc.writer.write(line.as_bytes())?;
+        let _ = out.write(&line)?;
     }
 
     Ok(())
@@ -137,7 +153,13 @@ pub fn all_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<()
 /// ```
 ///
 /// This enables easy styling of the code in templates.
-pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
+pub fn html_code(
+    h: &Helper,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
+) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -194,7 +216,7 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
             format!("{}{}", html_escape(line), line_separator)
         };
 
-        let _ = rc.writer.write(rendered.as_bytes())?;
+        let _ = out.write(&rendered)?;
     }
 
     Ok(())
@@ -204,7 +226,13 @@ pub fn html_code(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(
 ///
 /// E.g.: for a critical vulnerability in an application with between 100 and 200 vulnerability,
 /// for the critical vulnerability number 12 it would produce `C012`.
-pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Result<(), RenderError> {
+pub fn report_index(
+    h: &Helper,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
+) -> Result<(), RenderError> {
     let vulnerability = h.param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
@@ -236,7 +264,7 @@ pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
         index_padding = 2;
     }
     let rendered = format!("{}{:#02$}", char_index, index, index_padding);
-    let _ = rc.writer.write(rendered.as_bytes())?;
+    let _ = out.write(&rendered)?;
 
     Ok(())
 }
@@ -247,24 +275,26 @@ pub fn report_index(h: &Helper, _: &Handlebars, rc: &mut RenderContext) -> Resul
 /// menu object.
 pub fn generate_menu(
     h: &Helper,
-    _: &Handlebars,
-    rc: &mut RenderContext,
+    _: &Registry,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut Output,
 ) -> Result<(), RenderError> {
     let menu = h.param(0)
         .and_then(|m| m.value().as_array())
         .ok_or_else(|| {
             RenderError::new("to generate the menu, the first parameter must be a menu array")
         })?;
-    let _ = rc.writer.write(b"<ul>")?;
-    render_menu(menu, &mut rc.writer)?;
-    let _ = rc.writer.write(b"</ul>")?;
+    let _ = out.write("<ul>")?;
+    render_menu(menu, out)?;
+    let _ = out.write("</ul>")?;
     Ok(())
 }
 
-fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderError> {
+fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError> {
     for value in menu {
         if let Value::Object(ref item) = *value {
-            let _ = renderer.write(b"<li>")?;
+            let _ = renderer.write("<li>")?;
             let name = item.get("name")
                 .and_then(|n| n.as_str())
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
@@ -273,12 +303,12 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                     format!(
                         "<a href=\"#\" title=\"{0}\"><img src=\"../img/folder.svg\">{0}</a>",
                         name
-                    ).as_bytes(),
+                    ).as_str(),
                 )?;
-                let _ = renderer.write(b"<ul>")?;
+                let _ = renderer.write("<ul>")?;
 
                 render_menu(menu, renderer)?;
-                let _ = renderer.write(b"</ul>")?;
+                let _ = renderer.write("</ul>")?;
             } else {
                 let path = item.get("path")
                     .and_then(|n| n.as_str())
@@ -290,10 +320,10 @@ fn render_menu<W: Write>(menu: &[Value], renderer: &mut W) -> Result<(), RenderE
                     format!(
                         "<a href=\"{1}.html\" title=\"{0}\" target=\"code\"><img src=\"../img/{2}.svg\">{0}</a>",
                         name, path, file_type
-                    ).as_bytes(),
+                    ).as_str()
                 )?;
             }
-            let _ = renderer.write(b"</li>")?;
+            let _ = renderer.write("</li>")?;
         } else {
             return Err(RenderError::new("invalid menu object type"));
         }
