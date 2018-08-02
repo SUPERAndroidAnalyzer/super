@@ -41,7 +41,7 @@ fn main() {
         error!("{}", e);
 
         // After printing the error, print the causes, in order.
-        for e in e.causes().skip(1) {
+        for e in e.iter_causes() {
             println!("\t{}{}", "Caused by: ".bold(), e);
         }
 

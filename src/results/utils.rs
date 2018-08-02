@@ -94,7 +94,8 @@ impl Serialize for Vulnerability {
         if self.code.is_some() {
             ser_struct.serialize_field(
                 "language",
-                &self.file
+                &self
+                    .file
                     .as_ref()
                     .unwrap()
                     .extension()

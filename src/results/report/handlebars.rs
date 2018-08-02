@@ -58,7 +58,8 @@ impl Report {
             if let Some(ext) = dir_entry.path().extension() {
                 if ext == "hbs" {
                     let path = dir_entry.path();
-                    let template_file = path.file_stem()
+                    let template_file = path
+                        .file_stem()
                         .ok_or_else(|| error::Kind::TemplateName {
                             message: "template files must have a file name".to_owned(),
                         })
@@ -140,7 +141,8 @@ impl Report {
             let path = entry.path();
 
             let prefix = config.dist_folder().join(&self.package);
-            let stripped = path.strip_prefix(&prefix)
+            let stripped = path
+                .strip_prefix(&prefix)
                 .expect("could not remove path prefix");
 
             if path.is_dir() {

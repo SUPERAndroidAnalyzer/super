@@ -15,7 +15,8 @@ pub fn line_numbers(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let vulnerability = h.param(0)
+    let vulnerability = h
+        .param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
             RenderError::new(
@@ -70,7 +71,8 @@ pub fn all_lines(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let code = h.param(0)
+    let code = h
+        .param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
@@ -109,7 +111,8 @@ pub fn all_code(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let code = h.param(0)
+    let code = h
+        .param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
     let line_separator = match h.param(1) {
@@ -160,7 +163,8 @@ pub fn html_code(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let vulnerability = h.param(0)
+    let vulnerability = h
+        .param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
             RenderError::new(
@@ -233,7 +237,8 @@ pub fn report_index(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let vulnerability = h.param(0)
+    let vulnerability = h
+        .param(0)
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
             RenderError::new(
@@ -280,7 +285,8 @@ pub fn generate_menu(
     _: &mut RenderContext,
     out: &mut Output,
 ) -> Result<(), RenderError> {
-    let menu = h.param(0)
+    let menu = h
+        .param(0)
         .and_then(|m| m.value().as_array())
         .ok_or_else(|| {
             RenderError::new("to generate the menu, the first parameter must be a menu array")
@@ -295,7 +301,8 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
     for value in menu {
         if let Value::Object(ref item) = *value {
             let _ = renderer.write("<li>")?;
-            let name = item.get("name")
+            let name = item
+                .get("name")
                 .and_then(|n| n.as_str())
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
@@ -310,10 +317,12 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
                 render_menu(menu, renderer)?;
                 let _ = renderer.write("</ul>")?;
             } else {
-                let path = item.get("path")
+                let path = item
+                    .get("path")
                     .and_then(|n| n.as_str())
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
-                let file_type = item.get("type")
+                let file_type = item
+                    .get("type")
                     .and_then(|n| n.as_str())
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 let _ = renderer.write(

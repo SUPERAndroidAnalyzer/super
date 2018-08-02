@@ -2905,10 +2905,9 @@ impl<'de> Deserialize<'de> for Permission {
 
         match Self::from_str(&deser_result_str) {
             Ok(permission) => Ok(permission),
-            Err(e) => Err(Error::custom(e.context(format!(
-                "unknown permission `{}`",
-                deser_result_str
-            )))),
+            Err(e) => Err(Error::custom(
+                e.context(format!("unknown permission `{}`", deser_result_str)),
+            )),
         }
     }
 }
