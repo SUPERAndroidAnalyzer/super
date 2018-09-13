@@ -82,15 +82,15 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
                 "d2j-dex2jar.sh"
             },
         )).arg(config.dist_folder().join(&package_name).join("classes.dex"))
-            .arg("-f")
-            .arg("-o")
-            .arg(&classes)
-            .output()
-            .context(format_err!(
-                "there was an error when executing the {} to {} conversion command",
-                ".dex".italic(),
-                ".jar".italic()
-            ))?;
+        .arg("-f")
+        .arg("-o")
+        .arg(&classes)
+        .output()
+        .context(format_err!(
+            "there was an error when executing the {} to {} conversion command",
+            ".dex".italic(),
+            ".jar".italic()
+        ))?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,

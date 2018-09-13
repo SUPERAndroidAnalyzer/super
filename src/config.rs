@@ -168,8 +168,7 @@ impl Config {
                     "could not decode config file: {}, using default",
                     config_path.as_ref().to_string_lossy()
                 ))?)
-            })
-            .and_then(|mut new_config: Self| {
+            }).and_then(|mut new_config: Self| {
                 new_config
                     .loaded_files
                     .push(config_path.as_ref().to_path_buf());
@@ -382,7 +381,8 @@ impl Config {
             );
         } else if package_path
             .extension()
-            .expect("expected extension in package path") != "apk"
+            .expect("expected extension in package path")
+            != "apk"
         {
             let mut file_name = package_path
                 .file_name()

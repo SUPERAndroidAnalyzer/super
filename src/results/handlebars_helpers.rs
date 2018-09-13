@@ -251,7 +251,8 @@ pub fn report_index(
             "the index of the vulnerability in the current list must be the \
              second parameter",
         )
-    })? as usize + 1;
+    })? as usize
+        + 1;
 
     let list_len = h.param(2).unwrap().value().as_u64().unwrap();
     let char_index = vulnerability

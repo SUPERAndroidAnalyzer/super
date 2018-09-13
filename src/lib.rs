@@ -8,15 +8,27 @@
 #![forbid(anonymous_parameters)]
 #![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
 #![deny(
-    variant_size_differences, unused_results, unused_qualifications, unused_import_braces,
-    unsafe_code, trivial_numeric_casts, trivial_casts, missing_docs, unused_extern_crates,
-    missing_debug_implementations, missing_copy_implementations
+    variant_size_differences,
+    unused_results,
+    unused_qualifications,
+    unused_import_braces,
+    unsafe_code,
+    trivial_numeric_casts,
+    trivial_casts,
+    missing_docs,
+    unused_extern_crates,
+    missing_debug_implementations,
+    missing_copy_implementations
 )]
 // Allowing these for now.
 #![cfg_attr(
     feature = "cargo-clippy",
     allow(
-        stutter, similar_names, cast_possible_truncation, cast_possible_wrap, cast_precision_loss,
+        stutter,
+        similar_names,
+        cast_possible_truncation,
+        cast_possible_wrap,
+        cast_precision_loss,
         cast_sign_loss
     )
 )]
@@ -244,7 +256,8 @@ pub fn analyze_package<P: AsRef<Path>>(
                 .join("results.json")
         };
 
-        let status = open::that(open_path).context("the report could not be opened automatically")?;
+        let status =
+            open::that(open_path).context("the report could not be opened automatically")?;
 
         if !status.success() {
             bail!("report opening errored with status code: {}", status);
@@ -461,8 +474,8 @@ mod tests {
             "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
         ).unwrap()
-            .copy_to(&mut apk_file)
-            .unwrap();
+        .copy_to(&mut apk_file)
+        .unwrap();
 
         // Initialize minimum configuration.
         let mut benchmarks = BTreeMap::new();

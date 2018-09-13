@@ -356,7 +356,8 @@ impl Serialize for Results {
         ser_struct.serialize_field("app_min_sdk_name", self.app_min_sdk.name())?;
 
         if let Some(version) = self.app_min_sdk.version() {
-            ser_struct.serialize_field("app_min_sdk_version", &prettify_android_version(&version))?;
+            ser_struct
+                .serialize_field("app_min_sdk_version", &prettify_android_version(&version))?;
         }
 
         if let Some(sdk) = self.app_target_sdk {

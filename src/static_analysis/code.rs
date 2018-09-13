@@ -94,8 +94,7 @@ pub fn analysis<S: AsRef<str>>(
                     None => break,
                 }
             })
-        })
-        .collect();
+        }).collect();
 
     if config.is_verbose() {
         let mut last_print = 0;
@@ -166,12 +165,11 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
         }
 
         for permission in rule.permissions() {
-            if manifest.is_none()
-                || !manifest
-                    .as_ref()
-                    .unwrap()
-                    .permission_checklist()
-                    .needs_permission(*permission)
+            if manifest.is_none() || !manifest
+                .as_ref()
+                .unwrap()
+                .permission_checklist()
+                .needs_permission(*permission)
             {
                 continue 'check;
             }
@@ -554,15 +552,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
                             .context(
                                 "fc1 capture group used but no placeholder found in the forward \
                                  check",
-                            )
-                            .into()))
+                            ).into()))
                     } else if fc2_in_regex && !fc2_in_fc {
                         Some(Err(error::Kind::Parse
                             .context(
                                 "fc2 capture group used but no placeholder found in the forward \
                                  check",
-                            )
-                            .into()))
+                            ).into()))
                     } else {
                         if fc2_in_regex && !fc1_in_regex {
                             print_warning(format!(
@@ -596,8 +592,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
             } else {
                 None
             }
-        })
-        .collect::<Result<Vec<Rule>, Error>>()
+        }).collect::<Result<Vec<Rule>, Error>>()
         .context(format_error)?;
 
     Ok(rules)

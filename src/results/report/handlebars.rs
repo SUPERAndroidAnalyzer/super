@@ -62,8 +62,7 @@ impl Report {
                         .file_stem()
                         .ok_or_else(|| error::Kind::TemplateName {
                             message: "template files must have a file name".to_owned(),
-                        })
-                        .and_then(|stem| {
+                        }).and_then(|stem| {
                             stem.to_str().ok_or_else(|| error::Kind::TemplateName {
                                 message: "template names must be unicode".to_string(),
                             })

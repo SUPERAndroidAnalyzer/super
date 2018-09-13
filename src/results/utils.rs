@@ -123,13 +123,14 @@ impl PartialOrd for Vulnerability {
                 &self.start_line,
                 &self.end_line,
                 &self.name,
-            ).cmp(&(
-                &other.criticality,
-                &other.file,
-                &other.start_line,
-                &other.end_line,
-                &other.name,
-            )),
+            )
+                .cmp(&(
+                    &other.criticality,
+                    &other.file,
+                    &other.start_line,
+                    &other.end_line,
+                    &other.name,
+                )),
         )
     }
 }
