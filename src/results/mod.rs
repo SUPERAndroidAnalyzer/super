@@ -141,19 +141,19 @@ impl Results {
     pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
         match vuln.get_criticality() {
             Criticality::Warning => {
-                self.warnings.insert(vuln);
+                let _ = self.warnings.insert(vuln);
             }
             Criticality::Low => {
-                self.low.insert(vuln);
+                let _ = self.low.insert(vuln);
             }
             Criticality::Medium => {
-                self.medium.insert(vuln);
+                let _ = self.medium.insert(vuln);
             }
             Criticality::High => {
-                self.high.insert(vuln);
+                let _ = self.high.insert(vuln);
             }
             Criticality::Critical => {
-                self.critical.insert(vuln);
+                let _ = self.critical.insert(vuln);
             }
         }
     }

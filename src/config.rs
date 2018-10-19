@@ -291,7 +291,7 @@ impl Config {
     fn add_app_package<P: AsRef<Path>>(&mut self, app_package: P) {
         let mut package_path = self.downloads_folder.join(app_package);
         if package_path.extension().is_none() {
-            package_path.set_extension("apk");
+            let _ = package_path.set_extension("apk");
         } else if package_path.extension().unwrap() != "apk" {
             let mut file_name = package_path
                 .file_name()
@@ -676,7 +676,7 @@ impl Config {
                         print_warning(format_warning);
                         break;
                     };
-                    self.permissions.insert(PermissionConfig::new(
+                    let _ = self.permissions.insert(PermissionConfig::new(
                         permission,
                         criticality,
                         label,
