@@ -1,6 +1,6 @@
 [package]
 name = "super-analyzer"
-version = "0.4.1"
+version = "0.5.0"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",

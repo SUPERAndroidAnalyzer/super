@@ -1197,7 +1197,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "super-analyzer"
-version = "0.4.1"
+version = "0.5.0"
 dependencies = [
  "abxml 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytecount 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
