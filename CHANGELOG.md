@@ -16,7 +16,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 
 ### Internal Changes
 
-- SUPER now requires Rust 1.26.1 to be built.
+- SUPER now requires Rust 1.26.2 to be built.
 - Removed `error-chain` dependency in favor of `failure`.
 - Upgraded dependencies:
   - `clap`: 2.25 => **2.32**
@@ -25,12 +25,12 @@ deployed in each release. Here you can find the rest of the changes for this ver
   - `chrono`: 0.3 => **0.4**
   - `toml`: 0.3 => **0.4**
   - `regex`: 0.2 => **1.0**
-  - `lazy_static`: 0.2 => **1.0**
+  - `lazy_static`: 0.2 => **1.1**
   - `bytecount`: 0.1 => **0.3**
   - `log`: 0.3 => **0.4**
   - `env_logger`: 0.4 => **0.5**
   - `sha1`: 0.2 => **0.6**
-  - `sha2`: 0.5 => **0.7**
+  - `sha2`: 0.5 => **0.8**
   - `abxml`: 0.2 => **0.5**
   - `handlebars`: 0.25 => **1.0**
   - Some other minor uprades.
