@@ -47,7 +47,6 @@ matrix:
 before_script:
 - export PATH=$PATH:~/.cargo/bin
 - "./travis-helper.sh install_deps"
-- echo "CLIPPY = $CLIPPY"
   # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
 - |
   if [[ $TRAVIS_TAG ]]; then
