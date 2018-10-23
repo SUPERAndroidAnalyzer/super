@@ -5,7 +5,7 @@ action="$1"
 if [ "$action" = "install_deps" ]; then
   # Install rustfmt and clippy.
   if [[ -z $PACKAGE && "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
-    rustup component add rustfmt-preview clippy
+    rustup component add rustfmt-preview clippy-preview
   fi
 
 # Build the project with default features.
