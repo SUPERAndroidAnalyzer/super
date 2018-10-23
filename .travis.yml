@@ -53,7 +53,7 @@ before_script:
   if [[ $TRAVIS_TAG ]]; then
     export TAG=$TRAVIS_TAG;
   else
-    export TAG="0.4.1";
+    export TAG="0.5.0";
   fi
 
 # Run the multiple tests.
