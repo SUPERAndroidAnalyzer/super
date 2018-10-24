@@ -69,7 +69,7 @@ pub enum SdkNumber {
 /// As per: <https://developer.android.com/reference/android/os/Build.VERSION_CODES.html>
 impl SdkNumber {
     /// Gets the SDK API version number.
-    pub fn number(&self) -> u32 {
+    pub fn number(self) -> u32 {
         match self {
             SdkNumber::Api1 => 1,
             SdkNumber::Api2 => 2,
@@ -99,12 +99,12 @@ impl SdkNumber {
             SdkNumber::Api26 => 26,
 
             SdkNumber::Development => 10_000,
-            SdkNumber::Unknown(v) => *v,
+            SdkNumber::Unknown(v) => v,
         }
     }
 
     /// Gets the Android version number.
-    pub fn version(&self) -> Option<Version> {
+    pub fn version(self) -> Option<Version> {
         match self {
             SdkNumber::Api1 => Some(Version {
                 major: 1,

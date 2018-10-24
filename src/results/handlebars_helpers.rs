@@ -55,7 +55,7 @@ pub fn line_numbers(
         rendered.push_str(&format!("{}", l));
         rendered.push_str(line_separator);
     }
-    let _ = out.write(&rendered)?;
+    out.write(&rendered)?;
 
     Ok(())
 }
@@ -95,7 +95,7 @@ pub fn all_lines(
         rendered.push_str(format!("{}", l).as_str());
         rendered.push_str(line_separator);
     }
-    let _ = out.write(&rendered)?;
+    out.write(&rendered)?;
 
     Ok(())
 }
@@ -139,7 +139,7 @@ pub fn all_code(
             html_escape(line),
             line_separator
         );
-        let _ = out.write(&line)?;
+        out.write(&line)?;
     }
 
     Ok(())
@@ -220,7 +220,7 @@ pub fn html_code(
             format!("{}{}", html_escape(line), line_separator)
         };
 
-        let _ = out.write(&rendered)?;
+        out.write(&rendered)?;
     }
 
     Ok(())
@@ -270,7 +270,7 @@ pub fn report_index(
         index_padding = 2;
     }
     let rendered = format!("{}{:#02$}", char_index, index, index_padding);
-    let _ = out.write(&rendered)?;
+    out.write(&rendered)?;
 
     Ok(())
 }
@@ -292,31 +292,31 @@ pub fn generate_menu(
         .ok_or_else(|| {
             RenderError::new("to generate the menu, the first parameter must be a menu array")
         })?;
-    let _ = out.write("<ul>")?;
+    out.write("<ul>")?;
     render_menu(menu, out)?;
-    let _ = out.write("</ul>")?;
+    out.write("</ul>")?;
     Ok(())
 }
 
 fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError> {
     for value in menu {
         if let Value::Object(ref item) = *value {
-            let _ = renderer.write("<li>")?;
+            renderer.write("<li>")?;
             let name = item
                 .get("name")
                 .and_then(|n| n.as_str())
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
-                let _ = renderer.write(
+                renderer.write(
                     format!(
                         "<a href=\"#\" title=\"{0}\"><img src=\"../img/folder.svg\">{0}</a>",
                         name
                     ).as_str(),
                 )?;
-                let _ = renderer.write("<ul>")?;
+                renderer.write("<ul>")?;
 
                 render_menu(menu, renderer)?;
-                let _ = renderer.write("</ul>")?;
+                renderer.write("</ul>")?;
             } else {
                 let path = item
                     .get("path")
@@ -326,14 +326,14 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
                     .get("type")
                     .and_then(|n| n.as_str())
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
-                let _ = renderer.write(
+                renderer.write(
                     format!(
                         "<a href=\"{1}.html\" title=\"{0}\" target=\"code\"><img src=\"../img/{2}.svg\">{0}</a>",
                         name, path, file_type
                     ).as_str()
                 )?;
             }
-            let _ = renderer.write("</li>")?;
+            renderer.write("</li>")?;
         } else {
             return Err(RenderError::new("invalid menu object type"));
         }

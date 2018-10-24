@@ -18,7 +18,7 @@
     missing_docs,
     unused_extern_crates,
     missing_debug_implementations,
-    missing_copy_implementations
+    missing_copy_implementations,
 )]
 // Allowing these for now.
 #![cfg_attr(
@@ -29,7 +29,8 @@
         cast_possible_truncation,
         cast_possible_wrap,
         cast_precision_loss,
-        cast_sign_loss
+        cast_sign_loss,
+        non_ascii_literal,
     )
 )]
 
