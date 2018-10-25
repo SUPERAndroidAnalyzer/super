@@ -1,15 +1,15 @@
 //! General utilities module.
 
-use std::path::Path;
-use std::thread::sleep;
-use std::time::Duration;
-use std::{fmt, fs};
+use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
 
 use colored::Colorize;
 use failure::Error;
+use lazy_static::lazy_static;
 use log::Level::Debug;
-use xml::reader::{EventReader, XmlEvent};
-use xml::ParserConfig;
+use xml::{
+    reader::{EventReader, XmlEvent},
+    ParserConfig,
+};
 
 use config::Config;
 use criticality::Criticality;

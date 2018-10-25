@@ -26,7 +26,7 @@ rust:
 - nightly
 - beta
 - stable
-- 1.26.2
+- 1.30.0
 
 # Generate packages for multiple distributions.
 matrix:

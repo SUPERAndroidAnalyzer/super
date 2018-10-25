@@ -4,7 +4,7 @@
 //! for the SUPER launcher. It's also used to generate command line completion scripts in the
 //! `build.rs` file.
 
-use clap::{App, Arg};
+use clap::{crate_version, App, Arg};
 
 /// Generates the command line interface.
 pub fn generate() -> App<'static, 'static> {

@@ -2,22 +2,23 @@
 //!
 //! Handles and configures the initial settings and variables needed to run the program.
 
-use std::cmp::{Ordering, PartialOrd};
-use std::collections::btree_set::Iter;
-use std::collections::BTreeSet;
-use std::convert::From;
-use std::path::{Path, PathBuf};
-use std::slice::Iter as VecIter;
-use std::str::FromStr;
-use std::{fs, i64, usize};
+use std::{
+    cmp::{Ordering, PartialOrd},
+    collections::{btree_set::Iter, BTreeSet},
+    convert::From,
+    fs, i64,
+    path::{Path, PathBuf},
+    slice::Iter as VecIter,
+    str::FromStr,
+    usize,
+};
 
 use clap::ArgMatches;
 use colored::Colorize;
-use failure::{Error, ResultExt};
+use failure::{format_err, Error, ResultExt};
 use num_cpus;
 use serde::{de, Deserialize, Deserializer};
-use toml;
-use toml::value::Value;
+use toml::{self, value::Value};
 
 use criticality::Criticality;
 use print_warning;

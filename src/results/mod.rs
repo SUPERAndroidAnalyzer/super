@@ -1,10 +1,9 @@
 //! Results generation module.
 
-use std::collections::BTreeSet;
-use std::fs;
-use std::path::Path;
+use std::{collections::BTreeSet, fs, path::Path};
 
 use chrono::Local;
+use clap::crate_version;
 use failure::{Error, ResultExt};
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 

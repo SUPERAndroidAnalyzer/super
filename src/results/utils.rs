@@ -3,14 +3,17 @@
 //! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
 //! information for results.
 
-use std::borrow::Cow;
-use std::cmp::Ordering;
-use std::fs::File;
-use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::{
+    borrow::Cow,
+    cmp::Ordering,
+    fs::File,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
 use failure::Error;
 use hex::ToHex;
+use lazy_static::lazy_static;
 use regex::Regex;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use {md5, sha1, sha2};

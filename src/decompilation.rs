@@ -2,13 +2,11 @@
 //!
 //! Handles the extraction, decompression and  decompilation of `_.apks_`
 
-use std::fs;
-use std::path::Path;
-use std::process::Command;
+use std::{fs, path::Path, process::Command};
 
 use abxml::apk::Apk;
 use colored::Colorize;
-use failure::{Error, ResultExt};
+use failure::{bail, format_err, Error, ResultExt};
 
 use {get_package_name, print_warning, Config};
 

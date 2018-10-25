@@ -25,7 +25,6 @@
     feature = "cargo-clippy",
     allow(
         stutter,
-        similar_names,
         cast_possible_truncation,
         cast_possible_wrap,
         cast_precision_loss,
@@ -37,17 +36,14 @@
 extern crate abxml;
 extern crate bytecount;
 extern crate chrono;
-#[macro_use]
 extern crate clap;
 extern crate colored;
 extern crate env_logger;
-#[macro_use]
 extern crate failure;
 #[macro_use]
 extern crate failure_derive;
 extern crate handlebars;
 extern crate hex;
-#[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate log;
@@ -74,15 +70,17 @@ mod results;
 mod static_analysis;
 mod utils;
 
-use std::collections::BTreeMap;
-use std::path::Path;
-use std::thread::sleep;
-use std::time::{Duration, Instant};
-use std::{env, fs};
+use std::{
+    collections::BTreeMap,
+    env, fs,
+    path::Path,
+    thread::sleep,
+    time::{Duration, Instant},
+};
 
 use clap::ArgMatches;
 use colored::Colorize;
-use failure::{Error, ResultExt};
+use failure::{bail, format_err, Error, ResultExt};
 
 pub use config::Config;
 use decompilation::{decompile, decompress, dex_to_jar};
