@@ -27,10 +27,12 @@ extern crate failure;
 #[macro_use]
 extern crate log;
 
-use std::collections::BTreeMap;
-use std::io::{self, Write};
-use std::thread::sleep;
-use std::time::{Duration, Instant};
+use std::{
+    collections::BTreeMap,
+    io::{self, Write},
+    thread::sleep,
+    time::{Duration, Instant},
+};
 
 use colored::Colorize;
 use failure::{Error, ResultExt};

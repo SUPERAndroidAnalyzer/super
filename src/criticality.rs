@@ -1,8 +1,9 @@
 //! Criticality module.
 
-use std::fmt;
-use std::fmt::Display;
-use std::str::FromStr;
+use std::{
+    fmt::{self, Display},
+    str::FromStr,
+};
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 

@@ -1,24 +1,21 @@
 //! Handlebars report generation module.
 
-use std::collections::BTreeMap;
-use std::fs;
-use std::fs::File;
-use std::io::Write;
-use std::path::Path;
+use std::{
+    collections::BTreeMap,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+};
 
 use colored::Colorize;
 use failure::{Error, ResultExt};
 use handlebars::Handlebars;
-use serde_json::value::Value;
-use serde_json::Map;
+use serde_json::{value::Value, Map};
 
 use config::Config;
 use copy_folder;
 use error;
-use results::handlebars_helpers::*;
-use results::report::Generator;
-use results::utils::html_escape;
-use results::Results;
+use results::{handlebars_helpers::*, report::Generator, utils::html_escape, Results};
 
 /// Handlebars report generator.
 pub struct Report {

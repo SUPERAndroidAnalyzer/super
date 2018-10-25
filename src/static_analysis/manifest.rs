@@ -1,14 +1,14 @@
 //! Module containing the manifest analysis logic.
 
-use std::fs;
-use std::path::Path;
-use std::str::FromStr;
+use std::{fs, path::Path, str::FromStr};
 
 use colored::Colorize;
 use failure::Error;
 use serde::{self, Deserialize, Deserializer};
-use xml::attribute::OwnedAttribute;
-use xml::reader::{EventReader, XmlEvent};
+use xml::{
+    attribute::OwnedAttribute,
+    reader::{EventReader, XmlEvent},
+};
 
 use criticality::Criticality;
 use error;

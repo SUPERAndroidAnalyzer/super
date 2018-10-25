@@ -1,8 +1,6 @@
 //! This module performs the static analysis of the certificate of the application.
 
-use std::borrow::Borrow;
-use std::fs;
-use std::process::Command;
+use std::{borrow::Borrow, fs, process::Command};
 
 use chrono::{Datelike, Local};
 use colored::Colorize;

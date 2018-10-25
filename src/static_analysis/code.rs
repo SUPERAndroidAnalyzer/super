@@ -1,11 +1,14 @@
 //! Code analysis module.
 
-use std::borrow::Borrow;
-use std::fs::{DirEntry, File};
-use std::path::Path;
-use std::slice::Iter;
-use std::sync::{Arc, Mutex};
-use std::{fmt, fs, thread};
+use std::{
+    borrow::Borrow,
+    fmt,
+    fs::{self, DirEntry, File},
+    path::Path,
+    slice::Iter,
+    sync::{Arc, Mutex},
+    thread,
+};
 
 use colored::Colorize;
 use failure::{Error, Fail, ResultExt};
