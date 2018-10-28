@@ -4,11 +4,14 @@ use std::{borrow::Borrow, fs, process::Command};
 
 use chrono::{Datelike, Local};
 use colored::Colorize;
-use failure::{Error, ResultExt};
+use failure::{bail, Error, ResultExt};
 
-use criticality::Criticality;
-use results::{Results, Vulnerability};
-use {print_vulnerability, print_warning, Config};
+use crate::{
+    criticality::Criticality,
+    print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config,
+};
 
 /// Parses the given month string.
 ///

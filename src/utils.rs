@@ -11,8 +11,7 @@ use xml::{
     ParserConfig,
 };
 
-use config::Config;
-use criticality::Criticality;
+use crate::{config::Config, criticality::Criticality};
 
 /// Configuration for the XML parser.
 lazy_static! {
@@ -180,7 +179,7 @@ impl fmt::Display for Benchmark {
 
 #[cfg(test)]
 mod test {
-    use get_code;
+    use crate::get_code;
 
     #[test]
     fn it_get_code() {

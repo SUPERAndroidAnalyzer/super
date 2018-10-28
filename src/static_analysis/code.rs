@@ -17,10 +17,12 @@ use serde::de::{self, Deserializer, SeqAccess, Visitor};
 use serde_json;
 
 use super::manifest::{Manifest, Permission};
-use criticality::Criticality;
-use error;
-use results::{Results, Vulnerability};
-use {get_code, print_vulnerability, print_warning, Config};
+use crate::{
+    criticality::Criticality,
+    error, get_code, print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config,
+};
 
 /// Analyzes the whole codebase of the application.
 pub fn analysis<S: AsRef<str>>(
@@ -608,8 +610,7 @@ mod tests {
     use regex::Regex;
 
     use super::{load_rules, Rule};
-    use config::Config;
-    use criticality::Criticality;
+    use crate::{config::Config, criticality::Criticality};
 
     /// Prints information about the given error.
     fn print_error(e: &Error) {

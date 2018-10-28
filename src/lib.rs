@@ -82,11 +82,18 @@ use clap::ArgMatches;
 use colored::Colorize;
 use failure::{bail, format_err, Error, ResultExt};
 
-pub use config::Config;
-use decompilation::{decompile, decompress, dex_to_jar};
-use results::Results;
-use static_analysis::static_analysis;
-pub use utils::*;
+pub use crate::{
+    config::Config,
+    utils::{
+        get_code, get_package_name, get_string, print_vulnerability, print_warning, Benchmark,
+        PARSER_CONFIG,
+    },
+};
+use crate::{
+    decompilation::{decompile, decompress, dex_to_jar},
+    results::Results,
+    static_analysis::static_analysis,
+};
 
 /// Logo ASCII art, used in verbose mode.
 pub static BANNER: &str = include_str!("banner.txt");
@@ -358,14 +365,10 @@ pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
 mod tests {
     extern crate reqwest;
 
-    use super::*;
-    use config::Config;
-    use criticality::Criticality;
+    use std::{collections::BTreeMap, fs, path::Path, str::FromStr};
 
-    use std::collections::BTreeMap;
-    use std::fs;
-    use std::path::Path;
-    use std::str::FromStr;
+    use super::analyze_package;
+    use crate::{config::Config, criticality::Criticality};
 
     /// This tests checks that the `Criticality` enumeration works as expected.
     ///

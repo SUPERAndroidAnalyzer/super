@@ -38,7 +38,9 @@ use colored::Colorize;
 use failure::{Error, ResultExt};
 use log::Level;
 
-use super_analyzer_core::*;
+use super_analyzer_core::{
+    analyze_package, cli, error, initialize_config, initialize_logger, Benchmark, BANNER,
+};
 
 /// Program entry point.
 ///

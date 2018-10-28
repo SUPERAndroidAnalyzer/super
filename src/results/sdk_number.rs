@@ -385,7 +385,7 @@ pub fn prettify_android_version(version: &Version) -> String {
 #[cfg(test)]
 #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
 mod tests {
-    use super::*;
+    use super::{prettify_android_version, Identifier, SdkNumber, Version};
 
     /// Checks the correctness of the `SdkNumber` when transforming a `u32`.
     #[test]

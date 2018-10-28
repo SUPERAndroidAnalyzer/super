@@ -5,8 +5,10 @@ use std::{fs::File, io::BufWriter};
 use failure::Error;
 use serde_json::ser;
 
-use config::Config;
-use results::{report::Generator, Results};
+use crate::{
+    config::Config,
+    results::{report::Generator, Results},
+};
 
 /// JSON report generator.
 pub struct Json;

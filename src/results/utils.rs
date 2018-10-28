@@ -18,7 +18,7 @@ use regex::Regex;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use {md5, sha1, sha2};
 
-use criticality::Criticality;
+use crate::criticality::Criticality;
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]

@@ -20,9 +20,7 @@ use num_cpus;
 use serde::{de, Deserialize, Deserializer};
 use toml::{self, value::Value};
 
-use criticality::Criticality;
-use print_warning;
-use static_analysis::manifest;
+use crate::{criticality::Criticality, print_warning, static_analysis::manifest};
 
 /// Config structure.
 ///
@@ -625,14 +623,15 @@ impl Permission {
 /// Test module for the configuration.
 #[cfg(test)]
 mod tests {
-    use std::fs;
-    use std::path::{Path, PathBuf};
+    use std::{
+        fs,
+        path::{Path, PathBuf},
+    };
 
     use num_cpus;
 
     use super::Config;
-    use criticality::Criticality;
-    use static_analysis::manifest;
+    use crate::{criticality::Criticality, static_analysis::manifest};
 
     /// Test for the default configuration function.
     #[test]

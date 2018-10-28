@@ -10,10 +10,12 @@ use xml::{
     reader::{EventReader, XmlEvent},
 };
 
-use criticality::Criticality;
-use error;
-use results::{Results, Vulnerability};
-use {get_code, get_string, print_vulnerability, print_warning, Config, PARSER_CONFIG};
+use crate::{
+    criticality::Criticality,
+    error, get_code, get_string, print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config, PARSER_CONFIG,
+};
 
 /// Performs the manifest analysis.
 pub fn analysis<S: AsRef<str>>(
@@ -700,8 +702,9 @@ fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize, error::Kind> {
 
 #[cfg(test)]
 mod tests {
-    use super::{get_line, InstallLocation, Permission, PermissionChecklist};
     use std::str::FromStr;
+
+    use super::{get_line, InstallLocation, Permission, PermissionChecklist};
 
     #[test]
     fn it_get_line() {

@@ -8,7 +8,7 @@ use abxml::apk::Apk;
 use colored::Colorize;
 use failure::{bail, format_err, Error, ResultExt};
 
-use {get_package_name, print_warning, Config};
+use crate::{get_package_name, print_warning, Config};
 
 /// Decompresses the application using `_Apktool_`.
 pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {

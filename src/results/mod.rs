@@ -12,14 +12,17 @@ mod report;
 mod sdk_number;
 mod utils;
 
-use self::sdk_number::{prettify_android_version, SdkNumber};
-use self::utils::FingerPrint;
 pub use self::utils::{html_escape, split_indent, Vulnerability};
-
-use criticality::Criticality;
-use {print_warning, Config};
-
-use results::report::{Generator, HandlebarsReport, Json};
+use self::{
+    sdk_number::{prettify_android_version, SdkNumber},
+    utils::FingerPrint,
+};
+use crate::{
+    criticality::Criticality,
+    print_warning,
+    results::report::{Generator, HandlebarsReport, Json},
+    Config,
+};
 
 /// Results representation structure.
 pub struct Results {

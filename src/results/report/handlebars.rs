@@ -12,10 +12,18 @@ use failure::{Error, ResultExt};
 use handlebars::Handlebars;
 use serde_json::{value::Value, Map};
 
-use config::Config;
-use copy_folder;
-use error;
-use results::{handlebars_helpers::*, report::Generator, utils::html_escape, Results};
+use crate::{
+    config::Config,
+    copy_folder, error,
+    results::{
+        handlebars_helpers::{
+            all_code, all_lines, generate_menu, html_code, line_numbers, report_index,
+        },
+        report::Generator,
+        utils::html_escape,
+        Results,
+    },
+};
 
 /// Handlebars report generator.
 pub struct Report {
@@ -282,8 +290,8 @@ impl Generator for Report {
 /// Handlebars templates testing module.
 #[cfg(test)]
 mod test {
-    use super::*;
-    use config::Config;
+    use super::Report;
+    use crate::config::Config;
 
     /// Test the creation of a new report.
     #[test]

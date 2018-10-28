@@ -5,11 +5,8 @@ mod json;
 
 use failure::Error;
 
-use config::Config;
-use results::Results;
-
-pub use self::handlebars::Report as HandlebarsReport;
-pub use self::json::Json;
+pub use self::{handlebars::Report as HandlebarsReport, json::Json};
+use crate::{config::Config, results::Results};
 
 /// Trait that represents a type that can generate a report.
 pub trait Generator {
