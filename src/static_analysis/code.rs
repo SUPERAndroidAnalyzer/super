@@ -602,6 +602,7 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
 }
 
 #[cfg(test)]
+#[cfg_attr(feature = "cargo-clippy", allow(trivial_regex))]
 mod tests {
     use failure::Error;
     use regex::Regex;
@@ -611,10 +612,10 @@ mod tests {
     use criticality::Criticality;
 
     /// Prints information about the given error.
-    fn print_error(e: Error) {
+    fn print_error(e: &Error) {
         eprintln!("Error: {}", e);
 
-        for e in e.causes().skip(1) {
+        for e in e.iter_causes() {
             eprintln!("\tCaused by: {}", e);
         }
     }
@@ -695,11 +696,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(0).unwrap();
+        let rule = &rules[0];
 
         let should_match = &[
             "\"http://www.razican.com\"",
@@ -730,11 +731,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(1).unwrap();
+        let rule = &rules[1];
 
         let should_match = &[
             "catch (Exception e) {",
@@ -767,11 +768,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(2).unwrap();
+        let rule = &rules[2];
 
         let should_match = &[
             "throws Exception {",
@@ -803,11 +804,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(3).unwrap();
+        let rule = &rules[3];
 
         let should_match = &[
             "setVisible(View.INVISIBLE)",
@@ -834,11 +835,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(4).unwrap();
+        let rule = &rules[4];
 
         let should_match = &[
             " 192.168.1.1",
@@ -874,11 +875,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(5).unwrap();
+        let rule = &rules[5];
 
         let should_match = &["Math.random()", "Random()", "Math . random ()"];
         let should_not_match = &[
@@ -904,11 +905,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(6).unwrap();
+        let rule = &rules[6];
 
         let should_match = &[
             "Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
@@ -945,11 +946,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(7).unwrap();
+        let rule = &rules[7];
 
         let should_match = &[
             "C:\\",
@@ -975,11 +976,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(8).unwrap();
+        let rule = &rules[8];
 
         let should_match = &[
             "DESKeySpec",
@@ -1015,11 +1016,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(9).unwrap();
+        let rule = &rules[9];
 
         let should_match = &[
             "Thread.sleep(Usertime+Variable+Variable);",
@@ -1052,11 +1053,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(10).unwrap();
+        let rule = &rules[10];
 
         let should_match = &[
             "MODE_WORLD_READABLE",
@@ -1088,11 +1089,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(11).unwrap();
+        let rule = &rules[11];
 
         let should_match = &[
             "MODE_WORLD_WRITABLE",
@@ -1124,11 +1125,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(12).unwrap();
+        let rule = &rules[12];
 
         let should_match = &[".getExternalStorage", ".getExternalFilesDir()"];
 
@@ -1149,11 +1150,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(13).unwrap();
+        let rule = &rules[13];
 
         let should_match = &[".createTempFile()", ".createTempFile()"];
 
@@ -1174,11 +1175,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(14).unwrap();
+        let rule = &rules[14];
 
         let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"];
 
@@ -1199,11 +1200,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(15).unwrap();
+        let rule = &rules[15];
 
         let should_match = &[
             "onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
@@ -1227,11 +1228,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(16).unwrap();
+        let rule = &rules[16];
 
         let should_match = &[
             "android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
@@ -1264,11 +1265,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(17).unwrap();
+        let rule = &rules[17];
 
         let should_match = &[
             "javax.net.ssl   TrustAllSSLSocket-Factory",
@@ -1301,11 +1302,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(18).unwrap();
+        let rule = &rules[18];
 
         let should_match = &[
             "telephony.SmsManager  sendMultipartTextMessage(String \
@@ -1345,11 +1346,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(19).unwrap();
+        let rule = &rules[19];
 
         let should_match = &[
             "com.noshufou.android.su",
@@ -1376,11 +1377,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(20).unwrap();
+        let rule = &rules[20];
 
         let should_match = &[
             ".contains(\"test-keys\")",
@@ -1409,11 +1410,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(21).unwrap();
+        let rule = &rules[21];
 
         let should_match = &["telephony.TelephonyManager    getCellLocation"];
 
@@ -1434,11 +1435,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(22).unwrap();
+        let rule = &rules[22];
 
         let should_match = &["telephony.TelephonyManager      getDeviceId()"];
 
@@ -1459,11 +1460,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(23).unwrap();
+        let rule = &rules[23];
 
         let should_match = &["telephony.TelephonyManager      getSimSerialNumber()"];
 
@@ -1484,11 +1485,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(24).unwrap();
+        let rule = &rules[24];
 
         let should_match = &[
             "android.location   getLastKnownLocation()",
@@ -1520,11 +1521,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(25).unwrap();
+        let rule = &rules[25];
 
         let should_match = &[
             "android.util.Base64 .encodeToString()",
@@ -1548,11 +1549,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(26).unwrap();
+        let rule = &rules[26];
 
         let should_match = &["android.util.Base64   .decode()"];
 
@@ -1573,11 +1574,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(27).unwrap();
+        let rule = &rules[27];
 
         let should_match = &["while(true)"];
 
@@ -1598,11 +1599,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(28).unwrap();
+        let rule = &rules[28];
 
         let should_match = &[
             "super@super.es",
@@ -1628,11 +1629,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(29).unwrap();
+        let rule = &rules[29];
 
         let should_match = &[
             "\"key.key              ",
@@ -1665,11 +1666,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(30).unwrap();
+        let rule = &rules[30];
 
         let should_match = &["telephony.TelephonyManager      getSimOperator()"];
 
@@ -1690,11 +1691,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(31).unwrap();
+        let rule = &rules[31];
 
         let should_match = &["telephony.TelephonyManager      getSimOperatorName()"];
 
@@ -1715,11 +1716,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(32).unwrap();
+        let rule = &rules[32];
 
         let should_match = &[
             "android.utils.AESObfuscator getObfuscator();",
@@ -1750,11 +1751,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(33).unwrap();
+        let rule = &rules[33];
 
         let should_match = &[
             "Runtime.getRuntime().exec(\"command\", options);",
@@ -1785,11 +1786,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(34).unwrap();
+        let rule = &rules[34];
 
         let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
                               SSLSocketFactory.getInsecure()"];
@@ -1816,11 +1817,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(35).unwrap();
+        let rule = &rules[35];
 
         let should_match = &[
             "finally {                      return;",
@@ -1848,11 +1849,11 @@ mod tests {
         let rules = match load_rules(&config) {
             Ok(r) => r,
             Err(e) => {
-                print_error(e);
+                print_error(&e);
                 panic!()
             }
         };
-        let rule = rules.get(36).unwrap();
+        let rule = &rules[36];
 
         let should_match = &[
             "int var = EditText.getText  Thread.sleep(100 + var);",

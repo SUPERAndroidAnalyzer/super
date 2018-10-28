@@ -46,13 +46,13 @@ toml = "0.4.8"
 regex = "1.0.5"
 lazy_static = "1.1.0"
 open = "1.2.2"
-bytecount = "0.3.2"
-log = "0.4.5"
+bytecount = "0.4.0"
+log = "0.4.6"
 env_logger = "0.5.13"
 md5 = "0.5.0"
 sha1 = "0.6.0"
 sha2 = "0.8.0"
-abxml = "0.5.3"
+abxml = "0.6.0"
 handlebars = "1.1.0"
 semver = "0.9.0"
 hex = "0.3.2"
@@ -63,7 +63,7 @@ colored = "1.6.1"
 clap = "2.32.0"
 
 [dev-dependencies]
-reqwest = "0.9.3"
+reqwest = "0.9.4"
 
 [features]
 default = []

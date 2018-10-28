@@ -383,10 +383,11 @@ pub fn prettify_android_version(version: &Version) -> String {
 }
 
 #[cfg(test)]
+#[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
 mod tests {
     use super::*;
 
-    /// Checks the correctness of the SDKNumber when transforming a `u32`.
+    /// Checks the correctness of the `SdkNumber` when transforming a `u32`.
     #[test]
     fn it_from_u32() {
         assert_eq!(SdkNumber::from(1), SdkNumber::Api1);

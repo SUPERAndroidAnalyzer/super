@@ -12,7 +12,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 - Added SDK version strings to Android versions. Reports will now show the Android version of the
   target and minimum SDKs.
 - SUPER logo is now an SVG, so that it looks great in multiple resolutions.
-- All icons in the source tree viewer are now SVGs.
+- All icons in the source tree viewer are now SVGs too.
 
 ### Internal Changes
 
@@ -26,14 +26,14 @@ deployed in each release. Here you can find the rest of the changes for this ver
   - `toml`: 0.3 => **0.4**
   - `regex`: 0.2 => **1.0**
   - `lazy_static`: 0.2 => **1.1**
-  - `bytecount`: 0.1 => **0.3**
+  - `bytecount`: 0.1 => **0.4**
   - `log`: 0.3 => **0.4**
   - `env_logger`: 0.4 => **0.5**
   - `sha1`: 0.2 => **0.6**
   - `sha2`: 0.5 => **0.8**
-  - `abxml`: 0.2 => **0.5**
+  - `abxml`: 0.2 => **0.6**
   - `handlebars`: 0.25 => **1.1**
-  - Some other minor uprades.
+  - Some other minor upgrades.
 - New dependencies:
   - `failure`: 0.1
   - `semver`: 0.9

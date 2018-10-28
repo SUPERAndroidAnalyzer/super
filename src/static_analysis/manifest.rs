@@ -749,7 +749,7 @@ mod tests {
 
     #[test]
     fn it_permission_checklist() {
-        let mut checklist: PermissionChecklist = Default::default();
+        let mut checklist = PermissionChecklist::default();
         checklist.set_needs_permission(Permission::AndroidPermissionInternet);
 
         assert!(checklist.needs_permission(Permission::AndroidPermissionInternet,));

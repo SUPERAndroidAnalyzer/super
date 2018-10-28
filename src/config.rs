@@ -636,6 +636,7 @@ mod tests {
 
     /// Test for the default configuration function.
     #[test]
+    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
     fn it_config() {
         // Create config object.
         let mut config = Config::default();

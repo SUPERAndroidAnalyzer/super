@@ -372,6 +372,7 @@ mod tests {
     /// It checks the conversion both from and to strings, the comparisons between
     /// criticality levels and the debug format.
     #[test]
+    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
     fn it_criticality() {
         // Check "warnings" from strings
         assert_eq!(
