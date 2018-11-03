@@ -1,7 +1,6 @@
 # SUPER Android Analyzer #
 
 [![Build Status][linux_mac_build_img]][linux_mac_build]
-[![Build status][windows_build_img]][windows_build]
 [![codecov][coverage_img]][coverage]
 
 <img src="templates/super/img/logo.svg" alt="SUPER Android Analyzer logo" title="SUPER Android Analyzer" width="150">
@@ -96,8 +95,6 @@ License, or (at your option) any later version.
 
 [linux_mac_build_img]: https://travis-ci.org/SUPERAndroidAnalyzer/super.svg?branch=master
 [linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
-[windows_build_img]: https://ci.appveyor.com/api/projects/status/7xuikqyne4a2jn7e/branch/master?svg=true
-[windows_build]: https://ci.appveyor.com/project/Razican/super/branch/master
 [coverage_img]: https://codecov.io/gh/SUPERAndroidAnalyzer/super/branch/master/graph/badge.svg
 [coverage]: https://codecov.io/gh/SUPERAndroidAnalyzer/super
 [compile]: http://superanalyzer.rocks/download.html#compile-from-source

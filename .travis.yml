@@ -8,6 +8,7 @@ services:
 os:
 - linux
 - osx
+- windows
 
 addons:
   apt:
@@ -46,6 +47,9 @@ matrix:
   - os: linux
     rust: stable
     env: DEPLOY=true
+  allow_failures:
+  - os: windows
+    rust: nightly
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin

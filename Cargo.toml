@@ -19,7 +19,6 @@ categories = ["command-line-utilities", "development-tools"]
 
 [badges]
 travis-ci = { repository = "SUPERAndroidAnalyzer/super", branch = "master" }
-appveyor = { repository = "Razican/super", branch = "master", service = "github" }
 codecov = { repository = "SUPERAndroidAnalyzer/super", branch = "master", service = "github" }
 is-it-maintained-issue-resolution = { repository = "SUPERAndroidAnalyzer/super" }
 is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }

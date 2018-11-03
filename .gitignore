@@ -9,3 +9,5 @@ rpmbuild/*
 *.apk
 .DS_Store
 *.zip
+*.log
+CHECKSUM_FILE_BEFORE
