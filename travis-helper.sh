@@ -28,7 +28,7 @@ elif [ "$action" = "test" ]; then
 
 # Run ignored unit and integration tests.
 elif [ "$action" = "test_ignored" ]; then
-  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "stable"; then # && ( -z $DEPLOY || (! -z $DEPLOY  && ! -z $TRAVIS_TAG)]]; then
     cargo test --verbose -- --ignored
   fi
 
