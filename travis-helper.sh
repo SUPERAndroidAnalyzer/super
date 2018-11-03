@@ -98,13 +98,14 @@ elif [ "$action" = "dist_test" ]; then
     docker pull "$PACKAGE:latest" &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
     docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
-  elif [ ! -z $DEPLOY ] && [ ! -z $TRAVIS_TAG ]; then
+  elif [ ! -z $DEPLOY ]; then # && [ ! -z $TRAVIS_TAG ]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
       docker pull "$PACKAGE:latest" &&
       docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
       docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
     done
+    ls releases/
   fi
 
 fi
