@@ -230,7 +230,6 @@ pub struct Manifest {
 
 impl Manifest {
     /// Loads the given manifest in memory and analyzes it.
-    #[cfg_attr(feature = "cargo-clippy", warn(cyclomatic_complexity))]
     pub fn load<P: AsRef<Path>, S: AsRef<str>>(
         path: P,
         config: &Config,

@@ -383,7 +383,7 @@ pub fn prettify_android_version(version: &Version) -> String {
 }
 
 #[cfg(test)]
-#[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
+#[allow(clippy::cyclomatic_complexity)]
 mod tests {
     use super::{prettify_android_version, Identifier, SdkNumber, Version};
 

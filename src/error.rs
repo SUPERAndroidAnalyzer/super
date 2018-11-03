@@ -4,10 +4,7 @@
 #[derive(Debug, Fail)]
 pub enum Kind {
     /// Configuration error.
-    #[fail(
-        display = "there was an error in the configuration: {}",
-        message
-    )]
+    #[fail(display = "there was an error in the configuration: {}", message)]
     Config {
         /// Error message.
         message: String,

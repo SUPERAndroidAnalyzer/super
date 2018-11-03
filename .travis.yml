@@ -27,7 +27,7 @@ rust:
 - nightly
 - beta
 - stable
-- 1.30.0
+#- 1.31.0
 
 # Generate packages for multiple distributions.
 matrix:
@@ -50,6 +50,7 @@ matrix:
   allow_failures:
   - os: windows
     rust: nightly
+  - rust: stable
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin

@@ -21,7 +21,7 @@ impl Json {
 }
 
 impl Generator for Json {
-    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    #[allow(clippy::print_stdout)]
     fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
         if config.is_verbose() {
             println!("Starting JSON report generation. First we create the file.")

@@ -6,6 +6,7 @@ authors = [
     "Jaime Salas <jaimesr@protonmail.ch>",
     "Bruno Pin <brunoop@protonmail.ch>",
     "Sergio de los Dolores <sergiodlo@protonmail.com>"]
+edition = "2018"
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/SUPERAndroidAnalyzer/super"

@@ -25,7 +25,7 @@ pub enum Criticality {
 }
 
 impl Display for Criticality {
-    #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
+    #[allow(clippy::use_debug)]
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
     }
