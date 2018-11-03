@@ -22,13 +22,13 @@ elif [ "$action" = "package" ]; then
 
 # Run unit and integration tests.
 elif [ "$action" = "test" ]; then
-  if [ -z $PACKAGE ]; then # && ([ -z $DEPLOY ] || ([ ! -z $DEPLOY ] && [ ! -z $TRAVIS_TAG ])); then
+  if [ -z $PACKAGE ] && ([ -z $DEPLOY ] || ([ ! -z $DEPLOY ] && [ ! -z $TRAVIS_TAG ])); then
     cargo test --verbose
   fi
 
 # Run ignored unit and integration tests.
 elif [ "$action" = "test_ignored" ]; then
-  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "stable" ]]; then # && ( -z $DEPLOY || (! -z $DEPLOY  && ! -z $TRAVIS_TAG)]]; then
+  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "stable"  && ( -z $DEPLOY || (! -z $DEPLOY  && ! -z $TRAVIS_TAG)]]; then
     cargo test --verbose -- --ignored
   fi
 
@@ -98,14 +98,13 @@ elif [ "$action" = "dist_test" ]; then
     docker pull "$PACKAGE:latest" &&
     docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
     docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
-  elif [ ! -z $DEPLOY ]; then # && [ ! -z $TRAVIS_TAG ]; then
+  elif [ ! -z $DEPLOY ] && [ ! -z $TRAVIS_TAG ]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
       docker pull "$PACKAGE:latest" &&
       docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
       docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
     done
-    ls releases/
   fi
 
 fi
