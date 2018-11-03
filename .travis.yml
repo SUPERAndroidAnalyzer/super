@@ -32,17 +32,20 @@ rust:
 matrix:
   include:
   - os: linux
-    rust: "stable"
+    rust: stable
     env: PACKAGE="debian"
   - os: linux
-    rust: "stable"
+    rust: stable
     env: PACKAGE="ubuntu"
   - os: linux
-    rust: "stable"
+    rust: stable
     env: PACKAGE="fedora"
   - os: linux
-    rust: "stable"
+    rust: stable
     env: PACKAGE="centos"
+  - os: linux
+    rust: stable
+    env: DEPLOY=true
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin
@@ -85,6 +88,7 @@ deploy:
     tags: true
     rust: stable
     os: linux
+    condition: $DEPLOY = true
 
 notifications:
   email:

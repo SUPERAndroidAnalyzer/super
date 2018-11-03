@@ -18,5 +18,5 @@ cargo install cargo-deb &&
 
 # Generate the .deb file
 cd /root/super &&
-cargo deb &&
-mv target/debian/super-analyzer_`echo $TAG`_amd64.deb releases/super-analyzer_`echo $TAG`_ubuntu_amd64.deb
+cargo deb -v &&
+mv -v target/debian/super-analyzer_`echo $TAG`_amd64.deb releases/super-analyzer_`echo $TAG`_ubuntu_amd64.deb
