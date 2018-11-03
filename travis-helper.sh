@@ -46,10 +46,9 @@ elif [ "$action" = "test_unstable" ]; then
 
 # Run ignored unit and integration tests with unstable features.
 elif [ "$action" = "test_unstable_ignored" ]; then
-  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
+  if [[ -z $PACKAGE && "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" != "windows" ]]; then
     cargo test --verbose --features unstable -- --ignored
   fi
-
 
 # Run Clippy.
 elif [ "$action" = "clippy_run" ]; then

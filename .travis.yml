@@ -44,6 +44,9 @@ matrix:
   - os: linux
     rust: "stable"
     env: PACKAGE="centos"
+  allow_failures:
+  - os: windows
+    rust: nightly
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin
