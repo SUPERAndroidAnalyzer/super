@@ -1,16 +1,17 @@
 //! This module performs the static analysis of the certificate of the application.
 
-use std::fs;
-use std::process::Command;
-use std::borrow::Borrow;
-use std::error::Error as StdError;
+use std::{borrow::Borrow, fs, process::Command};
 
+use chrono::{Datelike, Local};
 use colored::Colorize;
-use chrono::{Local, Datelike};
+use failure::{bail, Error, ResultExt};
 
-use {Config, Criticality, Result, print_vulnerability, print_warning};
-use results::{Results, Vulnerability};
-use error::*;
+use crate::{
+    criticality::Criticality,
+    print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config,
+};
 
 /// Parses the given month string.
 ///
@@ -40,14 +41,14 @@ pub fn certificate_analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
-) -> Result<()> {
+) -> Result<(), Error> {
     if config.is_verbose() {
         println!("Reading and analyzing the certificates…")
     }
 
     // Gets the path to the certificate files.
     let path = config
-        .get_dist_folder()
+        .dist_folder()
         .join(package.as_ref())
         .join("original")
         .join("META-INF");
@@ -58,11 +59,10 @@ pub fn certificate_analysis<S: AsRef<str>>(
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
-                    "An error occurred when reading the \
-                                       {} dir searching certificates. \
-                                       Certificate analysis will be skipped. More info: {}",
+                    "An error occurred when reading the {} dir searching certificates. Certificate \
+                     analysis will be skipped. More info: {}",
                     path.display(),
-                    e.description()
+                    e
                 ));
                 break;
             }
@@ -85,7 +85,8 @@ pub fn certificate_analysis<S: AsRef<str>>(
 
         // We found a certificate, let's get its information.
         if is_cert {
-            let output = Command::new("openssl").arg("pkcs7")
+            let output = Command::new("openssl")
+                .arg("pkcs7")
                 .arg("-inform")
                 .arg("DER")
                 .arg("-in")
@@ -94,16 +95,12 @@ pub fn certificate_analysis<S: AsRef<str>>(
                 .arg("-print_certs")
                 .arg("-text")
                 .output()
-                .chain_err(|| {
-                    "There was an error when executing the openssl command to check the certificate"
-                })?;
+                .context("there was an error when executing the openssl command to check the certificate")?;
 
             if !output.status.success() {
-                return Err(
-                    format!(
-                        "The openssl command returned an error. More info: {}",
-                        String::from_utf8_lossy(&output.stderr[..])
-                    ).into(),
+                bail!(
+                    "the openssl command returned an error. More info: {}",
+                    String::from_utf8_lossy(&output.stderr[..])
                 );
             };
 
@@ -169,13 +166,15 @@ pub fn certificate_analysis<S: AsRef<str>>(
             let after = after.nth(1).unwrap();
             let cert_year = after[16..20].parse::<i32>().unwrap();
             let cert_month = parse_month(&after[0..3]);
-            let cert_day = match after[4..6].parse::<u32>() { //if day<10 parse 1 number
+            let cert_day = match after[4..6].parse::<u32>() {
+                //if day<10 parse 1 number
                 Ok(n) => n,
                 Err(_) => after[5..6].parse::<u32>().unwrap(),
             };
 
-            if year > cert_year || (year == cert_year && month > cert_month) ||
-                (year == cert_year && month == cert_month && day > cert_day)
+            if year > cert_year
+                || (year == cert_year && month > cert_month)
+                || (year == cert_year && month == cert_month && day > cert_day)
             {
                 let criticality = Criticality::High;
                 let description = "The certificate of the application has expired. You should not \

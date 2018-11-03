@@ -1,21 +1,22 @@
-use std::{fs, fmt};
-use std::io::Read;
-use std::path::Path;
-use std::time::Duration;
-use std::thread::sleep;
-use std::result::Result as StdResult;
+//! General utilities module.
 
-use xml::reader::{EventReader, XmlEvent};
-use xml::ParserConfig;
+use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
+
 use colored::Colorize;
-use log::LogLevel::Debug;
+use failure::Error;
+use lazy_static::lazy_static;
+use log::Level::Debug;
+use xml::{
+    reader::{EventReader, XmlEvent},
+    ParserConfig,
+};
 
-use error::*;
-use super::{Criticality, Config};
+use crate::{config::Config, criticality::Criticality};
 
 /// Configuration for the XML parser.
 lazy_static! {
     /// XML parser configuration.
+    #[allow(missing_debug_implementations)]
     pub static ref PARSER_CONFIG: ParserConfig = ParserConfig::new()
     .trim_whitespace(true)
     .whitespace_to_characters(true)
@@ -25,7 +26,7 @@ lazy_static! {
 }
 
 /// Prints a warning to `stderr` in yellow.
-#[allow(print_stdout)]
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
@@ -42,7 +43,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
-#[allow(print_stdout)]
+#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!(
@@ -69,7 +70,7 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
 pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
     path.as_ref()
         .file_stem()
-        .unwrap()
+        .expect("expected package name")
         .to_string_lossy()
         .into_owned()
 }
@@ -77,6 +78,7 @@ pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
 /// Gets the code snippet near the start and end lines.
 ///
 /// It will return 5 lines above and 5 lines below the vulnerability.
+#[cfg_attr(feature = "cargo-clippy", allow(nonminimal_bool))]
 pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.as_ref().lines().enumerate() {
@@ -95,10 +97,10 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
     label: L,
     config: &Config,
     package: P,
-) -> Result<String> {
-    let mut file = fs::File::open({
+) -> Result<String, Error> {
+    let code = fs::read_to_string({
         let path = config
-            .get_dist_folder()
+            .dist_folder()
             .join(package.as_ref())
             .join("res")
             .join("values-en")
@@ -108,7 +110,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
             path
         } else {
             config
-                .get_dist_folder()
+                .dist_folder()
                 .join(package.as_ref())
                 .join("res")
                 .join("values")
@@ -116,16 +118,15 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
         }
     })?;
 
-    let mut code = String::new();
-    let _ = file.read_to_string(&mut code)?;
-
     let bytes = code.into_bytes();
     let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG.clone());
 
     let mut found = false;
     for e in parser {
         match e {
-            Ok(XmlEvent::StartElement { name, attributes, .. }) => {
+            Ok(XmlEvent::StartElement {
+                name, attributes, ..
+            }) => {
                 if let "string" = name.local_name.as_str() {
                     for attr in attributes {
                         if attr.name.local_name == "name" && attr.value == label.as_ref() {
@@ -146,23 +147,26 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
 }
 
 /// Structure to store a benchmark information.
+#[derive(Debug)]
 pub struct Benchmark {
+    /// The label for the benchmark.
     label: String,
+    /// The benchmark duration.
     duration: Duration,
 }
 
 impl Benchmark {
     /// Creates a new benchmark.
-    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Benchmark {
-        Benchmark {
+    pub fn new<S: Into<String>>(label: S, duration: Duration) -> Self {
+        Self {
             label: label.into(),
-            duration: duration,
+            duration,
         }
     }
 }
 
 impl fmt::Display for Benchmark {
-    fn fmt(&self, f: &mut fmt::Formatter) -> StdResult<(), fmt::Error> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(
             f,
             "{}: {}.{}s",
@@ -175,7 +179,7 @@ impl fmt::Display for Benchmark {
 
 #[cfg(test)]
 mod test {
-    use get_code;
+    use crate::get_code;
 
     #[test]
     fn it_get_code() {
@@ -196,49 +200,49 @@ mod test {
         assert_eq!(
             get_code(code, 1, 1),
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
-                    Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque\n\
-                    Praesent blandit dolor. Sed non quam. In vel mi\n\
-                    Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n"
+             Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
+             Sed lacinia, urna non tincidunt mattis, tortor neque\n\
+             Praesent blandit dolor. Sed non quam. In vel mi\n\
+             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
+             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n"
         );
 
         assert_eq!(
             get_code(code, 13, 13),
             "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-                    Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
-                    Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
-                    Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n"
+             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
+             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
+             Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
+             Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
+             Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n"
         );
 
         assert_eq!(
             get_code(code, 7, 7),
             "Praesent blandit dolor. Sed non quam. In vel mi\n\
-                    Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
-                    Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
-                    Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
-                    Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
-                    Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-                    Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n"
+             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
+             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
+             Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
+             Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
+             Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
+             Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
+             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
+             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n"
         );
 
         assert_eq!(
             get_code(code, 7, 9),
             "Praesent blandit dolor. Sed non quam. In vel mi\n\
-                    Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-                    Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
-                    Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
-                    Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
-                    Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
-                    Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-                    Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-                    Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
-                    Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-                    Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n"
+             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
+             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
+             Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
+             Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
+             Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
+             Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
+             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
+             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
+             Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
+             Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n"
         );
     }
 }

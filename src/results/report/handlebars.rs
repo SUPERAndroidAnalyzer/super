@@ -1,41 +1,55 @@
-use std::path::PathBuf;
-use results::report::Report;
-use results::Results;
-use config::Config;
-use std::io::{Read, Write};
-use std::fs::File;
-use handlebars::Handlebars;
-use results::utils::html_escape;
-use results::handlebars_helpers::*;
-use std::fs;
-use copy_folder;
-use colored::Colorize;
-use serde_json::Map;
-use serde_json::value::Value;
-use std::collections::BTreeMap;
-use std::path::Path;
-use error::*;
+//! Handlebars report generation module.
 
-pub struct HandlebarsReport {
+use std::{
+    collections::BTreeMap,
+    fs::{self, File},
+    io::Write,
+    path::Path,
+};
+
+use colored::Colorize;
+use failure::{Error, ResultExt};
+use handlebars::Handlebars;
+use serde_json::{value::Value, Map};
+
+use crate::{
+    config::Config,
+    copy_folder, error,
+    results::{
+        handlebars_helpers::{
+            all_code, all_lines, generate_menu, html_code, line_numbers, report_index,
+        },
+        report::Generator,
+        utils::html_escape,
+        Results,
+    },
+};
+
+/// Handlebars report generator.
+pub struct Report {
+    /// Handlebars template structure.
     handler: Handlebars,
+    /// Package name.
     package: String,
 }
 
-impl HandlebarsReport {
-    pub fn new(template_path: PathBuf, package: String) -> Result<Self> {
-        let handlebars_handler = Self::load_templates(template_path).chain_err(
-            || "Could not load handlebars templates",
-        )?;
+impl Report {
+    /// Creates a new handlebars report generator.
+    pub fn new<P: AsRef<Path>, S: Into<String>>(
+        template_path: P,
+        package: S,
+    ) -> Result<Self, Error> {
+        let handlebars_handler =
+            Self::load_templates(template_path).context("Could not load handlebars templates")?;
 
-        let report = HandlebarsReport {
+        Ok(Self {
             handler: handlebars_handler,
-            package: package,
-        };
-
-        Ok(report)
+            package: package.into(),
+        })
     }
 
-    fn load_templates(template_path: PathBuf) -> Result<Handlebars> {
+    /// Loads templates from the given path.
+    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars, Error> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());
         let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
@@ -49,31 +63,26 @@ impl HandlebarsReport {
             if let Some(ext) = dir_entry.path().extension() {
                 if ext == "hbs" {
                     let path = dir_entry.path();
-                    let template_file = path.file_stem()
-                        .ok_or_else(|| {
-                            ErrorKind::TemplateName(
-                                "template files must have a file name".to_string(),
-                            )
-                        })
-                        .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| {
-                                ErrorKind::TemplateName(
-                                    "template names must be unicode".to_string(),
-                                )
+                    let template_file = path
+                        .file_stem()
+                        .ok_or_else(|| error::Kind::TemplateName {
+                            message: "template files must have a file name".to_owned(),
+                        }).and_then(|stem| {
+                            stem.to_str().ok_or_else(|| error::Kind::TemplateName {
+                                message: "template names must be unicode".to_string(),
                             })
                         })?;
 
-
                     handlebars
                         .register_template_file(template_file, dir_entry.path())
-                        .chain_err(|| "Error registering template file")?;
+                        .context("error registering template file")?;
                 }
             }
         }
 
-        if handlebars.get_template("report").is_none() ||
-            handlebars.get_template("src").is_none() ||
-            handlebars.get_template("code").is_none()
+        if handlebars.get_template("report").is_none()
+            || handlebars.get_template("src").is_none()
+            || handlebars.get_template("code").is_none()
         {
             let message = format!(
                 "templates must include {}, {} and {} templates",
@@ -82,19 +91,20 @@ impl HandlebarsReport {
                 "code".italic()
             );
 
-            Err(ErrorKind::TemplateName(message).into())
+            Err(error::Kind::TemplateName { message }.into())
         } else {
             Ok(handlebars)
         }
     }
 
-    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<()> {
+    /// Generates the HTML files for the code.
+    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<(), Error> {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
         let mut f = File::create(
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join("index.html"),
         )?;
@@ -106,26 +116,25 @@ impl HandlebarsReport {
         Ok(())
     }
 
+    /// Generates a folder with HTML files with the source code of the application.
     fn generate_code_html_folder<P: AsRef<Path>>(
         &self,
         path: P,
         config: &Config,
         results: &Results,
-    ) -> Result<Vec<Value>> {
-        if path.as_ref() == Path::new("classes/android") ||
-            path.as_ref() == Path::new("classes/com/google/android/gms") ||
-            path.as_ref() == Path::new("smali")
+    ) -> Result<Vec<Value>, Error> {
+        if path.as_ref() == Path::new("classes/android")
+            || path.as_ref() == Path::new("classes/com/google/android/gms")
+            || path.as_ref() == Path::new("smali")
         {
             return Ok(Vec::new());
         }
-        let dir_iter = fs::read_dir(config.get_dist_folder().join(&self.package).join(
-            path.as_ref(),
-        ))?;
+        let dir_iter = fs::read_dir(config.dist_folder().join(&self.package).join(path.as_ref()))?;
 
         fs::create_dir_all(
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join(path.as_ref()),
         )?;
@@ -135,16 +144,18 @@ impl HandlebarsReport {
             let entry = entry?;
             let path = entry.path();
 
-            let prefix = config.get_dist_folder().join(&self.package);
-            let stripped = path.strip_prefix(&prefix).unwrap();
+            let prefix = config.dist_folder().join(&self.package);
+            let stripped = path
+                .strip_prefix(&prefix)
+                .expect("could not remove path prefix");
 
             if path.is_dir() {
                 if stripped != Path::new("original") {
                     let inner_menu = self.generate_code_html_folder(stripped, config, results)?;
                     if inner_menu.is_empty() {
                         let path = config
-                            .get_results_folder()
-                            .join(&results.get_app_package())
+                            .results_folder()
+                            .join(&results.app_package())
                             .join("src")
                             .join(stripped);
                         if path.exists() {
@@ -162,12 +173,7 @@ impl HandlebarsReport {
             } else {
                 match path.extension() {
                     Some(e) if e == "xml" || e == "java" => {
-                        self.generate_code_html_for(
-                            &stripped,
-                            config,
-                            results,
-                            &self.package,
-                        )?;
+                        self.generate_code_html_for(&stripped, config, results, &self.package)?;
                         let name = path.file_name().unwrap().to_string_lossy().into_owned();
                         let mut data = Map::with_capacity(3);
                         let _ = data.insert("name".to_owned(), Value::String(name));
@@ -189,31 +195,29 @@ impl HandlebarsReport {
         Ok(menu)
     }
 
+    /// Generates an HTML file with source code for the given path.
     fn generate_code_html_for<P: AsRef<Path>, S: AsRef<str>>(
         &self,
         path: P,
         config: &Config,
         results: &Results,
         cli_package_name: S,
-    ) -> Result<()> {
-        let mut f_in = File::open(
+    ) -> Result<(), Error> {
+        let code = fs::read_to_string(
             config
-                .get_dist_folder()
+                .dist_folder()
                 .join(cli_package_name.as_ref())
                 .join(path.as_ref()),
         )?;
         let mut f_out = File::create(format!(
             "{}.html",
             config
-                .get_results_folder()
-                .join(&results.get_app_package())
+                .results_folder()
+                .join(&results.app_package())
                 .join("src")
                 .join(path.as_ref())
                 .display()
         ))?;
-
-        let mut code = String::new();
-        let _ = f_in.read_to_string(&mut code)?;
 
         let mut back_path = String::new();
         for _ in path.as_ref().components() {
@@ -228,22 +232,21 @@ impl HandlebarsReport {
         let _ = data.insert(String::from("code"), Value::String(code));
         let _ = data.insert(String::from("back_path"), Value::String(back_path));
 
-        f_out.write_all(
-            self.handler.render("code", &data)?.as_bytes(),
-        )?;
+        f_out.write_all(self.handler.render("code", &data)?.as_bytes())?;
 
         Ok(())
     }
 }
 
-impl Report for HandlebarsReport {
-    fn generate(&mut self, config: &Config, results: &Results) -> Result<()> {
+impl Generator for Report {
+    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }
         let mut f = File::create(
             config
-                .get_results_folder()
+                .results_folder()
                 .join(&results.app_package)
                 .join("index.html"),
         )?;
@@ -251,19 +254,17 @@ impl Report for HandlebarsReport {
             println!("The report file has been created. Now it's time to fill it.")
         }
 
-        f.write_all(
-            self.handler.render("report", results)?.as_bytes(),
-        )?;
+        f.write_all(self.handler.render("report", results)?.as_bytes())?;
 
-        for entry in fs::read_dir(config.get_template_path())? {
+        for entry in fs::read_dir(config.template_path())? {
             let entry = entry?;
             let entry_path = entry.path();
             if entry.file_type()?.is_dir() {
                 copy_folder(
                     &entry_path,
                     &config
-                        .get_results_folder()
-                        .join(&results.get_app_package())
+                        .results_folder()
+                        .join(&results.app_package())
                         .join(entry_path.file_name().unwrap()),
                 )?;
             } else {
@@ -273,7 +274,7 @@ impl Report for HandlebarsReport {
                     _ => {
                         let _ = fs::copy(
                             &entry_path,
-                            &config.get_results_folder().join(&results.get_app_package()),
+                            &config.results_folder().join(&results.app_package()),
                         )?;
                     }
                 }
@@ -283,5 +284,30 @@ impl Report for HandlebarsReport {
         self.generate_code_html_files(config, results)?;
 
         Ok(())
+    }
+}
+
+/// Handlebars templates testing module.
+#[cfg(test)]
+mod test {
+    use super::Report;
+    use crate::config::Config;
+
+    /// Test the creation of a new report.
+    #[test]
+    fn it_new() {
+        let _ = Report::new(&Config::default().template_path(), "test").unwrap();
+    }
+
+    /// Test the failure of the creation of an invalid new report.
+    #[test]
+    fn it_new_failure() {
+        assert!(Report::new("random path", "test").is_err());
+    }
+
+    /// Tests handlebars template loading.
+    #[test]
+    fn it_load_templates() {
+        let _ = Report::load_templates(&Config::default().template_path()).unwrap();
     }
 }

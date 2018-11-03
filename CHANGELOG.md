@@ -1,5 +1,64 @@
 # Changelog
 
+## SUPER 0.5.0
+
+This release contains multiple improvements that have been accumulated in the last year. We also
+improved our repository by adding a Code of Conduct and templates for issues and pull requests.
+Packages for Ubuntu, Debian, Fedora and CentOS are now generated automatically in each build, and
+deployed in each release. Here you can find the rest of the changes for this version.
+
+### Features
+
+- Added SDK version strings to Android versions. Reports will now show the Android version of the
+  target and minimum SDKs.
+- SUPER logo is now an SVG, so that it looks great in multiple resolutions.
+- All icons in the source tree viewer are now SVGs too.
+
+### Internal Changes
+
+- SUPER now requires Rust 1.30.0 to be built.
+- Removed `error-chain` dependency in favor of `failure`.
+- Upgraded dependencies:
+  - `clap`: 2.25 => **2.32**
+  - `xml-rs`: 0.4 => **0.8**
+  - `serde`: 0.9 => **1.0**
+  - `chrono`: 0.3 => **0.4**
+  - `toml`: 0.3 => **0.4**
+  - `regex`: 0.2 => **1.0**
+  - `lazy_static`: 0.2 => **1.1**
+  - `bytecount`: 0.1 => **0.4**
+  - `log`: 0.3 => **0.4**
+  - `env_logger`: 0.4 => **0.5**
+  - `sha1`: 0.2 => **0.6**
+  - `sha2`: 0.5 => **0.8**
+  - `abxml`: 0.2 => **0.6**
+  - `handlebars`: 0.25 => **1.1**
+  - Some other minor upgrades.
+- New dependencies:
+  - `failure`: 0.1
+  - `semver`: 0.9
+  - `hex`: 0.3
+  - `num_cpus`: 1.8
+- Multiple documentation improvements.
+- Code quality improved by using new syntax.
+- Fixed multiple performance bottlenecks.
+- Switched to library/binary architechture.
+
+### Bug Fixes
+
+- Fixed decompilation of badly formatted APK files.
+- Fixed strange characters in Windows Console.
+
+## SUPER 0.4.1
+
+### Internal Changes
+
+- Upgraded `abxml` to **0.2.0**.
+
+### Bug Fixes
+
+- SUPER now properly creates `dist` and `results` directories if they do not exist.
+
 ## SUPER 0.4.0
 
 ### Features
@@ -12,12 +71,12 @@
 
 ### Internal Changes
 
-- SUPER now requires Rust 1.16.0.
+- SUPER now requires Rust 1.16.0 to be built.
 - Errors moved to their own module.
 - Upgraded dependencies:
   - `clap`: 2.20 => **2.23**
   - `xml-rs`: 0.3 => **0.4**
-  And some other minor upgrades.
+  - And some other minor upgrades.
 - Dependency in `yaml-rust` has been removed.
 - Dependency in `error-chain` 0.10 has been added.
 - Dependency in `rust-crypto` has been removed and dependencies in `md5`, `sha1` and `sha2` have

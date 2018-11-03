@@ -1,16 +1,17 @@
-#[macro_use]
 extern crate clap;
 
-use std::path::PathBuf;
-use std::env;
 use clap::Shell;
+use std::env;
+use std::path::PathBuf;
 
 #[path = "src/cli.rs"]
 mod cli;
 
 fn main() {
     let mut cli = cli::generate();
-    let mut out_dir = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let mut out_dir = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR variable was not set"));
+
+    // This will output the completions in the target/release or target/debug directories.
     out_dir.pop();
     out_dir.pop();
     out_dir.pop();

@@ -53,7 +53,7 @@
     "description": "Sensitive information should never be logged since it can lead to that information being disclosed.",
     "include_file_regex": ".java$"
 }, {
-    "regex": "(?:(?:\\b[[:upper:]]{1}:)\\\\\\s*[^\\0 !$&*(?:)+]\\w.+)|(?:(?:\\b[[:upper:]]{1}:)\\\\)",
+    "regex": "(?:(?:\\b[[:upper:]]{1}:)\\\\\\s*[^0 !$&*(?:)+]\\w.+)|(?:(?:\\b[[:upper:]]{1}:)\\\\)",
     "criticality": "warning",
     "label": "Hardcoded file separator",
     "description": "Paths like C:\\\\Program Files\\\\... can cause problems, and are considered vulnerabilities, since some OSs use backslashes `\\\\` (DOS\/Windows) and others slashes `\/` (Unix)."

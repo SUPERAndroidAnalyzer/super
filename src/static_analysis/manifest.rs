@@ -1,17 +1,24 @@
-use std::fs::File;
-use std::io::Read;
-use std::path::Path;
-use std::str::FromStr;
-use std::error::Error as StdError;
-use error::*;
+//! Module containing the manifest analysis logic.
 
-use xml::reader::{EventReader, XmlEvent};
+use std::{fs, path::Path, str::FromStr};
+
 use colored::Colorize;
+use failure::Error;
+use serde::{self, Deserialize, Deserializer};
+use xml::{
+    attribute::OwnedAttribute,
+    reader::{EventReader, XmlEvent},
+};
 
-use {Config, Criticality, print_warning, print_vulnerability, get_code, get_string, PARSER_CONFIG};
-use results::{Results, Vulnerability};
+use crate::{
+    criticality::Criticality,
+    error, get_code, get_string, print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config, PARSER_CONFIG,
+};
 
-pub fn manifest_analysis<S: AsRef<str>>(
+/// Performs the manifest analysis.
+pub fn analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
@@ -19,12 +26,12 @@ pub fn manifest_analysis<S: AsRef<str>>(
     if config.is_verbose() {
         println!(
             "Loading the manifest file. For this, we first parse the document and then we'll \
-                  analyze it."
+             analyze it."
         )
     }
 
     let manifest = match Manifest::load(
-        config.get_dist_folder().join(package.as_ref()),
+        config.dist_folder().join(package.as_ref()),
         config,
         package.as_ref(),
         results,
@@ -39,60 +46,58 @@ pub fn manifest_analysis<S: AsRef<str>>(
         Err(e) => {
             print_warning(format!(
                 "There was an error when loading the manifest: {}",
-                e.description()
+                e
             ));
             if config.is_verbose() {
                 println!(
-                    "The rest of the analysis will continue, but there will be no analysis \
-                          of the AndroidManifest.xml file, and code analysis rules requiring \
-                          permissions will not run."
+                    "The rest of the analysis will continue, but there will be no analysis of the \
+                     AndroidManifest.xml file, and code analysis rules requiring permissions will \
+                     not run."
                 );
             }
             return None;
         }
     };
 
-    if manifest.get_package() != package.as_ref() {
+    if manifest.package() != package.as_ref() {
         print_warning(format!(
-            "Seems that the package in the AndroidManifest.xml is not the \
-                               same as the application ID provided. Provided application id: \
-                               {}, manifest package: {}",
+            "Seems that the package in the AndroidManifest.xml is not the same as the application \
+             ID provided. Provided application id: {}, manifest package: {}",
             package.as_ref(),
-            manifest.get_package()
+            manifest.package()
         ));
 
         if config.is_verbose() {
             println!(
-                "This does not mean that something went wrong, but it's supposed to have \
-                      the application in the format {{package}}.apk in the {} folder and use the \
-                      package as the application ID for this auditor.",
+                "This does not mean that something went wrong, but it's supposed to have the \
+                 application in the format {{package}}.apk in the {} folder and use the package as \
+                 the application ID for this auditor.",
                 "downloads".italic()
             );
         }
     }
 
-    results.set_app_package(manifest.get_package());
-    results.set_app_label(manifest.get_label());
-    results.set_app_description(manifest.get_description());
-    results.set_app_version(manifest.get_version_str());
-    results.set_app_version_num(manifest.get_version_number());
-    results.set_app_min_sdk(manifest.get_min_sdk());
-    if manifest.get_target_sdk().is_some() {
-        results.set_app_target_sdk(manifest.get_target_sdk().unwrap());
+    results.set_app_package(manifest.package());
+    results.set_app_label(manifest.label());
+    results.set_app_description(manifest.description());
+    results.set_app_version(manifest.version_str());
+    results.set_app_version_num(manifest.version_number());
+    results.set_app_min_sdk(manifest.min_sdk());
+    if manifest.target_sdk().is_some() {
+        results.set_app_target_sdk(manifest.target_sdk().unwrap());
     }
 
     if manifest.is_debug() {
         let criticality = Criticality::Critical;
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
+            let description = "The application is in debug mode. This allows any malicious person \
+                               to inject arbitrary code in the application. This option should \
+                               only be used while in development.";
 
-            let description = "The application is in debug mode. \
-                               This allows any malicious person to inject arbitrary code in the \
-                               application. This option should only be used while in development.";
-
-            let line = get_line(manifest.get_code(), "android:debuggable=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:debuggable=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -114,14 +119,14 @@ pub fn manifest_analysis<S: AsRef<str>>(
     if manifest.needs_large_heap() {
         let criticality = Criticality::Warning;
 
-        if criticality >= config.get_min_criticality() {
-            let description = "The application needs a large heap. This is not a vulnerability \
-                                 as such, but could be in devices with small heap. Check if the \
-                                 large heap is actually needed.";
+        if criticality >= config.min_criticality() {
+            let description = "The application needs a large heap. This is not a vulnerability as \
+                               such, but could be in devices with small heap. Check if the large \
+                               heap is actually needed.";
 
-            let line = get_line(manifest.get_code(), "android:largeHeap=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:largeHeap=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -142,14 +147,14 @@ pub fn manifest_analysis<S: AsRef<str>>(
     if manifest.allows_backup() {
         let criticality = Criticality::Medium;
 
-        if criticality >= config.get_min_criticality() {
+        if criticality >= config.min_criticality() {
             let description = "This option allows backups of the application data via adb. \
                                Malicious people with physical access could use adb to get private \
                                data of your app into their PC.";
 
-            let line = get_line(manifest.get_code(), "android:allowBackup=\"true\"").ok();
+            let line = get_line(manifest.code(), "android:allowBackup=\"true\"").ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
@@ -167,29 +172,29 @@ pub fn manifest_analysis<S: AsRef<str>>(
         }
     }
 
-    for permission in config.get_permissions() {
-        if manifest.get_permission_checklist().needs_permission(
-            permission
-                .get_permission(),
-        ) && permission.get_criticality() >= config.get_min_criticality()
+    for permission in config.permissions() {
+        if manifest
+            .permission_checklist()
+            .needs_permission(permission.name())
+            && permission.criticality() >= config.min_criticality()
         {
-            let line = get_line(manifest.get_code(), permission.get_permission().as_str()).ok();
+            let line = get_line(manifest.code(), permission.name().as_str()).ok();
             let code = match line {
-                Some(l) => Some(get_code(manifest.get_code(), l, l)),
+                Some(l) => Some(get_code(manifest.code(), l, l)),
                 None => None,
             };
 
             let vuln = Vulnerability::new(
-                permission.get_criticality(),
-                permission.get_label(),
-                permission.get_description(),
+                permission.criticality(),
+                permission.label(),
+                permission.description(),
                 Some("AndroidManifest.xml"),
                 line,
                 line,
                 code,
             );
             results.add_vulnerability(vuln);
-            print_vulnerability(permission.get_description(), permission.get_criticality());
+            print_vulnerability(permission.description(), permission.criticality());
         }
     }
 
@@ -204,6 +209,8 @@ pub fn manifest_analysis<S: AsRef<str>>(
     Some(manifest)
 }
 
+/// Manifest analysis representation structure.
+#[derive(Debug, Default)]
 pub struct Manifest {
     code: String,
     package: String,
@@ -222,17 +229,17 @@ pub struct Manifest {
 }
 
 impl Manifest {
+    /// Loads the given manifest in memory and analyzes it.
+    #[cfg_attr(feature = "cargo-clippy", warn(cyclomatic_complexity))]
     pub fn load<P: AsRef<Path>, S: AsRef<str>>(
         path: P,
         config: &Config,
         package: S,
         results: &mut Results,
-    ) -> Result<Manifest> {
-        let mut file = File::open(path.as_ref().join("AndroidManifest.xml"))?;
-        let mut manifest = Manifest::default();
+    ) -> Result<Self, Error> {
+        let code = fs::read_to_string(path.as_ref().join("AndroidManifest.xml"))?;
+        let mut manifest = Self::default();
 
-        let mut code = String::new();
-        let _ = file.read_to_string(&mut code)?;
         manifest.set_code(code.as_str());
 
         let bytes = code.into_bytes();
@@ -240,327 +247,32 @@ impl Manifest {
 
         for e in parser {
             match e {
-                Ok(XmlEvent::StartElement { name, attributes, .. }) => {
-                    match name.local_name.as_str() {
-                        "manifest" => {
-                            for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "package" => manifest.set_package(attr.value.as_str()),
-                                    "versionCode" => {
-                                        let version_number: u32 = match attr.value.parse() {
-                                            Ok(n) => n,
-                                            Err(e) => {
-                                                print_warning(format!("An error occurred when \
-                                                                       parsing the version in \
-                                                                       the manifest: {}.\nThe \
-                                                                       process will continue, \
-                                                                       though.",
-                                                                      e.description()));
-                                                break;
-                                            }
-                                        };
-                                        manifest.set_version_number(version_number);
-                                    }
-                                    "versionName" => manifest.set_version_str(attr.value.as_str()),
-                                    "installLocation" => {
-                                        let location =
-                                            match InstallLocation::from_str(attr.value.as_str()) {
-                                                Ok(l) => l,
-                                                Err(e) => {
-                                                    print_warning(format!(
-                                                        "An error occurred when \
-                                                                       parsing the \
-                                                                       installLocation \
-                                                                       attribute in the \
-                                                                       manifest: {}.\nThe \
-                                                                       process will continue, \
-                                                                       though.",
-                                                        e.description()
-                                                    ));
-                                                    break;
-                                                }
-                                            };
-                                        manifest.set_install_location(location)
-                                    }
-                                    _ => {}
-                                }
-                            }
-                        }
-                        "uses-sdk" => {
-                            for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "minSdkVersion" => {
-                                        let min_sdk_version: u32 =
-                                            match attr.value.as_str().parse() {
-                                                Ok(m) => m,
-                                                Err(e) => {
-                                                    print_warning(format!("An error occurred when \
-                                                                       parsing the \
-                                                                       minSdkVersion attribute \
-                                                                       in the manifest: \
-                                                                       {}.\nThe process will \
-                                                                       continue, though.",
-                                                                          e.description()));
-                                                    break;
-                                                }
-                                            };
-                                        manifest.set_min_sdk(min_sdk_version);
-                                    }
-                                    "targetSdkVersion" => {
-                                        let target_sdk_version: u32 =
-                                            match attr.value.as_str().parse() {
-                                                Ok(t) => t,
-                                                Err(e) => {
-                                                    print_warning(format!("An error occurred \
-                                                                           when parsing the \
-                                                                           targetSdkVersion \
-                                                                           attribute in the \
-                                                                           manifest: {}.\nThe \
-                                                                           process will \
-                                                                           continue, though.",
-                                                                          e.description()));
-                                                    break;
-                                                }
-                                            };
-                                        manifest.set_target_sdk(target_sdk_version);
-                                    }
-                                    _ => {}
-                                }
-                            }
-                        }
-                        "application" => {
-                            for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "debuggable" => {
-                                        let debug: bool = match attr.value.as_str().parse() {
-                                            Ok(b) => b,
-                                            Err(e) => {
-                                                print_warning(format!(
-                                                    "An error occurred \
-                                                                       when parsing the \
-                                                                       debuggable attribute in \
-                                                                       the manifest: \
-                                                                       {}.\nThe process \
-                                                                       will continue, though.",
-                                                    e.description()
-                                                ));
-                                                break;
-                                            }
-                                        };
-                                        if debug {
-                                            manifest.set_debug();
-                                        }
-                                    }
-                                    "allowBackup" => {
-                                        let allows_backup: bool =
-                                            match attr.value.as_str().parse() {
-                                                Ok(b) => b,
-                                                Err(e) => {
-                                                    print_warning(format!("An error occurred \
-                                                                       when parsing the \
-                                                                       allowBackup attribute in \
-                                                                       the manifest: \
-                                                                       {}.\nThe process \
-                                                                       will continue, though.",
-                                                                          e.description()));
-                                                    break;
-                                                }
-                                            };
-                                        if allows_backup {
-                                            manifest.set_allows_backup();
-                                        }
-                                    }
-                                    "description" => manifest.set_description(attr.value.as_str()),
-                                    "hasCode" => {
-                                        let has_code: bool = match attr.value.as_str().parse() {
-                                            Ok(b) => b,
-                                            Err(e) => {
-                                                print_warning(format!(
-                                                    "An error occurred \
-                                                                        when parsing the \
-                                                                    hasCode attribute in \
-                                                                           the manifest: \
-                                                                        {}.\nThe process \
-                                                                    will continue, though.",
-                                                    e.description()
-                                                ));
-                                                break;
-                                            }
-                                        };
-                                        if has_code {
-                                            manifest.set_has_code();
-                                        }
-                                    }
-                                    "largeHeap" => {
-                                        let large_heap: bool = match attr.value.as_str().parse() {
-                                            Ok(b) => b,
-                                            Err(e) => {
-                                                print_warning(format!("An error occurred \
-                                                                        when parsing the \
-                                                                  largeHeap attribute in \
-                                                                          the manifest: \
-                                                                        {}.\nThe process \
-                                                                    will continue, though.",
-                                                                      e.description()));
-                                                break;
-                                            }
-                                        };
-                                        if large_heap {
-                                            manifest.set_large_heap();
-                                        }
-                                    }
-                                    "label" => {
-                                        manifest.set_label(
-                                            if attr.value.starts_with("@string/") {
-                                                match get_string(
-                                                    &attr.value[8..],
-                                                    config,
-                                                    package.as_ref(),
-                                                ) {
-                                                    Ok(s) => s,
-                                                    Err(e) => {
-                                                        print_warning(format!(
-                                                            "An error occurred when\
-                                                                         trying to get the string\
-                                                                         for the app label in the\
-                                                                       manifest: {}.\nThe process\
-                                                                      will continue, though.",
-                                                            e.description()
-                                                        ));
-                                                        break;
-                                                    }
-                                                }
-                                            } else {
-                                                attr.value
-                                            }.as_str(),
-                                        )
-                                    }
-                                    _ => {}
-                                }
-                            }
-                        }
-                        "uses-permission" => {
-                            for attr in attributes {
-                                if let "name" = attr.name.local_name.as_str() {
-                                    let permission = if let Ok(p) = Permission::from_str(
-                                        attr.value.as_str(),
-                                    )
-                                    {
-                                        p
-                                    } else {
-                                        let line =
-                                            get_line(manifest.get_code(), attr.value.as_str()).ok();
-                                        let code = match line {
-                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
-                                            None => None,
-                                        };
-
-                                        let criticality = config
-                                            .get_unknown_permission_criticality();
-                                        let description = config
-                                            .get_unknown_permission_description();
-                                        let file = Some("AndroidManifest.xml");
-
-                                        if criticality > config.get_min_criticality() {
-                                            let vuln = Vulnerability::new(
-                                                criticality,
-                                                "Unknown permission",
-                                                description,
-                                                file,
-                                                line,
-                                                line,
-                                                code,
-                                            );
-                                            results.add_vulnerability(vuln);
-
-                                            print_vulnerability(description, criticality);
-                                        }
-                                        break;
-                                    };
-                                    manifest
-                                        .get_mut_permission_checklist()
-                                        .set_needs_permission(permission);
-                                }
-                            }
-                        }
-                        tag @ "provider" |
-                        tag @ "receiver" |
-                        tag @ "activity" |
-                        tag @ "activity-alias" |
-                        tag @ "service" => {
-                            let mut exported = None;
-                            let mut name = String::new();
-                            for attr in attributes {
-                                match attr.name.local_name.as_str() {
-                                    "exported" => {
-                                        if let Ok(found_exported) = attr.value.as_str().parse() {
-                                            exported = Some(found_exported);
-                                        }
-                                    }
-                                    "name" => name = attr.value,
-                                    _ => {}
-                                }
-                            }
-                            match exported {
-                                Some(true) | None => {
-                                    if tag != "provider" || exported.is_some() ||
-                                        manifest.get_min_sdk() < 17
-                                    {
-
-                                        let line = get_line(
-                                            manifest.get_code(),
-                                            &format!("android:name=\"{}\"", name),
-                                        ).ok();
-                                        let code = match line {
-                                            Some(l) => Some(get_code(manifest.get_code(), l, l)),
-                                            None => None,
-                                        };
-
-                                        let criticality = Criticality::Warning;
-
-                                        if criticality >= config.get_min_criticality() {
-                                            let vuln = Vulnerability::new(
-                                                criticality,
-                                                format!("Exported {}", tag),
-                                                format!(
-                                                    "Exported {} was \
-                                                                            found. It can be \
-                                                                            used by other \
-                                                                            applications.",
-                                                    tag
-                                                ),
-                                                Some("AndroidManifest.xml"),
-                                                line,
-                                                line,
-                                                code,
-                                            );
-                                            results.add_vulnerability(vuln);
-
-                                            print_vulnerability(
-                                                format!(
-                                                    "Exported {} was found. \
-                                                                         It can be used by \
-                                                                         other applications.",
-                                                    tag
-                                                ),
-                                                Criticality::Warning,
-                                            );
-                                        }
-                                    }
-                                }
-                                _ => {}
-                            }
-                        }
-                        _ => {}
+                Ok(XmlEvent::StartElement {
+                    name, attributes, ..
+                }) => match name.local_name.as_str() {
+                    "manifest" => manifest.parse_manifest_attributes(attributes),
+                    "uses-sdk" => manifest.parse_sdk_attributes(attributes),
+                    "application" => {
+                        manifest.parse_application_attributes(attributes, config, package.as_ref())
                     }
-                }
+                    "uses-permission" => {
+                        manifest.parse_permission_attributes(attributes, config, results)
+                    }
+                    tag @ "provider"
+                    | tag @ "receiver"
+                    | tag @ "activity"
+                    | tag @ "activity-alias"
+                    | tag @ "service" => {
+                        manifest.check_exported_atttributes(tag, attributes, config, results)
+                    }
+                    _ => {}
+                },
                 Ok(_) => {}
                 Err(e) => {
                     print_warning(format!(
-                        "An error occurred when parsing the \
-                                           AndroidManifest.xml file: {}.\nThe process will \
-                                           continue, though.",
-                        e.description()
+                        "An error occurred when parsing the `AndroidManifest.xml` file: {}.\nThe \
+                         process will continue, though.",
+                        e
                     ));
                 }
             }
@@ -569,15 +281,298 @@ impl Manifest {
         Ok(manifest)
     }
 
+    fn parse_manifest_attributes<A>(&mut self, attributes: A)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "package" => self.set_package(attr.value.as_str()),
+                "versionCode" => {
+                    let version_number: u32 = match attr.value.parse() {
+                        Ok(n) => n,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the version in the manifest: {}.\
+                                 \nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_version_number(version_number);
+                }
+                "versionName" => self.set_version_str(attr.value.as_str()),
+                "installLocation" => {
+                    let location = match InstallLocation::from_str(attr.value.as_str()) {
+                        Ok(l) => l,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `installLocation` attribute \
+                                 in the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_install_location(location)
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_sdk_attributes<A>(&mut self, attributes: A)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "minSdkVersion" => {
+                    let min_sdk_version: u32 = match attr.value.as_str().parse() {
+                        Ok(m) => m,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `minSdkVersion` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_min_sdk(min_sdk_version);
+                }
+                "targetSdkVersion" => {
+                    let target_sdk_version: u32 = match attr.value.as_str().parse() {
+                        Ok(t) => t,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `targetSdkVersion` attribute \
+                                 in the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    self.set_target_sdk(target_sdk_version);
+                }
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_application_attributes<A, S>(&mut self, attributes: A, config: &Config, package: S)
+    where
+        A: IntoIterator<Item = OwnedAttribute>,
+        S: AsRef<str>,
+    {
+        for attr in attributes {
+            match attr.name.local_name.as_str() {
+                "debuggable" => {
+                    let debug: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `debuggable` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if debug {
+                        self.set_debug();
+                    }
+                }
+                "allowBackup" => {
+                    let allows_backup: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `allowBackup` attribute in \
+                                 the manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if allows_backup {
+                        self.set_allows_backup();
+                    }
+                }
+                "description" => self.set_description(attr.value.as_str()),
+                "hasCode" => {
+                    let has_code: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `hasCode` attribute in the \
+                                 manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if has_code {
+                        self.set_has_code();
+                    }
+                }
+                "largeHeap" => {
+                    let large_heap: bool = match attr.value.as_str().parse() {
+                        Ok(b) => b,
+                        Err(e) => {
+                            print_warning(format!(
+                                "An error occurred when parsing the `largeHeap` attribute in the \
+                                 manifest: {}.\nThe process will continue, though.",
+                                e
+                            ));
+                            break;
+                        }
+                    };
+                    if large_heap {
+                        self.set_large_heap();
+                    }
+                }
+                "label" => self.set_label(
+                    if attr.value.starts_with("@string/") {
+                        match get_string(&attr.value[8..], config, package.as_ref()) {
+                            Ok(s) => s,
+                            Err(e) => {
+                                print_warning(format!(
+                                    "An error occurred when trying to get the string for the app \
+                                     label in the manifest: {}.\nThe process will continue, though.",
+                                    e
+                                ));
+                                break;
+                            }
+                        }
+                    } else {
+                        attr.value
+                    }.as_str(),
+                ),
+                _ => {}
+            }
+        }
+    }
+
+    fn parse_permission_attributes<A>(
+        &mut self,
+        attributes: A,
+        config: &Config,
+        results: &mut Results,
+    ) where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        for attr in attributes {
+            if let "name" = attr.name.local_name.as_str() {
+                let permission = if let Ok(p) = Permission::from_str(attr.value.as_str()) {
+                    p
+                } else {
+                    let line = get_line(self.code(), attr.value.as_str()).ok();
+                    let code = match line {
+                        Some(l) => Some(get_code(self.code(), l, l)),
+                        None => None,
+                    };
+
+                    let criticality = config.unknown_permission_criticality();
+                    let description = config.unknown_permission_description();
+                    let file = Some("AndroidManifest.xml");
+
+                    if criticality > config.min_criticality() {
+                        let vuln = Vulnerability::new(
+                            criticality,
+                            "Unknown permission",
+                            description,
+                            file,
+                            line,
+                            line,
+                            code,
+                        );
+                        results.add_vulnerability(vuln);
+
+                        print_vulnerability(description, criticality);
+                    }
+                    break;
+                };
+                self.permissions.set_needs_permission(permission);
+            }
+        }
+    }
+
+    fn check_exported_atttributes<A>(
+        &mut self,
+        tag: &str,
+        attributes: A,
+        config: &Config,
+        results: &mut Results,
+    ) where
+        A: IntoIterator<Item = OwnedAttribute>,
+    {
+        {
+            let mut exported = None;
+            let mut name = String::new();
+            for attr in attributes {
+                match attr.name.local_name.as_str() {
+                    "exported" => {
+                        if let Ok(found_exported) = attr.value.as_str().parse() {
+                            exported = Some(found_exported);
+                        }
+                    }
+                    "name" => name = attr.value,
+                    _ => {}
+                }
+            }
+            match exported {
+                Some(true) | None => {
+                    if tag != "provider" || exported.is_some() || self.min_sdk() < 17 {
+                        let line =
+                            get_line(self.code(), &format!("android:name=\"{}\"", name)).ok();
+                        let code = match line {
+                            Some(l) => Some(get_code(self.code(), l, l)),
+                            None => None,
+                        };
+
+                        let criticality = Criticality::Warning;
+
+                        if criticality >= config.min_criticality() {
+                            let vuln = Vulnerability::new(
+                                criticality,
+                                format!("Exported {}", tag),
+                                format!(
+                                    "Exported {} was found. It can be used by other applications.",
+                                    tag
+                                ),
+                                Some("AndroidManifest.xml"),
+                                line,
+                                line,
+                                code,
+                            );
+                            results.add_vulnerability(vuln);
+
+                            print_vulnerability(
+                                format!(
+                                    "Exported {} was found. It can be used by other applications.",
+                                    tag
+                                ),
+                                Criticality::Warning,
+                            );
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
     fn set_code<S: Into<String>>(&mut self, code: S) {
         self.code = code.into();
     }
 
-    pub fn get_code(&self) -> &str {
+    pub fn code(&self) -> &str {
         &self.code
     }
 
-    pub fn get_package(&self) -> &str {
+    pub fn package(&self) -> &str {
         &self.package
     }
 
@@ -585,7 +580,7 @@ impl Manifest {
         self.package = package.into();
     }
 
-    pub fn get_version_number(&self) -> u32 {
+    pub fn version_number(&self) -> u32 {
         self.version_number
     }
 
@@ -593,7 +588,7 @@ impl Manifest {
         self.version_number = version_number;
     }
 
-    pub fn get_version_str(&self) -> &str {
+    pub fn version_str(&self) -> &str {
         &self.version_str
     }
 
@@ -601,7 +596,7 @@ impl Manifest {
         self.version_str = version_str.into();
     }
 
-    pub fn get_label(&self) -> &str {
+    pub fn label(&self) -> &str {
         &self.label
     }
 
@@ -609,7 +604,7 @@ impl Manifest {
         self.label = label.into();
     }
 
-    pub fn get_description(&self) -> &str {
+    pub fn description(&self) -> &str {
         &self.description
     }
 
@@ -617,7 +612,7 @@ impl Manifest {
         self.description = description.into();
     }
 
-    pub fn get_min_sdk(&self) -> u32 {
+    pub fn min_sdk(&self) -> u32 {
         self.min_sdk
     }
 
@@ -625,7 +620,7 @@ impl Manifest {
         self.min_sdk = min_sdk;
     }
 
-    pub fn get_target_sdk(&self) -> Option<u32> {
+    pub fn target_sdk(&self) -> Option<u32> {
         self.target_sdk
     }
 
@@ -665,33 +660,8 @@ impl Manifest {
         self.debug = true;
     }
 
-    pub fn get_permission_checklist(&self) -> &PermissionChecklist {
+    pub fn permission_checklist(&self) -> &PermissionChecklist {
         &self.permissions
-    }
-
-    fn get_mut_permission_checklist(&mut self) -> &mut PermissionChecklist {
-        &mut self.permissions
-    }
-}
-
-impl Default for Manifest {
-    fn default() -> Manifest {
-        Manifest {
-            code: String::new(),
-            package: String::new(),
-            label: String::new(),
-            description: String::new(),
-            allows_backup: false,
-            has_code: false,
-            large_heap: false,
-            install_location: InstallLocation::InternalOnly,
-            permissions: Default::default(),
-            debug: false,
-            min_sdk: 0,
-            target_sdk: None,
-            version_number: 0,
-            version_str: String::new(),
-        }
     }
 }
 
@@ -702,32 +672,39 @@ pub enum InstallLocation {
     PreferExternal,
 }
 
+impl Default for InstallLocation {
+    fn default() -> Self {
+        InstallLocation::InternalOnly
+    }
+}
+
 impl FromStr for InstallLocation {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<InstallLocation> {
+    type Err = error::Kind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "internalOnly" => Ok(InstallLocation::InternalOnly),
             "auto" => Ok(InstallLocation::Auto),
             "preferExternal" => Ok(InstallLocation::PreferExternal),
-            _ => Err(ErrorKind::Parse.into()),
+            _ => Err(error::Kind::Parse),
         }
     }
 }
 
-fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize> {
+fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize, error::Kind> {
     for (i, line) in code.as_ref().lines().enumerate() {
         if line.contains(haystack.as_ref()) {
             return Ok(i);
         }
     }
 
-    Err(ErrorKind::CodeNotFound.into())
+    Err(error::Kind::CodeNotFound)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{InstallLocation, Permission, PermissionChecklist, get_line};
     use std::str::FromStr;
+
+    use super::{get_line, InstallLocation, Permission, PermissionChecklist};
 
     #[test]
     fn it_get_line() {
@@ -775,15 +752,11 @@ mod tests {
 
     #[test]
     fn it_permission_checklist() {
-        let mut checklist: PermissionChecklist = Default::default();
+        let mut checklist = PermissionChecklist::default();
         checklist.set_needs_permission(Permission::AndroidPermissionInternet);
 
-        assert!(checklist.needs_permission(
-            Permission::AndroidPermissionInternet,
-        ));
-        assert!(!checklist.needs_permission(
-            Permission::AndroidPermissionWriteExternalStorage,
-        ));
+        assert!(checklist.needs_permission(Permission::AndroidPermissionInternet,));
+        assert!(!checklist.needs_permission(Permission::AndroidPermissionWriteExternalStorage,));
     }
 
     #[test]
@@ -2396,8 +2369,8 @@ impl PermissionChecklist {
 }
 
 impl Default for PermissionChecklist {
-    fn default() -> PermissionChecklist {
-        PermissionChecklist {
+    fn default() -> Self {
+        Self {
             android_permission_access_all_external_storage: false,
             android_permission_access_checkin_properties: false,
             android_permission_access_coarse_location: false,
@@ -2660,6 +2633,7 @@ impl Default for PermissionChecklist {
     }
 }
 
+/// Enumeration describing all the known permissions.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]
 pub enum Permission {
     AndroidPermissionAccessAllExternalStorage,
@@ -2922,9 +2896,29 @@ pub enum Permission {
     ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
 }
 
+impl<'de> Deserialize<'de> for Permission {
+    fn deserialize<D>(de: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        use failure::Fail;
+        use serde::de::Error;
+
+        let deser_result_str: String = serde::Deserialize::deserialize(de)?;
+
+        match Self::from_str(&deser_result_str) {
+            Ok(permission) => Ok(permission),
+            Err(e) => Err(Error::custom(
+                e.context(format!("unknown permission `{}`", deser_result_str)),
+            )),
+        }
+    }
+}
+
 impl Permission {
+    /// Gets the string representation of the permission.
     pub fn as_str(&self) -> &str {
-        match *self {
+        match self {
             Permission::AndroidPermissionAccessAllExternalStorage => {
                 "android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
             }
@@ -3512,8 +3506,8 @@ impl Permission {
 }
 
 impl FromStr for Permission {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Permission> {
+    type Err = error::Kind;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "android.permission.ACCESS_ALL_EXTERNAL_STORAGE" => {
                 Ok(Permission::AndroidPermissionAccessAllExternalStorage)
@@ -3839,9 +3833,7 @@ impl FromStr for Permission {
             "android.permission.REMOVE_TASKS" => Ok(Permission::AndroidPermissionRemoveTasks),
             "android.permission.REORDER_TASKS" => Ok(Permission::AndroidPermissionReorderTasks),
             "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" => {
-                Ok(
-                    Permission::AndroidPermissionRequestIgnoreBatteryOptimizations,
-                )
+                Ok(Permission::AndroidPermissionRequestIgnoreBatteryOptimizations)
             }
             "android.permission.REQUEST_INSTALL_PACKAGES" => {
                 Ok(Permission::AndroidPermissionRequestInstallPackages)
@@ -3972,9 +3964,7 @@ impl FromStr for Permission {
                 Ok(Permission::ComAndroidVoicemailPermissionReadVoicemail)
             }
             "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL" => {
-                Ok(
-                    Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail,
-                )
+                Ok(Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail)
             }
             "com.android.voicemail.permission.WRITE_VOICEMAIL" => {
                 Ok(Permission::ComAndroidVoicemailPermissionWriteVoicemail)
@@ -3992,47 +3982,31 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ah" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.android" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.cl" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl)
@@ -4041,185 +4015,115 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.finance" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.health" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ig" => {
                 Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.knol" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.local" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mail" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.news" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.print" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.reader" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speech" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.talk" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wise" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.writely" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube" => {
-                Ok(
-                    Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube,
-                )
+                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube)
             }
             "com.google.android.gtalkservice.permission.GTALK_SERVICE" => {
-                Ok(
-                    Permission::ComGoogleAndroidGtalkservicePermissionGtalkService,
-                )
+                Ok(Permission::ComGoogleAndroidGtalkservicePermissionGtalkService)
             }
             "com.google.android.gtalkservice.permission.SEND_HEARTBEAT" => {
-                Ok(
-                    Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat,
-                )
+                Ok(Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat)
             }
             "com.google.android.permission.BROADCAST_DATA_MESSAGE" => {
                 Ok(Permission::ComGoogleAndroidPermissionBroadcastDataMessage)
             }
             "com.google.android.providers.gsf.permission.READ_GSERVICES" => {
-                Ok(
-                    Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices,
-                )
+                Ok(Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices)
             }
             "com.google.android.providers.talk.permission.READ_ONLY" => {
                 Ok(Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly)
@@ -4237,11 +4141,9 @@ impl FromStr for Permission {
                 Ok(Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint)
             }
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
-                Ok(
-                    Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast,
-                )
+                Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
-            _ => Err(ErrorKind::Parse.into()),
+            _ => Err(error::Kind::Parse),
         }
     }
 }

@@ -9,8 +9,7 @@ template = "super" # Results template
 rules_json = "/etc/super-analyzer/rules.json" # Vulnerability rules JSON
 
 # Vulnerable or potentially vulnerable permissions
-[[permissions]]
-name = "unknown" # Unknown permissions
+[unknown_permissions]
 criticality = "low"
 description = "Even if the application can create its own permissions, it's discouraged, since it can lead to missunderstanding between developers."
 

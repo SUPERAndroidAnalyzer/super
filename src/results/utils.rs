@@ -3,20 +3,22 @@
 //! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
 //! information for results.
 
-use std::result::Result as StdResult;
-use std::fs::File;
-use std::io::Read;
-use std::cmp::Ordering;
-use std::path::{Path, PathBuf};
-use std::borrow::Cow;
+use std::{
+    borrow::Cow,
+    cmp::Ordering,
+    fs::File,
+    io::Read,
+    path::{Path, PathBuf},
+};
 
+use failure::Error;
+use hex::ToHex;
+use lazy_static::lazy_static;
+use regex::Regex;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use {md5, sha1, sha2};
-use rustc_serialize::hex::ToHex;
-use regex::Regex;
 
-use error::*;
-use Criticality;
+use crate::criticality::Criticality;
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
@@ -47,17 +49,17 @@ impl Vulnerability {
         start_line: Option<usize>,
         end_line: Option<usize>,
         code: Option<C>,
-    ) -> Vulnerability {
-        Vulnerability {
-            criticality: criticality,
+    ) -> Self {
+        Self {
+            criticality,
             name: name.into(),
             description: description.into(),
             file: match file {
                 Some(p) => Some(p.as_ref().to_path_buf()),
                 None => None,
             },
-            start_line: start_line,
-            end_line: end_line,
+            start_line,
+            end_line,
             code: match code {
                 Some(c) => Some(c.into()),
                 None => None,
@@ -72,7 +74,7 @@ impl Vulnerability {
 }
 
 impl Serialize for Vulnerability {
-    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
@@ -90,15 +92,13 @@ impl Serialize for Vulnerability {
         )?;
         ser_struct.serialize_field("criticality", &self.criticality)?;
         ser_struct.serialize_field("name", self.name.as_str())?;
-        ser_struct.serialize_field(
-            "description",
-            self.description.as_str(),
-        )?;
+        ser_struct.serialize_field("description", self.description.as_str())?;
         ser_struct.serialize_field("file", &self.file)?;
         if self.code.is_some() {
             ser_struct.serialize_field(
                 "language",
-                &self.file
+                &self
+                    .file
                     .as_ref()
                     .unwrap()
                     .extension()
@@ -106,19 +106,10 @@ impl Serialize for Vulnerability {
                     .to_string_lossy(),
             )?;
             if self.start_line == self.end_line {
-                ser_struct.serialize_field(
-                    "line",
-                    &(self.start_line.unwrap() + 1),
-                )?;
+                ser_struct.serialize_field("line", &(self.start_line.unwrap() + 1))?;
             } else {
-                ser_struct.serialize_field(
-                    "start_line",
-                    &(self.start_line.unwrap() + 1),
-                )?;
-                ser_struct.serialize_field(
-                    "end_line",
-                    &(self.end_line.unwrap() + 1),
-                )?;
+                ser_struct.serialize_field("start_line", &(self.start_line.unwrap() + 1))?;
+                ser_struct.serialize_field("end_line", &(self.end_line.unwrap() + 1))?;
             }
             ser_struct.serialize_field("code", &self.code)?;
         }
@@ -127,7 +118,7 @@ impl Serialize for Vulnerability {
 }
 
 impl PartialOrd for Vulnerability {
-    fn partial_cmp(&self, other: &Vulnerability) -> Option<Ordering> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         Some(
             (
                 &self.criticality,
@@ -135,7 +126,8 @@ impl PartialOrd for Vulnerability {
                 &self.start_line,
                 &self.end_line,
                 &self.name,
-            ).cmp(&(
+            )
+                .cmp(&(
                     &other.criticality,
                     &other.file,
                     &other.start_line,
@@ -160,7 +152,7 @@ impl FingerPrint {
     /// Creates a new fingerprint.
     ///
     /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
-    pub fn new<P: AsRef<Path>>(package: P) -> Result<FingerPrint> {
+    pub fn new<P: AsRef<Path>>(package: P) -> Result<Self, Error> {
         use sha2::Digest;
 
         let mut f = File::open(package)?;
@@ -175,7 +167,7 @@ impl FingerPrint {
 
         let mut sha256_res = [0_u8; 32];
         sha256_res.clone_from_slice(&sha256.result()[..]);
-        Ok(FingerPrint {
+        Ok(Self {
             md5: md5::compute(&buffer),
             sha1: sha1.digest(),
             sha256: sha256_res,
@@ -184,17 +176,20 @@ impl FingerPrint {
 }
 
 impl Serialize for FingerPrint {
-    fn serialize<S>(&self, serializer: S) -> StdResult<S::Ok, S::Error>
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
-        ser_struct.serialize_field(
-            "md5",
-            &format!("{:x}", self.md5),
-        )?;
+        ser_struct.serialize_field("md5", &format!("{:x}", self.md5))?;
         ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
-        ser_struct.serialize_field("sha256", &self.sha256.to_hex())?;
+        let mut sha256_hex = String::new();
+        // It should never fail, we are writing directly to memory, without I/O access
+        // That's why the `expect()` should never panic.
+        self.sha256
+            .write_hex(&mut sha256_hex)
+            .expect("the SHA-256 fingerprinting of the application failed");
+        ser_struct.serialize_field("sha256", &sha256_hex)?;
         ser_struct.end()
     }
 }

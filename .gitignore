@@ -1,7 +1,8 @@
 downloads/*
 dist/*
 results/*
-target
+target/*
+releases/*
 rpmbuild/*
 !rpmbuild/super.spec
 *.bk

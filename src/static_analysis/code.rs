@@ -1,24 +1,30 @@
-use std::fs;
-use std::fs::{File, DirEntry};
-use std::io::Read;
-use std::str::FromStr;
-use std::path::Path;
-use std::borrow::Borrow;
-use std::thread;
-use std::sync::{Arc, Mutex};
-use std::slice::Iter;
-use std::error::Error as StdError;
+//! Code analysis module.
 
-use serde_json;
-use serde_json::value::Value;
-use regex::Regex;
+use std::{
+    borrow::Borrow,
+    fmt,
+    fs::{self, DirEntry, File},
+    path::Path,
+    slice::Iter,
+    sync::{Arc, Mutex},
+    thread,
+};
+
 use colored::Colorize;
+use failure::{Error, Fail, ResultExt};
+use regex::Regex;
+use serde::de::{self, Deserializer, SeqAccess, Visitor};
+use serde_json;
 
-use {Config, Criticality, print_warning, print_vulnerability, get_code};
-use results::{Results, Vulnerability};
-use super::manifest::{Permission, Manifest};
-use error::*;
+use super::manifest::{Manifest, Permission};
+use crate::{
+    criticality::Criticality,
+    error, get_code, print_vulnerability, print_warning,
+    results::{Results, Vulnerability},
+    Config,
+};
 
+/// Analyzes the whole codebase of the application.
 pub fn analysis<S: AsRef<str>>(
     manifest: Option<Manifest>,
     config: &Config,
@@ -30,7 +36,7 @@ pub fn analysis<S: AsRef<str>>(
         Err(e) => {
             print_warning(format!(
                 "An error occurred when loading code analysis rules. Error: {}",
-                e.description()
+                e
             ));
             return;
         }
@@ -39,9 +45,9 @@ pub fn analysis<S: AsRef<str>>(
     let mut files: Vec<DirEntry> = Vec::new();
     if let Err(e) = add_files_to_vec("", &mut files, package.as_ref(), config) {
         print_warning(format!(
-            "An error occurred when reading files for analysis, the results \
-                               might be incomplete. Error: {}",
-            e.description()
+            "An error occurred when reading files for analysis, the results might be incomplete. \
+             Error: {}",
+            e
         ));
     }
     let total_files = files.len();
@@ -50,23 +56,23 @@ pub fn analysis<S: AsRef<str>>(
     let manifest = Arc::new(manifest);
     let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
-    let dist_folder = Arc::new(config.get_dist_folder().join(package.as_ref()));
+    let dist_folder = Arc::new(config.dist_folder().join(package.as_ref()));
 
     if config.is_verbose() {
         println!(
             "Starting analysis of the code with {} threads. {} files to go!",
-            format!("{}", config.get_threads()).bold(),
+            format!("{}", config.threads()).bold(),
             format!("{}", total_files).bold()
         );
     }
 
-    let handles: Vec<_> = (0..config.get_threads())
+    let handles: Vec<_> = (0..config.threads())
         .map(|_| {
-            let thread_manifest = manifest.clone();
-            let thread_files = files.clone();
-            let thread_rules = rules.clone();
-            let thread_vulns = found_vulns.clone();
-            let thread_dist_folder = dist_folder.clone();
+            let thread_manifest = Arc::clone(&manifest);
+            let thread_files = Arc::clone(&files);
+            let thread_rules = Arc::clone(&rules);
+            let thread_vulns = Arc::clone(&found_vulns);
+            let thread_dist_folder = Arc::clone(&dist_folder);
 
             thread::spawn(move || loop {
                 let f = {
@@ -81,21 +87,19 @@ pub fn analysis<S: AsRef<str>>(
                             &thread_rules,
                             &thread_manifest,
                             &thread_vulns,
-                        )
-                        {
+                        ) {
                             print_warning(format!(
-                                "Error analyzing file {}. The analysis will \
-                                                   continue, though. Error: {}",
+                                "could not analyze `{}`. The analysis will continue, though. \
+                                 Error: {}",
                                 f.path().display(),
-                                e.description()
+                                e
                             ))
                         }
                     }
                     None => break,
                 }
             })
-        })
-        .collect();
+        }).collect();
 
     if config.is_verbose() {
         let mut last_print = 0;
@@ -105,7 +109,6 @@ pub fn analysis<S: AsRef<str>>(
             Err(_) => 1,
         } > 0
         {
-
             let left = match files.lock() {
                 Ok(f) => f.len(),
                 Err(_) => continue,
@@ -120,9 +123,9 @@ pub fn analysis<S: AsRef<str>>(
 
     for t in handles {
         if let Err(e) = t.join() {
-            #[allow(use_debug)]
+            #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
             print_warning(format!(
-                "An error occurred when joining analysis threads: Error: {:?}",
+                "an error occurred when joining analysis threads: Error: {:?}",
                 e
             ));
         }
@@ -140,20 +143,20 @@ pub fn analysis<S: AsRef<str>>(
     }
 }
 
+/// Analyzes the given file.
 fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
     path: P,
     dist_folder: T,
     rules: &[Rule],
     manifest: &Option<Manifest>,
     results: &Mutex<Vec<Vulnerability>>,
-) -> Result<()> {
-    let mut f = File::open(&path)?;
-    let mut code = String::new();
-    let _ = f.read_to_string(&mut code)?;
+) -> Result<(), Error> {
+    let code = fs::read_to_string(&path)?;
 
     'check: for rule in rules {
-        if manifest.is_some() && rule.get_max_sdk().is_some() &&
-            rule.get_max_sdk().unwrap() < manifest.as_ref().unwrap().get_min_sdk()
+        if manifest.is_some()
+            && rule.max_sdk().is_some()
+            && rule.max_sdk().unwrap() < manifest.as_ref().unwrap().min_sdk()
         {
             continue 'check;
         }
@@ -166,45 +169,42 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
             }
         }
 
-        for permission in rule.get_permissions() {
-            if manifest.is_none() ||
-                !manifest
-                    .as_ref()
-                    .unwrap()
-                    .get_permission_checklist()
-                    .needs_permission(*permission)
+        for permission in rule.permissions() {
+            if manifest.is_none() || !manifest
+                .as_ref()
+                .unwrap()
+                .permission_checklist()
+                .needs_permission(*permission)
             {
                 continue 'check;
             }
         }
 
-        'rule: for m in rule.get_regex().find_iter(code.as_str()) {
-            for white in rule.get_whitelist() {
+        'rule: for m in rule.regex().find_iter(code.as_str()) {
+            for white in rule.whitelist() {
                 if white.is_match(&code[m.start()..m.end()]) {
                     continue 'rule;
                 }
             }
-            match rule.get_forward_check() {
+            match rule.forward_check() {
                 None => {
                     let start_line = get_line_for(m.start(), code.as_str());
                     let end_line = get_line_for(m.end(), code.as_str());
                     let mut results = results.lock().unwrap();
                     results.push(Vulnerability::new(
-                        rule.get_criticality(),
-                        rule.get_label(),
-                        rule.get_description(),
+                        rule.criticality(),
+                        rule.label(),
+                        rule.description(),
                         Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
                         Some(start_line),
                         Some(end_line),
                         Some(get_code(code.as_str(), start_line, end_line)),
                     ));
 
-                    print_vulnerability(rule.get_description(), rule.get_criticality());
+                    print_vulnerability(rule.description(), rule.criticality());
                 }
                 Some(check) => {
-                    let caps = rule.get_regex()
-                        .captures(&code[m.start()..m.end()])
-                        .unwrap();
+                    let caps = rule.regex().captures(&code[m.start()..m.end()]).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -222,11 +222,10 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                         Ok(r) => r,
                         Err(e) => {
                             print_warning(format!(
-                                "There was an error creating the \
-                                                   forward_check '{}'. The rule will be \
-                                                   skipped. {}",
+                                "there was an error creating the forward_check '{}'. The rule will \
+                                 be skipped. {}",
                                 r,
-                                e.description()
+                                e
                             ));
                             break 'rule;
                         }
@@ -237,16 +236,16 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                         let end_line = get_line_for(m.end(), code.as_str());
                         let mut results = results.lock().unwrap();
                         results.push(Vulnerability::new(
-                            rule.get_criticality(),
-                            rule.get_label(),
-                            rule.get_description(),
+                            rule.criticality(),
+                            rule.label(),
+                            rule.description(),
                             Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
                             Some(start_line),
                             Some(end_line),
                             Some(get_code(code.as_str(), start_line, end_line)),
                         ));
 
-                        print_vulnerability(rule.get_description(), rule.get_criticality());
+                        print_vulnerability(rule.description(), rule.criticality());
                     }
                 }
             }
@@ -274,22 +273,22 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     vec: &mut Vec<DirEntry>,
     package: S,
     config: &Config,
-) -> Result<()> {
-    if path.as_ref() == Path::new("classes/android") ||
-        path.as_ref() == Path::new("classes/com/google/android/gms") ||
-        path.as_ref() == Path::new("smali")
+) -> Result<(), Error> {
+    if path.as_ref() == Path::new("classes/android")
+        || path.as_ref() == Path::new("classes/com/google/android/gms")
+        || path.as_ref() == Path::new("smali")
     {
         return Ok(());
     }
-    let real_path = config.get_dist_folder().join(package.as_ref()).join(path);
+    let real_path = config.dist_folder().join(package.as_ref()).join(path);
     for f in fs::read_dir(&real_path)? {
         let f = match f {
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
-                    "There was an error reading the directory {}: {}",
+                    "there was an error reading the directory {}: {}",
                     real_path.display(),
-                    e.description()
+                    e
                 ));
                 return Err(e.into());
             }
@@ -300,7 +299,7 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
         if f_type.is_dir() && f_path != real_path.join("original") {
             add_files_to_vec(
                 f.path()
-                    .strip_prefix(&config.get_dist_folder().join(package.as_ref()))
+                    .strip_prefix(&config.dist_folder().join(package.as_ref()))
                     .unwrap(),
                 vec,
                 package.as_ref(),
@@ -308,8 +307,9 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
             )?;
         } else if f_ext.is_some() {
             let filename = f_path.file_name().unwrap().to_string_lossy();
-            if filename != "AndroidManifest.xml" && filename != "R.java" &&
-                !filename.starts_with("R$")
+            if filename != "AndroidManifest.xml"
+                && filename != "R.java"
+                && !filename.starts_with("R$")
             {
                 match f_ext.unwrap().to_string_lossy().borrow() {
                     "xml" | "java" => vec.push(f),
@@ -321,49 +321,67 @@ fn add_files_to_vec<P: AsRef<Path>, S: AsRef<str>>(
     Ok(())
 }
 
+/// Vulnerability searching rule.
+#[derive(Debug, Deserialize)]
 struct Rule {
+    #[serde(deserialize_with = "deserialize_main_regex")]
     regex: Regex,
-    permissions: Vec<Permission>,
+    #[serde(default)]
+    permissions: Box<[Permission]>,
     forward_check: Option<String>,
     max_sdk: Option<u32>,
-    whitelist: Vec<Regex>,
+    #[serde(deserialize_with = "deserialize_whitelist_regex")]
+    #[serde(default)]
+    whitelist: Box<[Regex]>,
     label: String,
     description: String,
     criticality: Criticality,
+    #[serde(deserialize_with = "deserialize_file_regex")]
+    #[serde(default)]
     include_file_regex: Option<Regex>,
+    #[serde(deserialize_with = "deserialize_file_regex")]
+    #[serde(default)]
     exclude_file_regex: Option<Regex>,
 }
 
 impl Rule {
-    pub fn get_regex(&self) -> &Regex {
+    /// Gets the regex of the rule.
+    pub fn regex(&self) -> &Regex {
         &self.regex
     }
 
-    pub fn get_permissions(&self) -> Iter<Permission> {
+    /// Gets the permissions required for this rule to be checked.
+    pub fn permissions(&self) -> Iter<Permission> {
         self.permissions.iter()
     }
 
-    pub fn get_forward_check(&self) -> Option<&String> {
+    /// Gets the potential forward check of the rule.
+    pub fn forward_check(&self) -> Option<&String> {
         self.forward_check.as_ref()
     }
 
-    pub fn get_max_sdk(&self) -> Option<u32> {
+    /// Gets the maximum SDK affected by this vulnerability.
+    pub fn max_sdk(&self) -> Option<u32> {
         self.max_sdk
     }
 
-    pub fn get_label(&self) -> &str {
+    /// Gets the label of the vulnerability.
+    pub fn label(&self) -> &str {
         self.label.as_str()
     }
 
-    pub fn get_description(&self) -> &str {
+    /// Gets the description of the vulnerability.
+    pub fn description(&self) -> &str {
         self.description.as_str()
     }
 
-    pub fn get_criticality(&self) -> Criticality {
+    /// Gets the criticality for the vulnerabilities found by the rule.
+    pub fn criticality(&self) -> Criticality {
         self.criticality
     }
 
-    pub fn get_whitelist(&self) -> Iter<Regex> {
+    /// Gets the whitelist regex list.
+    pub fn whitelist(&self) -> Iter<Regex> {
         self.whitelist.iter()
     }
 
@@ -387,282 +405,225 @@ impl Rule {
     }
 }
 
-fn load_rules(config: &Config) -> Result<Vec<Rule>> {
-    let f = File::open(config.get_rules_json())?;
-    let rules_json: Value = serde_json::from_reader(f)?;
+/// Regular expression serde visitor.
+struct RegexVisitor;
 
-    let mut rules = Vec::new();
-    let rules_json = if let Some(a) = rules_json.as_array() {
-        a
-    } else {
-        print_warning("Rules must be a JSON array.");
-        return Err(ErrorKind::Parse.into());
-    };
+impl<'de> Visitor<'de> for RegexVisitor {
+    type Value = Regex;
 
-    for rule in rules_json {
-        let format_warning = format!(
-            "Rules must be objects with the following structure:\n{}\nAn optional {} \
-                     attribute can be added: an array of regular expressions that if matched, \
-                     the found match will be discarded. You can also include an optional {} \
-                     attribute: an array of the permissions needed for this rule to be checked. \
-                     And finally, an optional {} attribute can be added where you can specify a \
-                     second regular expression to check if the one in the {} attribute matches. \
-                     You can add one or two capture groups with name from the match to this \
-                     check, with names {} and {}. To use them you have to include {} or {} in \
-                     the forward check.",
-            "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long \
-                     description for this rule\"\n\t\"criticality\": \
-                     \"warning|low|medium|high|critical\"\n\t\"regex\": \
-                     \"regex_to_find_vulnerability\"\n}"
-                .italic(),
-            "whitelist".italic(),
-            "permissions".italic(),
-            "forward_check".italic(),
-            "regex".italic(),
-            "fc1".italic(),
-            "fc2".italic(),
-            "{fc1}".italic(),
-            "{fc2}".italic()
-        );
-        let rule = if let Some(o) = rule.as_object() {
-            o
-        } else {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
-        };
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("a valid regular expression")
+    }
 
-        if rule.len() < 4 || rule.len() > 8 {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
+    fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        Regex::new(value).map_err(E::custom)
+    }
+
+    fn visit_borrowed_str<E>(self, value: &'de str) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        self.visit_str(value)
+    }
+
+    fn visit_string<E>(self, value: String) -> Result<Self::Value, E>
+    where
+        E: de::Error,
+    {
+        self.visit_str(&value)
+    }
+}
+
+/// Deserializes the main regular expression of a rule.
+fn deserialize_main_regex<'de, D>(deserializer: D) -> Result<Regex, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    deserializer.deserialize_str(RegexVisitor)
+}
+
+/// Deserializes the list of whitelist regular expressions.
+fn deserialize_whitelist_regex<'de, D>(deserializer: D) -> Result<Box<[Regex]>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    /// Visitor that deserializes a sequence of regular expressions.
+    struct RegexSeqVisitor;
+
+    impl<'de> Visitor<'de> for RegexSeqVisitor {
+        type Value = Box<[Regex]>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a list of valid regular expressions")
         }
 
-        let regex = if let Some(&Value::String(ref r)) = rule.get("regex") {
-            match Regex::new(r) {
-                Ok(r) => r,
-                Err(e) => {
-                    print_warning(format!(
-                        "An error occurred when compiling the regular \
-                                           expresion: {}",
-                        e.description()
-                    ));
-                    return Err(ErrorKind::Parse.into());
-                }
+        fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'de>,
+        {
+            use serde::de::Error as SerdeError;
+
+            let mut list = Vec::with_capacity(seq.size_hint().unwrap_or(0));
+
+            // While there are entries remaining in the input, add them into our vector.
+            while let Some(regex_str) = seq.next_element::<String>()? {
+                list.push(Regex::new(regex_str.as_str()).map_err(A::Error::custom)?)
             }
-        } else {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
-        };
 
-        let max_sdk = match rule.get("max_sdk") {
-            Some(&Value::Number(ref sdk)) if sdk.is_u64() => Some(sdk.as_u64().unwrap() as u32),
-            None => None,
-            _ => {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            }
-        };
-
-        let permissions = match rule.get("permissions") {
-            Some(&Value::Array(ref v)) => {
-                let mut list = Vec::with_capacity(v.len());
-                for p in v {
-                    list.push(if let Value::String(ref p) = *p {
-                        if let Ok(p) = Permission::from_str(p) {
-                            p
-                        } else {
-                            print_warning(format!("the permission {} is unknown", p.italic()));
-                            return Err(ErrorKind::Parse.into());
-                        }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
-                    });
-                }
-                list
-            }
-            Some(_) => {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            }
-            None => Vec::with_capacity(0),
-        };
-
-        let forward_check = match rule.get("forward_check") {
-            Some(&Value::String(ref s)) => {
-                let capture_names = regex.capture_names();
-                for cap in capture_names {
-                    match cap {
-                        Some("fc1") => {
-                            if !s.contains("{fc1}") {
-                                print_warning(
-                                    "You must provide the '{fc1}' string where you \
-                                               want the 'fc1' capture to be inserted in the \
-                                               forward check.",
-                                );
-                                return Err(ErrorKind::Parse.into());
-                            }
-                        }
-                        Some("fc2") => {
-                            if !s.contains("{fc2}") {
-                                print_warning(
-                                    "You must provide the '{fc2}' string where you \
-                                               want the 'fc2' capture to be inserted in the \
-                                               forward check.",
-                                );
-                                return Err(ErrorKind::Parse.into());
-                            }
-                        }
-                        _ => {}
-                    }
-                }
-
-                let mut capture_names = regex.capture_names();
-                if capture_names.any(|c| c.is_some() && c.unwrap() == "fc2") &&
-                    !capture_names.any(|c| c.is_some() && c.unwrap() == "fc1")
-                {
-                    print_warning(
-                        "You must have a capture group named fc1 to use the capture \
-                                   fc2.",
-                    );
-                    return Err(ErrorKind::Parse.into());
-                }
-
-                Some(s.clone())
-            }
-            None => None,
-            _ => {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            }
-        };
-
-        let label = if let Some(&Value::String(ref l)) = rule.get("label") {
-            l
-        } else {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
-        };
-
-        let description = if let Some(&Value::String(ref d)) = rule.get("description") {
-            d
-        } else {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
-        };
-
-        let criticality = if let Some(&Value::String(ref c)) = rule.get("criticality") {
-            match Criticality::from_str(c) {
-                Ok(c) => c,
-                Err(e) => {
-                    print_warning(format!(
-                        "Criticality must be  one of {}, {}, {}, {} or {}.",
-                        "warning".italic(),
-                        "low".italic(),
-                        "medium".italic(),
-                        "high".italic(),
-                        "critical".italic()
-                    ));
-                    return Err(e);
-                }
-            }
-        } else {
-            print_warning(format_warning);
-            return Err(ErrorKind::Parse.into());
-        };
-
-        let whitelist = match rule.get("whitelist") {
-            Some(&Value::Array(ref v)) => {
-                let mut list = Vec::with_capacity(v.len());
-                for r in v {
-                    list.push(if let Value::String(ref r) = *r {
-                        match Regex::new(r) {
-                            Ok(r) => r,
-                            Err(e) => {
-                                print_warning(format!(
-                                    "An error occurred when compiling the \
-                                                       regular expresion: {}",
-                                    e.description()
-                                ));
-                                return Err(ErrorKind::Parse.into());
-                            }
-                        }
-                    } else {
-                        print_warning(format_warning);
-                        return Err(ErrorKind::Parse.into());
-                    });
-                }
-                list
-            }
-            Some(_) => {
-                print_warning(format_warning);
-                return Err(ErrorKind::Parse.into());
-            }
-            None => Vec::with_capacity(0),
-        };
-
-        let inclusion_regex = rule.get("include_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
-                let include_regex = Regex::new(r);
-                match include_regex {
-                    Ok(regex) => Some(regex),
-                    Err(e) => {
-                        print_warning(format!(
-                            "An error ocurred when compiling the inclusion \
-                                               regular expresion: {}",
-                            e.description()
-                        ));
-                        None
-                    }
-                }
-            });
-
-        let exclusion_regex = rule.get("exclude_file_regex")
-            .and_then(Value::as_str)
-            .and_then(|r| {
-                let exclude_regex = Regex::new(r);
-                match exclude_regex {
-                    Ok(regex) => Some(regex),
-                    Err(e) => {
-                        print_warning(format!(
-                            "An error ocurred when compiling the exclusion \
-                                               regular expresion: {}",
-                            e.description()
-                        ));
-                        None
-                    }
-                }
-            });
-
-        if criticality >= config.get_min_criticality() {
-            rules.push(Rule {
-                regex: regex,
-                permissions: permissions,
-                forward_check: forward_check,
-                max_sdk: max_sdk,
-                label: label.clone(),
-                description: description.clone(),
-                criticality: criticality,
-                whitelist: whitelist,
-                include_file_regex: inclusion_regex,
-                exclude_file_regex: exclusion_regex,
-            })
+            Ok(list.into_boxed_slice())
         }
     }
+
+    deserializer.deserialize_seq(RegexSeqVisitor)
+}
+
+/// Deserializes file regular expressions.
+fn deserialize_file_regex<'de, D>(deserializer: D) -> Result<Option<Regex>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    /// Optional regular expression serde visitor.
+    struct RegexOptionVisitor;
+
+    impl<'de> Visitor<'de> for RegexOptionVisitor {
+        type Value = Option<Regex>;
+
+        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+            formatter.write_str("a valid regular expression")
+        }
+
+        fn visit_some<D>(self, deserializer: D) -> Result<Self::Value, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            deserializer
+                .deserialize_str(RegexVisitor)
+                .and_then(|regex| Ok(Some(regex)))
+        }
+
+        fn visit_none<E>(self) -> Result<Self::Value, E>
+        where
+            E: de::Error,
+        {
+            Ok(None)
+        }
+    }
+
+    deserializer.deserialize_option(RegexOptionVisitor)
+}
+
+fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
+    let f = File::open(config.rules_json())?;
+    let format_error = format!(
+        "rules must be objects with the following structure:\n{}\nAn optional {} attribute can be \
+         added: an array of regular expressions that if matched, the found match will be \
+         discarded. You can also include an optional {} attribute: an array of the permissions \
+         needed for this rule to be checked. And finally, an optional {} attribute can be added \
+         where you can specify a second regular expression to check if the one in the {} attribute \
+         matches. You can add one or two capture groups with name from the match to this check, \
+         with names {} and {}. To use them you have to include {} or {} in the forward check.",
+        "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for this \
+         rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
+         \"regex_to_find_vulnerability\"\n}"
+            .italic(),
+        "whitelist".italic(),
+        "permissions".italic(),
+        "forward_check".italic(),
+        "regex".italic(),
+        "fc1".italic(),
+        "fc2".italic(),
+        "{fc1}".italic(),
+        "{fc2}".italic()
+    );
+
+    let rules: Vec<Rule> = serde_json::from_reader(f).context(format_error.clone())?;
+    let rules = rules
+        .into_iter()
+        .filter_map(|rule| {
+            if rule.criticality >= config.min_criticality() {
+                let fc1_in_regex = rule.regex().capture_names().any(|c| c == Some("fc1"));
+                let fc2_in_regex = rule.regex().capture_names().any(|c| c == Some("fc2"));
+
+                let forward_check = rule.forward_check().cloned();
+                if let Some(forward_check) = forward_check {
+                    let fc1_in_fc = forward_check.contains("{fc1}");
+                    let fc2_in_fc = forward_check.contains("{fc2}");
+
+                    if fc1_in_regex && !fc1_in_fc {
+                        Some(Err(error::Kind::Parse
+                            .context(
+                                "fc1 capture group used but no placeholder found in the forward \
+                                 check",
+                            ).into()))
+                    } else if fc2_in_regex && !fc2_in_fc {
+                        Some(Err(error::Kind::Parse
+                            .context(
+                                "fc2 capture group used but no placeholder found in the forward \
+                                 check",
+                            ).into()))
+                    } else {
+                        if fc2_in_regex && !fc1_in_regex {
+                            print_warning(format!(
+                                "fc2 capture group used in the `{}` rule's forward check, but no \
+                                 fc1 capture group used",
+                                rule.label()
+                            ));
+                        }
+
+                        if fc1_in_fc && !fc1_in_regex {
+                            print_warning(format!(
+                                "{{fc1}} used in the `{}` rule's forward check, but no capture \
+                                 group is checking for it",
+                                rule.label()
+                            ));
+                        }
+
+                        if fc2_in_fc && !fc2_in_regex {
+                            print_warning(format!(
+                                "{{fc2}} used in the `{}` rule's forward check, but no capture \
+                                 group is checking for it",
+                                rule.label()
+                            ));
+                        }
+
+                        Some(Ok(rule))
+                    }
+                } else {
+                    Some(Ok(rule))
+                }
+            } else {
+                None
+            }
+        }).collect::<Result<Vec<Rule>, Error>>()
+        .context(format_error)?;
 
     Ok(rules)
 }
 
 #[cfg(test)]
+#[cfg_attr(feature = "cargo-clippy", allow(trivial_regex))]
 mod tests {
+    use failure::Error;
     use regex::Regex;
-    use super::{Rule, load_rules};
-    use config::Config;
-    use Criticality;
+
+    use super::{load_rules, Rule};
+    use crate::{config::Config, criticality::Criticality};
+
+    /// Prints information about the given error.
+    fn print_error(e: &Error) {
+        eprintln!("Error: {}", e);
+
+        for e in e.iter_causes() {
+            eprintln!("\tCaused by: {}", e);
+        }
+    }
 
     fn check_match<S: AsRef<str>>(text: S, rule: &Rule) -> bool {
-        if rule.get_regex().is_match(text.as_ref()) {
-            for white in rule.get_whitelist() {
+        if rule.regex().is_match(text.as_ref()) {
+            for white in rule.whitelist() {
                 if white.is_match(text.as_ref()) {
                     let m = white.find(text.as_ref()).unwrap();
                     println!(
@@ -674,19 +635,19 @@ mod tests {
                     return false;
                 }
             }
-            match rule.get_forward_check() {
+            match rule.forward_check() {
                 None => {
-                    let m = rule.get_regex().find(text.as_ref()).unwrap();
+                    let m = rule.regex().find(text.as_ref()).unwrap();
                     println!(
                         "The regular expression '{}' matches the text '{}' in '{}'",
-                        rule.get_regex(),
+                        rule.regex(),
                         text.as_ref(),
                         &text.as_ref()[m.start()..m.end()]
                     );
                     true
                 }
                 Some(check) => {
-                    let caps = rule.get_regex().captures(text.as_ref()).unwrap();
+                    let caps = rule.regex().captures(text.as_ref()).unwrap();
 
                     let fcheck1 = caps.name("fc1");
                     let fcheck2 = caps.name("fc2");
@@ -723,7 +684,7 @@ mod tests {
         } else {
             println!(
                 "The regular expression '{}' does not match the text '{}'",
-                rule.get_regex(),
+                rule.regex(),
                 text.as_ref()
             );
             false
@@ -733,8 +694,14 @@ mod tests {
     #[test]
     fn it_url_regex() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(0).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[0];
 
         let should_match = &[
             "\"http://www.razican.com\"",
@@ -762,8 +729,14 @@ mod tests {
     #[test]
     fn it_catch_exception() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(1).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[1];
 
         let should_match = &[
             "catch (Exception e) {",
@@ -793,8 +766,14 @@ mod tests {
     #[test]
     fn it_throws_exception() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(2).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[2];
 
         let should_match = &[
             "throws Exception {",
@@ -823,8 +802,14 @@ mod tests {
     #[test]
     fn it_hidden_fields() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(3).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[3];
 
         let should_match = &[
             "setVisible(View.INVISIBLE)",
@@ -848,8 +833,14 @@ mod tests {
     #[test]
     fn it_ipv4_disclosure() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(4).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[4];
 
         let should_match = &[
             " 192.168.1.1",
@@ -882,8 +873,14 @@ mod tests {
     #[test]
     fn it_math_random() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(5).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[5];
 
         let should_match = &["Math.random()", "Random()", "Math . random ()"];
         let should_not_match = &[
@@ -906,18 +903,24 @@ mod tests {
     #[test]
     fn it_log() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(6).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[6];
 
         let should_match = &[
             "Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
-                              \" + messageToShow);",
+             \" + messageToShow);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
             " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-                              database: \" + messageToShow + msg1 +  msg2 + msg3);",
+             database: \" + messageToShow + msg1 +  msg2 + msg3);",
         ];
 
         let should_not_match = &[
@@ -941,8 +944,14 @@ mod tests {
     #[test]
     fn it_file_separator() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(7).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[7];
 
         let should_match = &[
             "C:\\",
@@ -965,8 +974,14 @@ mod tests {
     #[test]
     fn it_weak_algs() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(8).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[8];
 
         let should_match = &[
             "DESKeySpec",
@@ -999,8 +1014,14 @@ mod tests {
     #[test]
     fn it_sleep_method() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(9).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[9];
 
         let should_match = &[
             "Thread.sleep(Usertime+Variable+Variable);",
@@ -1030,8 +1051,14 @@ mod tests {
     #[test]
     fn it_world_readable_permissions() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(10).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[10];
 
         let should_match = &[
             "MODE_WORLD_READABLE",
@@ -1060,8 +1087,14 @@ mod tests {
     #[test]
     fn it_world_writable_permissions() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(11).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[11];
 
         let should_match = &[
             "MODE_WORLD_WRITABLE",
@@ -1090,8 +1123,14 @@ mod tests {
     #[test]
     fn it_external_storage_write_read() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(12).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[12];
 
         let should_match = &[".getExternalStorage", ".getExternalFilesDir()"];
 
@@ -1109,8 +1148,14 @@ mod tests {
     #[test]
     fn it_temp_file() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(13).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[13];
 
         let should_match = &[".createTempFile()", ".createTempFile()"];
 
@@ -1128,8 +1173,14 @@ mod tests {
     #[test]
     fn it_webview_xss() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(14).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[14];
 
         let should_match = &["setJavaScriptEnabled(true)    .addJavascriptInterface()"];
 
@@ -1147,12 +1198,18 @@ mod tests {
     #[test]
     fn it_webview_ssl_errors() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(15).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[15];
 
         let should_match = &[
             "onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
-                              error)             .proceed();",
+             error)             .proceed();",
         ];
 
         let should_not_match = &["", "", "", ""];
@@ -1169,16 +1226,22 @@ mod tests {
     #[test]
     fn it_sql_injection() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(16).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[16];
 
         let should_match = &[
             "android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
-                              ('\" + paramView.getText().toString() + \"', '\" + \
-                              localEditText.getText().toString() + \"');\");",
+             ('\" + paramView.getText().toString() + \"', '\" + \
+             localEditText.getText().toString() + \"');\");",
             "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES \
-                              ('\" + paramView.getText().toString() + \"', '\" + \
-                              localEditText.getText().toString() + \"');\");",
+             ('\" + paramView.getText().toString() + \"', '\" + \
+             localEditText.getText().toString() + \"');\");",
         ];
 
         let should_not_match = &[
@@ -1200,8 +1263,14 @@ mod tests {
     #[test]
     fn it_ssl_accepting_all_certificates() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(17).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[17];
 
         let should_match = &[
             "javax.net.ssl   TrustAllSSLSocket-Factory",
@@ -1231,15 +1300,23 @@ mod tests {
     #[test]
     fn it_sms_mms_sending() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(18).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[18];
 
         let should_match = &[
-            "telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
-               scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
-               ArrayList<PendingIntent> deliveryIntents)",
-            "telephony.SmsManager  sendTextMessage(String destinationAddress, String \
-               scAddress, String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
+            "telephony.SmsManager  sendMultipartTextMessage(String \
+             destinationAddress, String scAddress, ArrayList<String> parts, \
+             ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
+             deliveryIntents)",
+            "telephony.SmsManager  sendTextMessage(String destinationAddress, \
+             String scAddress, String text, PendingIntent sentIntent, \
+             PendingIntent deliveryIntent)",
             "telephony.SmsManager  vnd.android-dir/mms-sms",
             "telephony.SmsManager  vnd.android-dir/mms-sms",
         ];
@@ -1247,11 +1324,11 @@ mod tests {
         let should_not_match = &[
             "vnd.android-dir/mms-sms",
             "sendTextMessage(String destinationAddress, String scAddress, \
-                                  String text, PendingIntent sentIntent, PendingIntent \
-                                  deliveryIntent)",
+             String text, PendingIntent sentIntent, PendingIntent \
+             deliveryIntent)",
             " sendMultipartTextMessage(String destinationAddress, String \
-                                  scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
-                                  sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+             scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
+             sentIntents, ArrayList<PendingIntent> deliveryIntents)",
             "telephony.SmsManager ",
         ];
 
@@ -1267,8 +1344,14 @@ mod tests {
     #[test]
     fn it_superuser_privileges() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(19).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[19];
 
         let should_match = &[
             "com.noshufou.android.su",
@@ -1292,8 +1375,14 @@ mod tests {
     #[test]
     fn it_superuser_device_detection() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(20).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[20];
 
         let should_match = &[
             ".contains(\"test-keys\")",
@@ -1319,8 +1408,14 @@ mod tests {
     #[test]
     fn it_base_station_location() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(21).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[21];
 
         let should_match = &["telephony.TelephonyManager    getCellLocation"];
 
@@ -1338,8 +1433,14 @@ mod tests {
     #[test]
     fn it_get_device_id() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(22).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[22];
 
         let should_match = &["telephony.TelephonyManager      getDeviceId()"];
 
@@ -1357,8 +1458,14 @@ mod tests {
     #[test]
     fn it_get_sim_serial() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(23).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[23];
 
         let should_match = &["telephony.TelephonyManager      getSimSerialNumber()"];
 
@@ -1376,8 +1483,14 @@ mod tests {
     #[test]
     fn it_gps_location() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(24).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[24];
 
         let should_match = &[
             "android.location   getLastKnownLocation()",
@@ -1406,8 +1519,14 @@ mod tests {
     #[test]
     fn it_base64_encode() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(25).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[25];
 
         let should_match = &[
             "android.util.Base64 .encodeToString()",
@@ -1428,8 +1547,14 @@ mod tests {
     #[test]
     fn it_base64_decoding() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(26).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[26];
 
         let should_match = &["android.util.Base64   .decode()"];
 
@@ -1447,8 +1572,14 @@ mod tests {
     #[test]
     fn it_infinite_loop() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(27).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[27];
 
         let should_match = &["while(true)"];
 
@@ -1466,8 +1597,14 @@ mod tests {
     #[test]
     fn it_email_disclosure() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(28).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[28];
 
         let should_match = &[
             "super@super.es",
@@ -1490,8 +1627,14 @@ mod tests {
     #[test]
     fn it_hardcoded_certificate() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(29).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[29];
 
         let should_match = &[
             "\"key.key              ",
@@ -1499,7 +1642,7 @@ mod tests {
             "\"    key.pub    ",
             "\"    cert.pub   ",
             "     throw new IllegalArgumentException(\"translateAPI.key is not \
-                              specified\");",
+             specified\");",
         ];
 
         let should_not_match = &[
@@ -1521,8 +1664,14 @@ mod tests {
     #[test]
     fn it_get_sim_operator() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(30).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[30];
 
         let should_match = &["telephony.TelephonyManager      getSimOperator()"];
 
@@ -1540,8 +1689,14 @@ mod tests {
     #[test]
     fn it_get_sim_operatorname() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(31).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[31];
 
         let should_match = &["telephony.TelephonyManager      getSimOperatorName()"];
 
@@ -1559,8 +1714,14 @@ mod tests {
     #[test]
     fn it_obfuscation() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(32).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[32];
 
         let should_match = &[
             "android.utils.AESObfuscator getObfuscator();",
@@ -1588,8 +1749,14 @@ mod tests {
     #[test]
     fn it_command_exec() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(33).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[33];
 
         let should_match = &[
             "Runtime.getRuntime().exec(\"command\", options);",
@@ -1617,13 +1784,17 @@ mod tests {
     #[test]
     fn it_ssl_getinsecure_method() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(34).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[34];
 
-        let should_match = &[
-            " javax.net.ssl.SSLSocketFactory                 \
-                              SSLSocketFactory.getInsecure()",
-        ];
+        let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
+                              SSLSocketFactory.getInsecure()"];
 
         let should_not_match = &[
             "getInsecure()",
@@ -1644,8 +1815,14 @@ mod tests {
     #[test]
     fn it_finally_with_return() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(35).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[35];
 
         let should_match = &[
             "finally {                      return;",
@@ -1670,8 +1847,14 @@ mod tests {
     #[test]
     fn it_sleep_method_notvalidated() {
         let config = Config::default();
-        let rules = load_rules(&config).unwrap();
-        let rule = rules.get(36).unwrap();
+        let rules = match load_rules(&config) {
+            Ok(r) => r,
+            Err(e) => {
+                print_error(&e);
+                panic!()
+            }
+        };
+        let rule = &rules[36];
 
         let should_match = &[
             "int var = EditText.getText  Thread.sleep(100 + var);",
@@ -1698,10 +1881,10 @@ mod tests {
     fn it_has_to_check_rule_if_exclude_and_include_regexp_are_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1716,10 +1899,10 @@ mod tests {
     fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1734,10 +1917,10 @@ mod tests {
     fn it_does_not_have_to_check_rule_if_include_regexp_is_non_match_and_exlcude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1752,10 +1935,10 @@ mod tests {
     fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1770,10 +1953,10 @@ mod tests {
     fn it_does_not_have_to_check_rule_if_exclude_is_match() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
@@ -1788,10 +1971,10 @@ mod tests {
     fn it_does_not_have_to_check_if_both_regexps_matches() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
-            permissions: Vec::new(),
+            permissions: Box::new([]),
             forward_check: None,
             max_sdk: None,
-            whitelist: Vec::new(),
+            whitelist: Box::new([]),
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
