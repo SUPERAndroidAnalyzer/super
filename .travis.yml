@@ -49,7 +49,7 @@ matrix:
     env: DEPLOY=true
   allow_failures:
   - os: windows
-    rust: nightly
+    # rust: nightly
   - rust: stable
 
 before_script:
