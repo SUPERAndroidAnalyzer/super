@@ -97,8 +97,8 @@ License, or (at your option) any later version.
 [linux_mac_build]: https://travis-ci.org/SUPERAndroidAnalyzer/super
 [coverage_img]: https://codecov.io/gh/SUPERAndroidAnalyzer/super/branch/master/graph/badge.svg
 [coverage]: https://codecov.io/gh/SUPERAndroidAnalyzer/super
-[compile]: http://superanalyzer.rocks/download.html#compile-from-source
-[downloads]: http://superanalyzer.rocks/download.html
+[compile]: https://superanalyzer.rocks/download.html#compile-from-source
+[downloads]: https://superanalyzer.rocks/download.html
 [rustup]: https://www.rustup.rs/
 [contributing]: https://github.com/SUPERAndroidAnalyzer/super/blob/master/contributing.md
 [documentation]: https://superandroidanalyzer.github.io/super/
