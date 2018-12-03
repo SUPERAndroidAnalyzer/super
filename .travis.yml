@@ -5,11 +5,6 @@ sudo: true
 services:
 - docker
 
-os:
-- linux
-- osx
-- windows
-
 addons:
   apt:
     packages:
@@ -22,6 +17,11 @@ addons:
     - libiberty-dev
     - zlib1g-dev
 
+os:
+- linux
+- osx
+- windows
+
 # Run builds for all the supported trains
 rust:
 #- 1.31.0
@@ -30,7 +30,6 @@ rust:
 - nightly
 
 stages:
-- check
 - test
 - package
 - deploy
@@ -38,25 +37,6 @@ stages:
 # Extra jobs to include
 jobs:
   include:
-  # Check build
-  - os: linux
-    rust: stable
-    stage: check
-    script: ./travis-helper.sh build
-  - os: linux
-    rust: nightly
-    stage: check
-    script: ./travis-helper.sh build_unstable
-  # Run clippy
-  - os: linux
-    rust: stable
-    stage: check
-    script: ./travis-helper.sh clippy_run
-  # Check formatting
-  - os: linux
-    rust: stable
-    stage: check
-    script: ./travis-helper.sh fmt_run
   # Generate packages for multiple distributions.
   - os: linux
     rust: stable
@@ -122,15 +102,17 @@ before_script:
 
 # Run the multiple tests.
 script:
-- "./travis-helper.sh test"
-- "./travis-helper.sh test_ignored"
-- "./travis-helper.sh build_unstable"
-- "./travis-helper.sh test_unstable"
-- "./travis-helper.sh test_unstable_ignored"
+- ./travis-helper.sh fmt_run
+- ./travis-helper.sh clippy_run
+- ./travis-helper.sh test
+- ./travis-helper.sh test_ignored
+- ./travis-helper.sh build_unstable
+- ./travis-helper.sh test_unstable
+- ./travis-helper.sh test_unstable_ignored
 
 # Upload code coverage report
 after_success:
-- "./travis-helper.sh upload_code_coverage"
+- ./travis-helper.sh upload_code_coverage
 
 notifications:
   email:
