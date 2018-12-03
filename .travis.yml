@@ -30,10 +30,8 @@ rust:
 - nightly
 
 stages:
-- build
-- clippy_check
+- check
 - test
-- format_check
 - package
 - deploy
 
@@ -43,21 +41,21 @@ jobs:
   # Check build
   - os: linux
     rust: stable
-    stage: build
+    stage: check
     script: ./travis-helper.sh build
   - os: linux
     rust: nightly
-    stage: build
+    stage: check
     script: ./travis-helper.sh build_unstable
   # Run clippy
   - os: linux
     rust: stable
-    stage: clippy_check
+    stage: check
     script: ./travis_helper.sh clippy_run
   # Check formatting
   - os: linux
     rust: stable
-    stage: format_check
+    stage: check
     script: ./travis_helper.sh fmt_run
   # Generate packages for multiple distributions.
   - os: linux

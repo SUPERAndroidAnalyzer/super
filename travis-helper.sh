@@ -4,7 +4,7 @@ action="$1"
 package="$2"
 
 # Build the project with default features.
-elif [ "$action" = "build" ]; then
+if [ "$action" = "build" ]; then
   cargo build --verbose
 
 # Run unit and integration tests.
