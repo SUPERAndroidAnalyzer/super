@@ -51,34 +51,34 @@ jobs:
   - os: linux
     rust: stable
     stage: check
-    script: ./travis_helper.sh clippy_run
+    script: ./travis-helper.sh clippy_run
   # Check formatting
   - os: linux
     rust: stable
     stage: check
-    script: ./travis_helper.sh fmt_run
+    script: ./travis-helper.sh fmt_run
   # Generate packages for multiple distributions.
   - os: linux
     rust: stable
     stage: package
-    script: ./travis_helper.sh dist_test debian
+    script: ./travis-helper.sh dist_test debian
   - os: linux
     rust: stable
     stage: package
-    script: ./travis_helper.sh dist_test ubuntu
+    script: ./travis-helper.sh dist_test ubuntu
   - os: linux
     rust: stable
     stage: package
-    script: ./travis_helper.sh dist_test fedora
+    script: ./travis-helper.sh dist_test fedora
   - os: linux
     rust: stable
     stage: package
-    script: ./travis_helper.sh dist_test centos
+    script: ./travis-helper.sh dist_test centos
   # Upload documentation
   - os: linux
     rust: stable
     stage: deploy
-    script: ./travis_helper.sh documentation
+    script: ./travis-helper.sh documentation
     deploy: &pages
       provider: pages
       github-token: $GITHUB_TOKEN
@@ -92,7 +92,7 @@ jobs:
   - os: linux
     rust: stable
     stage: deploy
-    script: ./travis_helper.sh deploy
+    script: ./travis-helper.sh deploy
     deploy: &releases
       provider: releases
       api_key:
@@ -112,7 +112,6 @@ matrix:
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin
-- "./travis-helper.sh install_deps"
   # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
 - |
   if [[ $TRAVIS_TAG ]]; then

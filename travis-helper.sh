@@ -74,7 +74,7 @@ elif [ "$action" = "dist_test" ]; then
     docker exec "$package" "/root/super/`echo $package`_build.sh"
 
 elif [ "action" = "deploy"]; then
-  if ![-z $TRAVIS_TAG]; then
+  if [ ! -z $TRAVIS_TAG ]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
       docker pull "$PACKAGE:latest" &&
