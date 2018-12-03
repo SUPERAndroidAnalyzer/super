@@ -20,39 +20,38 @@ addons:
 os:
 - linux
 - osx
-- windows
+# - windows
 
 # Run builds for all the supported trains
 rust:
-#- 1.31.0
+# - 1.31.0
 - stable
 - beta
 - nightly
 
 stages:
 - test
-- package
 - deploy
 
 # Extra jobs to include
 jobs:
   include:
-  # Generate packages for multiple distributions.
+  # Test package generation for multiple distributions.
   - os: linux
     rust: stable
-    stage: package
+    stage: test
     script: ./travis-helper.sh dist_test debian
   - os: linux
     rust: stable
-    stage: package
+    stage: test
     script: ./travis-helper.sh dist_test ubuntu
   - os: linux
     rust: stable
-    stage: package
+    stage: test
     script: ./travis-helper.sh dist_test fedora
   - os: linux
     rust: stable
-    stage: package
+    stage: test
     script: ./travis-helper.sh dist_test centos
   # Upload documentation
   - os: linux
@@ -70,7 +69,7 @@ jobs:
         branch: develop
   # Deploy the release
   - os: linux
-    rust: stable
+    rust: false
     stage: deploy
     script: ./travis-helper.sh deploy
     deploy: &releases
@@ -86,8 +85,8 @@ jobs:
 
 matrix:
   allow_failures:
-  - os: windows
-    # rust: nightly
+  # - os: windows
+  #   rust: nightly
   - rust: stable
 
 before_script:
