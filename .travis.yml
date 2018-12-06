@@ -20,11 +20,11 @@ addons:
 os:
 - linux
 - osx
-# - windows
+- windows
 
 # Run builds for all the supported trains
 rust:
-# - 1.31.0
+- 1.31.0
 - stable
 - beta
 - nightly
@@ -85,9 +85,8 @@ jobs:
 
 matrix:
   allow_failures:
-  # - os: windows
-  #   rust: nightly
-  - rust: stable
+  - os: windows
+    rust: nightly
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin

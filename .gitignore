@@ -10,4 +10,5 @@ rpmbuild/*
 .DS_Store
 *.zip
 *.log
+.vscode
 CHECKSUM_FILE_BEFORE
