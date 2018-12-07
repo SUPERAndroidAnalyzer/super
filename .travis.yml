@@ -62,6 +62,13 @@ jobs:
     stage: test
     env: CACHE_NAME=CENTOS
     script: ./travis-helper.sh dist_test centos
+  # Test unstable features
+  - name: "Unstable features"
+    os: linux
+    rust: nightly
+    stage: test
+    env: CACHE_NAME=UNSTABLE
+    script: ./travis-helper.sh test_unstable
   # Upload documentation
   - name: "Documentation upload"
     os: linux
@@ -115,9 +122,6 @@ script:
 - ./travis-helper.sh clippy_run
 - ./travis-helper.sh test
 - ./travis-helper.sh test_ignored
-- ./travis-helper.sh build_unstable
-- ./travis-helper.sh test_unstable
-- ./travis-helper.sh test_unstable_ignored
 
 # Upload code coverage report
 after_success:

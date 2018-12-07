@@ -17,21 +17,10 @@ elif [ "$action" = "test_ignored" ]; then
     cargo test --verbose -- --ignored
   fi
 
-# Build the project with unstable features.
-elif [ "$action" = "build_unstable" ]; then
-  cargo build --verbose --features unstable
-
 # Run unit and integration tests with unstable features.
 elif [ "$action" = "test_unstable" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-    cargo test --verbose --features unstable
-  fi
-
-# Run ignored unit and integration tests with unstable features.
-elif [ "$action" = "test_unstable_ignored" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "nightly" && "$TRAVIS_OS_NAME" != "windows" ]]; then
+    cargo test --verbose --features unstable &&
     cargo test --verbose --features unstable -- --ignored
-  fi
 
 # Run Clippy.
 elif [ "$action" = "clippy_run" ]; then
@@ -63,7 +52,10 @@ elif [ "$action" = "upload_code_coverage" ]; then
     sudo make install &&
     cd ../.. &&
     rm -rf kcov-master &&
-    for file in target/debug/super_analyzer*[^\.d]; do mkdir -p "target/cov/$(basename $file)"; kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file"; done &&
+    for file in target/debug/super_analyzer*[^\.d]; do
+      mkdir -p "target/cov/$(basename $file)";
+      kcov --exclude-pattern=/.cargo,/usr/lib --verify "target/cov/$(basename $file)" "$file";
+    done &&
     bash <(curl -s https://codecov.io/bash) &&
     echo "Uploaded code coverage"
   fi
