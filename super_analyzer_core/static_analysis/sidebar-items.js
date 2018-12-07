@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["static_analysis","Runs the analysis for manifest, certificate and code files."]],"mod":[["code","Code analysis module."],["manifest","Module containing the manifest analysis logic."]]});

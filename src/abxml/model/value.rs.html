@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/abxml-0.1.0/src/model/value.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>value.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/abxml-0.6.2/src/model/value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>value.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -412,10 +367,14 @@
 <span id="367">367</span>
 <span id="368">368</span>
 <span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
 </pre><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">string</span>::<span class="ident">ToString</span>;
-<span class="kw">use</span> <span class="ident">errors</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">mem</span>, <span class="ident">string</span>::<span class="ident">ToString</span>};
+
+<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">format_err</span>, <span class="ident">Error</span>};
 
 <span class="kw">const</span> <span class="ident">TOKEN_TYPE_REFERENCE_ID</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x01</span>;
 <span class="kw">const</span> <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x02</span>;
@@ -472,21 +431,19 @@
 
 <span class="kw">impl</span> <span class="ident">ToString</span> <span class="kw">for</span> <span class="ident">Value</span> {
     <span class="kw">fn</span> <span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">Value</span>::<span class="ident">StringReference</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@string/{}&quot;</span>, <span class="ident">i</span>),
-            <span class="ident">Value</span>::<span class="ident">Dimension</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">Fraction</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">ColorARGB8</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">ColorRGB8</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">ColorARGB4</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">ColorRGB4</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">clone</span>(),
+            <span class="ident">Value</span>::<span class="ident">Dimension</span>(<span class="ident">s</span>)
+            <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">Fraction</span>(<span class="ident">s</span>)
+            <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">ColorARGB8</span>(<span class="ident">s</span>)
+            <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">ColorRGB8</span>(<span class="ident">s</span>)
+            <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">ColorARGB4</span>(<span class="ident">s</span>)
+            <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">ColorRGB4</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">clone</span>(),
             <span class="ident">Value</span>::<span class="ident">Float</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*}&quot;</span>, <span class="number">1</span>, <span class="ident">f</span>),
-            <span class="ident">Value</span>::<span class="ident">Integer</span>(<span class="ident">i</span>) <span class="op">|</span>
-            <span class="ident">Value</span>::<span class="ident">Flags</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="ident">i</span>.<span class="ident">to_string</span>(),
+            <span class="ident">Value</span>::<span class="ident">Integer</span>(<span class="ident">i</span>) <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">Flags</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="ident">i</span>.<span class="ident">to_string</span>(),
             <span class="ident">Value</span>::<span class="ident">Boolean</span>(<span class="ident">b</span>) <span class="op">=&gt;</span> <span class="ident">b</span>.<span class="ident">to_string</span>(),
-            <span class="ident">Value</span>::<span class="ident">ReferenceId</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@id/0x{:x}&quot;</span>, <span class="ident">s</span>),
-            <span class="ident">Value</span>::<span class="ident">AttributeReferenceId</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@id/0x{:x}&quot;</span>, <span class="ident">s</span>),
-            _ <span class="op">=&gt;</span> <span class="string">&quot;Unknown&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="ident">Value</span>::<span class="ident">ReferenceId</span>(<span class="ident">s</span>) <span class="op">|</span> <span class="ident">Value</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@id/0x{:x}&quot;</span>, <span class="ident">s</span>),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="string">&quot;Unknown&quot;</span>.<span class="ident">to_string</span>(),
         }
     }
 }
@@ -494,12 +451,12 @@
 <span class="kw">impl</span> <span class="ident">Value</span> {
     <span class="doccomment">/// Creates a new `Value`. If the payload can not be interpreted by the given `value_type`, it</span>
     <span class="doccomment">/// will return an error. If the type is not know, it will return `Value::Unknown`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">value_type</span> {
-            <span class="ident">TOKEN_TYPE_REFERENCE_ID</span> <span class="op">|</span>
-            <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">ReferenceId</span>(<span class="ident">data</span>),
-            <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span> <span class="op">|</span>
-            <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">data</span>),
+            <span class="ident">TOKEN_TYPE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">ReferenceId</span>(<span class="ident">data</span>),
+            <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span> <span class="op">=&gt;</span> {
+                <span class="ident">Value</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">data</span>)
+            }
             <span class="ident">TOKEN_TYPE_STRING</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">StringReference</span>(<span class="ident">data</span>),
             <span class="ident">TOKEN_TYPE_DIMENSION</span> <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">units</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">6</span>] <span class="op">=</span> [<span class="string">&quot;px&quot;</span>, <span class="string">&quot;dip&quot;</span>, <span class="string">&quot;sp&quot;</span>, <span class="string">&quot;pt&quot;</span>, <span class="string">&quot;in&quot;</span>, <span class="string">&quot;mm&quot;</span>];
@@ -512,7 +469,10 @@
                         <span class="ident">Value</span>::<span class="ident">Dimension</span>(<span class="ident">formatted</span>)
                     }
                     <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Expected a valid unit index. Got: {}&quot;</span>, <span class="ident">unit_idx</span>).<span class="ident">into</span>())
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(
+                            <span class="string">&quot;expected a valid unit index, got: {}&quot;</span>,
+                            <span class="ident">unit_idx</span>
+                        ))
                     }
                 }
             }
@@ -521,9 +481,9 @@
                 <span class="kw">let</span> <span class="ident">unit_idx</span> <span class="op">=</span> (<span class="ident">data</span> <span class="op">&amp;</span> <span class="number">0xF</span>) <span class="kw">as</span> <span class="ident">usize</span>;
                 <span class="kw">let</span> <span class="ident">final_value</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">complex</span>(<span class="ident">data</span>) <span class="op">*</span> <span class="number">100.0</span>;
 
-                <span class="kw">match</span> <span class="ident">units</span>.<span class="ident">get</span>(<span class="ident">unit_idx</span> <span class="kw">as</span> <span class="ident">usize</span>) {
+                <span class="kw">match</span> <span class="ident">units</span>.<span class="ident">get</span>(<span class="ident">unit_idx</span>) {
                     <span class="prelude-val">Some</span>(<span class="ident">unit</span>) <span class="op">=&gt;</span> {
-                        <span class="kw">let</span> <span class="ident">integer</span> <span class="op">=</span> <span class="ident">final_value</span>.<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">f32</span>;
+                        <span class="kw">let</span> <span class="ident">integer</span> <span class="op">=</span> <span class="ident">final_value</span>.<span class="ident">round</span>();
                         <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="ident">final_value</span> <span class="op">-</span> <span class="ident">integer</span>;
                         <span class="kw">let</span> <span class="ident">formatted_fraction</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">diff</span> <span class="op">&gt;</span> <span class="number">0.0000001</span> {
                             <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*}{}&quot;</span>, <span class="number">6</span>, <span class="ident">final_value</span>, <span class="ident">unit</span>)
@@ -534,7 +494,10 @@
                         <span class="ident">Value</span>::<span class="ident">Fraction</span>(<span class="ident">formatted_fraction</span>)
                     }
                     <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Expected a valid unit index. Got: {}&quot;</span>, <span class="ident">unit_idx</span>).<span class="ident">into</span>())
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format_err</span><span class="macro">!</span>(
+                            <span class="string">&quot;expected a valid unit index, got: {}&quot;</span>,
+                            <span class="ident">unit_idx</span>
+                        ))
                     }
                 }
             }
@@ -543,17 +506,8 @@
                 <span class="ident">Value</span>::<span class="ident">Integer</span>(<span class="ident">data</span>)
             }
             <span class="ident">TOKEN_TYPE_FLAGS</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">Flags</span>(<span class="ident">data</span>),
-            <span class="ident">TOKEN_TYPE_FLOAT</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>::<span class="op">&lt;</span><span class="ident">u32</span>, <span class="ident">f32</span><span class="op">&gt;</span>(<span class="ident">data</span>) };
-                <span class="ident">Value</span>::<span class="ident">Float</span>(<span class="ident">f</span>)
-            }
-            <span class="ident">TOKEN_TYPE_BOOLEAN</span> <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">data</span> <span class="op">&gt;</span> <span class="number">0</span> {
-                    <span class="ident">Value</span>::<span class="ident">Boolean</span>(<span class="bool-val">true</span>)
-                } <span class="kw">else</span> {
-                    <span class="ident">Value</span>::<span class="ident">Boolean</span>(<span class="bool-val">false</span>)
-                }
-            }
+            <span class="ident">TOKEN_TYPE_FLOAT</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">Float</span>(<span class="ident">f32</span>::<span class="ident">from_bits</span>(<span class="ident">data</span>)),
+            <span class="ident">TOKEN_TYPE_BOOLEAN</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">Boolean</span>(<span class="ident">data</span> <span class="op">&gt;</span> <span class="number">0</span>),
             <span class="ident">TOKEN_TYPE_ARGB8</span> <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="ident">Value</span>::<span class="ident">ColorARGB8</span>(<span class="ident">formatted_color</span>)
@@ -570,25 +524,28 @@
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="ident">Value</span>::<span class="ident">ColorRGB4</span>(<span class="ident">formatted_color</span>)
             }
-            _ <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">Unknown</span>(<span class="ident">value_type</span>, <span class="ident">data</span>),
-
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">Unknown</span>(<span class="ident">value_type</span>, <span class="ident">data</span>),
         };
 
         <span class="prelude-val">Ok</span>(<span class="ident">value</span>)
     }
 
+    <span class="comment">// TODO: maybe remove the unsafe code.</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unsafe_code</span>)]</span>
     <span class="kw">fn</span> <span class="ident">complex</span>(<span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">f32</span> {
         <span class="comment">// TODO: Clean this mess</span>
         <span class="kw">let</span> <span class="ident">mantissa</span> <span class="op">=</span> <span class="number">0xffffff</span> <span class="op">&lt;&lt;</span> <span class="number">8</span>;
-        <span class="kw">let</span> <span class="ident">uvalue</span> <span class="op">=</span> <span class="ident">data</span> <span class="op">&amp;</span> <span class="ident">mantissa</span>;
-        <span class="kw">let</span> <span class="ident">ivalue</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">uvalue</span>) };
-        <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">ivalue</span> <span class="kw">as</span> <span class="ident">f32</span>;
+        <span class="kw">let</span> <span class="ident">u_value</span> <span class="op">=</span> <span class="ident">data</span> <span class="op">&amp;</span> <span class="ident">mantissa</span>;
+        <span class="kw">let</span> <span class="ident">i_value</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">u_value</span>) };
+        <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">i_value</span> <span class="kw">as</span> <span class="ident">f32</span>;
         <span class="kw">let</span> <span class="ident">mm</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">f32</span>);
 
-        <span class="kw">let</span> <span class="ident">radix</span> <span class="op">=</span> [<span class="number">1.0</span> <span class="op">*</span> <span class="ident">mm</span>,
-                     <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">7</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
-                     <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">15</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
-                     <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">23</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>];
+        <span class="kw">let</span> <span class="ident">radix</span> <span class="op">=</span> [
+            <span class="number">1.0</span> <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">7</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">15</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">23</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+        ];
 
         <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> (<span class="ident">data</span> <span class="op">&gt;&gt;</span> <span class="number">4</span>) <span class="op">&amp;</span> <span class="number">0x3</span>;
 
@@ -598,7 +555,13 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::{
+        <span class="ident">ToString</span>, <span class="ident">Value</span>, <span class="ident">TOKEN_TYPE_ARGB4</span>, <span class="ident">TOKEN_TYPE_ARGB8</span>, <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span>,
+        <span class="ident">TOKEN_TYPE_BOOLEAN</span>, <span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span>,
+        <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span>, <span class="ident">TOKEN_TYPE_FLAGS</span>, <span class="ident">TOKEN_TYPE_FLOAT</span>, <span class="ident">TOKEN_TYPE_FRACTION</span>,
+        <span class="ident">TOKEN_TYPE_INTEGER</span>, <span class="ident">TOKEN_TYPE_REFERENCE_ID</span>, <span class="ident">TOKEN_TYPE_RGB4</span>, <span class="ident">TOKEN_TYPE_RGB8</span>,
+        <span class="ident">TOKEN_TYPE_STRING</span>,
+    };
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_string_value</span>() {
@@ -783,65 +746,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "abxml";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "abxml";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

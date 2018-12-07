@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["decompile","Decompiles the application using `_jd\\_cmd_`."],["decompress","Decompresses the application using `_Apktool_`."],["dex_to_jar","Converts `_.dex_` files to `_.jar_` using `_Dex2jar_`."]]});

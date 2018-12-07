@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["handlebars","Handlebars report generation module."],["json","JSON report generation module."]],"trait":[["Generator","Trait that represents a type that can generate a report."]]});

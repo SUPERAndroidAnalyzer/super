@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["InstallLocation",""],["Permission","Enumeration describing all the known permissions."]],"fn":[["analysis","Performs the manifest analysis."],["get_line",""]],"struct":[["Manifest","Manifest analysis representation structure."],["PermissionChecklist",""]]});

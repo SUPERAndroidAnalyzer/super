@@ -1,0 +1,184 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `super_analyzer_core` crate."><meta name="keywords" content="rust, rustlang, rust-lang, super_analyzer_core"><title>super_analyzer_core - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate super_analyzer_core</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all super_analyzer_core's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#structs">Structs</a></li><li><a href="#statics">Statics</a></li><li><a href="#functions">Functions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'super_analyzer_core', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/super_analyzer_core/lib.rs.html#1-478' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>super_analyzer_core</a></span></h1><div class='docblock'><p>SUPER Android Analyzer core library.</p>
+<p>This library contains the code for analyzing Android applications. It's called by the
+launcher and contains the main logic of the analysis, with the configuration management,
+the logger initialization and some utility functions.</p>
+</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="cli/index.html"
+                                  title='mod super_analyzer_core::cli'>cli</a></td>
+                           <td class='docblock-short'>
+                                <p>Command line interface module.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="config/index.html"
+                                  title='mod super_analyzer_core::config'>config</a></td>
+                           <td class='docblock-short'>
+                                <p>Configuration module.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="criticality/index.html"
+                                  title='mod super_analyzer_core::criticality'>criticality</a></td>
+                           <td class='docblock-short'>
+                                <p>Criticality module.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="decompilation/index.html"
+                                  title='mod super_analyzer_core::decompilation'>decompilation</a></td>
+                           <td class='docblock-short'>
+                                <p>Decompilation module.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="error/index.html"
+                                  title='mod super_analyzer_core::error'>error</a></td>
+                           <td class='docblock-short'>
+                                <p>Module containing the definition of error types.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="results/index.html"
+                                  title='mod super_analyzer_core::results'>results</a></td>
+                           <td class='docblock-short'>
+                                <p>Results generation module.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="static_analysis/index.html"
+                                  title='mod super_analyzer_core::static_analysis'>static_analysis</a></td>
+                           <td class='docblock-short'>
+                                <p>Static analysis for manifest, certificate and code files.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="utils/index.html"
+                                  title='mod super_analyzer_core::utils'>utils</a></td>
+                           <td class='docblock-short'>
+                                <p>General utilities module.</p>
+
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Benchmark.html"
+                                  title='struct super_analyzer_core::Benchmark'>Benchmark</a></td>
+                           <td class='docblock-short'>
+                                <p>Structure to store a benchmark information.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Config.html"
+                                  title='struct super_analyzer_core::Config'>Config</a></td>
+                           <td class='docblock-short'>
+                                <p>Config structure.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.PARSER_CONFIG.html"
+                                  title='struct super_analyzer_core::PARSER_CONFIG'>PARSER_CONFIG</a></td>
+                           <td class='docblock-short'>
+                                <p>XML parser configuration.</p>
+
+                           </td>
+                       </tr></table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="static" href="static.BANNER.html"
+                                  title='static super_analyzer_core::BANNER'>BANNER</a></td>
+                           <td class='docblock-short'>
+                                <p>Logo ASCII art, used in verbose mode.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="static" href="static.PARSER_CONFIG.html"
+                                  title='static super_analyzer_core::PARSER_CONFIG'>PARSER_CONFIG</a></td>
+                           <td class='docblock-short'>
+                                
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.analyze_package.html"
+                                  title='fn super_analyzer_core::analyze_package'>analyze_package</a></td>
+                           <td class='docblock-short'>
+                                <p>Analyzes the given package with the given configuration.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.copy_folder.html"
+                                  title='fn super_analyzer_core::copy_folder'>copy_folder</a></td>
+                           <td class='docblock-short'>
+                                <p>Copies the contents of <code>from</code> to <code>to</code></p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_code.html"
+                                  title='fn super_analyzer_core::get_code'>get_code</a></td>
+                           <td class='docblock-short'>
+                                <p>Gets the code snippet near the start and end lines.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_package_name.html"
+                                  title='fn super_analyzer_core::get_package_name'>get_package_name</a></td>
+                           <td class='docblock-short'>
+                                <p>Gets the name of the package from the path of the <em>.apk</em> file.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.get_string.html"
+                                  title='fn super_analyzer_core::get_string'>get_string</a></td>
+                           <td class='docblock-short'>
+                                <p>Gets a string from the strings XML file.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.initialize_config.html"
+                                  title='fn super_analyzer_core::initialize_config'>initialize_config</a></td>
+                           <td class='docblock-short'>
+                                <p>Initialize the config with the config files and command line options.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.initialize_logger.html"
+                                  title='fn super_analyzer_core::initialize_logger'>initialize_logger</a></td>
+                           <td class='docblock-short'>
+                                <p>Initializes the logger.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.print_vulnerability.html"
+                                  title='fn super_analyzer_core::print_vulnerability'>print_vulnerability</a></td>
+                           <td class='docblock-short'>
+                                <p>Prints a vulnerability to <code>stdout</code> in a color depending on the criticality.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.print_warning.html"
+                                  title='fn super_analyzer_core::print_warning'>print_warning</a></td>
+                           <td class='docblock-short'>
+                                <p>Prints a warning to <code>stderr</code> in yellow.</p>
+
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "super_analyzer_core";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

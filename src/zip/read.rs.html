@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.2.3/src/read.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>read.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.4.2/src/read.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>read.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -403,6 +358,337 @@
 <span id="358">358</span>
 <span id="359">359</span>
 <span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Structs for reading a ZIP archive</span>
 
@@ -413,12 +699,17 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
-<span class="kw">use</span> <span class="ident">flate2</span>;
-<span class="kw">use</span> <span class="ident">flate2</span>::<span class="ident">FlateReadExt</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
+
 <span class="kw">use</span> <span class="ident">podio</span>::{<span class="ident">ReadPodExt</span>, <span class="ident">LittleEndian</span>};
 <span class="kw">use</span> <span class="ident">types</span>::{<span class="ident">ZipFileData</span>, <span class="ident">System</span>};
 <span class="kw">use</span> <span class="ident">cp437</span>::<span class="ident">FromCp437</span>;
 <span class="kw">use</span> <span class="ident">msdos_time</span>::{<span class="ident">TmMsDosExt</span>, <span class="ident">MsDosDateTime</span>};
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">flate2</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">flate2</span>::<span class="ident">read</span>::<span class="ident">DeflateDecoder</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">bzip2</span>::<span class="ident">read</span>::<span class="ident">BzDecoder</span>;
@@ -427,6 +718,20 @@
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">S_IFDIR</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0o0040000</span>;
     <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">S_IFREG</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="number">0o0100000</span>;
 }
+
+<span class="kw">const</span> <span class="ident">TM_1980_01_01</span> : ::<span class="ident">time</span>::<span class="ident">Tm</span> <span class="op">=</span> ::<span class="ident">time</span>::<span class="ident">Tm</span> {
+	<span class="ident">tm_sec</span>: <span class="number">0</span>,
+	<span class="ident">tm_min</span>: <span class="number">0</span>,
+	<span class="ident">tm_hour</span>: <span class="number">0</span>,
+	<span class="ident">tm_mday</span>: <span class="number">1</span>,
+	<span class="ident">tm_mon</span>: <span class="number">0</span>,
+	<span class="ident">tm_year</span>: <span class="number">80</span>,
+	<span class="ident">tm_wday</span>: <span class="number">2</span>,
+	<span class="ident">tm_yday</span>: <span class="number">0</span>,
+	<span class="ident">tm_isdst</span>: <span class="op">-</span><span class="number">1</span>,
+	<span class="ident">tm_utcoff</span>: <span class="number">0</span>,
+	<span class="ident">tm_nsec</span>: <span class="number">0</span>
+};
 
 <span class="doccomment">/// Wrapper for reading the contents of a ZIP file.</span>
 <span class="doccomment">///</span>
@@ -460,10 +765,14 @@
     <span class="ident">reader</span>: <span class="ident">R</span>,
     <span class="ident">files</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ZipFileData</span><span class="op">&gt;</span>,
     <span class="ident">names_map</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="ident">offset</span>: <span class="ident">u64</span>,
+    <span class="ident">comment</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">enum</span> <span class="ident">ZipFileReader</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">NoReader</span>,
     <span class="ident">Stored</span>(<span class="ident">Crc32Reader</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Take</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Read</span><span class="op">&gt;&gt;</span>),
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
     <span class="ident">Deflated</span>(<span class="ident">Crc32Reader</span><span class="op">&lt;</span><span class="ident">flate2</span>::<span class="ident">read</span>::<span class="ident">DeflateDecoder</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Take</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Read</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>),
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
     <span class="ident">Bzip2</span>(<span class="ident">Crc32Reader</span><span class="op">&lt;</span><span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Take</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Read</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>),
@@ -471,7 +780,7 @@
 
 <span class="doccomment">/// A struct for reading a zip file</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ZipFile</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ZipFileData</span>,
+    <span class="ident">data</span>: <span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">ZipFileData</span><span class="op">&gt;</span>,
     <span class="ident">reader</span>: <span class="ident">ZipFileReader</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
 }
 
@@ -480,29 +789,150 @@
     <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">UnsupportedArchive</span>(<span class="ident">detail</span>))
 }
 
+
+<span class="kw">fn</span> <span class="ident">make_reader</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
+    <span class="ident">compression_method</span>: ::<span class="ident">compression</span>::<span class="ident">CompressionMethod</span>,
+    <span class="ident">crc32</span>: <span class="ident">u32</span>,
+    <span class="ident">reader</span>: <span class="ident">io</span>::<span class="ident">Take</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span>)
+        <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span><span class="ident">ZipFileReader</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
+
+    <span class="kw">match</span> <span class="ident">compression_method</span> {
+        <span class="ident">CompressionMethod</span>::<span class="ident">Stored</span> <span class="op">=&gt;</span>
+        {
+            <span class="prelude-val">Ok</span>(<span class="ident">ZipFileReader</span>::<span class="ident">Stored</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
+                <span class="ident">reader</span>,
+                <span class="ident">crc32</span>)))
+        },
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
+        <span class="ident">CompressionMethod</span>::<span class="ident">Deflated</span> <span class="op">=&gt;</span>
+        {
+            <span class="kw">let</span> <span class="ident">deflate_reader</span> <span class="op">=</span> <span class="ident">DeflateDecoder</span>::<span class="ident">new</span>(<span class="ident">reader</span>);
+            <span class="prelude-val">Ok</span>(<span class="ident">ZipFileReader</span>::<span class="ident">Deflated</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
+                <span class="ident">deflate_reader</span>,
+                <span class="ident">crc32</span>)))
+        },
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
+        <span class="ident">CompressionMethod</span>::<span class="ident">Bzip2</span> <span class="op">=&gt;</span>
+        {
+            <span class="kw">let</span> <span class="ident">bzip2_reader</span> <span class="op">=</span> <span class="ident">BzDecoder</span>::<span class="ident">new</span>(<span class="ident">reader</span>);
+            <span class="prelude-val">Ok</span>(<span class="ident">ZipFileReader</span>::<span class="ident">Bzip2</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
+                <span class="ident">bzip2_reader</span>,
+                <span class="ident">crc32</span>)))
+        },
+        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Compression method not supported&quot;</span>),
+    }
+}
+
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">+</span><span class="ident">io</span>::<span class="ident">Seek</span><span class="op">&gt;</span> <span class="ident">ZipArchive</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>
 {
+    <span class="doccomment">/// Get the directory start offset and number of files. This is done in a</span>
+    <span class="doccomment">/// separate function to ease the control flow design.</span>
+    <span class="kw">fn</span> <span class="ident">get_directory_counts</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>,
+                            <span class="ident">footer</span>: <span class="kw-2">&amp;</span><span class="ident">spec</span>::<span class="ident">CentralDirectoryEnd</span>,
+                            <span class="ident">cde_start_pos</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span>(<span class="ident">u64</span>, <span class="ident">u64</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
+        <span class="comment">// See if there&#39;s a ZIP64 footer. The ZIP64 locator if present will</span>
+        <span class="comment">// have its signature 20 bytes in front of the standard footer. The</span>
+        <span class="comment">// standard footer, in turn, is 22+N bytes large, where N is the</span>
+        <span class="comment">// comment length. Therefore:</span>
+        <span class="kw">let</span> <span class="ident">zip64locator</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">End</span>(<span class="op">-</span>(<span class="number">20</span> <span class="op">+</span> <span class="number">22</span> <span class="op">+</span> <span class="ident">footer</span>.<span class="ident">zip_file_comment</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">i64</span>))).<span class="ident">is_ok</span>() {
+            <span class="kw">match</span> <span class="ident">spec</span>::<span class="ident">Zip64CentralDirectoryEndLocator</span>::<span class="ident">parse</span>(<span class="ident">reader</span>) {
+                <span class="prelude-val">Ok</span>(<span class="ident">loc</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">loc</span>),
+                <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">InvalidArchive</span>(<span class="kw">_</span>)) <span class="op">=&gt;</span> {
+                    <span class="comment">// No ZIP64 header; that&#39;s actually fine. We&#39;re done here.</span>
+                    <span class="prelude-val">None</span>
+                },
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+                    <span class="comment">// Yikes, a real problem</span>
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>);
+                }
+            }
+        }
+        <span class="kw">else</span> {
+            <span class="comment">// Empty Zip files will have nothing else so this error might be fine. If</span>
+            <span class="comment">// not, we&#39;ll find out soon.</span>
+            <span class="prelude-val">None</span>
+        };
+
+        <span class="kw">match</span> <span class="ident">zip64locator</span> {
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                <span class="comment">// Some zip files have data prepended to them, resulting in the</span>
+                <span class="comment">// offsets all being too small. Get the amount of error by comparing</span>
+                <span class="comment">// the actual file position we found the CDE at with the offset</span>
+                <span class="comment">// recorded in the CDE.</span>
+                <span class="kw">let</span> <span class="ident">archive_offset</span> <span class="op">=</span> <span class="ident">cde_start_pos</span>.<span class="ident">checked_sub</span>(<span class="ident">footer</span>.<span class="ident">central_directory_size</span> <span class="kw">as</span> <span class="ident">u64</span>)
+                    .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">checked_sub</span>(<span class="ident">footer</span>.<span class="ident">central_directory_offset</span> <span class="kw">as</span> <span class="ident">u64</span>))
+                    .<span class="ident">ok_or</span>(<span class="ident">ZipError</span>::<span class="ident">InvalidArchive</span>(<span class="string">&quot;Invalid central directory size or offset&quot;</span>))<span class="question-mark">?</span>;
+
+                <span class="kw">let</span> <span class="ident">directory_start</span> <span class="op">=</span> <span class="ident">footer</span>.<span class="ident">central_directory_offset</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">+</span> <span class="ident">archive_offset</span>;
+                <span class="kw">let</span> <span class="ident">number_of_files</span> <span class="op">=</span> <span class="ident">footer</span>.<span class="ident">number_of_files_on_this_disk</span> <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">return</span> <span class="prelude-val">Ok</span>((<span class="ident">archive_offset</span>, <span class="ident">directory_start</span>, <span class="ident">number_of_files</span>));
+            },
+            <span class="prelude-val">Some</span>(<span class="ident">locator64</span>) <span class="op">=&gt;</span> {
+                <span class="comment">// If we got here, this is indeed a ZIP64 file.</span>
+
+                <span class="kw">if</span> <span class="ident">footer</span>.<span class="ident">disk_number</span> <span class="kw">as</span> <span class="ident">u32</span> <span class="op">!=</span> <span class="ident">locator64</span>.<span class="ident">disk_with_central_directory</span> {
+                    <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Support for multi-disk files is not implemented&quot;</span>)
+                }
+
+                <span class="comment">// We need to reassess `archive_offset`. We know where the ZIP64</span>
+                <span class="comment">// central-directory-end structure *should* be, but unfortunately we</span>
+                <span class="comment">// don&#39;t know how to precisely relate that location to our current</span>
+                <span class="comment">// actual offset in the file, since there may be junk at its</span>
+                <span class="comment">// beginning. Therefore we need to perform another search, as in</span>
+                <span class="comment">// read::CentralDirectoryEnd::find_and_parse, except now we search</span>
+                <span class="comment">// forward.</span>
+
+                <span class="kw">let</span> <span class="ident">search_upper_bound</span> <span class="op">=</span> <span class="ident">cde_start_pos</span>
+                    .<span class="ident">checked_sub</span>(<span class="number">60</span>) <span class="comment">// minimum size of Zip64CentralDirectoryEnd + Zip64CentralDirectoryEndLocator</span>
+                    .<span class="ident">ok_or</span>(<span class="ident">ZipError</span>::<span class="ident">InvalidArchive</span>(<span class="string">&quot;File cannot contain ZIP64 central directory end&quot;</span>))<span class="question-mark">?</span>;
+                <span class="kw">let</span> (<span class="ident">footer</span>, <span class="ident">archive_offset</span>) <span class="op">=</span> <span class="ident">spec</span>::<span class="ident">Zip64CentralDirectoryEnd</span>::<span class="ident">find_and_parse</span>(
+                    <span class="ident">reader</span>,
+                    <span class="ident">locator64</span>.<span class="ident">end_of_central_directory_offset</span>,
+                    <span class="ident">search_upper_bound</span>)<span class="question-mark">?</span>;
+
+                <span class="kw">if</span> <span class="ident">footer</span>.<span class="ident">disk_number</span> <span class="op">!=</span> <span class="ident">footer</span>.<span class="ident">disk_with_central_directory</span> {
+                    <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Support for multi-disk files is not implemented&quot;</span>)
+                }
+
+                <span class="kw">let</span> <span class="ident">directory_start</span> <span class="op">=</span> <span class="ident">footer</span>.<span class="ident">central_directory_offset</span> <span class="op">+</span> <span class="ident">archive_offset</span>;
+                <span class="prelude-val">Ok</span>((<span class="ident">archive_offset</span>, <span class="ident">directory_start</span>, <span class="ident">footer</span>.<span class="ident">number_of_files</span> <span class="kw">as</span> <span class="ident">usize</span>))
+            },
+        }
+    }
+
     <span class="doccomment">/// Opens a Zip archive and parses the central directory</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span><span class="ident">ZipArchive</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">let</span> <span class="ident">footer</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">spec</span>::<span class="ident">CentralDirectoryEnd</span>::<span class="ident">find_and_parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>));
+        <span class="kw">let</span> (<span class="ident">footer</span>, <span class="ident">cde_start_pos</span>) <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">spec</span>::<span class="ident">CentralDirectoryEnd</span>::<span class="ident">find_and_parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>));
 
-        <span class="kw">if</span> <span class="ident">footer</span>.<span class="ident">disk_number</span> <span class="op">!=</span> <span class="ident">footer</span>.<span class="ident">disk_with_central_directory</span> { <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Support for multi-disk files is not implemented&quot;</span>) }
+        <span class="kw">if</span> <span class="ident">footer</span>.<span class="ident">disk_number</span> <span class="op">!=</span> <span class="ident">footer</span>.<span class="ident">disk_with_central_directory</span>
+        {
+            <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Support for multi-disk files is not implemented&quot;</span>)
+        }
 
-        <span class="kw">let</span> <span class="ident">directory_start</span> <span class="op">=</span> <span class="ident">footer</span>.<span class="ident">central_directory_offset</span> <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="kw">let</span> <span class="ident">number_of_files</span> <span class="op">=</span> <span class="ident">footer</span>.<span class="ident">number_of_files_on_this_disk</span> <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="kw">let</span> (<span class="ident">archive_offset</span>, <span class="ident">directory_start</span>, <span class="ident">number_of_files</span>) <span class="op">=</span>
+            <span class="macro">try</span><span class="macro">!</span>(<span class="self">Self</span>::<span class="ident">get_directory_counts</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>, <span class="kw-2">&amp;</span><span class="ident">footer</span>, <span class="ident">cde_start_pos</span>));
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="ident">number_of_files</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">names_map</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
 
-        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">directory_start</span>)));
-        <span class="kw">for</span> _ <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">number_of_files</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">directory_start</span>)) {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">InvalidArchive</span>(<span class="string">&quot;Could not seek to start of central directory&quot;</span>));
+        }
+
+        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span> .. <span class="ident">number_of_files</span>
         {
-            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">central_header_to_zip_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>));
+            <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">central_header_to_zip_file</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>, <span class="ident">archive_offset</span>));
             <span class="ident">names_map</span>.<span class="ident">insert</span>(<span class="ident">file</span>.<span class="ident">file_name</span>.<span class="ident">clone</span>(), <span class="ident">files</span>.<span class="ident">len</span>());
             <span class="ident">files</span>.<span class="ident">push</span>(<span class="ident">file</span>);
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">ZipArchive</span> { <span class="ident">reader</span>: <span class="ident">reader</span>, <span class="ident">files</span>: <span class="ident">files</span>, <span class="ident">names_map</span>: <span class="ident">names_map</span> })
+        <span class="prelude-val">Ok</span>(<span class="ident">ZipArchive</span> {
+            <span class="ident">reader</span>: <span class="ident">reader</span>,
+            <span class="ident">files</span>: <span class="ident">files</span>,
+            <span class="ident">names_map</span>: <span class="ident">names_map</span>,
+            <span class="ident">offset</span>: <span class="ident">archive_offset</span>,
+            <span class="ident">comment</span>: <span class="ident">footer</span>.<span class="ident">zip_file_comment</span>,
+        })
     }
 
     <span class="doccomment">/// Number of files contained in this zip.</span>
@@ -520,6 +950,14 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span>
     {
         <span class="self">self</span>.<span class="ident">files</span>.<span class="ident">len</span>()
+    }
+
+    <span class="doccomment">/// Get the offset from the beginning of the underlying reader that this zip begins at, in bytes.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Normally this value is zero, but if the zip has arbitrary data prepended to it, then this value will be the size</span>
+    <span class="doccomment">/// of that prepended data.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">offset</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="self">self</span>.<span class="ident">offset</span>
     }
 
     <span class="doccomment">/// Search for a file entry by name</span>
@@ -547,32 +985,7 @@
         <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">pos</span>)));
         <span class="kw">let</span> <span class="ident">limit_reader</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">by_ref</span>() <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>).<span class="ident">take</span>(<span class="ident">data</span>.<span class="ident">compressed_size</span>);
 
-        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">data</span>.<span class="ident">compression_method</span>
-        {
-            <span class="ident">CompressionMethod</span>::<span class="ident">Stored</span> <span class="op">=&gt;</span>
-            {
-                <span class="ident">ZipFileReader</span>::<span class="ident">Stored</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
-                    <span class="ident">limit_reader</span>,
-                    <span class="ident">data</span>.<span class="ident">crc32</span>))
-            },
-            <span class="ident">CompressionMethod</span>::<span class="ident">Deflated</span> <span class="op">=&gt;</span>
-            {
-                <span class="kw">let</span> <span class="ident">deflate_reader</span> <span class="op">=</span> <span class="ident">limit_reader</span>.<span class="ident">deflate_decode</span>();
-                <span class="ident">ZipFileReader</span>::<span class="ident">Deflated</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
-                    <span class="ident">deflate_reader</span>,
-                    <span class="ident">data</span>.<span class="ident">crc32</span>))
-            },
-            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
-            <span class="ident">CompressionMethod</span>::<span class="ident">Bzip2</span> <span class="op">=&gt;</span>
-            {
-                <span class="kw">let</span> <span class="ident">bzip2_reader</span> <span class="op">=</span> <span class="ident">BzDecoder</span>::<span class="ident">new</span>(<span class="ident">limit_reader</span>);
-                <span class="ident">ZipFileReader</span>::<span class="ident">Bzip2</span>(<span class="ident">Crc32Reader</span>::<span class="ident">new</span>(
-                    <span class="ident">bzip2_reader</span>,
-                    <span class="ident">data</span>.<span class="ident">crc32</span>))
-            },
-            _ <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Compression method not supported&quot;</span>),
-        };
-        <span class="prelude-val">Ok</span>(<span class="ident">ZipFile</span> { <span class="ident">reader</span>: <span class="ident">reader</span>, <span class="ident">data</span>: <span class="ident">data</span> })
+        <span class="prelude-val">Ok</span>(<span class="ident">ZipFile</span> { <span class="ident">reader</span>: <span class="macro">try</span><span class="macro">!</span>(<span class="ident">make_reader</span>(<span class="ident">data</span>.<span class="ident">compression_method</span>, <span class="ident">data</span>.<span class="ident">crc32</span>, <span class="ident">limit_reader</span>)), <span class="ident">data</span>: <span class="ident">Cow</span>::<span class="ident">Borrowed</span>(<span class="ident">data</span>) })
     }
 
     <span class="doccomment">/// Unwrap and return the inner reader object</span>
@@ -584,7 +997,7 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">central_header_to_zip_file</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">+</span><span class="ident">io</span>::<span class="ident">Seek</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span><span class="ident">ZipFileData</span><span class="op">&gt;</span>
+<span class="kw">fn</span> <span class="ident">central_header_to_zip_file</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">+</span><span class="ident">io</span>::<span class="ident">Seek</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>, <span class="ident">archive_offset</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span><span class="ident">ZipFileData</span><span class="op">&gt;</span>
 {
     <span class="comment">// Parse central header</span>
     <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
@@ -610,10 +1023,13 @@
     <span class="kw">let</span> <span class="ident">_disk_number</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
     <span class="kw">let</span> <span class="ident">_internal_file_attributes</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
     <span class="kw">let</span> <span class="ident">external_file_attributes</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
-    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">u64</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">u64</span>;
     <span class="kw">let</span> <span class="ident">file_name_raw</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">ReadPodExt</span>::<span class="ident">read_exact</span>(<span class="ident">reader</span>, <span class="ident">file_name_length</span>));
     <span class="kw">let</span> <span class="ident">extra_field</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">ReadPodExt</span>::<span class="ident">read_exact</span>(<span class="ident">reader</span>, <span class="ident">extra_field_length</span>));
     <span class="kw">let</span> <span class="ident">file_comment_raw</span>  <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">ReadPodExt</span>::<span class="ident">read_exact</span>(<span class="ident">reader</span>, <span class="ident">file_comment_length</span>));
+
+    <span class="comment">// Account for shifted zip offsets.</span>
+    <span class="ident">offset</span> <span class="op">+=</span> <span class="ident">archive_offset</span>;
 
     <span class="kw">let</span> <span class="ident">file_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">is_utf8</span>
     {
@@ -626,11 +1042,35 @@
         <span class="bool-val">false</span> <span class="op">=&gt;</span> <span class="ident">file_comment_raw</span>.<span class="ident">from_cp437</span>(),
     };
 
+    <span class="comment">// Construct the result</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">ZipFileData</span>
+    {
+        <span class="ident">system</span>: <span class="ident">System</span>::<span class="ident">from_u8</span>((<span class="ident">version_made_by</span> <span class="op">&gt;&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>),
+        <span class="ident">version_made_by</span>: <span class="ident">version_made_by</span> <span class="kw">as</span> <span class="ident">u8</span>,
+        <span class="ident">encrypted</span>: <span class="ident">encrypted</span>,
+        <span class="ident">compression_method</span>: <span class="ident">CompressionMethod</span>::<span class="ident">from_u16</span>(<span class="ident">compression_method</span>),
+        <span class="ident">last_modified_time</span>: ::<span class="ident">time</span>::<span class="ident">Tm</span>::<span class="ident">from_msdos</span>(<span class="ident">MsDosDateTime</span>::<span class="ident">new</span>(<span class="ident">last_mod_time</span>, <span class="ident">last_mod_date</span>)).<span class="ident">unwrap_or</span>(<span class="ident">TM_1980_01_01</span>),
+        <span class="ident">crc32</span>: <span class="ident">crc32</span>,
+        <span class="ident">compressed_size</span>: <span class="ident">compressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
+        <span class="ident">uncompressed_size</span>: <span class="ident">uncompressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
+        <span class="ident">file_name</span>: <span class="ident">file_name</span>,
+        <span class="ident">file_name_raw</span>: <span class="ident">file_name_raw</span>,
+        <span class="ident">file_comment</span>: <span class="ident">file_comment</span>,
+        <span class="ident">header_start</span>: <span class="ident">offset</span>,
+        <span class="ident">data_start</span>: <span class="number">0</span>,
+        <span class="ident">external_attributes</span>: <span class="ident">external_file_attributes</span>,
+    };
+
+    <span class="kw">match</span> <span class="ident">parse_extra_field</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">result</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">extra_field</span>) {
+        <span class="prelude-val">Ok</span>(..) <span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">Io</span>(..)) <span class="op">=&gt;</span> {},
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)),
+    }
+
     <span class="comment">// Remember end of central header</span>
     <span class="kw">let</span> <span class="ident">return_position</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Current</span>(<span class="number">0</span>)));
 
     <span class="comment">// Parse local header</span>
-    <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">offset</span>)));
+    <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">result</span>.<span class="ident">header_start</span>)));
     <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
     <span class="kw">if</span> <span class="ident">signature</span> <span class="op">!=</span> <span class="ident">spec</span>::<span class="ident">LOCAL_FILE_HEADER_SIGNATURE</span>
     {
@@ -641,31 +1081,7 @@
     <span class="kw">let</span> <span class="ident">file_name_length</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">u64</span>;
     <span class="kw">let</span> <span class="ident">extra_field_length</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">u64</span>;
     <span class="kw">let</span> <span class="ident">magic_and_header</span> <span class="op">=</span> <span class="number">4</span> <span class="op">+</span> <span class="number">22</span> <span class="op">+</span> <span class="number">2</span> <span class="op">+</span> <span class="number">2</span>;
-    <span class="kw">let</span> <span class="ident">data_start</span> <span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">magic_and_header</span> <span class="op">+</span> <span class="ident">file_name_length</span> <span class="op">+</span> <span class="ident">extra_field_length</span>;
-
-    <span class="comment">// Construct the result</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">ZipFileData</span>
-    {
-        <span class="ident">system</span>: <span class="ident">System</span>::<span class="ident">from_u8</span>((<span class="ident">version_made_by</span> <span class="op">&gt;&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>),
-        <span class="ident">version_made_by</span>: <span class="ident">version_made_by</span> <span class="kw">as</span> <span class="ident">u8</span>,
-        <span class="ident">encrypted</span>: <span class="ident">encrypted</span>,
-        <span class="ident">compression_method</span>: <span class="ident">CompressionMethod</span>::<span class="ident">from_u16</span>(<span class="ident">compression_method</span>),
-        <span class="ident">last_modified_time</span>: <span class="macro">try</span><span class="macro">!</span>(::<span class="ident">time</span>::<span class="ident">Tm</span>::<span class="ident">from_msdos</span>(<span class="ident">MsDosDateTime</span>::<span class="ident">new</span>(<span class="ident">last_mod_time</span>, <span class="ident">last_mod_date</span>))),
-        <span class="ident">crc32</span>: <span class="ident">crc32</span>,
-        <span class="ident">compressed_size</span>: <span class="ident">compressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
-        <span class="ident">uncompressed_size</span>: <span class="ident">uncompressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
-        <span class="ident">file_name</span>: <span class="ident">file_name</span>,
-        <span class="ident">file_name_raw</span>: <span class="ident">file_name_raw</span>,
-        <span class="ident">file_comment</span>: <span class="ident">file_comment</span>,
-        <span class="ident">header_start</span>: <span class="ident">offset</span>,
-        <span class="ident">data_start</span>: <span class="ident">data_start</span>,
-        <span class="ident">external_attributes</span>: <span class="ident">external_file_attributes</span>,
-    };
-
-    <span class="kw">match</span> <span class="ident">parse_extra_field</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">result</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">extra_field</span>) {
-        <span class="prelude-val">Ok</span>(..) <span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">Io</span>(..)) <span class="op">=&gt;</span> {},
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)),
-    }
+    <span class="ident">result</span>.<span class="ident">data_start</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">header_start</span> <span class="op">+</span> <span class="ident">magic_and_header</span> <span class="op">+</span> <span class="ident">file_name_length</span> <span class="op">+</span> <span class="ident">extra_field_length</span>;
 
     <span class="comment">// Go back after the central header</span>
     <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Start</span>(<span class="ident">return_position</span>)));
@@ -673,7 +1089,7 @@
     <span class="prelude-val">Ok</span>(<span class="ident">result</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">parse_extra_field</span>(<span class="ident">_file</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ZipFileData</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+<span class="kw">fn</span> <span class="ident">parse_extra_field</span>(<span class="ident">file</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ZipFileData</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
 {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">data</span>);
 
@@ -683,21 +1099,34 @@
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
         <span class="kw">match</span> <span class="ident">kind</span>
         {
-            _ <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Current</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">i64</span>))),
+            <span class="comment">// Zip64 extended information extra field</span>
+            <span class="number">0x0001</span> <span class="op">=&gt;</span> {
+                <span class="ident">file</span>.<span class="ident">uncompressed_size</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u64</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+                <span class="ident">file</span>.<span class="ident">compressed_size</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u64</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u64</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());  <span class="comment">// relative header offset</span>
+                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());  <span class="comment">// disk start number</span>
+            },
+            <span class="kw">_</span> <span class="op">=&gt;</span> { <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">seek</span>(<span class="ident">io</span>::<span class="ident">SeekFrom</span>::<span class="ident">Current</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">i64</span>))); },
         };
     }
     <span class="prelude-val">Ok</span>(())
 }
 
+<span class="kw">fn</span> <span class="ident">get_reader</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">ZipFileReader</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">Read</span> {
+    <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">reader</span> {
+        <span class="ident">ZipFileReader</span>::<span class="ident">NoReader</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;ZipFileReader was in an invalid state&quot;</span>),
+        <span class="ident">ZipFileReader</span>::<span class="ident">Stored</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
+        <span class="ident">ZipFileReader</span>::<span class="ident">Deflated</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
+        <span class="ident">ZipFileReader</span>::<span class="ident">Bzip2</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
+    }
+}
+
 <span class="doccomment">/// Methods for retreiving information on zip files</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">ZipFile</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">get_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">reader</span> {
-           <span class="ident">ZipFileReader</span>::<span class="ident">Stored</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
-           <span class="ident">ZipFileReader</span>::<span class="ident">Deflated</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
-           <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
-           <span class="ident">ZipFileReader</span>::<span class="ident">Bzip2</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Read</span>,
-        }
+        <span class="ident">get_reader</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">reader</span>)
     }
     <span class="doccomment">/// Get the version of the file</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">version_made_by</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">u8</span>, <span class="ident">u8</span>) {
@@ -710,6 +1139,11 @@
     <span class="doccomment">/// Get the name of the file, in the raw (internal) byte representation.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
         <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">data</span>.<span class="ident">file_name_raw</span>
+    }
+    <span class="doccomment">/// Get the name of the file in a sanitized form. It truncates the name to the first NULL byte,</span>
+    <span class="doccomment">/// removes a leading &#39;/&#39; and removes &#39;..&#39; parts.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">sanitized_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span> {
+        <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">file_name_sanitized</span>()
     }
     <span class="doccomment">/// Get the comment of the file</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">comment</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
@@ -733,6 +1167,10 @@
     }
     <span class="doccomment">/// Get unix mode for the file</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unix_mode</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">external_attributes</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">return</span> <span class="prelude-val">None</span>;
+        }
+
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">system</span> {
             <span class="ident">System</span>::<span class="ident">Unix</span> <span class="op">=&gt;</span> {
                 <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">external_attributes</span> <span class="op">&gt;&gt;</span> <span class="number">16</span>)
@@ -750,12 +1188,17 @@
                 }
                 <span class="prelude-val">Some</span>(<span class="ident">mode</span>)
             },
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="doccomment">/// Get the CRC32 hash of the original file</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">crc32</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">crc32</span>
+    }
+
+    <span class="doccomment">/// Get the starting offset of the data of the compressed file</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">data_start</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">data_start</span>
     }
 }
 
@@ -764,66 +1207,179 @@
          <span class="self">self</span>.<span class="ident">get_reader</span>().<span class="ident">read</span>(<span class="ident">buf</span>)
      }
 }
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ZipFile</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="comment">// self.data is Owned, this reader is constructed by a streaming reader.</span>
+        <span class="comment">// In this case, we want to exhaust the reader so that the next file is accessible.</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Cow</span>::<span class="ident">Owned</span>(<span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">1</span><span class="op">&lt;&lt;</span><span class="number">16</span>];
+
+            <span class="comment">// Get the inner `Take` reader so all decompression and CRC calculation is skipped.</span>
+            <span class="kw">let</span> <span class="ident">innerreader</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">reader</span>, <span class="ident">ZipFileReader</span>::<span class="ident">NoReader</span>);
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">innerreader</span> {
+                <span class="ident">ZipFileReader</span>::<span class="ident">NoReader</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;ZipFileReader was in an invalid state&quot;</span>),
+                <span class="ident">ZipFileReader</span>::<span class="ident">Stored</span>(<span class="ident">crcreader</span>) <span class="op">=&gt;</span> <span class="ident">crcreader</span>.<span class="ident">into_inner</span>(),
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;flate2&quot;</span>)]</span>
+                <span class="ident">ZipFileReader</span>::<span class="ident">Deflated</span>(<span class="ident">crcreader</span>) <span class="op">=&gt;</span> <span class="ident">crcreader</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>(),
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
+                <span class="ident">ZipFileReader</span>::<span class="ident">Bzip2</span>(<span class="ident">crcreader</span>) <span class="op">=&gt;</span> <span class="ident">crcreader</span>.<span class="ident">into_inner</span>().<span class="ident">into_inner</span>(),
+            };
+
+            <span class="kw">loop</span> {
+                <span class="kw">match</span> <span class="ident">reader</span>.<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buffer</span>) {
+                    <span class="prelude-val">Ok</span>(<span class="number">0</span>) <span class="op">=&gt;</span> <span class="kw">break</span>,
+                    <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> (),
+                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Could not consume all of the output of the current ZipFile: {:?}&quot;</span>, <span class="ident">e</span>),
+                }
+            }
+        }
+    }
+}
+
+<span class="doccomment">/// Read ZipFile structures from a non-seekable reader.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This is an alternative method to read a zip file. If possible, use the ZipArchive functions</span>
+<span class="doccomment">/// as some information will be missing when reading this manner.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Reads a file header from the start of the stream. Will return `Ok(Some(..))` if a file is</span>
+<span class="doccomment">/// present at the start of the stream. Returns `Ok(None)` if the start of the central directory</span>
+<span class="doccomment">/// is encountered. No more files should be read after this.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The Drop implementation of ZipFile ensures that the reader will be correctly positioned after</span>
+<span class="doccomment">/// the structure is done.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Missing fields are:</span>
+<span class="doccomment">/// * `comment`: set to an empty string</span>
+<span class="doccomment">/// * `data_start`: set to 0</span>
+<span class="doccomment">/// * `external_attributes`: `unix_mode()`: will return None</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_zipfile_from_stream</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">reader</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">ZipResult</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ZipFile</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">let</span> <span class="ident">signature</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+
+    <span class="kw">match</span> <span class="ident">signature</span> {
+        <span class="ident">spec</span>::<span class="ident">LOCAL_FILE_HEADER_SIGNATURE</span> <span class="op">=&gt;</span> (),
+        <span class="ident">spec</span>::<span class="ident">CENTRAL_DIRECTORY_HEADER_SIGNATURE</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">InvalidArchive</span>(<span class="string">&quot;Invalid local file header&quot;</span>)),
+    }
+
+    <span class="kw">let</span> <span class="ident">version_made_by</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">encrypted</span> <span class="op">=</span> <span class="ident">flags</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">1</span>;
+    <span class="kw">let</span> <span class="ident">is_utf8</span> <span class="op">=</span> <span class="ident">flags</span> <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">11</span>) <span class="op">!=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="ident">using_data_descriptor</span> <span class="op">=</span> <span class="ident">flags</span> <span class="op">&amp;</span> (<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">3</span>) <span class="op">!=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="ident">compression_method</span> <span class="op">=</span> <span class="ident">CompressionMethod</span>::<span class="ident">from_u16</span>(<span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()));
+    <span class="kw">let</span> <span class="ident">last_mod_time</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">last_mod_date</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">crc32</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">compressed_size</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">uncompressed_size</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>());
+    <span class="kw">let</span> <span class="ident">file_name_length</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">usize</span>;
+    <span class="kw">let</span> <span class="ident">extra_field_length</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()) <span class="kw">as</span> <span class="ident">usize</span>;
+
+    <span class="kw">let</span> <span class="ident">file_name_raw</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">ReadPodExt</span>::<span class="ident">read_exact</span>(<span class="ident">reader</span>, <span class="ident">file_name_length</span>));
+    <span class="kw">let</span> <span class="ident">extra_field</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">ReadPodExt</span>::<span class="ident">read_exact</span>(<span class="ident">reader</span>, <span class="ident">extra_field_length</span>));
+
+    <span class="kw">let</span> <span class="ident">file_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">is_utf8</span>
+    {
+        <span class="bool-val">true</span> <span class="op">=&gt;</span> <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">file_name_raw</span>).<span class="ident">into_owned</span>(),
+        <span class="bool-val">false</span> <span class="op">=&gt;</span> <span class="ident">file_name_raw</span>.<span class="ident">clone</span>().<span class="ident">from_cp437</span>(),
+    };
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">ZipFileData</span>
+    {
+        <span class="ident">system</span>: <span class="ident">System</span>::<span class="ident">from_u8</span>((<span class="ident">version_made_by</span> <span class="op">&gt;&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>),
+        <span class="ident">version_made_by</span>: <span class="ident">version_made_by</span> <span class="kw">as</span> <span class="ident">u8</span>,
+        <span class="ident">encrypted</span>: <span class="ident">encrypted</span>,
+        <span class="ident">compression_method</span>: <span class="ident">compression_method</span>,
+        <span class="ident">last_modified_time</span>: ::<span class="ident">time</span>::<span class="ident">Tm</span>::<span class="ident">from_msdos</span>(<span class="ident">MsDosDateTime</span>::<span class="ident">new</span>(<span class="ident">last_mod_time</span>, <span class="ident">last_mod_date</span>)).<span class="ident">unwrap_or</span>(<span class="ident">TM_1980_01_01</span>),
+        <span class="ident">crc32</span>: <span class="ident">crc32</span>,
+        <span class="ident">compressed_size</span>: <span class="ident">compressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
+        <span class="ident">uncompressed_size</span>: <span class="ident">uncompressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>,
+        <span class="ident">file_name</span>: <span class="ident">file_name</span>,
+        <span class="ident">file_name_raw</span>: <span class="ident">file_name_raw</span>,
+        <span class="ident">file_comment</span>: <span class="ident">String</span>::<span class="ident">new</span>(),  <span class="comment">// file comment is only available in the central directory</span>
+        <span class="comment">// header_start and data start are not available, but also don&#39;t matter, since seeking is</span>
+        <span class="comment">// not available.</span>
+        <span class="ident">header_start</span>: <span class="number">0</span>,
+        <span class="ident">data_start</span>: <span class="number">0</span>,
+        <span class="comment">// The external_attributes field is only available in the central directory.</span>
+        <span class="comment">// We set this to zero, which should be valid as the docs state &#39;If input came</span>
+        <span class="comment">// from standard input, this field is set to zero.&#39;</span>
+        <span class="ident">external_attributes</span>: <span class="number">0</span>,
+    };
+
+    <span class="kw">match</span> <span class="ident">parse_extra_field</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">result</span>, <span class="kw-2">&amp;</span><span class="ident">extra_field</span>) {
+        <span class="prelude-val">Ok</span>(..) <span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">Io</span>(..)) <span class="op">=&gt;</span> {},
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)),
+    }
+
+    <span class="kw">if</span> <span class="ident">encrypted</span> {
+        <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;Encrypted files are not supported&quot;</span>)
+    }
+    <span class="kw">if</span> <span class="ident">using_data_descriptor</span> {
+        <span class="kw">return</span> <span class="ident">unsupported_zip_error</span>(<span class="string">&quot;The file length is not available in the local header&quot;</span>);
+    }
+
+    <span class="kw">let</span> <span class="ident">limit_reader</span> <span class="op">=</span> (<span class="ident">reader</span> <span class="kw">as</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">io</span>::<span class="ident">Read</span>).<span class="ident">take</span>(<span class="ident">result</span>.<span class="ident">compressed_size</span> <span class="kw">as</span> <span class="ident">u64</span>);
+
+    <span class="kw">let</span> <span class="ident">result_crc32</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">crc32</span>;
+    <span class="kw">let</span> <span class="ident">result_compression_method</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">compression_method</span>;
+    <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">ZipFile</span> {
+        <span class="ident">data</span>: <span class="ident">Cow</span>::<span class="ident">Owned</span>(<span class="ident">result</span>),
+        <span class="ident">reader</span>: <span class="macro">try</span><span class="macro">!</span>(<span class="ident">make_reader</span>(<span class="ident">result_compression_method</span>, <span class="ident">result_crc32</span>, <span class="ident">limit_reader</span>))
+    }))
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">test</span> {
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">invalid_offset</span>() {
+        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ZipArchive</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="ident">v</span>.<span class="ident">extend_from_slice</span>(<span class="macro">include_bytes</span><span class="macro">!</span>(<span class="string">&quot;../tests/data/invalid_offset.zip&quot;</span>));
+        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">ZipArchive</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">v</span>));
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">is_err</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">zip64_with_leading_junk</span>() {
+        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ZipArchive</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="ident">v</span>.<span class="ident">extend_from_slice</span>(<span class="macro">include_bytes</span><span class="macro">!</span>(<span class="string">&quot;../tests/data/zip64_demo.zip&quot;</span>));
+        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">ZipArchive</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">v</span>)).<span class="ident">unwrap</span>();
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">zip_comment</span>() {
+        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ZipArchive</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="ident">v</span>.<span class="ident">extend_from_slice</span>(<span class="macro">include_bytes</span><span class="macro">!</span>(<span class="string">&quot;../tests/data/mimetype.zip&quot;</span>));
+        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">ZipArchive</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">v</span>)).<span class="ident">unwrap</span>();
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">reader</span>.<span class="ident">comment</span> <span class="op">==</span> <span class="string">b&quot;zip-rs&quot;</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">zip_read_streaming</span>() {
+        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+        <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">read_zipfile_from_stream</span>;
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="ident">v</span>.<span class="ident">extend_from_slice</span>(<span class="macro">include_bytes</span><span class="macro">!</span>(<span class="string">&quot;../tests/data/mimetype.zip&quot;</span>));
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="ident">v</span>);
+        <span class="kw">loop</span> {
+            <span class="kw">match</span> <span class="ident">read_zipfile_from_stream</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>).<span class="ident">unwrap</span>() {
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">break</span>,
+                <span class="kw">_</span> <span class="op">=&gt;</span> (),
+            }
+        }
+    }
+}
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "zip";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "zip";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

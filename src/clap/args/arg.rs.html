@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/clap-2.24.1/src/args/arg.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>arg.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/clap-2.32.0/src/args/arg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>arg.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -3505,24 +3460,506 @@
 <span id="3460">3460</span>
 <span id="3461">3461</span>
 <span id="3462">3462</span>
+<span id="3463">3463</span>
+<span id="3464">3464</span>
+<span id="3465">3465</span>
+<span id="3466">3466</span>
+<span id="3467">3467</span>
+<span id="3468">3468</span>
+<span id="3469">3469</span>
+<span id="3470">3470</span>
+<span id="3471">3471</span>
+<span id="3472">3472</span>
+<span id="3473">3473</span>
+<span id="3474">3474</span>
+<span id="3475">3475</span>
+<span id="3476">3476</span>
+<span id="3477">3477</span>
+<span id="3478">3478</span>
+<span id="3479">3479</span>
+<span id="3480">3480</span>
+<span id="3481">3481</span>
+<span id="3482">3482</span>
+<span id="3483">3483</span>
+<span id="3484">3484</span>
+<span id="3485">3485</span>
+<span id="3486">3486</span>
+<span id="3487">3487</span>
+<span id="3488">3488</span>
+<span id="3489">3489</span>
+<span id="3490">3490</span>
+<span id="3491">3491</span>
+<span id="3492">3492</span>
+<span id="3493">3493</span>
+<span id="3494">3494</span>
+<span id="3495">3495</span>
+<span id="3496">3496</span>
+<span id="3497">3497</span>
+<span id="3498">3498</span>
+<span id="3499">3499</span>
+<span id="3500">3500</span>
+<span id="3501">3501</span>
+<span id="3502">3502</span>
+<span id="3503">3503</span>
+<span id="3504">3504</span>
+<span id="3505">3505</span>
+<span id="3506">3506</span>
+<span id="3507">3507</span>
+<span id="3508">3508</span>
+<span id="3509">3509</span>
+<span id="3510">3510</span>
+<span id="3511">3511</span>
+<span id="3512">3512</span>
+<span id="3513">3513</span>
+<span id="3514">3514</span>
+<span id="3515">3515</span>
+<span id="3516">3516</span>
+<span id="3517">3517</span>
+<span id="3518">3518</span>
+<span id="3519">3519</span>
+<span id="3520">3520</span>
+<span id="3521">3521</span>
+<span id="3522">3522</span>
+<span id="3523">3523</span>
+<span id="3524">3524</span>
+<span id="3525">3525</span>
+<span id="3526">3526</span>
+<span id="3527">3527</span>
+<span id="3528">3528</span>
+<span id="3529">3529</span>
+<span id="3530">3530</span>
+<span id="3531">3531</span>
+<span id="3532">3532</span>
+<span id="3533">3533</span>
+<span id="3534">3534</span>
+<span id="3535">3535</span>
+<span id="3536">3536</span>
+<span id="3537">3537</span>
+<span id="3538">3538</span>
+<span id="3539">3539</span>
+<span id="3540">3540</span>
+<span id="3541">3541</span>
+<span id="3542">3542</span>
+<span id="3543">3543</span>
+<span id="3544">3544</span>
+<span id="3545">3545</span>
+<span id="3546">3546</span>
+<span id="3547">3547</span>
+<span id="3548">3548</span>
+<span id="3549">3549</span>
+<span id="3550">3550</span>
+<span id="3551">3551</span>
+<span id="3552">3552</span>
+<span id="3553">3553</span>
+<span id="3554">3554</span>
+<span id="3555">3555</span>
+<span id="3556">3556</span>
+<span id="3557">3557</span>
+<span id="3558">3558</span>
+<span id="3559">3559</span>
+<span id="3560">3560</span>
+<span id="3561">3561</span>
+<span id="3562">3562</span>
+<span id="3563">3563</span>
+<span id="3564">3564</span>
+<span id="3565">3565</span>
+<span id="3566">3566</span>
+<span id="3567">3567</span>
+<span id="3568">3568</span>
+<span id="3569">3569</span>
+<span id="3570">3570</span>
+<span id="3571">3571</span>
+<span id="3572">3572</span>
+<span id="3573">3573</span>
+<span id="3574">3574</span>
+<span id="3575">3575</span>
+<span id="3576">3576</span>
+<span id="3577">3577</span>
+<span id="3578">3578</span>
+<span id="3579">3579</span>
+<span id="3580">3580</span>
+<span id="3581">3581</span>
+<span id="3582">3582</span>
+<span id="3583">3583</span>
+<span id="3584">3584</span>
+<span id="3585">3585</span>
+<span id="3586">3586</span>
+<span id="3587">3587</span>
+<span id="3588">3588</span>
+<span id="3589">3589</span>
+<span id="3590">3590</span>
+<span id="3591">3591</span>
+<span id="3592">3592</span>
+<span id="3593">3593</span>
+<span id="3594">3594</span>
+<span id="3595">3595</span>
+<span id="3596">3596</span>
+<span id="3597">3597</span>
+<span id="3598">3598</span>
+<span id="3599">3599</span>
+<span id="3600">3600</span>
+<span id="3601">3601</span>
+<span id="3602">3602</span>
+<span id="3603">3603</span>
+<span id="3604">3604</span>
+<span id="3605">3605</span>
+<span id="3606">3606</span>
+<span id="3607">3607</span>
+<span id="3608">3608</span>
+<span id="3609">3609</span>
+<span id="3610">3610</span>
+<span id="3611">3611</span>
+<span id="3612">3612</span>
+<span id="3613">3613</span>
+<span id="3614">3614</span>
+<span id="3615">3615</span>
+<span id="3616">3616</span>
+<span id="3617">3617</span>
+<span id="3618">3618</span>
+<span id="3619">3619</span>
+<span id="3620">3620</span>
+<span id="3621">3621</span>
+<span id="3622">3622</span>
+<span id="3623">3623</span>
+<span id="3624">3624</span>
+<span id="3625">3625</span>
+<span id="3626">3626</span>
+<span id="3627">3627</span>
+<span id="3628">3628</span>
+<span id="3629">3629</span>
+<span id="3630">3630</span>
+<span id="3631">3631</span>
+<span id="3632">3632</span>
+<span id="3633">3633</span>
+<span id="3634">3634</span>
+<span id="3635">3635</span>
+<span id="3636">3636</span>
+<span id="3637">3637</span>
+<span id="3638">3638</span>
+<span id="3639">3639</span>
+<span id="3640">3640</span>
+<span id="3641">3641</span>
+<span id="3642">3642</span>
+<span id="3643">3643</span>
+<span id="3644">3644</span>
+<span id="3645">3645</span>
+<span id="3646">3646</span>
+<span id="3647">3647</span>
+<span id="3648">3648</span>
+<span id="3649">3649</span>
+<span id="3650">3650</span>
+<span id="3651">3651</span>
+<span id="3652">3652</span>
+<span id="3653">3653</span>
+<span id="3654">3654</span>
+<span id="3655">3655</span>
+<span id="3656">3656</span>
+<span id="3657">3657</span>
+<span id="3658">3658</span>
+<span id="3659">3659</span>
+<span id="3660">3660</span>
+<span id="3661">3661</span>
+<span id="3662">3662</span>
+<span id="3663">3663</span>
+<span id="3664">3664</span>
+<span id="3665">3665</span>
+<span id="3666">3666</span>
+<span id="3667">3667</span>
+<span id="3668">3668</span>
+<span id="3669">3669</span>
+<span id="3670">3670</span>
+<span id="3671">3671</span>
+<span id="3672">3672</span>
+<span id="3673">3673</span>
+<span id="3674">3674</span>
+<span id="3675">3675</span>
+<span id="3676">3676</span>
+<span id="3677">3677</span>
+<span id="3678">3678</span>
+<span id="3679">3679</span>
+<span id="3680">3680</span>
+<span id="3681">3681</span>
+<span id="3682">3682</span>
+<span id="3683">3683</span>
+<span id="3684">3684</span>
+<span id="3685">3685</span>
+<span id="3686">3686</span>
+<span id="3687">3687</span>
+<span id="3688">3688</span>
+<span id="3689">3689</span>
+<span id="3690">3690</span>
+<span id="3691">3691</span>
+<span id="3692">3692</span>
+<span id="3693">3693</span>
+<span id="3694">3694</span>
+<span id="3695">3695</span>
+<span id="3696">3696</span>
+<span id="3697">3697</span>
+<span id="3698">3698</span>
+<span id="3699">3699</span>
+<span id="3700">3700</span>
+<span id="3701">3701</span>
+<span id="3702">3702</span>
+<span id="3703">3703</span>
+<span id="3704">3704</span>
+<span id="3705">3705</span>
+<span id="3706">3706</span>
+<span id="3707">3707</span>
+<span id="3708">3708</span>
+<span id="3709">3709</span>
+<span id="3710">3710</span>
+<span id="3711">3711</span>
+<span id="3712">3712</span>
+<span id="3713">3713</span>
+<span id="3714">3714</span>
+<span id="3715">3715</span>
+<span id="3716">3716</span>
+<span id="3717">3717</span>
+<span id="3718">3718</span>
+<span id="3719">3719</span>
+<span id="3720">3720</span>
+<span id="3721">3721</span>
+<span id="3722">3722</span>
+<span id="3723">3723</span>
+<span id="3724">3724</span>
+<span id="3725">3725</span>
+<span id="3726">3726</span>
+<span id="3727">3727</span>
+<span id="3728">3728</span>
+<span id="3729">3729</span>
+<span id="3730">3730</span>
+<span id="3731">3731</span>
+<span id="3732">3732</span>
+<span id="3733">3733</span>
+<span id="3734">3734</span>
+<span id="3735">3735</span>
+<span id="3736">3736</span>
+<span id="3737">3737</span>
+<span id="3738">3738</span>
+<span id="3739">3739</span>
+<span id="3740">3740</span>
+<span id="3741">3741</span>
+<span id="3742">3742</span>
+<span id="3743">3743</span>
+<span id="3744">3744</span>
+<span id="3745">3745</span>
+<span id="3746">3746</span>
+<span id="3747">3747</span>
+<span id="3748">3748</span>
+<span id="3749">3749</span>
+<span id="3750">3750</span>
+<span id="3751">3751</span>
+<span id="3752">3752</span>
+<span id="3753">3753</span>
+<span id="3754">3754</span>
+<span id="3755">3755</span>
+<span id="3756">3756</span>
+<span id="3757">3757</span>
+<span id="3758">3758</span>
+<span id="3759">3759</span>
+<span id="3760">3760</span>
+<span id="3761">3761</span>
+<span id="3762">3762</span>
+<span id="3763">3763</span>
+<span id="3764">3764</span>
+<span id="3765">3765</span>
+<span id="3766">3766</span>
+<span id="3767">3767</span>
+<span id="3768">3768</span>
+<span id="3769">3769</span>
+<span id="3770">3770</span>
+<span id="3771">3771</span>
+<span id="3772">3772</span>
+<span id="3773">3773</span>
+<span id="3774">3774</span>
+<span id="3775">3775</span>
+<span id="3776">3776</span>
+<span id="3777">3777</span>
+<span id="3778">3778</span>
+<span id="3779">3779</span>
+<span id="3780">3780</span>
+<span id="3781">3781</span>
+<span id="3782">3782</span>
+<span id="3783">3783</span>
+<span id="3784">3784</span>
+<span id="3785">3785</span>
+<span id="3786">3786</span>
+<span id="3787">3787</span>
+<span id="3788">3788</span>
+<span id="3789">3789</span>
+<span id="3790">3790</span>
+<span id="3791">3791</span>
+<span id="3792">3792</span>
+<span id="3793">3793</span>
+<span id="3794">3794</span>
+<span id="3795">3795</span>
+<span id="3796">3796</span>
+<span id="3797">3797</span>
+<span id="3798">3798</span>
+<span id="3799">3799</span>
+<span id="3800">3800</span>
+<span id="3801">3801</span>
+<span id="3802">3802</span>
+<span id="3803">3803</span>
+<span id="3804">3804</span>
+<span id="3805">3805</span>
+<span id="3806">3806</span>
+<span id="3807">3807</span>
+<span id="3808">3808</span>
+<span id="3809">3809</span>
+<span id="3810">3810</span>
+<span id="3811">3811</span>
+<span id="3812">3812</span>
+<span id="3813">3813</span>
+<span id="3814">3814</span>
+<span id="3815">3815</span>
+<span id="3816">3816</span>
+<span id="3817">3817</span>
+<span id="3818">3818</span>
+<span id="3819">3819</span>
+<span id="3820">3820</span>
+<span id="3821">3821</span>
+<span id="3822">3822</span>
+<span id="3823">3823</span>
+<span id="3824">3824</span>
+<span id="3825">3825</span>
+<span id="3826">3826</span>
+<span id="3827">3827</span>
+<span id="3828">3828</span>
+<span id="3829">3829</span>
+<span id="3830">3830</span>
+<span id="3831">3831</span>
+<span id="3832">3832</span>
+<span id="3833">3833</span>
+<span id="3834">3834</span>
+<span id="3835">3835</span>
+<span id="3836">3836</span>
+<span id="3837">3837</span>
+<span id="3838">3838</span>
+<span id="3839">3839</span>
+<span id="3840">3840</span>
+<span id="3841">3841</span>
+<span id="3842">3842</span>
+<span id="3843">3843</span>
+<span id="3844">3844</span>
+<span id="3845">3845</span>
+<span id="3846">3846</span>
+<span id="3847">3847</span>
+<span id="3848">3848</span>
+<span id="3849">3849</span>
+<span id="3850">3850</span>
+<span id="3851">3851</span>
+<span id="3852">3852</span>
+<span id="3853">3853</span>
+<span id="3854">3854</span>
+<span id="3855">3855</span>
+<span id="3856">3856</span>
+<span id="3857">3857</span>
+<span id="3858">3858</span>
+<span id="3859">3859</span>
+<span id="3860">3860</span>
+<span id="3861">3861</span>
+<span id="3862">3862</span>
+<span id="3863">3863</span>
+<span id="3864">3864</span>
+<span id="3865">3865</span>
+<span id="3866">3866</span>
+<span id="3867">3867</span>
+<span id="3868">3868</span>
+<span id="3869">3869</span>
+<span id="3870">3870</span>
+<span id="3871">3871</span>
+<span id="3872">3872</span>
+<span id="3873">3873</span>
+<span id="3874">3874</span>
+<span id="3875">3875</span>
+<span id="3876">3876</span>
+<span id="3877">3877</span>
+<span id="3878">3878</span>
+<span id="3879">3879</span>
+<span id="3880">3880</span>
+<span id="3881">3881</span>
+<span id="3882">3882</span>
+<span id="3883">3883</span>
+<span id="3884">3884</span>
+<span id="3885">3885</span>
+<span id="3886">3886</span>
+<span id="3887">3887</span>
+<span id="3888">3888</span>
+<span id="3889">3889</span>
+<span id="3890">3890</span>
+<span id="3891">3891</span>
+<span id="3892">3892</span>
+<span id="3893">3893</span>
+<span id="3894">3894</span>
+<span id="3895">3895</span>
+<span id="3896">3896</span>
+<span id="3897">3897</span>
+<span id="3898">3898</span>
+<span id="3899">3899</span>
+<span id="3900">3900</span>
+<span id="3901">3901</span>
+<span id="3902">3902</span>
+<span id="3903">3903</span>
+<span id="3904">3904</span>
+<span id="3905">3905</span>
+<span id="3906">3906</span>
+<span id="3907">3907</span>
+<span id="3908">3908</span>
+<span id="3909">3909</span>
+<span id="3910">3910</span>
+<span id="3911">3911</span>
+<span id="3912">3912</span>
+<span id="3913">3913</span>
+<span id="3914">3914</span>
+<span id="3915">3915</span>
+<span id="3916">3916</span>
+<span id="3917">3917</span>
+<span id="3918">3918</span>
+<span id="3919">3919</span>
+<span id="3920">3920</span>
+<span id="3921">3921</span>
+<span id="3922">3922</span>
+<span id="3923">3923</span>
+<span id="3924">3924</span>
+<span id="3925">3925</span>
+<span id="3926">3926</span>
+<span id="3927">3927</span>
+<span id="3928">3928</span>
+<span id="3929">3929</span>
+<span id="3930">3930</span>
+<span id="3931">3931</span>
+<span id="3932">3932</span>
+<span id="3933">3933</span>
+<span id="3934">3934</span>
+<span id="3935">3935</span>
+<span id="3936">3936</span>
+<span id="3937">3937</span>
+<span id="3938">3938</span>
+<span id="3939">3939</span>
+<span id="3940">3940</span>
+<span id="3941">3941</span>
+<span id="3942">3942</span>
+<span id="3943">3943</span>
+<span id="3944">3944</span>
 </pre><pre class="rust ">
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;yaml&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">BTreeMap</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">rc</span>::<span class="ident">Rc</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::{<span class="ident">OsString</span>, <span class="ident">OsStr</span>};
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span><span class="op">=</span><span class="string">&quot;windows&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::{<span class="ident">OsStr</span>, <span class="ident">OsString</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;windows&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">osstringext</span>::<span class="ident">OsStrExt3</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_os</span><span class="op">=</span><span class="string">&quot;windows&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;windows&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)))]</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">ffi</span>::<span class="ident">OsStrExt</span>;
-
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">env</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;yaml&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">yaml_rust</span>::<span class="ident">Yaml</span>;
-<span class="kw">use</span> <span class="ident">vec_map</span>::<span class="ident">VecMap</span>;
+<span class="kw">use</span> <span class="ident">map</span>::<span class="ident">VecMap</span>;
 
 <span class="kw">use</span> <span class="ident">usage_parser</span>::<span class="ident">UsageParser</span>;
 <span class="kw">use</span> <span class="ident">args</span>::<span class="ident">settings</span>::<span class="ident">ArgSettings</span>;
-<span class="kw">use</span> <span class="ident">args</span>::<span class="ident">arg_builder</span>::{<span class="ident">Base</span>, <span class="ident">Valued</span>, <span class="ident">Switched</span>};
+<span class="kw">use</span> <span class="ident">args</span>::<span class="ident">arg_builder</span>::{<span class="ident">Base</span>, <span class="ident">Switched</span>, <span class="ident">Valued</span>};
 
 <span class="doccomment">/// The abstract representation of a command line argument. Used to set all the options and</span>
 <span class="doccomment">/// relationships that define a valid argument for the program.</span>
@@ -3549,18 +3986,14 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_debug_implementations</span>)]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Arg</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>
-    <span class="kw">where</span> <span class="lifetime">&#39;a</span>: <span class="lifetime">&#39;b</span>
+<span class="kw">where</span>
+    <span class="lifetime">&#39;a</span>: <span class="lifetime">&#39;b</span>,
 {
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">b</span>: <span class="ident">Base</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">s</span>: <span class="ident">Switched</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">v</span>: <span class="ident">Valued</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
-    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">r_ifs</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)<span class="op">&gt;&gt;</span>,
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="ident">b</span>: <span class="ident">Base</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="ident">s</span>: <span class="ident">Switched</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="ident">v</span>: <span class="ident">Valued</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="ident">index</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>,
+    <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span> <span class="kw">pub</span> <span class="ident">r_ifs</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)<span class="op">&gt;&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Arg</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
@@ -3581,7 +4014,12 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// [`Arg::takes_value(true)`]: ./struct.Arg.html#method.takes_value</span>
     <span class="doccomment">/// [`Arg`]: ./struct.Arg.html</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_name</span>(<span class="ident">n</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> { <span class="ident">Arg</span> { <span class="ident">b</span>: <span class="ident">Base</span>::<span class="ident">new</span>(<span class="ident">n</span>), ..<span class="ident">Default</span>::<span class="ident">default</span>() } }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_name</span>(<span class="ident">n</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">Arg</span> {
+            <span class="ident">b</span>: <span class="ident">Base</span>::<span class="ident">new</span>(<span class="ident">n</span>),
+            ..<span class="ident">Default</span>::<span class="ident">default</span>()
+        }
+    }
 
     <span class="doccomment">/// Creates a new instance of [`Arg`] from a .yml (YAML) file.</span>
     <span class="doccomment">///</span>
@@ -3629,6 +4067,7 @@
                 <span class="string">&quot;value_name&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_str</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">value_name</span>),
                 <span class="string">&quot;use_delimiter&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_bool</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">use_delimiter</span>),
                 <span class="string">&quot;allow_hyphen_values&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_bool</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">allow_hyphen_values</span>),
+                <span class="string">&quot;last&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_bool</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">last</span>),
                 <span class="string">&quot;require_delimiter&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_bool</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">require_delimiter</span>),
                 <span class="string">&quot;value_delimiter&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_str</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">value_delimiter</span>),
                 <span class="string">&quot;required_unless&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_str</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">required_unless</span>),
@@ -3636,6 +4075,7 @@
                 <span class="string">&quot;default_value&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_str</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">default_value</span>),
                 <span class="string">&quot;default_value_if&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_tuple3</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">default_value_if</span>),
                 <span class="string">&quot;default_value_ifs&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_tuple3</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">default_value_if</span>),
+                <span class="string">&quot;env&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_to_str</span><span class="macro">!</span>(<span class="ident">a</span>, <span class="ident">v</span>, <span class="ident">env</span>),
                 <span class="string">&quot;value_names&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_vec_or_str</span><span class="macro">!</span>(<span class="ident">v</span>, <span class="ident">a</span>, <span class="ident">value_name</span>),
                 <span class="string">&quot;groups&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_vec_or_str</span><span class="macro">!</span>(<span class="ident">v</span>, <span class="ident">a</span>, <span class="ident">group</span>),
                 <span class="string">&quot;requires&quot;</span> <span class="op">=&gt;</span> <span class="macro">yaml_vec_or_str</span><span class="macro">!</span>(<span class="ident">v</span>, <span class="ident">a</span>, <span class="ident">requires</span>),
@@ -3650,11 +4090,10 @@
                     <span class="ident">a</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">RequiredUnlessAll</span>);
                     <span class="ident">a</span>
                 }
-                <span class="ident">s</span> <span class="op">=&gt;</span> {
-                    <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unknown Arg setting &#39;{}&#39; in YAML file for arg &#39;{}&#39;&quot;</span>,
-                           <span class="ident">s</span>,
-                           <span class="ident">name_str</span>)
-                }
+                <span class="ident">s</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(
+                    <span class="string">&quot;Unknown Arg setting &#39;{}&#39; in YAML file for arg &#39;{}&#39;&quot;</span>,
+                    <span class="ident">s</span>, <span class="ident">name_str</span>
+                ),
             }
         }
 
@@ -3935,7 +4374,7 @@
                 <span class="ident">als</span>.<span class="ident">push</span>((<span class="ident">n</span>, <span class="bool-val">false</span>));
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">s</span>.<span class="ident">aliases</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> (<span class="kw-2">*</span><span class="ident">n</span>, <span class="bool-val">false</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">s</span>.<span class="ident">aliases</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> (<span class="kw-2">*</span><span class="ident">n</span>, <span class="bool-val">false</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -3993,7 +4432,7 @@
                 <span class="ident">als</span>.<span class="ident">push</span>((<span class="ident">n</span>, <span class="bool-val">true</span>));
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">s</span>.<span class="ident">aliases</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> (<span class="kw-2">*</span><span class="ident">n</span>, <span class="bool-val">true</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">s</span>.<span class="ident">aliases</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> (<span class="kw-2">*</span><span class="ident">n</span>, <span class="bool-val">true</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -4112,10 +4551,10 @@
     <span class="doccomment">///         that cannot be read by this program. Obviously I&#39;m going on</span>
     <span class="doccomment">///         and on, so I&#39;ll stop now.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// -h, --help       </span>
+    <span class="doccomment">/// -h, --help</span>
     <span class="doccomment">///         Prints help information</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// -V, --version    </span>
+    <span class="doccomment">/// -V, --version</span>
     <span class="doccomment">///         Prints version information</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// [`Arg::help`]: ./struct.Arg.html#method.help</span>
@@ -4131,13 +4570,13 @@
     <span class="doccomment">/// allows one to access this arg early using the `--` syntax. Accessing an arg early, even with</span>
     <span class="doccomment">/// the `--` syntax is otherwise not possible.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// **NOTE:** This will change the usage string to look like `$ prog [FLAGS] [-- &lt;ARG&gt;]` if </span>
+    <span class="doccomment">/// **NOTE:** This will change the usage string to look like `$ prog [FLAGS] [-- &lt;ARG&gt;]` if</span>
     <span class="doccomment">/// `ARG` is marked as `.last(true)`.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** This setting will imply [`AppSettings::DontCollapseArgsInUsage`] because failing</span>
     <span class="doccomment">/// to set this can make the usage string very confusing.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// **NOTE**: This setting only applies to positional arguments, and has no affect on FLAGS / </span>
+    <span class="doccomment">/// **NOTE**: This setting only applies to positional arguments, and has no affect on FLAGS /</span>
     <span class="doccomment">/// OPTIONS</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **CAUTION:** Setting an argument to `.last(true)` *and* having child subcommands is not</span>
@@ -4328,9 +4767,14 @@
 
     <span class="doccomment">/// Allows values which start with a leading hyphen (`-`)</span>
     <span class="doccomment">///</span>
+    <span class="doccomment">/// **WARNING**: Take caution when using this setting combined with [`Arg::multiple(true)`], as</span>
+    <span class="doccomment">/// this becomes ambiguous `$ prog --arg -- -- val`. All three `--, --, val` will be values</span>
+    <span class="doccomment">/// when the user may have thought the second `--` would constitute the normal, &quot;Only</span>
+    <span class="doccomment">/// positional args follow&quot; idiom. To fix this, consider using [`Arg::number_of_values(1)`]</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// **WARNING**: When building your CLIs, consider the effects of allowing leading hyphens and</span>
     <span class="doccomment">/// the user passing in a value that matches a valid short. For example `prog -opt -F` where</span>
-    <span class="doccomment">/// `-F` is supposed to be a value, yet `-F` is *also* a valid short for anther arg. Care should</span>
+    <span class="doccomment">/// `-F` is supposed to be a value, yet `-F` is *also* a valid short for another arg. Care should</span>
     <span class="doccomment">/// should be taken when designing these args. This is compounded by the ability to &quot;stack&quot;</span>
     <span class="doccomment">/// short args. I.e. if `-val` is supposed to be a value, but `-v`, `-a`, and `-l` are all valid</span>
     <span class="doccomment">/// shorts.</span>
@@ -4375,6 +4819,8 @@
     <span class="doccomment">/// assert_eq!(res.unwrap_err().kind, ErrorKind::UnknownArgument);</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// [`Arg::allow_hyphen_values(true)`]: ./struct.Arg.html#method.allow_hyphen_values</span>
+    <span class="doccomment">/// [`Arg::multiple(true)`]: ./struct.Arg.html#method.multiple</span>
+    <span class="doccomment">/// [`Arg::number_of_values(1)`]: ./struct.Arg.html#method.number_of_values</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">allow_hyphen_values</span>(<span class="self">self</span>, <span class="ident">a</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">if</span> <span class="ident">a</span> {
             <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">AllowLeadingHyphen</span>)
@@ -4516,7 +4962,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">r_unless</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">r_unless</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">RequiredUnlessAll</span>);
         <span class="self">self</span>.<span class="ident">required</span>(<span class="bool-val">true</span>)
@@ -4592,7 +5038,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">r_unless</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">r_unless</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>.<span class="ident">required</span>(<span class="bool-val">true</span>)
     }
@@ -4690,7 +5136,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">blacklist</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">blacklist</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -4701,6 +5147,10 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** When an argument is overridden it is essentially as if it never was used, any</span>
     <span class="doccomment">/// conflicts, requirements, etc. are evaluated **after** all &quot;overrides&quot; have been removed</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **WARNING:** Positional arguments cannot override themselves (or we would never be able</span>
+    <span class="doccomment">/// to advance to the next positional). If a positional agument lists itself as an override,</span>
+    <span class="doccomment">/// it is simply ignored.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -4721,11 +5171,79 @@
     <span class="doccomment">///                                 // was never used because it was overridden with color</span>
     <span class="doccomment">/// assert!(!m.is_present(&quot;flag&quot;));</span>
     <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Care must be taken when using this setting, and having an arg override with itself. This</span>
+    <span class="doccomment">/// is common practice when supporting things like shell aliases, config files, etc.</span>
+    <span class="doccomment">/// However, when combined with multiple values, it can get dicy.</span>
+    <span class="doccomment">/// Here is how clap handles such situations:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When a flag overrides itself, it&#39;s as if the flag was only ever used once (essentially</span>
+    <span class="doccomment">/// preventing a &quot;Unexpected multiple usage&quot; error):</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;posix&quot;)</span>
+    <span class="doccomment">///             .arg(Arg::from_usage(&quot;--flag  &#39;some flag&#39;&quot;).overrides_with(&quot;flag&quot;))</span>
+    <span class="doccomment">///             .get_matches_from(vec![&quot;posix&quot;, &quot;--flag&quot;, &quot;--flag&quot;]);</span>
+    <span class="doccomment">/// assert!(m.is_present(&quot;flag&quot;));</span>
+    <span class="doccomment">/// assert_eq!(m.occurrences_of(&quot;flag&quot;), 1);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Making a arg `multiple(true)` and override itself is essentially meaningless. Therefore</span>
+    <span class="doccomment">/// clap ignores an override of self if it&#39;s a flag and it already accepts multiple occurrences.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;posix&quot;)</span>
+    <span class="doccomment">///             .arg(Arg::from_usage(&quot;--flag...  &#39;some flag&#39;&quot;).overrides_with(&quot;flag&quot;))</span>
+    <span class="doccomment">///             .get_matches_from(vec![&quot;&quot;, &quot;--flag&quot;, &quot;--flag&quot;, &quot;--flag&quot;, &quot;--flag&quot;]);</span>
+    <span class="doccomment">/// assert!(m.is_present(&quot;flag&quot;));</span>
+    <span class="doccomment">/// assert_eq!(m.occurrences_of(&quot;flag&quot;), 4);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Now notice with options (which *do not* set `multiple(true)`), it&#39;s as if only the last</span>
+    <span class="doccomment">/// occurrence happened.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;posix&quot;)</span>
+    <span class="doccomment">///             .arg(Arg::from_usage(&quot;--opt [val] &#39;some option&#39;&quot;).overrides_with(&quot;opt&quot;))</span>
+    <span class="doccomment">///             .get_matches_from(vec![&quot;&quot;, &quot;--opt=some&quot;, &quot;--opt=other&quot;]);</span>
+    <span class="doccomment">/// assert!(m.is_present(&quot;opt&quot;));</span>
+    <span class="doccomment">/// assert_eq!(m.occurrences_of(&quot;opt&quot;), 1);</span>
+    <span class="doccomment">/// assert_eq!(m.value_of(&quot;opt&quot;), Some(&quot;other&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Just like flags, options with `multiple(true)` set, will ignore the &quot;override self&quot; setting.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;posix&quot;)</span>
+    <span class="doccomment">///             .arg(Arg::from_usage(&quot;--opt [val]... &#39;some option&#39;&quot;)</span>
+    <span class="doccomment">///                 .overrides_with(&quot;opt&quot;))</span>
+    <span class="doccomment">///             .get_matches_from(vec![&quot;&quot;, &quot;--opt&quot;, &quot;first&quot;, &quot;over&quot;, &quot;--opt&quot;, &quot;other&quot;, &quot;val&quot;]);</span>
+    <span class="doccomment">/// assert!(m.is_present(&quot;opt&quot;));</span>
+    <span class="doccomment">/// assert_eq!(m.occurrences_of(&quot;opt&quot;), 2);</span>
+    <span class="doccomment">/// assert_eq!(m.values_of(&quot;opt&quot;).unwrap().collect::&lt;Vec&lt;_&gt;&gt;(), &amp;[&quot;first&quot;, &quot;over&quot;, &quot;other&quot;, &quot;val&quot;]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// A safe thing to do if you&#39;d like to support an option which supports multiple values, but</span>
+    <span class="doccomment">/// also is &quot;overridable&quot; by itself, is to use `use_delimiter(false)` and *not* use</span>
+    <span class="doccomment">/// `multiple(true)` while telling users to seperate values with a comma (i.e. `val1,val2`)</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;posix&quot;)</span>
+    <span class="doccomment">///             .arg(Arg::from_usage(&quot;--opt [val] &#39;some option&#39;&quot;)</span>
+    <span class="doccomment">///                 .overrides_with(&quot;opt&quot;)</span>
+    <span class="doccomment">///                 .use_delimiter(false))</span>
+    <span class="doccomment">///             .get_matches_from(vec![&quot;&quot;, &quot;--opt=some,other&quot;, &quot;--opt=one,two&quot;]);</span>
+    <span class="doccomment">/// assert!(m.is_present(&quot;opt&quot;));</span>
+    <span class="doccomment">/// assert_eq!(m.occurrences_of(&quot;opt&quot;), 1);</span>
+    <span class="doccomment">/// assert_eq!(m.values_of(&quot;opt&quot;).unwrap().collect::&lt;Vec&lt;_&gt;&gt;(), &amp;[&quot;one,two&quot;]);</span>
+    <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overrides_with</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">vec</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">overrides</span> {
-            <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">name</span>.<span class="ident">as_ref</span>());
+            <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">name</span>);
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">overrides</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">name</span>.<span class="ident">as_ref</span>()]);
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">overrides</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">name</span>]);
         }
         <span class="self">self</span>
     }
@@ -4763,7 +5281,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">overrides</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">overrides</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -5008,7 +5526,7 @@
     <span class="doccomment">/// assert!(res.is_ok()); // We didn&#39;t use --other=special, so &quot;cfg&quot; wasn&#39;t required</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// Setting [`Arg::required_if(arg, val)`] and having `arg` used with a vaue of `val` but *not*</span>
+    <span class="doccomment">/// Setting [`Arg::required_if(arg, val)`] and having `arg` used with a value of `val` but *not*</span>
     <span class="doccomment">/// using this arg is an error.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```rust</span>
@@ -5092,7 +5610,7 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Setting [`Arg::required_ifs(&amp;[(arg, val)])`] and having any of the `arg`s used with it&#39;s</span>
-    <span class="doccomment">/// vaue of `val` but *not* using this arg is an error.</span>
+    <span class="doccomment">/// value of `val` but *not* using this arg is an error.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```rust</span>
     <span class="doccomment">/// # use clap::{App, Arg, ErrorKind};</span>
@@ -5391,17 +5909,47 @@
     <span class="doccomment">/// **WARNING:**</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Setting `multiple(true)` for an [option] with no other details, allows multiple values</span>
-    <span class="doccomment">/// **and** multiple occurrences because it isn&#39;t possible to have more occurrences than values for</span>
-    <span class="doccomment">/// options. Because multiple values are allowed, `--option val1 val2 val3` is perfectly valid,</span>
-    <span class="doccomment">/// be careful when designing a CLI where positional arguments are expected after a option which</span>
-    <span class="doccomment">/// accepts multiple values, as `clap` will continue parsing *values* until it reaches the max</span>
-    <span class="doccomment">/// or specific number of values defined, or another flag or option.</span>
+    <span class="doccomment">/// **and** multiple occurrences because it isn&#39;t possible to have more occurrences than values</span>
+    <span class="doccomment">/// for options. Because multiple values are allowed, `--option val1 val2 val3` is perfectly</span>
+    <span class="doccomment">/// valid, be careful when designing a CLI where positional arguments are expected after a</span>
+    <span class="doccomment">/// option which accepts multiple values, as `clap` will continue parsing *values* until it</span>
+    <span class="doccomment">/// reaches the max or specific number of values defined, or another flag or option.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **Pro Tip**:</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// It&#39;s possible to define an option which allows multiple occurrences, but only one value per</span>
     <span class="doccomment">/// occurrence. To do this use [`Arg::number_of_values(1)`] in coordination with</span>
     <span class="doccomment">/// [`Arg::multiple(true)`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **WARNING:**</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// When using args with `multiple(true)` on [options] or [positionals] (i.e. those args that</span>
+    <span class="doccomment">/// accept values) and [subcommands], one needs to consider the possibility of an argument value</span>
+    <span class="doccomment">/// being the same as a valid subcommand. By default `clap` will parse the argument in question</span>
+    <span class="doccomment">/// as a value *only if* a value is possible at that moment. Otherwise it will be parsed as a</span>
+    <span class="doccomment">/// subcommand. In effect, this means using `multiple(true)` with no additional parameters and</span>
+    <span class="doccomment">/// a possible value that coincides with a subcommand name, the subcommand cannot be called</span>
+    <span class="doccomment">/// unless another argument is passed first.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// As an example, consider a CLI with an option `--ui-paths=&lt;paths&gt;...` and subcommand `signer`</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The following would be parsed as values to `--ui-paths`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// $ program --ui-paths path1 path2 signer</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This is because `--ui-paths` accepts multiple values. `clap` will continue parsing values</span>
+    <span class="doccomment">/// until another argument is reached and it knows `--ui-paths` is done.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// By adding additional parameters to `--ui-paths` we can solve this issue. Consider adding</span>
+    <span class="doccomment">/// [`Arg::number_of_values(1)`] as discussed above. The following are all valid, and `signer`</span>
+    <span class="doccomment">/// is parsed as both a subcommand and a value in the second case.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// $ program --ui-paths path1 signer</span>
+    <span class="doccomment">/// $ program --ui-paths path1 --ui-paths signer signer</span>
+    <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -5446,7 +5994,7 @@
     <span class="doccomment">/// let files: Vec&lt;_&gt; = m.values_of(&quot;file&quot;).unwrap().collect();</span>
     <span class="doccomment">/// assert_eq!(files, [&quot;file1&quot;, &quot;file2&quot;, &quot;file3&quot;]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// This is functionally equivilant to the example above</span>
+    <span class="doccomment">/// This is functionally equivalent to the example above</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```rust</span>
     <span class="doccomment">/// # use clap::{App, Arg};</span>
@@ -5536,6 +6084,9 @@
     <span class="doccomment">/// assert_eq!(res.unwrap_err().kind, ErrorKind::UnknownArgument);</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// [option]: ./struct.Arg.html#method.takes_value</span>
+    <span class="doccomment">/// [options]: ./struct.Arg.html#method.takes_value</span>
+    <span class="doccomment">/// [subcommands]: ./struct.SubCommand.html</span>
+    <span class="doccomment">/// [positionals]: ./struct.Arg.html#method.index</span>
     <span class="doccomment">/// [`Arg::number_of_values(1)`]: ./struct.Arg.html#method.number_of_values</span>
     <span class="doccomment">/// [`Arg::multiple(true)`]: ./struct.Arg.html#method.multiple</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">multiple</span>(<span class="self">self</span>, <span class="ident">multi</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
@@ -5555,7 +6106,7 @@
     <span class="doccomment">/// **NOTE:** This setting only applies to [options] and [positional arguments]</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** When the terminator is passed in on the command line, it is **not** stored as one</span>
-    <span class="doccomment">/// of the vaues</span>
+    <span class="doccomment">/// of the values</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -5599,14 +6150,10 @@
 
     <span class="doccomment">/// Specifies that an argument can be matched to all child [`SubCommand`]s.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// **NOTE:** Global arguments *only* propagate down, **not** up (to parent commands)</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// **NOTE:** Global arguments *cannot* be [required].</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// **NOTE:** Global arguments, when matched, *only* exist in the command&#39;s matches that they</span>
-    <span class="doccomment">/// were matched to. For example, if you defined a `--flag` global argument in the top most</span>
-    <span class="doccomment">/// parent command, but the user supplied the arguments `top cmd1 cmd2 --flag` *only* `cmd2`&#39;s</span>
-    <span class="doccomment">/// [`ArgMatches`] would return `true` if tested for [`ArgMatches::is_present(&quot;flag&quot;)`].</span>
+    <span class="doccomment">/// **NOTE:** Global arguments *only* propagate down, **not** up (to parent commands), however</span>
+    <span class="doccomment">/// their values once a user uses them will be propagated back up to parents. In effect, this</span>
+    <span class="doccomment">/// means one should *define* all global arguments at the top level, however it doesn&#39;t matter</span>
+    <span class="doccomment">/// where the user *uses* the global argument.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -5618,7 +6165,7 @@
     <span class="doccomment">/// # ;</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// For example, assume an appliction with two subcommands, and you&#39;d like to define a</span>
+    <span class="doccomment">/// For example, assume an application with two subcommands, and you&#39;d like to define a</span>
     <span class="doccomment">/// `--verbose` flag that can be called on any of the subcommands and parent, but you don&#39;t</span>
     <span class="doccomment">/// want to clutter the source with three duplicate [`Arg`] definitions.</span>
     <span class="doccomment">///</span>
@@ -5697,6 +6244,9 @@
 
     <span class="doccomment">/// Hides an argument from help message output.</span>
     <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** Implicitly sets [`Arg::hidden_short_help(true)`] and [`Arg::hidden_long_help(true)`]</span>
+    <span class="doccomment">/// when set to true</span>
+    <span class="doccomment">/// </span>
     <span class="doccomment">/// **NOTE:** This does **not** hide the argument from usage strings on error</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
@@ -5733,6 +6283,8 @@
     <span class="doccomment">/// -h, --help       Prints help information</span>
     <span class="doccomment">/// -V, --version    Prints version information</span>
     <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// [`Arg::hidden_short_help(true)`]: ./struct.Arg.html#method.hidden_short_help</span>
+    <span class="doccomment">/// [`Arg::hidden_long_help(true)`]: ./struct.Arg.html#method.hidden_long_help</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hidden</span>(<span class="self">self</span>, <span class="ident">h</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">if</span> <span class="ident">h</span> {
             <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">Hidden</span>)
@@ -5794,7 +6346,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">possible_vals</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">possible_vals</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -5859,6 +6411,59 @@
             <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">possible_vals</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">name</span>]);
         }
         <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// When used with [`Arg::possible_values`] it allows the argument value to pass validation even if</span>
+    <span class="doccomment">/// the case differs from that of the specified `possible_value`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **Pro Tip:** Use this setting with [`arg_enum!`]</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// # use std::ascii::AsciiExt;</span>
+    <span class="doccomment">/// let m = App::new(&quot;pv&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;option&quot;)</span>
+    <span class="doccomment">///         .long(&quot;--option&quot;)</span>
+    <span class="doccomment">///         .takes_value(true)</span>
+    <span class="doccomment">///         .possible_value(&quot;test123&quot;)</span>
+    <span class="doccomment">///         .case_insensitive(true))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;pv&quot;, &quot;--option&quot;, &quot;TeSt123&quot;,</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert!(m.value_of(&quot;option&quot;).unwrap().eq_ignore_ascii_case(&quot;test123&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This setting also works when multiple values can be defined:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;pv&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;option&quot;)</span>
+    <span class="doccomment">///         .short(&quot;-o&quot;)</span>
+    <span class="doccomment">///         .long(&quot;--option&quot;)</span>
+    <span class="doccomment">///         .takes_value(true)</span>
+    <span class="doccomment">///         .possible_value(&quot;test123&quot;)</span>
+    <span class="doccomment">///         .possible_value(&quot;test321&quot;)</span>
+    <span class="doccomment">///         .multiple(true)</span>
+    <span class="doccomment">///         .case_insensitive(true))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;pv&quot;, &quot;--option&quot;, &quot;TeSt123&quot;, &quot;teST123&quot;, &quot;tESt321&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let matched_vals = m.values_of(&quot;option&quot;).unwrap().collect::&lt;Vec&lt;_&gt;&gt;();</span>
+    <span class="doccomment">/// assert_eq!(&amp;*matched_vals, &amp;[&quot;TeSt123&quot;, &quot;teST123&quot;, &quot;tESt321&quot;]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// [`Arg::case_insensitive(true)`]: ./struct.Arg.html#method.possible_values</span>
+    <span class="doccomment">/// [`arg_enum!`]: ./macro.arg_enum.html</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">case_insensitive</span>(<span class="self">self</span>, <span class="ident">ci</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">if</span> <span class="ident">ci</span> {
+            <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">CaseInsensitive</span>)
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">unset</span>(<span class="ident">ArgSettings</span>::<span class="ident">CaseInsensitive</span>)
+        }
     }
 
     <span class="doccomment">/// Specifies the name of the [`ArgGroup`] the argument belongs to.</span>
@@ -5937,7 +6542,7 @@
                 <span class="ident">vec</span>.<span class="ident">push</span>(<span class="ident">s</span>);
             }
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">groups</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span>_<span class="op">&gt;&gt;</span>());
+            <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">groups</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">names</span>.<span class="ident">into_iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">s</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>());
         }
         <span class="self">self</span>
     }
@@ -6021,19 +6626,20 @@
     <span class="doccomment">/// [`Err(String)`]: https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err</span>
     <span class="doccomment">/// [`Rc`]: https://doc.rust-lang.org/std/rc/struct.Rc.html</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validator</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
-        <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>
+    <span class="kw">where</span>
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">String</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">validator</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">f</span>));
         <span class="self">self</span>
     }
 
-    <span class="doccomment">/// Works identically to Validator but is intended to be used with values that could </span>
+    <span class="doccomment">/// Works identically to Validator but is intended to be used with values that could</span>
     <span class="doccomment">/// contain non UTF-8 formatted strings.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
-    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">unix</span>), <span class="ident">doc</span><span class="op">=</span><span class="string">&quot; ```ignore&quot;</span>)]</span>
-    <span class="attribute">#[<span class="ident">cfg_attr</span>(    <span class="ident">unix</span> , <span class="ident">doc</span><span class="op">=</span><span class="string">&quot; ```rust&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">unix</span>), <span class="ident">doc</span> <span class="op">=</span> <span class="string">&quot; ```ignore&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">unix</span>, <span class="ident">doc</span> <span class="op">=</span> <span class="string">&quot; ```rust&quot;</span>)]</span>
     <span class="doccomment">/// # use clap::{App, Arg};</span>
     <span class="doccomment">/// # use std::ffi::{OsStr, OsString};</span>
     <span class="doccomment">/// # use std::os::unix::ffi::OsStrExt;</span>
@@ -6058,7 +6664,8 @@
     <span class="doccomment">/// [`Err(String)`]: https://doc.rust-lang.org/std/result/enum.Result.html#variant.Err</span>
     <span class="doccomment">/// [`Rc`]: https://doc.rust-lang.org/std/rc/struct.Rc.html</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validator_os</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="self">Self</span>
-        <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">OsStr</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">OsString</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>
+    <span class="kw">where</span>
+        <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">OsStr</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">OsString</span><span class="op">&gt;</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">validator_os</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">f</span>));
         <span class="self">self</span>
@@ -6070,9 +6677,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** This does *not* implicitly set [`Arg::multiple(true)`]. This is because</span>
     <span class="doccomment">/// `-o val -o val` is multiple occurrences but a single value and `-o val1 val2` is a single</span>
-    <span class="doccomment">/// occurence with multiple values. For positional arguments this **does** set</span>
+    <span class="doccomment">/// occurrence with multiple values. For positional arguments this **does** set</span>
     <span class="doccomment">/// [`Arg::multiple(true)`] because there is no way to determine the difference between multiple</span>
-    <span class="doccomment">/// occurences and multiple values.</span>
+    <span class="doccomment">/// occurrences and multiple values.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -6133,9 +6740,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** This does not implicitly set [`Arg::multiple(true)`]. This is because</span>
     <span class="doccomment">/// `-o val -o val` is multiple occurrences but a single value and `-o val1 val2` is a single</span>
-    <span class="doccomment">/// occurence with multiple values. For positional arguments this **does** set</span>
+    <span class="doccomment">/// occurrence with multiple values. For positional arguments this **does** set</span>
     <span class="doccomment">/// [`Arg::multiple(true)`] because there is no way to determine the difference between multiple</span>
-    <span class="doccomment">/// occurences and multiple values.</span>
+    <span class="doccomment">/// occurrences and multiple values.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -6361,9 +6968,11 @@
         <span class="self">self</span>.<span class="ident">unsetb</span>(<span class="ident">ArgSettings</span>::<span class="ident">ValueDelimiterNotSet</span>);
         <span class="self">self</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">TakesValue</span>);
         <span class="self">self</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">UseValueDelimiter</span>);
-        <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">val_delim</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">d</span>.<span class="ident">chars</span>()
-            .<span class="ident">nth</span>(<span class="number">0</span>)
-            .<span class="ident">expect</span>(<span class="string">&quot;Failed to get value_delimiter from arg&quot;</span>));
+        <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">val_delim</span> <span class="op">=</span> <span class="prelude-val">Some</span>(
+            <span class="ident">d</span>.<span class="ident">chars</span>()
+                .<span class="ident">nth</span>(<span class="number">0</span>)
+                .<span class="ident">expect</span>(<span class="string">&quot;Failed to get value_delimiter from arg&quot;</span>),
+        );
         <span class="self">self</span>
     }
 
@@ -6515,7 +7124,7 @@
     <span class="doccomment">/// **NOTE:** If the user *does not* use this argument at runtime [`ArgMatches::is_present`] will</span>
     <span class="doccomment">/// still return `true`. If you wish to determine whether the argument was used at runtime or</span>
     <span class="doccomment">/// not, consider [`ArgMatches::occurrences_of`] which will return `0` if the argument was *not*</span>
-    <span class="doccomment">/// used at runtmie.</span>
+    <span class="doccomment">/// used at runtime.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** This setting is perfectly compatible with [`Arg::default_value_if`] but slightly</span>
     <span class="doccomment">/// different. `Arg::default_value` *only* takes affect when the user has not provided this arg</span>
@@ -6528,7 +7137,7 @@
     <span class="doccomment">/// **NOTE:** This implicitly sets [`Arg::takes_value(true)`].</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// **NOTE:** This setting effectively disables `AppSettings::ArgRequiredElseHelp` if used in</span>
-    <span class="doccomment">/// conjuction as it ensures that some argument will always be present.</span>
+    <span class="doccomment">/// conjunction as it ensures that some argument will always be present.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
@@ -6681,20 +7290,23 @@
     <span class="doccomment">/// [`Arg::takes_value(true)`]: ./struct.Arg.html#method.takes_value</span>
     <span class="doccomment">/// [`Arg::default_value`]: ./struct.Arg.html#method.default_value</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_value_if</span>(<span class="self">self</span>, <span class="ident">arg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">val</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">default</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="self">self</span>.<span class="ident">default_value_if_os</span>(<span class="ident">arg</span>,
-                                 <span class="ident">val</span>.<span class="ident">map</span>(<span class="ident">str</span>::<span class="ident">as_bytes</span>).<span class="ident">map</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>),
-                                 <span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="ident">default</span>.<span class="ident">as_bytes</span>()))
+        <span class="self">self</span>.<span class="ident">default_value_if_os</span>(
+            <span class="ident">arg</span>,
+            <span class="ident">val</span>.<span class="ident">map</span>(<span class="ident">str</span>::<span class="ident">as_bytes</span>).<span class="ident">map</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>),
+            <span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="ident">default</span>.<span class="ident">as_bytes</span>()),
+        )
     }
 
     <span class="doccomment">/// Provides a conditional default value in the exact same manner as [`Arg::default_value_if`]</span>
     <span class="doccomment">/// only using [`OsStr`]s instead.</span>
     <span class="doccomment">/// [`Arg::default_value_if`]: ./struct.Arg.html#method.default_value_if</span>
     <span class="doccomment">/// [`OsStr`]: https://doc.rust-lang.org/std/ffi/struct.OsStr.html</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_value_if_os</span>(<span class="kw-2">mut</span> <span class="self">self</span>,
-                               <span class="ident">arg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-                               <span class="ident">val</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">OsStr</span><span class="op">&gt;</span>,
-                               <span class="ident">default</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">OsStr</span>)
-                               <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_value_if_os</span>(
+        <span class="kw-2">mut</span> <span class="self">self</span>,
+        <span class="ident">arg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
+        <span class="ident">val</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">OsStr</span><span class="op">&gt;</span>,
+        <span class="ident">default</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">OsStr</span>,
+    ) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">TakesValue</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">vm</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">default_vals_ifs</span> {
             <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="ident">vm</span>.<span class="ident">len</span>();
@@ -6767,7 +7379,7 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// We can also see that these values are applied in order, and if more than one condition is</span>
-    <span class="doccomment">/// true, only the first evaluatd &quot;wins&quot;</span>
+    <span class="doccomment">/// true, only the first evaluated &quot;wins&quot;</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```rust</span>
     <span class="doccomment">/// # use clap::{App, Arg};</span>
@@ -6793,9 +7405,11 @@
     <span class="doccomment">/// [`Arg::default_value`]: ./struct.Arg.html#method.default_value</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default_value_ifs</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">ifs</span>: <span class="kw-2">&amp;</span>[(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span><span class="op">&gt;</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">str</span>)]) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">for</span> <span class="kw-2">&amp;</span>(<span class="ident">arg</span>, <span class="ident">val</span>, <span class="ident">default</span>) <span class="kw">in</span> <span class="ident">ifs</span> {
-            <span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">default_value_if_os</span>(<span class="ident">arg</span>,
-                                            <span class="ident">val</span>.<span class="ident">map</span>(<span class="ident">str</span>::<span class="ident">as_bytes</span>).<span class="ident">map</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>),
-                                            <span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="ident">default</span>.<span class="ident">as_bytes</span>()));
+            <span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">default_value_if_os</span>(
+                <span class="ident">arg</span>,
+                <span class="ident">val</span>.<span class="ident">map</span>(<span class="ident">str</span>::<span class="ident">as_bytes</span>).<span class="ident">map</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>),
+                <span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="ident">default</span>.<span class="ident">as_bytes</span>()),
+            );
         }
         <span class="self">self</span>
     }
@@ -6810,6 +7424,128 @@
             <span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">default_value_if_os</span>(<span class="ident">arg</span>, <span class="ident">val</span>, <span class="ident">default</span>);
         }
         <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// Specifies that if the value is not passed in as an argument, that it should be retrieved</span>
+    <span class="doccomment">/// from the environment, if available. If it is not present in the environment, then default</span>
+    <span class="doccomment">/// rules will apply.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** If the user *does not* use this argument at runtime, [`ArgMatches::occurrences_of`]</span>
+    <span class="doccomment">/// will return `0` even though the [`ArgMatches::value_of`] will return the default specified.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** If the user *does not* use this argument at runtime [`ArgMatches::is_present`] will</span>
+    <span class="doccomment">/// return `true` if the variable is present in the environment . If you wish to determine whether</span>
+    <span class="doccomment">/// the argument was used at runtime or not, consider [`ArgMatches::occurrences_of`] which will</span>
+    <span class="doccomment">/// return `0` if the argument was *not* used at runtime.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** This implicitly sets [`Arg::takes_value(true)`].</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** If [`Arg::multiple(true)`] is set then [`Arg::use_delimiter(true)`] should also be</span>
+    <span class="doccomment">/// set. Otherwise, only a single argument will be returned from the environment variable. The</span>
+    <span class="doccomment">/// default delimiter is `,` and follows all the other delimiter rules.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// In this example, we show the variable coming from the environment:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use std::env;</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// env::set_var(&quot;MY_FLAG&quot;, &quot;env&quot;);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .long(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .env(&quot;MY_FLAG&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(m.value_of(&quot;flag&quot;), Some(&quot;env&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// In this example, we show the variable coming from an option on the CLI:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use std::env;</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// env::set_var(&quot;MY_FLAG&quot;, &quot;env&quot;);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .long(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .env(&quot;MY_FLAG&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;, &quot;--flag&quot;, &quot;opt&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(m.value_of(&quot;flag&quot;), Some(&quot;opt&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// In this example, we show the variable coming from the environment even with the</span>
+    <span class="doccomment">/// presence of a default:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use std::env;</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// env::set_var(&quot;MY_FLAG&quot;, &quot;env&quot;);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .long(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .env(&quot;MY_FLAG&quot;)</span>
+    <span class="doccomment">///         .default_value(&quot;default&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(m.value_of(&quot;flag&quot;), Some(&quot;env&quot;));</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// In this example, we show the use of multiple values in a single environment variable:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use std::env;</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// env::set_var(&quot;MY_FLAG_MULTI&quot;, &quot;env1,env2&quot;);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .long(&quot;flag&quot;)</span>
+    <span class="doccomment">///         .env(&quot;MY_FLAG_MULTI&quot;)</span>
+    <span class="doccomment">///         .multiple(true)</span>
+    <span class="doccomment">///         .use_delimiter(true))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(m.values_of(&quot;flag&quot;).unwrap().collect::&lt;Vec&lt;_&gt;&gt;(), vec![&quot;env1&quot;, &quot;env2&quot;]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">env</span>(<span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">env_os</span>(<span class="ident">OsStr</span>::<span class="ident">new</span>(<span class="ident">name</span>))
+    }
+
+    <span class="doccomment">/// Specifies that if the value is not passed in as an argument, that it should be retrieved</span>
+    <span class="doccomment">/// from the environment if available in the exact same manner as [`Arg::env`] only using</span>
+    <span class="doccomment">/// [`OsStr`]s instead.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">env_os</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">OsStr</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">setb</span>(<span class="ident">ArgSettings</span>::<span class="ident">TakesValue</span>);
+
+        <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">env</span> <span class="op">=</span> <span class="prelude-val">Some</span>((<span class="ident">name</span>, <span class="ident">env</span>::<span class="ident">var_os</span>(<span class="ident">name</span>)));
+        <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// @TODO @p2 @docs @release: write docs</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hide_env_values</span>(<span class="self">self</span>, <span class="ident">hide</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">if</span> <span class="ident">hide</span> {
+            <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">HideEnvValues</span>)
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">unset</span>(<span class="ident">ArgSettings</span>::<span class="ident">HideEnvValues</span>)
+        }
     }
 
     <span class="doccomment">/// When set to `true` the help string will be displayed on the line after the argument and</span>
@@ -6926,9 +7662,188 @@
         <span class="self">self</span>
     }
 
+    <span class="doccomment">/// Indicates that all parameters passed after this should not be parsed</span>
+    <span class="doccomment">/// individually, but rather passed in their entirety. It is worth noting</span>
+    <span class="doccomment">/// that setting this requires all values to come after a `--` to indicate they</span>
+    <span class="doccomment">/// should all be captured. For example:</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// --foo something -- -v -v -v -b -b -b --baz -q -u -x</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Will result in everything after `--` to be considered one raw argument. This behavior</span>
+    <span class="doccomment">/// may not be exactly what you are expecting and using [`AppSettings::TrailingVarArg`]</span>
+    <span class="doccomment">/// may be more appropriate.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** Implicitly sets [`Arg::multiple(true)`], [`Arg::allow_hyphen_values(true)`], and</span>
+    <span class="doccomment">/// [`Arg::last(true)`] when set to `true`</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [`Arg::multiple(true)`]: ./struct.Arg.html#method.multiple</span>
+    <span class="doccomment">/// [`Arg::allow_hyphen_values(true)`]: ./struct.Arg.html#method.allow_hyphen_values</span>
+    <span class="doccomment">/// [`Arg::last(true)`]: ./struct.Arg.html#method.last</span>
+    <span class="doccomment">/// [`AppSettings::TrailingVarArg`]: ./enum.AppSettings.html#variant.TrailingVarArg</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">raw</span>(<span class="self">self</span>, <span class="ident">raw</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">multiple</span>(<span class="ident">raw</span>).<span class="ident">allow_hyphen_values</span>(<span class="ident">raw</span>).<span class="ident">last</span>(<span class="ident">raw</span>)
+    }
+
+    <span class="doccomment">/// Hides an argument from short help message output.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** This does **not** hide the argument from usage strings on error</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** Setting this option will cause next-line-help output style to be used</span>
+    <span class="doccomment">/// when long help (`--help`) is called.</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// Arg::with_name(&quot;debug&quot;)</span>
+    <span class="doccomment">///     .hidden_short_help(true)</span>
+    <span class="doccomment">/// # ;</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Setting `hidden_short_help(true)` will hide the argument when displaying short help text</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;cfg&quot;)</span>
+    <span class="doccomment">///         .long(&quot;config&quot;)</span>
+    <span class="doccomment">///         .hidden_short_help(true)</span>
+    <span class="doccomment">///         .help(&quot;Some help text describing the --config arg&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;, &quot;-h&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The above example displays</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// helptest</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// USAGE:</span>
+    <span class="doccomment">///    helptest [FLAGS]</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// FLAGS:</span>
+    <span class="doccomment">/// -h, --help       Prints help information</span>
+    <span class="doccomment">/// -V, --version    Prints version information</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// However, when --help is called</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;cfg&quot;)</span>
+    <span class="doccomment">///         .long(&quot;config&quot;)</span>
+    <span class="doccomment">///         .hidden_short_help(true)</span>
+    <span class="doccomment">///         .help(&quot;Some help text describing the --config arg&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;, &quot;--help&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// Then the following would be displayed</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// helptest</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// USAGE:</span>
+    <span class="doccomment">///    helptest [FLAGS]</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// FLAGS:</span>
+    <span class="doccomment">///     --config     Some help text describing the --config arg</span>
+    <span class="doccomment">/// -h, --help       Prints help information</span>
+    <span class="doccomment">/// -V, --version    Prints version information</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hidden_short_help</span>(<span class="self">self</span>, <span class="ident">hide</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">if</span> <span class="ident">hide</span> { 
+            <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">HiddenShortHelp</span>)
+        } <span class="kw">else</span> { 
+            <span class="self">self</span>.<span class="ident">unset</span>(<span class="ident">ArgSettings</span>::<span class="ident">HiddenShortHelp</span>)
+        }
+    }
+
+    <span class="doccomment">/// Hides an argument from long help message output.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** This does **not** hide the argument from usage strings on error</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// **NOTE:** Setting this option will cause next-line-help output style to be used</span>
+    <span class="doccomment">/// when long help (`--help`) is called.</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// # Examples</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// Arg::with_name(&quot;debug&quot;)</span>
+    <span class="doccomment">///     .hidden_long_help(true)</span>
+    <span class="doccomment">/// # ;</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// Setting `hidden_long_help(true)` will hide the argument when displaying long help text</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;cfg&quot;)</span>
+    <span class="doccomment">///         .long(&quot;config&quot;)</span>
+    <span class="doccomment">///         .hidden_long_help(true)</span>
+    <span class="doccomment">///         .help(&quot;Some help text describing the --config arg&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;, &quot;--help&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// The above example displays</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// helptest</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// USAGE:</span>
+    <span class="doccomment">///    helptest [FLAGS]</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// FLAGS:</span>
+    <span class="doccomment">/// -h, --help       Prints help information</span>
+    <span class="doccomment">/// -V, --version    Prints version information</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// However, when -h is called</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// # use clap::{App, Arg};</span>
+    <span class="doccomment">/// let m = App::new(&quot;prog&quot;)</span>
+    <span class="doccomment">///     .arg(Arg::with_name(&quot;cfg&quot;)</span>
+    <span class="doccomment">///         .long(&quot;config&quot;)</span>
+    <span class="doccomment">///         .hidden_long_help(true)</span>
+    <span class="doccomment">///         .help(&quot;Some help text describing the --config arg&quot;))</span>
+    <span class="doccomment">///     .get_matches_from(vec![</span>
+    <span class="doccomment">///         &quot;prog&quot;, &quot;-h&quot;</span>
+    <span class="doccomment">///     ]);</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// Then the following would be displayed</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// ```notrust</span>
+    <span class="doccomment">/// helptest</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// USAGE:</span>
+    <span class="doccomment">///    helptest [FLAGS]</span>
+    <span class="doccomment">/// </span>
+    <span class="doccomment">/// FLAGS:</span>
+    <span class="doccomment">///     --config     Some help text describing the --config arg</span>
+    <span class="doccomment">/// -h, --help       Prints help information</span>
+    <span class="doccomment">/// -V, --version    Prints version information</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hidden_long_help</span>(<span class="self">self</span>, <span class="ident">hide</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="kw">if</span> <span class="ident">hide</span> {
+            <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">ArgSettings</span>::<span class="ident">HiddenLongHelp</span>)
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">unset</span>(<span class="ident">ArgSettings</span>::<span class="ident">HiddenLongHelp</span>)
+        }
+    }
+
     <span class="doccomment">/// Checks if one of the [`ArgSettings`] settings is set for the argument</span>
     <span class="doccomment">/// [`ArgSettings`]: ./enum.ArgSettings.html</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">is_set</span>(<span class="ident">s</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_set</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">is_set</span>(<span class="ident">s</span>)
+    }
 
     <span class="doccomment">/// Sets one of the [`ArgSettings`] settings for the argument</span>
     <span class="doccomment">/// [`ArgSettings`]: ./enum.ArgSettings.html</span>
@@ -6945,10 +7860,14 @@
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">setb</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) { <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">set</span>(<span class="ident">s</span>); }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">setb</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) {
+        <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">set</span>(<span class="ident">s</span>);
+    }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unsetb</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) { <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">unset</span>(<span class="ident">s</span>); }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unsetb</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">s</span>: <span class="ident">ArgSettings</span>) {
+        <span class="self">self</span>.<span class="ident">b</span>.<span class="ident">unset</span>(<span class="ident">s</span>);
+    }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="lifetime">&#39;z</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;z</span> <span class="ident">Arg</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Arg</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
@@ -6969,65 +7888,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "clap";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "clap";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

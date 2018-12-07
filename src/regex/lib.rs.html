@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-0.2.1/src/lib.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>lib.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.1.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -671,6 +626,61 @@
 <span id="626">626</span>
 <span id="627">627</span>
 <span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2014-2015 The Rust Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution and at</span>
@@ -703,7 +713,7 @@ used by adding `regex` to your dependencies in your project&#39;s `Cargo.toml`.
 
 ```toml
 [dependencies]
-regex = &quot;0.2&quot;
+regex = &quot;1&quot;
 ```
 
 and this to your crate root:
@@ -730,7 +740,7 @@ it to match anywhere in the text. Anchors can be used to ensure that the
 full text matches an expression.
 
 This example also demonstrates the utility of
-[raw strings](https://doc.rust-lang.org/stable/reference.html#raw-string-literals)
+[raw strings](https://doc.rust-lang.org/stable/reference/tokens.html#raw-string-literals)
 in Rust, which
 are just like regular strings except they are prefixed with an `r` and do
 not process any escape sequences. For example, `&quot;\\d&quot;` is the same
@@ -835,6 +845,10 @@ assert_eq!(after, &quot;03/14/2012, 01/01/2013 and 07/05/2014&quot;);
 # }
 ```
 
+If you wish to match against whitespace in this mode, you can still use `\s`,
+`\n`, `\t`, etc. For escaping a single space character, you can use its hex
+character code `\x20` or temporarily disable the `x` flag, e.g., `(?-x: )`.
+
 # Example: match multiple regular expressions simultaneously
 
 This demonstrates how to use a `RegexSet` to match multiple (possibly
@@ -887,9 +901,8 @@ This implementation executes regular expressions **only** on valid UTF-8
 while exposing match locations as byte indices into the search string.
 
 Only simple case folding is supported. Namely, when matching
-case-insensitively, the characters are first mapped using the [simple case
-folding](ftp://ftp.unicode.org/Public/UNIDATA/CaseFolding.txt) mapping
-before matching.
+case-insensitively, the characters are first mapped using the &quot;simple&quot; case
+folding rules defined by Unicode.
 
 Regular expressions themselves are **only** interpreted as a sequence of
 Unicode scalar values. This means you can use Unicode characters directly
@@ -918,9 +931,9 @@ are some examples:
   recognize `\n` and not any of the other forms of line terminators defined
   by Unicode.
 
-Finally, Unicode general categories and scripts are available as character
-classes. For example, you can match a sequence of numerals, Greek or
-Cherokee letters:
+Unicode general categories, scripts, script extensions, ages and a smattering
+of boolean properties are available as character classes. For example, you can
+match a sequence of numerals, Greek or Cherokee letters:
 
 ```rust
 # extern crate regex; use regex::Regex;
@@ -930,6 +943,12 @@ let mat = re.find(&quot;abcΔᎠβⅠᏴγδⅡxyz&quot;).unwrap();
 assert_eq!((mat.start(), mat.end()), (3, 23));
 # }
 ```
+
+For a more detailed breakdown of Unicode support with respect to
+[UTS#18](http://unicode.org/reports/tr18/),
+please see the
+[UNICODE](https://github.com/rust-lang/regex/blob/master/UNICODE.md)
+document in the root of the regex repository.
 
 # Opt out of Unicode support
 
@@ -952,28 +971,46 @@ regexes.
 The syntax supported in this crate is documented below.
 
 Note that the regular expression parser and abstract syntax are exposed in
-a separate crate, [`regex-syntax`](../regex_syntax/index.html).
+a separate crate, [`regex-syntax`](https://docs.rs/regex-syntax).
 
 ## Matching one character
 
 &lt;pre class=&quot;rust&quot;&gt;
 .             any character except new line (includes new line with s flag)
-[xyz]         A character class matching either x, y or z.
-[^xyz]        A character class matching any character except x, y and z.
-[a-z]         A character class matching any character in range a-z.
 \d            digit (\p{Nd})
 \D            not digit
-[[:alpha:]]   ASCII character class ([A-Za-z])
-[[:^alpha:]]  Negated ASCII character class ([^A-Za-z])
 \pN           One-letter name Unicode character class
 \p{Greek}     Unicode character class (general category or script)
 \PN           Negated one-letter name Unicode character class
 \P{Greek}     negated Unicode character class (general category or script)
 &lt;/pre&gt;
 
+### Character classes
+
+&lt;pre class=&quot;rust&quot;&gt;
+[xyz]         A character class matching either x, y or z (union).
+[^xyz]        A character class matching any character except x, y and z.
+[a-z]         A character class matching any character in range a-z.
+[[:alpha:]]   ASCII character class ([A-Za-z])
+[[:^alpha:]]  Negated ASCII character class ([^A-Za-z])
+[x[^xyz]]     Nested/grouping character class (matching any character except y and z)
+[a-y&amp;&amp;xyz]    Intersection (matching x or y)
+[0-9&amp;&amp;[^4]]   Subtraction using intersection and negation (matching 0-9 except 4)
+[0-9--4]      Direct subtraction (matching 0-9 except 4)
+[a-g~~b-h]    Symmetric difference (matching `a` and `h` only)
+[\[\]]        Escaping in character classes (matching [ or ])
+&lt;/pre&gt;
+
 Any named character class may appear inside a bracketed `[...]` character
 class. For example, `[\p{Greek}[:digit:]]` matches any Greek or ASCII
-digit.
+digit. `[\p{Greek}&amp;&amp;\pL]` matches Greek letters.
+
+Precedence in character classes, from most binding to least:
+
+1. Ranges: `a-cd` == `[a-c]d`
+2. Union: `ab&amp;&amp;bc` == `[ab]&amp;&amp;[bc]`
+3. Intersection: `^a-z&amp;&amp;b` == `^[a-z&amp;&amp;b]`
+4. Negation
 
 ## Composites
 
@@ -1028,7 +1065,7 @@ the `x` flag and clears the `y` flag.
 All flags are by default disabled unless stated otherwise. They are:
 
 &lt;pre class=&quot;rust&quot;&gt;
-i     case-insensitive
+i     case-insensitive: letters match both upper and lower case
 m     multi-line mode: ^ and $ match begin/end of line
 s     allow . to match \n
 U     swap the meaning of x* and x*?
@@ -1036,8 +1073,8 @@ u     Unicode support (enabled by default)
 x     ignore whitespace and allow line comments (starting with `#`)
 &lt;/pre&gt;
 
-Here&#39;s an example that matches case-insensitively for only part of the
-expression:
+Flags can be toggled within a pattern. Here&#39;s an example that matches
+case-insensitively for the first part but case-sensitively for the second part:
 
 ```rust
 # extern crate regex; use regex::Regex;
@@ -1050,6 +1087,25 @@ assert_eq!(&amp;cap[0], &quot;AaAaAbb&quot;);
 
 Notice that the `a+` matches either `a` or `A`, but the `b+` only matches
 `b`.
+
+Multi-line mode means `^` and `$` no longer match just at the beginning/end of
+the input, but at the beginning/end of lines:
+
+```
+# use regex::Regex;
+let re = Regex::new(r&quot;(?m)^line \d+&quot;).unwrap();
+let m = re.find(&quot;line one\nline 2\n&quot;).unwrap();
+assert_eq!(m.as_str(), &quot;line 2&quot;);
+```
+
+Note that `^` matches after new lines, even at the end of input:
+
+```
+# use regex::Regex;
+let re = Regex::new(r&quot;(?m)^&quot;).unwrap();
+let m = re.find_iter(&quot;test\n&quot;).last().unwrap();
+assert_eq!((m.start(), m.end()), (5, 5));
+```
 
 Here is an example that uses an ASCII word boundary instead of a Unicode
 word boundary:
@@ -1066,16 +1122,20 @@ assert_eq!(&amp;cap[0], &quot;abc&quot;);
 ## Escape sequences
 
 &lt;pre class=&quot;rust&quot;&gt;
-\*         literal *, works for any punctuation character: \.+*?()|[]{}^$
-\a         bell (\x07)
-\f         form feed (\x0C)
-\t         horizontal tab
-\n         new line
-\r         carriage return
-\v         vertical tab (\x0B)
-\123       octal character code (up to three digits)
-\x7F       hex character code (exactly two digits)
-\x{10FFFF} any hex character code corresponding to a Unicode code point
+\*          literal *, works for any punctuation character: \.+*?()|[]{}^$
+\a          bell (\x07)
+\f          form feed (\x0C)
+\t          horizontal tab
+\n          new line
+\r          carriage return
+\v          vertical tab (\x0B)
+\123        octal character code (up to three digits) (when enabled)
+\x7F        hex character code (exactly two digits)
+\x{10FFFF}  any hex character code corresponding to a Unicode code point
+\u007F      hex character code (exactly four digits)
+\u{7F}      any hex character code corresponding to a Unicode code point
+\U0000007F  hex character code (exactly eight digits)
+\U{7F}      any hex character code corresponding to a Unicode code point
 &lt;/pre&gt;
 
 ## Perl character classes (Unicode friendly)
@@ -1104,7 +1164,7 @@ These classes are based on the definitions provided in
 [[:graph:]]    graphical ([!-~])
 [[:lower:]]    lower case ([a-z])
 [[:print:]]    printable ([ -~])
-[[:punct:]]    punctuation ([!-/:-@[-`{-~])
+[[:punct:]]    punctuation ([!-/:-@\[-`{-~])
 [[:space:]]    whitespace ([\t\n\v\f\r ])
 [[:upper:]]    upper case ([A-Z])
 [[:word:]]     word characters ([0-9A-Za-z_])
@@ -1128,10 +1188,10 @@ text`), which means there&#39;s no way to cause exponential blow-up like with
 some other regular expression engines. (We pay for this by disallowing
 features like arbitrary look-ahead and backreferences.)
 
-When a DFA is used, pathological cases with exponential state blow up are
+When a DFA is used, pathological cases with exponential state blow-up are
 avoided by constructing the DFA lazily or in an &quot;online&quot; manner. Therefore,
 at most one new state can be created for each byte of input. This satisfies
-our time complexity guarantees, but can lead to unbounded memory growth
+our time complexity guarantees, but can lead to memory growth
 proportional to the size of the input. As a stopgap, the DFA is only
 allowed to store a fixed number of states. When the limit is reached, its
 states are wiped and continues on, possibly duplicating previous work. If
@@ -1141,28 +1201,37 @@ another matching engine with fixed memory requirements.
 [`RegexBuilder::dfa_size_limit`](struct.RegexBuilder.html#method.dfa_size_limit).)
 */</span>
 
-<span class="attribute">#<span class="op">!</span>[<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
-<span class="attribute">#<span class="op">!</span>[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">deny</span>(<span class="ident">warnings</span>))]</span>
-<span class="attribute">#<span class="op">!</span>[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;pattern&quot;</span>, <span class="ident">feature</span>(<span class="ident">pattern</span>))]</span>
-<span class="attribute">#<span class="op">!</span>[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;simd-accel&quot;</span>, <span class="ident">feature</span>(<span class="ident">cfg_target_feature</span>))]</span>
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">deny</span>(<span class="ident">warnings</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;pattern&quot;</span>, <span class="ident">feature</span>(<span class="ident">pattern</span>))]</span>
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>))]</span>
+<span class="macro">compile_error</span><span class="macro">!</span>(<span class="string">&quot;`use_std` feature is currently required to build this crate&quot;</span>);
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">aho_corasick</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">memchr</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">thread_local</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">quickcheck</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">quickcheck</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">regex_syntax</span> <span class="kw">as</span> <span class="ident">syntax</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;simd-accel&quot;</span>)]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">simd</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">utf8_ranges</span>;
 
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">Error</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_builder</span>::<span class="ident">unicode</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_builder</span>::<span class="ident">set_unicode</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_set</span>::<span class="ident">unicode</span>::<span class="kw-2">*</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_trait</span>::<span class="ident">Locations</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_unicode</span>::{
     <span class="ident">Regex</span>, <span class="ident">Match</span>, <span class="ident">Captures</span>,
     <span class="ident">CaptureNames</span>, <span class="ident">Matches</span>, <span class="ident">CaptureMatches</span>, <span class="ident">SubCaptureMatches</span>,
-    <span class="ident">Replacer</span>, <span class="ident">NoExpand</span>, <span class="ident">Split</span>, <span class="ident">SplitN</span>,
+    <span class="ident">CaptureLocations</span>, <span class="ident">Locations</span>,
+    <span class="ident">Replacer</span>, <span class="ident">ReplacerRef</span>, <span class="ident">NoExpand</span>, <span class="ident">Split</span>, <span class="ident">SplitN</span>,
     <span class="ident">escape</span>,
 };
 
@@ -1243,7 +1312,8 @@ determine whether a byte is a word byte or not.
 5. Hexadecimal notation can be used to specify arbitrary bytes instead of
 Unicode codepoints. For example, in ASCII compatible mode, `\xFF` matches the
 literal byte `\xFF`, while in Unicode mode, `\xFF` is a Unicode codepoint that
-matches its UTF-8 encoding of `\xC3\xBF`. Similarly for octal notation.
+matches its UTF-8 encoding of `\xC3\xBF`. Similarly for octal notation when
+enabled.
 6. `.` matches any *byte* except for `\n` instead of any Unicode scalar value.
 When the `s` flag is enabled, `.` matches any byte.
 
@@ -1252,12 +1322,12 @@ When the `s` flag is enabled, `.` matches any byte.
 In general, one should expect performance on `&amp;[u8]` to be roughly similar to
 performance on `&amp;str`.
 */</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">bytes</span> {
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_builder</span>::<span class="ident">bytes</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_builder</span>::<span class="ident">set_bytes</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_bytes</span>::<span class="kw-2">*</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_set</span>::<span class="ident">bytes</span>::<span class="kw-2">*</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_trait</span>::<span class="ident">Locations</span>;
 }
 
 <span class="kw">mod</span> <span class="ident">backtrack</span>;
@@ -1269,97 +1339,31 @@ performance on `&amp;str`.
 <span class="kw">mod</span> <span class="ident">expand</span>;
 <span class="kw">mod</span> <span class="ident">freqs</span>;
 <span class="kw">mod</span> <span class="ident">input</span>;
-<span class="kw">mod</span> <span class="ident">literals</span>;
+<span class="kw">mod</span> <span class="ident">literal</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;pattern&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">pattern</span>;
 <span class="kw">mod</span> <span class="ident">pikevm</span>;
 <span class="kw">mod</span> <span class="ident">prog</span>;
 <span class="kw">mod</span> <span class="ident">re_builder</span>;
 <span class="kw">mod</span> <span class="ident">re_bytes</span>;
-<span class="kw">mod</span> <span class="ident">re_plugin</span>;
 <span class="kw">mod</span> <span class="ident">re_set</span>;
 <span class="kw">mod</span> <span class="ident">re_trait</span>;
 <span class="kw">mod</span> <span class="ident">re_unicode</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;simd-accel&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">simd_accel</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;simd-accel&quot;</span>))]</span>
-<span class="attribute">#[<span class="ident">path</span> <span class="op">=</span> <span class="string">&quot;simd_fallback/mod.rs&quot;</span>]</span>
-<span class="kw">mod</span> <span class="ident">simd_accel</span>;
 <span class="kw">mod</span> <span class="ident">sparse</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">regex_runtime_teddy_ssse3</span>, <span class="ident">regex_runtime_teddy_avx2</span>))]</span>
+<span class="kw">mod</span> <span class="ident">vector</span>;
 
-<span class="doccomment">/// The `internal` module exists to support the `regex!` macro and other</span>
-<span class="doccomment">/// suspicious activity, such as testing different matching engines and</span>
-<span class="doccomment">/// supporting the `regex-debug` CLI utility.</span>
+<span class="doccomment">/// The `internal` module exists to support suspicious activity, such as</span>
+<span class="doccomment">/// testing different matching engines and supporting the `regex-debug` CLI</span>
+<span class="doccomment">/// utility.</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;use_std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">internal</span> {
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">compile</span>::<span class="ident">Compiler</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">exec</span>::{<span class="ident">Exec</span>, <span class="ident">ExecBuilder</span>};
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">input</span>::{<span class="ident">Char</span>, <span class="ident">Input</span>, <span class="ident">CharInput</span>, <span class="ident">InputAt</span>};
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">literals</span>::<span class="ident">LiteralSearcher</span>;
+    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">literal</span>::<span class="ident">LiteralSearcher</span>;
     <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">prog</span>::{<span class="ident">Program</span>, <span class="ident">Inst</span>, <span class="ident">EmptyLook</span>, <span class="ident">InstRanges</span>};
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_plugin</span>::<span class="ident">Plugin</span>;
-    <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">re_unicode</span>::<span class="ident">_Regex</span>;
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "regex";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "regex";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

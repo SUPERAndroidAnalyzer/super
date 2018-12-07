@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["ConfigurationWrapper",""],["Region",""],["TableTypeDecoder",""],["TableTypeWrapper",""]]});
+initSidebarItems({"struct":[["ConfigurationWrapper",""],["Region",""],["TableTypeWrapper",""]]});

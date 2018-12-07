@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.5.1/src/lib.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>lib.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1"> 1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/sha2-0.8.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../sha2/index.html'><img src='https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1"> 1</span>
 <span id="2"> 2</span>
 <span id="3"> 3</span>
 <span id="4"> 4</span>
@@ -122,10 +77,8 @@
 <span id="77">77</span>
 <span id="78">78</span>
 <span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
 </pre><pre class="rust ">
-<span class="doccomment">//! An implementation of the SHA-2 cryptographic hash algorithms.</span>
+<span class="doccomment">//! An implementation of the [SHA-2][1] cryptographic hash algorithms.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! There are 6 standard algorithms specified in the SHA-2 standard:</span>
 <span class="doccomment">//!</span>
@@ -146,59 +99,57 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Usage</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! An example of using `Sha256` is:</span>
-<span class="doccomment">//!</span>
 <span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use sha2::{Sha256, Digest};</span>
+<span class="doccomment">//! # #[macro_use] extern crate hex_literal;</span>
+<span class="doccomment">//! # extern crate sha2;</span>
+<span class="doccomment">//! # fn main() {</span>
+<span class="doccomment">//! use sha2::{Sha256, Sha512, Digest};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // create a Sha256 object</span>
-<span class="doccomment">//! let mut hasher = Sha256::default();</span>
+<span class="doccomment">//! let mut hasher = Sha256::new();</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // write input message</span>
 <span class="doccomment">//! hasher.input(b&quot;hello world&quot;);</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // read hash digest and consume hasher</span>
-<span class="doccomment">//! let output = hasher.result();</span>
+<span class="doccomment">//! let result = hasher.result();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! assert_eq!(output[..], [0xb9, 0x4d, 0x27, 0xb9, 0x93, 0x4d, 0x3e, 0x08,</span>
-<span class="doccomment">//!                         0xa5, 0x2e, 0x52, 0xd7, 0xda, 0x7d, 0xab, 0xfa,</span>
-<span class="doccomment">//!                         0xc4, 0x84, 0xef, 0xe3, 0x7a, 0x53, 0x80, 0xee,</span>
-<span class="doccomment">//!                         0x90, 0x88, 0xf7, 0xac, 0xe2, 0xef, 0xcd, 0xe9]);</span>
-<span class="doccomment">//! ```</span>
+<span class="doccomment">//! assert_eq!(result[..], hex!(&quot;</span>
+<span class="doccomment">//!     b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9</span>
+<span class="doccomment">//! &quot;)[..]);</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! An example of using `Sha512` is:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! use sha2::{Sha512, Digest};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // create a Sha512 object</span>
-<span class="doccomment">//! let mut hasher = Sha512::default();</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! // write input message</span>
+<span class="doccomment">//! // same for Sha512</span>
+<span class="doccomment">//! let mut hasher = Sha512::new();</span>
 <span class="doccomment">//! hasher.input(b&quot;hello world&quot;);</span>
+<span class="doccomment">//! let result = hasher.result();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! // read hash digest and consume hasher</span>
-<span class="doccomment">//! let output = hasher.result();</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! assert_eq!(output[..], [0x30, 0x9e, 0xcc, 0x48, 0x9c, 0x12, 0xd6, 0xeb,</span>
-<span class="doccomment">//!                         0x4c, 0xc4, 0x0f, 0x50, 0xc9, 0x02, 0xf2, 0xb4,</span>
-<span class="doccomment">//!                         0xd0, 0xed, 0x77, 0xee, 0x51, 0x1a, 0x7c, 0x7a,</span>
-<span class="doccomment">//!                         0x9b, 0xcd, 0x3c, 0xa8, 0x6d, 0x4c, 0xd8, 0x6f,</span>
-<span class="doccomment">//!                         0x98, 0x9d, 0xd3, 0x5b, 0xc5, 0xff, 0x49, 0x96,</span>
-<span class="doccomment">//!                         0x70, 0xda, 0x34, 0x25, 0x5b, 0x45, 0xb0, 0xcf,</span>
-<span class="doccomment">//!                         0xd8, 0x30, 0xe8, 0x1f, 0x60, 0x5d, 0xcf, 0x7d,</span>
-<span class="doccomment">//!                         0xc5, 0x54, 0x2e, 0x93, 0xae, 0x9c, 0xd7, 0x6f][..]);</span>
+<span class="doccomment">//! assert_eq!(result[..], hex!(&quot;</span>
+<span class="doccomment">//!     309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f</span>
+<span class="doccomment">//!     989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f</span>
+<span class="doccomment">//! &quot;)[..]);</span>
+<span class="doccomment">//! # }</span>
 <span class="doccomment">//! ```</span>
-
-<span class="attribute">#<span class="op">!</span>[<span class="ident">no_std</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">generic_array</span>;
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">byte_tools</span>;
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">digest</span>;
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">digest_buffer</span>;
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Also see [RustCrypto/hashes][2] readme.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! [1]: https://en.wikipedia.org/wiki/SHA-2</span>
+<span class="doccomment">//! [2]: https://github.com/RustCrypto/hashes</span>
+<span class="attribute">#![<span class="ident">no_std</span>]</span>
+<span class="attribute">#![<span class="ident">doc</span>(<span class="ident">html_logo_url</span> <span class="op">=</span>
+    <span class="string">&quot;https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png&quot;</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">block_buffer</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">fake_simd</span> <span class="kw">as</span> <span class="ident">simd</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">opaque_debug</span>;
+<span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">pub</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">digest</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;asm&quot;</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">sha2_asm</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">std</span>;
 
 <span class="kw">mod</span> <span class="ident">consts</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;asm&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">sha256_utils</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;asm&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">sha512_utils</span>;
 <span class="kw">mod</span> <span class="ident">sha256</span>;
 <span class="kw">mod</span> <span class="ident">sha512</span>;
@@ -207,65 +158,4 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sha256</span>::{<span class="ident">Sha256</span>, <span class="ident">Sha224</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">sha512</span>::{<span class="ident">Sha512</span>, <span class="ident">Sha384</span>, <span class="ident">Sha512Trunc224</span>, <span class="ident">Sha512Trunc256</span>};
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "sha2";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "sha2";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

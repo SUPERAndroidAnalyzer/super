@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-0.2.1/src/input.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>input.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.1.0/src/input.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>input.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -463,11 +418,6 @@
 <span id="418">418</span>
 <span id="419">419</span>
 <span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
-<span id="425">425</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2014-2015 The Rust Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution and at</span>
@@ -487,7 +437,7 @@
 
 <span class="kw">use</span> <span class="ident">syntax</span>;
 
-<span class="kw">use</span> <span class="ident">literals</span>::<span class="ident">LiteralSearcher</span>;
+<span class="kw">use</span> <span class="ident">literal</span>::<span class="ident">LiteralSearcher</span>;
 <span class="kw">use</span> <span class="ident">prog</span>::<span class="ident">InstEmptyLook</span>;
 <span class="kw">use</span> <span class="ident">utf8</span>::{<span class="ident">decode_utf8</span>, <span class="ident">decode_last_utf8</span>};
 
@@ -529,6 +479,12 @@
         <span class="self">self</span>.<span class="ident">len</span>
     }
 
+    <span class="doccomment">/// Returns whether the UTF-8 width of the character at this position</span>
+    <span class="doccomment">/// is zero.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">len</span> <span class="op">==</span> <span class="number">0</span>
+    }
+
     <span class="doccomment">/// Returns the byte offset of this position.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">pos</span>
@@ -568,6 +524,9 @@
 
     <span class="doccomment">/// The number of bytes in the input.</span>
     <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span>;
+
+    <span class="doccomment">/// Whether the input is empty.</span>
+    <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="self">self</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> }
 
     <span class="doccomment">/// Return the given input as a sequence of bytes.</span>
     <span class="kw">fn</span> <span class="ident">as_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>];
@@ -618,7 +577,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span> <span class="ident">Input</span> <span class="kw">for</span> <span class="ident">CharInput</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">at</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">i</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">InputAt</span> {
-        <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">decode_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">i</span>..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, _)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>();
+        <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">decode_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">i</span>..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>();
         <span class="ident">InputAt</span> {
             <span class="ident">pos</span>: <span class="ident">i</span>,
             <span class="ident">c</span>: <span class="ident">c</span>,
@@ -632,7 +591,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">previous_char</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">at</span>: <span class="ident">InputAt</span>) <span class="op">-&gt;</span> <span class="ident">Char</span> {
-        <span class="ident">decode_last_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[..<span class="ident">at</span>.<span class="ident">pos</span>()]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, _)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
+        <span class="ident">decode_last_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[..<span class="ident">at</span>.<span class="ident">pos</span>()]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">is_empty_match</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">at</span>: <span class="ident">InputAt</span>, <span class="ident">empty</span>: <span class="kw-2">&amp;</span><span class="ident">InstEmptyLook</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -672,7 +631,7 @@
         <span class="ident">prefixes</span>: <span class="kw-2">&amp;</span><span class="ident">LiteralSearcher</span>,
         <span class="ident">at</span>: <span class="ident">InputAt</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InputAt</span><span class="op">&gt;</span> {
-        <span class="ident">prefixes</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">s</span>, _)<span class="op">|</span> <span class="self">self</span>.<span class="ident">at</span>(<span class="ident">at</span>.<span class="ident">pos</span>() <span class="op">+</span> <span class="ident">s</span>))
+        <span class="ident">prefixes</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">s</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">at</span>(<span class="ident">at</span>.<span class="ident">pos</span>() <span class="op">+</span> <span class="ident">s</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
@@ -685,10 +644,6 @@
 }
 
 <span class="doccomment">/// An input reader over bytes.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// N.B. We represent the reader with a string for now, since that gives us</span>
-<span class="doccomment">/// easy access to necessary Unicode decoding (used for word boundary look</span>
-<span class="doccomment">/// ahead/look behind).</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ByteInput</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span> {
     <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t</span> [<span class="ident">u8</span>],
@@ -718,17 +673,17 @@
         <span class="ident">InputAt</span> {
             <span class="ident">pos</span>: <span class="ident">i</span>,
             <span class="ident">c</span>: <span class="prelude-val">None</span>.<span class="ident">into</span>(),
-            <span class="ident">byte</span>: <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">b</span><span class="op">|</span> <span class="ident">b</span>),
+            <span class="ident">byte</span>: <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">cloned</span>(),
             <span class="ident">len</span>: <span class="number">1</span>,
         }
     }
 
     <span class="kw">fn</span> <span class="ident">next_char</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">at</span>: <span class="ident">InputAt</span>) <span class="op">-&gt;</span> <span class="ident">Char</span> {
-        <span class="ident">decode_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, _)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
+        <span class="ident">decode_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">previous_char</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">at</span>: <span class="ident">InputAt</span>) <span class="op">-&gt;</span> <span class="ident">Char</span> {
-        <span class="ident">decode_last_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[..<span class="ident">at</span>.<span class="ident">pos</span>()]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, _)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
+        <span class="ident">decode_last_utf8</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[..<span class="ident">at</span>.<span class="ident">pos</span>()]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">c</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">c</span>).<span class="ident">into</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">is_empty_match</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">at</span>: <span class="ident">InputAt</span>, <span class="ident">empty</span>: <span class="kw-2">&amp;</span><span class="ident">InstEmptyLook</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -788,7 +743,7 @@
         <span class="ident">prefixes</span>: <span class="kw-2">&amp;</span><span class="ident">LiteralSearcher</span>,
         <span class="ident">at</span>: <span class="ident">InputAt</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">InputAt</span><span class="op">&gt;</span> {
-        <span class="ident">prefixes</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">s</span>, _)<span class="op">|</span> <span class="self">self</span>.<span class="ident">at</span>(<span class="ident">at</span>.<span class="ident">pos</span>() <span class="op">+</span> <span class="ident">s</span>))
+        <span class="ident">prefixes</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>[<span class="ident">at</span>.<span class="ident">pos</span>()..]).<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">s</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">at</span>(<span class="ident">at</span>.<span class="ident">pos</span>() <span class="op">+</span> <span class="ident">s</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
@@ -796,7 +751,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">as_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">text</span>
+        <span class="self">self</span>.<span class="ident">text</span>
     }
 }
 
@@ -837,7 +792,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// If the character is absent, then false is returned.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_word_char</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">char</span>::<span class="ident">from_u32</span>(<span class="self">self</span>.<span class="number">0</span>).<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="ident">syntax</span>::<span class="ident">is_word_char</span>)
+        <span class="ident">char</span>::<span class="ident">from_u32</span>(<span class="self">self</span>.<span class="number">0</span>).<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="ident">syntax</span>::<span class="ident">is_word_character</span>)
     }
 
     <span class="doccomment">/// Returns true iff the byte is a word byte.</span>
@@ -845,19 +800,9 @@
     <span class="doccomment">/// If the byte is absent, then false is returned.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_word_byte</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="ident">char</span>::<span class="ident">from_u32</span>(<span class="self">self</span>.<span class="number">0</span>) {
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
             <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="kw">if</span> <span class="ident">c</span> <span class="op">&lt;=</span> <span class="string">&#39;\u{7F}&#39;</span> <span class="op">=&gt;</span> <span class="ident">syntax</span>::<span class="ident">is_word_byte</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">u8</span>),
-            <span class="prelude-val">Some</span>(_) <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">false</span>,
         }
-    }
-
-    <span class="doccomment">/// Converts the character to a real primitive `char`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// If the character is absent, then `None` is returned.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_char</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span> {
-        <span class="comment">// This is only used in the `regex!` macro because it expands char</span>
-        <span class="comment">// classes into `match` expressions (instead of binary search).</span>
-        <span class="ident">char</span>::<span class="ident">from_u32</span>(<span class="self">self</span>.<span class="number">0</span>)
     }
 }
 
@@ -895,65 +840,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "regex";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "regex";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

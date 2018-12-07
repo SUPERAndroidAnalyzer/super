@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["super"] = [];
 implementors["toml"] = [];
 
             if (window.register_implementors) {

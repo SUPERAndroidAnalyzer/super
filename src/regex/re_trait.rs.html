@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-0.2.1/src/re_trait.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>re_trait.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.1.0/src/re_trait.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>re_trait.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -332,6 +287,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Unlike `Captures`, a `Locations` value only stores offsets.</span>
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Locations</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Slot</span><span class="op">&gt;</span>);
 
 <span class="kw">impl</span> <span class="ident">Locations</span> {
@@ -343,7 +299,7 @@
         <span class="kw">let</span> (<span class="ident">s</span>, <span class="ident">e</span>) <span class="op">=</span> (<span class="ident">i</span> <span class="op">*</span> <span class="number">2</span>, <span class="ident">i</span> <span class="op">*</span> <span class="number">2</span> <span class="op">+</span> <span class="number">1</span>);
         <span class="kw">match</span> (<span class="self">self</span>.<span class="number">0</span>.<span class="ident">get</span>(<span class="ident">s</span>), <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get</span>(<span class="ident">e</span>)) {
             (<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">s</span>)), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="prelude-val">Some</span>(<span class="ident">e</span>))) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>((<span class="ident">s</span>, <span class="ident">e</span>)),
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
@@ -351,7 +307,7 @@
     <span class="doccomment">/// appearance in the regular expression. Positions are byte indices</span>
     <span class="doccomment">/// in terms of the original string matched.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">SubCapturesPosIter</span> {
-        <span class="ident">SubCapturesPosIter</span> { <span class="ident">idx</span>: <span class="number">0</span>, <span class="ident">locs</span>: <span class="kw-2">&amp;</span><span class="self">self</span> }
+        <span class="ident">SubCapturesPosIter</span> { <span class="ident">idx</span>: <span class="number">0</span>, <span class="ident">locs</span>: <span class="self">self</span> }
     }
 
     <span class="doccomment">/// Returns the total number of capturing groups.</span>
@@ -361,12 +317,11 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">len</span>() <span class="op">/</span> <span class="number">2</span>
     }
-}
 
-<span class="doccomment">/// This is a hack to make Locations -&gt; &amp;mut [Slot] be available internally</span>
-<span class="doccomment">/// without exposing it in the public API.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_slots</span>(<span class="ident">locs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Locations</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">Slot</span>] {
-    <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">locs</span>.<span class="number">0</span>
+    <span class="doccomment">/// Return the individual slots as a slice.</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">as_slots</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">Slot</span>] {
+        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="number">0</span>
+    }
 }
 
 <span class="doccomment">/// An iterator over capture group positions for a particular match of a</span>
@@ -398,7 +353,7 @@
     }
 }
 
-<span class="doccomment">/// RegularExpression describes types that can implement regex searching.</span>
+<span class="doccomment">/// `RegularExpression` describes types that can implement regex searching.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This trait is my attempt at reducing code duplication and to standardize</span>
 <span class="doccomment">/// the internal API. Specific duplication that is avoided are the `find`</span>
@@ -453,7 +408,7 @@
 
     <span class="doccomment">/// Returns the leftmost-first match location if one exists, and also</span>
     <span class="doccomment">/// fills in any matching capture slot locations.</span>
-    <span class="kw">fn</span> <span class="ident">read_captures_at</span>(
+    <span class="kw">fn</span> <span class="ident">captures_read_at</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">locs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Locations</span>,
         <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Text</span>,
@@ -462,10 +417,10 @@
 
     <span class="doccomment">/// Returns an iterator over all non-overlapping successive leftmost-first</span>
     <span class="doccomment">/// matches.</span>
-    <span class="kw">fn</span> <span class="ident">find_iter</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">find_iter</span> (
         <span class="self">self</span>,
-        <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t</span> <span class="self">Self</span>::<span class="ident">Text</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">Matches</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span>, <span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Text</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">Matches</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="ident">Matches</span> {
             <span class="ident">re</span>: <span class="self">self</span>,
             <span class="ident">text</span>: <span class="ident">text</span>,
@@ -476,10 +431,10 @@
 
     <span class="doccomment">/// Returns an iterator over all non-overlapping successive leftmost-first</span>
     <span class="doccomment">/// matches with captures.</span>
-    <span class="kw">fn</span> <span class="ident">captures_iter</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span><span class="op">&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">captures_iter</span>(
         <span class="self">self</span>,
-        <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;t</span> <span class="self">Self</span>::<span class="ident">Text</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">CaptureMatches</span><span class="op">&lt;</span><span class="lifetime">&#39;t</span>, <span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Text</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">CaptureMatches</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="ident">CaptureMatches</span>(<span class="self">self</span>.<span class="ident">find_iter</span>(<span class="ident">text</span>))
     }
 }
@@ -520,7 +475,7 @@
             <span class="comment">// This is an empty match. To ensure we make progress, start</span>
             <span class="comment">// the next search at the smallest possible starting position</span>
             <span class="comment">// of the next match following this one.</span>
-            <span class="self">self</span>.<span class="ident">last_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">re</span>.<span class="ident">next_after_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">text</span>, <span class="ident">e</span>);
+            <span class="self">self</span>.<span class="ident">last_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">re</span>.<span class="ident">next_after_empty</span>(<span class="self">self</span>.<span class="ident">text</span>, <span class="ident">e</span>);
             <span class="comment">// Don&#39;t accept empty matches immediately following a match.</span>
             <span class="comment">// Just move on to the next match.</span>
             <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>) <span class="op">==</span> <span class="self">self</span>.<span class="ident">last_match</span> {
@@ -560,7 +515,7 @@
             <span class="kw">return</span> <span class="prelude-val">None</span>
         }
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">locs</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">re</span>.<span class="ident">locations</span>();
-        <span class="kw">let</span> (<span class="ident">s</span>, <span class="ident">e</span>) <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">re</span>.<span class="ident">read_captures_at</span>(
+        <span class="kw">let</span> (<span class="ident">s</span>, <span class="ident">e</span>) <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">re</span>.<span class="ident">captures_read_at</span>(
             <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">locs</span>,
             <span class="self">self</span>.<span class="number">0</span>.<span class="ident">text</span>,
             <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_end</span>,
@@ -569,7 +524,7 @@
             <span class="prelude-val">Some</span>((<span class="ident">s</span>, <span class="ident">e</span>)) <span class="op">=&gt;</span> (<span class="ident">s</span>, <span class="ident">e</span>),
         };
         <span class="kw">if</span> <span class="ident">s</span> <span class="op">==</span> <span class="ident">e</span> {
-            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">re</span>.<span class="ident">next_after_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>.<span class="ident">text</span>, <span class="ident">e</span>);
+            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_end</span> <span class="op">=</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">re</span>.<span class="ident">next_after_empty</span>(<span class="self">self</span>.<span class="number">0</span>.<span class="ident">text</span>, <span class="ident">e</span>);
             <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>) <span class="op">==</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_match</span> {
                 <span class="kw">return</span> <span class="self">self</span>.<span class="ident">next</span>();
             }
@@ -581,65 +536,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "regex";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "regex";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

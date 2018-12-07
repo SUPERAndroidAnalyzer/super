@@ -1,58 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `sha2` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, sha2">
-
-    <title>sha2 - Rust</title>
-
-    <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc mod">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'sha2', ty: 'mod', relpath: '../'};</script>
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>sha2</a></span><span class='out-of-band'><span id='render-detail'>
-                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                       [<span class='inner'>&#x2212;</span>]
-                   </a>
-               </span><a class='srclink' href='../src/sha2/lib.rs.html#1-81' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>An implementation of the SHA-2 cryptographic hash algorithms.</p>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `sha2` crate."><meta name="keywords" content="rust, rustlang, rust-lang, sha2"><title>sha2 - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../sha2/index.html'><img src='https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png' alt='logo' width='100'></a><p class='location'>Crate sha2</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all sha2's items</p></a><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'sha2', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/sha2/lib.rs.html#1-79' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>sha2</a></span></h1><div class='docblock'><p>An implementation of the <a href="https://en.wikipedia.org/wiki/SHA-2">SHA-2</a> cryptographic hash algorithms.</p>
 <p>There are 6 standard algorithms specified in the SHA-2 standard:</p>
-
 <ul>
 <li><code>Sha224</code>, which is the 32-bit <code>Sha256</code> algorithm with the result truncated
 to 224 bits.</li>
@@ -65,54 +12,38 @@ truncated to 224 bits.</li>
 <li><code>Sha512Trunc256</code>, which is the 64-bit <code>Sha512</code> algorithm with the result
 truncated to 256 bits.</li>
 </ul>
-
 <p>Algorithmically, there are only 2 core algorithms: <code>Sha256</code> and <code>Sha512</code>.
 All other algorithms are just applications of these with different initial
 hash values, and truncated to different digest bit lengths.</p>
-
-<h1 id='usage' class='section-header'><a href='#usage'>Usage</a></h1>
-<p>An example of using <code>Sha256</code> is:</p>
-
+<h1 id="usage" class="section-header"><a href="#usage">Usage</a></h1>
 <pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">sha2</span>::{<span class="ident">Sha256</span>, <span class="ident">Digest</span>};
+<span class="kw">use</span> <span class="ident">sha2</span>::{<span class="ident">Sha256</span>, <span class="ident">Sha512</span>, <span class="ident">Digest</span>};
 
 <span class="comment">// create a Sha256 object</span>
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hasher</span> <span class="op">=</span> <span class="ident">Sha256</span>::<span class="ident">default</span>();
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hasher</span> <span class="op">=</span> <span class="ident">Sha256</span>::<span class="ident">new</span>();
 
 <span class="comment">// write input message</span>
 <span class="ident">hasher</span>.<span class="ident">input</span>(<span class="string">b&quot;hello world&quot;</span>);
 
 <span class="comment">// read hash digest and consume hasher</span>
-<span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">hasher</span>.<span class="ident">result</span>();
+<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">hasher</span>.<span class="ident">result</span>();
 
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">output</span>[..], [<span class="number">0xb9</span>, <span class="number">0x4d</span>, <span class="number">0x27</span>, <span class="number">0xb9</span>, <span class="number">0x93</span>, <span class="number">0x4d</span>, <span class="number">0x3e</span>, <span class="number">0x08</span>,
-                        <span class="number">0xa5</span>, <span class="number">0x2e</span>, <span class="number">0x52</span>, <span class="number">0xd7</span>, <span class="number">0xda</span>, <span class="number">0x7d</span>, <span class="number">0xab</span>, <span class="number">0xfa</span>,
-                        <span class="number">0xc4</span>, <span class="number">0x84</span>, <span class="number">0xef</span>, <span class="number">0xe3</span>, <span class="number">0x7a</span>, <span class="number">0x53</span>, <span class="number">0x80</span>, <span class="number">0xee</span>,
-                        <span class="number">0x90</span>, <span class="number">0x88</span>, <span class="number">0xf7</span>, <span class="number">0xac</span>, <span class="number">0xe2</span>, <span class="number">0xef</span>, <span class="number">0xcd</span>, <span class="number">0xe9</span>]);</pre>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">result</span>[..], <span class="macro">hex</span><span class="macro">!</span>(<span class="string">&quot;
+    b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+&quot;</span>)[..]);
 
-<p>An example of using <code>Sha512</code> is:</p>
-
-<pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">sha2</span>::{<span class="ident">Sha512</span>, <span class="ident">Digest</span>};
-
-<span class="comment">// create a Sha512 object</span>
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hasher</span> <span class="op">=</span> <span class="ident">Sha512</span>::<span class="ident">default</span>();
-
-<span class="comment">// write input message</span>
+<span class="comment">// same for Sha512</span>
+<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hasher</span> <span class="op">=</span> <span class="ident">Sha512</span>::<span class="ident">new</span>();
 <span class="ident">hasher</span>.<span class="ident">input</span>(<span class="string">b&quot;hello world&quot;</span>);
+<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">hasher</span>.<span class="ident">result</span>();
 
-<span class="comment">// read hash digest and consume hasher</span>
-<span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">hasher</span>.<span class="ident">result</span>();
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">output</span>[..], [<span class="number">0x30</span>, <span class="number">0x9e</span>, <span class="number">0xcc</span>, <span class="number">0x48</span>, <span class="number">0x9c</span>, <span class="number">0x12</span>, <span class="number">0xd6</span>, <span class="number">0xeb</span>,
-                        <span class="number">0x4c</span>, <span class="number">0xc4</span>, <span class="number">0x0f</span>, <span class="number">0x50</span>, <span class="number">0xc9</span>, <span class="number">0x02</span>, <span class="number">0xf2</span>, <span class="number">0xb4</span>,
-                        <span class="number">0xd0</span>, <span class="number">0xed</span>, <span class="number">0x77</span>, <span class="number">0xee</span>, <span class="number">0x51</span>, <span class="number">0x1a</span>, <span class="number">0x7c</span>, <span class="number">0x7a</span>,
-                        <span class="number">0x9b</span>, <span class="number">0xcd</span>, <span class="number">0x3c</span>, <span class="number">0xa8</span>, <span class="number">0x6d</span>, <span class="number">0x4c</span>, <span class="number">0xd8</span>, <span class="number">0x6f</span>,
-                        <span class="number">0x98</span>, <span class="number">0x9d</span>, <span class="number">0xd3</span>, <span class="number">0x5b</span>, <span class="number">0xc5</span>, <span class="number">0xff</span>, <span class="number">0x49</span>, <span class="number">0x96</span>,
-                        <span class="number">0x70</span>, <span class="number">0xda</span>, <span class="number">0x34</span>, <span class="number">0x25</span>, <span class="number">0x5b</span>, <span class="number">0x45</span>, <span class="number">0xb0</span>, <span class="number">0xcf</span>,
-                        <span class="number">0xd8</span>, <span class="number">0x30</span>, <span class="number">0xe8</span>, <span class="number">0x1f</span>, <span class="number">0x60</span>, <span class="number">0x5d</span>, <span class="number">0xcf</span>, <span class="number">0x7d</span>,
-                        <span class="number">0xc5</span>, <span class="number">0x54</span>, <span class="number">0x2e</span>, <span class="number">0x93</span>, <span class="number">0xae</span>, <span class="number">0x9c</span>, <span class="number">0xd7</span>, <span class="number">0x6f</span>][..]);</pre>
-</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">result</span>[..], <span class="macro">hex</span><span class="macro">!</span>(<span class="string">&quot;
+    309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f
+    989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f
+&quot;</span>)[..]);</pre>
+<p>Also see <a href="https://github.com/RustCrypto/hashes">RustCrypto/hashes</a> readme.</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub extern crate <a class="mod" href="../digest/index.html" title="mod digest">digest</a>;</code></td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
                            <td><a class="struct" href="struct.Sha224.html"
@@ -120,6 +51,7 @@ hash values, and truncated to different digest bit lengths.</p>
                            <td class='docblock-short'>
                                 <p>The SHA-256 hash algorithm with the SHA-224 initial hash value. The result
 is truncated to 224 bits.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -127,6 +59,7 @@ is truncated to 224 bits.</p>
                                   title='struct sha2::Sha256'>Sha256</a></td>
                            <td class='docblock-short'>
                                 <p>The SHA-256 hash algorithm with the SHA-256 initial hash value.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -135,6 +68,7 @@ is truncated to 224 bits.</p>
                            <td class='docblock-short'>
                                 <p>The SHA-512 hash algorithm with the SHA-384 initial hash value. The result
 is truncated to 384 bits.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -142,6 +76,7 @@ is truncated to 384 bits.</p>
                                   title='struct sha2::Sha512'>Sha512</a></td>
                            <td class='docblock-short'>
                                 <p>The SHA-512 hash algorithm with the SHA-512 initial hash value.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -150,6 +85,7 @@ is truncated to 384 bits.</p>
                            <td class='docblock-short'>
                                 <p>The SHA-512 hash algorithm with the SHA-512/224 initial hash value.
 The result is truncated to 224 bits.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -158,6 +94,7 @@ The result is truncated to 224 bits.</p>
                            <td class='docblock-short'>
                                 <p>The SHA-512 hash algorithm with the SHA-512/256 initial hash value. The
 result is truncated to 256 bits.</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
@@ -165,68 +102,7 @@ result is truncated to 256 bits.</p>
                            <td><a class="trait" href="trait.Digest.html"
                                   title='trait sha2::Digest'>Digest</a></td>
                            <td class='docblock-short'>
-                                <p>The Digest trait specifies an interface common to digest functions. It&#39;s a
-convinience wrapper around <code>Input</code> and <code>FixedResult</code> traits</p>
+                                <p>The <code>Digest</code> trait specifies an interface common for digest functions.</p>
+
                            </td>
-                       </tr></table></section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../";
-        window.currentCrate = "sha2";
-    </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
-    <script defer src="../search-index.js"></script>
-</body>
-</html>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "sha2";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

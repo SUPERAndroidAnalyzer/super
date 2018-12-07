@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["_DERIVE_failure_Fail_FOR_Kind",""],["_DERIVE_failure_core_fmt_Display_FOR_Kind",""]],"enum":[["Kind","Enumeration of the different error kinds."]]});

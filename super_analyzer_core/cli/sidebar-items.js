@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["generate","Generates the command line interface."]]});

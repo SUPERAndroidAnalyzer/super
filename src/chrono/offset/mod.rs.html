@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.3.1/src/offset/mod.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>mod.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.4.6/src/offset/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -422,39 +377,73 @@
 <span id="377">377</span>
 <span id="378">378</span>
 <span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
 </pre><pre class="rust ">
 <span class="comment">// This is a part of Chrono.</span>
 <span class="comment">// See README.md and LICENSE.txt for details.</span>
 
-<span class="doccomment">/*!
- * The time zone, which calculates offsets from the local time to UTC.
- *
- * There are four operations provided by the `TimeZone` trait:
- *
- * 1. Converting the local `NaiveDateTime` to `DateTime&lt;Tz&gt;`
- * 2. Converting the UTC `NaiveDateTime` to `DateTime&lt;Tz&gt;`
- * 3. Converting `DateTime&lt;Tz&gt;` to the local `NaiveDateTime`
- * 4. Constructing `DateTime&lt;Tz&gt;` objects from various offsets
- *
- * 1 is used for constructors. 2 is used for the `with_timezone` method of date and time types.
- * 3 is used for other methods, e.g. `year()` or `format()`, and provided by an associated type
- * which implements `Offset` (which then passed to `TimeZone` for actual implementations).
- * Technically speaking `TimeZone` has a total knowledge about given timescale,
- * but `Offset` is used as a cache to avoid the repeated conversion
- * and provides implementations for 1 and 3.
- * An `TimeZone` instance can be reconstructed from the corresponding `Offset` instance.
- */</span>
+<span class="doccomment">//! The time zone, which calculates offsets from the local time to UTC.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! There are four operations provided by the `TimeZone` trait:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! 1. Converting the local `NaiveDateTime` to `DateTime&lt;Tz&gt;`</span>
+<span class="doccomment">//! 2. Converting the UTC `NaiveDateTime` to `DateTime&lt;Tz&gt;`</span>
+<span class="doccomment">//! 3. Converting `DateTime&lt;Tz&gt;` to the local `NaiveDateTime`</span>
+<span class="doccomment">//! 4. Constructing `DateTime&lt;Tz&gt;` objects from various offsets</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! 1 is used for constructors. 2 is used for the `with_timezone` method of date and time types.</span>
+<span class="doccomment">//! 3 is used for other methods, e.g. `year()` or `format()`, and provided by an associated type</span>
+<span class="doccomment">//! which implements `Offset` (which then passed to `TimeZone` for actual implementations).</span>
+<span class="doccomment">//! Technically speaking `TimeZone` has a total knowledge about given timescale,</span>
+<span class="doccomment">//! but `Offset` is used as a cache to avoid the repeated conversion</span>
+<span class="doccomment">//! and provides implementations for 1 and 3.</span>
+<span class="doccomment">//! An `TimeZone` instance can be reconstructed from the corresponding `Offset` instance.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
 <span class="kw">use</span> <span class="ident">Weekday</span>;
-<span class="kw">use</span> <span class="ident">naive</span>::<span class="ident">date</span>::<span class="ident">NaiveDate</span>;
-<span class="kw">use</span> <span class="ident">naive</span>::<span class="ident">time</span>::<span class="ident">NaiveTime</span>;
-<span class="kw">use</span> <span class="ident">naive</span>::<span class="ident">datetime</span>::<span class="ident">NaiveDateTime</span>;
-<span class="kw">use</span> <span class="ident">date</span>::<span class="ident">Date</span>;
-<span class="kw">use</span> <span class="ident">datetime</span>::<span class="ident">DateTime</span>;
+<span class="kw">use</span> <span class="ident">naive</span>::{<span class="ident">NaiveDate</span>, <span class="ident">NaiveTime</span>, <span class="ident">NaiveDateTime</span>};
+<span class="kw">use</span> {<span class="ident">Date</span>, <span class="ident">DateTime</span>};
 <span class="kw">use</span> <span class="ident">format</span>::{<span class="ident">parse</span>, <span class="ident">Parsed</span>, <span class="ident">ParseResult</span>, <span class="ident">StrftimeItems</span>};
-<span class="kw">use</span> <span class="self">self</span>::<span class="ident">fixed</span>::<span class="ident">FixedOffset</span>;
 
 <span class="doccomment">/// The conversion result from the local time to the timezone-aware datetime types.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Debug</span>)]</span>
@@ -472,17 +461,17 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">LocalResult</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Returns `Some` only when the conversion result is unique, or `None` otherwise.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">single</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), _ <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
+        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
     }
 
     <span class="doccomment">/// Returns `Some` for the earliest possible conversion result, or `None` if none.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">earliest</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">|</span> <span class="ident">LocalResult</span>::<span class="ident">Ambiguous</span>(<span class="ident">t</span>,_) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), _ <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
+        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">|</span> <span class="ident">LocalResult</span>::<span class="ident">Ambiguous</span>(<span class="ident">t</span>,<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
     }
 
     <span class="doccomment">/// Returns `Some` for the latest possible conversion result, or `None` if none.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">latest</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">|</span> <span class="ident">LocalResult</span>::<span class="ident">Ambiguous</span>(_,<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), _ <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
+        <span class="kw">match</span> <span class="self">self</span> { <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">t</span>) <span class="op">|</span> <span class="ident">LocalResult</span>::<span class="ident">Ambiguous</span>(<span class="kw">_</span>,<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span> }
     }
 
     <span class="doccomment">/// Maps a `LocalResult&lt;T&gt;` into `LocalResult&lt;U&gt;` with given function.</span>
@@ -505,7 +494,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>.<span class="ident">and_time</span>(<span class="ident">time</span>)
                                        .<span class="ident">map_or</span>(<span class="ident">LocalResult</span>::<span class="prelude-val">None</span>, <span class="ident">LocalResult</span>::<span class="ident">Single</span>),
-            _ <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
     }
 
@@ -518,7 +507,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>.<span class="ident">and_hms_opt</span>(<span class="ident">hour</span>, <span class="ident">min</span>, <span class="ident">sec</span>)
                                        .<span class="ident">map_or</span>(<span class="ident">LocalResult</span>::<span class="prelude-val">None</span>, <span class="ident">LocalResult</span>::<span class="ident">Single</span>),
-            _ <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
     }
 
@@ -533,7 +522,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>.<span class="ident">and_hms_milli_opt</span>(<span class="ident">hour</span>, <span class="ident">min</span>, <span class="ident">sec</span>, <span class="ident">milli</span>)
                                        .<span class="ident">map_or</span>(<span class="ident">LocalResult</span>::<span class="prelude-val">None</span>, <span class="ident">LocalResult</span>::<span class="ident">Single</span>),
-            _ <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
     }
 
@@ -548,7 +537,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>.<span class="ident">and_hms_micro_opt</span>(<span class="ident">hour</span>, <span class="ident">min</span>, <span class="ident">sec</span>, <span class="ident">micro</span>)
                                        .<span class="ident">map_or</span>(<span class="ident">LocalResult</span>::<span class="prelude-val">None</span>, <span class="ident">LocalResult</span>::<span class="ident">Single</span>),
-            _ <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
     }
 
@@ -563,7 +552,7 @@
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="ident">d</span>.<span class="ident">and_hms_nano_opt</span>(<span class="ident">hour</span>, <span class="ident">min</span>, <span class="ident">sec</span>, <span class="ident">nano</span>)
                                        .<span class="ident">map_or</span>(<span class="ident">LocalResult</span>::<span class="prelude-val">None</span>, <span class="ident">LocalResult</span>::<span class="ident">Single</span>),
-            _ <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
     }
 
@@ -590,8 +579,8 @@
 
 <span class="doccomment">/// The time zone.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// The methods here are the primarily constructors for [`Date`](../date/struct.Date.html) and</span>
-<span class="doccomment">/// [`DateTime`](../datetime/struct.DateTime.html) types.</span>
+<span class="doccomment">/// The methods here are the primarily constructors for [`Date`](../struct.Date.html) and</span>
+<span class="doccomment">/// [`DateTime`](../struct.DateTime.html) types.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TimeZone</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Clone</span> {
     <span class="doccomment">/// An associated offset type.</span>
     <span class="doccomment">/// This type is used to store the actual offset in date and time types.</span>
@@ -609,9 +598,9 @@
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::{UTC, TimeZone};</span>
+    <span class="doccomment">/// use chrono::{Utc, TimeZone};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(UTC.ymd(2015, 5, 15).to_string(), &quot;2015-05-15UTC&quot;);</span>
+    <span class="doccomment">/// assert_eq!(Utc.ymd(2015, 5, 15).to_string(), &quot;2015-05-15UTC&quot;);</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="kw">fn</span> <span class="ident">ymd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">year</span>: <span class="ident">i32</span>, <span class="ident">month</span>: <span class="ident">u32</span>, <span class="ident">day</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Date</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">ymd_opt</span>(<span class="ident">year</span>, <span class="ident">month</span>, <span class="ident">day</span>).<span class="ident">unwrap</span>()
@@ -628,10 +617,10 @@
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::{UTC, LocalResult, TimeZone};</span>
+    <span class="doccomment">/// use chrono::{Utc, LocalResult, TimeZone};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(UTC.ymd_opt(2015, 5, 15).unwrap().to_string(), &quot;2015-05-15UTC&quot;);</span>
-    <span class="doccomment">/// assert_eq!(UTC.ymd_opt(2000, 0, 0), LocalResult::None);</span>
+    <span class="doccomment">/// assert_eq!(Utc.ymd_opt(2015, 5, 15).unwrap().to_string(), &quot;2015-05-15UTC&quot;);</span>
+    <span class="doccomment">/// assert_eq!(Utc.ymd_opt(2000, 0, 0), LocalResult::None);</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="kw">fn</span> <span class="ident">ymd_opt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">year</span>: <span class="ident">i32</span>, <span class="ident">month</span>: <span class="ident">u32</span>, <span class="ident">day</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">LocalResult</span><span class="op">&lt;</span><span class="ident">Date</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="ident">NaiveDate</span>::<span class="ident">from_ymd_opt</span>(<span class="ident">year</span>, <span class="ident">month</span>, <span class="ident">day</span>) {
@@ -651,9 +640,9 @@
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::{UTC, TimeZone};</span>
+    <span class="doccomment">/// use chrono::{Utc, TimeZone};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(UTC.yo(2015, 135).to_string(), &quot;2015-05-15UTC&quot;);</span>
+    <span class="doccomment">/// assert_eq!(Utc.yo(2015, 135).to_string(), &quot;2015-05-15UTC&quot;);</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="kw">fn</span> <span class="ident">yo</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">year</span>: <span class="ident">i32</span>, <span class="ident">ordinal</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Date</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">yo_opt</span>(<span class="ident">year</span>, <span class="ident">ordinal</span>).<span class="ident">unwrap</span>()
@@ -686,9 +675,9 @@
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::{UTC, Weekday, TimeZone};</span>
+    <span class="doccomment">/// use chrono::{Utc, Weekday, TimeZone};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(UTC.isoywd(2015, 20, Weekday::Fri).to_string(), &quot;2015-05-15UTC&quot;);</span>
+    <span class="doccomment">/// assert_eq!(Utc.isoywd(2015, 20, Weekday::Fri).to_string(), &quot;2015-05-15UTC&quot;);</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="kw">fn</span> <span class="ident">isoywd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">year</span>: <span class="ident">i32</span>, <span class="ident">week</span>: <span class="ident">u32</span>, <span class="ident">weekday</span>: <span class="ident">Weekday</span>) <span class="op">-&gt;</span> <span class="ident">Date</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">isoywd_opt</span>(<span class="ident">year</span>, <span class="ident">week</span>, <span class="ident">weekday</span>).<span class="ident">unwrap</span>()
@@ -714,14 +703,15 @@
     <span class="doccomment">/// since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;)</span>
     <span class="doccomment">/// and the number of nanoseconds since the last whole non-leap second.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// Panics on the out-of-range number of seconds and/or invalid nanosecond.</span>
+    <span class="doccomment">/// Panics on the out-of-range number of seconds and/or invalid nanosecond,</span>
+    <span class="doccomment">/// for a non-panicking version see [`timestamp_opt`](#method.timestamp_opt).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::{UTC, TimeZone};</span>
+    <span class="doccomment">/// use chrono::{Utc, TimeZone};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// assert_eq!(UTC.timestamp(1431648000, 0).to_string(), &quot;2015-05-15 00:00:00 UTC&quot;);</span>
+    <span class="doccomment">/// assert_eq!(Utc.timestamp(1431648000, 0).to_string(), &quot;2015-05-15 00:00:00 UTC&quot;);</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="kw">fn</span> <span class="ident">timestamp</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">secs</span>: <span class="ident">i64</span>, <span class="ident">nsecs</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">DateTime</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">timestamp_opt</span>(<span class="ident">secs</span>, <span class="ident">nsecs</span>).<span class="ident">unwrap</span>()
@@ -731,12 +721,52 @@
     <span class="doccomment">/// since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;)</span>
     <span class="doccomment">/// and the number of nanoseconds since the last whole non-leap second.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// Returns `None` on the out-of-range number of seconds and/or invalid nanosecond.</span>
+    <span class="doccomment">/// Returns `LocalResult::None` on out-of-range number of seconds and/or</span>
+    <span class="doccomment">/// invalid nanosecond, otherwise always returns `LocalResult::Single`.</span>
     <span class="kw">fn</span> <span class="ident">timestamp_opt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">secs</span>: <span class="ident">i64</span>, <span class="ident">nsecs</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">LocalResult</span><span class="op">&lt;</span><span class="ident">DateTime</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="ident">NaiveDateTime</span>::<span class="ident">from_timestamp_opt</span>(<span class="ident">secs</span>, <span class="ident">nsecs</span>) {
             <span class="prelude-val">Some</span>(<span class="ident">dt</span>) <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="ident">Single</span>(<span class="self">self</span>.<span class="ident">from_utc_datetime</span>(<span class="kw-2">&amp;</span><span class="ident">dt</span>)),
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">LocalResult</span>::<span class="prelude-val">None</span>,
         }
+    }
+
+    <span class="doccomment">/// Makes a new `DateTime` from the number of non-leap milliseconds</span>
+    <span class="doccomment">/// since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Panics on out-of-range number of milliseconds for a non-panicking</span>
+    <span class="doccomment">/// version see [`timestamp_millis_opt`](#method.timestamp_millis_opt).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ~~~~</span>
+    <span class="doccomment">/// use chrono::{Utc, TimeZone};</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(Utc.timestamp_millis(1431648000).timestamp(), 1431648);</span>
+    <span class="doccomment">/// ~~~~</span>
+    <span class="kw">fn</span> <span class="ident">timestamp_millis</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">millis</span>: <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="ident">DateTime</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">timestamp_millis_opt</span>(<span class="ident">millis</span>).<span class="ident">unwrap</span>()
+    }
+
+    <span class="doccomment">/// Makes a new `DateTime` from the number of non-leap milliseconds</span>
+    <span class="doccomment">/// since January 1, 1970 0:00:00 UTC (aka &quot;UNIX timestamp&quot;).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Returns `LocalResult::None` on out-of-range number of milliseconds</span>
+    <span class="doccomment">/// and/or invalid nanosecond, otherwise always returns</span>
+    <span class="doccomment">/// `LocalResult::Single`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// ~~~~</span>
+    <span class="doccomment">/// use chrono::{Utc, TimeZone, LocalResult};</span>
+    <span class="doccomment">/// match Utc.timestamp_millis_opt(1431648000) {</span>
+    <span class="doccomment">///     LocalResult::Single(dt) =&gt; assert_eq!(dt.timestamp(), 1431648),</span>
+    <span class="doccomment">///     _ =&gt; panic!(&quot;Incorrect timestamp_millis&quot;),</span>
+    <span class="doccomment">/// };</span>
+    <span class="doccomment">/// ~~~~</span>
+    <span class="kw">fn</span> <span class="ident">timestamp_millis_opt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">millis</span>: <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="ident">LocalResult</span><span class="op">&lt;</span><span class="ident">DateTime</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;&gt;</span> {
+        <span class="kw">let</span> (<span class="ident">secs</span>, <span class="ident">millis</span>) <span class="op">=</span> (<span class="ident">millis</span> <span class="op">/</span> <span class="number">1000</span>, <span class="ident">millis</span> <span class="op">%</span> <span class="number">1000</span>);
+        <span class="self">self</span>.<span class="ident">timestamp_opt</span>(<span class="ident">secs</span>, <span class="ident">millis</span> <span class="kw">as</span> <span class="ident">u32</span> <span class="op">*</span> <span class="number">1_000_000</span>)
     }
 
     <span class="doccomment">/// Parses a string with the specified format string and</span>
@@ -798,70 +828,14 @@
     }
 }
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">utc</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">fixed</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">local</span>;
+<span class="kw">mod</span> <span class="ident">utc</span>;
+<span class="kw">mod</span> <span class="ident">fixed</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span><span class="op">=</span><span class="string">&quot;clock&quot;</span>)]</span>
+<span class="kw">mod</span> <span class="ident">local</span>;
 
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">utc</span>::<span class="ident">Utc</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">fixed</span>::<span class="ident">FixedOffset</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span><span class="op">=</span><span class="string">&quot;clock&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">local</span>::<span class="ident">Local</span>;
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "chrono";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "chrono";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

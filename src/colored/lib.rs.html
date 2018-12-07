@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.5.0/src/lib.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>lib.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.6.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -584,8 +539,176 @@
 <span id="539">539</span>
 <span id="540">540</span>
 <span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
+<span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
+<span id="636">636</span>
+<span id="637">637</span>
+<span id="638">638</span>
+<span id="639">639</span>
+<span id="640">640</span>
+<span id="641">641</span>
+<span id="642">642</span>
+<span id="643">643</span>
+<span id="644">644</span>
+<span id="645">645</span>
+<span id="646">646</span>
+<span id="647">647</span>
+<span id="648">648</span>
+<span id="649">649</span>
+<span id="650">650</span>
+<span id="651">651</span>
+<span id="652">652</span>
+<span id="653">653</span>
+<span id="654">654</span>
+<span id="655">655</span>
+<span id="656">656</span>
+<span id="657">657</span>
+<span id="658">658</span>
+<span id="659">659</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+<span id="666">666</span>
+<span id="667">667</span>
+<span id="668">668</span>
+<span id="669">669</span>
+<span id="670">670</span>
+<span id="671">671</span>
+<span id="672">672</span>
+<span id="673">673</span>
+<span id="674">674</span>
+<span id="675">675</span>
+<span id="676">676</span>
+<span id="677">677</span>
+<span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
 </pre><pre class="rust ">
-<span class="attribute">#<span class="op">!</span>[<span class="ident">allow</span>(<span class="ident">unused_imports</span>, <span class="ident">dead_code</span>, <span class="ident">unused_parens</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">unused_imports</span>, <span class="ident">dead_code</span>, <span class="ident">unused_parens</span>)]</span>
+
+<span class="doccomment">//!Coloring terminal so simple, you already know how to do it !</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!    use colored::Colorize;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!    &quot;this is blue&quot;.blue();</span>
+<span class="doccomment">//!    &quot;this is red&quot;.red();</span>
+<span class="doccomment">//!    &quot;this is red on blue&quot;.red().on_blue();</span>
+<span class="doccomment">//!    &quot;this is also red on blue&quot;.on_blue().red();</span>
+<span class="doccomment">//!    &quot;you can also make bold comments&quot;.bold();</span>
+<span class="doccomment">//!    println!(&quot;{} {} {}&quot;, &quot;or use&quot;.cyan(), &quot;any&quot;.italic().yellow(), &quot;string type&quot;.cyan());</span>
+<span class="doccomment">//!    &quot;or change advice. This is red&quot;.yellow().blue().red();</span>
+<span class="doccomment">//!    &quot;or clear things up. This is default color and style&quot;.red().bold().clear();</span>
+<span class="doccomment">//!    &quot;purple and magenta are the same&quot;.purple().magenta();</span>
+<span class="doccomment">//!    &quot;bright colors are also allowed&quot;.bright_blue().on_bright_white();</span>
+<span class="doccomment">//!    &quot;you can specify color by string&quot;.color(&quot;blue&quot;).on_color(&quot;red&quot;);</span>
+<span class="doccomment">//!    &quot;and so are normal and clear&quot;.normal().clear();</span>
+<span class="doccomment">//!    String::from(&quot;this also works!&quot;).green().bold();</span>
+<span class="doccomment">//!    format!(&quot;{:30}&quot;, &quot;format works as expected. This will be padded&quot;.blue());</span>
+<span class="doccomment">//!    format!(&quot;{:.3}&quot;, &quot;and this will be green but truncated to 3 chars&quot;.green());</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! See [the `Colorize` trait](./trait.Colorize.html) for all the methods.</span>
+<span class="doccomment">//!</span>
 
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">lazy_static</span>;
@@ -593,19 +716,19 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">rspec</span>;
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">control</span>;
 <span class="kw">mod</span> <span class="ident">color</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">control</span>;
 <span class="kw">mod</span> <span class="ident">style</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">color</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Deref</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">string</span>::<span class="ident">String</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 
-<span class="doccomment">/// Colored mean both color or styled</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="doccomment">/// A string that may have color and/or style applied to it.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ColoredString</span> {
     <span class="ident">input</span>: <span class="ident">String</span>,
     <span class="ident">fgcolor</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span>,
@@ -613,6 +736,10 @@
     <span class="ident">style</span>: <span class="ident">style</span>::<span class="ident">Style</span>,
 }
 
+<span class="doccomment">/// The trait that enables something to be given color.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// You can use `colored` effectively simply by importing this trait</span>
+<span class="doccomment">/// and then using its methods on `String` and `&amp;str`.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Colorize</span> {
     <span class="comment">// Font Colors</span>
     <span class="kw">fn</span> <span class="ident">black</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
@@ -624,6 +751,15 @@
     <span class="kw">fn</span> <span class="ident">purple</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">cyan</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">white</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_black</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_green</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_yellow</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_blue</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_magenta</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_purple</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_cyan</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">bright_white</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="comment">// Background Colors</span>
     <span class="kw">fn</span> <span class="ident">on_black</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
@@ -635,6 +771,15 @@
     <span class="kw">fn</span> <span class="ident">on_purple</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">on_cyan</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">on_white</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_black</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_green</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_yellow</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_blue</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_magenta</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_purple</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_cyan</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">on_bright_white</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">on_color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="comment">// Styles</span>
     <span class="kw">fn</span> <span class="ident">clear</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
@@ -644,8 +789,13 @@
     <span class="kw">fn</span> <span class="ident">italic</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">underline</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">blink</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="doccomment">/// Historical name of `Colorize::reversed`. May be removed in a future version. Please use</span>
+    <span class="doccomment">/// `Colorize::reversed` instead</span>
     <span class="kw">fn</span> <span class="ident">reverse</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="doccomment">/// This should be preferred to `Colorize::reverse`.</span>
+    <span class="kw">fn</span> <span class="ident">reversed</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
     <span class="kw">fn</span> <span class="ident">hidden</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
+    <span class="kw">fn</span> <span class="ident">strikethrough</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">ColoredString</span> {
@@ -671,12 +821,12 @@
         }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;\x1B[&quot;</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_wrote</span> <span class="op">=</span> <span class="bool-val">false</span>;
-
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">style</span> <span class="op">!=</span> <span class="ident">style</span>::<span class="ident">CLEAR</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_wrote</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">style</span> <span class="op">!=</span> <span class="ident">style</span>::<span class="ident">CLEAR</span> {
             <span class="ident">res</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">style</span>.<span class="ident">to_str</span>());
-            <span class="ident">has_wrote</span> <span class="op">=</span> <span class="bool-val">true</span>;
-        }
+            <span class="bool-val">true</span>
+        } <span class="kw">else</span> {
+            <span class="bool-val">false</span>
+        };
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">bgcolor</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">bgcolor</span> {
             <span class="kw">if</span> <span class="ident">has_wrote</span> {
@@ -709,7 +859,7 @@
         <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">compute_style</span>();
         <span class="kw">let</span> <span class="ident">matches</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">input</span>
             .<span class="ident">match_indices</span>(<span class="ident">reset</span>)
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">idx</span>, _)<span class="op">|</span> <span class="ident">idx</span>)
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">idx</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">idx</span>)
             .<span class="ident">collect</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">idx_in_matches</span> <span class="op">=</span> <span class="number">0</span>;
@@ -793,6 +943,17 @@
     <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Magenta</span>);
     <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Cyan</span>);
     <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">White</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_black</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlack</span>);
+    <span class="kw">fn</span> <span class="ident">bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
+        <span class="self">self</span>.<span class="ident">color</span>(<span class="ident">Color</span>::<span class="ident">BrightRed</span>)
+    }
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_green</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightGreen</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_yellow</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightYellow</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_blue</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlue</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_magenta</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightCyan</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightWhite</span>);
 
     <span class="kw">fn</span> <span class="ident">color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
         <span class="ident">ColoredString</span> {
@@ -816,6 +977,21 @@
     <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Cyan</span>);
     <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">White</span>);
 
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_black</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlack</span>);
+    <span class="kw">fn</span> <span class="ident">on_bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
+        <span class="ident">ColoredString</span> {
+            <span class="ident">bgcolor</span>: <span class="prelude-val">Some</span>(<span class="ident">Color</span>::<span class="ident">BrightRed</span>),
+            ..<span class="self">self</span>
+        }
+    }
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_green</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightGreen</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_yellow</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightYellow</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_blue</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlue</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_magenta</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightCyan</span>);
+    <span class="macro">def_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightWhite</span>);
+
     <span class="kw">fn</span> <span class="ident">on_color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
         <span class="ident">ColoredString</span> {
             <span class="ident">bgcolor</span>: <span class="prelude-val">Some</span>(<span class="ident">color</span>.<span class="ident">into</span>()),
@@ -838,7 +1014,9 @@
     <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">underline</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Underline</span>);
     <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">blink</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Blink</span>);
     <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">reverse</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Reversed</span>);
+    <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">reversed</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Reversed</span>);
     <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">hidden</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Hidden</span>);
+    <span class="macro">def_style</span><span class="macro">!</span>(<span class="ident">strikethrough</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Strikethrough</span>);
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">def_str_color</span> {
@@ -882,6 +1060,22 @@
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Cyan</span>);
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">White</span>);
 
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_black</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlack</span>);
+    <span class="kw">fn</span> <span class="ident">bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
+        <span class="ident">ColoredString</span> {
+            <span class="ident">input</span>: <span class="ident">String</span>::<span class="ident">from</span>(<span class="self">self</span>),
+            <span class="ident">fgcolor</span>: <span class="prelude-val">Some</span>(<span class="ident">Color</span>::<span class="ident">BrightRed</span>),
+            ..<span class="ident">ColoredString</span>::<span class="ident">default</span>()
+        }
+    }
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_green</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightGreen</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_yellow</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightYellow</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_blue</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlue</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_magenta</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightCyan</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">fgcolor</span>: <span class="ident">bright_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightWhite</span>);
+
     <span class="kw">fn</span> <span class="ident">color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
         <span class="ident">ColoredString</span> {
             <span class="ident">fgcolor</span>: <span class="prelude-val">Some</span>(<span class="ident">color</span>.<span class="ident">into</span>()),
@@ -889,7 +1083,6 @@
             ..<span class="ident">ColoredString</span>::<span class="ident">default</span>()
         }
     }
-
 
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_black</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Black</span>);
     <span class="kw">fn</span> <span class="ident">on_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
@@ -906,6 +1099,22 @@
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Magenta</span>);
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">Cyan</span>);
     <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">White</span>);
+
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_black</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlack</span>);
+    <span class="kw">fn</span> <span class="ident">on_bright_red</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
+        <span class="ident">ColoredString</span> {
+            <span class="ident">input</span>: <span class="ident">String</span>::<span class="ident">from</span>(<span class="self">self</span>),
+            <span class="ident">bgcolor</span>: <span class="prelude-val">Some</span>(<span class="ident">Color</span>::<span class="ident">BrightRed</span>),
+            ..<span class="ident">ColoredString</span>::<span class="ident">default</span>()
+        }
+    }
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_green</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightGreen</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_yellow</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightYellow</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_blue</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightBlue</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_magenta</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_purple</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightMagenta</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_cyan</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightCyan</span>);
+    <span class="macro">def_str_color</span><span class="macro">!</span>(<span class="ident">bgcolor</span>: <span class="ident">on_bright_white</span> <span class="op">=&gt;</span> <span class="ident">Color</span>::<span class="ident">BrightWhite</span>);
 
     <span class="kw">fn</span> <span class="ident">on_color</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;&gt;</span>(<span class="self">self</span>, <span class="ident">color</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">ColoredString</span> {
         <span class="ident">ColoredString</span> {
@@ -931,7 +1140,9 @@
     <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">underline</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Underline</span>);
     <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">blink</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Blink</span>);
     <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">reverse</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Reversed</span>);
+    <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">reversed</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Reversed</span>);
     <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">hidden</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Hidden</span>);
+    <span class="macro">def_str_style</span><span class="macro">!</span>(<span class="ident">strikethrough</span>, <span class="ident">style</span>::<span class="ident">Styles</span>::<span class="ident">Strikethrough</span>);
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">ColoredString</span> {
@@ -959,8 +1170,10 @@
         <span class="comment">// respect the formatting. Escape sequence add some padding so &gt;= 40</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:40}&quot;</span>, <span class="string">&quot;&quot;</span>.<span class="ident">blue</span>()).<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="number">40</span>);
         <span class="comment">// both should be truncated to 1 char before coloring</span>
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:1.1}&quot;</span>, <span class="string">&quot;toto&quot;</span>.<span class="ident">blue</span>()).<span class="ident">len</span>(),
-                   <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:1.1}&quot;</span>, <span class="string">&quot;1&quot;</span>.<span class="ident">blue</span>()).<span class="ident">len</span>())
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:1.1}&quot;</span>, <span class="string">&quot;toto&quot;</span>.<span class="ident">blue</span>()).<span class="ident">len</span>(),
+            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:1.1}&quot;</span>, <span class="string">&quot;1&quot;</span>.<span class="ident">blue</span>()).<span class="ident">len</span>()
+        )
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -1029,6 +1242,30 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">compute_style_simple_fg_bright_blue</span>() {
+        <span class="kw">let</span> <span class="ident">blue</span> <span class="op">=</span> <span class="string">&quot;\x1B[94m&quot;</span>;
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">blue</span>, <span class="string">&quot;&quot;</span>.<span class="ident">bright_blue</span>().<span class="ident">compute_style</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">compute_style_simple_bg_bright_blue</span>() {
+        <span class="kw">let</span> <span class="ident">on_blue</span> <span class="op">=</span> <span class="string">&quot;\x1B[104m&quot;</span>;
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">on_blue</span>, <span class="string">&quot;&quot;</span>.<span class="ident">on_bright_blue</span>().<span class="ident">compute_style</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">compute_style_bright_blue_on_bright_blue</span>() {
+        <span class="kw">let</span> <span class="ident">blue_on_blue</span> <span class="op">=</span> <span class="string">&quot;\x1B[104;94m&quot;</span>;
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">blue_on_blue</span>,
+            <span class="string">&quot;&quot;</span>.<span class="ident">bright_blue</span>().<span class="ident">on_bright_blue</span>().<span class="ident">compute_style</span>()
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">compute_style_simple_bold</span>() {
         <span class="kw">let</span> <span class="ident">bold</span> <span class="op">=</span> <span class="string">&quot;\x1B[1m&quot;</span>;
 
@@ -1046,8 +1283,10 @@
     <span class="kw">fn</span> <span class="ident">compute_style_blue_bold_on_blue</span>() {
         <span class="kw">let</span> <span class="ident">blue_bold_on_blue</span> <span class="op">=</span> <span class="string">&quot;\x1B[1;44;34m&quot;</span>;
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">blue_bold_on_blue</span>,
-                   <span class="string">&quot;&quot;</span>.<span class="ident">blue</span>().<span class="ident">bold</span>().<span class="ident">on_blue</span>().<span class="ident">compute_style</span>());
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">blue_bold_on_blue</span>,
+            <span class="string">&quot;&quot;</span>.<span class="ident">blue</span>().<span class="ident">bold</span>().<span class="ident">on_blue</span>().<span class="ident">compute_style</span>()
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -1087,29 +1326,23 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">escape_reset_sequence_spec_should_replace_multiple_inner_reset_sequences_with_current_style</span>
-        () {
+    <span class="kw">fn</span> <span class="ident">escape_reset_sequence_spec_should_replace_multiple_inner_reset_sequences_with_current_style</span>()
+    {
         <span class="kw">let</span> <span class="ident">italic_str</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;yo&quot;</span>).<span class="ident">italic</span>();
-        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;start 1:{} 2:{} 3:{} end&quot;</span>,
-                            <span class="ident">italic_str</span>,
-                            <span class="ident">italic_str</span>,
-                            <span class="ident">italic_str</span>);
+        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;start 1:{} 2:{} 3:{} end&quot;</span>,
+            <span class="ident">italic_str</span>, <span class="ident">italic_str</span>, <span class="ident">italic_str</span>
+        );
         <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">blue</span>();
 
         <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">style</span>.<span class="ident">escape_inner_reset_sequences</span>();
         <span class="kw">let</span> <span class="ident">blue</span> <span class="op">=</span> <span class="string">&quot;\x1B[34m&quot;</span>;
         <span class="kw">let</span> <span class="ident">italic</span> <span class="op">=</span> <span class="string">&quot;\x1B[3m&quot;</span>;
         <span class="kw">let</span> <span class="ident">reset</span> <span class="op">=</span> <span class="string">&quot;\x1B[0m&quot;</span>;
-        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;start 1:{}yo{}{} 2:{}yo{}{} 3:{}yo{}{} end&quot;</span>,
-                               <span class="ident">italic</span>,
-                               <span class="ident">reset</span>,
-                               <span class="ident">blue</span>,
-                               <span class="ident">italic</span>,
-                               <span class="ident">reset</span>,
-                               <span class="ident">blue</span>,
-                               <span class="ident">italic</span>,
-                               <span class="ident">reset</span>,
-                               <span class="ident">blue</span>);
+        <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;start 1:{}yo{}{} 2:{}yo{}{} 3:{}yo{}{} end&quot;</span>,
+            <span class="ident">italic</span>, <span class="ident">reset</span>, <span class="ident">blue</span>, <span class="ident">italic</span>, <span class="ident">reset</span>, <span class="ident">blue</span>, <span class="ident">italic</span>, <span class="ident">reset</span>, <span class="ident">blue</span>
+        );
 
         <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;first: {}\nsecond: {}&quot;</span>, <span class="ident">expected</span>, <span class="ident">output</span>);
 
@@ -1125,67 +1358,16 @@
     <span class="kw">fn</span> <span class="ident">on_color_fn</span>() {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;blue&quot;</span>.<span class="ident">on_blue</span>(), <span class="string">&quot;blue&quot;</span>.<span class="ident">on_color</span>(<span class="string">&quot;blue&quot;</span>))
     }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">bright_color_fn</span>() {
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;blue&quot;</span>.<span class="ident">bright_blue</span>(), <span class="string">&quot;blue&quot;</span>.<span class="ident">color</span>(<span class="string">&quot;bright blue&quot;</span>))
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">on_bright_color_fn</span>() {
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;blue&quot;</span>.<span class="ident">on_bright_blue</span>(), <span class="string">&quot;blue&quot;</span>.<span class="ident">on_color</span>(<span class="string">&quot;bright blue&quot;</span>))
+    }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "colored";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "colored";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

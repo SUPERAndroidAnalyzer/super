@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.1.37/src/sys.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>sys.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    <link rel="shortcut icon" href="https://www.rust-lang.org/favicon.ico">
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        <a href='../../time/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='logo' width='100'></a>
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/time-0.1.40/src/sys.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>sys.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><link rel="shortcut icon" href="https://www.rust-lang.org/favicon.ico"></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../time/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -884,22 +839,149 @@
 <span id="839">839</span>
 <span id="840">840</span>
 <span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
+<span id="870">870</span>
+<span id="871">871</span>
+<span id="872">872</span>
+<span id="873">873</span>
+<span id="874">874</span>
+<span id="875">875</span>
+<span id="876">876</span>
+<span id="877">877</span>
+<span id="878">878</span>
+<span id="879">879</span>
+<span id="880">880</span>
+<span id="881">881</span>
+<span id="882">882</span>
+<span id="883">883</span>
+<span id="884">884</span>
+<span id="885">885</span>
+<span id="886">886</span>
+<span id="887">887</span>
+<span id="888">888</span>
+<span id="889">889</span>
+<span id="890">890</span>
+<span id="891">891</span>
+<span id="892">892</span>
+<span id="893">893</span>
+<span id="894">894</span>
+<span id="895">895</span>
+<span id="896">896</span>
+<span id="897">897</span>
+<span id="898">898</span>
+<span id="899">899</span>
+<span id="900">900</span>
+<span id="901">901</span>
+<span id="902">902</span>
+<span id="903">903</span>
+<span id="904">904</span>
+<span id="905">905</span>
+<span id="906">906</span>
+<span id="907">907</span>
+<span id="908">908</span>
+<span id="909">909</span>
+<span id="910">910</span>
+<span id="911">911</span>
+<span id="912">912</span>
+<span id="913">913</span>
+<span id="914">914</span>
+<span id="915">915</span>
+<span id="916">916</span>
+<span id="917">917</span>
+<span id="918">918</span>
+<span id="919">919</span>
+<span id="920">920</span>
+<span id="921">921</span>
+<span id="922">922</span>
+<span id="923">923</span>
+<span id="924">924</span>
+<span id="925">925</span>
+<span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
+<span id="941">941</span>
+<span id="942">942</span>
+<span id="943">943</span>
+<span id="944">944</span>
+<span id="945">945</span>
+<span id="946">946</span>
+<span id="947">947</span>
+<span id="948">948</span>
+<span id="949">949</span>
+<span id="950">950</span>
+<span id="951">951</span>
+<span id="952">952</span>
+<span id="953">953</span>
+<span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
+<span id="969">969</span>
+<span id="970">970</span>
+<span id="971">971</span>
 </pre><pre class="rust ">
-<span class="attribute">#<span class="op">!</span>[<span class="ident">allow</span>(<span class="ident">bad_style</span>)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">bad_style</span>)]</span>
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">inner</span>::<span class="kw-2">*</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;redox&quot;</span>)]</span>
-<span class="kw">mod</span> <span class="ident">inner</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>};
-    <span class="kw">use</span> <span class="ident">syscall</span>;
-
-    <span class="kw">use</span> <span class="ident">Duration</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(
+    <span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;emscripten&quot;</span>)),
+    <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;redox&quot;</span>,
+))]</span>
+<span class="kw">mod</span> <span class="ident">common</span> {
     <span class="kw">use</span> <span class="ident">Tm</span>;
 
-    <span class="kw">fn</span> <span class="ident">time_to_tm</span>(<span class="ident">ts</span>: <span class="ident">i64</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tm</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">time_to_tm</span>(<span class="ident">ts</span>: <span class="ident">i64</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tm</span>) {
         <span class="kw">let</span> <span class="ident">leapyear</span> <span class="op">=</span> <span class="op">|</span><span class="ident">year</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="ident">bool</span> {
             <span class="ident">year</span> <span class="op">%</span> <span class="number">4</span> <span class="op">==</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> (<span class="ident">year</span> <span class="op">%</span> <span class="number">100</span> <span class="op">!=</span> <span class="number">0</span> <span class="op">||</span> <span class="ident">year</span> <span class="op">%</span> <span class="number">400</span> <span class="op">==</span> <span class="number">0</span>)
         };
@@ -943,7 +1025,7 @@
         <span class="ident">tm</span>.<span class="ident">tm_isdst</span> <span class="op">=</span> <span class="number">0</span>;
     }
 
-    <span class="kw">fn</span> <span class="ident">tm_to_time</span>(<span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tm_to_time</span>(<span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">+</span> <span class="number">1900</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">tm</span>.<span class="ident">tm_mon</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">+</span> <span class="number">1</span>;
         <span class="kw">if</span> <span class="ident">m</span> <span class="op">&lt;=</span> <span class="number">2</span> {
@@ -957,6 +1039,82 @@
         (<span class="number">365</span><span class="kw-2">*</span><span class="ident">y</span> <span class="op">+</span> <span class="ident">y</span><span class="op">/</span><span class="number">4</span> <span class="op">-</span> <span class="ident">y</span><span class="op">/</span><span class="number">100</span> <span class="op">+</span> <span class="ident">y</span><span class="op">/</span><span class="number">400</span> <span class="op">+</span> <span class="number">3</span><span class="kw-2">*</span>(<span class="ident">m</span><span class="op">+</span><span class="number">1</span>)<span class="op">/</span><span class="number">5</span> <span class="op">+</span> <span class="number">30</span><span class="kw-2">*</span><span class="ident">m</span> <span class="op">+</span> <span class="ident">d</span> <span class="op">-</span> <span class="number">719561</span>)
             <span class="op">*</span> <span class="number">86400</span> <span class="op">+</span> <span class="number">3600</span> <span class="op">*</span> <span class="ident">h</span> <span class="op">+</span> <span class="number">60</span> <span class="op">*</span> <span class="ident">mi</span> <span class="op">+</span> <span class="ident">s</span>
     }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;emscripten&quot;</span>)))]</span>
+<span class="kw">mod</span> <span class="ident">inner</span> {
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>};
+    <span class="kw">use</span> <span class="ident">Tm</span>;
+    <span class="kw">use</span> <span class="ident">Duration</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">common</span>::{<span class="ident">time_to_tm</span>, <span class="ident">tm_to_time</span>};
+
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SteadyTime</span>;
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">time_to_utc_tm</span>(<span class="ident">sec</span>: <span class="ident">i64</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tm</span>) {
+        <span class="ident">time_to_tm</span>(<span class="ident">sec</span>, <span class="ident">tm</span>);
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">time_to_local_tm</span>(<span class="ident">sec</span>: <span class="ident">i64</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tm</span>) {
+        <span class="comment">// FIXME: Add timezone logic</span>
+        <span class="ident">time_to_tm</span>(<span class="ident">sec</span>, <span class="ident">tm</span>);
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">utc_tm_to_time</span>(<span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
+        <span class="ident">tm_to_time</span>(<span class="ident">tm</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">local_tm_to_time</span>(<span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
+        <span class="comment">// FIXME: Add timezone logic</span>
+        <span class="ident">tm_to_time</span>(<span class="ident">tm</span>)
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_time</span>() <span class="op">-&gt;</span> (<span class="ident">i64</span>, <span class="ident">i32</span>) {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_precise_ns</span>() <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="macro">unimplemented</span><span class="macro">!</span>()
+    }
+
+    <span class="kw">impl</span> <span class="ident">SteadyTime</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">now</span>() <span class="op">-&gt;</span> <span class="ident">SteadyTime</span> {
+            <span class="macro">unimplemented</span><span class="macro">!</span>()
+        }
+    }
+
+    <span class="kw">impl</span> <span class="ident">Sub</span> <span class="kw">for</span> <span class="ident">SteadyTime</span> {
+        <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">Duration</span>;
+        <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">_other</span>: <span class="ident">SteadyTime</span>) <span class="op">-&gt;</span> <span class="ident">Duration</span> {
+            <span class="macro">unimplemented</span><span class="macro">!</span>()
+        }
+    }
+
+    <span class="kw">impl</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SteadyTime</span> {
+        <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">SteadyTime</span>;
+        <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">_other</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="ident">SteadyTime</span> {
+            <span class="macro">unimplemented</span><span class="macro">!</span>()
+        }
+    }
+
+    <span class="kw">impl</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SteadyTime</span> {
+        <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">SteadyTime</span>;
+        <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">_other</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="ident">SteadyTime</span> {
+            <span class="macro">unimplemented</span><span class="macro">!</span>()
+        }
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;redox&quot;</span>)]</span>
+<span class="kw">mod</span> <span class="ident">inner</span> {
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>};
+    <span class="kw">use</span> <span class="ident">syscall</span>;
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">common</span>::{<span class="ident">time_to_tm</span>, <span class="ident">tm_to_time</span>};
+
+    <span class="kw">use</span> <span class="ident">Duration</span>;
+    <span class="kw">use</span> <span class="ident">Tm</span>;
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">time_to_utc_tm</span>(<span class="ident">sec</span>: <span class="ident">i64</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Tm</span>) {
         <span class="ident">time_to_tm</span>(<span class="ident">sec</span>, <span class="ident">tm</span>);
@@ -1096,6 +1254,12 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>), <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;ios&quot;</span>)))]</span>
     <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">unix</span>::<span class="kw-2">*</span>;
 
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>)]</span>
+    <span class="kw">extern</span> {
+        <span class="kw">static</span> <span class="ident">timezone</span>: <span class="ident">time_t</span>;
+        <span class="kw">static</span> <span class="ident">altzone</span>: <span class="ident">time_t</span>;
+    }
+
     <span class="kw">fn</span> <span class="ident">rust_tm_to_tm</span>(<span class="ident">rust_tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>, <span class="ident">tm</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">tm</span>) {
         <span class="ident">tm</span>.<span class="ident">tm_sec</span> <span class="op">=</span> <span class="ident">rust_tm</span>.<span class="ident">tm_sec</span>;
         <span class="ident">tm</span>.<span class="ident">tm_min</span> <span class="op">=</span> <span class="ident">rust_tm</span>.<span class="ident">tm_min</span>;
@@ -1121,8 +1285,8 @@
         <span class="ident">rust_tm</span>.<span class="ident">tm_utcoff</span> <span class="op">=</span> <span class="ident">utcoff</span>;
     }
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;nacl&quot;</span>)]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">timegm</span>(<span class="ident">tm</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">tm</span>) <span class="op">-&gt;</span> <span class="ident">time_t</span> {
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;nacl&quot;</span>, <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>))]</span>
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">timegm</span>(<span class="ident">tm</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">tm</span>) <span class="op">-&gt;</span> <span class="ident">time_t</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">env</span>::{<span class="ident">set_var</span>, <span class="ident">var_os</span>, <span class="ident">remove_var</span>};
         <span class="kw">extern</span> {
             <span class="kw">fn</span> <span class="ident">tzset</span>();
@@ -1164,14 +1328,29 @@
             <span class="kw">if</span> <span class="ident">libc</span>::<span class="ident">localtime_r</span>(<span class="kw-2">&amp;</span><span class="ident">sec</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">out</span>).<span class="ident">is_null</span>() {
                 <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;localtime_r failed: {}&quot;</span>, <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>());
             }
-            <span class="ident">tm_to_rust_tm</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>, <span class="ident">out</span>.<span class="ident">tm_gmtoff</span> <span class="kw">as</span> <span class="ident">i32</span>, <span class="ident">tm</span>);
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>)]</span>
+            <span class="kw">let</span> <span class="ident">gmtoff</span> <span class="op">=</span> {
+                ::<span class="ident">tzset</span>();
+                <span class="comment">// &lt; 0 means we don&#39;t know; assume we&#39;re not in DST.</span>
+                <span class="kw">if</span> <span class="ident">out</span>.<span class="ident">tm_isdst</span> <span class="op">==</span> <span class="number">0</span> {
+                    <span class="comment">// timezone is seconds west of UTC, tm_gmtoff is seconds east</span>
+                    <span class="op">-</span><span class="ident">timezone</span>
+                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">out</span>.<span class="ident">tm_isdst</span> <span class="op">&gt;</span> <span class="number">0</span> {
+                    <span class="op">-</span><span class="ident">altzone</span>
+                } <span class="kw">else</span> {
+                    <span class="op">-</span><span class="ident">timezone</span>
+                }
+            };
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>))]</span>
+            <span class="kw">let</span> <span class="ident">gmtoff</span> <span class="op">=</span> <span class="ident">out</span>.<span class="ident">tm_gmtoff</span>;
+            <span class="ident">tm_to_rust_tm</span>(<span class="kw-2">&amp;</span><span class="ident">out</span>, <span class="ident">gmtoff</span> <span class="kw">as</span> <span class="ident">i32</span>, <span class="ident">tm</span>);
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">utc_tm_to_time</span>(<span class="ident">rust_tm</span>: <span class="kw-2">&amp;</span><span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;android&quot;</span>, <span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>))]</span>
         <span class="kw">use</span> <span class="ident">libc</span>::<span class="ident">timegm64</span> <span class="kw">as</span> <span class="ident">timegm</span>;
-        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;android&quot;</span>, <span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>)))]</span>
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">any</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;android&quot;</span>, <span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>), <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;nacl&quot;</span>, <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;solaris&quot;</span>)))]</span>
         <span class="kw">use</span> <span class="ident">libc</span>::<span class="ident">timegm</span>;
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tm</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">zeroed</span>() };
@@ -1214,6 +1393,7 @@
             (<span class="ident">tv</span>.<span class="ident">tv_sec</span> <span class="kw">as</span> <span class="ident">i64</span>, <span class="ident">tv</span>.<span class="ident">tv_usec</span> <span class="op">*</span> <span class="number">1000</span>)
         }
 
+        <span class="attribute">#[<span class="ident">inline</span>]</span>
         <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_precise_ns</span>() <span class="op">-&gt;</span> <span class="ident">u64</span> {
             <span class="kw">unsafe</span> {
                 <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">mach_absolute_time</span>();
@@ -1356,14 +1536,20 @@
                 <span class="kw">let</span> <span class="ident">seconds</span> <span class="op">=</span> <span class="ident">other</span>.<span class="ident">num_seconds</span>();
                 <span class="kw">let</span> <span class="ident">nanoseconds</span> <span class="op">=</span> <span class="ident">other</span> <span class="op">-</span> <span class="ident">Duration</span>::<span class="ident">seconds</span>(<span class="ident">seconds</span>);
                 <span class="kw">let</span> <span class="ident">nanoseconds</span> <span class="op">=</span> <span class="ident">nanoseconds</span>.<span class="ident">num_nanoseconds</span>().<span class="ident">unwrap</span>();
+
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>))]</span>
+                <span class="kw">type</span> <span class="ident">nsec</span> <span class="op">=</span> <span class="ident">i64</span>;
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>, <span class="ident">target_pointer_width</span> <span class="op">=</span> <span class="string">&quot;32&quot;</span>)))]</span>
+                <span class="kw">type</span> <span class="ident">nsec</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
+
                 <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_sec</span> <span class="op">+=</span> <span class="ident">seconds</span> <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">time_t</span>;
-                <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">+=</span> <span class="ident">nanoseconds</span> <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">&gt;=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">c_long</span> {
-                    <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">-=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
+                <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">+=</span> <span class="ident">nanoseconds</span> <span class="kw">as</span> <span class="ident">nsec</span>;
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">&gt;=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">nsec</span> {
+                    <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">-=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">nsec</span>;
                     <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_sec</span> <span class="op">+=</span> <span class="number">1</span>;
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">&lt;</span> <span class="number">0</span> {
                     <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_sec</span> <span class="op">-=</span> <span class="number">1</span>;
-                    <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">+=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
+                    <span class="self">self</span>.<span class="ident">t</span>.<span class="ident">tv_nsec</span> <span class="op">+=</span> ::<span class="ident">NSEC_PER_SEC</span> <span class="kw">as</span> <span class="ident">nsec</span>;
                 }
                 <span class="self">self</span>
             }
@@ -1405,18 +1591,38 @@
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>};
     <span class="kw">use</span> {<span class="ident">Tm</span>, <span class="ident">Duration</span>};
 
-    <span class="kw">use</span> <span class="ident">kernel32</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">winnt</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">shared</span>::<span class="ident">minwindef</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">minwinbase</span>::<span class="ident">SYSTEMTIME</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">profileapi</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">timezoneapi</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">sysinfoapi</span>::<span class="ident">GetSystemTimeAsFileTime</span>;
 
-    <span class="kw">fn</span> <span class="ident">frequency</span>() <span class="op">-&gt;</span> <span class="ident">LARGE_INTEGER</span> {
-        <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">FREQUENCY</span>: <span class="ident">LARGE_INTEGER</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">fn</span> <span class="ident">frequency</span>() <span class="op">-&gt;</span> <span class="ident">i64</span> {
+        <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">FREQUENCY</span>: <span class="ident">i64</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">static</span> <span class="ident">ONCE</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">ONCE_INIT</span>;
 
         <span class="kw">unsafe</span> {
             <span class="ident">ONCE</span>.<span class="ident">call_once</span>(<span class="op">||</span> {
-                <span class="ident">QueryPerformanceFrequency</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FREQUENCY</span>);
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">l</span> <span class="op">=</span> <span class="ident">i64_to_large_integer</span>(<span class="number">0</span>);
+                <span class="ident">QueryPerformanceFrequency</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">l</span>);
+                <span class="ident">FREQUENCY</span> <span class="op">=</span> <span class="ident">large_integer_to_i64</span>(<span class="ident">l</span>);
             });
             <span class="ident">FREQUENCY</span>
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">i64_to_large_integer</span>(<span class="ident">i</span>: <span class="ident">i64</span>) <span class="op">-&gt;</span> <span class="ident">LARGE_INTEGER</span> {
+        <span class="kw">unsafe</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">large_integer</span>: <span class="ident">LARGE_INTEGER</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
+            <span class="kw-2">*</span><span class="ident">large_integer</span>.<span class="ident">QuadPart_mut</span>() <span class="op">=</span> <span class="ident">i</span>;
+            <span class="ident">large_integer</span>
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">large_integer_to_i64</span>(<span class="ident">l</span>: <span class="ident">LARGE_INTEGER</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
+        <span class="kw">unsafe</span> {
+            <span class="kw-2">*</span><span class="ident">l</span>.<span class="ident">QuadPart</span>()
         }
     }
 
@@ -1512,7 +1718,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utc</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">local</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
             <span class="macro">call</span><span class="macro">!</span>(<span class="ident">FileTimeToSystemTime</span>(<span class="kw-2">&amp;</span><span class="ident">ft</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">utc</span>));
-            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">SystemTimeToTzSpecificLocalTime</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> _,
+            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">SystemTimeToTzSpecificLocalTime</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span>,
                                                   <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">utc</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">local</span>));
             <span class="ident">system_time_to_tm</span>(<span class="kw-2">&amp;</span><span class="ident">local</span>, <span class="ident">tm</span>);
 
@@ -1547,7 +1753,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ft</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">utc</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sys_time</span> <span class="op">=</span> <span class="ident">tm_to_system_time</span>(<span class="ident">tm</span>);
-            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">TzSpecificLocalTimeToSystemTime</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _,
+            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">TzSpecificLocalTimeToSystemTime</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
                                                   <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">sys_time</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">utc</span>));
             <span class="macro">call</span><span class="macro">!</span>(<span class="ident">SystemTimeToFileTime</span>(<span class="kw-2">&amp;</span><span class="ident">utc</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ft</span>));
             <span class="ident">file_time_to_unix_seconds</span>(<span class="kw-2">&amp;</span><span class="ident">ft</span>)
@@ -1563,24 +1769,24 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_precise_ns</span>() <span class="op">-&gt;</span> <span class="ident">u64</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ticks</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ticks</span> <span class="op">=</span> <span class="ident">i64_to_large_integer</span>(<span class="number">0</span>);
         <span class="kw">unsafe</span> {
             <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">QueryPerformanceCounter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ticks</span>) <span class="op">==</span> <span class="number">1</span>);
         }
-        <span class="ident">mul_div_i64</span>(<span class="ident">ticks</span> <span class="kw">as</span> <span class="ident">i64</span>, <span class="number">1000000000</span>, <span class="ident">frequency</span>() <span class="kw">as</span> <span class="ident">i64</span>) <span class="kw">as</span> <span class="ident">u64</span>
+        <span class="ident">mul_div_i64</span>(<span class="ident">large_integer_to_i64</span>(<span class="ident">ticks</span>), <span class="number">1000000000</span>, <span class="ident">frequency</span>()) <span class="kw">as</span> <span class="ident">u64</span>
 
     }
 
-    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Debug</span>)]</span>
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Debug</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SteadyTime</span> {
-        <span class="ident">t</span>: <span class="ident">LARGE_INTEGER</span>,
+        <span class="ident">t</span>: <span class="ident">i64</span>,
     }
 
     <span class="kw">impl</span> <span class="ident">SteadyTime</span> {
         <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">now</span>() <span class="op">-&gt;</span> <span class="ident">SteadyTime</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">SteadyTime</span> { <span class="ident">t</span>: <span class="number">0</span> };
-            <span class="kw">unsafe</span> { <span class="ident">QueryPerformanceCounter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>.<span class="ident">t</span>); }
-            <span class="ident">t</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">l</span> <span class="op">=</span> <span class="ident">i64_to_large_integer</span>(<span class="number">0</span>);
+            <span class="kw">unsafe</span> { <span class="ident">QueryPerformanceCounter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">l</span>); }
+            <span class="ident">SteadyTime</span> { <span class="ident">t</span> : <span class="ident">large_integer_to_i64</span>(<span class="ident">l</span>) }
         }
     }
 
@@ -1589,7 +1795,7 @@
         <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">SteadyTime</span>) <span class="op">-&gt;</span> <span class="ident">Duration</span> {
             <span class="kw">let</span> <span class="ident">diff</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">t</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">t</span> <span class="kw">as</span> <span class="ident">i64</span>;
             <span class="ident">Duration</span>::<span class="ident">nanoseconds</span>(<span class="ident">mul_div_i64</span>(<span class="ident">diff</span>, <span class="number">1000000000</span>,
-                                              <span class="ident">frequency</span>() <span class="kw">as</span> <span class="ident">i64</span>))
+                                              <span class="ident">frequency</span>()))
         }
     }
 
@@ -1603,8 +1809,8 @@
     <span class="kw">impl</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">SteadyTime</span> {
         <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">SteadyTime</span>;
         <span class="kw">fn</span> <span class="ident">add</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">other</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="ident">SteadyTime</span> {
-            <span class="self">self</span>.<span class="ident">t</span> <span class="op">+=</span> (<span class="ident">other</span>.<span class="ident">num_microseconds</span>().<span class="ident">unwrap</span>() <span class="op">*</span> <span class="ident">frequency</span>() <span class="kw">as</span> <span class="ident">i64</span> <span class="op">/</span>
-                       <span class="number">1_000_000</span>) <span class="kw">as</span> <span class="ident">LARGE_INTEGER</span>;
+            <span class="self">self</span>.<span class="ident">t</span> <span class="op">+=</span> (<span class="ident">other</span>.<span class="ident">num_microseconds</span>().<span class="ident">unwrap</span>() <span class="op">*</span> <span class="ident">frequency</span>() <span class="op">/</span>
+                       <span class="number">1_000_000</span>) <span class="kw">as</span> <span class="ident">i64</span>;
             <span class="self">self</span>
         }
     }
@@ -1670,9 +1876,18 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
     <span class="kw">fn</span> <span class="ident">acquire_privileges</span>() {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">ONCE_INIT</span>, <span class="ident">Once</span>};
-        <span class="kw">use</span> <span class="ident">advapi32</span>::<span class="kw-2">*</span>;
+        <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">processthreadsapi</span>::<span class="kw-2">*</span>;
+        <span class="kw">use</span> <span class="ident">winapi</span>::<span class="ident">um</span>::<span class="ident">winbase</span>::<span class="ident">LookupPrivilegeValueA</span>;
         <span class="kw">const</span> <span class="ident">SE_PRIVILEGE_ENABLED</span>: <span class="ident">DWORD</span> <span class="op">=</span> <span class="number">2</span>;
         <span class="kw">static</span> <span class="ident">INIT</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">ONCE_INIT</span>;
+
+        <span class="comment">// TODO: FIXME</span>
+        <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> {
+            <span class="kw">fn</span> <span class="ident">AdjustTokenPrivileges</span>(
+                <span class="ident">TokenHandle</span>: <span class="ident">HANDLE</span>, <span class="ident">DisableAllPrivileges</span>: <span class="ident">BOOL</span>, <span class="ident">NewState</span>: <span class="ident">PTOKEN_PRIVILEGES</span>,
+                <span class="ident">BufferLength</span>: <span class="ident">DWORD</span>, <span class="ident">PreviousState</span>: <span class="ident">PTOKEN_PRIVILEGES</span>, <span class="ident">ReturnLength</span>: <span class="ident">PDWORD</span>,
+            ) <span class="op">-&gt;</span> <span class="ident">BOOL</span>;
+        }
 
         <span class="attribute">#[<span class="ident">repr</span>(<span class="ident">C</span>)]</span>
         <span class="kw">struct</span> <span class="ident">TKP</span> {
@@ -1681,7 +1896,7 @@
         }
 
         <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">||</span> <span class="kw">unsafe</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hToken</span> <span class="op">=</span> <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _;
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hToken</span> <span class="op">=</span> <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
             <span class="macro">call</span><span class="macro">!</span>(<span class="ident">OpenProcessToken</span>(<span class="ident">GetCurrentProcess</span>(),
                                    <span class="ident">TOKEN_ADJUST_PRIVILEGES</span> <span class="op">|</span> <span class="ident">TOKEN_QUERY</span>,
                                    <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">hToken</span>));
@@ -1689,12 +1904,12 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tkp</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>::<span class="op">&lt;</span><span class="ident">TKP</span><span class="op">&gt;</span>();
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">tkp</span>.<span class="ident">tkp</span>.<span class="ident">Privileges</span>.<span class="ident">len</span>(), <span class="number">0</span>);
             <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CString</span>::<span class="ident">new</span>(<span class="string">&quot;SeTimeZonePrivilege&quot;</span>).<span class="ident">unwrap</span>();
-            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">LookupPrivilegeValueA</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> _, <span class="ident">c</span>.<span class="ident">as_ptr</span>(),
+            <span class="macro">call</span><span class="macro">!</span>(<span class="ident">LookupPrivilegeValueA</span>(<span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span>, <span class="ident">c</span>.<span class="ident">as_ptr</span>(),
                                         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tkp</span>.<span class="ident">laa</span>.<span class="ident">Luid</span>));
             <span class="ident">tkp</span>.<span class="ident">tkp</span>.<span class="ident">PrivilegeCount</span> <span class="op">=</span> <span class="number">1</span>;
             <span class="ident">tkp</span>.<span class="ident">laa</span>.<span class="ident">Attributes</span> <span class="op">=</span> <span class="ident">SE_PRIVILEGE_ENABLED</span>;
             <span class="macro">call</span><span class="macro">!</span>(<span class="ident">AdjustTokenPrivileges</span>(<span class="ident">hToken</span>, <span class="ident">FALSE</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tkp</span>.<span class="ident">tkp</span>, <span class="number">0</span>,
-                                        <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _, <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> _));
+                                        <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>, <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>));
         });
     }
 
@@ -1727,65 +1942,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "time";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "time";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

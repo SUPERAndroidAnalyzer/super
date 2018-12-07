@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["handlebars_helpers",""],["report","Report generation module."],["sdk_number","Android SDK numbering scheme."],["utils","Utilities for results generation."]],"struct":[["Results","Results representation structure."]]});

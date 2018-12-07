@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["super"] = [];
 implementors["unicode_width"] = [];
 
             if (window.register_implementors) {

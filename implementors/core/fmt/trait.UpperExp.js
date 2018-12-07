@@ -1,15 +1,5 @@
 (function() {var implementors = {};
-implementors["chrono"] = [];
-implementors["error_chain"] = [];
-implementors["flate2"] = [];
-implementors["handlebars"] = [];
-implementors["libc"] = [];
-implementors["num"] = [];
-implementors["regex_syntax"] = [];
-implementors["serde"] = [];
-implementors["sha2"] = [];
-implementors["super"] = [];
-implementors["void"] = [];
+implementors["env_logger"] = [{text:"impl&lt;'a, T:&nbsp;<a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html\" title=\"trait core::fmt::UpperExp\">UpperExp</a>&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/fmt/trait.UpperExp.html\" title=\"trait core::fmt::UpperExp\">UpperExp</a> for <a class=\"struct\" href=\"env_logger/fmt/struct.StyledValue.html\" title=\"struct env_logger::fmt::StyledValue\">StyledValue</a>&lt;'a, T&gt;",synthetic:false,types:["env_logger::fmt::writer::termcolor::imp::StyledValue"]},];
 
             if (window.register_implementors) {
                 window.register_implementors(implementors);

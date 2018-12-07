@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/toml-0.4.0/src/lib.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>lib.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/toml-0.4.10/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -211,10 +166,17 @@
 <span id="166">166</span>
 <span id="167">167</span>
 <span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! A [TOML]-parsing library</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! This library implements a [TOML] v0.4.0 compatible parser,</span>
+<span class="doccomment">//! This library implements a [TOML] v0.5.0 compatible parser,</span>
 <span class="doccomment">//! primarily supporting the [`serde`] library for encoding/decoding</span>
 <span class="doccomment">//! various types in Rust.</span>
 <span class="doccomment">//!</span>
@@ -223,11 +185,11 @@
 <span class="doccomment">//! ```toml</span>
 <span class="doccomment">//! [package]</span>
 <span class="doccomment">//! name = &quot;toml&quot;</span>
-<span class="doccomment">//! version = &quot;0.2.1&quot;</span>
+<span class="doccomment">//! version = &quot;0.4.2&quot;</span>
 <span class="doccomment">//! authors = [&quot;Alex Crichton &lt;alex@alexcrichton.com&gt;&quot;]</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! [dependencies]</span>
-<span class="doccomment">//! serde = &quot;0.9&quot;</span>
+<span class="doccomment">//! serde = &quot;1.0&quot;</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! The TOML format tends to be relatively common throughout the Rust community</span>
@@ -271,7 +233,7 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ## Deserialization and Serialization</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! This crate supports [`serde`] 0.9 with a number of</span>
+<span class="doccomment">//! This crate supports [`serde`] 1.0 with a number of</span>
 <span class="doccomment">//! implementations of the `Deserialize`, `Serialize`, `Deserializer`, and</span>
 <span class="doccomment">//! `Serializer` traits. Namely, you&#39;ll find:</span>
 <span class="doccomment">//!</span>
@@ -362,8 +324,8 @@
 <span class="doccomment">//! [Cargo]: https://crates.io/</span>
 <span class="doccomment">//! [`serde`]: https://serde.rs/</span>
 
-<span class="attribute">#<span class="op">!</span>[<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;https://docs.rs/toml/0.3&quot;</span>)]</span>
-<span class="attribute">#<span class="op">!</span>[<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
+<span class="attribute">#![<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;https://docs.rs/toml/0.4&quot;</span>)]</span>
+<span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
 
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">serde</span>;
@@ -375,71 +337,17 @@
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ser</span>;
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ser</span>::{<span class="ident">to_string</span>, <span class="ident">to_vec</span>, <span class="ident">Serializer</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">ser</span>::{<span class="ident">to_string</span>, <span class="ident">to_string_pretty</span>, <span class="ident">to_vec</span>, <span class="ident">Serializer</span>};
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">de</span>;
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">de</span>::{<span class="ident">from_slice</span>, <span class="ident">from_str</span>, <span class="ident">Deserializer</span>};
 <span class="kw">mod</span> <span class="ident">tokens</span>;
+
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">macros</span>;
+
+<span class="kw">mod</span> <span class="ident">spanned</span>;
+<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">no_inline</span>)]</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">spanned</span>::<span class="ident">Spanned</span>;
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../";
-        window.currentCrate = "toml";
-    </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
-    <script defer src="../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "toml";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script defer src="../../search-index.js"></script></body></html>

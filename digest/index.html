@@ -1,70 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `digest` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, digest">
-
-    <title>digest - Rust</title>
-
-    <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc mod">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'digest', ty: 'mod', relpath: '../'};</script>
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>digest</a></span><span class='out-of-band'><span id='render-detail'>
-                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                       [<span class='inner'>&#x2212;</span>]
-                   </a>
-               </span><a class='srclink' href='../src/digest/lib.rs.html#1-69' title='goto source code'>[src]</a></span></h1>
-<h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `digest` crate."><meta name="keywords" content="rust, rustlang, rust-lang, digest"><title>digest - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../digest/index.html'><img src='https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png' alt='logo' width='100'></a><p class='location'>Crate digest</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all digest's items</p></a><div class="block items"><ul><li><a href="#reexports">Re-exports</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'digest', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/digest/lib.rs.html#1-141' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>digest</a></span></h1><div class='docblock'><p>This crate provides traits which describe funcionality of cryptographic hash
+functions.</p>
+<p>Traits in this repository can be separatedin two levels:</p>
+<ul>
+<li>Low level traits: <code>Input</code>, <code>BlockInput</code>, <code>Reset</code>, <code>FixedOutput</code>,
+<code>VariableOutput</code>, <code>ExtendableOutput</code>. These traits atomically describe
+available functionality of hash function implementations.</li>
+<li>Convinience trait: <code>Digest</code>, <code>DynDigest</code>. They are wrappers around
+low level traits for most common hash-function use-cases.</li>
+</ul>
+<p>Additionally hash functions implement traits from <code>std</code>: <code>Default</code>, <code>Clone</code>,
+<code>Write</code>. (the latter depends on enabled-by-default <code>std</code> crate feature)</p>
+<p>The <code>Digest</code> trait is the most commonly used trait.</p>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Re-exports</a></h2>
+<table><tr><td><code>pub extern crate <a class="mod" href="../generic_array/index.html" title="mod generic_array">generic_array</a>;</code></td></tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.InvalidLength.html"
-                                  title='struct digest::InvalidLength'>InvalidLength</a></td>
+                           <td><a class="macro" href="macro.impl_write.html"
+                                  title='macro digest::impl_write'>impl_write</a></td>
                            <td class='docblock-short'>
-                                <p>The error type for variable digest output</p>
+                                <p>Implements <code>std::io::Write</code> trait for implementator of <code>Input</code></p>
+
+                           </td>
+                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.InvalidOutputSize.html"
+                                  title='struct digest::InvalidOutputSize'>InvalidOutputSize</a></td>
+                           <td class='docblock-short'>
+                                <p>The error type for variable hasher initialization</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
                        <tr class=' module-item'>
+                           <td><a class="trait" href="trait.BlockInput.html"
+                                  title='trait digest::BlockInput'>BlockInput</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait to indicate that digest function processes data in blocks of size
+<code>BlockSize</code>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class="trait" href="trait.Digest.html"
                                   title='trait digest::Digest'>Digest</a></td>
                            <td class='docblock-short'>
-                                <p>The Digest trait specifies an interface common to digest functions. It&#39;s a
-convinience wrapper around <code>Input</code> and <code>FixedResult</code> traits</p>
+                                <p>The <code>Digest</code> trait specifies an interface common for digest functions.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.DynDigest.html"
+                                  title='trait digest::DynDigest'>DynDigest</a></td>
+                           <td class='docblock-short'>
+                                <p>The <code>DynDigest</code> trait is a modification of <code>Digest</code> trait suitable
+for trait objects.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.ExtendableOutput.html"
+                                  title='trait digest::ExtendableOutput'>ExtendableOutput</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait which describes extendable-output functions (XOF).</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -72,6 +71,7 @@ convinience wrapper around <code>Input</code> and <code>FixedResult</code> trait
                                   title='trait digest::FixedOutput'>FixedOutput</a></td>
                            <td class='docblock-short'>
                                 <p>Trait for returning digest result with the fixed size</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -79,6 +79,15 @@ convinience wrapper around <code>Input</code> and <code>FixedResult</code> trait
                                   title='trait digest::Input'>Input</a></td>
                            <td class='docblock-short'>
                                 <p>Trait for processing input data</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.Reset.html"
+                                  title='trait digest::Reset'>Reset</a></td>
+                           <td class='docblock-short'>
+                                <p>Trait for resetting hash instances</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
@@ -86,74 +95,15 @@ convinience wrapper around <code>Input</code> and <code>FixedResult</code> trait
                                   title='trait digest::VariableOutput'>VariableOutput</a></td>
                            <td class='docblock-short'>
                                 <p>Trait for returning digest result with the varaible size</p>
+
                            </td>
-                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
-<table>
+                       </tr>
                        <tr class=' module-item'>
-                           <td><a class="type" href="type.VariableResult.html"
-                                  title='type digest::VariableResult'>VariableResult</a></td>
+                           <td><a class="trait" href="trait.XofReader.html"
+                                  title='trait digest::XofReader'>XofReader</a></td>
                            <td class='docblock-short'>
-                                
+                                <p>Trait for decribing readers which are used to extract extendable output
+from XOF (extendable-output function) result.</p>
+
                            </td>
-                       </tr></table></section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../";
-        window.currentCrate = "digest";
-    </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
-    <script defer src="../search-index.js"></script>
-</body>
-</html>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "digest";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

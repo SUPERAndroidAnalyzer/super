@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Report","Handlebars report generator."]]});

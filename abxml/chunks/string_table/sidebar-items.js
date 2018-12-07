@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["StringTableCache",""],["StringTableDecoder",""],["StringTableWrapper",""]]});
+initSidebarItems({"struct":[["StringTableCache",""],["StringTableWrapper",""]]});

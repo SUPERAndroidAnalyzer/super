@@ -1,5 +1,4 @@
 (function() {var implementors = {};
-implementors["super"] = [];
 implementors["xml"] = [];
 
             if (window.register_implementors) {

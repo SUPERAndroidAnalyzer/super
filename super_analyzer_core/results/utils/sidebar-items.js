@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["html_escape","Escapes the given input's HTML special characters."],["split_indent","Split line into indentation and the rest of the line."]],"struct":[["FingerPrint","Structure to store the application fingerprint."],["Vulnerability","Structure to store information about a vulnerability."]]});

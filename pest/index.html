@@ -1,582 +1,157 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="API documentation for the Rust `pest` crate.">
-    <meta name="keywords" content="rust, rustlang, rust-lang, pest">
-
-    <title>pest - Rust</title>
-
-    <link rel="stylesheet" type="text/css" href="../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc mod">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        <p class='location'></p><script>window.sidebarCurrent = {name: 'pest', ty: 'mod', relpath: '../'};</script>
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content">
-<h1 class='fqn'><span class='in-band'>Crate <a class="mod" href=''>pest</a></span><span class='out-of-band'><span id='render-detail'>
-                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
-                       [<span class='inner'>&#x2212;</span>]
-                   </a>
-               </span><a class='srclink' href='../src/pest/lib.rs.html#8-580' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'>
-<h1 id='pest-elegant-efficient-grammars' class='section-header'><a href='#pest-elegant-efficient-grammars'>pest. Elegant, efficient grammars</a></h1>
-<p>pest is a <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a> parser generator with
-<em>simplicity</em> and <em>speed</em> in mind.</p>
-
-<h2 id='input--parser' class='section-header'><a href='#input--parser'>Input &amp; Parser</a></h2>
-<p>pest works mainly through two <code>trait</code>s: <code>Input</code> &amp; <code>Parser</code>. <code>Input</code> is used to remember the
-current position or index of the to-be-parsed input. It also knows how to match a <code>&amp;str</code> or
-<code>char</code> range against the current position. If it did in fact match, it advances the input by
-incrementing the position.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;asdasdf&quot;</span>); <span class="comment">// Input mutates its position</span>
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">pos</span>(), <span class="number">0</span>);                  <span class="comment">// matching starts from 0, before &#39;a&#39;</span>
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">match_string</span>(<span class="string">&quot;asd&quot;</span>));          <span class="comment">// Input::match_string matches &quot;asd&quot;; returns true</span>
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">pos</span>(), <span class="number">3</span>);                  <span class="comment">// last match advances the parser by &quot;asd&quot;.len()</span>
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">match_range</span>(<span class="string">&#39;a&#39;</span>, <span class="string">&#39;z&#39;</span>));        <span class="comment">// Input::match_range matches &#39;a&#39;; returns true</span>
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">pos</span>(), <span class="number">4</span>);                  <span class="comment">// last match advances the parser by 1</span></pre>
-
-<p><code>Input</code> is also supposed to return a <code>&amp;str</code> <code>slice</code> of its input by calling
-<a href="trait.Input#tymethod.slice"><code>Input::slice</code></a>.</p>
-
-<p><code>Parser</code> gets constructed on top of an <code>Input</code> and delegates position access to
-<a href="trait.Parser#tymethod.pos"><code>Parser::pos</code></a> and
-<a href="trait.Parser#tymethod.set_pos"><code>Parser::set_pos</code></a>. Apart from this, <code>Parser</code> also gives access
-to its <code>Token</code> queue and expected rules to match when it fails.</p>
-
-<h2 id='grammar' class='section-header'><a href='#grammar'>grammar!</a></h2>
-<p>The <a href="macro.grammar!"><code>grammar!</code></a> <code>macro</code> processes every rule and generates a method on a
-<code>Parser</code> that returns whether the rule has matched its <code>Input</code>. <code>grammar!</code> can only be used
-inside of <a href="macro.impl_rdp!"><code>impl_rdp!</code></a> right now until other parser algorithms are
-implemented.</p>
-
-<p><em>Note:</em> <code>grammar!</code> may require you to increase the recursion limit of your create with
-<code>#![recursion_limit = &quot;*&quot;]</code> where * is the new limit.</p>
-
-<p>When <code>impl_rdp!</code> is run, it implements an <code>enum</code> called <code>Rule</code> that has a value for all
-<a href="macro.grammar!#silent-rules-_">non-silent</a> rules, but also for
-<a href="macro.grammar!"><code>any</code> and <code>eoi</code></a>. These <code>Rule</code>s are used within <code>Token</code>s to specify the type
-of rule that matched. These <code>Tokens</code> are accesible from
-<a href="trait.Parser#tymethod.queue"><code>Parser::queue</code></a> after parsing. Instead of having the shape of
-an AST, the <code>Token</code>s come in a <code>Vec</code> in a predefined order that makes them easy to process.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{ <span class="ident">paren</span> ~ <span class="ident">expression</span><span class="question-mark">?</span> } <span class="comment">// expression is silent so we&#39;ll only have parens</span>
-        <span class="ident">paren</span>      <span class="op">=</span>  { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span><span class="question-mark">?</span> ~ [<span class="string">&quot;)&quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;(())()&quot;</span>));
-                                        <span class="comment">//  ^--^   - Token { paren, 0, 4 }; queue[0]</span>
-                                        <span class="comment">//   ^^    - Token { paren, 1, 3 }; queue[1]</span>
-                                        <span class="comment">//      ^^ - Token { paren, 4, 6 }; queue[2]</span>
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());
-
-<span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">paren</span>, <span class="number">0</span>, <span class="number">4</span>),
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">paren</span>, <span class="number">1</span>, <span class="number">3</span>),
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">paren</span>, <span class="number">4</span>, <span class="number">6</span>)
-];
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">queue</span>(), <span class="kw-2">&amp;</span><span class="ident">queue</span>);</pre>
-
-<p><code>Rule</code>s are also used for error reporting through
-<a href="trait.Parser#tymethod.queue"><code>Parser::queue</code></a> which is used when a <code>Parser</code> failed to parse
-and you want to see what <code>Rule</code>s it expected at the last possible position.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{ <span class="ident">paren</span> ~ <span class="ident">expression</span><span class="question-mark">?</span> } <span class="comment">// expression is silent so we&#39;ll only have parens</span>
-        <span class="ident">paren</span>      <span class="op">=</span>  { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span><span class="question-mark">?</span> ~ [<span class="string">&quot;)&quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;(())()foo&quot;</span>));
-                                        <span class="comment">//        ^   - Parser should expect a paren at pos 6</span>
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>()); <span class="comment">// the parser goes as deep as it can</span>
-<span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">parser</span>.<span class="ident">end</span>());       <span class="comment">// end is not reached, so the whole Input was not matched</span>
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expected</span>(), (<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">Rule</span>::<span class="ident">paren</span>], <span class="number">6</span>));</pre>
-
-<p><em>Note:</em> You can use the <code>eoi</code> rule instead of calling
-<a href="trait.Parser#tymethod.end"><code>Parser::end</code></a> manually.</p>
-
-<h1 id='calculator-example' class='section-header'><a href='#calculator-example'>Calculator example</a></h1>
-<p>This example will concentrate on parsing and solving simple airthmetic with parens, additions,
-subtractions, multiplications, and divisions.</p>
-
-<p>Let&#39;s start with defining a rule that matches integers. We first need to match an optional
-<code>&quot;-&quot;</code>.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;-&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">number</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());</pre>
-
-<p>In order to match a number, we should deal with two cases:</p>
-
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `pest` crate."><meta name="keywords" content="rust, rustlang, rust-lang, pest"><title>pest - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate pest</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all pest's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'pest', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/pest/lib.rs.html#10-94' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>pest</a></span></h1><div class='docblock'><h1 id="pest-the-elegant-parser" class="section-header"><a href="#pest-the-elegant-parser">pest. The Elegant Parser</a></h1>
+<p>pest is a general purpose parser written in Rust with a focus on accessibility, correctness,
+and performance. It uses parsing expression grammars (or <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a>) as input, which are similar in
+spirit to regular expressions, but which offer the enhanced expressivity needed to parse
+complex languages.</p>
+<h2 id="getting-started" class="section-header"><a href="#getting-started">Getting started</a></h2>
+<p>The recommended way to start parsing with pest is to read the official <a href="https://pest-parser.github.io/book">book</a>.</p>
+<p>Other helpful resources:</p>
 <ul>
-<li>number is <code>0</code></li>
-<li>number is any other number <em>not</em> starting with <code>0</code></li>
+<li>API reference on <a href="https://docs.rs/pest">docs.rs</a></li>
+<li>play with grammars and share them on our <a href="https://pest-parser.github.io/#editor">fiddle</a></li>
+<li>leave feedback, ask questions, or greet us on <a href="https://gitter.im/dragostis/pest">Gitter</a></li>
 </ul>
+<h2 id="usage" class="section-header"><a href="#usage">Usage</a></h2>
+<p>The core of pest is the trait <a href="trait.Parser.html"><code>Parser</code></a>, which provides an interface to the parsing
+functionality.</p>
+<p>The accompanying crate <code>pest_derive</code> can automatically generate a <a href="trait.Parser.html"><code>Parser</code></a> from a PEG
+grammar. Using <code>pest_derive</code> is highly encouraged, but it is also possible to implement
+<a href="trait.Parser.html"><code>Parser</code></a> manually if required.</p>
+<h2 id="pest-files" class="section-header"><a href="#pest-files"><code>.pest</code> files</a></h2>
+<p>Grammar definitions reside in custom <code>.pest</code> files located in the crate <code>src</code> directory.
+Parsers are automatically generated from these files using <code>#[derive(Parser)]</code> and a special
+<code>#[grammar = &quot;...&quot;]</code> attribute on a dummy struct.</p>
 
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-               <span class="comment">//  |    | |  |     | |          | |         ^ zero or more</span>
-               <span class="comment">//  |    | |  |     | |          | ^ digit</span>
-               <span class="comment">//  |    | |  |     | |          ^ followed by</span>
-               <span class="comment">//  |    | |  |     | ^ non-zero digit</span>
-               <span class="comment">//  |    | |  |     ^ or</span>
-               <span class="comment">//  |    | |  ^ zero</span>
-               <span class="comment">//  |    | ^ followed by</span>
-               <span class="comment">//  |    ^ optional</span>
-               <span class="comment">//  ^ minus</span>
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;-90&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">number</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());</pre>
-
-<p>Now let&#39;s add operator rules.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span> { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span> { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span> { [<span class="string">&quot;/&quot;</span>] }
-    }
-}</pre>
-
-<p>Because infix precedence is hard to implement in PEG and quite inefficient, pest comes with a
-<a href="macro.grammar!#precedence-climbing">rule</a> that implements <a href="https://en.wikipedia.org/wiki/Operator-precedence_parser#Precedence_climbing_method">precedence climbing</a>.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> {
-            { <span class="ident">number</span> }                         <span class="comment">// primary rule is a number</span>
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> } <span class="comment">// precedence 0 is addition</span>
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> } <span class="comment">// precedence 1 is multiplication</span>
-        }
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span> { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span> { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span> { [<span class="string">&quot;/&quot;</span>] }
-    }
-}</pre>
-
-<p>Before we go any further, let&#39;s see what parsing a <code>number</code> from an <code>expression</code> places on to
-the queue.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;-90&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());
-
-<span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">parser</span>.<span class="ident">queue</span>()); <span class="comment">// [Token { rule: expression, start: 0, end: 3 },</span>
-                                  <span class="comment">//  Token { rule: number, start: 0, end: 3 }]</span></pre>
-
-<p>Since we&#39;re already parsing an <code>expression</code> and don&#39;t care about its length, we can make it
-<a href="macro.grammar!#silent-rules-_">silent</a>.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{ <span class="comment">// the underscore tells pest that this rule is silent</span>
-            { <span class="ident">number</span> }
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> }
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> }
-        }
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span> { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span> { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span> { [<span class="string">&quot;/&quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;-90&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());
-
-<span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">number</span>, <span class="number">0</span>, <span class="number">3</span>)
-];
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">queue</span>(), <span class="kw-2">&amp;</span><span class="ident">queue</span>);</pre>
-
-<p>Adding parens to the whole business is as easy as adding a paren rule to the primary rule of
-the precedence climber.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{
-            { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span> ~ [<span class="string">&quot;)&quot;</span>] <span class="op">|</span> <span class="ident">number</span> }
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> }
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> }
-        }
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span> { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span> { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span> { [<span class="string">&quot;/&quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;((-90))&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());
-
-<span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">number</span>, <span class="number">2</span>, <span class="number">5</span>)
-];
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">queue</span>(), <span class="kw-2">&amp;</span><span class="ident">queue</span>);</pre>
-
-<p>Before we get to the processing of the <code>Token</code>s, let&#39;s also add white-space to the grammar.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{
-            { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span> ~ [<span class="string">&quot;)&quot;</span>] <span class="op">|</span> <span class="ident">number</span> }
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> }
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> }
-        }
-        <span class="ident">number</span> <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span> { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span> { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span> { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span> { [<span class="string">&quot;/&quot;</span>] }
-
-        <span class="ident">whitespace</span> <span class="op">=</span> _{ [<span class="string">&quot; &quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;2 + 2&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());</pre>
-
-<p>But now trying to parse <code>&quot;9 9&quot;</code> will work and recognize it as a <code>number</code>.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;9 9&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">end</span>());
-
-<span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
-    <span class="ident">Token</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">number</span>, <span class="number">0</span>, <span class="number">3</span>)
-];
-
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">queue</span>(), <span class="kw-2">&amp;</span><span class="ident">queue</span>);</pre>
-
-<p>To solve this issue, we make <code>number</code> <a href="macro.grammar!#atomic-rules-">atomic</a>, stopping any
-white-space matching inside of the rule.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{
-            { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span> ~ [<span class="string">&quot;)&quot;</span>] <span class="op">|</span> <span class="ident">number</span> }
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> }
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> }
-        }
-        <span class="ident">number</span> <span class="op">=</span> @{ [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span>  { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span>  { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span>  { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span>  { [<span class="string">&quot;/&quot;</span>] }
-
-        <span class="ident">whitespace</span> <span class="op">=</span> _{ [<span class="string">&quot; &quot;</span>] }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;9 9&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">parser</span>.<span class="ident">end</span>());</pre>
-
-<p>To process all these <code>Token</code>s we&#39;ll use the <a href="macro.process!"><code>process!</code></a> <code>macro</code>. This <code>macro</code>
-defines matcher methods on the <code>Parser</code> that pattern match against a set of <code>Token</code>s from the
-front of the queue, calling themselves recursively until everything matched and returned its
-result.</p>
-
-<p>Let&#39;s start by defining the signature of the <code>compute</code> matcher that will do the computation. We
-need it to return an <code>i32</code> in the end.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="ident">compute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">i32</span></pre>
-
-<p>Now all we need to do is to write the three cases of interest, namely <code>number</code>, <code>addition</code>, and
-<code>multiplication</code>. <code>number</code> is captured (its <code>&amp;str</code> is being sliced from the <code>Input</code>) with the
-<code>&amp;</code> pattern and then parsed to an <code>i32</code>.</p>
-
-<pre class="rust rust-example-rendered">
-(<span class="kw-2">&amp;</span><span class="ident">number</span>: <span class="ident">number</span>) <span class="op">=&gt;</span> <span class="ident">number</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>()</pre>
-
-<p><code>addition</code> and <code>multiplication</code> are virtually identical:</p>
-
-<ul>
-<li>match the <code>addition</code>/<code>multiplication</code> <code>Token</code> without using it</li>
-<li>recursively process the left-hand-side by calling <code>compute</code></li>
-<li>use the <code>sign</code> <code>Token</code> without capturing its <code>&amp;str</code> value</li>
-<li>recursively process the right-hand-side by calling <code>compute</code></li>
-<li>match <code>sign</code> inside the block and return the appropriate result</li>
-</ul>
-
-<pre class="rust rust-example-rendered">
-(_: <span class="ident">addition</span>, <span class="ident">left</span>: <span class="ident">compute</span>(), <span class="ident">sign</span>, <span class="ident">right</span>: <span class="ident">compute</span>()) <span class="op">=&gt;</span> {
-    <span class="kw">match</span> <span class="ident">sign</span>.<span class="ident">rule</span> {
-        <span class="ident">Rule</span>::<span class="ident">plus</span>  <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">+</span> <span class="ident">right</span>,
-        <span class="ident">Rule</span>::<span class="ident">minus</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">-</span> <span class="ident">right</span>,
-        _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
-    }
-},
-(_: <span class="ident">multiplication</span>, <span class="ident">left</span>: <span class="ident">compute</span>(), <span class="ident">sign</span>, <span class="ident">right</span>: <span class="ident">compute</span>()) <span class="op">=&gt;</span> {
-    <span class="kw">match</span> <span class="ident">sign</span>.<span class="ident">rule</span> {
-        <span class="ident">Rule</span>::<span class="ident">times</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">*</span> <span class="ident">right</span>,
-        <span class="ident">Rule</span>::<span class="ident">slash</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">/</span> <span class="ident">right</span>,
-        _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
-    }
-}</pre>
-
-<p>The reason we&#39;re matching <code>sign</code> manually inside of the block is because using <code>_: plus</code> and
-<code>_: minus</code> will cause <code>left: main()</code> to be run twice in case the first rule fails. Caching the
-result in this case is non-trivial apart from the fact that duplicate complex patterns are not
-necessarily easier to read.</p>
-
-<p>Now for the whole example:</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">impl_rdp</span><span class="macro">!</span> {
-    <span class="macro">grammar</span><span class="macro">!</span> {
-        <span class="ident">expression</span> <span class="op">=</span> _{
-            { [<span class="string">&quot;(&quot;</span>] ~ <span class="ident">expression</span> ~ [<span class="string">&quot;)&quot;</span>] <span class="op">|</span> <span class="ident">number</span> }
-            <span class="ident">addition</span>       <span class="op">=</span> { <span class="ident">plus</span>  <span class="op">|</span> <span class="ident">minus</span> }
-            <span class="ident">multiplication</span> <span class="op">=</span> { <span class="ident">times</span> <span class="op">|</span> <span class="ident">slash</span> }
-        }
-        <span class="ident">number</span> <span class="op">=</span> @{ [<span class="string">&quot;-&quot;</span>]<span class="question-mark">?</span> ~ ([<span class="string">&quot;0&quot;</span>] <span class="op">|</span> [<span class="string">&#39;1&#39;</span>..<span class="string">&#39;9&#39;</span>] ~ [<span class="string">&#39;0&#39;</span>..<span class="string">&#39;9&#39;</span>]<span class="kw-2">*</span>) }
-        <span class="ident">plus</span>   <span class="op">=</span>  { [<span class="string">&quot;+&quot;</span>] }
-        <span class="ident">minus</span>  <span class="op">=</span>  { [<span class="string">&quot;-&quot;</span>] }
-        <span class="ident">times</span>  <span class="op">=</span>  { [<span class="string">&quot;*&quot;</span>] }
-        <span class="ident">slash</span>  <span class="op">=</span>  { [<span class="string">&quot;/&quot;</span>] }
-
-        <span class="ident">whitespace</span> <span class="op">=</span> _{ [<span class="string">&quot; &quot;</span>] }
-    }
-
-    <span class="macro">process</span><span class="macro">!</span> {
-        <span class="ident">compute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">i32</span> {
-            (<span class="kw-2">&amp;</span><span class="ident">number</span>: <span class="ident">number</span>) <span class="op">=&gt;</span> <span class="ident">number</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>(),
-            (_: <span class="ident">addition</span>, <span class="ident">left</span>: <span class="ident">compute</span>(), <span class="ident">sign</span>, <span class="ident">right</span>: <span class="ident">compute</span>()) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">sign</span>.<span class="ident">rule</span> {
-                    <span class="ident">Rule</span>::<span class="ident">plus</span>  <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">+</span> <span class="ident">right</span>,
-                    <span class="ident">Rule</span>::<span class="ident">minus</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">-</span> <span class="ident">right</span>,
-                    _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
-                }
-            },
-            (_: <span class="ident">multiplication</span>, <span class="ident">left</span>: <span class="ident">compute</span>(), <span class="ident">sign</span>, <span class="ident">right</span>: <span class="ident">compute</span>()) <span class="op">=&gt;</span> {
-                <span class="kw">match</span> <span class="ident">sign</span>.<span class="ident">rule</span> {
-                    <span class="ident">Rule</span>::<span class="ident">times</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">*</span> <span class="ident">right</span>,
-                    <span class="ident">Rule</span>::<span class="ident">slash</span> <span class="op">=&gt;</span> <span class="ident">left</span> <span class="op">/</span> <span class="ident">right</span>,
-                    _ <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>()
-                }
-            }
-        }
-    }
-}
-
-<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">parser</span> <span class="op">=</span> <span class="ident">Rdp</span>::<span class="ident">new</span>(<span class="ident">StringInput</span>::<span class="ident">new</span>(<span class="string">&quot;(3 + (9 + 3 * 4 + (3 + 1) / 2 - 4)) * 2&quot;</span>));
-
-<span class="macro">assert</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">expression</span>());
-<span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">compute</span>(), <span class="number">44</span>);</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Parser</span>)]</span>
+<span class="attribute">#[<span class="ident">grammar</span> <span class="op">=</span> <span class="string">&quot;path/to/my_grammar.pest&quot;</span>]</span> <span class="comment">// relative to src</span>
+<span class="kw">struct</span> <span class="ident">MyParser</span>;</pre>
+<p>The syntax of <code>.pest</code> files is documented in the <a href="https://docs.rs/pest_derive/"><code>pest_derive</code> crate</a>.</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="mod" href="prelude/index.html"
-                                  title='mod pest::prelude'>prelude</a></td>
+                           <td><a class="mod" href="error/index.html"
+                                  title='mod pest::error'>error</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>mod</code> that contains <code>pest::Input</code>, <code>pest::Parser</code>, <code>pest::StringInput</code>, and <code>pest::Token</code>.</p>
+                                <p>Types for different kinds of parsing failures.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="iterators/index.html"
+                                  title='mod pest::iterators'>iterators</a></td>
+                           <td class='docblock-short'>
+                                <p>Types and iterators for parser output.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="mod" href="prec_climber/index.html"
+                                  title='mod pest::prec_climber'>prec_climber</a></td>
+                           <td class='docblock-short'>
+                                <p>Constructs useful in infix operator parsing with the precedence climbing method.</p>
+
                            </td>
                        </tr></table><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="macro" href="macro.grammar.html"
-                                  title='macro pest::grammar'>grammar</a></td>
+                           <td><a class="macro" href="macro.fails_with.html"
+                                  title='macro pest::fails_with'>fails_with</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>macro</code> that defines each rule as a method on a <code>Parser</code> which parses from the current
-position. Rules are always defined between braces, with an optional symbol marking the type of
-rule defined.</p>
+                                <p>Testing tool that compares produced errors.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="macro" href="macro.impl_rdp.html"
-                                  title='macro pest::impl_rdp'>impl_rdp</a></td>
+                           <td><a class="macro" href="macro.parses_to.html"
+                                  title='macro pest::parses_to'>parses_to</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>macro</code> useful for implementing the <code>Parser</code> <code>trait</code> as a recursive descent parser. It only
-accepts <code>grammar!</code> and <code>process!</code> calls that get implemented on <code>self</code>.</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="macro" href="macro.process.html"
-                                  title='macro pest::process'>process</a></td>
-                           <td class='docblock-short'>
-                                <p>A <code>macro</code> for pattern-matching queued <code>Token</code>s generated by a <code>Parser</code>. It generates a method
-<code>process</code> on <code>&amp;self</code> that processes the whole queue of <code>Token</code>s, reducing it to one single
-result.</p>
+                                <p>Testing tool that compares produced tokens.</p>
+
                            </td>
                        </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.StringInput.html"
-                                  title='struct pest::StringInput'>StringInput</a></td>
+                           <td><a class="struct" href="struct.ParserState.html"
+                                  title='struct pest::ParserState'>ParserState</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>struct</code> useful for matching in-memory <code>String</code>s.</p>
+                                <p>The complete state of a <a href="trait.Parser.html"><code>Parser</code></a>.</p>
+
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Token.html"
-                                  title='struct pest::Token'>Token</a></td>
+                           <td><a class="struct" href="struct.Position.html"
+                                  title='struct pest::Position'>Position</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>struct</code> representing tokens generated by a parser.</p>
+                                <p>A cursor position in a <code>&amp;str</code> which provides useful methods to manually parse that string.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="struct" href="struct.Span.html"
+                                  title='struct pest::Span'>Span</a></td>
+                           <td class='docblock-short'>
+                                <p>A span over a <code>&amp;str</code>. It is created from either <a href="struct.Position.html#method.span">two <code>Position</code>s</a> or from a <a href="../iterators/struct.Pair.html#method.span"><code>Pair</code></a>.</p>
+
+                           </td>
+                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Atomicity.html"
+                                  title='enum pest::Atomicity'>Atomicity</a></td>
+                           <td class='docblock-short'>
+                                <p>The current atomicity of a <a href="struct.ParserState.html"><code>ParserState</code></a>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Lookahead.html"
+                                  title='enum pest::Lookahead'>Lookahead</a></td>
+                           <td class='docblock-short'>
+                                <p>The current lookahead status of a <a href="struct.ParserState.html"><code>ParserState</code></a>.</p>
+
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="enum" href="enum.Token.html"
+                                  title='enum pest::Token'>Token</a></td>
+                           <td class='docblock-short'>
+                                <p>A token generated by a <code>Parser</code>.</p>
+
                            </td>
                        </tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
 <table>
                        <tr class=' module-item'>
-                           <td><a class="trait" href="trait.Input.html"
-                                  title='trait pest::Input'>Input</a></td>
-                           <td class='docblock-short'>
-                                <p>A <code>trait</code> that defines an input for a <code>Parser</code>.</p>
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
                            <td><a class="trait" href="trait.Parser.html"
                                   title='trait pest::Parser'>Parser</a></td>
                            <td class='docblock-short'>
-                                <p>A <code>trait</code> that defines a parser.</p>
+                                <p>A trait with a single method that parses strings.</p>
+
                            </td>
-                       </tr></table></section>
-    <section id='search' class="content hidden"></section>
+                       </tr>
+                       <tr class=' module-item'>
+                           <td><a class="trait" href="trait.RuleType.html"
+                                  title='trait pest::RuleType'>RuleType</a></td>
+                           <td class='docblock-short'>
+                                <p>A trait which parser rules must implement.</p>
 
-    <section class="footer"></section>
+                           </td>
+                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="fn" href="fn.state.html"
+                                  title='fn pest::state'>state</a></td>
+                           <td class='docblock-short'>
+                                <p>Creates a <code>ParserState</code> from a <code>&amp;str</code>, supplying it to a closure <code>f</code>.</p>
 
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
+                           </td>
+                       </tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table>
+                       <tr class=' module-item'>
+                           <td><a class="type" href="type.ParseResult.html"
+                                  title='type pest::ParseResult'>ParseResult</a></td>
+                           <td class='docblock-short'>
+                                <p>Type alias to simplify specifying the return value of chained closures.</p>
 
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../";
-        window.currentCrate = "pest";
-    </script>
-    <script src="../jquery.js"></script>
-    <script src="../main.js"></script>
-    <script defer src="../search-index.js"></script>
-</body>
-</html>
+                           </td>
+                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "pest";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.3.1/src/naive/time.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>time.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.4.6/src/naive/time.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>time.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1680,167 +1635,110 @@
 <span id="1635">1635</span>
 <span id="1636">1636</span>
 <span id="1637">1637</span>
+<span id="1638">1638</span>
+<span id="1639">1639</span>
+<span id="1640">1640</span>
+<span id="1641">1641</span>
+<span id="1642">1642</span>
+<span id="1643">1643</span>
+<span id="1644">1644</span>
+<span id="1645">1645</span>
+<span id="1646">1646</span>
+<span id="1647">1647</span>
+<span id="1648">1648</span>
+<span id="1649">1649</span>
+<span id="1650">1650</span>
+<span id="1651">1651</span>
+<span id="1652">1652</span>
+<span id="1653">1653</span>
+<span id="1654">1654</span>
+<span id="1655">1655</span>
+<span id="1656">1656</span>
+<span id="1657">1657</span>
+<span id="1658">1658</span>
+<span id="1659">1659</span>
+<span id="1660">1660</span>
+<span id="1661">1661</span>
+<span id="1662">1662</span>
+<span id="1663">1663</span>
+<span id="1664">1664</span>
+<span id="1665">1665</span>
+<span id="1666">1666</span>
+<span id="1667">1667</span>
+<span id="1668">1668</span>
+<span id="1669">1669</span>
+<span id="1670">1670</span>
+<span id="1671">1671</span>
+<span id="1672">1672</span>
+<span id="1673">1673</span>
+<span id="1674">1674</span>
+<span id="1675">1675</span>
+<span id="1676">1676</span>
+<span id="1677">1677</span>
+<span id="1678">1678</span>
+<span id="1679">1679</span>
+<span id="1680">1680</span>
+<span id="1681">1681</span>
+<span id="1682">1682</span>
+<span id="1683">1683</span>
+<span id="1684">1684</span>
+<span id="1685">1685</span>
+<span id="1686">1686</span>
+<span id="1687">1687</span>
+<span id="1688">1688</span>
+<span id="1689">1689</span>
+<span id="1690">1690</span>
+<span id="1691">1691</span>
+<span id="1692">1692</span>
+<span id="1693">1693</span>
+<span id="1694">1694</span>
+<span id="1695">1695</span>
+<span id="1696">1696</span>
+<span id="1697">1697</span>
+<span id="1698">1698</span>
+<span id="1699">1699</span>
+<span id="1700">1700</span>
+<span id="1701">1701</span>
+<span id="1702">1702</span>
+<span id="1703">1703</span>
+<span id="1704">1704</span>
+<span id="1705">1705</span>
+<span id="1706">1706</span>
+<span id="1707">1707</span>
+<span id="1708">1708</span>
+<span id="1709">1709</span>
+<span id="1710">1710</span>
+<span id="1711">1711</span>
+<span id="1712">1712</span>
+<span id="1713">1713</span>
+<span id="1714">1714</span>
+<span id="1715">1715</span>
+<span id="1716">1716</span>
+<span id="1717">1717</span>
+<span id="1718">1718</span>
+<span id="1719">1719</span>
+<span id="1720">1720</span>
+<span id="1721">1721</span>
+<span id="1722">1722</span>
+<span id="1723">1723</span>
+<span id="1724">1724</span>
+<span id="1725">1725</span>
+<span id="1726">1726</span>
+<span id="1727">1727</span>
+<span id="1728">1728</span>
+<span id="1729">1729</span>
+<span id="1730">1730</span>
+<span id="1731">1731</span>
+<span id="1732">1732</span>
+<span id="1733">1733</span>
 </pre><pre class="rust ">
 <span class="comment">// This is a part of Chrono.</span>
 <span class="comment">// See README.md and LICENSE.txt for details.</span>
 
 <span class="doccomment">//! ISO 8601 time without timezone.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! # Leap Second Handling</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Since 1960s, the manmade atomic clock has been so accurate that</span>
-<span class="doccomment">//! it is much more accurate than Earth&#39;s own motion.</span>
-<span class="doccomment">//! It became desirable to define the civil time in terms of the atomic clock,</span>
-<span class="doccomment">//! but that risks the desynchronization of the civil time from Earth.</span>
-<span class="doccomment">//! To account for this, the designers of the Coordinated Universal Time (UTC)</span>
-<span class="doccomment">//! made that the UTC should be kept within 0.9 seconds of the observed Earth-bound time.</span>
-<span class="doccomment">//! When the mean solar day is longer than the ideal (86,400 seconds),</span>
-<span class="doccomment">//! the error slowly accumulates and it is necessary to add a **leap second**</span>
-<span class="doccomment">//! to slow the UTC down a bit.</span>
-<span class="doccomment">//! (We may also remove a second to speed the UTC up a bit, but it never happened.)</span>
-<span class="doccomment">//! The leap second, if any, follows 23:59:59 of June 30 or December 31 in the UTC.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Fast forward to the 21st century,</span>
-<span class="doccomment">//! we have seen 26 leap seconds from January 1972 to December 2015.</span>
-<span class="doccomment">//! Yes, 26 seconds. Probably you can read this paragraph within 26 seconds.</span>
-<span class="doccomment">//! But those 26 seconds, and possibly more in the future, are never predictable,</span>
-<span class="doccomment">//! and whether to add a leap second or not is known only before 6 months.</span>
-<span class="doccomment">//! Internet-based clocks (via NTP) do account for known leap seconds,</span>
-<span class="doccomment">//! but the system API normally doesn&#39;t (and often can&#39;t, with no network connection)</span>
-<span class="doccomment">//! and there is no reliable way to retrieve leap second information.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Chrono does not try to accurately implement leap seconds; it is impossible.</span>
-<span class="doccomment">//! Rather, **it allows for leap seconds but behaves as if there are *no other* leap seconds.**</span>
-<span class="doccomment">//! Various operations will ignore any possible leap second(s)</span>
-<span class="doccomment">//! except when any of the operands were actually leap seconds.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! If you cannot tolerate this behavior,</span>
-<span class="doccomment">//! you must use a separate `TimeZone` for the International Atomic Time (TAI).</span>
-<span class="doccomment">//! TAI is like UTC but has no leap seconds, and thus slightly differs from UTC.</span>
-<span class="doccomment">//! Chrono 0.3 does not provide such implementation, but it is planned for 0.4.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Representing Leap Seconds</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The leap second is indicated via fractional seconds more than 1 second.</span>
-<span class="doccomment">//! This makes possible to treat a leap second as the prior non-leap second</span>
-<span class="doccomment">//! if you don&#39;t care about sub-second accuracy.</span>
-<span class="doccomment">//! You should use the proper formatting to get the raw leap second.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! All methods accepting fractional seconds will accept such values.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//! use chrono::{NaiveDate, NaiveTime, UTC, TimeZone};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let t = NaiveTime::from_hms_milli(8, 59, 59, 1_000);</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let dt1 = NaiveDate::from_ymd(2015, 7, 1).and_hms_micro(8, 59, 59, 1_000_000);</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let dt2 = UTC.ymd(2015, 6, 30).and_hms_nano(23, 59, 59, 1_000_000_000);</span>
-<span class="doccomment">//! # let _ = (t, dt1, dt2);</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Note that the leap second can happen anytime given an appropriate time zone;</span>
-<span class="doccomment">//! 2015-07-01 01:23:60 would be a proper leap second if UTC+01:24 had existed.</span>
-<span class="doccomment">//! Practically speaking, though, by the time of the first leap second on 1972-06-30,</span>
-<span class="doccomment">//! every time zone offset around the world has standardized to the 5-minute alignment.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Date And Time Arithmetics</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! As a concrete example, let&#39;s assume that `03:00:60` and `04:00:60` are leap seconds.</span>
-<span class="doccomment">//! (In reality, of course, leap seconds are separated by at least 6 months.)</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! `Time + Duration`:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `03:00:00 + 1s = 03:00:01`.</span>
-<span class="doccomment">//! - `03:00:59 + 60s = 03:02:00`.</span>
-<span class="doccomment">//! - `03:00:59 + 1s = 03:01:00`.</span>
-<span class="doccomment">//! - `03:00:60 + 1s = 03:01:00`.</span>
-<span class="doccomment">//!   Note that the sum is identical to the previous.</span>
-<span class="doccomment">//! - `03:00:60 + 60s = 03:01:59`.</span>
-<span class="doccomment">//! - `03:00:60 + 61s = 03:02:00`.</span>
-<span class="doccomment">//! - `03:00:60.1 + 0.8s = 03:00:60.9`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! `Time - Duration`:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `03:00:00 - 1s = 02:59:59`.</span>
-<span class="doccomment">//! - `03:01:00 - 1s = 03:00:59`.</span>
-<span class="doccomment">//! - `03:01:00 - 60s = 03:00:00`.</span>
-<span class="doccomment">//! - `03:00:60 - 60s = 03:00:00`.</span>
-<span class="doccomment">//!   Note that the result is identical to the previous.</span>
-<span class="doccomment">//! - `03:00:60.7 - 0.4s = 03:00:60.3`.</span>
-<span class="doccomment">//! - `03:00:60.7 - 0.9s = 03:00:59.8`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! `Time - Time`:</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `04:00:00 - 03:00:00 = 3600s`.</span>
-<span class="doccomment">//! - `03:01:00 - 03:00:00 = 60s`.</span>
-<span class="doccomment">//! - `03:00:60 - 03:00:00 = 60s`.</span>
-<span class="doccomment">//!   Note that the difference is identical to the previous.</span>
-<span class="doccomment">//! - `03:00:60.6 - 03:00:59.4 = 1.2s`.</span>
-<span class="doccomment">//! - `03:01:00 - 03:00:59.8 = 0.2s`.</span>
-<span class="doccomment">//! - `03:01:00 - 03:00:60.5 = 0.5s`.</span>
-<span class="doccomment">//!   Note that the difference is larger than the previous,</span>
-<span class="doccomment">//!   even though the leap second clearly follows the previous whole second.</span>
-<span class="doccomment">//! - `04:00:60.9 - 03:00:60.1 =</span>
-<span class="doccomment">//!   (04:00:60.9 - 04:00:00) + (04:00:00 - 03:01:00) + (03:01:00 - 03:00:60.1) =</span>
-<span class="doccomment">//!   60.9s + 3540s + 0.9s = 3601.8s`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! In general,</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `Time + Duration` unconditionally equals to `Duration + Time`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `Time - Duration` unconditionally equals to `Time + (-Duration)`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - `Time1 - Time2` unconditionally equals to `-(Time2 - Time1)`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! - Associativity does not generally hold, because</span>
-<span class="doccomment">//!   `(Time + Duration1) - Duration2` no longer equals to `Time + (Duration1 - Duration2)`</span>
-<span class="doccomment">//!   for two positive durations.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     - As a special case, `(Time + Duration) - Duration` also does not equal to `Time`.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//!     - If you can assume that all durations have the same sign, however,</span>
-<span class="doccomment">//!       then the associativity holds:</span>
-<span class="doccomment">//!       `(Time + Duration1) + Duration2` equals to `Time + (Duration1 + Duration2)`</span>
-<span class="doccomment">//!       for two positive durations.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ## Reading And Writing Leap Seconds</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! The &quot;typical&quot; leap seconds on the minute boundary are</span>
-<span class="doccomment">//! correctly handled both in the formatting and parsing.</span>
-<span class="doccomment">//! The leap second in the human-readable representation</span>
-<span class="doccomment">//! will be represented as the second part being 60, as required by ISO 8601.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//! use chrono::{UTC, TimeZone};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let dt = UTC.ymd(2015, 6, 30).and_hms_milli(23, 59, 59, 1_000);</span>
-<span class="doccomment">//! assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:59:60Z&quot;);</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! There are hypothetical leap seconds not on the minute boundary</span>
-<span class="doccomment">//! nevertheless supported by Chrono.</span>
-<span class="doccomment">//! They are allowed for the sake of completeness and consistency;</span>
-<span class="doccomment">//! there were several &quot;exotic&quot; time zone offsets with fractional minutes prior to UTC after all.</span>
-<span class="doccomment">//! For such cases the human-readable representation is ambiguous</span>
-<span class="doccomment">//! and would be read back to the next non-leap second.</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//! use chrono::{DateTime, UTC, TimeZone};</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let dt = UTC.ymd(2015, 6, 30).and_hms_milli(23, 56, 4, 1_000);</span>
-<span class="doccomment">//! assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:56:05Z&quot;);</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! let dt = UTC.ymd(2015, 6, 30).and_hms(23, 56, 5);</span>
-<span class="doccomment">//! assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:56:05Z&quot;);</span>
-<span class="doccomment">//! assert_eq!(DateTime::parse_from_rfc3339(&quot;2015-06-30T23:56:05Z&quot;).unwrap(), dt);</span>
-<span class="doccomment">//! ~~~~</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! Since Chrono alone cannot determine any existence of leap seconds,</span>
-<span class="doccomment">//! **there is absolutely no guarantee that the leap second read has actually happened**.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">str</span>, <span class="ident">fmt</span>, <span class="ident">hash</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Sub</span>, <span class="ident">AddAssign</span>, <span class="ident">SubAssign</span>};
 <span class="kw">use</span> <span class="ident">oldtime</span>::<span class="ident">Duration</span> <span class="kw">as</span> <span class="ident">OldDuration</span>;
 
 <span class="kw">use</span> <span class="ident">Timelike</span>;
@@ -1851,9 +1749,162 @@
 <span class="doccomment">/// ISO 8601 time without timezone.</span>
 <span class="doccomment">/// Allows for the nanosecond precision and optional leap second representation.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// &lt;a name=&quot;leap-second-what?&quot;&gt;&lt;/a&gt;</span>
-<span class="doccomment">/// Chrono has a notable policy on the [leap second handling](./index.html#leap-second-handling),</span>
-<span class="doccomment">/// designed to be maximally useful for typical users.</span>
+<span class="doccomment">/// # Leap Second Handling</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Since 1960s, the manmade atomic clock has been so accurate that</span>
+<span class="doccomment">/// it is much more accurate than Earth&#39;s own motion.</span>
+<span class="doccomment">/// It became desirable to define the civil time in terms of the atomic clock,</span>
+<span class="doccomment">/// but that risks the desynchronization of the civil time from Earth.</span>
+<span class="doccomment">/// To account for this, the designers of the Coordinated Universal Time (UTC)</span>
+<span class="doccomment">/// made that the UTC should be kept within 0.9 seconds of the observed Earth-bound time.</span>
+<span class="doccomment">/// When the mean solar day is longer than the ideal (86,400 seconds),</span>
+<span class="doccomment">/// the error slowly accumulates and it is necessary to add a **leap second**</span>
+<span class="doccomment">/// to slow the UTC down a bit.</span>
+<span class="doccomment">/// (We may also remove a second to speed the UTC up a bit, but it never happened.)</span>
+<span class="doccomment">/// The leap second, if any, follows 23:59:59 of June 30 or December 31 in the UTC.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Fast forward to the 21st century,</span>
+<span class="doccomment">/// we have seen 26 leap seconds from January 1972 to December 2015.</span>
+<span class="doccomment">/// Yes, 26 seconds. Probably you can read this paragraph within 26 seconds.</span>
+<span class="doccomment">/// But those 26 seconds, and possibly more in the future, are never predictable,</span>
+<span class="doccomment">/// and whether to add a leap second or not is known only before 6 months.</span>
+<span class="doccomment">/// Internet-based clocks (via NTP) do account for known leap seconds,</span>
+<span class="doccomment">/// but the system API normally doesn&#39;t (and often can&#39;t, with no network connection)</span>
+<span class="doccomment">/// and there is no reliable way to retrieve leap second information.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Chrono does not try to accurately implement leap seconds; it is impossible.</span>
+<span class="doccomment">/// Rather, **it allows for leap seconds but behaves as if there are *no other* leap seconds.**</span>
+<span class="doccomment">/// Various operations will ignore any possible leap second(s)</span>
+<span class="doccomment">/// except when any of the operands were actually leap seconds.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If you cannot tolerate this behavior,</span>
+<span class="doccomment">/// you must use a separate `TimeZone` for the International Atomic Time (TAI).</span>
+<span class="doccomment">/// TAI is like UTC but has no leap seconds, and thus slightly differs from UTC.</span>
+<span class="doccomment">/// Chrono does not yet provide such implementation, but it is planned.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Representing Leap Seconds</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The leap second is indicated via fractional seconds more than 1 second.</span>
+<span class="doccomment">/// This makes possible to treat a leap second as the prior non-leap second</span>
+<span class="doccomment">/// if you don&#39;t care about sub-second accuracy.</span>
+<span class="doccomment">/// You should use the proper formatting to get the raw leap second.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// All methods accepting fractional seconds will accept such values.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">/// use chrono::{NaiveDate, NaiveTime, Utc, TimeZone};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let t = NaiveTime::from_hms_milli(8, 59, 59, 1_000);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let dt1 = NaiveDate::from_ymd(2015, 7, 1).and_hms_micro(8, 59, 59, 1_000_000);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let dt2 = Utc.ymd(2015, 6, 30).and_hms_nano(23, 59, 59, 1_000_000_000);</span>
+<span class="doccomment">/// # let _ = (t, dt1, dt2);</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Note that the leap second can happen anytime given an appropriate time zone;</span>
+<span class="doccomment">/// 2015-07-01 01:23:60 would be a proper leap second if UTC+01:24 had existed.</span>
+<span class="doccomment">/// Practically speaking, though, by the time of the first leap second on 1972-06-30,</span>
+<span class="doccomment">/// every time zone offset around the world has standardized to the 5-minute alignment.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Date And Time Arithmetics</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// As a concrete example, let&#39;s assume that `03:00:60` and `04:00:60` are leap seconds.</span>
+<span class="doccomment">/// In reality, of course, leap seconds are separated by at least 6 months.</span>
+<span class="doccomment">/// We will also use some intuitive concise notations for the explanation.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `Time + Duration`</span>
+<span class="doccomment">/// (short for [`NaiveTime::overflowing_add_signed`](#method.overflowing_add_signed)):</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `03:00:00 + 1s = 03:00:01`.</span>
+<span class="doccomment">/// - `03:00:59 + 60s = 03:02:00`.</span>
+<span class="doccomment">/// - `03:00:59 + 1s = 03:01:00`.</span>
+<span class="doccomment">/// - `03:00:60 + 1s = 03:01:00`.</span>
+<span class="doccomment">///   Note that the sum is identical to the previous.</span>
+<span class="doccomment">/// - `03:00:60 + 60s = 03:01:59`.</span>
+<span class="doccomment">/// - `03:00:60 + 61s = 03:02:00`.</span>
+<span class="doccomment">/// - `03:00:60.1 + 0.8s = 03:00:60.9`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `Time - Duration`</span>
+<span class="doccomment">/// (short for [`NaiveTime::overflowing_sub_signed`](#method.overflowing_sub_signed)):</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `03:00:00 - 1s = 02:59:59`.</span>
+<span class="doccomment">/// - `03:01:00 - 1s = 03:00:59`.</span>
+<span class="doccomment">/// - `03:01:00 - 60s = 03:00:00`.</span>
+<span class="doccomment">/// - `03:00:60 - 60s = 03:00:00`.</span>
+<span class="doccomment">///   Note that the result is identical to the previous.</span>
+<span class="doccomment">/// - `03:00:60.7 - 0.4s = 03:00:60.3`.</span>
+<span class="doccomment">/// - `03:00:60.7 - 0.9s = 03:00:59.8`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `Time - Time`</span>
+<span class="doccomment">/// (short for [`NaiveTime::signed_duration_since`](#method.signed_duration_since)):</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `04:00:00 - 03:00:00 = 3600s`.</span>
+<span class="doccomment">/// - `03:01:00 - 03:00:00 = 60s`.</span>
+<span class="doccomment">/// - `03:00:60 - 03:00:00 = 60s`.</span>
+<span class="doccomment">///   Note that the difference is identical to the previous.</span>
+<span class="doccomment">/// - `03:00:60.6 - 03:00:59.4 = 1.2s`.</span>
+<span class="doccomment">/// - `03:01:00 - 03:00:59.8 = 0.2s`.</span>
+<span class="doccomment">/// - `03:01:00 - 03:00:60.5 = 0.5s`.</span>
+<span class="doccomment">///   Note that the difference is larger than the previous,</span>
+<span class="doccomment">///   even though the leap second clearly follows the previous whole second.</span>
+<span class="doccomment">/// - `04:00:60.9 - 03:00:60.1 =</span>
+<span class="doccomment">///   (04:00:60.9 - 04:00:00) + (04:00:00 - 03:01:00) + (03:01:00 - 03:00:60.1) =</span>
+<span class="doccomment">///   60.9s + 3540s + 0.9s = 3601.8s`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// In general,</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `Time + Duration` unconditionally equals to `Duration + Time`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `Time - Duration` unconditionally equals to `Time + (-Duration)`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - `Time1 - Time2` unconditionally equals to `-(Time2 - Time1)`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// - Associativity does not generally hold, because</span>
+<span class="doccomment">///   `(Time + Duration1) - Duration2` no longer equals to `Time + (Duration1 - Duration2)`</span>
+<span class="doccomment">///   for two positive durations.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///     - As a special case, `(Time + Duration) - Duration` also does not equal to `Time`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///     - If you can assume that all durations have the same sign, however,</span>
+<span class="doccomment">///       then the associativity holds:</span>
+<span class="doccomment">///       `(Time + Duration1) + Duration2` equals to `Time + (Duration1 + Duration2)`</span>
+<span class="doccomment">///       for two positive durations.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Reading And Writing Leap Seconds</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The &quot;typical&quot; leap seconds on the minute boundary are</span>
+<span class="doccomment">/// correctly handled both in the formatting and parsing.</span>
+<span class="doccomment">/// The leap second in the human-readable representation</span>
+<span class="doccomment">/// will be represented as the second part being 60, as required by ISO 8601.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">/// use chrono::{Utc, TimeZone};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let dt = Utc.ymd(2015, 6, 30).and_hms_milli(23, 59, 59, 1_000);</span>
+<span class="doccomment">/// assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:59:60Z&quot;);</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// There are hypothetical leap seconds not on the minute boundary</span>
+<span class="doccomment">/// nevertheless supported by Chrono.</span>
+<span class="doccomment">/// They are allowed for the sake of completeness and consistency;</span>
+<span class="doccomment">/// there were several &quot;exotic&quot; time zone offsets with fractional minutes prior to UTC after all.</span>
+<span class="doccomment">/// For such cases the human-readable representation is ambiguous</span>
+<span class="doccomment">/// and would be read back to the next non-leap second.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">/// use chrono::{DateTime, Utc, TimeZone};</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let dt = Utc.ymd(2015, 6, 30).and_hms_milli(23, 56, 4, 1_000);</span>
+<span class="doccomment">/// assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:56:05Z&quot;);</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let dt = Utc.ymd(2015, 6, 30).and_hms(23, 56, 5);</span>
+<span class="doccomment">/// assert_eq!(format!(&quot;{:?}&quot;, dt), &quot;2015-06-30T23:56:05Z&quot;);</span>
+<span class="doccomment">/// assert_eq!(DateTime::parse_from_rfc3339(&quot;2015-06-30T23:56:05Z&quot;).unwrap(), dt);</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Since Chrono alone cannot determine any existence of leap seconds,</span>
+<span class="doccomment">/// **there is absolutely no guarantee that the leap second read has actually happened**.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Ord</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NaiveTime</span> {
     <span class="ident">secs</span>: <span class="ident">u32</span>,
@@ -1863,7 +1914,7 @@
 <span class="kw">impl</span> <span class="ident">NaiveTime</span> {
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute and second.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// No [leap second](./index.html#leap-second-handling) is allowed here;</span>
+    <span class="doccomment">/// No [leap second](#leap-second-handling) is allowed here;</span>
     <span class="doccomment">/// use `NaiveTime::from_hms_*` methods with a subsecond parameter instead.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics on invalid hour, minute and/or second.</span>
@@ -1886,7 +1937,7 @@
 
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute and second.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// No [leap second](./index.html#leap-second-handling) is allowed here;</span>
+    <span class="doccomment">/// No [leap second](#leap-second-handling) is allowed here;</span>
     <span class="doccomment">/// use `NaiveTime::from_hms_*_opt` methods with a subsecond parameter instead.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `None` on invalid hour, minute and/or second.</span>
@@ -1912,7 +1963,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and millisecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The millisecond part can exceed 1,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics on invalid hour, minute, second and/or millisecond.</span>
     <span class="doccomment">///</span>
@@ -1935,7 +1986,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and millisecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The millisecond part can exceed 1,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `None` on invalid hour, minute, second and/or millisecond.</span>
     <span class="doccomment">///</span>
@@ -1963,7 +2014,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and microsecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The microsecond part can exceed 1,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics on invalid hour, minute, second and/or microsecond.</span>
     <span class="doccomment">///</span>
@@ -1986,7 +2037,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and microsecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The microsecond part can exceed 1,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `None` on invalid hour, minute, second and/or microsecond.</span>
     <span class="doccomment">///</span>
@@ -2014,7 +2065,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and nanosecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The nanosecond part can exceed 1,000,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics on invalid hour, minute, second and/or nanosecond.</span>
     <span class="doccomment">///</span>
@@ -2037,7 +2088,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from hour, minute, second and nanosecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The nanosecond part can exceed 1,000,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `None` on invalid hour, minute, second and/or nanosecond.</span>
     <span class="doccomment">///</span>
@@ -2066,7 +2117,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from the number of seconds since midnight and nanosecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The nanosecond part can exceed 1,000,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics on invalid number of seconds and/or nanosecond.</span>
     <span class="doccomment">///</span>
@@ -2089,7 +2140,7 @@
     <span class="doccomment">/// Makes a new `NaiveTime` from the number of seconds since midnight and nanosecond.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The nanosecond part can exceed 1,000,000,000</span>
-    <span class="doccomment">/// in order to represent the [leap second](./index.html#leap-second-handling).</span>
+    <span class="doccomment">/// in order to represent the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `None` on invalid number of seconds and/or nanosecond.</span>
     <span class="doccomment">///</span>
@@ -2103,17 +2154,17 @@
     <span class="doccomment">/// assert!(from_nsecs_opt(0, 0).is_some());</span>
     <span class="doccomment">/// assert!(from_nsecs_opt(86399, 999_999_999).is_some());</span>
     <span class="doccomment">/// assert!(from_nsecs_opt(86399, 1_999_999_999).is_some()); // a leap second after 23:59:59</span>
-    <span class="doccomment">/// assert!(from_nsecs_opt(86400, 0).is_none());</span>
+    <span class="doccomment">/// assert!(from_nsecs_opt(86_400, 0).is_none());</span>
     <span class="doccomment">/// assert!(from_nsecs_opt(86399, 2_000_000_000).is_none());</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_num_seconds_from_midnight_opt</span>(<span class="ident">secs</span>: <span class="ident">u32</span>, <span class="ident">nano</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NaiveTime</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">secs</span> <span class="op">&gt;=</span> <span class="number">86400</span> <span class="op">||</span> <span class="ident">nano</span> <span class="op">&gt;=</span> <span class="number">2_000_000_000</span> { <span class="kw">return</span> <span class="prelude-val">None</span>; }
+        <span class="kw">if</span> <span class="ident">secs</span> <span class="op">&gt;=</span> <span class="number">86_400</span> <span class="op">||</span> <span class="ident">nano</span> <span class="op">&gt;=</span> <span class="number">2_000_000_000</span> { <span class="kw">return</span> <span class="prelude-val">None</span>; }
         <span class="prelude-val">Some</span>(<span class="ident">NaiveTime</span> { <span class="ident">secs</span>: <span class="ident">secs</span>, <span class="ident">frac</span>: <span class="ident">nano</span> })
     }
 
     <span class="doccomment">/// Parses a string with the specified format string and returns a new `NaiveTime`.</span>
-    <span class="doccomment">/// See the [`format::strftime` module](../../format/strftime/index.html)</span>
+    <span class="doccomment">/// See the [`format::strftime` module](../format/strftime/index.html)</span>
     <span class="doccomment">/// on the supported escape sequences.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
@@ -2138,7 +2189,7 @@
     <span class="doccomment">///            Ok(NaiveTime::from_hms(12, 34, 56)));</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// [Leap seconds](./index.html#leap-second-handling) are correctly handled by</span>
+    <span class="doccomment">/// [Leap seconds](#leap-second-handling) are correctly handled by</span>
     <span class="doccomment">/// treating any time of the form `hh:mm:60` as a leap second.</span>
     <span class="doccomment">/// (This equally applies to the formatting, so the round trip is possible.)</span>
     <span class="doccomment">///</span>
@@ -2196,11 +2247,12 @@
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_add_signed(Duration::hours(11)),</span>
     <span class="doccomment">///            (from_hms(14, 4, 5), 0));</span>
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_add_signed(Duration::hours(23)),</span>
-    <span class="doccomment">///            (from_hms(2, 4, 5), 86400));</span>
+    <span class="doccomment">///            (from_hms(2, 4, 5), 86_400));</span>
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_add_signed(Duration::hours(-7)),</span>
-    <span class="doccomment">///            (from_hms(20, 4, 5), -86400));</span>
+    <span class="doccomment">///            (from_hms(20, 4, 5), -86_400));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ~~~~</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cargo-clippy&quot;</span>, <span class="ident">allow</span>(<span class="ident">cyclomatic_complexity</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">overflowing_add_signed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">rhs</span>: <span class="ident">OldDuration</span>) <span class="op">-&gt;</span> (<span class="ident">NaiveTime</span>, <span class="ident">i64</span>) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">secs</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">secs</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">frac</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">frac</span>;
@@ -2210,36 +2262,36 @@
         <span class="comment">// otherwise the addition immediately finishes.</span>
         <span class="kw">if</span> <span class="ident">frac</span> <span class="op">&gt;=</span> <span class="number">1_000_000_000</span> {
             <span class="kw">let</span> <span class="ident">rfrac</span> <span class="op">=</span> <span class="number">2_000_000_000</span> <span class="op">-</span> <span class="ident">frac</span>;
-            <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&gt;=</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">rfrac</span> <span class="kw">as</span> <span class="ident">i64</span>) {
-                <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span> <span class="op">-</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">rfrac</span> <span class="kw">as</span> <span class="ident">i64</span>);
+            <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&gt;=</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">rfrac</span>)) {
+                <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span> <span class="op">-</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">rfrac</span>));
                 <span class="ident">secs</span> <span class="op">+=</span> <span class="number">1</span>;
                 <span class="ident">frac</span> <span class="op">=</span> <span class="number">0</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&lt;</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="op">-</span>(<span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i64</span>)) {
-                <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span> <span class="op">+</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i64</span>);
+            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">rhs</span> <span class="op">&lt;</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="op">-</span><span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">frac</span>)) {
+                <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span> <span class="op">+</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">frac</span>));
                 <span class="ident">frac</span> <span class="op">=</span> <span class="number">0</span>;
             } <span class="kw">else</span> {
-                <span class="ident">frac</span> <span class="op">=</span> (<span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">+</span> <span class="ident">rhs</span>.<span class="ident">num_nanoseconds</span>().<span class="ident">unwrap</span>()) <span class="kw">as</span> <span class="ident">u32</span>;
+                <span class="ident">frac</span> <span class="op">=</span> (<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">frac</span>) <span class="op">+</span> <span class="ident">rhs</span>.<span class="ident">num_nanoseconds</span>().<span class="ident">unwrap</span>()) <span class="kw">as</span> <span class="ident">u32</span>;
                 <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">frac</span> <span class="op">&lt;</span> <span class="number">2_000_000_000</span>);
                 <span class="kw">return</span> (<span class="ident">NaiveTime</span> { <span class="ident">secs</span>: <span class="ident">secs</span>, <span class="ident">frac</span>: <span class="ident">frac</span> }, <span class="number">0</span>);
             }
         }
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">secs</span> <span class="op">&lt;=</span> <span class="number">86400</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">secs</span> <span class="op">&lt;=</span> <span class="number">86_400</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">frac</span> <span class="op">&lt;</span> <span class="number">1_000_000_000</span>);
 
         <span class="kw">let</span> <span class="ident">rhssecs</span> <span class="op">=</span> <span class="ident">rhs</span>.<span class="ident">num_seconds</span>();
         <span class="kw">let</span> <span class="ident">rhsfrac</span> <span class="op">=</span> (<span class="ident">rhs</span> <span class="op">-</span> <span class="ident">OldDuration</span>::<span class="ident">seconds</span>(<span class="ident">rhssecs</span>)).<span class="ident">num_nanoseconds</span>().<span class="ident">unwrap</span>();
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">OldDuration</span>::<span class="ident">seconds</span>(<span class="ident">rhssecs</span>) <span class="op">+</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">rhsfrac</span>) <span class="op">==</span> <span class="ident">rhs</span>);
-        <span class="kw">let</span> <span class="ident">rhssecsinday</span> <span class="op">=</span> <span class="ident">rhssecs</span> <span class="op">%</span> <span class="number">86400</span>;
+        <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">OldDuration</span>::<span class="ident">seconds</span>(<span class="ident">rhssecs</span>) <span class="op">+</span> <span class="ident">OldDuration</span>::<span class="ident">nanoseconds</span>(<span class="ident">rhsfrac</span>), <span class="ident">rhs</span>);
+        <span class="kw">let</span> <span class="ident">rhssecsinday</span> <span class="op">=</span> <span class="ident">rhssecs</span> <span class="op">%</span> <span class="number">86_400</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">morerhssecs</span> <span class="op">=</span> <span class="ident">rhssecs</span> <span class="op">-</span> <span class="ident">rhssecsinday</span>;
         <span class="kw">let</span> <span class="ident">rhssecs</span> <span class="op">=</span> <span class="ident">rhssecsinday</span> <span class="kw">as</span> <span class="ident">i32</span>;
         <span class="kw">let</span> <span class="ident">rhsfrac</span> <span class="op">=</span> <span class="ident">rhsfrac</span> <span class="kw">as</span> <span class="ident">i32</span>;
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86400</span> <span class="op">&lt;</span> <span class="ident">rhssecs</span> <span class="op">&amp;&amp;</span> <span class="ident">rhssecs</span> <span class="op">&lt;</span> <span class="number">86400</span>);
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">morerhssecs</span> <span class="op">%</span> <span class="number">86400</span> <span class="op">==</span> <span class="number">0</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86_400</span> <span class="op">&lt;</span> <span class="ident">rhssecs</span> <span class="op">&amp;&amp;</span> <span class="ident">rhssecs</span> <span class="op">&lt;</span> <span class="number">86_400</span>);
+        <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">morerhssecs</span> <span class="op">%</span> <span class="number">86_400</span>, <span class="number">0</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">1_000_000_000</span> <span class="op">&lt;</span> <span class="ident">rhsfrac</span> <span class="op">&amp;&amp;</span> <span class="ident">rhsfrac</span> <span class="op">&lt;</span> <span class="number">1_000_000_000</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">secs</span> <span class="op">=</span> <span class="ident">secs</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="op">+</span> <span class="ident">rhssecs</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">frac</span> <span class="op">=</span> <span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i32</span> <span class="op">+</span> <span class="ident">rhsfrac</span>;
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86400</span> <span class="op">&lt;</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">2</span> <span class="op">*</span> <span class="number">86400</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86_400</span> <span class="op">&lt;</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">2</span> <span class="op">*</span> <span class="number">86_400</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">1_000_000_000</span> <span class="op">&lt;</span> <span class="ident">frac</span> <span class="op">&amp;&amp;</span> <span class="ident">frac</span> <span class="op">&lt;</span> <span class="number">2_000_000_000</span>);
 
         <span class="kw">if</span> <span class="ident">frac</span> <span class="op">&lt;</span> <span class="number">0</span> {
@@ -2249,17 +2301,17 @@
             <span class="ident">frac</span> <span class="op">-=</span> <span class="number">1_000_000_000</span>;
             <span class="ident">secs</span> <span class="op">+=</span> <span class="number">1</span>;
         }
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86400</span> <span class="op">&lt;=</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">2</span> <span class="op">*</span> <span class="number">86400</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">-</span><span class="number">86_400</span> <span class="op">&lt;=</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">2</span> <span class="op">*</span> <span class="number">86_400</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="number">0</span> <span class="op">&lt;=</span> <span class="ident">frac</span> <span class="op">&amp;&amp;</span> <span class="ident">frac</span> <span class="op">&lt;</span> <span class="number">1_000_000_000</span>);
 
         <span class="kw">if</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">0</span> {
-            <span class="ident">secs</span> <span class="op">+=</span> <span class="number">86400</span>;
-            <span class="ident">morerhssecs</span> <span class="op">-=</span> <span class="number">86400</span>;
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">secs</span> <span class="op">&gt;=</span> <span class="number">86400</span> {
-            <span class="ident">secs</span> <span class="op">-=</span> <span class="number">86400</span>;
-            <span class="ident">morerhssecs</span> <span class="op">+=</span> <span class="number">86400</span>;
+            <span class="ident">secs</span> <span class="op">+=</span> <span class="number">86_400</span>;
+            <span class="ident">morerhssecs</span> <span class="op">-=</span> <span class="number">86_400</span>;
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">secs</span> <span class="op">&gt;=</span> <span class="number">86_400</span> {
+            <span class="ident">secs</span> <span class="op">-=</span> <span class="number">86_400</span>;
+            <span class="ident">morerhssecs</span> <span class="op">+=</span> <span class="number">86_400</span>;
         }
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="number">0</span> <span class="op">&lt;=</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">86400</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="number">0</span> <span class="op">&lt;=</span> <span class="ident">secs</span> <span class="op">&amp;&amp;</span> <span class="ident">secs</span> <span class="op">&lt;</span> <span class="number">86_400</span>);
 
         (<span class="ident">NaiveTime</span> { <span class="ident">secs</span>: <span class="ident">secs</span> <span class="kw">as</span> <span class="ident">u32</span>, <span class="ident">frac</span>: <span class="ident">frac</span> <span class="kw">as</span> <span class="ident">u32</span> }, <span class="ident">morerhssecs</span>)
     }
@@ -2281,9 +2333,9 @@
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_sub_signed(Duration::hours(2)),</span>
     <span class="doccomment">///            (from_hms(1, 4, 5), 0));</span>
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_sub_signed(Duration::hours(17)),</span>
-    <span class="doccomment">///            (from_hms(10, 4, 5), 86400));</span>
+    <span class="doccomment">///            (from_hms(10, 4, 5), 86_400));</span>
     <span class="doccomment">/// assert_eq!(from_hms(3, 4, 5).overflowing_sub_signed(Duration::hours(-22)),</span>
-    <span class="doccomment">///            (from_hms(1, 4, 5), -86400));</span>
+    <span class="doccomment">///            (from_hms(1, 4, 5), -86_400));</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2296,7 +2348,7 @@
     <span class="doccomment">/// Returns a `Duration` within +/- 1 day.</span>
     <span class="doccomment">/// This does not overflow or underflow at all.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](./index.html#leap-second-handling),</span>
+    <span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](#leap-second-handling),</span>
     <span class="doccomment">/// the subtraction assumes that **there is no leap second ever**,</span>
     <span class="doccomment">/// except when any of the `NaiveTime`s themselves represents a leap second</span>
     <span class="doccomment">/// in which case the assumption becomes that</span>
@@ -2365,8 +2417,8 @@
 
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 
-        <span class="kw">let</span> <span class="ident">secs</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">secs</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">-</span> <span class="ident">rhs</span>.<span class="ident">secs</span> <span class="kw">as</span> <span class="ident">i64</span>;
-        <span class="kw">let</span> <span class="ident">frac</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i64</span> <span class="op">-</span> <span class="ident">rhs</span>.<span class="ident">frac</span> <span class="kw">as</span> <span class="ident">i64</span>;
+        <span class="kw">let</span> <span class="ident">secs</span> <span class="op">=</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="self">self</span>.<span class="ident">secs</span>) <span class="op">-</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">rhs</span>.<span class="ident">secs</span>);
+        <span class="kw">let</span> <span class="ident">frac</span> <span class="op">=</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="self">self</span>.<span class="ident">frac</span>) <span class="op">-</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">rhs</span>.<span class="ident">frac</span>);
 
         <span class="comment">// `secs` may contain a leap second yet to be counted</span>
         <span class="kw">let</span> <span class="ident">adjust</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">secs</span>.<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">secs</span>) {
@@ -2412,7 +2464,7 @@
     }
 
     <span class="doccomment">/// Formats the time with the specified format string.</span>
-    <span class="doccomment">/// See the [`format::strftime` module](../../format/strftime/index.html)</span>
+    <span class="doccomment">/// See the [`format::strftime` module](../format/strftime/index.html)</span>
     <span class="doccomment">/// on the supported escape sequences.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This returns a `DelayedFormat`,</span>
@@ -2501,7 +2553,7 @@
     <span class="doccomment">/// ~~~~</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This method never returns 60 even when it is a leap second.</span>
-    <span class="doccomment">/// ([Why?](./index.html#leap-second-handling))</span>
+    <span class="doccomment">/// ([Why?](#leap-second-handling))</span>
     <span class="doccomment">/// Use the proper [formatting method](#method.format) to get a human-readable representation.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
@@ -2517,7 +2569,7 @@
 
     <span class="doccomment">/// Returns the number of nanoseconds since the whole non-leap second.</span>
     <span class="doccomment">/// The range from 1,000,000,000 to 1,999,999,999 represents</span>
-    <span class="doccomment">/// the [leap second](./naive/time/index.html#leap-second-handling).</span>
+    <span class="doccomment">/// the [leap second](#leap-second-handling).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
@@ -2663,6 +2715,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// Practically this also takes account of fractional seconds, so it is not recommended.</span>
 <span class="doccomment">/// (For the obvious reason this also distinguishes leap seconds from non-leap seconds.)</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cargo-clippy&quot;</span>, <span class="ident">allow</span>(<span class="ident">derive_hash_xor_eq</span>))]</span>
 <span class="kw">impl</span> <span class="ident">hash</span>::<span class="ident">Hash</span> <span class="kw">for</span> <span class="ident">NaiveTime</span> {
     <span class="kw">fn</span> <span class="ident">hash</span><span class="op">&lt;</span><span class="ident">H</span>: <span class="ident">hash</span>::<span class="ident">Hasher</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">H</span>) {
         <span class="self">self</span>.<span class="ident">secs</span>.<span class="ident">hash</span>(<span class="ident">state</span>);
@@ -2673,7 +2726,7 @@
 <span class="doccomment">/// An addition of `Duration` to `NaiveTime` wraps around and never overflows or underflows.</span>
 <span class="doccomment">/// In particular the addition ignores integral number of days.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](./index.html#leap-second-handling),</span>
+<span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](#leap-second-handling),</span>
 <span class="doccomment">/// the addition assumes that **there is no leap second ever**,</span>
 <span class="doccomment">/// except when the `NaiveTime` itself represents a leap second</span>
 <span class="doccomment">/// in which case the assumption becomes that **there is exactly a single leap second ever**.</span>
@@ -2737,11 +2790,18 @@
     }
 }
 
+<span class="kw">impl</span> <span class="ident">AddAssign</span><span class="op">&lt;</span><span class="ident">OldDuration</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NaiveTime</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">add_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">OldDuration</span>) {
+        <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">add</span>(<span class="ident">rhs</span>);
+    }
+}
+
 <span class="doccomment">/// A subtraction of `Duration` from `NaiveTime` wraps around and never overflows or underflows.</span>
 <span class="doccomment">/// In particular the addition ignores integral number of days.</span>
 <span class="doccomment">/// It is same to the addition with a negated `Duration`.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](./index.html#leap-second-handling),</span>
+<span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](#leap-second-handling),</span>
 <span class="doccomment">/// the addition assumes that **there is no leap second ever**,</span>
 <span class="doccomment">/// except when the `NaiveTime` itself represents a leap second</span>
 <span class="doccomment">/// in which case the assumption becomes that **there is exactly a single leap second ever**.</span>
@@ -2800,8 +2860,75 @@
     }
 }
 
+<span class="kw">impl</span> <span class="ident">SubAssign</span><span class="op">&lt;</span><span class="ident">OldDuration</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NaiveTime</span> {
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">sub_assign</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">OldDuration</span>) {
+        <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">sub</span>(<span class="ident">rhs</span>);
+    }
+}
+
+<span class="doccomment">/// Subtracts another `NaiveTime` from the current time.</span>
+<span class="doccomment">/// Returns a `Duration` within +/- 1 day.</span>
+<span class="doccomment">/// This does not overflow or underflow at all.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// As a part of Chrono&#39;s [leap second handling](#leap-second-handling),</span>
+<span class="doccomment">/// the subtraction assumes that **there is no leap second ever**,</span>
+<span class="doccomment">/// except when any of the `NaiveTime`s themselves represents a leap second</span>
+<span class="doccomment">/// in which case the assumption becomes that</span>
+<span class="doccomment">/// **there are exactly one (or two) leap second(s) ever**.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The implementation is a wrapper around</span>
+<span class="doccomment">/// [`NaiveTime::signed_duration_since`](#method.signed_duration_since).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">/// # extern crate chrono; extern crate time; fn main() {</span>
+<span class="doccomment">/// use chrono::NaiveTime;</span>
+<span class="doccomment">/// use time::Duration;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// let from_hmsm = NaiveTime::from_hms_milli;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(3, 5, 7, 900), Duration::zero());</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(3, 5, 7, 875), Duration::milliseconds(25));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(3, 5, 6, 925), Duration::milliseconds(975));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(3, 5, 0, 900), Duration::seconds(7));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(3, 0, 7, 900), Duration::seconds(5 * 60));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(0, 5, 7, 900), Duration::seconds(3 * 3600));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(4, 5, 7, 900), Duration::seconds(-3600));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 5, 7, 900) - from_hmsm(2, 4, 6, 800),</span>
+<span class="doccomment">///            Duration::seconds(3600 + 60 + 1) + Duration::milliseconds(100));</span>
+<span class="doccomment">/// # }</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Leap seconds are handled, but the subtraction assumes that</span>
+<span class="doccomment">/// there were no other leap seconds happened.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="doccomment">/// # extern crate chrono; extern crate time; fn main() {</span>
+<span class="doccomment">/// # use chrono::NaiveTime;</span>
+<span class="doccomment">/// # use time::Duration;</span>
+<span class="doccomment">/// # let from_hmsm = NaiveTime::from_hms_milli;</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 0, 59, 1_000) - from_hmsm(3, 0, 59, 0), Duration::seconds(1));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 0, 59, 1_500) - from_hmsm(3, 0, 59, 0),</span>
+<span class="doccomment">///            Duration::milliseconds(1500));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 0, 59, 1_000) - from_hmsm(3, 0, 0, 0), Duration::seconds(60));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 0, 0, 0) - from_hmsm(2, 59, 59, 1_000), Duration::seconds(1));</span>
+<span class="doccomment">/// assert_eq!(from_hmsm(3, 0, 59, 1_000) - from_hmsm(2, 59, 59, 1_000),</span>
+<span class="doccomment">///            Duration::seconds(61));</span>
+<span class="doccomment">/// # }</span>
+<span class="doccomment">/// ~~~~</span>
+<span class="kw">impl</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">NaiveTime</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NaiveTime</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">OldDuration</span>;
+
+    <span class="attribute">#[<span class="ident">inline</span>]</span>
+    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">NaiveTime</span>) <span class="op">-&gt;</span> <span class="ident">OldDuration</span> {
+        <span class="self">self</span>.<span class="ident">signed_duration_since</span>(<span class="ident">rhs</span>)
+    }
+}
+
 <span class="doccomment">/// The `Debug` output of the naive time `t` is same to</span>
-<span class="doccomment">/// [`t.format(&quot;%H:%M:%S%.f&quot;)`](../../format/strftime/index.html).</span>
+<span class="doccomment">/// [`t.format(&quot;%H:%M:%S%.f&quot;)`](../format/strftime/index.html).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The string printed can be readily parsed via the `parse` method on `str`.</span>
 <span class="doccomment">///</span>
@@ -2851,7 +2978,7 @@
 }
 
 <span class="doccomment">/// The `Display` output of the naive time `t` is same to</span>
-<span class="doccomment">/// [`t.format(&quot;%H:%M:%S%.f&quot;)`](../../format/strftime/index.html).</span>
+<span class="doccomment">/// [`t.format(&quot;%H:%M:%S%.f&quot;)`](../format/strftime/index.html).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The string printed can be readily parsed via the `parse` method on `str`.</span>
 <span class="doccomment">///</span>
@@ -2883,7 +3010,7 @@
 }
 
 <span class="doccomment">/// Parsing a `str` into a `NaiveTime` uses the same format,</span>
-<span class="doccomment">/// [`%H:%M:%S%.f`](../../format/strftime/index.html), as in `Debug` and `Display`.</span>
+<span class="doccomment">/// [`%H:%M:%S%.f`](../format/strftime/index.html), as in `Debug` and `Display`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
@@ -2999,7 +3126,7 @@
 
     <span class="kw">impl</span> <span class="ident">Decodable</span> <span class="kw">for</span> <span class="ident">NaiveTime</span> {
         <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Decoder</span><span class="op">&gt;</span>(<span class="ident">d</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">D</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">NaiveTime</span>, <span class="ident">D</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="ident">d</span>.<span class="ident">read_str</span>()<span class="question-mark">?</span>.<span class="ident">parse</span>().<span class="ident">map_err</span>(<span class="op">|</span>_<span class="op">|</span> <span class="ident">d</span>.<span class="ident">error</span>(<span class="string">&quot;invalid time&quot;</span>))
+            <span class="ident">d</span>.<span class="ident">read_str</span>()<span class="question-mark">?</span>.<span class="ident">parse</span>().<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">error</span>(<span class="string">&quot;invalid time&quot;</span>))
         }
     }
 
@@ -3020,7 +3147,7 @@
 <span class="kw">mod</span> <span class="ident">serde</span> {
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
     <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">NaiveTime</span>;
-    <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">ser</span>, <span class="ident">de</span>};
+    <span class="kw">use</span> <span class="ident">serdelib</span>::{<span class="ident">ser</span>, <span class="ident">de</span>};
 
     <span class="comment">// TODO not very optimized for space (binary formats would want something better)</span>
     <span class="comment">// TODO round-trip for general leap seconds (not just those with second = 60)</span>
@@ -3183,15 +3310,35 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>).<span class="ident">overflowing_add_signed</span>(<span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">11</span>)),
                    (<span class="ident">hmsm</span>(<span class="number">14</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="number">0</span>));
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>).<span class="ident">overflowing_add_signed</span>(<span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">23</span>)),
-                   (<span class="ident">hmsm</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="number">86400</span>));
+                   (<span class="ident">hmsm</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="number">86_400</span>));
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>).<span class="ident">overflowing_add_signed</span>(<span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="op">-</span><span class="number">7</span>)),
-                   (<span class="ident">hmsm</span>(<span class="number">20</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="op">-</span><span class="number">86400</span>));
+                   (<span class="ident">hmsm</span>(<span class="number">20</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="op">-</span><span class="number">86_400</span>));
 
         <span class="comment">// overflowing_add_signed with leap seconds may be counter-intuitive</span>
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1_678</span>).<span class="ident">overflowing_add_signed</span>(<span class="ident">Duration</span>::<span class="ident">days</span>(<span class="number">1</span>)),
-                   (<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="number">86400</span>));
+                   (<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">678</span>), <span class="number">86_400</span>));
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1_678</span>).<span class="ident">overflowing_add_signed</span>(<span class="ident">Duration</span>::<span class="ident">days</span>(<span class="op">-</span><span class="number">1</span>)),
-                   (<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">678</span>), <span class="op">-</span><span class="number">86400</span>));
+                   (<span class="ident">hmsm</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">678</span>), <span class="op">-</span><span class="number">86_400</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_time_addassignment</span>() {
+        <span class="kw">let</span> <span class="ident">hms</span> <span class="op">=</span> <span class="ident">NaiveTime</span>::<span class="ident">from_hms</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">hms</span>(<span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>);
+        <span class="ident">time</span> <span class="op">+=</span> <span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">10</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">time</span>, <span class="ident">hms</span>(<span class="number">22</span>, <span class="number">12</span>, <span class="number">12</span>));
+        <span class="ident">time</span> <span class="op">+=</span> <span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">10</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">time</span>, <span class="ident">hms</span>(<span class="number">8</span>, <span class="number">12</span>, <span class="number">12</span>));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_time_subassignment</span>() {
+        <span class="kw">let</span> <span class="ident">hms</span> <span class="op">=</span> <span class="ident">NaiveTime</span>::<span class="ident">from_hms</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">hms</span>(<span class="number">12</span>, <span class="number">12</span>, <span class="number">12</span>);
+        <span class="ident">time</span> <span class="op">-=</span> <span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">10</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">time</span>, <span class="ident">hms</span>(<span class="number">2</span>, <span class="number">12</span>, <span class="number">12</span>));
+        <span class="ident">time</span> <span class="op">-=</span> <span class="ident">Duration</span>::<span class="ident">hours</span>(<span class="number">10</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">time</span>, <span class="ident">hms</span>(<span class="number">16</span>, <span class="number">12</span>, <span class="number">12</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -3319,65 +3466,4 @@
 }
 
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "chrono";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "chrono";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

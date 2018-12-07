@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.1/src/value/index.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>index.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.33/src/value/index.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>index.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -302,6 +257,21 @@
 <span id="257">257</span>
 <span id="258">258</span>
 <span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2017 Serde Developers</span>
 <span class="comment">//</span>
@@ -317,11 +287,38 @@
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Value</span>;
 <span class="kw">use</span> <span class="ident">map</span>::<span class="ident">Map</span>;
 
-<span class="doccomment">/// A type that can be used to index into a `serde_json::Value`. See the `get`</span>
-<span class="doccomment">/// and `get_mut` methods of `Value`.</span>
+<span class="doccomment">/// A type that can be used to index into a `serde_json::Value`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The [`get`] and [`get_mut`] methods of `Value` accept any type that</span>
+<span class="doccomment">/// implements `Index`, as does the [square-bracket indexing operator]. This</span>
+<span class="doccomment">/// trait is implemented for strings which are used as the index into a JSON</span>
+<span class="doccomment">/// map, and for `usize` which is used as the index into a JSON array.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [`get`]: ../enum.Value.html#method.get</span>
+<span class="doccomment">/// [`get_mut`]: ../enum.Value.html#method.get_mut</span>
+<span class="doccomment">/// [square-bracket indexing operator]: ../enum.Value.html#impl-Index%3CI%3E</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This trait is sealed and cannot be implemented for types outside of</span>
 <span class="doccomment">/// `serde_json`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Examples</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```rust</span>
+<span class="doccomment">/// # #[macro_use]</span>
+<span class="doccomment">/// # extern crate serde_json;</span>
+<span class="doccomment">/// #</span>
+<span class="doccomment">/// # fn main() {</span>
+<span class="doccomment">/// let data = json!({ &quot;inner&quot;: [1, 2, 3] });</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// // Data is a JSON map so it can be indexed with a string.</span>
+<span class="doccomment">/// let inner = &amp;data[&quot;inner&quot;];</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// // Inner is a JSON array so it can be indexed with an integer.</span>
+<span class="doccomment">/// let first = &amp;inner[0];</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// assert_eq!(first, 1);</span>
+<span class="doccomment">/// # }</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Index</span>: <span class="ident">private</span>::<span class="ident">Sealed</span> {
     <span class="doccomment">/// Return None if the key is not already in the array or object.</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
@@ -343,31 +340,27 @@
     <span class="kw">fn</span> <span class="ident">index_into</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
             <span class="ident">Value</span>::<span class="ident">Array</span>(<span class="kw-2">ref</span> <span class="ident">vec</span>) <span class="op">=&gt;</span> <span class="ident">vec</span>.<span class="ident">get</span>(<span class="kw-2">*</span><span class="self">self</span>),
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">fn</span> <span class="ident">index_into_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
             <span class="ident">Value</span>::<span class="ident">Array</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">vec</span>) <span class="op">=&gt;</span> <span class="ident">vec</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="self">self</span>),
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">fn</span> <span class="ident">index_or_insert</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
             <span class="ident">Value</span>::<span class="ident">Array</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">vec</span>) <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">vec</span>.<span class="ident">len</span>();
-                <span class="ident">vec</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="self">self</span>)
-                    .<span class="ident">unwrap_or_else</span>(
-                        <span class="op">||</span> {
-                            <span class="macro">panic</span><span class="macro">!</span>(
-                                <span class="string">&quot;cannot access index {} of JSON array of length {}&quot;</span>,
-                                <span class="self">self</span>,
-                                <span class="ident">len</span>
-                            )
-                        },
+                <span class="ident">vec</span>.<span class="ident">get_mut</span>(<span class="kw-2">*</span><span class="self">self</span>).<span class="ident">unwrap_or_else</span>(<span class="op">||</span> {
+                    <span class="macro">panic</span><span class="macro">!</span>(
+                        <span class="string">&quot;cannot access index {} of JSON array of length {}&quot;</span>,
+                        <span class="self">self</span>, <span class="ident">len</span>
                     )
+                })
             }
-            _ <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot access index {} of JSON {}&quot;</span>, <span class="self">self</span>, <span class="ident">Type</span>(<span class="ident">v</span>)),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot access index {} of JSON {}&quot;</span>, <span class="self">self</span>, <span class="ident">Type</span>(<span class="ident">v</span>)),
         }
     }
 }
@@ -376,26 +369,22 @@
     <span class="kw">fn</span> <span class="ident">index_into</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
             <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="kw-2">ref</span> <span class="ident">map</span>) <span class="op">=&gt;</span> <span class="ident">map</span>.<span class="ident">get</span>(<span class="self">self</span>),
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">fn</span> <span class="ident">index_into_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
             <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">map</span>) <span class="op">=&gt;</span> <span class="ident">map</span>.<span class="ident">get_mut</span>(<span class="self">self</span>),
-            _ <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
     <span class="kw">fn</span> <span class="ident">index_or_insert</span><span class="op">&lt;</span><span class="lifetime">&#39;v</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;v</span> <span class="kw-2">mut</span> <span class="ident">Value</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Value</span>::<span class="ident">Null</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">v</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">Map</span>::<span class="ident">new</span>();
-            <span class="ident">map</span>.<span class="ident">insert</span>(<span class="self">self</span>.<span class="ident">to_owned</span>(), <span class="ident">Value</span>::<span class="ident">Null</span>);
-            <span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="ident">map</span>);
+            <span class="kw-2">*</span><span class="ident">v</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="ident">Map</span>::<span class="ident">new</span>());
         }
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">v</span> {
-            <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">map</span>) <span class="op">=&gt;</span> {
-                <span class="ident">map</span>.<span class="ident">entry</span>(<span class="self">self</span>.<span class="ident">to_owned</span>()).<span class="ident">or_insert</span>(<span class="ident">Value</span>::<span class="ident">Null</span>)
-            }
-            _ <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot access key {:?} in JSON {}&quot;</span>, <span class="self">self</span>, <span class="ident">Type</span>(<span class="ident">v</span>)),
+            <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">map</span>) <span class="op">=&gt;</span> <span class="ident">map</span>.<span class="ident">entry</span>(<span class="self">self</span>.<span class="ident">to_owned</span>()).<span class="ident">or_insert</span>(<span class="ident">Value</span>::<span class="ident">Null</span>),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;cannot access key {:?} in JSON {}&quot;</span>, <span class="self">self</span>, <span class="ident">Type</span>(<span class="ident">v</span>)),
         }
     }
 }
@@ -433,11 +422,7 @@
     <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">usize</span> {}
     <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">str</span> {}
     <span class="kw">impl</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="ident">String</span> {}
-    <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span>
-    <span class="kw">where</span>
-        <span class="ident">T</span>: <span class="ident">Sealed</span>,
-    {
-    }
+    <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Sealed</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Sealed</span> {}
 }
 
 <span class="doccomment">/// Used in panic messages.</span>
@@ -447,11 +432,11 @@
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">formatter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="number">0</span> {
             <span class="ident">Value</span>::<span class="ident">Null</span> <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;null&quot;</span>),
-            <span class="ident">Value</span>::<span class="ident">Bool</span>(_) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;boolean&quot;</span>),
-            <span class="ident">Value</span>::<span class="ident">Number</span>(_) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;number&quot;</span>),
-            <span class="ident">Value</span>::<span class="ident">String</span>(_) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;string&quot;</span>),
-            <span class="ident">Value</span>::<span class="ident">Array</span>(_) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;array&quot;</span>),
-            <span class="ident">Value</span>::<span class="ident">Object</span>(_) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;object&quot;</span>),
+            <span class="ident">Value</span>::<span class="ident">Bool</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;boolean&quot;</span>),
+            <span class="ident">Value</span>::<span class="ident">Number</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;number&quot;</span>),
+            <span class="ident">Value</span>::<span class="ident">String</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;string&quot;</span>),
+            <span class="ident">Value</span>::<span class="ident">Array</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;array&quot;</span>),
+            <span class="ident">Value</span>::<span class="ident">Object</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">formatter</span>.<span class="ident">write_str</span>(<span class="string">&quot;object&quot;</span>),
         }
     }
 }
@@ -563,65 +548,4 @@
     }
 }
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "serde_json";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "serde_json";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

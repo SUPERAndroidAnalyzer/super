@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.3.1/src/format/mod.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>mod.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.4.6/src/format/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -641,11 +596,50 @@
 <span id="596">596</span>
 <span id="597">597</span>
 <span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
 </pre><pre class="rust ">
 <span class="comment">// This is a part of Chrono.</span>
 <span class="comment">// See README.md and LICENSE.txt for details.</span>
 
-<span class="doccomment">//! Formatting utilities for date and time.</span>
+<span class="doccomment">//! Formatting (and parsing) utilities for date and time.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This module provides the common types and routines to implement,</span>
+<span class="doccomment">//! for example, [`DateTime::format`](../struct.DateTime.html#method.format) or</span>
+<span class="doccomment">//! [`DateTime::parse_from_str`](../struct.DateTime.html#method.parse_from_str) methods.</span>
+<span class="doccomment">//! For most cases you should use these high-level interfaces.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Internally the formatting and parsing shares the same abstract **formatting items**,</span>
+<span class="doccomment">//! which are just an [`Iterator`](https://doc.rust-lang.org/std/iter/trait.Iterator.html) of</span>
+<span class="doccomment">//! the [`Item`](./enum.Item.html) type.</span>
+<span class="doccomment">//! They are generated from more readable **format strings**;</span>
+<span class="doccomment">//! currently Chrono supports [one built-in syntax closely resembling</span>
+<span class="doccomment">//! C&#39;s `strftime` format](./strftime/index.html).</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
@@ -653,10 +647,8 @@
 
 <span class="kw">use</span> {<span class="ident">Datelike</span>, <span class="ident">Timelike</span>, <span class="ident">Weekday</span>, <span class="ident">ParseWeekdayError</span>};
 <span class="kw">use</span> <span class="ident">div</span>::{<span class="ident">div_floor</span>, <span class="ident">mod_floor</span>};
-<span class="kw">use</span> <span class="ident">offset</span>::<span class="ident">Offset</span>;
-<span class="kw">use</span> <span class="ident">offset</span>::<span class="ident">fixed</span>::<span class="ident">FixedOffset</span>;
-<span class="kw">use</span> <span class="ident">naive</span>::<span class="ident">date</span>::<span class="ident">NaiveDate</span>;
-<span class="kw">use</span> <span class="ident">naive</span>::<span class="ident">time</span>::<span class="ident">NaiveTime</span>;
+<span class="kw">use</span> <span class="ident">offset</span>::{<span class="ident">Offset</span>, <span class="ident">FixedOffset</span>};
+<span class="kw">use</span> <span class="ident">naive</span>::{<span class="ident">NaiveDate</span>, <span class="ident">NaiveTime</span>};
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">strftime</span>::<span class="ident">StrftimeItems</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">parsed</span>::<span class="ident">Parsed</span>;
@@ -686,7 +678,7 @@
 <span class="doccomment">/// If the number is too long or (in some cases) negative, it is printed as is.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// The **parsing width** is the maximal width to be scanned.</span>
-<span class="doccomment">/// The parser only tries to consume from one to given number of digits (greedily). </span>
+<span class="doccomment">/// The parser only tries to consume from one to given number of digits (greedily).</span>
 <span class="doccomment">/// It also trims the preceding whitespaces if any.</span>
 <span class="doccomment">/// It cannot parse the negative number, so some date and time cannot be formatted then</span>
 <span class="doccomment">/// parsed with the same formatting items.</span>
@@ -819,14 +811,14 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// In the parser, the colon can be omitted and/or surrounded with any amount of whitespaces.</span>
     <span class="doccomment">/// The offset is limited from `-24:00` to `+24:00`,</span>
-    <span class="doccomment">/// which is same to [`FixedOffset`](../offset/fixed/struct.FixedOffset.html)&#39;s range.</span>
+    <span class="doccomment">/// which is same to [`FixedOffset`](../offset/struct.FixedOffset.html)&#39;s range.</span>
     <span class="ident">TimezoneOffsetColon</span>,
     <span class="doccomment">/// Offset from the local time to UTC (`+09:00` or `-04:00` or `Z`).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// In the parser, the colon can be omitted and/or surrounded with any amount of whitespaces,</span>
     <span class="doccomment">/// and `Z` can be either in upper case or in lower case.</span>
     <span class="doccomment">/// The offset is limited from `-24:00` to `+24:00`,</span>
-    <span class="doccomment">/// which is same to [`FixedOffset`](../offset/fixed/struct.FixedOffset.html)&#39;s range.</span>
+    <span class="doccomment">/// which is same to [`FixedOffset`](../offset/struct.FixedOffset.html)&#39;s range.</span>
     <span class="ident">TimezoneOffsetColonZ</span>,
     <span class="doccomment">/// Same to [`TimezoneOffsetColon`](#variant.TimezoneOffsetColon) but prints no colon.</span>
     <span class="doccomment">/// Parsing allows an optional colon.</span>
@@ -847,29 +839,28 @@
 }
 
 <span class="doccomment">/// An opaque type representing fixed-format item types for internal uses only.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">InternalFixed</span> {
-    <span class="ident">_dummy</span>: <span class="ident">Void</span>,
+    <span class="ident">val</span>: <span class="ident">InternalInternal</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">InternalFixed</span> {
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">_dummy</span> {}
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">PartialEq</span> <span class="kw">for</span> <span class="ident">InternalFixed</span> {
-    <span class="kw">fn</span> <span class="ident">eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_other</span>: <span class="kw-2">&amp;</span><span class="ident">InternalFixed</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">_dummy</span> {}
-    }
-}
-
-<span class="kw">impl</span> <span class="ident">Eq</span> <span class="kw">for</span> <span class="ident">InternalFixed</span> {
-}
-
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">InternalFixed</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;&lt;InternalFixed&gt;&quot;</span>)
-    }
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
+<span class="kw">enum</span> <span class="ident">InternalInternal</span> {
+    <span class="doccomment">/// Same as [`TimezoneOffsetColonZ`](#variant.TimezoneOffsetColonZ), but</span>
+    <span class="doccomment">/// allows missing minutes (per [ISO 8601][iso8601]).</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If you try to use this for printing.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// [iso8601]: https://en.wikipedia.org/wiki/ISO_8601#Time_offsets_from_UTC</span>
+    <span class="ident">TimezoneOffsetPermissive</span>,
+    <span class="doccomment">/// Same to [`Nanosecond`](#variant.Nanosecond) but the accuracy is fixed to 3 and there is no leading dot.</span>
+    <span class="ident">Nanosecond3NoDot</span>,
+    <span class="doccomment">/// Same to [`Nanosecond`](#variant.Nanosecond) but the accuracy is fixed to 6 and there is no leading dot.</span>
+    <span class="ident">Nanosecond6NoDot</span>,
+    <span class="doccomment">/// Same to [`Nanosecond`](#variant.Nanosecond) but the accuracy is fixed to 9 and there is no leading dot.</span>
+    <span class="ident">Nanosecond9NoDot</span>,
 }
 
 <span class="doccomment">/// A single formatting item. This is used for both formatting and parsing.</span>
@@ -898,6 +889,7 @@
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">num0</span> { (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> (<span class="ident">Item</span>::<span class="ident">Numeric</span>(<span class="ident">Numeric</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">Pad</span>::<span class="ident">Zero</span>)) }
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">nums</span> { (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> (<span class="ident">Item</span>::<span class="ident">Numeric</span>(<span class="ident">Numeric</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">Pad</span>::<span class="ident">Space</span>)) }
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">fix</span>  { (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> (<span class="ident">Item</span>::<span class="ident">Fixed</span>(<span class="ident">Fixed</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>)) }
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">internal_fix</span> { (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> (<span class="ident">Item</span>::<span class="ident">Fixed</span>(<span class="ident">Fixed</span>::<span class="ident">Internal</span>(<span class="ident">InternalFixed</span> { <span class="ident">val</span>: <span class="ident">InternalInternal</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> })))}
 
 <span class="doccomment">/// An error from the `parse` function.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Copy</span>)]</span>
@@ -996,32 +988,36 @@
                     (<span class="ident">d</span>.<span class="ident">ordinal</span>() <span class="kw">as</span> <span class="ident">i32</span> <span class="op">-</span> <span class="ident">d</span>.<span class="ident">weekday</span>().<span class="ident">num_days_from_monday</span>() <span class="kw">as</span> <span class="ident">i32</span> <span class="op">+</span> <span class="number">7</span>) <span class="op">/</span> <span class="number">7</span>;
 
                 <span class="kw">let</span> (<span class="ident">width</span>, <span class="ident">v</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">spec</span> {
-                    <span class="ident">Year</span>           <span class="op">=&gt;</span> (<span class="number">4</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">year</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">YearDiv100</span>     <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">div_floor</span>(<span class="ident">d</span>.<span class="ident">year</span>() <span class="kw">as</span> <span class="ident">i64</span>, <span class="number">100</span>))),
-                    <span class="ident">YearMod100</span>     <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">mod_floor</span>(<span class="ident">d</span>.<span class="ident">year</span>() <span class="kw">as</span> <span class="ident">i64</span>, <span class="number">100</span>))),
-                    <span class="ident">IsoYear</span>        <span class="op">=&gt;</span> (<span class="number">4</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">isoweekdate</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">IsoYearDiv100</span>  <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">div_floor</span>(<span class="ident">d</span>.<span class="ident">isoweekdate</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">i64</span>, <span class="number">100</span>))),
-                    <span class="ident">IsoYearMod100</span>  <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">mod_floor</span>(<span class="ident">d</span>.<span class="ident">isoweekdate</span>().<span class="number">0</span> <span class="kw">as</span> <span class="ident">i64</span>, <span class="number">100</span>))),
-                    <span class="ident">Month</span>          <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">month</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Day</span>            <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">day</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">WeekFromSun</span>    <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">week_from_sun</span>(<span class="ident">d</span>) <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">WeekFromMon</span>    <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">week_from_mon</span>(<span class="ident">d</span>) <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">IsoWeek</span>        <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">isoweekdate</span>().<span class="number">1</span> <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">NumDaysFromSun</span> <span class="op">=&gt;</span> (<span class="number">1</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">weekday</span>().<span class="ident">num_days_from_sunday</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">WeekdayFromMon</span> <span class="op">=&gt;</span> (<span class="number">1</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">weekday</span>().<span class="ident">number_from_monday</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Ordinal</span>        <span class="op">=&gt;</span> (<span class="number">3</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">d</span>.<span class="ident">ordinal</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Hour</span>           <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">hour</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Hour12</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">hour12</span>().<span class="number">1</span> <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Minute</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">minute</span>() <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Second</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> (<span class="ident">t</span>.<span class="ident">second</span>() <span class="op">+</span>
-                                                        <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">/</span> <span class="number">1_000_000_000</span>) <span class="kw">as</span> <span class="ident">i64</span>)),
-                    <span class="ident">Nanosecond</span>     <span class="op">=&gt;</span> (<span class="number">9</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> (<span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>) <span class="kw">as</span> <span class="ident">i64</span>)),
+                    <span class="ident">Year</span>           <span class="op">=&gt;</span> (<span class="number">4</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">year</span>()))),
+                    <span class="ident">YearDiv100</span>     <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">div_floor</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">year</span>()), <span class="number">100</span>))),
+                    <span class="ident">YearMod100</span>     <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">mod_floor</span>(<span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">year</span>()), <span class="number">100</span>))),
+                    <span class="ident">IsoYear</span>        <span class="op">=&gt;</span> (<span class="number">4</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">iso_week</span>().<span class="ident">year</span>()))),
+                    <span class="ident">IsoYearDiv100</span>  <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">div_floor</span>(
+                        <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">iso_week</span>().<span class="ident">year</span>()), <span class="number">100</span>))),
+                    <span class="ident">IsoYearMod100</span>  <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">mod_floor</span>(
+                        <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">iso_week</span>().<span class="ident">year</span>()), <span class="number">100</span>))),
+                    <span class="ident">Month</span>          <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">month</span>()))),
+                    <span class="ident">Day</span>            <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">day</span>()))),
+                    <span class="ident">WeekFromSun</span>    <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">week_from_sun</span>(<span class="ident">d</span>)))),
+                    <span class="ident">WeekFromMon</span>    <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">week_from_mon</span>(<span class="ident">d</span>)))),
+                    <span class="ident">IsoWeek</span>        <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">iso_week</span>().<span class="ident">week</span>()))),
+                    <span class="ident">NumDaysFromSun</span> <span class="op">=&gt;</span> (<span class="number">1</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">weekday</span>()
+                                                                  .<span class="ident">num_days_from_sunday</span>()))),
+                    <span class="ident">WeekdayFromMon</span> <span class="op">=&gt;</span> (<span class="number">1</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">weekday</span>()
+                                                                  .<span class="ident">number_from_monday</span>()))),
+                    <span class="ident">Ordinal</span>        <span class="op">=&gt;</span> (<span class="number">3</span>, <span class="ident">date</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">d</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">d</span>.<span class="ident">ordinal</span>()))),
+                    <span class="ident">Hour</span>           <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">hour</span>()))),
+                    <span class="ident">Hour12</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">hour12</span>().<span class="number">1</span>))),
+                    <span class="ident">Minute</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">minute</span>()))),
+                    <span class="ident">Second</span>         <span class="op">=&gt;</span> (<span class="number">2</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">second</span>() <span class="op">+</span>
+                                                        <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">/</span> <span class="number">1_000_000_000</span>))),
+                    <span class="ident">Nanosecond</span>     <span class="op">=&gt;</span> (<span class="number">9</span>, <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">i64</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>))),
                     <span class="ident">Timestamp</span>      <span class="op">=&gt;</span> (<span class="number">1</span>, <span class="kw">match</span> (<span class="ident">date</span>, <span class="ident">time</span>, <span class="ident">off</span>) {
                         (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">None</span>) <span class="op">=&gt;</span>
                             <span class="prelude-val">Some</span>(<span class="ident">d</span>.<span class="ident">and_time</span>(<span class="kw-2">*</span><span class="ident">t</span>).<span class="ident">timestamp</span>()),
-                        (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(_, <span class="ident">off</span>))) <span class="op">=&gt;</span>
+                        (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>))) <span class="op">=&gt;</span>
                             <span class="prelude-val">Some</span>((<span class="ident">d</span>.<span class="ident">and_time</span>(<span class="kw-2">*</span><span class="ident">t</span>) <span class="op">-</span> <span class="ident">off</span>).<span class="ident">timestamp</span>()),
-                        (_, _, _) <span class="op">=&gt;</span> <span class="prelude-val">None</span>
+                        (<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>
                     }),
 
                     <span class="comment">// for the future expansion</span>
@@ -1029,7 +1025,7 @@
                 };
 
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="ident">v</span> {
-                    <span class="kw">if</span> (<span class="ident">spec</span> <span class="op">==</span> <span class="ident">Year</span> <span class="op">||</span> <span class="ident">spec</span> <span class="op">==</span> <span class="ident">IsoYear</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span>(<span class="number">0</span> <span class="op">&lt;=</span> <span class="ident">v</span> <span class="op">&amp;&amp;</span> <span class="ident">v</span> <span class="op">&lt;</span> <span class="number">10000</span>) {
+                    <span class="kw">if</span> (<span class="ident">spec</span> <span class="op">==</span> <span class="ident">Year</span> <span class="op">||</span> <span class="ident">spec</span> <span class="op">==</span> <span class="ident">IsoYear</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span>(<span class="number">0</span> <span class="op">&lt;=</span> <span class="ident">v</span> <span class="op">&amp;&amp;</span> <span class="ident">v</span> <span class="op">&lt;</span> <span class="number">10_000</span>) {
                         <span class="comment">// non-four-digit years require an explicit sign as per ISO 8601</span>
                         <span class="kw">match</span> <span class="ident">pad</span> {
                             <span class="ident">Pad</span>::<span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{:+}&quot;</span>, <span class="ident">v</span>)),
@@ -1111,18 +1107,35 @@
                             <span class="kw">let</span> <span class="ident">nano</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>;
                             <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;.{:09}&quot;</span>, <span class="ident">nano</span>)
                         }),
+                    <span class="ident">Internal</span>(<span class="ident">InternalFixed</span> { <span class="ident">val</span>: <span class="ident">InternalInternal</span>::<span class="ident">Nanosecond3NoDot</span> }) <span class="op">=&gt;</span>
+                        <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
+                            <span class="kw">let</span> <span class="ident">nano</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>;
+                            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{:03}&quot;</span>, <span class="ident">nano</span> <span class="op">/</span> <span class="number">1_000_000</span>)
+                        }),
+                    <span class="ident">Internal</span>(<span class="ident">InternalFixed</span> { <span class="ident">val</span>: <span class="ident">InternalInternal</span>::<span class="ident">Nanosecond6NoDot</span> }) <span class="op">=&gt;</span>
+                        <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
+                            <span class="kw">let</span> <span class="ident">nano</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>;
+                            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{:06}&quot;</span>, <span class="ident">nano</span> <span class="op">/</span> <span class="number">1_000</span>)
+                        }),
+                    <span class="ident">Internal</span>(<span class="ident">InternalFixed</span> { <span class="ident">val</span>: <span class="ident">InternalInternal</span>::<span class="ident">Nanosecond9NoDot</span> }) <span class="op">=&gt;</span>
+                        <span class="ident">time</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
+                            <span class="kw">let</span> <span class="ident">nano</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="number">1_000_000_000</span>;
+                            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{:09}&quot;</span>, <span class="ident">nano</span>)
+                        }),
                     <span class="ident">TimezoneName</span> <span class="op">=&gt;</span>
-                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw-2">ref</span> <span class="ident">name</span>, _)<span class="op">|</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{}&quot;</span>, <span class="kw-2">*</span><span class="ident">name</span>)),
+                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw-2">ref</span> <span class="ident">name</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{}&quot;</span>, <span class="kw-2">*</span><span class="ident">name</span>)),
                     <span class="ident">TimezoneOffsetColon</span> <span class="op">=&gt;</span>
-                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(_, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">false</span>, <span class="bool-val">true</span>)),
+                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">false</span>, <span class="bool-val">true</span>)),
                     <span class="ident">TimezoneOffsetColonZ</span> <span class="op">=&gt;</span>
-                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(_, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">true</span>, <span class="bool-val">true</span>)),
+                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">true</span>, <span class="bool-val">true</span>)),
                     <span class="ident">TimezoneOffset</span> <span class="op">=&gt;</span>
-                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(_, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>)),
+                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>)),
                     <span class="ident">TimezoneOffsetZ</span> <span class="op">=&gt;</span>
-                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(_, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">true</span>, <span class="bool-val">false</span>)),
+                        <span class="ident">off</span>.<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>)<span class="op">|</span> <span class="ident">write_local_minus_utc</span>(<span class="ident">w</span>, <span class="ident">off</span>, <span class="bool-val">true</span>, <span class="bool-val">false</span>)),
+                    <span class="ident">Internal</span>(<span class="ident">InternalFixed</span> { <span class="ident">val</span>: <span class="ident">InternalInternal</span>::<span class="ident">TimezoneOffsetPermissive</span> }) <span class="op">=&gt;</span>
+                        <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Do not try to write %#z it is undefined&quot;</span>),
                     <span class="ident">RFC2822</span> <span class="op">=&gt;</span> <span class="comment">// same to `%a, %e %b %Y %H:%M:%S %z`</span>
-                        <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(_, <span class="ident">off</span>))) <span class="op">=</span> (<span class="ident">date</span>, <span class="ident">time</span>, <span class="ident">off</span>) {
+                        <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>))) <span class="op">=</span> (<span class="ident">date</span>, <span class="ident">time</span>, <span class="ident">off</span>) {
                             <span class="kw">let</span> <span class="ident">sec</span> <span class="op">=</span> <span class="ident">t</span>.<span class="ident">second</span>() <span class="op">+</span> <span class="ident">t</span>.<span class="ident">nanosecond</span>() <span class="op">/</span> <span class="number">1_000_000_000</span>;
                             <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{}, {:2} {} {:04} {:02}:{:02}:{:02} &quot;</span>,
                                         <span class="ident">SHORT_WEEKDAYS</span>[<span class="ident">d</span>.<span class="ident">weekday</span>().<span class="ident">num_days_from_monday</span>() <span class="kw">as</span> <span class="ident">usize</span>],
@@ -1133,7 +1146,7 @@
                             <span class="prelude-val">None</span>
                         },
                     <span class="ident">RFC3339</span> <span class="op">=&gt;</span> <span class="comment">// same to `%Y-%m-%dT%H:%M:%S%.f%:z`</span>
-                        <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(_, <span class="ident">off</span>))) <span class="op">=</span> (<span class="ident">date</span>, <span class="ident">time</span>, <span class="ident">off</span>) {
+                        <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Some</span>(<span class="ident">d</span>), <span class="prelude-val">Some</span>(<span class="ident">t</span>), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">off</span>))) <span class="op">=</span> (<span class="ident">date</span>, <span class="ident">time</span>, <span class="ident">off</span>) {
                             <span class="comment">// reuse `Debug` impls which already print ISO 8601 format.</span>
                             <span class="comment">// this is faster in this way.</span>
                             <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">w</span>, <span class="string">&quot;{:?}T{:?}&quot;</span>, <span class="ident">d</span>, <span class="ident">t</span>));
@@ -1141,9 +1154,6 @@
                         } <span class="kw">else</span> {
                             <span class="prelude-val">None</span>
                         },
-
-                    <span class="comment">// for the future expansion</span>
-                    <span class="ident">Internal</span>(<span class="kw-2">ref</span> <span class="ident">int</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">int</span>.<span class="ident">_dummy</span> {},
                 };
 
                 <span class="kw">match</span> <span class="ident">ret</span> {
@@ -1159,7 +1169,7 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">parsed</span>;
+<span class="kw">mod</span> <span class="ident">parsed</span>;
 
 <span class="comment">// due to the size of parsing routines, they are in separate modules.</span>
 <span class="kw">mod</span> <span class="ident">scan</span>;
@@ -1204,7 +1214,7 @@
 
 <span class="comment">// this implementation is here only because we need some private code from `scan`</span>
 
-<span class="doccomment">/// Parsing a `str` into a `Weekday` uses the format [`%W`](../../format/strftime/index.html).</span>
+<span class="doccomment">/// Parsing a `str` into a `Weekday` uses the format [`%W`](./format/strftime/index.html).</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
@@ -1239,67 +1249,5 @@
         }
     }
 }
-
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "chrono";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "chrono";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>

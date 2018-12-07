@@ -1,6 +1,4 @@
 (function() {var implementors = {};
-implementors["sha2"] = [];
-implementors["super"] = [];
 implementors["typenum"] = [];
 
             if (window.register_implementors) {

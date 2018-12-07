@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Color",""]],"mod":[["control",""]],"struct":[["ColoredString","Colored mean both color or styled"]],"trait":[["Colorize",""]]});
+initSidebarItems({"enum":[["Color","The 8 standard colors."]],"mod":[["control","A couple of functions to enable and disable coloring."]],"struct":[["ColoredString","A string that may have color and/or style applied to it."]],"trait":[["Colorize","The trait that enables something to be given color."]]});

@@ -1,49 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/clap-2.24.1/src/completions/zsh.rs`.">
-    <meta name="keywords" content="rust, rustlang, rust-lang">
-
-    <title>zsh.rs.html -- source</title>
-
-    <link rel="stylesheet" type="text/css" href="../../../normalize.css">
-    <link rel="stylesheet" type="text/css" href="../../../rustdoc.css">
-    <link rel="stylesheet" type="text/css" href="../../../main.css">
-    
-
-    
-    
-</head>
-<body class="rustdoc source">
-    <!--[if lte IE 8]>
-    <div class="warning">
-        This old browser is unsupported and will most likely display funky
-        things.
-    </div>
-    <![endif]-->
-
-    
-
-    <nav class="sidebar">
-        
-        
-    </nav>
-
-    <nav class="sub">
-        <form class="search-form js-only">
-            <div class="search-container">
-                <input class="search-input" name="search"
-                       autocomplete="off"
-                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
-                       type="search">
-            </div>
-        </form>
-    </nav>
-
-    <section id='main' class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/clap-2.32.0/src/completions/zsh.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>zsh.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -430,21 +385,107 @@
 <span id="385">385</span>
 <span id="386">386</span>
 <span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
 </pre><pre class="rust ">
-
 <span class="comment">// Std</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>, <span class="ident">unused_imports</span>)]</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ascii</span>::<span class="ident">AsciiExt</span>;
 
 <span class="comment">// Internal</span>
 <span class="kw">use</span> <span class="ident">app</span>::<span class="ident">App</span>;
 <span class="kw">use</span> <span class="ident">app</span>::<span class="ident">parser</span>::<span class="ident">Parser</span>;
-<span class="kw">use</span> <span class="ident">args</span>::{<span class="ident">ArgSettings</span>, <span class="ident">AnyArg</span>};
+<span class="kw">use</span> <span class="ident">args</span>::{<span class="ident">AnyArg</span>, <span class="ident">ArgSettings</span>};
 <span class="kw">use</span> <span class="ident">completions</span>;
 <span class="kw">use</span> <span class="ident">INTERNAL_ERROR_MSG</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ZshGen</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>
-    <span class="kw">where</span> <span class="lifetime">&#39;a</span>: <span class="lifetime">&#39;b</span>
+<span class="kw">where</span>
+    <span class="lifetime">&#39;a</span>: <span class="lifetime">&#39;b</span>,
 {
     <span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
 }
@@ -457,13 +498,24 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">generate_to</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) {
         <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::generate_to;&quot;</span>);
-        <span class="macro">w</span><span class="macro">!</span>(<span class="ident">buf</span>,
-            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\
+        <span class="macro">w</span><span class="macro">!</span>(
+            <span class="ident">buf</span>,
+            <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;\
 #compdef {name}
+
+autoload -U is-at-least
 
 _{name}() {{
     typeset -A opt_args
+    typeset -a _arguments_options
     local ret=1
+
+    if is-at-least 5.2; then
+        _arguments_options=(-s -S -C)
+    else
+        _arguments_options=(-s -C)
+    fi
 
     local context curcontext=\&quot;$curcontext\&quot; state line
     {initial_args}
@@ -473,15 +525,16 @@ _{name}() {{
 {subcommand_details}
 
 _{name} \&quot;$@\&quot;&quot;</span>,
-                   <span class="ident">name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>(),
-                   <span class="ident">initial_args</span> <span class="op">=</span> <span class="ident">get_args_of</span>(<span class="self">self</span>.<span class="ident">p</span>),
-                   <span class="ident">subcommands</span> <span class="op">=</span> <span class="ident">get_subcommands_of</span>(<span class="self">self</span>.<span class="ident">p</span>),
-                   <span class="ident">subcommand_details</span> <span class="op">=</span> <span class="ident">subcommand_details</span>(<span class="self">self</span>.<span class="ident">p</span>)).<span class="ident">as_bytes</span>());
-
+                <span class="ident">name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>(),
+                <span class="ident">initial_args</span> <span class="op">=</span> <span class="ident">get_args_of</span>(<span class="self">self</span>.<span class="ident">p</span>),
+                <span class="ident">subcommands</span> <span class="op">=</span> <span class="ident">get_subcommands_of</span>(<span class="self">self</span>.<span class="ident">p</span>),
+                <span class="ident">subcommand_details</span> <span class="op">=</span> <span class="ident">subcommand_details</span>(<span class="self">self</span>.<span class="ident">p</span>)
+            ).<span class="ident">as_bytes</span>()
+        );
     }
 }
 
-<span class="comment">// Displays the positional args and commands of a subcommand</span>
+<span class="comment">// Displays the commands of a subcommand</span>
 <span class="comment">// (( $+functions[_[bin_name_underscore]_commands] )) ||</span>
 <span class="comment">// _[bin_name_underscore]_commands() {</span>
 <span class="comment">// 	local commands; commands=(</span>
@@ -490,11 +543,11 @@ _{name} \&quot;$@\&quot;&quot;</span>,
 <span class="comment">// 	_describe -t commands &#39;[bin_name] commands&#39; commands &quot;$@&quot;</span>
 <span class="comment">//</span>
 <span class="comment">// Where the following variables are present:</span>
-<span class="comment">//    [bin_name_underscore]: The full space deliniated bin_name, where spaces have been replaced by</span>
+<span class="comment">//    [bin_name_underscore]: The full space delineated bin_name, where spaces have been replaced by</span>
 <span class="comment">//                           underscore characters</span>
-<span class="comment">//    [arg_name]: The name of the positional arg or subcommand</span>
-<span class="comment">//    [arg_help]: The help message of the arg or subcommand</span>
-<span class="comment">//    [bin_name]: The full space deliniated bin_name</span>
+<span class="comment">//    [arg_name]: The name of the subcommand</span>
+<span class="comment">//    [arg_help]: The help message of the subcommand</span>
+<span class="comment">//    [bin_name]: The full space delineated bin_name</span>
 <span class="comment">//</span>
 <span class="comment">// Here&#39;s a snippet from rustup:</span>
 <span class="comment">//</span>
@@ -511,7 +564,9 @@ _{name} \&quot;$@\&quot;&quot;</span>,
 <span class="kw">fn</span> <span class="ident">subcommand_details</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
     <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommand_details;&quot;</span>);
     <span class="comment">// First we do ourself</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
+        <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;\
 (( $+functions[_{bin_name_underscore}_commands] )) ||
 _{bin_name_underscore}_commands() {{
     local commands; commands=(
@@ -521,15 +576,18 @@ _{bin_name_underscore}_commands() {{
 }}&quot;</span>,
             <span class="ident">bin_name_underscore</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;__&quot;</span>),
             <span class="ident">bin_name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>(),
-            <span class="ident">subcommands_and_args</span> <span class="op">=</span> <span class="ident">subcommands_and_args_of</span>(<span class="ident">p</span>))];
+            <span class="ident">subcommands_and_args</span> <span class="op">=</span> <span class="ident">subcommands_of</span>(<span class="ident">p</span>)
+        ),
+    ];
 
     <span class="comment">// Next we start looping through all the children, grandchildren, etc.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">all_subcommands</span> <span class="op">=</span> <span class="ident">completions</span>::<span class="ident">all_subcommands</span>(<span class="ident">p</span>);
     <span class="ident">all_subcommands</span>.<span class="ident">sort</span>();
     <span class="ident">all_subcommands</span>.<span class="ident">dedup</span>();
-    <span class="kw">for</span> <span class="kw-2">&amp;</span>(_, <span class="kw-2">ref</span> <span class="ident">bin_name</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">all_subcommands</span> {
+    <span class="kw">for</span> <span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="kw-2">ref</span> <span class="ident">bin_name</span>) <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">all_subcommands</span> {
         <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommand_details:iter: bin_name={}&quot;</span>, <span class="ident">bin_name</span>);
-        <span class="ident">ret</span>.<span class="ident">push</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\
+        <span class="ident">ret</span>.<span class="ident">push</span>(<span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;\
 (( $+functions[_{bin_name_underscore}_commands] )) ||
 _{bin_name_underscore}_commands() {{
     local commands; commands=(
@@ -539,56 +597,55 @@ _{bin_name_underscore}_commands() {{
 }}&quot;</span>,
             <span class="ident">bin_name_underscore</span> <span class="op">=</span> <span class="ident">bin_name</span>.<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;__&quot;</span>),
             <span class="ident">bin_name</span> <span class="op">=</span> <span class="ident">bin_name</span>,
-            <span class="ident">subcommands_and_args</span> <span class="op">=</span> <span class="ident">subcommands_and_args_of</span>(<span class="ident">parser_of</span>(<span class="ident">p</span>, <span class="ident">bin_name</span>))));
+            <span class="ident">subcommands_and_args</span> <span class="op">=</span> <span class="ident">subcommands_of</span>(<span class="ident">parser_of</span>(<span class="ident">p</span>, <span class="ident">bin_name</span>))
+        ));
     }
 
     <span class="ident">ret</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
 }
 
-<span class="comment">// Generates subcommand and positional argument completions in form of</span>
+<span class="comment">// Generates subcommand completions in form of</span>
 <span class="comment">//</span>
 <span class="comment">// 		&#39;[arg_name]:[arg_help]&#39;</span>
 <span class="comment">//</span>
 <span class="comment">// Where:</span>
-<span class="comment">//    [arg_name]: the argument or subcommand&#39;s name</span>
-<span class="comment">//    [arg_help]: the help message of the argument or subcommand</span>
+<span class="comment">//    [arg_name]: the subcommand&#39;s name</span>
+<span class="comment">//    [arg_help]: the help message of the subcommand</span>
 <span class="comment">//</span>
 <span class="comment">// A snippet from rustup:</span>
 <span class="comment">// 		&#39;show:Show the active and installed toolchains&#39;</span>
 <span class="comment">//      &#39;update:Update Rust toolchains&#39;</span>
-<span class="kw">fn</span> <span class="ident">subcommands_and_args_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
-    <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommands_and_args_of;&quot;</span>);
+<span class="kw">fn</span> <span class="ident">subcommands_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommands_of;&quot;</span>);
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">fn</span> <span class="ident">add_sc</span>(<span class="ident">sc</span>: <span class="kw-2">&amp;</span><span class="ident">App</span>, <span class="ident">n</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">ret</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>) {
         <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::add_sc;&quot;</span>);
-        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{name}:{help}\&quot; \\&quot;</span>, 
-            <span class="ident">name</span> <span class="op">=</span> <span class="ident">n</span>, 
-            <span class="ident">help</span> <span class="op">=</span> <span class="ident">sc</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">about</span>.<span class="ident">unwrap_or</span>(<span class="string">&quot;&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>));
+        <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;\&quot;{name}:{help}\&quot; \\&quot;</span>,
+            <span class="ident">name</span> <span class="op">=</span> <span class="ident">n</span>,
+            <span class="ident">help</span> <span class="op">=</span> <span class="ident">sc</span>.<span class="ident">p</span>
+                .<span class="ident">meta</span>
+                .<span class="ident">about</span>
+                .<span class="ident">unwrap_or</span>(<span class="string">&quot;&quot;</span>)
+                .<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>)
+                .<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>)
+        );
         <span class="kw">if</span> <span class="op">!</span><span class="ident">s</span>.<span class="ident">is_empty</span>() {
             <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">s</span>);
         }
     }
 
-    <span class="comment">// First the subcommands</span>
+    <span class="comment">// The subcommands</span>
     <span class="kw">for</span> <span class="ident">sc</span> <span class="kw">in</span> <span class="ident">p</span>.<span class="ident">subcommands</span>() {
-        <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommands_and_args_of:iter: subcommand={}&quot;</span>, <span class="ident">sc</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>);
+        <span class="macro">debugln</span><span class="macro">!</span>(
+            <span class="string">&quot;ZshGen::subcommands_of:iter: subcommand={}&quot;</span>,
+            <span class="ident">sc</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>
+        );
         <span class="ident">add_sc</span>(<span class="ident">sc</span>, <span class="kw-2">&amp;</span><span class="ident">sc</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ret</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">v</span>) <span class="op">=</span> <span class="ident">sc</span>.<span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">aliases</span> {
-            <span class="kw">for</span> <span class="ident">alias</span> <span class="kw">in</span> <span class="ident">v</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="op">&amp;&amp;</span>(_, <span class="ident">vis</span>)<span class="op">|</span> <span class="ident">vis</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, _)<span class="op">|</span> <span class="ident">n</span>) {
+            <span class="kw">for</span> <span class="ident">alias</span> <span class="kw">in</span> <span class="ident">v</span>.<span class="ident">iter</span>().<span class="ident">filter</span>(<span class="op">|</span><span class="op">&amp;&amp;</span>(<span class="kw">_</span>, <span class="ident">vis</span>)<span class="op">|</span> <span class="ident">vis</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">n</span>) {
                 <span class="ident">add_sc</span>(<span class="ident">sc</span>, <span class="ident">alias</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ret</span>);
             }
-        }
-    }
-
-    <span class="comment">// Then the positional args</span>
-    <span class="kw">for</span> <span class="ident">arg</span> <span class="kw">in</span> <span class="ident">p</span>.<span class="ident">positionals</span>() {
-        <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;ZshGen::subcommands_and_args_of:iter: arg={}&quot;</span>, <span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">name</span>);
-        <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{name}:{help}\&quot; \\&quot;</span>, 
-            <span class="ident">name</span> <span class="op">=</span> <span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">name</span>.<span class="ident">to_ascii_uppercase</span>(), 
-            <span class="ident">help</span> <span class="op">=</span> <span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">help</span>.<span class="ident">unwrap_or</span>(<span class="string">&quot;&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>));
-
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">a</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">a</span>);
         }
     }
 
@@ -620,14 +677,17 @@ _{bin_name_underscore}_commands() {{
 <span class="comment">//</span>
 <span class="comment">// Where the following variables are present:</span>
 <span class="comment">//    [name] = The subcommand name in the form of &quot;install&quot; for &quot;rustup toolchain install&quot;</span>
-<span class="comment">//    [bin_name] = The full space deliniated bin_name such as &quot;rustup toolchain install&quot;</span>
-<span class="comment">//    [name_hyphen] = The full space deliniated bin_name, but replace spaces with hyphens</span>
+<span class="comment">//    [bin_name] = The full space delineated bin_name such as &quot;rustup toolchain install&quot;</span>
+<span class="comment">//    [name_hyphen] = The full space delineated bin_name, but replace spaces with hyphens</span>
 <span class="comment">//    [repeat] = From the same recursive calls, but for all subcommands</span>
 <span class="comment">//    [subcommand_args] = The same as zsh::get_args_of</span>
 <span class="kw">fn</span> <span class="ident">get_subcommands_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
     <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;get_subcommands_of;&quot;</span>);
 
-    <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;get_subcommands_of: Has subcommands...{:?}&quot;</span>, <span class="ident">p</span>.<span class="ident">has_subcommands</span>());
+    <span class="macro">debugln</span><span class="macro">!</span>(
+        <span class="string">&quot;get_subcommands_of: Has subcommands...{:?}&quot;</span>,
+        <span class="ident">p</span>.<span class="ident">has_subcommands</span>()
+    );
     <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">has_subcommands</span>() {
         <span class="kw">return</span> <span class="ident">String</span>::<span class="ident">new</span>();
     }
@@ -650,17 +710,21 @@ _{bin_name_underscore}_commands() {{
     }
 
     <span class="macro">format</span><span class="macro">!</span>(
-<span class="string">&quot;case $state in
+        <span class="string">&quot;case $state in
     ({name})
-        curcontext=\&quot;${{curcontext%:*:*}}:{name_hyphen}-command-$words[1]:\&quot;
-        case $line[1] in
+        words=($line[{pos}] \&quot;${{words[@]}}\&quot;)
+        (( CURRENT += 1 ))
+        curcontext=\&quot;${{curcontext%:*:*}}:{name_hyphen}-command-$line[{pos}]:\&quot;
+        case $line[{pos}] in
             {subcommands}
         esac
     ;;
-esac&quot;</span>, 
+esac&quot;</span>,
         <span class="ident">name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>,
         <span class="ident">name_hyphen</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;-&quot;</span>),
-        <span class="ident">subcommands</span> <span class="op">=</span> <span class="ident">subcmds</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>))
+        <span class="ident">subcommands</span> <span class="op">=</span> <span class="ident">subcmds</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>),
+        <span class="ident">pos</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">positionals</span>().<span class="ident">len</span>() <span class="op">+</span> <span class="number">1</span>
+    )
 }
 
 <span class="kw">fn</span> <span class="ident">parser_of</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span>, <span class="ident">sc</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">Parser</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
@@ -671,8 +735,8 @@ esac&quot;</span>,
     <span class="kw-2">&amp;</span><span class="ident">p</span>.<span class="ident">find_subcommand</span>(<span class="ident">sc</span>).<span class="ident">expect</span>(<span class="ident">INTERNAL_ERROR_MSG</span>).<span class="ident">p</span>
 }
 
-<span class="comment">// Writes out the args section, which ends up being the flags and opts, and a jump to</span>
-<span class="comment">// another ZSH function if there are positional args or subcommands.</span>
+<span class="comment">// Writes out the args section, which ends up being the flags, opts and postionals, and a jump to</span>
+<span class="comment">// another ZSH function if there are subcommands.</span>
 <span class="comment">// The structer works like this:</span>
 <span class="comment">//    ([conflicting_args]) [multiple] arg [takes_value] [[help]] [: :(possible_values)]</span>
 <span class="comment">//       ^-- list &#39;-v -h&#39;    ^--&#39;*&#39;          ^--&#39;+&#39;                   ^-- list &#39;one two three&#39;</span>
@@ -683,8 +747,8 @@ esac&quot;</span>,
 <span class="comment">// 		&#39;(-h --help --verbose)-v[Enable verbose output]&#39; \</span>
 <span class="comment">// 		&#39;(-V -v --version --verbose --help)-h[Prints help information]&#39; \</span>
 <span class="comment">//      # ... snip for brevity</span>
-<span class="comment">// 		&#39;1:: :_rustup_commands&#39; \   # &lt;-- displays positional args and subcommands</span>
-<span class="comment">// 		&#39;*:: :-&gt;rustup&#39; \           # &lt;-- displays subcommand args and child subcommands</span>
+<span class="comment">// 		&#39;:: :_rustup_commands&#39; \    # &lt;-- displays subcommands</span>
+<span class="comment">// 		&#39;*::: :-&gt;rustup&#39; \          # &lt;-- displays subcommand args and child subcommands</span>
 <span class="comment">// 	&amp;&amp; ret=0</span>
 <span class="comment">//</span>
 <span class="comment">// The args used for _arguments are as follows:</span>
@@ -693,17 +757,20 @@ esac&quot;</span>,
 <span class="comment">//    -S: Do not complete anything after &#39;--&#39; and treat those as argument values</span>
 <span class="kw">fn</span> <span class="ident">get_args_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
     <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;get_args_of;&quot;</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;_arguments -s -S -C \\&quot;</span>)];
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;_arguments \&quot;${_arguments_options[@]}\&quot; \\&quot;</span>)];
     <span class="kw">let</span> <span class="ident">opts</span> <span class="op">=</span> <span class="ident">write_opts_of</span>(<span class="ident">p</span>);
     <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">write_flags_of</span>(<span class="ident">p</span>);
-    <span class="kw">let</span> <span class="ident">sc_or_a</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">has_subcommands</span>() <span class="op">||</span> <span class="ident">p</span>.<span class="ident">has_positionals</span>() {
-        <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;1:: :_{name}_commands\&quot; \\&quot;</span>, 
-                <span class="ident">name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;__&quot;</span>))
+    <span class="kw">let</span> <span class="ident">positionals</span> <span class="op">=</span> <span class="ident">write_positionals_of</span>(<span class="ident">p</span>);
+    <span class="kw">let</span> <span class="ident">sc_or_a</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">has_subcommands</span>() {
+        <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;\&quot;:: :_{name}_commands\&quot; \\&quot;</span>,
+            <span class="ident">name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">bin_name</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;__&quot;</span>)
+        )
     } <span class="kw">else</span> {
         <span class="ident">String</span>::<span class="ident">new</span>()
     };
     <span class="kw">let</span> <span class="ident">sc</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">has_subcommands</span>() {
-        <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;*:: :-&gt;{name}\&quot; \\&quot;</span>, <span class="ident">name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>)
+        <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;*::: :-&gt;{name}\&quot; \\&quot;</span>, <span class="ident">name</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">meta</span>.<span class="ident">name</span>)
     } <span class="kw">else</span> {
         <span class="ident">String</span>::<span class="ident">new</span>()
     };
@@ -713,6 +780,9 @@ esac&quot;</span>,
     }
     <span class="kw">if</span> <span class="op">!</span><span class="ident">flags</span>.<span class="ident">is_empty</span>() {
         <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">flags</span>);
+    }
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">positionals</span>.<span class="ident">is_empty</span>() {
+        <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">positionals</span>);
     }
     <span class="kw">if</span> <span class="op">!</span><span class="ident">sc_or_a</span>.<span class="ident">is_empty</span>() {
         <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">sc_or_a</span>);
@@ -725,12 +795,31 @@ esac&quot;</span>,
     <span class="ident">ret</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
 }
 
+<span class="comment">// Escape help string inside single quotes and brackets</span>
+<span class="kw">fn</span> <span class="ident">escape_help</span>(<span class="ident">string</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="ident">string</span>
+        .<span class="ident">replace</span>(<span class="string">&quot;\\&quot;</span>, <span class="string">&quot;\\\\&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;&#39;&quot;</span>, <span class="string">&quot;&#39;\\&#39;&#39;&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>)
+}
+
+<span class="comment">// Escape value string inside single quotes and parentheses</span>
+<span class="kw">fn</span> <span class="ident">escape_value</span>(<span class="ident">string</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="ident">string</span>
+        .<span class="ident">replace</span>(<span class="string">&quot;\\&quot;</span>, <span class="string">&quot;\\\\&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;&#39;&quot;</span>, <span class="string">&quot;&#39;\\&#39;&#39;&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;(&quot;</span>, <span class="string">&quot;\\(&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot;)&quot;</span>, <span class="string">&quot;\\)&quot;</span>)
+        .<span class="ident">replace</span>(<span class="string">&quot; &quot;</span>, <span class="string">&quot;\\ &quot;</span>)
+}
+
 <span class="kw">fn</span> <span class="ident">write_opts_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
     <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_opts_of;&quot;</span>);
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">for</span> <span class="ident">o</span> <span class="kw">in</span> <span class="ident">p</span>.<span class="ident">opts</span>() {
         <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_opts_of:iter: o={}&quot;</span>, <span class="ident">o</span>.<span class="ident">name</span>());
-        <span class="kw">let</span> <span class="ident">help</span> <span class="op">=</span> <span class="ident">o</span>.<span class="ident">help</span>().<span class="ident">unwrap_or</span>(<span class="string">&quot;&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>);
+        <span class="kw">let</span> <span class="ident">help</span> <span class="op">=</span> <span class="ident">o</span>.<span class="ident">help</span>().<span class="ident">map_or</span>(<span class="ident">String</span>::<span class="ident">new</span>(), <span class="ident">escape_help</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">conflicts</span> <span class="op">=</span> <span class="macro">get_zsh_arg_conflicts</span><span class="macro">!</span>(<span class="ident">p</span>, <span class="ident">o</span>, <span class="ident">INTERNAL_ERROR_MSG</span>);
         <span class="ident">conflicts</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">conflicts</span>.<span class="ident">is_empty</span>() {
             <span class="ident">String</span>::<span class="ident">new</span>()
@@ -744,28 +833,33 @@ esac&quot;</span>,
             <span class="string">&quot;&quot;</span>
         };
         <span class="kw">let</span> <span class="ident">pv</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pv_vec</span>) <span class="op">=</span> <span class="ident">o</span>.<span class="ident">possible_vals</span>() {
-            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;: :({})&quot;</span>, <span class="ident">pv_vec</span>.<span class="ident">join</span>(<span class="string">&quot; &quot;</span>))
+            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;: :({})&quot;</span>, <span class="ident">pv_vec</span>.<span class="ident">iter</span>().<span class="ident">map</span>(
+                <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">escape_value</span>(<span class="kw-2">*</span><span class="ident">v</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>().<span class="ident">join</span>(<span class="string">&quot; &quot;</span>))
         } <span class="kw">else</span> {
             <span class="ident">String</span>::<span class="ident">new</span>()
         };
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">short</span>) <span class="op">=</span> <span class="ident">o</span>.<span class="ident">short</span>() {
-            <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{conflicts}{multiple}-{arg}+[{help}]{possible_values}\&quot; \\&quot;</span>,
+            <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;&#39;{conflicts}{multiple}-{arg}+[{help}]{possible_values}&#39; \\&quot;</span>,
                 <span class="ident">conflicts</span> <span class="op">=</span> <span class="ident">conflicts</span>,
                 <span class="ident">multiple</span> <span class="op">=</span> <span class="ident">multiple</span>,
                 <span class="ident">arg</span> <span class="op">=</span> <span class="ident">short</span>,
                 <span class="ident">possible_values</span> <span class="op">=</span> <span class="ident">pv</span>,
-                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>);
+                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>
+            );
 
             <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_opts_of:iter: Wrote...{}&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">s</span>);
             <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">s</span>);
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">long</span>) <span class="op">=</span> <span class="ident">o</span>.<span class="ident">long</span>() {
-            <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{conflicts}{multiple}--{arg}+[{help}]{possible_values}\&quot; \\&quot;</span>,
+            <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;&#39;{conflicts}{multiple}--{arg}=[{help}]{possible_values}&#39; \\&quot;</span>,
                 <span class="ident">conflicts</span> <span class="op">=</span> <span class="ident">conflicts</span>,
                 <span class="ident">multiple</span> <span class="op">=</span> <span class="ident">multiple</span>,
                 <span class="ident">arg</span> <span class="op">=</span> <span class="ident">long</span>,
                 <span class="ident">possible_values</span> <span class="op">=</span> <span class="ident">pv</span>,
-                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>);
+                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>
+            );
 
             <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_opts_of:iter: Wrote...{}&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">l</span>);
             <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">l</span>);
@@ -780,7 +874,7 @@ esac&quot;</span>,
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">for</span> <span class="ident">f</span> <span class="kw">in</span> <span class="ident">p</span>.<span class="ident">flags</span>() {
         <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_flags_of:iter: f={}&quot;</span>, <span class="ident">f</span>.<span class="ident">name</span>());
-        <span class="kw">let</span> <span class="ident">help</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">help</span>().<span class="ident">unwrap_or</span>(<span class="string">&quot;&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>).<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>);
+        <span class="kw">let</span> <span class="ident">help</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">help</span>().<span class="ident">map_or</span>(<span class="ident">String</span>::<span class="ident">new</span>(), <span class="ident">escape_help</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">conflicts</span> <span class="op">=</span> <span class="macro">get_zsh_arg_conflicts</span><span class="macro">!</span>(<span class="ident">p</span>, <span class="ident">f</span>, <span class="ident">INTERNAL_ERROR_MSG</span>);
         <span class="ident">conflicts</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">conflicts</span>.<span class="ident">is_empty</span>() {
             <span class="ident">String</span>::<span class="ident">new</span>()
@@ -794,22 +888,26 @@ esac&quot;</span>,
             <span class="string">&quot;&quot;</span>
         };
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">short</span>) <span class="op">=</span> <span class="ident">f</span>.<span class="ident">short</span>() {
-            <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{conflicts}{multiple}-{arg}[{help}]\&quot; \\&quot;</span>,
+            <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;&#39;{conflicts}{multiple}-{arg}[{help}]&#39; \\&quot;</span>,
                 <span class="ident">multiple</span> <span class="op">=</span> <span class="ident">multiple</span>,
                 <span class="ident">conflicts</span> <span class="op">=</span> <span class="ident">conflicts</span>,
                 <span class="ident">arg</span> <span class="op">=</span> <span class="ident">short</span>,
-                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>);
+                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>
+            );
 
             <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_flags_of:iter: Wrote...{}&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">s</span>);
             <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">s</span>);
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">long</span>) <span class="op">=</span> <span class="ident">f</span>.<span class="ident">long</span>() {
-            <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\&quot;{conflicts}{multiple}--{arg}[{help}]\&quot; \\&quot;</span>,
+            <span class="kw">let</span> <span class="ident">l</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+                <span class="string">&quot;&#39;{conflicts}{multiple}--{arg}[{help}]&#39; \\&quot;</span>,
                 <span class="ident">conflicts</span> <span class="op">=</span> <span class="ident">conflicts</span>,
                 <span class="ident">multiple</span> <span class="op">=</span> <span class="ident">multiple</span>,
                 <span class="ident">arg</span> <span class="op">=</span> <span class="ident">long</span>,
-                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>);
+                <span class="ident">help</span> <span class="op">=</span> <span class="ident">help</span>
+            );
 
             <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_flags_of:iter: Wrote...{}&quot;</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">l</span>);
             <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">l</span>);
@@ -818,66 +916,32 @@ esac&quot;</span>,
 
     <span class="ident">ret</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
 }
+
+<span class="kw">fn</span> <span class="ident">write_positionals_of</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_positionals_of;&quot;</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ret</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+    <span class="kw">for</span> <span class="ident">arg</span> <span class="kw">in</span> <span class="ident">p</span>.<span class="ident">positionals</span>() {
+        <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_positionals_of:iter: arg={}&quot;</span>, <span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">name</span>);
+        <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="string">&quot;&#39;{optional}:{name}{help}:{action}&#39; \\&quot;</span>,
+            <span class="ident">optional</span> <span class="op">=</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">is_set</span>(<span class="ident">ArgSettings</span>::<span class="ident">Required</span>) { <span class="string">&quot;:&quot;</span> } <span class="kw">else</span> { <span class="string">&quot;&quot;</span> },
+            <span class="ident">name</span> <span class="op">=</span> <span class="ident">arg</span>.<span class="ident">b</span>.<span class="ident">name</span>,
+            <span class="ident">help</span> <span class="op">=</span> <span class="ident">arg</span>.<span class="ident">b</span>
+                .<span class="ident">help</span>
+                .<span class="ident">map_or</span>(<span class="string">&quot;&quot;</span>.<span class="ident">to_owned</span>(), <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="string">&quot; -- &quot;</span>.<span class="ident">to_owned</span>() <span class="op">+</span> <span class="ident">v</span>)
+                .<span class="ident">replace</span>(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;\\[&quot;</span>)
+                .<span class="ident">replace</span>(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;\\]&quot;</span>),
+            <span class="ident">action</span> <span class="op">=</span> <span class="ident">arg</span>.<span class="ident">possible_vals</span>().<span class="ident">map_or</span>(<span class="string">&quot;_files&quot;</span>.<span class="ident">to_owned</span>(), <span class="op">|</span><span class="ident">values</span><span class="op">|</span> {
+                <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;({})&quot;</span>,
+                    <span class="ident">values</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="ident">escape_value</span>(<span class="kw-2">*</span><span class="ident">v</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>().<span class="ident">join</span>(<span class="string">&quot; &quot;</span>))
+            })
+        );
+
+        <span class="macro">debugln</span><span class="macro">!</span>(<span class="string">&quot;write_positionals_of:iter: Wrote...{}&quot;</span>, <span class="ident">a</span>);
+        <span class="ident">ret</span>.<span class="ident">push</span>(<span class="ident">a</span>);
+    }
+
+    <span class="ident">ret</span>.<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
+}
 </pre>
-</section>
-    <section id='search' class="content hidden"></section>
-
-    <section class="footer"></section>
-
-    <aside id="help" class="hidden">
-        <div>
-            <h1 class="hidden">Help</h1>
-
-            <div class="shortcuts">
-                <h2>Keyboard Shortcuts</h2>
-
-                <dl>
-                    <dt>?</dt>
-                    <dd>Show this help dialog</dd>
-                    <dt>S</dt>
-                    <dd>Focus the search field</dd>
-                    <dt>&larrb;</dt>
-                    <dd>Move up in search results</dd>
-                    <dt>&rarrb;</dt>
-                    <dd>Move down in search results</dd>
-                    <dt>&#9166;</dt>
-                    <dd>Go to active search result</dd>
-                    <dt>+</dt>
-                    <dd>Collapse/expand all sections</dd>
-                </dl>
-            </div>
-
-            <div class="infos">
-                <h2>Search Tricks</h2>
-
-                <p>
-                    Prefix searches with a type followed by a colon (e.g.
-                    <code>fn:</code>) to restrict the search to a given type.
-                </p>
-
-                <p>
-                    Accepted types are: <code>fn</code>, <code>mod</code>,
-                    <code>struct</code>, <code>enum</code>,
-                    <code>trait</code>, <code>type</code>, <code>macro</code>,
-                    and <code>const</code>.
-                </p>
-
-                <p>
-                    Search functions by type signature (e.g.
-                    <code>vec -> usize</code> or <code>* -> vec</code>)
-                </p>
-            </div>
-        </div>
-    </aside>
-
-    
-
-    <script>
-        window.rootPath = "../../../";
-        window.currentCrate = "clap";
-    </script>
-    <script src="../../../jquery.js"></script>
-    <script src="../../../main.js"></script>
-    <script defer src="../../../search-index.js"></script>
-</body>
-</html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "clap";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>
