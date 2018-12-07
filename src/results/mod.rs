@@ -202,7 +202,7 @@ impl Results {
                 // );
             }
             Criticality::Critical => {
-                let new = self.critical.insert(vuln.clone());
+                let new = self.critical.insert(vuln);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
