@@ -36,14 +36,14 @@ elif [ "$action" = "test_unstable_ignored" ]; then
 # Run Clippy.
 elif [ "$action" = "clippy_run" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
-    rustup component add clippy-preview &&
+    rustup component add clippy &&
     cargo clippy --verbose
   fi
 
 # Check formatting.
 elif [ "$action" = "fmt_run" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
-    rustup component add rustfmt-preview &&
+    rustup component add rustfmt &&
     cargo fmt --verbose -- --check
   fi
 

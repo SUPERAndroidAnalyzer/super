@@ -17,6 +17,7 @@ addons:
     - libiberty-dev
     - zlib1g-dev
 
+# Run builds in Linux, MacOS X and Windows
 os:
 - linux
 - osx
@@ -36,7 +37,7 @@ stages:
 # Extra jobs to include
 jobs:
   include:
-  # Test package generation for multiple distributions.
+  # Test package generation for multiple distributions
   - os: linux
     rust: stable
     stage: test
@@ -86,7 +87,6 @@ jobs:
 matrix:
   allow_failures:
   - os: windows
-    rust: nightly
 
 before_script:
 - export PATH=$PATH:~/.cargo/bin
