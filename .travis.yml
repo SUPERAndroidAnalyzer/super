@@ -41,23 +41,28 @@ jobs:
   - os: linux
     rust: stable
     stage: test
+    env: CACHE_NAME=DEBIAN
     script: ./travis-helper.sh dist_test debian
   - os: linux
     rust: stable
     stage: test
+    env: CACHE_NAME=UBUNTU
     script: ./travis-helper.sh dist_test ubuntu
   - os: linux
     rust: stable
     stage: test
+    env: CACHE_NAME=FEDORA
     script: ./travis-helper.sh dist_test fedora
   - os: linux
     rust: stable
     stage: test
+    env: CACHE_NAME=CENTOS
     script: ./travis-helper.sh dist_test centos
   # Upload documentation
   - os: linux
     rust: stable
     stage: deploy
+    env: CACHE_NAME=DOCS
     script: ./travis-helper.sh documentation
     deploy: &pages
       provider: pages
@@ -72,6 +77,7 @@ jobs:
   - os: linux
     rust: false
     stage: deploy
+    env: CACHE_NAME=DEPLOY
     script: ./travis-helper.sh deploy
     deploy: &releases
       provider: releases
