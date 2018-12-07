@@ -49,7 +49,10 @@ elif [ "$action" = "fmt_run" ]; then
 
 # Upload code coverage report for stable builds in Linux.
 elif [ "$action" = "upload_code_coverage" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
+  if [[ "$TRAVIS_BUILD_STAGE_NAME" == "Test" &&
+        "$TRAVIS_RUST_VERSION" == "stable" &&
+        "$TRAVIS_OS_NAME" == "linux" &&
+        "$TRAVIS_JOB_NAME" != *"packaging"*]]; then
     wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
     tar xzf master.tar.gz &&
     cd kcov-master &&

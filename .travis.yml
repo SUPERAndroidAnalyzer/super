@@ -38,35 +38,40 @@ stages:
 jobs:
   include:
   # Test package generation for multiple distributions
-  - os: linux
+  - name: "Debian packaging"
+    os: linux
     rust: stable
     stage: test
     env: CACHE_NAME=DEBIAN
     script: ./travis-helper.sh dist_test debian
-  - os: linux
+  - name: "Ubuntu packaging"
+    os: linux
     rust: stable
     stage: test
     env: CACHE_NAME=UBUNTU
     script: ./travis-helper.sh dist_test ubuntu
-  - os: linux
+  - name: "Fedora packaging"
+    os: linux
     rust: stable
     stage: test
     env: CACHE_NAME=FEDORA
     script: ./travis-helper.sh dist_test fedora
-  - os: linux
+  - name: "CentOS packaging"
+    os: linux
     rust: stable
     stage: test
     env: CACHE_NAME=CENTOS
     script: ./travis-helper.sh dist_test centos
   # Upload documentation
-  - os: linux
+  - name: "Documentation upload"
+    os: linux
     rust: stable
     stage: deploy
     env: CACHE_NAME=DOCS
     script: ./travis-helper.sh documentation
     deploy: &pages
       provider: pages
-      github-token: $GITHUB_TOKEN
+      github-token: $GH_TOKEN
       local-dir: target/doc/*
       skip_cleanup: true
       keep-history: true
@@ -74,8 +79,9 @@ jobs:
         repo: SUPERAndroidAnalyzer/super
         branch: develop
   # Deploy the release
-  - os: linux
-    rust: false
+  - name: "Release deployment"
+    os: linux
+    rust: stable
     stage: deploy
     env: CACHE_NAME=DEPLOY
     script: ./travis-helper.sh deploy
