@@ -35,7 +35,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref()).context("error loading apk file")?;
+        let mut apk = Apk::from_path(package.as_ref()).context("error loading apk file")?;
         apk.export(&path, true).context(format_err!(
             "could not decompress the apk file. Tried to decompile at: {}",
             path.display()
