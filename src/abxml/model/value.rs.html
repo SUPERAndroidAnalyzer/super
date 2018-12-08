@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/abxml-0.6.2/src/model/value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>value.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/abxml-0.7.1/src/model/value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>value.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -451,7 +451,7 @@
 <span class="kw">impl</span> <span class="ident">Value</span> {
     <span class="doccomment">/// Creates a new `Value`. If the payload can not be interpreted by the given `value_type`, it</span>
     <span class="doccomment">/// will return an error. If the type is not know, it will return `Value::Unknown`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">value_type</span> {
             <span class="ident">TOKEN_TYPE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span> <span class="op">=&gt;</span> <span class="ident">Value</span>::<span class="ident">ReferenceId</span>(<span class="ident">data</span>),
             <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span> <span class="op">=&gt;</span> {
@@ -565,15 +565,15 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_string_value</span>() {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_STRING</span>, <span class="number">33</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_STRING</span>, <span class="number">33</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;@string/33&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_reference_and_dyn_references</span>() {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_REFERENCE_ID</span>, <span class="number">12345</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">value2</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_DYN_REFERENCE</span>, <span class="number">67890</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_REFERENCE_ID</span>, <span class="number">12345</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">value2</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DYN_REFERENCE</span>, <span class="number">67890</span>).<span class="ident">unwrap</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;@id/0x3039&quot;</span>, <span class="ident">value</span>.<span class="ident">to_string</span>());
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;@id/0x10932&quot;</span>, <span class="ident">value2</span>.<span class="ident">to_string</span>());
@@ -581,8 +581,8 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_attribute_and_dyn_references</span>() {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span>, <span class="number">12345</span>).<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">value2</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span>, <span class="number">67890</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span>, <span class="number">12345</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">value2</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span>, <span class="number">67890</span>).<span class="ident">unwrap</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;@id/0x3039&quot;</span>, <span class="ident">value</span>.<span class="ident">to_string</span>());
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;@id/0x10932&quot;</span>, <span class="ident">value2</span>.<span class="ident">to_string</span>());
@@ -593,7 +593,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">30</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x5</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
         <span class="kw">let</span> <span class="ident">str_value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;4194304.0mm&quot;</span>, <span class="ident">str_value</span>);
@@ -604,7 +604,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span>; <span class="comment">// Negative value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x0</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
         <span class="kw">let</span> <span class="ident">str_value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;-8388608.0px&quot;</span>, <span class="ident">str_value</span>);
@@ -615,7 +615,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x6</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
 
         <span class="comment">// TODO: Assert error string!</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">value</span>.<span class="ident">is_err</span>());
@@ -626,7 +626,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">25</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x1</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
         <span class="kw">let</span> <span class="ident">str_value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;13107200.0%p&quot;</span>, <span class="ident">str_value</span>);
@@ -637,7 +637,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x0</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
         <span class="kw">let</span> <span class="ident">str_value</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>();
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;-25599.988281%&quot;</span>, <span class="ident">str_value</span>);
@@ -648,7 +648,7 @@
         <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x2</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
 
         <span class="comment">// TODO: Assert error string!</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">value</span>.<span class="ident">is_err</span>());
@@ -658,7 +658,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_integer_values</span>() {
         <span class="kw">let</span> <span class="ident">int</span> <span class="op">=</span> <span class="number">12345</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_INTEGER</span>, <span class="ident">int</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_INTEGER</span>, <span class="ident">int</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;12345&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -667,7 +667,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_flag_values</span>() {
         <span class="kw">let</span> <span class="ident">int</span> <span class="op">=</span> <span class="number">12345</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_FLAGS</span>, <span class="ident">int</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FLAGS</span>, <span class="ident">int</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;12345&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -677,7 +677,7 @@
         <span class="comment">// TODO: Improve this test with a IEE754 number</span>
         <span class="kw">let</span> <span class="ident">float</span> <span class="op">=</span> <span class="number">0</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_FLOAT</span>, <span class="ident">float</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FLOAT</span>, <span class="ident">float</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;0.0&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -686,7 +686,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_boolean_true_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">123</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_BOOLEAN</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_BOOLEAN</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;true&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -695,7 +695,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_boolean_false_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_BOOLEAN</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_BOOLEAN</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;false&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -704,7 +704,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_color_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0x01AB23FE</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_ARGB8</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_ARGB8</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;#01ab23fe&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -713,7 +713,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_color2_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0x01AB23FE</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_RGB8</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_RGB8</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;#01ab23fe&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -722,7 +722,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_an_argb4_color_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0x01AB23FE</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_ARGB4</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_ARGB4</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;#01ab23fe&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -731,7 +731,7 @@
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_rgb4_color_value</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0x01AB23FE</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="ident">TOKEN_TYPE_RGB4</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_RGB4</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;#01ab23fe&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
@@ -740,7 +740,7 @@
     <span class="kw">fn</span> <span class="ident">it_generated_unknown_values_if_type_is_unkown</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="number">0x12345</span>;
 
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">new</span>(<span class="number">0x20</span>, <span class="ident">data</span>);
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="number">0x20</span>, <span class="ident">data</span>);
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;Unknown&quot;</span>, <span class="ident">value</span>.<span class="ident">unwrap</span>().<span class="ident">to_string</span>());
     }
