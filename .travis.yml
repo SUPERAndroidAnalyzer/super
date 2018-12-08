@@ -118,8 +118,8 @@ before_script:
 
 # Run the multiple tests.
 script:
-- ./travis-helper.sh fmt_run
-- ./travis-helper.sh clippy_run
+- ./travis-helper.sh fmt_check
+- ./travis-helper.sh clippy_check
 - ./travis-helper.sh test
 - ./travis-helper.sh test_ignored
 

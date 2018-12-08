@@ -3,12 +3,8 @@
 action="$1"
 package="$2"
 
-# Build the project with default features.
-if [ "$action" = "build" ]; then
-  cargo build --verbose
-
 # Run unit and integration tests.
-elif [ "$action" = "test" ]; then
+if [ "$action" = "test" ]; then
   cargo test --verbose
 
 # Run ignored unit and integration tests.
@@ -22,18 +18,18 @@ elif [ "$action" = "test_unstable" ]; then
     cargo test --verbose --features unstable &&
     cargo test --verbose --features unstable -- --ignored
 
-# Run Clippy.
-elif [ "$action" = "clippy_run" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
-    rustup component add clippy &&
-    cargo clippy --verbose
-  fi
-
 # Check formatting.
-elif [ "$action" = "fmt_run" ]; then
+elif [ "$action" = "fmt_check" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
     rustup component add rustfmt &&
     cargo fmt --verbose -- --check
+  fi
+
+# Run Clippy.
+elif [ "$action" = "clippy_check" ]; then
+  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" == "linux" ]]; then
+    rustup component add clippy &&
+    cargo clippy --verbose
   fi
 
 # Upload code coverage report for stable builds in Linux.
@@ -81,6 +77,6 @@ elif [ "action" = "deploy"]; then
       docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
     done
   fi
-fi
 
+fi
 exit $?
