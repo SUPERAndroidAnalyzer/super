@@ -13,6 +13,7 @@ internal enhancements.
   - `lazy_static`: 1.1 => **1.2**
   - `md5`: 0.5 => **0.6**
   - `regex`: 1.0 => **1.1**
+  - `abxml`: 0.6 => **0.7**
   - Some other minor upgrades.
 
 - Multiple syntax changes to adapt the codebase to Rust 2018.
