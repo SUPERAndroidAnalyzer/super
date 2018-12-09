@@ -185,7 +185,6 @@
 <span id="185">185</span>
 <span id="186">186</span>
 <span id="187">187</span>
-<span id="188">188</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Decompilation module.</span>
 <span class="doccomment">//!</span>
@@ -289,7 +288,6 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">call_ok</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">success</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">stderr</span>.<span class="ident">contains</span>(<span class="string">&quot;use&quot;</span>);
         <span class="kw">if</span> <span class="ident">stderr</span>.<span class="ident">find</span>(<span class="string">&#39;\n&#39;</span>) <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">stderr</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>) {
             <span class="kw">if</span> <span class="ident">stderr</span>.<span class="ident">starts_with</span>(<span class="string">&quot;Picked up _JAVA_OPTIONS:&quot;</span>) {
-                <span class="macro">eprintln</span><span class="macro">!</span>(<span class="string">&quot;Lines count: {}&quot;</span>, <span class="ident">stderr</span>.<span class="ident">lines</span>().<span class="ident">count</span>());
                 <span class="ident">call_ok</span> <span class="op">=</span> <span class="ident">stderr</span>.<span class="ident">lines</span>().<span class="ident">count</span>() <span class="op">==</span> <span class="number">2</span>;
             } <span class="kw">else</span> {
                 <span class="ident">call_ok</span> <span class="op">=</span> <span class="bool-val">false</span>;
