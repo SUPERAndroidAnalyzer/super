@@ -311,7 +311,8 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
                     format!(
                         "<a href=\"#\" title=\"{0}\"><img src=\"../img/folder.svg\">{0}</a>",
                         name
-                    ).as_str(),
+                    )
+                    .as_str(),
                 )?;
                 renderer.write("<ul>")?;
 

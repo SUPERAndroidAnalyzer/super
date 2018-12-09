@@ -99,7 +99,8 @@ pub fn analysis<S: AsRef<str>>(
                     None => break,
                 }
             })
-        }).collect();
+        })
+        .collect();
 
     if config.is_verbose() {
         let mut last_print = 0;
@@ -123,7 +124,7 @@ pub fn analysis<S: AsRef<str>>(
 
     for t in handles {
         if let Err(e) = t.join() {
-            #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
+            #[allow(clippy::use_debug)]
             print_warning(format!(
                 "an error occurred when joining analysis threads: Error: {:?}",
                 e
@@ -170,11 +171,12 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
         }
 
         for permission in rule.permissions() {
-            if manifest.is_none() || !manifest
-                .as_ref()
-                .unwrap()
-                .permission_checklist()
-                .needs_permission(*permission)
+            if manifest.is_none()
+                || !manifest
+                    .as_ref()
+                    .unwrap()
+                    .permission_checklist()
+                    .needs_permission(*permission)
             {
                 continue 'check;
             }
@@ -540,71 +542,73 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
     );
 
     let rules: Vec<Rule> = serde_json::from_reader(f).context(format_error.clone())?;
-    let rules = rules
-        .into_iter()
-        .filter_map(|rule| {
-            if rule.criticality >= config.min_criticality() {
-                let fc1_in_regex = rule.regex().capture_names().any(|c| c == Some("fc1"));
-                let fc2_in_regex = rule.regex().capture_names().any(|c| c == Some("fc2"));
+    let rules =
+        rules
+            .into_iter()
+            .filter_map(|rule| {
+                if rule.criticality >= config.min_criticality() {
+                    let fc1_in_regex = rule.regex().capture_names().any(|c| c == Some("fc1"));
+                    let fc2_in_regex = rule.regex().capture_names().any(|c| c == Some("fc2"));
 
-                let forward_check = rule.forward_check().cloned();
-                if let Some(forward_check) = forward_check {
-                    let fc1_in_fc = forward_check.contains("{fc1}");
-                    let fc2_in_fc = forward_check.contains("{fc2}");
+                    let forward_check = rule.forward_check().cloned();
+                    if let Some(forward_check) = forward_check {
+                        let fc1_in_fc = forward_check.contains("{fc1}");
+                        let fc2_in_fc = forward_check.contains("{fc2}");
 
-                    if fc1_in_regex && !fc1_in_fc {
-                        Some(Err(error::Kind::Parse
+                        if fc1_in_regex && !fc1_in_fc {
+                            Some(Err(error::Kind::Parse
                             .context(
                                 "fc1 capture group used but no placeholder found in the forward \
                                  check",
                             ).into()))
-                    } else if fc2_in_regex && !fc2_in_fc {
-                        Some(Err(error::Kind::Parse
+                        } else if fc2_in_regex && !fc2_in_fc {
+                            Some(Err(error::Kind::Parse
                             .context(
                                 "fc2 capture group used but no placeholder found in the forward \
                                  check",
                             ).into()))
-                    } else {
-                        if fc2_in_regex && !fc1_in_regex {
-                            print_warning(format!(
+                        } else {
+                            if fc2_in_regex && !fc1_in_regex {
+                                print_warning(format!(
                                 "fc2 capture group used in the `{}` rule's forward check, but no \
                                  fc1 capture group used",
                                 rule.label()
                             ));
-                        }
+                            }
 
-                        if fc1_in_fc && !fc1_in_regex {
-                            print_warning(format!(
+                            if fc1_in_fc && !fc1_in_regex {
+                                print_warning(format!(
                                 "{{fc1}} used in the `{}` rule's forward check, but no capture \
                                  group is checking for it",
                                 rule.label()
                             ));
-                        }
+                            }
 
-                        if fc2_in_fc && !fc2_in_regex {
-                            print_warning(format!(
+                            if fc2_in_fc && !fc2_in_regex {
+                                print_warning(format!(
                                 "{{fc2}} used in the `{}` rule's forward check, but no capture \
                                  group is checking for it",
                                 rule.label()
                             ));
-                        }
+                            }
 
+                            Some(Ok(rule))
+                        }
+                    } else {
                         Some(Ok(rule))
                     }
                 } else {
-                    Some(Ok(rule))
+                    None
                 }
-            } else {
-                None
-            }
-        }).collect::<Result<Vec<Rule>, Error>>()
-        .context(format_error)?;
+            })
+            .collect::<Result<Vec<Rule>, Error>>()
+            .context(format_error)?;
 
     Ok(rules)
 }
 
 #[cfg(test)]
-#[cfg_attr(feature = "cargo-clippy", allow(trivial_regex))]
+#[allow(clippy::trivial_regex)]
 mod tests {
     use failure::Error;
     use regex::Regex;

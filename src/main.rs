@@ -3,11 +3,10 @@
 //! This code controls the CLI of the application and launches the analysis of the application
 //! using the core library.
 
-#![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
-#![cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+#![warn(clippy::pedantic)]
 #![deny(
+    clippy::all,
     variant_size_differences,
     unused_results,
     unused_qualifications,
@@ -20,10 +19,6 @@
     missing_copy_implementations
 )]
 
-extern crate super_analyzer_core;
-
-extern crate colored;
-extern crate failure;
 #[macro_use]
 extern crate log;
 
@@ -102,7 +97,8 @@ fn run() -> Result<(), Error> {
 
         return Err(error::Kind::Config {
             message: error_string,
-        }.into());
+        }
+        .into());
     }
 
     // Print the banner if we are in verbose mode.

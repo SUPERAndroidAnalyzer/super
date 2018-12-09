@@ -1,11 +1,12 @@
 [package]
 name = "super-analyzer"
-version = "0.5.0"
+version = "0.5.1"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
     "Bruno Pin <brunoop@protonmail.ch>",
     "Sergio de los Dolores <sergiodlo@protonmail.com>"]
+edition = "2018"
 license = "GPL-3.0"
 readme = "README.md"
 repository = "https://github.com/SUPERAndroidAnalyzer/super"
@@ -16,60 +17,6 @@ with CLI.\
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 categories = ["command-line-utilities", "development-tools"]
-
-[badges]
-travis-ci = { repository = "SUPERAndroidAnalyzer/super", branch = "master" }
-appveyor = { repository = "Razican/super", branch = "master", service = "github" }
-codecov = { repository = "SUPERAndroidAnalyzer/super", branch = "master", service = "github" }
-is-it-maintained-issue-resolution = { repository = "SUPERAndroidAnalyzer/super" }
-is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
-maintenance = { status = "experimental" }
-
-[[bin]]
-name = "super-analyzer"
-path = "src/main.rs"
-
-[lib]
-name = "super_analyzer_core"
-path = "src/lib.rs"
-
-[dependencies]
-failure = "0.1.3"
-failure_derive = "0.1.3"
-clap = "2.32.0"
-xml-rs = "0.8.0"
-serde = "1.0.80"
-serde_derive = "1.0.80"
-serde_json = "1.0.32"
-chrono = { version = "0.4.6", features = ["serde"] }
-toml = "0.4.8"
-regex = "1.0.5"
-lazy_static = "1.1.0"
-open = "1.2.2"
-bytecount = "0.4.0"
-log = "0.4.6"
-env_logger = "0.5.13"
-md5 = "0.5.0"
-sha1 = "0.6.0"
-sha2 = "0.8.0"
-abxml = "0.6.2"
-handlebars = "1.1.0"
-semver = "0.9.0"
-hex = "0.3.2"
-num_cpus = "1.8.0"
-colored = "1.6.1"
-
-[build-dependencies]
-clap = "2.32.0"
-
-[dev-dependencies]
-reqwest = "0.9.4"
-
-[features]
-default = []
-unstable = ["certificate"]
-no-color = ["colored/no-color"]
-certificate = []
 
 [package.metadata.deb]
 maintainer = "SUPER Team <contact@superanalyzer.rocks>"
@@ -116,6 +63,59 @@ assets = [
     # README
     ["README.md", "usr/share/doc/super-analyzer/README.md", "644"],
 ]
+
+[badges]
+travis-ci = { repository = "SUPERAndroidAnalyzer/super", branch = "master" }
+codecov = { repository = "SUPERAndroidAnalyzer/super", branch = "master", service = "github" }
+is-it-maintained-issue-resolution = { repository = "SUPERAndroidAnalyzer/super" }
+is-it-maintained-open-issues = { repository = "SUPERAndroidAnalyzer/super" }
+maintenance = { status = "experimental" }
+
+[[bin]]
+name = "super-analyzer"
+path = "src/main.rs"
+
+[lib]
+name = "super_analyzer_core"
+path = "src/lib.rs"
+
+[dependencies]
+failure = "0.1.3"
+failure_derive = "0.1.3"
+clap = "2.32.0"
+xml-rs = "0.8.0"
+serde = "1.0.81"
+serde_derive = "1.0.81"
+serde_json = "1.0.33"
+chrono = { version = "0.4.6", features = ["serde"] }
+toml = "0.4.10"
+regex = "1.1.0"
+lazy_static = "1.2.0"
+open = "1.2.2"
+bytecount = "0.4.0"
+log = "0.4.6"
+env_logger = "0.6.0"
+md5 = "0.6.0"
+sha1 = "0.6.0"
+sha2 = "0.8.0"
+abxml = "0.7.1"
+handlebars = "1.1.0"
+semver = "0.9.0"
+hex = "0.3.2"
+num_cpus = "1.8.0"
+colored = "1.6.1"
+
+[build-dependencies]
+clap = "2.32.0"
+
+[dev-dependencies]
+reqwest = "0.9.5"
+
+[features]
+default = []
+unstable = ["certificate"]
+no-color = ["colored/no-color"]
+certificate = []
 
 # The release profile, used for `cargo build`.
 [profile.dev]

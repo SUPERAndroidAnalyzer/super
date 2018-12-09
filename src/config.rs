@@ -91,7 +91,7 @@ impl ConfigDeserializer {
     {
         let deser_result: Value = Deserialize::deserialize(de)?;
 
-        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
+        #[allow(clippy::use_debug)]
         match deser_result {
             Value::Integer(threads) => {
                 if threads > 0 && threads <= {
@@ -123,7 +123,7 @@ impl ConfigDeserializer {
     {
         let deser_result: Value = Deserialize::deserialize(de)?;
 
-        #[cfg_attr(feature = "cargo-clippy", allow(use_debug))]
+        #[allow(clippy::use_debug)]
         match deser_result {
             Value::Table(ref table) => {
                 let criticality_str = table
@@ -167,7 +167,8 @@ impl Config {
                     "could not decode config file: {}, using default",
                     config_path.as_ref().to_string_lossy()
                 ))?)
-            }).and_then(|mut new_config: Self| {
+            })
+            .and_then(|mut new_config: Self| {
                 new_config
                     .loaded_files
                     .push(config_path.as_ref().to_path_buf());
@@ -634,8 +635,8 @@ mod tests {
     use crate::{criticality::Criticality, static_analysis::manifest};
 
     /// Test for the default configuration function.
+    #[allow(clippy::cyclomatic_complexity)]
     #[test]
-    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
     fn it_config() {
         // Create config object.
         let mut config = Config::default();

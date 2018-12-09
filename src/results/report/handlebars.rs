@@ -35,7 +35,7 @@ pub struct Report {
 
 impl Report {
     /// Creates a new handlebars report generator.
-    pub fn new<P: AsRef<Path>, S: Into<String>>(
+    pub fn from_path<P: AsRef<Path>, S: Into<String>>(
         template_path: P,
         package: S,
     ) -> Result<Self, Error> {
@@ -67,7 +67,8 @@ impl Report {
                         .file_stem()
                         .ok_or_else(|| error::Kind::TemplateName {
                             message: "template files must have a file name".to_owned(),
-                        }).and_then(|stem| {
+                        })
+                        .and_then(|stem| {
                             stem.to_str().ok_or_else(|| error::Kind::TemplateName {
                                 message: "template names must be unicode".to_string(),
                             })
@@ -239,7 +240,7 @@ impl Report {
 }
 
 impl Generator for Report {
-    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    #[allow(clippy::print_stdout)]
     fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
@@ -296,13 +297,13 @@ mod test {
     /// Test the creation of a new report.
     #[test]
     fn it_new() {
-        let _ = Report::new(&Config::default().template_path(), "test").unwrap();
+        let _ = Report::from_path(&Config::default().template_path(), "test").unwrap();
     }
 
     /// Test the failure of the creation of an invalid new report.
     #[test]
     fn it_new_failure() {
-        assert!(Report::new("random path", "test").is_err());
+        assert!(Report::from_path("random path", "test").is_err());
     }
 
     /// Tests handlebars template loading.

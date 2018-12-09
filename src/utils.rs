@@ -26,7 +26,7 @@ lazy_static! {
 }
 
 /// Prints a warning to `stderr` in yellow.
-#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+#[allow(clippy::print_stdout)]
 pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
@@ -43,7 +43,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 }
 
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
-#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+#[allow(clippy::print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
     if cfg!(not(test)) && log_enabled!(Debug) {
         let message = format!(
@@ -78,7 +78,7 @@ pub fn get_package_name<P: AsRef<Path>>(path: P) -> String {
 /// Gets the code snippet near the start and end lines.
 ///
 /// It will return 5 lines above and 5 lines below the vulnerability.
-#[cfg_attr(feature = "cargo-clippy", allow(nonminimal_bool))]
+#[allow(clippy::nonminimal_bool)]
 pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String {
     let mut result = String::new();
     for (i, text) in code.as_ref().lines().enumerate() {

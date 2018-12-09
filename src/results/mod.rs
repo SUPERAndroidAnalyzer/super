@@ -59,9 +59,9 @@ pub struct Results {
 
 impl Results {
     /// Initializes the results structure.
-    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    #[allow(clippy::print_stdout)]
     pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self, Error> {
-        let fingerprint = match FingerPrint::new(package) {
+        let fingerprint = match FingerPrint::from_package(package) {
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
@@ -190,7 +190,7 @@ impl Results {
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
-                //     "trying to insert the same medium criticalityvulnerability twice"
+                //     "trying to insert the same medium criticality vulnerability twice"
                 // );
             }
             Criticality::High => {
@@ -202,7 +202,7 @@ impl Results {
                 // );
             }
             Criticality::Critical => {
-                let new = self.critical.insert(vuln.clone());
+                let new = self.critical.insert(vuln);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -213,7 +213,7 @@ impl Results {
     }
 
     /// Generates the report.
-    #[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+    #[allow(clippy::print_stdout)]
     pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<(), Error> {
         let path = config.results_folder().join(&self.app_package);
         if config.is_verbose() {
@@ -287,8 +287,10 @@ impl Results {
                     }
                 }
 
-                let handelbars_report_result =
-                    HandlebarsReport::new(config.template_path(), package.as_ref().to_owned());
+                let handelbars_report_result = HandlebarsReport::from_path(
+                    config.template_path(),
+                    package.as_ref().to_owned(),
+                );
 
                 if let Ok(mut handlebars_reporter) = handelbars_report_result {
                     if let Err(e) = handlebars_reporter.generate(config, self) {

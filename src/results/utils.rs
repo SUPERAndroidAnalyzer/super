@@ -152,11 +152,11 @@ impl FingerPrint {
     /// Creates a new fingerprint.
     ///
     /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
-    pub fn new<P: AsRef<Path>>(package: P) -> Result<Self, Error> {
+    pub fn from_package<P: AsRef<Path>>(package: P) -> Result<Self, Error> {
         use sha2::Digest;
 
         let mut f = File::open(package)?;
-        let mut buffer = Vec::with_capacity(f.metadata().unwrap().len() as usize);
+        let mut buffer = Vec::with_capacity(f.metadata()?.len() as usize);
         let _ = f.read_to_end(&mut buffer)?;
 
         let mut sha1 = sha1::Sha1::new();

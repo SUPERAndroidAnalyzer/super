@@ -4,10 +4,10 @@
 //! launcher and contains the main logic of the analysis, with the configuration management,
 //! the logger initialization and some utility functions.
 
-#![cfg_attr(feature = "cargo-clippy", deny(clippy))]
 #![forbid(anonymous_parameters)]
-#![cfg_attr(feature = "cargo-clippy", warn(clippy_pedantic))]
+#![warn(clippy::pedantic)]
 #![deny(
+    clippy::all,
     variant_size_differences,
     unused_results,
     unused_qualifications,
@@ -18,48 +18,24 @@
     missing_docs,
     unused_extern_crates,
     missing_debug_implementations,
-    missing_copy_implementations,
+    missing_copy_implementations
 )]
 // Allowing these for now.
-#![cfg_attr(
-    feature = "cargo-clippy",
-    allow(
-        stutter,
-        cast_possible_truncation,
-        cast_possible_wrap,
-        cast_precision_loss,
-        cast_sign_loss,
-        non_ascii_literal,
-    )
+#![allow(
+    clippy::stutter,
+    clippy::cast_possible_truncation,
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::cast_sign_loss,
+    clippy::non_ascii_literal
 )]
 
-extern crate abxml;
-extern crate bytecount;
-extern crate chrono;
-extern crate clap;
-extern crate colored;
-extern crate env_logger;
-extern crate failure;
 #[macro_use]
 extern crate failure_derive;
-extern crate handlebars;
-extern crate hex;
-extern crate lazy_static;
 #[macro_use]
 extern crate log;
-extern crate md5;
-extern crate num_cpus;
-extern crate open;
-extern crate regex;
-extern crate semver;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
-extern crate sha1;
-extern crate sha2;
-extern crate toml;
-extern crate xml;
 
 pub mod cli;
 mod config;
@@ -132,7 +108,7 @@ pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
 }
 
 /// Analyzes the given package with the given configuration.
-#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+#[allow(clippy::print_stdout)]
 pub fn analyze_package<P: AsRef<Path>>(
     package: P,
     config: &mut Config,
@@ -306,7 +282,7 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
 ///
 /// This will initialize the environment logger structure so that it generates the
 /// proper messages using the right colors. It's called from the launcher.
-#[cfg_attr(feature = "cargo-clippy", allow(print_stdout))]
+#[allow(clippy::print_stdout)]
 pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
     use env_logger::fmt::{Color, Formatter};
     use env_logger::Builder;
@@ -363,8 +339,6 @@ pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
 /// integration tests.
 #[cfg(test)]
 mod tests {
-    extern crate reqwest;
-
     use std::{collections::BTreeMap, fs, path::Path, str::FromStr};
 
     use super::analyze_package;
@@ -374,8 +348,8 @@ mod tests {
     ///
     /// It checks the conversion both from and to strings, the comparisons between
     /// criticality levels and the debug format.
+    #[allow(clippy::cyclomatic_complexity)]
     #[test]
-    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
     fn it_criticality() {
         // Check "warnings" from strings
         assert_eq!(
@@ -476,7 +450,8 @@ mod tests {
         let _ = reqwest::get(
             "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
-        ).unwrap()
+        )
+        .unwrap()
         .copy_to(&mut apk_file)
         .unwrap();
 

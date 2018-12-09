@@ -35,7 +35,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
             println!("Decompressing the application…");
         }
 
-        let mut apk = Apk::new(package.as_ref()).context("error loading apk file")?;
+        let mut apk = Apk::from_path(package.as_ref()).context("error loading apk file")?;
         apk.export(&path, true).context(format_err!(
             "could not decompress the apk file. Tried to decompile at: {}",
             path.display()
@@ -47,7 +47,8 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
                 format!(
                     "The application has been decompressed in {}.",
                     path.display()
-                ).green()
+                )
+                .green()
             );
         } else if !config.is_quiet() {
             println!("Application decompressed.");
@@ -79,7 +80,8 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
             } else {
                 "d2j-dex2jar.sh"
             },
-        )).arg(config.dist_folder().join(&package_name).join("classes.dex"))
+        ))
+        .arg(config.dist_folder().join(&package_name).join("classes.dex"))
         .arg("-f")
         .arg("-o")
         .arg(&classes)
@@ -115,7 +117,8 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
                     ".jar".italic(),
                     "file has been generated in".green(),
                     format!("{}", classes.display()).green()
-                ).green()
+                )
+                .green()
             );
         } else if !config.is_quiet() {
             println!("Jar file generated.");

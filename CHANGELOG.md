@@ -1,5 +1,23 @@
 # Changelog
 
+## SUPER 0.5.1
+
+This release is the first SUPER release targeting Rust 2018 edition. It contains some internal
+improvements that will make future development easier and more efficient. It also has some
+internal enhancements.
+
+### Internal Changes
+
+- SUPER now requires Rust 1.31.0 (Rust 2018 edition) to be built.
+- Upgraded dependencies:
+  - `lazy_static`: 1.1 => **1.2**
+  - `md5`: 0.5 => **0.6**
+  - `regex`: 1.0 => **1.1**
+  - `abxml`: 0.6 => **0.7**
+  - Some other minor upgrades.
+
+- Multiple syntax changes to adapt the codebase to Rust 2018.
+
 ## SUPER 0.5.0
 
 This release contains multiple improvements that have been accumulated in the last year. We also
