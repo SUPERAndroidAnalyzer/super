@@ -77,6 +77,7 @@ elif [ "$action" = "deploy" ]; then
   if [[ $TRAVIS_TAG ]]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
+      echo "Making distribution package for $PACKAGE release" &&
       docker pull "superandroidanalyzer/$PACKAGE:latest" &&
       docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "superandroidanalyzer/$PACKAGE:latest" "/bin/bash" &&
       docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
