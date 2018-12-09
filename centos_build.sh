@@ -1,16 +1,5 @@
 #!/bin/bash
 
-# Update the system
-yum upgrade -y &&
-yum autoremove -y &&
-
-# Install build dependencies
-yum install -y wget gcc make rpm-build redhat-rpm-config &&
-
-# Create needed directories and macros
-mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} &&
-echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros &&
-
 # Create the package
 cd /root &&
 mkdir -vp super-analyzer-$TAG &&

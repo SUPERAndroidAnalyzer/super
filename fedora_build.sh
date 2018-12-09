@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# Update the system
-dnf upgrade --refresh -y &&
-dnf autoremove -y &&
-
-# Install build dependencies
-dnf install -y wget gcc fedora-packager &&
-
 # Create the package
 cd /root &&
 mkdir -v super-analyzer-$TAG &&

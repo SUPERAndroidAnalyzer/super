@@ -69,16 +69,16 @@ elif [ "$action" = "documentation" ]; then
 # Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.
 elif [ "$action" = "dist_test" ]; then
     mkdir -pv releases &&
-    docker pull "$package:latest" &&
-    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$package" --privileged "$package:latest" "/bin/bash" &&
+    docker pull "superandroidanalyzer/$package:latest" &&
+    docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$package" --privileged "superandroidanalyzer/$package:latest" "/bin/bash" &&
     docker exec "$package" "/root/super/`echo $package`_build.sh"
 
 elif [ "action" = "deploy" ]; then
   if [ -n "$TRAVIS_TAG" ]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
-      docker pull "$PACKAGE:latest" &&
-      docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "$PACKAGE:latest" "/bin/bash" &&
+      docker pull "superandroidanalyzer/$PACKAGE:latest" &&
+      docker run -d -t -e TAG=$TAG -v $TRAVIS_BUILD_DIR:/root/super --name "$PACKAGE" --privileged "superandroidanalyzer/$PACKAGE:latest" "/bin/bash" &&
       docker exec "$PACKAGE" "/root/super/`echo $PACKAGE`_build.sh"
     done
   fi
