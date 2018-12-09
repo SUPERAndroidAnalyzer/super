@@ -472,7 +472,7 @@
         };
         <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
             <span class="macro">println</span><span class="macro">!</span>(
-                <span class="string">&quot;The results struct has been created. All the vulnerabilitis will now \
+                <span class="string">&quot;The results struct has been created. All the vulnerabilities will now \
                  be recorded and when the analysis ends, they will be written to result \
                  files.&quot;</span>
             );
@@ -568,15 +568,15 @@
 
     <span class="doccomment">/// Adds a vulnerability to the results.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused_variables</span>)]</span> <span class="comment">// Until we remove the debug assertions</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_vulnerability</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">vuln</span>: <span class="ident">Vulnerability</span>) {
-        <span class="kw">match</span> <span class="ident">vuln</span>.<span class="ident">get_criticality</span>() {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_vulnerability</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">vulnerability</span>: <span class="ident">Vulnerability</span>) {
+        <span class="kw">match</span> <span class="ident">vulnerability</span>.<span class="ident">get_criticality</span>() {
             <span class="ident">Criticality</span>::<span class="ident">Warning</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">warnings</span>.<span class="ident">insert</span>(<span class="ident">vuln</span>);
+                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">warnings</span>.<span class="ident">insert</span>(<span class="ident">vulnerability</span>);
                 <span class="comment">// FIXME should we maintain it?</span>
                 <span class="comment">//debug_assert!(new, &quot;trying to insert the same warning twice&quot;);</span>
             }
             <span class="ident">Criticality</span>::<span class="ident">Low</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">low</span>.<span class="ident">insert</span>(<span class="ident">vuln</span>);
+                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">low</span>.<span class="ident">insert</span>(<span class="ident">vulnerability</span>);
                 <span class="comment">// FIXME should we maintain it?</span>
                 <span class="comment">// debug_assert!(</span>
                 <span class="comment">//     new,</span>
@@ -584,7 +584,7 @@
                 <span class="comment">// );</span>
             }
             <span class="ident">Criticality</span>::<span class="ident">Medium</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">medium</span>.<span class="ident">insert</span>(<span class="ident">vuln</span>);
+                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">medium</span>.<span class="ident">insert</span>(<span class="ident">vulnerability</span>);
                 <span class="comment">// FIXME should we maintain it?</span>
                 <span class="comment">// debug_assert!(</span>
                 <span class="comment">//     new,</span>
@@ -592,7 +592,7 @@
                 <span class="comment">// );</span>
             }
             <span class="ident">Criticality</span>::<span class="ident">High</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">high</span>.<span class="ident">insert</span>(<span class="ident">vuln</span>);
+                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">high</span>.<span class="ident">insert</span>(<span class="ident">vulnerability</span>);
                 <span class="comment">// FIXME should we maintain it?</span>
                 <span class="comment">// debug_assert!(</span>
                 <span class="comment">//     new,</span>
@@ -600,7 +600,7 @@
                 <span class="comment">// );</span>
             }
             <span class="ident">Criticality</span>::<span class="ident">Critical</span> <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">critical</span>.<span class="ident">insert</span>(<span class="ident">vuln</span>);
+                <span class="kw">let</span> <span class="ident">new</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">critical</span>.<span class="ident">insert</span>(<span class="ident">vulnerability</span>);
                 <span class="comment">// FIXME should we maintain it?</span>
                 <span class="comment">// debug_assert!(</span>
                 <span class="comment">//     new,</span>
@@ -667,7 +667,7 @@
             <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_force</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">index_path</span>.<span class="ident">exists</span>() {
                 <span class="kw">if</span> <span class="ident">path</span>.<span class="ident">exists</span>() {
                     <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
-                        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;The application HTML resulsts exist. But no more…&quot;</span>);
+                        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;The application HTML results exist. But no more…&quot;</span>);
                     }
 
                     <span class="kw">for</span> <span class="ident">f</span> <span class="kw">in</span> <span class="ident">fs</span>::<span class="ident">read_dir</span>(<span class="ident">path</span>)
@@ -685,12 +685,12 @@
                     }
                 }
 
-                <span class="kw">let</span> <span class="ident">handelbars_report_result</span> <span class="op">=</span> <span class="ident">HandlebarsReport</span>::<span class="ident">from_path</span>(
+                <span class="kw">let</span> <span class="ident">handlebars_report_result</span> <span class="op">=</span> <span class="ident">HandlebarsReport</span>::<span class="ident">from_path</span>(
                     <span class="ident">config</span>.<span class="ident">template_path</span>(),
                     <span class="ident">package</span>.<span class="ident">as_ref</span>().<span class="ident">to_owned</span>(),
                 );
 
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">handlebars_reporter</span>) <span class="op">=</span> <span class="ident">handelbars_report_result</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">handlebars_reporter</span>) <span class="op">=</span> <span class="ident">handlebars_report_result</span> {
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">handlebars_reporter</span>.<span class="ident">generate</span>(<span class="ident">config</span>, <span class="self">self</span>) {
                         <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;There was en error generating HTML report: {}&quot;</span>, <span class="ident">e</span>));
                     }

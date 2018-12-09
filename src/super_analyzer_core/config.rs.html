@@ -880,7 +880,7 @@
     <span class="ident">templates_folder</span>: <span class="ident">PathBuf</span>,
     <span class="doccomment">/// The name of the template to use.</span>
     <span class="ident">template</span>: <span class="ident">String</span>,
-    <span class="doccomment">/// Represents an unknow permission.</span>
+    <span class="doccomment">/// Represents an unknown permission.</span>
     <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">deserialize_with</span> <span class="op">=</span> <span class="string">&quot;ConfigDeserializer::deserialize_unknown_permission&quot;</span>)]</span>
     <span class="ident">unknown_permission</span>: (<span class="ident">Criticality</span>, <span class="ident">String</span>),
     <span class="doccomment">/// List of permissions to analyze.</span>
@@ -901,10 +901,10 @@
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
-        <span class="kw">let</span> <span class="ident">deser_result</span>: <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Deserialize</span>::<span class="ident">deserialize</span>(<span class="ident">de</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">deserialize_result</span>: <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Deserialize</span>::<span class="ident">deserialize</span>(<span class="ident">de</span>)<span class="question-mark">?</span>;
 
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">use_debug</span>)]</span>
-        <span class="kw">match</span> <span class="ident">deser_result</span> {
+        <span class="kw">match</span> <span class="ident">deserialize_result</span> {
             <span class="ident">Value</span>::<span class="ident">Integer</span>(<span class="ident">threads</span>) <span class="op">=&gt;</span> {
                 <span class="kw">if</span> <span class="ident">threads</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">threads</span> <span class="op">&lt;=</span> {
                     <span class="comment">// TODO: change it for compile-time check.</span>
@@ -923,7 +923,7 @@
             }
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;unexpected value: {:?}&quot;</span>,
-                <span class="ident">deser_result</span>
+                <span class="ident">deserialize_result</span>
             ))),
         }
     }
@@ -933,10 +933,10 @@
     <span class="kw">where</span>
         <span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
     {
-        <span class="kw">let</span> <span class="ident">deser_result</span>: <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Deserialize</span>::<span class="ident">deserialize</span>(<span class="ident">de</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">deserialize_result</span>: <span class="ident">Value</span> <span class="op">=</span> <span class="ident">Deserialize</span>::<span class="ident">deserialize</span>(<span class="ident">de</span>)<span class="question-mark">?</span>;
 
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">use_debug</span>)]</span>
-        <span class="kw">match</span> <span class="ident">deser_result</span> {
+        <span class="kw">match</span> <span class="ident">deserialize_result</span> {
             <span class="ident">Value</span>::<span class="ident">Table</span>(<span class="kw-2">ref</span> <span class="ident">table</span>) <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">criticality_str</span> <span class="op">=</span> <span class="ident">table</span>
                     .<span class="ident">get</span>(<span class="string">&quot;criticality&quot;</span>)
@@ -962,7 +962,7 @@
             }
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">custom</span>(<span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;Unexpected value: {:?}&quot;</span>,
-                <span class="ident">deser_result</span>
+                <span class="ident">deserialize_result</span>
             ))),
         }
     }
@@ -1345,7 +1345,7 @@
                 <span class="ident">String</span>::<span class="ident">from</span>(
                     <span class="string">&quot;Even if the application can create its own \
                      permissions, it&#39;s discouraged, since it can \
-                     lead to missunderstanding between developers.&quot;</span>,
+                     lead to misunderstanding between developers.&quot;</span>,
                 ),
             ),
             <span class="ident">permissions</span>: <span class="ident">BTreeSet</span>::<span class="ident">new</span>(),
@@ -1363,7 +1363,7 @@
         <span class="kw">if</span> <span class="ident">etc_rules</span>.<span class="ident">exists</span>() {
             <span class="ident">config</span>.<span class="ident">rules_json</span> <span class="op">=</span> <span class="ident">etc_rules</span>;
         }
-        <span class="kw">let</span> <span class="ident">share_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">taros</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>) {
+        <span class="kw">let</span> <span class="ident">share_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>) {
             <span class="string">&quot;/usr/local/super-analyzer&quot;</span>
         } <span class="kw">else</span> {
             <span class="string">&quot;/usr/share/super-analyzer&quot;</span>
@@ -1465,9 +1465,9 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">config</span>.<span class="ident">dist_folder</span>(), <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;dist&quot;</span>));
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">config</span>.<span class="ident">results_folder</span>(), <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;results&quot;</span>));
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">config</span>.<span class="ident">template_name</span>(), <span class="string">&quot;super&quot;</span>);
-        <span class="kw">let</span> <span class="ident">share_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">taros</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>) {
+        <span class="kw">let</span> <span class="ident">share_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>) {
             <span class="string">&quot;/usr/local/super-analyzer&quot;</span>
-        } <span class="kw">else</span> <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">tarfamily</span> <span class="op">=</span> <span class="string">&quot;windows&quot;</span>) {
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_family</span> <span class="op">=</span> <span class="string">&quot;windows&quot;</span>) {
             <span class="string">&quot;&quot;</span>
         } <span class="kw">else</span> {
             <span class="string">&quot;/usr/share/super-analyzer&quot;</span>
@@ -1490,7 +1490,7 @@
             <span class="ident">config</span>.<span class="ident">template_path</span>(),
             <span class="ident">share_path</span>.<span class="ident">join</span>(<span class="string">&quot;templates&quot;</span>).<span class="ident">join</span>(<span class="string">&quot;super&quot;</span>)
         );
-        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">tarfamily</span> <span class="op">=</span> <span class="string">&quot;unix&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/etc/super-analyzer/rules.json&quot;</span>).<span class="ident">exists</span>() {
+        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_family</span> <span class="op">=</span> <span class="string">&quot;unix&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/etc/super-analyzer/rules.json&quot;</span>).<span class="ident">exists</span>() {
             <span class="macro">assert_eq</span><span class="macro">!</span>(
                 <span class="ident">config</span>.<span class="ident">rules_json</span>(),
                 <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/etc/super-analyzer/rules.json&quot;</span>)
@@ -1502,7 +1502,7 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">config</span>.<span class="ident">unknown_permission_description</span>(),
             <span class="string">&quot;Even if the application can create its own permissions, it&#39;s discouraged, \
-             since it can lead to missunderstanding between developers.&quot;</span>
+             since it can lead to misunderstanding between developers.&quot;</span>
         );
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">config</span>.<span class="ident">permissions</span>().<span class="ident">next</span>(), <span class="prelude-val">None</span>);
 
@@ -1591,7 +1591,7 @@
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">config</span>.<span class="ident">unknown_permission_description</span>(),
             <span class="string">&quot;Even if the application can create its own permissions, it&#39;s discouraged, \
-             since it can lead to missunderstanding between developers.&quot;</span>
+             since it can lead to misunderstanding between developers.&quot;</span>
         );
 
         <span class="kw">let</span> <span class="ident">permission</span> <span class="op">=</span> <span class="ident">config</span>.<span class="ident">permissions</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>();

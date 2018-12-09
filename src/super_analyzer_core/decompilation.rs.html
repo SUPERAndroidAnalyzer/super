@@ -180,6 +180,12 @@
 <span id="180">180</span>
 <span id="181">181</span>
 <span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Decompilation module.</span>
 <span class="doccomment">//!</span>
@@ -278,12 +284,18 @@
         <span class="kw">let</span> <span class="ident">stderr</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="kw-2">&amp;</span><span class="ident">output</span>.<span class="ident">stderr</span>);
         <span class="comment">// Here a small hack: seems that dex2jar outputs in stderr even if everything went well,</span>
         <span class="comment">// and the status is always success. So the only difference is if we detect the actual</span>
-        <span class="comment">// exception that was produced. But, the thing is that in some cases it does not return an</span>
-        <span class="comment">// exception, so we have to check if errors such as &quot;use certain option&quot; occur.</span>
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">success</span>()
-            <span class="op">||</span> <span class="ident">stderr</span>.<span class="ident">find</span>(<span class="string">&#39;\n&#39;</span>) <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">stderr</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>)
-            <span class="op">||</span> <span class="ident">stderr</span>.<span class="ident">contains</span>(<span class="string">&quot;use&quot;</span>)
-        {
+        <span class="comment">// exception that was produced. But in some cases it does not return an exception, so we</span>
+        <span class="comment">// have to check if errors such as &quot;use certain option&quot; occur.</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">call_ok</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">status</span>.<span class="ident">success</span>() <span class="op">||</span> <span class="op">!</span><span class="ident">stderr</span>.<span class="ident">contains</span>(<span class="string">&quot;use&quot;</span>);
+        <span class="kw">if</span> <span class="ident">stderr</span>.<span class="ident">find</span>(<span class="string">&#39;\n&#39;</span>) <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">stderr</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>) {
+            <span class="kw">if</span> <span class="ident">stderr</span>.<span class="ident">starts_with</span>(<span class="string">&quot;Picked up _JAVA_OPTIONS:&quot;</span>) {
+                <span class="macro">eprintln</span><span class="macro">!</span>(<span class="string">&quot;Lines count: {}&quot;</span>, <span class="ident">stderr</span>.<span class="ident">lines</span>().<span class="ident">count</span>());
+                <span class="ident">call_ok</span> <span class="op">=</span> <span class="ident">stderr</span>.<span class="ident">lines</span>().<span class="ident">count</span>() <span class="op">==</span> <span class="number">2</span>;
+            } <span class="kw">else</span> {
+                <span class="ident">call_ok</span> <span class="op">=</span> <span class="bool-val">false</span>;
+            }
+        }
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">call_ok</span> {
             <span class="macro">bail</span><span class="macro">!</span>(
                 <span class="string">&quot;the {} to {} conversion command returned an error. More info: {}&quot;</span>,
                 <span class="string">&quot;.dex&quot;</span>.<span class="ident">italic</span>(),
@@ -347,7 +359,7 @@
         <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
             <span class="macro">println</span><span class="macro">!</span>(
                 <span class="string">&quot;{}&quot;</span>,
-                <span class="string">&quot;The application has been succesfully decompiled!&quot;</span>.<span class="ident">green</span>()
+                <span class="string">&quot;The application has been successfully decompiled!&quot;</span>.<span class="ident">green</span>()
             );
         } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">config</span>.<span class="ident">is_quiet</span>() {
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Application decompiled.&quot;</span>);

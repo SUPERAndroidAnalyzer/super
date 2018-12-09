@@ -130,7 +130,7 @@
 </pre><pre class="rust ">
 <span class="doccomment">//! Command line interface module.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! This module contains the `generate()` function, that generates the complet command line</span>
+<span class="doccomment">//! This module contains the `generate()` function, that generates the complete command line</span>
 <span class="doccomment">//! for the SUPER launcher. It&#39;s also used to generate command line completion scripts in the</span>
 <span class="doccomment">//! `build.rs` file.</span>
 
@@ -191,12 +191,12 @@
         .<span class="ident">arg</span>(
             <span class="ident">Arg</span>::<span class="ident">with_name</span>(<span class="string">&quot;json&quot;</span>)
                 .<span class="ident">long</span>(<span class="string">&quot;json&quot;</span>)
-                .<span class="ident">help</span>(<span class="string">&quot;Generates the reults in JSON format&quot;</span>),
+                .<span class="ident">help</span>(<span class="string">&quot;Generates the results in JSON format&quot;</span>),
         )
         .<span class="ident">arg</span>(
             <span class="ident">Arg</span>::<span class="ident">with_name</span>(<span class="string">&quot;html&quot;</span>)
                 .<span class="ident">long</span>(<span class="string">&quot;html&quot;</span>)
-                .<span class="ident">help</span>(<span class="string">&quot;Generates the reults in HTML format&quot;</span>),
+                .<span class="ident">help</span>(<span class="string">&quot;Generates the results in HTML format&quot;</span>),
         )
         .<span class="ident">arg</span>(
             <span class="ident">Arg</span>::<span class="ident">with_name</span>(<span class="string">&quot;min_criticality&quot;</span>)

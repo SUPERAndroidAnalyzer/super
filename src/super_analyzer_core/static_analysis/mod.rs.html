@@ -46,7 +46,7 @@
 </pre><pre class="rust ">
 <span class="doccomment">//! Static analysis for manifest, certificate and code files.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! The static analysis of the application&#39;s source files is used to search for vulnearable</span>
+<span class="doccomment">//! The static analysis of the application&#39;s source files is used to search for vulnerable</span>
 <span class="doccomment">//! code, settings and any other form of implementation that might be used as an exploit.</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;certificate&quot;</span>)]</span>
@@ -77,10 +77,10 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;certificate&quot;</span>)]</span>
     {
-        <span class="comment">// Run analysis for cerificate file.</span>
+        <span class="comment">// Run analysis for certificate file.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">certificate_analysis</span>(<span class="ident">config</span>, <span class="ident">package</span>.<span class="ident">as_ref</span>(), <span class="ident">results</span>) {
             <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(
-                <span class="string">&quot;there was an error analysing the certificate: {}&quot;</span>,
+                <span class="string">&quot;there was an error analyzing the certificate: {}&quot;</span>,
                 <span class="ident">e</span>
             ))
         }

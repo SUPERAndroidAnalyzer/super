@@ -721,7 +721,7 @@
             <span class="ident">open</span>::<span class="ident">that</span>(<span class="ident">open_path</span>).<span class="ident">context</span>(<span class="string">&quot;the report could not be opened automatically&quot;</span>)<span class="question-mark">?</span>;
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">status</span>.<span class="ident">success</span>() {
-            <span class="macro">bail</span><span class="macro">!</span>(<span class="string">&quot;report opening errored with status code: {}&quot;</span>, <span class="ident">status</span>);
+            <span class="macro">bail</span><span class="macro">!</span>(<span class="string">&quot;report opening failed with status code: {}&quot;</span>, <span class="ident">status</span>);
         }
     }
 
@@ -732,7 +732,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// If the destination folder doesn&#39;t exist is created. Note that the parent folder must exist. If</span>
 <span class="doccomment">/// files in the destination folder exist with the same name as in the origin folder, they will be</span>
-<span class="doccomment">/// overwriten.</span>
+<span class="doccomment">/// overwritten.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">copy_folder</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(<span class="ident">from</span>: <span class="ident">P</span>, <span class="ident">to</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="op">!</span><span class="ident">to</span>.<span class="ident">as_ref</span>().<span class="ident">exists</span>() {
         <span class="ident">fs</span>::<span class="ident">create_dir</span>(<span class="ident">to</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
@@ -882,7 +882,7 @@
             <span class="ident">Criticality</span>::<span class="ident">Critical</span>
         );
 
-        <span class="comment">// Check that the comparisions between criticalities is correct.</span>
+        <span class="comment">// Check that the comparisons between criticality levels is correct.</span>
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Criticality</span>::<span class="ident">Warning</span> <span class="op">&lt;</span> <span class="ident">Criticality</span>::<span class="ident">Low</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Criticality</span>::<span class="ident">Warning</span> <span class="op">&lt;</span> <span class="ident">Criticality</span>::<span class="ident">Medium</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Criticality</span>::<span class="ident">Warning</span> <span class="op">&lt;</span> <span class="ident">Criticality</span>::<span class="ident">High</span>);
@@ -894,14 +894,14 @@
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Criticality</span>::<span class="ident">Medium</span> <span class="op">&lt;</span> <span class="ident">Criticality</span>::<span class="ident">Critical</span>);
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">Criticality</span>::<span class="ident">High</span> <span class="op">&lt;</span> <span class="ident">Criticality</span>::<span class="ident">Critical</span>);
 
-        <span class="comment">// Check that the criticalities are printed correctly with the `Display` trait.</span>
+        <span class="comment">// Check that the criticality is printed correctly with the `Display` trait.</span>
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Warning</span>).<span class="ident">as_str</span>(), <span class="string">&quot;warning&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Low</span>).<span class="ident">as_str</span>(), <span class="string">&quot;low&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Medium</span>).<span class="ident">as_str</span>(), <span class="string">&quot;medium&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">High</span>).<span class="ident">as_str</span>(), <span class="string">&quot;high&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Critical</span>).<span class="ident">as_str</span>(), <span class="string">&quot;critical&quot;</span>);
 
-        <span class="comment">// Check that the criticalities are printed correctly with the `Debug` trait.</span>
+        <span class="comment">// Check that the criticality is printed correctly with the `Debug` trait.</span>
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Warning</span>).<span class="ident">as_str</span>(), <span class="string">&quot;Warning&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Low</span>).<span class="ident">as_str</span>(), <span class="string">&quot;Low&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">Criticality</span>::<span class="ident">Medium</span>).<span class="ident">as_str</span>(), <span class="string">&quot;Medium&quot;</span>);

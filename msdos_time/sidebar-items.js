@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["MsDosDateTime","Struct representing the date and time part of an MsDos datetime"]],"trait":[["TmMsDosExt","Trait to convert a time representation to and from a MsDosDateTime"]]});
