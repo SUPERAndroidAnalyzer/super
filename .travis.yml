@@ -98,6 +98,7 @@ jobs:
       file: releases/*
       skip_cleanup: true
       prerelease: true # TODO: remove on 1.0
+      name: "SUPER $TRAVIS_TAG"
       on:
         repo: SUPERAndroidAnalyzer/super
         tags: true
