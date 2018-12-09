@@ -40,7 +40,7 @@ elif [ "$action" = "upload_code_coverage" ]; then
         "$TRAVIS_RUST_VERSION" == "stable" &&
         "$TRAVIS_OS_NAME" == "linux" &&
         "$TRAVIS_JOB_NAME" != *"packaging"* ]]; then
-    sudo -E apt-get -yq --no-install-suggests --no-install-recommends $(travis_apt_get_options) install libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev zlib1g-dev &&
+    sudo -E apt-get -yq --no-install-suggests --no-install-recommends install libcurl4-openssl-dev libelf-dev libdw-dev cmake gcc binutils-dev libiberty-dev zlib1g-dev &&
     wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
     tar xzf master.tar.gz &&
     cd kcov-master &&
