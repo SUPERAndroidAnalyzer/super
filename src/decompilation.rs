@@ -100,7 +100,6 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
         let mut call_ok = output.status.success() || !stderr.contains("use");
         if stderr.find('\n') != Some(stderr.len() - 1) {
             if stderr.starts_with("Picked up _JAVA_OPTIONS:") {
-                eprintln!("Lines count: {}", stderr.lines().count());
                 call_ok = stderr.lines().count() == 2;
             } else {
                 call_ok = false;
