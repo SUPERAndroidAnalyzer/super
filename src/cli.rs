@@ -1,6 +1,6 @@
 //! Command line interface module.
 //!
-//! This module contains the `generate()` function, that generates the complet command line
+//! This module contains the `generate()` function, that generates the complete command line
 //! for the SUPER launcher. It's also used to generate command line completion scripts in the
 //! `build.rs` file.
 
@@ -61,12 +61,12 @@ pub fn generate() -> App<'static, 'static> {
         .arg(
             Arg::with_name("json")
                 .long("json")
-                .help("Generates the reults in JSON format"),
+                .help("Generates the results in JSON format"),
         )
         .arg(
             Arg::with_name("html")
                 .long("html")
-                .help("Generates the reults in HTML format"),
+                .help("Generates the results in HTML format"),
         )
         .arg(
             Arg::with_name("min_criticality")

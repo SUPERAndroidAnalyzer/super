@@ -1,6 +1,6 @@
 //! Static analysis for manifest, certificate and code files.
 //!
-//! The static analysis of the application's source files is used to search for vulnearable
+//! The static analysis of the application's source files is used to search for vulnerable
 //! code, settings and any other form of implementation that might be used as an exploit.
 
 #[cfg(feature = "certificate")]
@@ -31,10 +31,10 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
 
     #[cfg(feature = "certificate")]
     {
-        // Run analysis for cerificate file.
+        // Run analysis for certificate file.
         if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
             print_warning(format!(
-                "there was an error analysing the certificate: {}",
+                "there was an error analyzing the certificate: {}",
                 e
             ))
         }

@@ -426,7 +426,7 @@ mod tests {
         assert_eq!(SdkNumber::from(10_000), SdkNumber::Development);
     }
 
-    /// Checks the correctnes back from the SDK to its number.
+    /// Checks the correctness back from the SDK to its number.
     #[test]
     fn it_get_number() {
         assert_eq!(SdkNumber::Api1.number(), 1);

@@ -97,10 +97,15 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
         // and the status is always success. So the only difference is if we detect the actual
         // exception that was produced. But in some cases it does not return an exception, so we
         // have to check if errors such as "use certain option" occur.
-        if !output.status.success()
-            || stderr.find('\n') != Some(stderr.len() - 1)
-            || stderr.contains("use")
-        {
+        let mut call_ok = output.status.success() || !stderr.contains("use");
+        if stderr.find('\n') != Some(stderr.len() - 1) {
+            if stderr.starts_with("Picked up _JAVA_OPTIONS:") {
+                call_ok = stderr.lines().count() == 3;
+            } else {
+                call_ok = false;
+            }
+        }
+        if !call_ok {
             bail!(
                 "the {} to {} conversion command returned an error. More info: {}",
                 ".dex".italic(),
@@ -164,7 +169,7 @@ pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), 
         if config.is_verbose() {
             println!(
                 "{}",
-                "The application has been succesfully decompiled!".green()
+                "The application has been successfully decompiled!".green()
             );
         } else if !config.is_quiet() {
             println!("Application decompiled.");

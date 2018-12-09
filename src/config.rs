@@ -68,7 +68,7 @@ pub struct Config {
     templates_folder: PathBuf,
     /// The name of the template to use.
     template: String,
-    /// Represents an unknow permission.
+    /// Represents an unknown permission.
     #[serde(deserialize_with = "ConfigDeserializer::deserialize_unknown_permission")]
     unknown_permission: (Criticality, String),
     /// List of permissions to analyze.
@@ -89,10 +89,10 @@ impl ConfigDeserializer {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: Value = Deserialize::deserialize(de)?;
+        let deserialize_result: Value = Deserialize::deserialize(de)?;
 
         #[allow(clippy::use_debug)]
-        match deser_result {
+        match deserialize_result {
             Value::Integer(threads) => {
                 if threads > 0 && threads <= {
                     // TODO: change it for compile-time check.
@@ -111,7 +111,7 @@ impl ConfigDeserializer {
             }
             _ => Err(de::Error::custom(format!(
                 "unexpected value: {:?}",
-                deser_result
+                deserialize_result
             ))),
         }
     }
@@ -121,10 +121,10 @@ impl ConfigDeserializer {
     where
         D: Deserializer<'de>,
     {
-        let deser_result: Value = Deserialize::deserialize(de)?;
+        let deserialize_result: Value = Deserialize::deserialize(de)?;
 
         #[allow(clippy::use_debug)]
-        match deser_result {
+        match deserialize_result {
             Value::Table(ref table) => {
                 let criticality_str = table
                     .get("criticality")
@@ -150,7 +150,7 @@ impl ConfigDeserializer {
             }
             _ => Err(de::Error::custom(format!(
                 "Unexpected value: {:?}",
-                deser_result
+                deserialize_result
             ))),
         }
     }
@@ -533,7 +533,7 @@ impl Config {
                 String::from(
                     "Even if the application can create its own \
                      permissions, it's discouraged, since it can \
-                     lead to missunderstanding between developers.",
+                     lead to misunderstanding between developers.",
                 ),
             ),
             permissions: BTreeSet::new(),
@@ -551,7 +551,7 @@ impl Default for Config {
         if etc_rules.exists() {
             config.rules_json = etc_rules;
         }
-        let share_path = Path::new(if cfg!(taros = "macos") {
+        let share_path = Path::new(if cfg!(target_os = "macos") {
             "/usr/local/super-analyzer"
         } else {
             "/usr/share/super-analyzer"
@@ -653,9 +653,9 @@ mod tests {
         assert_eq!(config.dist_folder(), Path::new("dist"));
         assert_eq!(config.results_folder(), Path::new("results"));
         assert_eq!(config.template_name(), "super");
-        let share_path = Path::new(if cfg!(taros = "macos") {
+        let share_path = Path::new(if cfg!(target_os = "macos") {
             "/usr/local/super-analyzer"
-        } else if cfg!(tarfamily = "windows") {
+        } else if cfg!(target_family = "windows") {
             ""
         } else {
             "/usr/share/super-analyzer"
@@ -678,7 +678,7 @@ mod tests {
             config.template_path(),
             share_path.join("templates").join("super")
         );
-        if cfg!(tarfamily = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
+        if cfg!(target_family = "unix") && Path::new("/etc/super-analyzer/rules.json").exists() {
             assert_eq!(
                 config.rules_json(),
                 Path::new("/etc/super-analyzer/rules.json")
@@ -690,7 +690,7 @@ mod tests {
         assert_eq!(
             config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
-             since it can lead to missunderstanding between developers."
+             since it can lead to misunderstanding between developers."
         );
         assert_eq!(config.permissions().next(), None);
 
@@ -779,7 +779,7 @@ mod tests {
         assert_eq!(
             config.unknown_permission_description(),
             "Even if the application can create its own permissions, it's discouraged, \
-             since it can lead to missunderstanding between developers."
+             since it can lead to misunderstanding between developers."
         );
 
         let permission = config.permissions().next().unwrap();

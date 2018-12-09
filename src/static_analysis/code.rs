@@ -54,7 +54,7 @@ pub fn analysis<S: AsRef<str>>(
 
     let rules = Arc::new(rules);
     let manifest = Arc::new(manifest);
-    let found_vulns: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
+    let found_vulnerabilities: Arc<Mutex<Vec<Vulnerability>>> = Arc::new(Mutex::new(Vec::new()));
     let files = Arc::new(Mutex::new(files));
     let dist_folder = Arc::new(config.dist_folder().join(package.as_ref()));
 
@@ -71,7 +71,7 @@ pub fn analysis<S: AsRef<str>>(
             let thread_manifest = Arc::clone(&manifest);
             let thread_files = Arc::clone(&files);
             let thread_rules = Arc::clone(&rules);
-            let thread_vulns = Arc::clone(&found_vulns);
+            let thread_vulnerabilities = Arc::clone(&found_vulnerabilities);
             let thread_dist_folder = Arc::clone(&dist_folder);
 
             thread::spawn(move || loop {
@@ -86,7 +86,7 @@ pub fn analysis<S: AsRef<str>>(
                             &*thread_dist_folder,
                             &thread_rules,
                             &thread_manifest,
-                            &thread_vulns,
+                            &thread_vulnerabilities,
                         ) {
                             print_warning(format!(
                                 "could not analyze `{}`. The analysis will continue, though. \
@@ -132,13 +132,17 @@ pub fn analysis<S: AsRef<str>>(
         }
     }
 
-    for vuln in Arc::try_unwrap(found_vulns).unwrap().into_inner().unwrap() {
-        results.add_vulnerability(vuln);
+    for vulnerability in Arc::try_unwrap(found_vulnerabilities)
+        .unwrap()
+        .into_inner()
+        .unwrap()
+    {
+        results.add_vulnerability(vulnerability);
     }
 
     if config.is_verbose() {
         println!();
-        println!("{}", "The source code was analized correctly!".green());
+        println!("{}", "The source code was analyzed correctly!".green());
     } else if !config.is_quiet() {
         println!("Source code analyzed.");
     }
@@ -208,15 +212,15 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                 Some(check) => {
                     let caps = rule.regex().captures(&code[m.start()..m.end()]).unwrap();
 
-                    let fcheck1 = caps.name("fc1");
-                    let fcheck2 = caps.name("fc2");
+                    let forward_check1 = caps.name("fc1");
+                    let forward_check2 = caps.name("fc2");
                     let mut r = check.clone();
 
-                    if let Some(fc1) = fcheck1 {
+                    if let Some(fc1) = forward_check1 {
                         r = r.replace("{fc1}", fc1.as_str());
                     }
 
-                    if let Some(fc2) = fcheck2 {
+                    if let Some(fc2) = forward_check2 {
                         r = r.replace("{fc2}", fc2.as_str());
                     }
 
@@ -653,15 +657,15 @@ mod tests {
                 Some(check) => {
                     let caps = rule.regex().captures(text.as_ref()).unwrap();
 
-                    let fcheck1 = caps.name("fc1");
-                    let fcheck2 = caps.name("fc2");
+                    let forward_check1 = caps.name("fc1");
+                    let forward_check2 = caps.name("fc2");
                     let mut r = check.clone();
 
-                    if let Some(fc1) = fcheck1 {
+                    if let Some(fc1) = forward_check1 {
                         r = r.replace("{fc1}", fc1.as_str());
                     }
 
-                    if let Some(fc2) = fcheck2 {
+                    if let Some(fc2) = forward_check2 {
                         r = r.replace("{fc2}", fc2.as_str());
                     }
 
@@ -749,13 +753,13 @@ mod tests {
             "catch (IOException|Exception e) {",
             "catch (Exception|IOException e) {",
             "catch (IOException | Exception e) {",
-            "catch (IOException|Exception|PepeException e) {",
-            "catch (SystemException|ApplicationException|PepeException e) {",
-            "catch (IOException|Exception | PepeException e) {",
+            "catch (IOException|Exception|MyTestException e) {",
+            "catch (SystemException|ApplicationException|MyTestException e) {",
+            "catch (IOException|Exception | MyTestException e) {",
         ];
         let should_not_match = &[
             "catch (IOException e) {",
-            "catch (IOException|PepeException e) {",
+            "catch (IOException|MyTestException e) {",
         ];
 
         for m in should_match {
@@ -976,7 +980,7 @@ mod tests {
     }
 
     #[test]
-    fn it_weak_algs() {
+    fn it_weak_algorithms() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1613,7 +1617,7 @@ mod tests {
         let should_match = &[
             "super@super.es",
             "android_analizer@dem.co.uk",
-            "foo@unadepatatas.com",
+            "foo@mywebpage.com",
             "android-rust69@tux.rox",
         ];
 
@@ -1691,7 +1695,7 @@ mod tests {
     }
 
     #[test]
-    fn it_get_sim_operatorname() {
+    fn it_get_sim_operator_name() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1786,7 +1790,7 @@ mod tests {
     }
 
     #[test]
-    fn it_ssl_getinsecure_method() {
+    fn it_ssl_get_insecure_method() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1849,7 +1853,7 @@ mod tests {
     }
 
     #[test]
-    fn it_sleep_method_notvalidated() {
+    fn it_sleep_method_not_validated() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1900,7 +1904,7 @@ mod tests {
     }
 
     #[test]
-    fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not_provided() {
+    fn it_has_to_check_rule_if_include_regexp_is_match_and_exclude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
             permissions: Box::new([]),
@@ -1918,7 +1922,7 @@ mod tests {
     }
 
     #[test]
-    fn it_does_not_have_to_check_rule_if_include_regexp_is_non_match_and_exlcude_not_provided() {
+    fn it_does_not_have_to_check_rule_if_include_regexp_is_non_match_and_exclude_not_provided() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
             permissions: Box::new([]),
@@ -1936,7 +1940,7 @@ mod tests {
     }
 
     #[test]
-    fn it_has_to_check_rule_if_include_regexp_is_match_and_exlcude_not() {
+    fn it_has_to_check_rule_if_include_regexp_is_match_and_exclude_not() {
         let rule = Rule {
             regex: Regex::new("").unwrap(),
             permissions: Box::new([]),
@@ -1947,7 +1951,7 @@ mod tests {
             description: String::new(),
             criticality: Criticality::Warning,
             include_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
-            exclude_file_regex: Some(Regex::new(r"nonmatching").unwrap()),
+            exclude_file_regex: Some(Regex::new(r"non_matching").unwrap()),
         };
 
         assert!(rule.has_to_check("filename.xml"));
@@ -1964,7 +1968,7 @@ mod tests {
             label: String::new(),
             description: String::new(),
             criticality: Criticality::Warning,
-            include_file_regex: Some(Regex::new(r"nonmatching").unwrap()),
+            include_file_regex: Some(Regex::new(r"non_matching").unwrap()),
             exclude_file_regex: Some(Regex::new(r".*\.xml").unwrap()),
         };
 

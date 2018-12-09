@@ -141,7 +141,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
                 let description = "The application is signed with the Android Debug Certificate. \
                                    This certificate should never be used for publishing an app.";
 
-                let vuln = Vulnerability::new(
+                let vulnerability = Vulnerability::new(
                     criticality,
                     "Android Debug Certificate",
                     description,
@@ -150,7 +150,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
                     None,
                     None::<String>,
                 );
-                results.add_vulnerability(vuln);
+                results.add_vulnerability(vulnerability);
                 print_vulnerability(description, criticality);
             }
             if issuer.nth(1) == subject.nth(1) {
@@ -181,7 +181,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
                                    use applications with expired certificates since the app is \
                                    not secure anymore.";
 
-                let vuln = Vulnerability::new(
+                let vulnerability = Vulnerability::new(
                     criticality,
                     "Expired certificate",
                     description,
@@ -190,7 +190,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
                     None,
                     None::<String>,
                 );
-                results.add_vulnerability(vuln);
+                results.add_vulnerability(vulnerability);
                 print_vulnerability(description, criticality);
             }
         }

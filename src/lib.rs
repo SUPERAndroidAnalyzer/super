@@ -242,7 +242,7 @@ pub fn analyze_package<P: AsRef<Path>>(
             open::that(open_path).context("the report could not be opened automatically")?;
 
         if !status.success() {
-            bail!("report opening errored with status code: {}", status);
+            bail!("report opening failed with status code: {}", status);
         }
     }
 
@@ -253,7 +253,7 @@ pub fn analyze_package<P: AsRef<Path>>(
 ///
 /// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
 /// files in the destination folder exist with the same name as in the origin folder, they will be
-/// overwriten.
+/// overwritten.
 pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
     if !to.as_ref().exists() {
         fs::create_dir(to.as_ref())?;
@@ -403,7 +403,7 @@ mod tests {
             Criticality::Critical
         );
 
-        // Check that the comparisions between criticalities is correct.
+        // Check that the comparisons between criticality levels is correct.
         assert!(Criticality::Warning < Criticality::Low);
         assert!(Criticality::Warning < Criticality::Medium);
         assert!(Criticality::Warning < Criticality::High);
@@ -415,14 +415,14 @@ mod tests {
         assert!(Criticality::Medium < Criticality::Critical);
         assert!(Criticality::High < Criticality::Critical);
 
-        // Check that the criticalities are printed correctly with the `Display` trait.
+        // Check that the criticality is printed correctly with the `Display` trait.
         assert_eq!(format!("{}", Criticality::Warning).as_str(), "warning");
         assert_eq!(format!("{}", Criticality::Low).as_str(), "low");
         assert_eq!(format!("{}", Criticality::Medium).as_str(), "medium");
         assert_eq!(format!("{}", Criticality::High).as_str(), "high");
         assert_eq!(format!("{}", Criticality::Critical).as_str(), "critical");
 
-        // Check that the criticalities are printed correctly with the `Debug` trait.
+        // Check that the criticality is printed correctly with the `Debug` trait.
         assert_eq!(format!("{:?}", Criticality::Warning).as_str(), "Warning");
         assert_eq!(format!("{:?}", Criticality::Low).as_str(), "Low");
         assert_eq!(format!("{:?}", Criticality::Medium).as_str(), "Medium");

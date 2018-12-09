@@ -74,7 +74,7 @@ impl Results {
         };
         if config.is_verbose() {
             println!(
-                "The results struct has been created. All the vulnerabilitis will now \
+                "The results struct has been created. All the vulnerabilities will now \
                  be recorded and when the analysis ends, they will be written to result \
                  files."
             );
@@ -170,15 +170,15 @@ impl Results {
 
     /// Adds a vulnerability to the results.
     #[allow(unused_variables)] // Until we remove the debug assertions
-    pub fn add_vulnerability(&mut self, vuln: Vulnerability) {
-        match vuln.get_criticality() {
+    pub fn add_vulnerability(&mut self, vulnerability: Vulnerability) {
+        match vulnerability.get_criticality() {
             Criticality::Warning => {
-                let new = self.warnings.insert(vuln);
+                let new = self.warnings.insert(vulnerability);
                 // FIXME should we maintain it?
                 //debug_assert!(new, "trying to insert the same warning twice");
             }
             Criticality::Low => {
-                let new = self.low.insert(vuln);
+                let new = self.low.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -186,7 +186,7 @@ impl Results {
                 // );
             }
             Criticality::Medium => {
-                let new = self.medium.insert(vuln);
+                let new = self.medium.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -194,7 +194,7 @@ impl Results {
                 // );
             }
             Criticality::High => {
-                let new = self.high.insert(vuln);
+                let new = self.high.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -202,7 +202,7 @@ impl Results {
                 // );
             }
             Criticality::Critical => {
-                let new = self.critical.insert(vuln);
+                let new = self.critical.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -269,7 +269,7 @@ impl Results {
             if config.is_force() || !index_path.exists() {
                 if path.exists() {
                     if config.is_verbose() {
-                        println!("The application HTML resulsts exist. But no more…");
+                        println!("The application HTML results exist. But no more…");
                     }
 
                     for f in fs::read_dir(path)
@@ -287,12 +287,12 @@ impl Results {
                     }
                 }
 
-                let handelbars_report_result = HandlebarsReport::from_path(
+                let handlebars_report_result = HandlebarsReport::from_path(
                     config.template_path(),
                     package.as_ref().to_owned(),
                 );
 
-                if let Ok(mut handlebars_reporter) = handelbars_report_result {
+                if let Ok(mut handlebars_reporter) = handlebars_report_result {
                     if let Err(e) = handlebars_reporter.generate(config, self) {
                         print_warning(format!("There was en error generating HTML report: {}", e));
                     }

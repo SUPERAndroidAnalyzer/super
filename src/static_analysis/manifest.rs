@@ -101,7 +101,7 @@ pub fn analysis<S: AsRef<str>>(
                 None => None,
             };
 
-            let vuln = Vulnerability::new(
+            let vulnerability = Vulnerability::new(
                 criticality,
                 "Manifest Debug",
                 description,
@@ -111,7 +111,7 @@ pub fn analysis<S: AsRef<str>>(
                 code,
             );
 
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(vulnerability);
             print_vulnerability(description, criticality);
         }
     }
@@ -130,7 +130,7 @@ pub fn analysis<S: AsRef<str>>(
                 None => None,
             };
 
-            let vuln = Vulnerability::new(
+            let vulnerability = Vulnerability::new(
                 criticality,
                 "Large heap",
                 description,
@@ -139,7 +139,7 @@ pub fn analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(vulnerability);
             print_vulnerability(description, criticality);
         }
     }
@@ -158,7 +158,7 @@ pub fn analysis<S: AsRef<str>>(
                 None => None,
             };
 
-            let vuln = Vulnerability::new(
+            let vulnerability = Vulnerability::new(
                 criticality,
                 "Allows Backup",
                 description,
@@ -167,7 +167,7 @@ pub fn analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(vulnerability);
             print_vulnerability(description, criticality);
         }
     }
@@ -184,7 +184,7 @@ pub fn analysis<S: AsRef<str>>(
                 None => None,
             };
 
-            let vuln = Vulnerability::new(
+            let vulnerability = Vulnerability::new(
                 permission.criticality(),
                 permission.label(),
                 permission.description(),
@@ -193,7 +193,7 @@ pub fn analysis<S: AsRef<str>>(
                 line,
                 code,
             );
-            results.add_vulnerability(vuln);
+            results.add_vulnerability(vulnerability);
             print_vulnerability(permission.description(), permission.criticality());
         }
     }
@@ -262,7 +262,7 @@ impl Manifest {
                     | tag @ "activity"
                     | tag @ "activity-alias"
                     | tag @ "service" => {
-                        manifest.check_exported_atttributes(tag, attributes, config, results)
+                        manifest.check_exported_attributes(tag, attributes, config, results)
                     }
                     _ => {}
                 },
@@ -478,7 +478,7 @@ impl Manifest {
                     let file = Some("AndroidManifest.xml");
 
                     if criticality > config.min_criticality() {
-                        let vuln = Vulnerability::new(
+                        let vulnerability = Vulnerability::new(
                             criticality,
                             "Unknown permission",
                             description,
@@ -487,7 +487,7 @@ impl Manifest {
                             line,
                             code,
                         );
-                        results.add_vulnerability(vuln);
+                        results.add_vulnerability(vulnerability);
 
                         print_vulnerability(description, criticality);
                     }
@@ -498,7 +498,7 @@ impl Manifest {
         }
     }
 
-    fn check_exported_atttributes<A>(
+    fn check_exported_attributes<A>(
         &mut self,
         tag: &str,
         attributes: A,
@@ -534,7 +534,7 @@ impl Manifest {
                         let criticality = Criticality::Warning;
 
                         if criticality >= config.min_criticality() {
-                            let vuln = Vulnerability::new(
+                            let vulnerability = Vulnerability::new(
                                 criticality,
                                 format!("Exported {}", tag),
                                 format!(
@@ -546,7 +546,7 @@ impl Manifest {
                                 line,
                                 code,
                             );
-                            results.add_vulnerability(vuln);
+                            results.add_vulnerability(vulnerability);
 
                             print_vulnerability(
                                 format!(
@@ -709,27 +709,27 @@ mod tests {
     fn it_get_line() {
         let code1 = "Hello, I'm Razican.
         I'm trying to create a complex code to test
-        multiline code search. This should be
+        multi-line code search. This should be
         enough, probably.";
 
         let code2 = "Hello, I'm Razican.
         I'm trying to create a complex code to test
-        multiline code
+        multi-line code
         search. This should be
         enough, probably.";
 
         let code3 = "Hello, I'm Razican.I'm trying to create a complex
         code to test
-        multiline code search. This should be
+        multi-line code search. This should be
         enough, probably.";
 
         assert_eq!(get_line(code1, "Razican").unwrap(), 0);
-        assert_eq!(get_line(code1, "multiline").unwrap(), 2);
+        assert_eq!(get_line(code1, "multi-line").unwrap(), 2);
         assert_eq!(get_line(code2, "search").unwrap(), 3);
         assert_eq!(get_line(code2, "probably").unwrap(), 4);
         assert_eq!(get_line(code3, "create").unwrap(), 0);
         assert_eq!(get_line(code3, "enough").unwrap(), 3);
-        assert!(get_line(code3, "lalalala").is_err());
+        assert!(get_line(code3, "non-matching").is_err());
     }
 
     #[test]
