@@ -12,7 +12,7 @@ elif [ "$action" = "test_ignored" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "stable" &&
         "$TRAVIS_OS_NAME" != "windows" ]]; then # &&
         # (-n "$TRAVIS_TAG") ]]; then
-    cargo test --verbose --features="no_color" -- --ignored
+    cargo test --verbose --features="no-color" -- --ignored
   fi
 
 # Run unit and integration tests with unstable features.
