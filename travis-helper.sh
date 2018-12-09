@@ -9,7 +9,9 @@ if [ "$action" = "test" ]; then
 
 # Run ignored unit and integration tests.
 elif [ "$action" = "test_ignored" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" != "windows" && (-v TRAVIS_TAG) ]]; then
+  if [[ "$TRAVIS_RUST_VERSION" == "stable" &&
+        "$TRAVIS_OS_NAME" != "windows" &&
+        (-n "$TRAVIS_TAG") ]]; then
     cargo test --verbose -- --ignored
   fi
 
