@@ -1,7 +1,7 @@
 language: rust
 cache:
   cargo: true
-  timeout: 300
+  timeout: 1000
 dist: xenial
 sudo: true
 
