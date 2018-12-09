@@ -4,7 +4,8 @@
 
 This release is the first SUPER release targeting Rust 2018 edition. It contains some internal
 improvements that will make future development easier and more efficient. It also has some
-internal enhancements.
+internal enhancements. Additionally, we have fixed a bunch of spelling mistakes and upgraded some
+dependencies.
 
 ### Internal Changes
 
