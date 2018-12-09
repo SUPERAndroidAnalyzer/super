@@ -12,6 +12,7 @@ elif [ "$action" = "test_ignored" ]; then
   if [[ "$TRAVIS_RUST_VERSION" == "stable" &&
         "$TRAVIS_OS_NAME" != "windows" ]]; then # &&
         # (-n "$TRAVIS_TAG") ]]; then
+    java -version &&
     cargo test --verbose --features="no-color" -- --ignored
   fi
 

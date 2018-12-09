@@ -95,8 +95,8 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
         // and the status is always success. So the only difference is if we detect the actual
-        // exception that was produced. But, the thing is that in some cases it does not return an
-        // exception, so we have to check if errors such as "use certain option" occur.
+        // exception that was produced. But in some cases it does not return an exception, so we
+        // have to check if errors such as "use certain option" occur.
         if !output.status.success()
             || stderr.find('\n') != Some(stderr.len() - 1)
             || stderr.contains("use")
