@@ -58,8 +58,10 @@ elif [ "$action" = "upload_code_coverage" ]; then
 
 # Upload development documentation for the develop branch.
 elif [ "$action" = "documentation" ]; then
-  cargo doc -v --document-private-items &&
-  echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html
+  if [ "$TRAVIS_BRANCH" = "develop" ]
+    cargo doc -v --document-private-items &&
+    echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html
+  fi
 
 # Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.
 elif [ "$action" = "dist_test" ]; then
