@@ -9,7 +9,7 @@ if [ "$action" = "test" ]; then
 
 # Run ignored unit and integration tests.
 elif [ "$action" = "test_ignored" ]; then
-  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" != "windows" && (! -z $TRAVIS_TAG) ]]; then
+  if [[ "$TRAVIS_RUST_VERSION" == "stable" && "$TRAVIS_OS_NAME" != "windows" && (-v TRAVIS_TAG) ]]; then
     cargo test --verbose -- --ignored
   fi
 
@@ -71,7 +71,7 @@ elif [ "$action" = "dist_test" ]; then
     docker exec "$package" "/root/super/`echo $package`_build.sh"
 
 elif [ "action" = "deploy"]; then
-  if [ ! -z $TRAVIS_TAG ]; then
+  if [[ -v TRAVIS_TAG ]]; then
     mkdir -pv releases &&
     for PACKAGE in "debian" "ubuntu" "fedora" "centos"; do
       docker pull "$PACKAGE:latest" &&
