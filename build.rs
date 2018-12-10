@@ -1,8 +1,5 @@
-extern crate clap;
-
 use clap::Shell;
-use std::env;
-use std::path::PathBuf;
+use std::{env, path::PathBuf};
 
 #[path = "src/cli.rs"]
 mod cli;

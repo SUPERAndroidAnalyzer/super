@@ -63,7 +63,7 @@ elif [ "$action" = "upload_code_coverage" ]; then
 elif [ "$action" = "documentation" ]; then
   if [ "$TRAVIS_BRANCH" = "develop" ]; then
     cargo doc -v --document-private-items &&
-    echo "<meta http-equiv=refresh content=0;url=super/index.html>" > target/doc/index.html
+    echo "<meta http-equiv=refresh content=0;url=super_analyzer/index.html>" > target/doc/index.html
   fi
 
 # Runs packaging tests for pull requests, new releases or release preparations in Ubuntu and Fedora.

@@ -27,7 +27,7 @@ an efficiency only comparable to C/C++.
 
 And secondly, we decided to make the software 100% extensible: All rules are centered in a
 `rules.json` file, and each company or tester could create its own rules to analyze what they need.
-It's also modular, so that new developments can easily add new functionality. Finally, a templating
+It's also modular, so that new developments can easily add new functionality. Finally, a template
 system for results reports gives users the ability to personalize the report.
 
 It also gives great code review tools, directly in the HTML report, so that anyone can search
@@ -51,14 +51,14 @@ are a few usage options available:
 
 ```
 USAGE:
-    super [FLAGS] [OPTIONS] <package>
+    super-analyzer [FLAGS] [OPTIONS] <package>
 
 FLAGS:
         --bench       Show benchmarks for the analysis
         --force       If you'd like to force the auditor to do everything from the beginning
     -h, --help        Prints help information
-        --html        Generates the reults in HTML format
-        --json        Generates the reults in JSON format
+        --html        Generates the results in HTML format
+        --json        Generates the results in JSON format
         --open        Open the report in a browser once it is complete
     -q, --quiet       If you'd like a zen auditor that won't output anything in stdout
     -a, --test-all    Test all .apk files in the downloads directory
@@ -74,7 +74,8 @@ OPTIONS:
         --results <results>                    Folder where to store the results
         --rules <rules>                        Path to a JSON rules file
         --template <template>                  Path to a results template file
-    -t, --threads <threads>                    Number of threads to use, by default it will use one thread per logical CPU core
+    -t, --threads <threads>                    Number of threads to use, by default it will use one thread per logical
+                                               CPU core
 
 ARGS:
     <package>    The package string of the application to test

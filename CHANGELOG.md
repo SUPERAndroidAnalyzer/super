@@ -61,7 +61,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 - Multiple documentation improvements.
 - Code quality improved by using new syntax.
 - Fixed multiple performance bottlenecks.
-- Switched to library/binary architechture.
+- Switched to library/binary architecture.
 
 ### Bug Fixes
 
@@ -85,7 +85,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 - Removed ApkTool dependency, analysis are now about 20% - 50% faster.
 - Removed all ApkTool related configuration and CLI directives.
 - The `--force` flag is now less aggressive. It won't remove a JSON report if only the HTML report
-  is being generated, and the othey way around: it won't remove the HTML report if only the JSON
+  is being generated, and the other way around: it won't remove the HTML report if only the JSON
   report is being generated.
 
 ### Internal Changes
@@ -149,7 +149,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 
 ### Changes in Rules
 
-- Changed some regexes to match the new `regex` crate classes.
+- Changed some regular expressions to match the new `regex` crate classes.
 - The files to be searched with a given rule can now be filtered by two new fields:
   - `include_file_regex`: A regex that all tested files will match.
   - `exclude_file_regex`: A regex that will whitelist files matched by the previous regex.
@@ -194,7 +194,7 @@ Apart from the core team, the following people has contributed to this release:
 
 ### Bug Fixes
 
-- Changed paths for better multiplatform support.
+- Changed paths for better multi-platform support.
 - Regular Expressions:
   - URL Disclosure no longer detects content providers (`content://...`).
 - Solved some coloring errors when combining styling and color in the same print.
