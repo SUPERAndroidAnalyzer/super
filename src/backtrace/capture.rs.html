@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/capture.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>capture.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.13/src/capture.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>capture.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -235,23 +235,69 @@
 <span id="235">235</span>
 <span id="236">236</span>
 <span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
 </pre><pre class="rust ">
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">prelude</span>::<span class="ident">v1</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::<span class="ident">c_void</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::{<span class="ident">Path</span>, <span class="ident">PathBuf</span>};
 
 <span class="kw">use</span> {<span class="ident">trace</span>, <span class="ident">resolve</span>, <span class="ident">SymbolName</span>};
+<span class="kw">use</span> <span class="ident">types</span>::<span class="ident">c_void</span>;
 
 <span class="doccomment">/// Representation of an owned and self-contained backtrace.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This structure can be used to capture a backtrace at various points in a</span>
 <span class="doccomment">/// program and later used to inspect what the backtrace was at that time.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `Backtrace` supports pretty-printing of backtraces through its `Debug`</span>
+<span class="doccomment">/// implementation.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serialize-rustc&quot;</span>, <span class="ident">derive</span>(<span class="ident">RustcDecodable</span>, <span class="ident">RustcEncodable</span>))]</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serialize-serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>))]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Backtrace</span> {
+    <span class="comment">// Frames here are listed from top-to-bottom of the stack</span>
     <span class="ident">frames</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BacktraceFrame</span><span class="op">&gt;</span>,
+    <span class="comment">// The index we believe is the actual start of the backtrace, omitting</span>
+    <span class="comment">// frames like `Backtrace::new` and `backtrace::trace`.</span>
+    <span class="ident">actual_start_index</span>: <span class="ident">usize</span>,
 }
 
 <span class="doccomment">/// Captured version of a frame in a backtrace.</span>
@@ -297,10 +343,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// let current_backtrace = Backtrace::new();</span>
     <span class="doccomment">/// ```</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span> <span class="comment">// want to make sure there&#39;s a frame here to remove</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bt</span> <span class="op">=</span> <span class="ident">Backtrace</span>::<span class="ident">new_unresolved</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bt</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">create</span>(<span class="self">Self</span>::<span class="ident">new</span> <span class="kw">as</span> <span class="ident">usize</span>);
         <span class="ident">bt</span>.<span class="ident">resolve</span>();
-        <span class="kw">return</span> <span class="ident">bt</span>
+        <span class="ident">bt</span>
     }
 
     <span class="doccomment">/// Similar to `new` except that this does not resolve any symbols, this</span>
@@ -321,18 +368,39 @@
     <span class="doccomment">/// current_backtrace.resolve();</span>
     <span class="doccomment">/// println!(&quot;{:?}&quot;, current_backtrace); // symbol names now present</span>
     <span class="doccomment">/// ```</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span> <span class="comment">// want to make sure there&#39;s a frame here to remove</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_unresolved</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="self">Self</span>::<span class="ident">create</span>(<span class="self">Self</span>::<span class="ident">new_unresolved</span> <span class="kw">as</span> <span class="ident">usize</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">ip</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">let</span> <span class="ident">ip_lo</span> <span class="op">=</span> <span class="ident">ip</span>;
+        <span class="kw">let</span> <span class="ident">ip_hi</span> <span class="op">=</span> <span class="ident">ip</span> <span class="op">+</span> <span class="number">128</span>;
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">frames</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">actual_start_index</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         <span class="ident">trace</span>(<span class="op">|</span><span class="ident">frame</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">ip</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">ip</span>() <span class="kw">as</span> <span class="ident">usize</span>;
             <span class="ident">frames</span>.<span class="ident">push</span>(<span class="ident">BacktraceFrame</span> {
-                <span class="ident">ip</span>: <span class="ident">frame</span>.<span class="ident">ip</span>() <span class="kw">as</span> <span class="ident">usize</span>,
+                <span class="ident">ip</span>,
                 <span class="ident">symbol_address</span>: <span class="ident">frame</span>.<span class="ident">symbol_address</span>() <span class="kw">as</span> <span class="ident">usize</span>,
                 <span class="ident">symbols</span>: <span class="prelude-val">None</span>,
             });
+
+            <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;windows&quot;</span>, <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86&quot;</span>))) <span class="op">&amp;&amp;</span>
+                <span class="ident">ip</span> <span class="op">&gt;=</span> <span class="ident">ip_lo</span> <span class="op">&amp;&amp;</span>
+                <span class="ident">ip</span> <span class="op">&lt;=</span> <span class="ident">ip_hi</span> <span class="op">&amp;&amp;</span>
+                <span class="ident">actual_start_index</span>.<span class="ident">is_none</span>()
+            {
+                <span class="ident">actual_start_index</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">frames</span>.<span class="ident">len</span>());
+            }
             <span class="bool-val">true</span>
         });
 
-        <span class="ident">Backtrace</span> { <span class="ident">frames</span>: <span class="ident">frames</span> }
+        <span class="ident">Backtrace</span> {
+            <span class="ident">frames</span>,
+            <span class="ident">actual_start_index</span>: <span class="ident">actual_start_index</span>.<span class="ident">unwrap_or</span>(<span class="number">0</span>),
+        }
     }
 
     <span class="doccomment">/// Returns the frames from when this backtrace was captured.</span>
@@ -341,7 +409,7 @@
     <span class="doccomment">/// and the last frame is likely something about how this thread or the main</span>
     <span class="doccomment">/// function started.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">frames</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">BacktraceFrame</span>] {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">frames</span>
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">frames</span>[<span class="self">self</span>.<span class="ident">actual_start_index</span>..]
     }
 
     <span class="doccomment">/// If this backtrace was created from `new_unresolved` then this function</span>
@@ -356,7 +424,7 @@
                 <span class="ident">symbols</span>.<span class="ident">push</span>(<span class="ident">BacktraceSymbol</span> {
                     <span class="ident">name</span>: <span class="ident">symbol</span>.<span class="ident">name</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>()),
                     <span class="ident">addr</span>: <span class="ident">symbol</span>.<span class="ident">addr</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">a</span><span class="op">|</span> <span class="ident">a</span> <span class="kw">as</span> <span class="ident">usize</span>),
-                    <span class="ident">filename</span>: <span class="ident">symbol</span>.<span class="ident">filename</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">to_path_buf</span>()),
+                    <span class="ident">filename</span>: <span class="ident">symbol</span>.<span class="ident">filename</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">m</span><span class="op">|</span> <span class="ident">m</span>.<span class="ident">to_owned</span>()),
                     <span class="ident">lineno</span>: <span class="ident">symbol</span>.<span class="ident">lineno</span>(),
                 });
             });
@@ -368,7 +436,8 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BacktraceFrame</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">frames</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BacktraceFrame</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">Backtrace</span> {
-            <span class="ident">frames</span>: <span class="ident">frames</span>
+            <span class="ident">frames</span>,
+            <span class="ident">actual_start_index</span>: <span class="number">0</span>,
         }
     }
 }
@@ -428,38 +497,47 @@
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="kw">let</span> <span class="ident">hex_width</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>() <span class="op">*</span> <span class="number">2</span> <span class="op">+</span> <span class="number">2</span>;
+        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;stack backtrace:&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;stack backtrace:&quot;</span>));
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">fmt</span>.<span class="ident">alternate</span>() {
+            <span class="self">self</span>.<span class="ident">frames</span>.<span class="ident">iter</span>()
+        } <span class="kw">else</span> {
+            <span class="self">self</span>.<span class="ident">frames</span>[<span class="self">self</span>.<span class="ident">actual_start_index</span>..].<span class="ident">iter</span>()
+        };
 
-        <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">frame</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">frames</span>().<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
+        <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">frame</span>) <span class="kw">in</span> <span class="ident">iter</span>.<span class="ident">enumerate</span>() {
             <span class="kw">let</span> <span class="ident">ip</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">ip</span>();
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n{:4}: {:2$?}&quot;</span>, <span class="ident">idx</span>, <span class="ident">ip</span>, <span class="ident">hex_width</span>));
+            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n{:4}: &quot;</span>, <span class="ident">idx</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let</span> <span class="ident">symbols</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">frame</span>.<span class="ident">symbols</span> {
                 <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>,
                 <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot; - &lt;unresolved&gt;&quot;</span>));
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;&lt;unresolved&gt; ({:?})&quot;</span>, <span class="ident">ip</span>)<span class="question-mark">?</span>;
                     <span class="kw">continue</span>
                 }
             };
             <span class="kw">if</span> <span class="ident">symbols</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
-                <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot; - &lt;no info&gt;&quot;</span>));
+                <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;&lt;no info&gt; ({:?})&quot;</span>, <span class="ident">ip</span>)<span class="question-mark">?</span>;
+                <span class="kw">continue</span>;
             }
 
             <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">symbol</span>) <span class="kw">in</span> <span class="ident">symbols</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
                 <span class="kw">if</span> <span class="ident">idx</span> <span class="op">!=</span> <span class="number">0</span> {
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n      {:1$}&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="ident">hex_width</span>));
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n      &quot;</span>)<span class="question-mark">?</span>;
                 }
 
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">name</span>) <span class="op">=</span> <span class="ident">symbol</span>.<span class="ident">name</span>() {
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot; - {}&quot;</span>, <span class="ident">name</span>));
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>;
                 } <span class="kw">else</span> {
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot; - &lt;unknown&gt;&quot;</span>));
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;&lt;unknown&gt;&quot;</span>)<span class="question-mark">?</span>;
+                }
+
+                <span class="kw">if</span> <span class="ident">idx</span> <span class="op">==</span> <span class="number">0</span> {
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot; ({:?})&quot;</span>, <span class="ident">ip</span>)<span class="question-mark">?</span>;
                 }
 
                 <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Some</span>(<span class="ident">file</span>), <span class="prelude-val">Some</span>(<span class="ident">line</span>)) <span class="op">=</span> (<span class="ident">symbol</span>.<span class="ident">filename</span>(), <span class="ident">symbol</span>.<span class="ident">lineno</span>()) {
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n      {:3$}at {}:{}&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="ident">file</span>.<span class="ident">display</span>(), <span class="ident">line</span>, <span class="ident">hex_width</span>));
+                    <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n             at {}:{}&quot;</span>, <span class="ident">file</span>.<span class="ident">display</span>(), <span class="ident">line</span>)<span class="question-mark">?</span>;
                 }
             }
         }

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.9/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.13/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -177,7 +177,6 @@
 <span id="177">177</span>
 <span id="178">178</span>
 <span id="179">179</span>
-<span id="180">180</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2014-2015 The Rust Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution and at</span>
@@ -193,15 +192,15 @@
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">backtrace_sys</span> <span class="kw">as</span> <span class="ident">bt</span>;
 
-<span class="kw">use</span> <span class="ident">libc</span>::<span class="ident">uintptr_t</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::{<span class="ident">CStr</span>, <span class="ident">OsStr</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">raw</span>::{<span class="ident">c_void</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ptr</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">CStr</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ptr</span>, <span class="ident">slice</span>};
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">ONCE_INIT</span>, <span class="ident">Once</span>};
 
+<span class="kw">use</span> <span class="ident">libc</span>::{<span class="self">self</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_void</span>, <span class="ident">uintptr_t</span>};
+
 <span class="kw">use</span> <span class="ident">SymbolName</span>;
+
+<span class="kw">use</span> <span class="ident">types</span>::<span class="ident">BytesOrWideString</span>;
 
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Symbol</span> {
     <span class="ident">Syminfo</span> {
@@ -237,13 +236,15 @@
         <span class="kw">if</span> <span class="ident">pc</span> <span class="op">==</span> <span class="number">0</span> {<span class="prelude-val">None</span>} <span class="kw">else</span> {<span class="prelude-val">Some</span>(<span class="ident">pc</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>)}
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Path</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesOrWideString</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
             <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
             <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">filename</span>, .. } <span class="op">=&gt;</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">Path</span>::<span class="ident">new</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="kw">unsafe</span> {
-                    <span class="ident">CStr</span>::<span class="ident">from_ptr</span>(<span class="ident">filename</span>).<span class="ident">to_bytes</span>()
-                })))
+                <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">filename</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>;
+                <span class="kw">unsafe</span> {
+                    <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">strlen</span>(<span class="ident">filename</span>);
+                    <span class="prelude-val">Some</span>(<span class="ident">BytesOrWideString</span>::<span class="ident">Bytes</span>(<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="ident">ptr</span>, <span class="ident">len</span>)))
+                }
             }
         }
     }
@@ -339,24 +340,21 @@
     <span class="ident">STATE</span>
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve</span>(<span class="ident">symaddr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>, <span class="kw-2">mut</span> <span class="ident">cb</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw">super</span>::<span class="ident">Symbol</span>)) {
-    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> ::<span class="ident">lock</span>::<span class="ident">lock</span>();
-
+<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">resolve</span>(<span class="ident">symaddr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>, <span class="kw-2">mut</span> <span class="ident">cb</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw">super</span>::<span class="ident">Symbol</span>))
+{
     <span class="comment">// backtrace errors are currently swept under the rug</span>
-    <span class="kw">unsafe</span> {
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">init_state</span>();
-        <span class="kw">if</span> <span class="ident">state</span>.<span class="ident">is_null</span>() {
-            <span class="kw">return</span>
-        }
+    <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">init_state</span>();
+    <span class="kw">if</span> <span class="ident">state</span>.<span class="ident">is_null</span>() {
+        <span class="kw">return</span>
+    }
 
-        <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">bt</span>::<span class="ident">backtrace_pcinfo</span>(<span class="ident">state</span>, <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
-                                       <span class="ident">pcinfo_cb</span>, <span class="ident">error_cb</span>,
-                                       <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cb</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>);
-        <span class="kw">if</span> <span class="ident">ret</span> <span class="op">!=</span> <span class="number">0</span> {
-            <span class="ident">bt</span>::<span class="ident">backtrace_syminfo</span>(<span class="ident">state</span>, <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
-                                  <span class="ident">syminfo_cb</span>, <span class="ident">error_cb</span>,
-                                  <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cb</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>);
-        }
+    <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="ident">bt</span>::<span class="ident">backtrace_pcinfo</span>(<span class="ident">state</span>, <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
+                                   <span class="ident">pcinfo_cb</span>, <span class="ident">error_cb</span>,
+                                   <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cb</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>);
+    <span class="kw">if</span> <span class="ident">ret</span> <span class="op">!=</span> <span class="number">0</span> {
+        <span class="ident">bt</span>::<span class="ident">backtrace_syminfo</span>(<span class="ident">state</span>, <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
+                              <span class="ident">syminfo_cb</span>, <span class="ident">error_cb</span>,
+                              <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cb</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>);
     }
 }
 </pre>
