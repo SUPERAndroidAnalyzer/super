@@ -13,7 +13,7 @@ os:
 
 # Run builds for all the supported trains
 rust:
-- 1.31.0
+- 1.31.1
 - stable
 - beta
 - nightly

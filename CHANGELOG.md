@@ -1,5 +1,13 @@
 # Changelog
 
+## SUPER 0.6.0
+
+### Internal Changes
+
+- Upgraded dependencies:
+  - `num_cpus`: 1.8 => **1.9**
+  - Some other minor upgrades.
+
 ## SUPER 0.5.1
 
 This release is the first SUPER release targeting Rust 2018 edition. It contains some internal
