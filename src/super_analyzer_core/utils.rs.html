@@ -254,7 +254,7 @@
 <span class="kw">use</span> <span class="ident">colored</span>::<span class="ident">Colorize</span>;
 <span class="kw">use</span> <span class="ident">failure</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">lazy_static</span>::<span class="ident">lazy_static</span>;
-<span class="kw">use</span> <span class="ident">log</span>::<span class="ident">Level</span>::<span class="ident">Debug</span>;
+<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">log_enabled</span>, <span class="ident">warn</span>, <span class="ident">Level</span>::<span class="ident">Debug</span>};
 <span class="kw">use</span> <span class="ident">xml</span>::{
     <span class="ident">reader</span>::{<span class="ident">EventReader</span>, <span class="ident">XmlEvent</span>},
     <span class="ident">ParserConfig</span>,

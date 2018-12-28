@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest_derive-2.0.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest_derive-2.1.0/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -275,6 +275,31 @@
 <span id="275">275</span>
 <span id="276">276</span>
 <span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
 </pre><pre class="rust ">
 <span class="comment">// pest. The Elegant Parser</span>
 <span class="comment">// Copyright (c) 2018 Dragoș Tiselice</span>
@@ -320,6 +345,10 @@
 <span class="doccomment">//! #[grammar = &quot;path/to/my_grammar.pest&quot;] // relative to src</span>
 <span class="doccomment">//! struct MyParser;</span>
 <span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Inline grammars</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Grammars can also be inlined by using the `#[grammar_inline = &quot;...&quot;]` attribute.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ## Grammar</span>
 <span class="doccomment">//!</span>
@@ -468,6 +497,7 @@
 <span class="doccomment">//! * `POP` - pops a string from the stack and matches it</span>
 <span class="doccomment">//! * `POP_ALL` - pops the entire state of the stack and matches it</span>
 <span class="doccomment">//! * `PEEK` - peeks a string from the stack and matches it</span>
+<span class="doccomment">//! * `PEEK[a..b]` - peeks part of the stack and matches it</span>
 <span class="doccomment">//! * `PEEK_ALL` - peeks the entire state of the stack and matches it</span>
 <span class="doccomment">//! * `DROP` - drops the top of the stack (fails to match if the stack is empty)</span>
 <span class="doccomment">//!</span>
@@ -500,8 +530,8 @@
 <span class="doccomment">//! `PUSH(e)` simply pushes the captured string of the expression `e` down a stack. This stack can</span>
 <span class="doccomment">//! then later be used to match grammar based on its content with `POP` and `PEEK`.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! `PEEK` always matches the string at the top of stack. So, if the stack contains `[&quot;a&quot;, &quot;b&quot;]`,</span>
-<span class="doccomment">//! the this grammar:</span>
+<span class="doccomment">//! `PEEK` always matches the string at the top of stack. So, if the stack contains `[&quot;b&quot;, &quot;a&quot;]`</span>
+<span class="doccomment">//! (`&quot;a&quot;` being on top), this grammar:</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```ignore</span>
 <span class="doccomment">//! a = { PEEK }</span>
@@ -514,12 +544,32 @@
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! `POP` works the same way with the exception that it pops the string off of the stack if the</span>
-<span class="doccomment">//! the match worked. With the stack from above, if `POP` matches `&quot;a&quot;`, the stack will be mutated</span>
+<span class="doccomment">//! match worked. With the stack from above, if `POP` matches `&quot;a&quot;`, the stack will be mutated</span>
 <span class="doccomment">//! to `[&quot;b&quot;]`.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! `DROP` makes it possible to remove the string at the top of the stack</span>
 <span class="doccomment">//! without matching it. If the stack is nonempty, `DROP` drops the top of the</span>
 <span class="doccomment">//! stack. If the stack is empty, then `DROP` fails to match.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ### Advanced peeking</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! `PEEK[start..end]` and `PEEK_ALL` allow to peek deeper into the stack. The syntax works exactly</span>
+<span class="doccomment">//! like Rust’s exclusive slice syntax. Additionally, negative indices can be used to indicate an</span>
+<span class="doccomment">//! offset from the top. If the end lies before or at the start, the expression matches (as does</span>
+<span class="doccomment">//! a `PEEK_ALL` on an empty stack). With the stack `[&quot;c&quot;, &quot;b&quot;, &quot;a&quot;]` (`&quot;a&quot;` on top):</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```ignore</span>
+<span class="doccomment">//! fill = PUSH(&quot;c&quot;) ~ PUSH(&quot;b&quot;) ~ PUSH(&quot;a&quot;)</span>
+<span class="doccomment">//! v = { PEEK_ALL } = { &quot;a&quot; ~ &quot;b&quot; ~ &quot;c&quot; }  // top to bottom</span>
+<span class="doccomment">//! w = { PEEK[..] } = { &quot;c&quot; ~ &quot;b&quot; ~ &quot;a&quot; }  // bottom to top</span>
+<span class="doccomment">//! x = { PEEK[1..2] } = { PEEK[1..-1] } = { &quot;b&quot; }</span>
+<span class="doccomment">//! y = { PEEK[..-2] } = { PEEK[0..1] } = { &quot;a&quot; }</span>
+<span class="doccomment">//! z = { PEEK[1..] } = { PEEK[-2..3] } = { &quot;c&quot; ~ &quot;b&quot; }</span>
+<span class="doccomment">//! n = { PEEK[2..-2] } = { PEEK[2..1] } = { &quot;&quot; }</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! For historical reasons, `PEEK_ALL` matches from top to bottom, while `PEEK[start..end]` matches</span>
+<span class="doccomment">//! from bottom to top. There is currectly no syntax to match a slice of the stack top to bottom.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ## `Rule`</span>
 <span class="doccomment">//!</span>
@@ -549,7 +599,7 @@
 
 <span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
 
-<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">Parser</span>, <span class="ident">attributes</span>(<span class="ident">grammar</span>))]</span>
+<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">Parser</span>, <span class="ident">attributes</span>(<span class="ident">grammar</span>, <span class="ident">grammar_inline</span>))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">derive_parser</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
     <span class="ident">pest_generator</span>::<span class="ident">derive_parser</span>(<span class="ident">input</span>.<span class="ident">into</span>(), <span class="bool-val">true</span>).<span class="ident">into</span>()
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `pest_derive` crate."><meta name="keywords" content="rust, rustlang, rust-lang, pest_derive"><title>pest_derive - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate pest_derive</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all pest_derive's items</p></a><p class='location'></p><script>window.sidebarCurrent = {name: 'pest_derive', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/pest_derive/lib.rs.html#10-277' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>pest_derive</a></span></h1><div class='docblock'><h1 id="pest-the-elegant-parser" class="section-header"><a href="#pest-the-elegant-parser">pest. The Elegant Parser</a></h1>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `pest_derive` crate."><meta name="keywords" content="rust, rustlang, rust-lang, pest_derive"><title>pest_derive - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate pest_derive</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all pest_derive's items</p></a><p class='location'></p><script>window.sidebarCurrent = {name: 'pest_derive', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/pest_derive/lib.rs.html#10-302' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>pest_derive</a></span></h1><div class='docblock'><h1 id="pest-the-elegant-parser" class="section-header"><a href="#pest-the-elegant-parser">pest. The Elegant Parser</a></h1>
 <p>pest is a general purpose parser written in Rust with a focus on accessibility, correctness,
 and performance. It uses parsing expression grammars (or <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a>) as input, which are similar in
 spirit to regular expressions, but which offer the enhanced expressivity needed to parse
@@ -20,6 +20,8 @@ relative to <code>src</code> and is specified between the <code>derive</code> at
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Parser</span>)]</span>
 <span class="attribute">#[<span class="ident">grammar</span> <span class="op">=</span> <span class="string">&quot;path/to/my_grammar.pest&quot;</span>]</span> <span class="comment">// relative to src</span>
 <span class="kw">struct</span> <span class="ident">MyParser</span>;</pre>
+<h2 id="inline-grammars" class="section-header"><a href="#inline-grammars">Inline grammars</a></h2>
+<p>Grammars can also be inlined by using the <code>#[grammar_inline = &quot;...&quot;]</code> attribute.</p>
 <h2 id="grammar" class="section-header"><a href="#grammar">Grammar</a></h2>
 <p>A grammar is a series of rules separated by whitespace, possibly containing comments.</p>
 <h3 id="comments" class="section-header"><a href="#comments">Comments</a></h3>
@@ -146,6 +148,7 @@ expressions are a special case; they never modify the stack.</p>
 <li><code>POP</code> - pops a string from the stack and matches it</li>
 <li><code>POP_ALL</code> - pops the entire state of the stack and matches it</li>
 <li><code>PEEK</code> - peeks a string from the stack and matches it</li>
+<li><code>PEEK[a..b]</code> - peeks part of the stack and matches it</li>
 <li><code>PEEK_ALL</code> - peeks the entire state of the stack and matches it</li>
 <li><code>DROP</code> - drops the top of the stack (fails to match if the stack is empty)</li>
 </ul>
@@ -168,8 +171,8 @@ they are run in repetitions.</p>
 <h2 id="push-pop-drop-and-peek" class="section-header"><a href="#push-pop-drop-and-peek"><code>PUSH</code>, <code>POP</code>, <code>DROP</code>, and <code>PEEK</code></a></h2>
 <p><code>PUSH(e)</code> simply pushes the captured string of the expression <code>e</code> down a stack. This stack can
 then later be used to match grammar based on its content with <code>POP</code> and <code>PEEK</code>.</p>
-<p><code>PEEK</code> always matches the string at the top of stack. So, if the stack contains <code>[&quot;a&quot;, &quot;b&quot;]</code>,
-the this grammar:</p>
+<p><code>PEEK</code> always matches the string at the top of stack. So, if the stack contains <code>[&quot;b&quot;, &quot;a&quot;]</code>
+(<code>&quot;a&quot;</code> being on top), this grammar:</p>
 
 <div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span> { <span class="ident">PEEK</span> }</pre>
@@ -178,11 +181,27 @@ the this grammar:</p>
 <div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span> { <span class="string">&quot;a&quot;</span> }</pre>
 <p><code>POP</code> works the same way with the exception that it pops the string off of the stack if the
-the match worked. With the stack from above, if <code>POP</code> matches <code>&quot;a&quot;</code>, the stack will be mutated
+match worked. With the stack from above, if <code>POP</code> matches <code>&quot;a&quot;</code>, the stack will be mutated
 to <code>[&quot;b&quot;]</code>.</p>
 <p><code>DROP</code> makes it possible to remove the string at the top of the stack
 without matching it. If the stack is nonempty, <code>DROP</code> drops the top of the
 stack. If the stack is empty, then <code>DROP</code> fails to match.</p>
+<h3 id="advanced-peeking" class="section-header"><a href="#advanced-peeking">Advanced peeking</a></h3>
+<p><code>PEEK[start..end]</code> and <code>PEEK_ALL</code> allow to peek deeper into the stack. The syntax works exactly
+like Rust’s exclusive slice syntax. Additionally, negative indices can be used to indicate an
+offset from the top. If the end lies before or at the start, the expression matches (as does
+a <code>PEEK_ALL</code> on an empty stack). With the stack <code>[&quot;c&quot;, &quot;b&quot;, &quot;a&quot;]</code> (<code>&quot;a&quot;</code> on top):</p>
+
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<span class="ident">fill</span> <span class="op">=</span> <span class="ident">PUSH</span>(<span class="string">&quot;c&quot;</span>) ~ <span class="ident">PUSH</span>(<span class="string">&quot;b&quot;</span>) ~ <span class="ident">PUSH</span>(<span class="string">&quot;a&quot;</span>)
+<span class="ident">v</span> <span class="op">=</span> { <span class="ident">PEEK_ALL</span> } <span class="op">=</span> { <span class="string">&quot;a&quot;</span> ~ <span class="string">&quot;b&quot;</span> ~ <span class="string">&quot;c&quot;</span> }  <span class="comment">// top to bottom</span>
+<span class="ident">w</span> <span class="op">=</span> { <span class="ident">PEEK</span>[..] } <span class="op">=</span> { <span class="string">&quot;c&quot;</span> ~ <span class="string">&quot;b&quot;</span> ~ <span class="string">&quot;a&quot;</span> }  <span class="comment">// bottom to top</span>
+<span class="ident">x</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..<span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..<span class="op">-</span><span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;b&quot;</span> }
+<span class="ident">y</span> <span class="op">=</span> { <span class="ident">PEEK</span>[..<span class="op">-</span><span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">0</span>..<span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;a&quot;</span> }
+<span class="ident">z</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="op">-</span><span class="number">2</span>..<span class="number">3</span>] } <span class="op">=</span> { <span class="string">&quot;c&quot;</span> ~ <span class="string">&quot;b&quot;</span> }
+<span class="ident">n</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="op">-</span><span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;&quot;</span> }</pre>
+<p>For historical reasons, <code>PEEK_ALL</code> matches from top to bottom, while <code>PEEK[start..end]</code> matches
+from bottom to top. There is currectly no syntax to match a slice of the stack top to bottom.</p>
 <h2 id="rule" class="section-header"><a href="#rule"><code>Rule</code></a></h2>
 <p>All rules defined or used in the grammar populate a generated <code>enum</code> called <code>Rule</code>. This
 implements <code>pest</code>'s <code>RuleType</code> and can be used throughout the API.</p>

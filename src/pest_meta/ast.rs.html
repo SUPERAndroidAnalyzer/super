@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest_meta-2.0.3/src/ast.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>ast.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest_meta-2.1.0/src/ast.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>ast.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -311,6 +311,8 @@
 <span id="311">311</span>
 <span id="312">312</span>
 <span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
 </pre><pre class="rust ">
 <span class="comment">// pest. The Elegant Parser</span>
 <span class="comment">// Copyright (c) 2018 Dragoș Tiselice</span>
@@ -325,7 +327,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Rule</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">ty</span>: <span class="ident">RuleType</span>,
-    <span class="kw">pub</span> <span class="ident">expr</span>: <span class="ident">Expr</span>
+    <span class="kw">pub</span> <span class="ident">expr</span>: <span class="ident">Expr</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
@@ -334,7 +336,7 @@
     <span class="ident">Silent</span>,
     <span class="ident">Atomic</span>,
     <span class="ident">CompoundAtomic</span>,
-    <span class="ident">NonAtomic</span>
+    <span class="ident">NonAtomic</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Debug</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>)]</span>
@@ -347,6 +349,8 @@
     <span class="ident">Range</span>(<span class="ident">String</span>, <span class="ident">String</span>),
     <span class="doccomment">/// Matches the rule with the given name, e.g. `a`</span>
     <span class="ident">Ident</span>(<span class="ident">String</span>),
+    <span class="doccomment">/// Matches a custom part of the stack, e.g. `PEEK[..]`</span>
+    <span class="ident">PeekSlice</span>(<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>),
     <span class="doccomment">/// Positive lookahead; matches expression without making progress, e.g. `&amp;e`</span>
     <span class="ident">PosPred</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>),
     <span class="doccomment">/// Negative lookahead; matches if expression doesn&#39;t match, without making progress, e.g. `!e`</span>
@@ -372,7 +376,7 @@
     <span class="doccomment">/// Continues to match expressions until one of the strings in the `Vec` is found</span>
     <span class="ident">Skip</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>),
     <span class="doccomment">/// Matches an expression and pushes it to the stack, e.g. `push(e)`</span>
-    <span class="ident">Push</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>)
+    <span class="ident">Push</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>),
 }
 
 <span class="kw">impl</span> <span class="ident">Expr</span> {
@@ -382,11 +386,11 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map_top_down</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>,
     {
         <span class="kw">fn</span> <span class="ident">map_internal</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">expr</span>: <span class="ident">Expr</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
+            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>,
         {
             <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="ident">f</span>(<span class="ident">expr</span>);
 
@@ -442,7 +446,7 @@
                     <span class="kw">let</span> <span class="ident">mapped</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">map_internal</span>(<span class="kw-2">*</span><span class="ident">expr</span>, <span class="ident">f</span>));
                     <span class="ident">Expr</span>::<span class="ident">Push</span>(<span class="ident">mapped</span>)
                 }
-                <span class="ident">expr</span> <span class="op">=&gt;</span> <span class="ident">expr</span>
+                <span class="ident">expr</span> <span class="op">=&gt;</span> <span class="ident">expr</span>,
             }
         }
 
@@ -451,11 +455,11 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map_bottom_up</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>,
     {
         <span class="kw">fn</span> <span class="ident">map_internal</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">expr</span>: <span class="ident">Expr</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>
+            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Expr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span>,
         {
             <span class="kw">let</span> <span class="ident">mapped</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">expr</span> {
                 <span class="ident">Expr</span>::<span class="ident">PosPred</span>(<span class="ident">expr</span>) <span class="op">=&gt;</span> {
@@ -509,7 +513,7 @@
                     <span class="kw">let</span> <span class="ident">mapped</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">map_internal</span>(<span class="kw-2">*</span><span class="ident">expr</span>, <span class="ident">f</span>));
                     <span class="ident">Expr</span>::<span class="ident">Push</span>(<span class="ident">mapped</span>)
                 }
-                <span class="ident">expr</span> <span class="op">=&gt;</span> <span class="ident">expr</span>
+                <span class="ident">expr</span> <span class="op">=&gt;</span> <span class="ident">expr</span>,
             };
 
             <span class="ident">f</span>(<span class="ident">mapped</span>)
@@ -522,7 +526,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExprTopDownIterator</span> {
     <span class="ident">current</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>,
     <span class="ident">next</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>,
-    <span class="ident">right_branches</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>
+    <span class="ident">right_branches</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">ExprTopDownIterator</span> {
@@ -530,7 +534,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">ExprTopDownIterator</span> {
             <span class="ident">current</span>: <span class="prelude-val">None</span>,
             <span class="ident">next</span>: <span class="prelude-val">None</span>,
-            <span class="ident">right_branches</span>: <span class="macro">vec</span><span class="macro">!</span>[]
+            <span class="ident">right_branches</span>: <span class="macro">vec</span><span class="macro">!</span>[],
         };
         <span class="ident">iter</span>.<span class="ident">iterate_expr</span>(<span class="ident">expr</span>.<span class="ident">clone</span>());
         <span class="ident">iter</span>
@@ -590,7 +594,7 @@
     <span class="kw">fn</span> <span class="ident">top_down_iterator</span>() {
         <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">Choice</span>(
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;a&quot;</span>))),
-            <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;b&quot;</span>)))
+            <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;b&quot;</span>))),
         );
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">top_down</span> <span class="op">=</span> <span class="ident">expr</span>.<span class="ident">clone</span>().<span class="ident">iter_top_down</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">top_down</span>.<span class="ident">next</span>(), <span class="prelude-val">Some</span>(<span class="ident">expr</span>));
@@ -604,17 +608,17 @@
         <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="ident">Expr</span>::<span class="ident">Choice</span>(
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Seq</span>(
                 <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Ident</span>(<span class="string">&quot;a&quot;</span>.<span class="ident">to_owned</span>())),
-                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="string">&quot;b&quot;</span>.<span class="ident">to_owned</span>()))
+                <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="string">&quot;b&quot;</span>.<span class="ident">to_owned</span>())),
             )),
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">PosPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">NegPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Rep</span>(
                 <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">RepOnce</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Opt</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Choice</span>(
                     <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Insens</span>(<span class="string">&quot;c&quot;</span>.<span class="ident">to_owned</span>())),
                     <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Push</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expr</span>::<span class="ident">Range</span>(
                         <span class="string">&quot;&#39;d&#39;&quot;</span>.<span class="ident">to_owned</span>(),
-                        <span class="string">&quot;&#39;e&#39;&quot;</span>.<span class="ident">to_owned</span>()
-                    ))))
-                ))))))
-            ))))))
+                        <span class="string">&quot;&#39;e&#39;&quot;</span>.<span class="ident">to_owned</span>(),
+                    )))),
+                )))))),
+            )))))),
         );
 
         <span class="macro">assert_eq</span><span class="macro">!</span>(

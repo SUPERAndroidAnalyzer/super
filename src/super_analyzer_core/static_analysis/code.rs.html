@@ -1993,6 +1993,9 @@
 <span id="1993">1993</span>
 <span id="1994">1994</span>
 <span id="1995">1995</span>
+<span id="1996">1996</span>
+<span id="1997">1997</span>
+<span id="1998">1998</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Code analysis module.</span>
 
@@ -2009,7 +2012,10 @@
 <span class="kw">use</span> <span class="ident">colored</span>::<span class="ident">Colorize</span>;
 <span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">Error</span>, <span class="ident">Fail</span>, <span class="ident">ResultExt</span>};
 <span class="kw">use</span> <span class="ident">regex</span>::<span class="ident">Regex</span>;
-<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::{<span class="self">self</span>, <span class="ident">Deserializer</span>, <span class="ident">SeqAccess</span>, <span class="ident">Visitor</span>};
+<span class="kw">use</span> <span class="ident">serde</span>::{
+    <span class="ident">de</span>::{<span class="self">self</span>, <span class="ident">SeqAccess</span>, <span class="ident">Visitor</span>},
+    <span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>,
+};
 <span class="kw">use</span> <span class="ident">serde_json</span>;
 
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">manifest</span>::{<span class="ident">Manifest</span>, <span class="ident">Permission</span>};

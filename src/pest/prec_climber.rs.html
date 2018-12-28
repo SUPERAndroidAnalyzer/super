@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest-2.0.2/src/prec_climber.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>prec_climber.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest-2.1.0/src/prec_climber.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>prec_climber.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -230,6 +230,7 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
 </pre><pre class="rust ">
 <span class="comment">// pest. The Elegant Parser</span>
 <span class="comment">// Copyright (c) 2018 Dragoș Tiselice</span>
@@ -246,8 +247,8 @@
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">Peekable</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">BitOr</span>;
 
-<span class="kw">use</span> <span class="ident">RuleType</span>;
 <span class="kw">use</span> <span class="ident">iterators</span>::<span class="ident">Pair</span>;
+<span class="kw">use</span> <span class="ident">RuleType</span>;
 
 <span class="doccomment">/// Associativity of an [`Operator`].</span>
 <span class="doccomment">///</span>
@@ -257,7 +258,7 @@
     <span class="doccomment">/// Left `Operator` associativity</span>
     <span class="ident">Left</span>,
     <span class="doccomment">/// Right `Operator` associativity</span>
-    <span class="ident">Right</span>
+    <span class="ident">Right</span>,
 }
 
 <span class="doccomment">/// Infix operator used in [`PrecClimber`].</span>
@@ -267,7 +268,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Operator</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">RuleType</span><span class="op">&gt;</span> {
     <span class="ident">rule</span>: <span class="ident">R</span>,
     <span class="ident">assoc</span>: <span class="ident">Assoc</span>,
-    <span class="ident">next</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Operator</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>
+    <span class="ident">next</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Operator</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">RuleType</span><span class="op">&gt;</span> <span class="ident">Operator</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
@@ -290,7 +291,7 @@
         <span class="ident">Operator</span> {
             <span class="ident">rule</span>,
             <span class="ident">assoc</span>,
-            <span class="ident">next</span>: <span class="prelude-val">None</span>
+            <span class="ident">next</span>: <span class="prelude-val">None</span>,
         }
     }
 }
@@ -320,7 +321,7 @@
 <span class="doccomment">/// [`Pairs`]: ../iterators/struct.Pairs.html</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PrecClimber</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">RuleType</span><span class="op">&gt;</span> {
-    <span class="ident">ops</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">R</span>, (<span class="ident">u32</span>, <span class="ident">Assoc</span>)<span class="op">&gt;</span>
+    <span class="ident">ops</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">R</span>, (<span class="ident">u32</span>, <span class="ident">Assoc</span>)<span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">RuleType</span><span class="op">&gt;</span> <span class="ident">PrecClimber</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
@@ -349,7 +350,8 @@
     <span class="doccomment">/// ]);</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ops</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Operator</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">PrecClimber</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">ops</span> <span class="op">=</span> <span class="ident">ops</span>.<span class="ident">into_iter</span>()
+        <span class="kw">let</span> <span class="ident">ops</span> <span class="op">=</span> <span class="ident">ops</span>
+            .<span class="ident">into_iter</span>()
             .<span class="ident">zip</span>(<span class="number">1</span>..)
             .<span class="ident">fold</span>(<span class="ident">HashMap</span>::<span class="ident">new</span>(), <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">map</span>, (<span class="ident">op</span>, <span class="ident">prec</span>)<span class="op">|</span> {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">op</span>);
@@ -359,7 +361,7 @@
                         <span class="ident">Operator</span> {
                             <span class="ident">rule</span>,
                             <span class="ident">assoc</span>,
-                            <span class="ident">next</span>: <span class="ident">op_next</span>
+                            <span class="ident">next</span>: <span class="ident">op_next</span>,
                         } <span class="op">=&gt;</span> {
                             <span class="ident">map</span>.<span class="ident">insert</span>(<span class="ident">rule</span>, (<span class="ident">prec</span>, <span class="ident">assoc</span>));
                             <span class="ident">next</span> <span class="op">=</span> <span class="ident">op_next</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">op</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">op</span>);
@@ -405,12 +407,12 @@
     <span class="kw">where</span>
         <span class="ident">P</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;&gt;</span>,
         <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">T</span>,
-        <span class="ident">G</span>: <span class="ident">FnMut</span>(<span class="ident">T</span>, <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">T</span>
+        <span class="ident">G</span>: <span class="ident">FnMut</span>(<span class="ident">T</span>, <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">T</span>,
     {
         <span class="kw">let</span> <span class="ident">lhs</span> <span class="op">=</span> <span class="ident">primary</span>(
             <span class="ident">pairs</span>
                 .<span class="ident">next</span>()
-                .<span class="ident">expect</span>(<span class="string">&quot;precedence climbing requires a non-empty Pairs&quot;</span>)
+                .<span class="ident">expect</span>(<span class="string">&quot;precedence climbing requires a non-empty Pairs&quot;</span>),
         );
         <span class="self">self</span>.<span class="ident">climb_rec</span>(<span class="ident">lhs</span>, <span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">pairs</span>.<span class="ident">peekable</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">primary</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">infix</span>)
     }
@@ -421,12 +423,12 @@
         <span class="ident">min_prec</span>: <span class="ident">u32</span>,
         <span class="ident">pairs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">P</span><span class="op">&gt;</span>,
         <span class="ident">primary</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">F</span>,
-        <span class="ident">infix</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">G</span>
+        <span class="ident">infix</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">G</span>,
     ) <span class="op">-&gt;</span> <span class="ident">T</span>
     <span class="kw">where</span>
         <span class="ident">P</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;&gt;</span>,
         <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">T</span>,
-        <span class="ident">G</span>: <span class="ident">FnMut</span>(<span class="ident">T</span>, <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">T</span>
+        <span class="ident">G</span>: <span class="ident">FnMut</span>(<span class="ident">T</span>, <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">R</span><span class="op">&gt;</span>, <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">T</span>,
     {
         <span class="kw">while</span> <span class="ident">pairs</span>.<span class="ident">peek</span>().<span class="ident">is_some</span>() {
             <span class="kw">let</span> <span class="ident">rule</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">peek</span>().<span class="ident">unwrap</span>().<span class="ident">as_rule</span>();
@@ -435,7 +437,7 @@
                     <span class="kw">let</span> <span class="ident">op</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">primary</span>(<span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">expect</span>(
                         <span class="string">&quot;infix operator must be followed by \
-                         a primary expression&quot;</span>
+                         a primary expression&quot;</span>,
                     ));
 
                     <span class="kw">while</span> <span class="ident">pairs</span>.<span class="ident">peek</span>().<span class="ident">is_some</span>() {
