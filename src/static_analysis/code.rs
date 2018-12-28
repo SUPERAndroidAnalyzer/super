@@ -13,7 +13,10 @@ use std::{
 use colored::Colorize;
 use failure::{Error, Fail, ResultExt};
 use regex::Regex;
-use serde::de::{self, Deserializer, SeqAccess, Visitor};
+use serde::{
+    de::{self, SeqAccess, Visitor},
+    Deserialize, Deserializer,
+};
 use serde_json;
 
 use super::manifest::{Manifest, Permission};

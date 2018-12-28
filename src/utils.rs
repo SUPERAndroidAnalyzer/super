@@ -5,7 +5,7 @@ use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
 use colored::Colorize;
 use failure::Error;
 use lazy_static::lazy_static;
-use log::Level::Debug;
+use log::{log_enabled, warn, Level::Debug};
 use xml::{
     reader::{EventReader, XmlEvent},
     ParserConfig,

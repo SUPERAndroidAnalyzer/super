@@ -7,6 +7,8 @@
 - Upgraded dependencies:
   - `num_cpus`: 1.8 => **1.9**
   - Some other minor upgrades.
+- Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` features of
+  the `serde` and `failure` dependencies respectively. This improves the readability of code.
 
 ## SUPER 0.5.1
 

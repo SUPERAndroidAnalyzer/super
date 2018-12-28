@@ -1,5 +1,7 @@
 //! Module containing the definition of error types.
 
+use failure::Fail;
+
 /// Enumeration of the different error kinds.
 #[derive(Debug, Fail)]
 pub enum Kind {
