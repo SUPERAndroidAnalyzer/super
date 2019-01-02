@@ -19,9 +19,6 @@
     missing_copy_implementations
 )]
 
-#[macro_use]
-extern crate log;
-
 use std::{
     collections::BTreeMap,
     io::{self, Write},
@@ -31,10 +28,10 @@ use std::{
 
 use colored::Colorize;
 use failure::{Error, ResultExt};
-use log::Level;
+use log::{error, log_enabled, Level};
 
 use super_analyzer_core::{
-    analyze_package, cli, error, initialize_config, initialize_logger, Benchmark, BANNER,
+    analyze_package, cli, initialize_config, initialize_logger, Benchmark, ErrorKind, BANNER,
 };
 
 /// Program entry point.
@@ -95,7 +92,7 @@ fn run() -> Result<(), Error> {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
 
-        return Err(error::Kind::Config {
+        return Err(ErrorKind::Config {
             message: error_string,
         }
         .into());

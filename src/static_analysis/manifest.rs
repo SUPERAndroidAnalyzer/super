@@ -12,9 +12,9 @@ use xml::{
 
 use crate::{
     criticality::Criticality,
-    error, get_code, get_string, print_vulnerability, print_warning,
+    get_code, get_string, print_vulnerability, print_warning,
     results::{Results, Vulnerability},
-    Config, PARSER_CONFIG,
+    Config, ErrorKind, PARSER_CONFIG,
 };
 
 /// Performs the manifest analysis.
@@ -678,25 +678,25 @@ impl Default for InstallLocation {
 }
 
 impl FromStr for InstallLocation {
-    type Err = error::Kind;
+    type Err = ErrorKind;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "internalOnly" => Ok(InstallLocation::InternalOnly),
             "auto" => Ok(InstallLocation::Auto),
             "preferExternal" => Ok(InstallLocation::PreferExternal),
-            _ => Err(error::Kind::Parse),
+            _ => Err(ErrorKind::Parse),
         }
     }
 }
 
-fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize, error::Kind> {
+fn get_line<S: AsRef<str>>(code: S, haystack: S) -> Result<usize, ErrorKind> {
     for (i, line) in code.as_ref().lines().enumerate() {
         if line.contains(haystack.as_ref()) {
             return Ok(i);
         }
     }
 
-    Err(error::Kind::CodeNotFound)
+    Err(ErrorKind::CodeNotFound)
 }
 
 #[cfg(test)]
@@ -2903,12 +2903,12 @@ impl<'de> Deserialize<'de> for Permission {
         use failure::Fail;
         use serde::de::Error;
 
-        let deser_result_str: String = serde::Deserialize::deserialize(de)?;
+        let result_str: String = serde::Deserialize::deserialize(de)?;
 
-        match Self::from_str(&deser_result_str) {
+        match Self::from_str(&result_str) {
             Ok(permission) => Ok(permission),
             Err(e) => Err(Error::custom(
-                e.context(format!("unknown permission `{}`", deser_result_str)),
+                e.context(format!("unknown permission `{}`", result_str)),
             )),
         }
     }
@@ -3505,7 +3505,7 @@ impl Permission {
 }
 
 impl FromStr for Permission {
-    type Err = error::Kind;
+    type Err = ErrorKind;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "android.permission.ACCESS_ALL_EXTERNAL_STORAGE" => {
@@ -4142,7 +4142,7 @@ impl FromStr for Permission {
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
                 Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
-            _ => Err(error::Kind::Parse),
+            _ => Err(ErrorKind::Parse),
         }
     }
 }

@@ -20,21 +20,11 @@
     missing_debug_implementations,
     missing_copy_implementations
 )]
-// Allowing these for now.
-#![allow(
-    clippy::stutter,
-    clippy::cast_possible_truncation,
-    clippy::cast_possible_wrap,
-    clippy::cast_precision_loss,
-    clippy::cast_sign_loss,
-    clippy::non_ascii_literal
-)]
 
 pub mod cli;
 mod config;
 mod criticality;
 mod decompilation;
-pub mod error;
 mod results;
 mod static_analysis;
 mod utils;
@@ -49,7 +39,7 @@ use std::{
 
 use clap::ArgMatches;
 use colored::Colorize;
-use failure::{bail, format_err, Error, ResultExt};
+use failure::{bail, format_err, Error, Fail, ResultExt};
 
 pub use crate::{
     config::Config,
@@ -66,6 +56,29 @@ use crate::{
 
 /// Logo ASCII art, used in verbose mode.
 pub static BANNER: &str = include_str!("banner.txt");
+
+/// Enumeration of the different error kinds.
+#[derive(Debug, Fail)]
+pub enum ErrorKind {
+    /// Configuration error.
+    #[fail(display = "there was an error in the configuration: {}", message)]
+    Config {
+        /// Error message.
+        message: String,
+    },
+    /// Parsing error.
+    #[fail(display = "there was an error in the parsing process")]
+    Parse,
+    /// Template name error.
+    #[fail(display = "invalid template name: {}", message)]
+    TemplateName {
+        /// Error message.
+        message: String,
+    },
+    /// Code not found.
+    #[fail(display = "no code was found in the file")]
+    CodeNotFound,
+}
 
 /// Initialize the config with the config files and command line options.
 ///
@@ -196,7 +209,7 @@ pub fn analyze_package<P: AsRef<Path>>(
     if config.is_verbose() {
         println!("Everything went smoothly, you can now check all the results.");
         println!();
-        println!("I will now analyze myself for vulnerabilities…");
+        println!("I will now analyze myself for vulnerabilities.");
         sleep(Duration::from_millis(1500));
         println!(
             "Nah, just kidding, I've been developed in {}!",

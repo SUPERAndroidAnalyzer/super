@@ -1,19 +1,19 @@
 [package]
 name = "super-analyzer"
 version = "0.5.1"
+license = "GPL-3.0"
 authors = [
     "Iban Eguia <razican@protonmail.ch>",
     "Jaime Salas <jaimesr@protonmail.ch>",
     "Bruno Pin <brunoop@protonmail.ch>",
     "Sergio de los Dolores <sergiodlo@protonmail.com>"]
 edition = "2018"
-license = "GPL-3.0"
 readme = "README.md"
-repository = "https://github.com/SUPERAndroidAnalyzer/super"
-homepage = "https://superanalyzer.rocks"
+documentation = "https://superandroidanalyzer.github.io/super/"
+repository = "https://github.com/SUPERAndroidAnalyzer/super/"
+homepage = "https://superanalyzer.rocks/"
 description = """\
-Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software
-with CLI.\
+Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software with CLI.
 """
 keywords = ["Android", "security", "audit", "super", "analyzer"]
 categories = ["command-line-utilities", "development-tools"]
@@ -96,7 +96,7 @@ env_logger = "0.6.0"
 md5 = "0.6.1"
 sha1 = "0.6.0"
 sha2 = "0.8.0"
-abxml = "0.7.1"
+abxml = "0.7.2"
 handlebars = "1.1.0"
 semver = "0.9.0"
 hex = "0.3.2"

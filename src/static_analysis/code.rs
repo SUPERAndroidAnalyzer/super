@@ -22,9 +22,9 @@ use serde_json;
 use super::manifest::{Manifest, Permission};
 use crate::{
     criticality::Criticality,
-    error, get_code, print_vulnerability, print_warning,
+    get_code, print_vulnerability, print_warning,
     results::{Results, Vulnerability},
-    Config,
+    Config, ErrorKind,
 };
 
 /// Analyzes the whole codebase of the application.
@@ -563,13 +563,13 @@ fn load_rules(config: &Config) -> Result<Vec<Rule>, Error> {
                         let fc2_in_fc = forward_check.contains("{fc2}");
 
                         if fc1_in_regex && !fc1_in_fc {
-                            Some(Err(error::Kind::Parse
+                            Some(Err(ErrorKind::Parse
                             .context(
                                 "fc1 capture group used but no placeholder found in the forward \
                                  check",
                             ).into()))
                         } else if fc2_in_regex && !fc2_in_fc {
-                            Some(Err(error::Kind::Parse
+                            Some(Err(ErrorKind::Parse
                             .context(
                                 "fc2 capture group used but no placeholder found in the forward \
                                  check",
@@ -794,11 +794,11 @@ mod tests {
             "throws IOException,Exception{",
             "throws SystemException,Exception{",
             "throws ApplicationException,Exception{",
-            "throws PepeException, Exception, IOException {",
+            "throws SomeException, Exception, IOException {",
         ];
         let should_not_match = &[
             "throws IOException {",
-            "throws PepeException, IOException {",
+            "throws SomeException, IOException {",
         ];
 
         for m in should_match {
@@ -1037,15 +1037,15 @@ mod tests {
         let should_match = &[
             "Thread.sleep(Usertime+Variable+Variable);",
             "Thread.sleep(Usertime+13+123+1+24);",
-            "Thread . sleep (200+asdad+adasasda );",
-            "Thread . sleep (200+asdad+adasasda+30 );",
+            "Thread . sleep (200+var1+var2 );",
+            "Thread . sleep (200+var1+var2+30 );",
             "Thread.sleep(10 + 10 + 10241 + Usertime);",
             "SystemClock.sleep(Usertime);",
         ];
 
         let should_not_match = &[
             "Thread.sleep(2000);",
-            "Thread.sleep(“1000” + Usertime);",
+            "Thread.sleep(\"1000\" + Usertime);",
             "Thread.sleep();",
             "SystemClock.sleep(1000);",
         ];
@@ -1182,7 +1182,7 @@ mod tests {
     }
 
     #[test]
-    fn it_webview_xss() {
+    fn it_web_view_xss() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1207,7 +1207,7 @@ mod tests {
     }
 
     #[test]
-    fn it_webview_ssl_errors() {
+    fn it_web_view_ssl_errors() {
         let config = Config::default();
         let rules = match load_rules(&config) {
             Ok(r) => r,
@@ -1619,8 +1619,8 @@ mod tests {
 
         let should_match = &[
             "super@super.es",
-            "android_analizer@dem.co.uk",
-            "foo@mywebpage.com",
+            "android_analyzer@dem.co.uk",
+            "foo@webpage.com",
             "android-rust69@tux.rox",
         ];
 
@@ -1843,7 +1843,7 @@ mod tests {
         let should_not_match = &[
             "finally{}",
             "finally{ var;}",
-            "finally { Printf (“Hello”); return true; }",
+            "finally { Printf (\"Hello\"); return true; }",
         ];
 
         for m in should_match {
@@ -1874,7 +1874,7 @@ mod tests {
 
         let should_not_match = &[
             "int var4 = EditText.getText  Thread.sleep(100 + var);",
-            "var = .getText  Thread.sleep(100 + hola);",
+            "var = .getText  Thread.sleep(100 + hello);",
             "",
             "",
         ];

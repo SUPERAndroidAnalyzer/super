@@ -14,7 +14,7 @@ use serde_json::{value::Value, Map};
 
 use crate::{
     config::Config,
-    copy_folder, error,
+    copy_folder,
     results::{
         handlebars_helpers::{
             all_code, all_lines, generate_menu, html_code, line_numbers, report_index,
@@ -23,6 +23,7 @@ use crate::{
         utils::html_escape,
         Results,
     },
+    ErrorKind,
 };
 
 /// Handlebars report generator.
@@ -65,11 +66,11 @@ impl Report {
                     let path = dir_entry.path();
                     let template_file = path
                         .file_stem()
-                        .ok_or_else(|| error::Kind::TemplateName {
+                        .ok_or_else(|| ErrorKind::TemplateName {
                             message: "template files must have a file name".to_owned(),
                         })
                         .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| error::Kind::TemplateName {
+                            stem.to_str().ok_or_else(|| ErrorKind::TemplateName {
                                 message: "template names must be unicode".to_string(),
                             })
                         })?;
@@ -92,7 +93,7 @@ impl Report {
                 "code".italic()
             );
 
-            Err(error::Kind::TemplateName { message }.into())
+            Err(ErrorKind::TemplateName { message }.into())
         } else {
             Ok(handlebars)
         }

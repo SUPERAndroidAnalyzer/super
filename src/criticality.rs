@@ -7,7 +7,7 @@ use std::{
 
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::error;
+use crate::ErrorKind;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
@@ -58,7 +58,7 @@ impl<'de> Deserialize<'de> for Criticality {
 }
 
 impl FromStr for Criticality {
-    type Err = error::Kind;
+    type Err = ErrorKind;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "critical" => Ok(Criticality::Critical),
@@ -66,7 +66,7 @@ impl FromStr for Criticality {
             "medium" => Ok(Criticality::Medium),
             "low" => Ok(Criticality::Low),
             "warning" => Ok(Criticality::Warning),
-            _ => Err(error::Kind::Parse),
+            _ => Err(ErrorKind::Parse),
         }
     }
 }

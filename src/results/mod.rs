@@ -234,7 +234,7 @@ impl Results {
             if config.is_force() || !path.exists() {
                 if path.exists() {
                     if config.is_verbose() {
-                        println!("The application JSON results file exists. But no more…");
+                        println!("The application JSON results file existed. But no more!");
                     }
 
                     if let Err(e) = fs::remove_file(&path) {
@@ -269,7 +269,7 @@ impl Results {
             if config.is_force() || !index_path.exists() {
                 if path.exists() {
                     if config.is_verbose() {
-                        println!("The application HTML results exist. But no more…");
+                        println!("The application HTML results existed. But no more!");
                     }
 
                     for f in fs::read_dir(path)

@@ -6,7 +6,7 @@ use std::{
     cmp::{Ordering, PartialOrd},
     collections::{btree_set::Iter, BTreeSet},
     convert::From,
-    fs, i64,
+    fs,
     path::{Path, PathBuf},
     slice::Iter as VecIter,
     str::FromStr,
@@ -50,7 +50,6 @@ pub struct Config {
     /// Minimum criticality to analyze
     min_criticality: Criticality,
     /// Number of threads.
-    #[serde(deserialize_with = "ConfigDeserializer::deserialize_threads")]
     threads: usize,
     /// Folder where the applications are stored.
     downloads_folder: PathBuf,
@@ -84,38 +83,6 @@ struct ConfigDeserializer;
 type CriticalityString = (Criticality, String);
 
 impl ConfigDeserializer {
-    /// Deserialize `thread` field and checks that is on the proper bounds
-    pub fn deserialize_threads<'de, D>(de: D) -> Result<usize, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let deserialize_result: Value = Deserialize::deserialize(de)?;
-
-        #[allow(clippy::use_debug)]
-        match deserialize_result {
-            Value::Integer(threads) => {
-                if threads > 0 && threads <= {
-                    // TODO: change it for compile-time check.
-                    if (usize::max_value() as i64) < 0 {
-                        // 64-bit machine
-                        i64::max_value()
-                    } else {
-                        // Smaller than 64 bit words.
-                        usize::max_value() as i64
-                    }
-                } {
-                    Ok(threads as usize)
-                } else {
-                    Err(de::Error::custom("threads is not in the valid range"))
-                }
-            }
-            _ => Err(de::Error::custom(format!(
-                "unexpected value: {:?}",
-                deserialize_result
-            ))),
-        }
-    }
-
     /// Deserialize `unknown_permission` field
     pub fn deserialize_unknown_permission<'de, D>(de: D) -> Result<CriticalityString, D::Error>
     where

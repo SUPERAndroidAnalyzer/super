@@ -1,3 +1,6 @@
+//! Handlebars helpers
+#![allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+
 use bytecount::count;
 use handlebars::{Context, Handlebars as Registry, Helper, Output, RenderContext, RenderError};
 use serde_json::Value;
@@ -230,6 +233,7 @@ pub fn html_code(
 ///
 /// E.g.: for a critical vulnerability in an application with between 100 and 200 vulnerability,
 /// for the critical vulnerability number 12 it would produce `C012`.
+#[allow(clippy::cast_precision_loss)]
 pub fn report_index(
     h: &Helper,
     _: &Registry,
@@ -242,14 +246,12 @@ pub fn report_index(
         .and_then(|v| v.value().as_object())
         .ok_or_else(|| {
             RenderError::new(
-                "to generate the vulnerability index, the first parameter must be a \
-                 vulnerability",
+                "to generate the vulnerability index, the first parameter must be a vulnerability",
             )
         })?;
     let index = h.param(1).and_then(|v| v.value().as_u64()).ok_or_else(|| {
         RenderError::new(
-            "the index of the vulnerability in the current list must be the \
-             second parameter",
+            "the index of the vulnerability in the current list must be the second parameter",
         )
     })? as usize
         + 1;
@@ -265,7 +267,7 @@ pub fn report_index(
         .next()
         .unwrap();
 
-    let mut index_padding = (list_len as f32 + 1_f32).log10().ceil() as usize + 1;
+    let mut index_padding = (list_len as f64 + 1_f64).log10().ceil() as usize + 1;
     if index_padding < 2 {
         index_padding = 2;
     }

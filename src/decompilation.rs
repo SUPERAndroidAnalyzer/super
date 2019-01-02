@@ -18,7 +18,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
     if !path.exists() || config.is_force() {
         if path.exists() {
             if config.is_verbose() {
-                println!("The application decompression folder exists. But no more…");
+                println!("The application decompression folder existed. But no more!");
             }
 
             if let Err(e) = fs::remove_dir_all(&path) {
@@ -32,7 +32,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
 
         if config.is_verbose() {
             println!();
-            println!("Decompressing the application…");
+            println!("Decompressing the application.");
         }
 
         let mut apk = Apk::from_path(package.as_ref()).context("error loading apk file")?;
