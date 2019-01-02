@@ -23,29 +23,28 @@ provides an implementation of <code>Serialize</code> for it.</p>
         <h3 id='tymethod.serialize' class='method'><span id='serialize.v' class='invisible'><code>fn <a href='#tymethod.serialize' class='fnname'>serialize</a>&lt;S&gt;(&amp;self, serializer: S) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;S::<a class="type" href="../../serde/trait.Serializer.html#associatedtype.Ok" title="type serde::Serializer::Ok">Ok</a>, S::<a class="type" href="../../serde/trait.Serializer.html#associatedtype.Error" title="type serde::Serializer::Error">Error</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;S: <a class="trait" href="../../serde/trait.Serializer.html" title="trait serde::Serializer">Serializer</a>,&nbsp;</span></code></span></h3><div class='docblock'><p>Serialize this value into the given Serde serializer.</p>
 <p>See the <a href="https://serde.rs/impl-serialize.html">Implementing <code>Serialize</code></a> section of the manual for more
 information about how to implement this method.</p>
+<pre><code class="language-edition2018">use serde::ser::{Serialize, SerializeStruct, Serializer};
 
-<pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">ser</span>::{<span class="ident">Serialize</span>, <span class="ident">SerializeStruct</span>, <span class="ident">Serializer</span>};
-
-<span class="kw">struct</span> <span class="ident">Person</span> {
-    <span class="ident">name</span>: <span class="ident">String</span>,
-    <span class="ident">age</span>: <span class="ident">u8</span>,
-    <span class="ident">phones</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+struct Person {
+    name: String,
+    age: u8,
+    phones: Vec&lt;String&gt;,
 }
 
-<span class="comment">// This is what #[derive(Serialize)] would generate.</span>
-<span class="kw">impl</span> <span class="ident">Serialize</span> <span class="kw">for</span> <span class="ident">Person</span> {
-    <span class="kw">fn</span> <span class="ident">serialize</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">serializer</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">S</span>::<span class="prelude-val">Ok</span>, <span class="ident">S</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">S</span>: <span class="ident">Serializer</span>,
+// This is what #[derive(Serialize)] would generate.
+impl Serialize for Person {
+    fn serialize&lt;S&gt;(&amp;self, serializer: S) -&gt; Result&lt;S::Ok, S::Error&gt;
+    where
+        S: Serializer,
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">serializer</span>.<span class="ident">serialize_struct</span>(<span class="string">&quot;Person&quot;</span>, <span class="number">3</span>)<span class="question-mark">?</span>;
-        <span class="ident">s</span>.<span class="ident">serialize_field</span>(<span class="string">&quot;name&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>)<span class="question-mark">?</span>;
-        <span class="ident">s</span>.<span class="ident">serialize_field</span>(<span class="string">&quot;age&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">age</span>)<span class="question-mark">?</span>;
-        <span class="ident">s</span>.<span class="ident">serialize_field</span>(<span class="string">&quot;phones&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">phones</span>)<span class="question-mark">?</span>;
-        <span class="ident">s</span>.<span class="ident">end</span>()
+        let mut s = serializer.serialize_struct(&quot;Person&quot;, 3)?;
+        s.serialize_field(&quot;name&quot;, &amp;self.name)?;
+        s.serialize_field(&quot;age&quot;, &amp;self.age)?;
+        s.serialize_field(&quot;phones&quot;, &amp;self.phones)?;
+        s.end()
     }
-}</pre>
+}
+</code></pre>
 </div></div>
                 <h2 id='foreign-impls' class='small-section-header'>
                   Implementations on Foreign Types<a href='#foreign-impls' class='anchor'></a>

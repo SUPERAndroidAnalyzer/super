@@ -2,98 +2,103 @@
 <p>Think of this like <code>serde_json::Value</code> in that it can be deserialized from
 any type, except that it does not store any information about the data that
 gets deserialized.</p>
+<pre><code class="language-edition2018">use std::fmt;
+use std::marker::PhantomData;
 
-<pre class="rust rust-example-rendered">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
-
-<span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::{
-    <span class="self">self</span>, <span class="ident">Deserialize</span>, <span class="ident">DeserializeSeed</span>, <span class="ident">Deserializer</span>, <span class="ident">IgnoredAny</span>, <span class="ident">SeqAccess</span>, <span class="ident">Visitor</span>,
+use serde::de::{
+    self, Deserialize, DeserializeSeed, Deserializer, IgnoredAny, SeqAccess, Visitor,
 };
 
-<span class="doccomment">/// A seed that can be used to deserialize only the `n`th element of a sequence</span>
-<span class="doccomment">/// while efficiently discarding elements of any type before or after index `n`.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// For example to deserialize only the element at index 3:</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// NthElement::new(3).deserialize(deserializer)</span>
-<span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NthElement</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="ident">n</span>: <span class="ident">usize</span>,
-    <span class="ident">marker</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+/// A seed that can be used to deserialize only the `n`th element of a sequence
+/// while efficiently discarding elements of any type before or after index `n`.
+///
+/// For example to deserialize only the element at index 3:
+///
+/// ```
+/// NthElement::new(3).deserialize(deserializer)
+/// ```
+pub struct NthElement&lt;T&gt; {
+    n: usize,
+    marker: PhantomData&lt;T&gt;,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">NthElement</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">n</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="ident">NthElement</span> {
-            <span class="ident">n</span>: <span class="ident">n</span>,
-            <span class="ident">marker</span>: <span class="ident">PhantomData</span>,
+impl&lt;T&gt; NthElement&lt;T&gt; {
+    pub fn new(n: usize) -&gt; Self {
+        NthElement {
+            n: n,
+            marker: PhantomData,
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Visitor</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NthElement</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+impl&lt;'de, T&gt; Visitor&lt;'de&gt; for NthElement&lt;T&gt;
+where
+    T: Deserialize&lt;'de&gt;,
 {
-    <span class="kw">type</span> <span class="ident">Value</span> <span class="op">=</span> <span class="ident">T</span>;
+    type Value = T;
 
-    <span class="kw">fn</span> <span class="ident">expecting</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">formatter</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">write</span><span class="macro">!</span>(
-            <span class="ident">formatter</span>,
-            <span class="string">&quot;a sequence in which we care about element {}&quot;</span>,
-            <span class="self">self</span>.<span class="ident">n</span>
+    fn expecting(&amp;self, formatter: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        write!(
+            formatter,
+            &quot;a sequence in which we care about element {}&quot;,
+            self.n
         )
     }
 
-    <span class="kw">fn</span> <span class="ident">visit_seq</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">seq</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Value</span>, <span class="ident">A</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">A</span>: <span class="ident">SeqAccess</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+    fn visit_seq&lt;A&gt;(self, mut seq: A) -&gt; Result&lt;Self::Value, A::Error&gt;
+    where
+        A: SeqAccess&lt;'de&gt;,
     {
-        <span class="comment">// Skip over the first `n` elements.</span>
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">n</span> {
-            <span class="comment">// It is an error if the sequence ends before we get to element `n`.</span>
-            <span class="kw">if</span> <span class="ident">seq</span>.<span class="ident">next_element</span>::<span class="op">&lt;</span><span class="ident">IgnoredAny</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">is_none</span>() {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">invalid_length</span>(<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="self">self</span>));
+        // Skip over the first `n` elements.
+        for i in 0..self.n {
+            // It is an error if the sequence ends before we get to element `n`.
+            if seq.next_element::&lt;IgnoredAny&gt;()?.is_none() {
+                return Err(de::Error::invalid_length(i, &amp;self));
             }
         }
 
-        <span class="comment">// Deserialize the one we care about.</span>
-        <span class="kw">let</span> <span class="ident">nth</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">seq</span>.<span class="ident">next_element</span>()<span class="question-mark">?</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">nth</span>) <span class="op">=&gt;</span> <span class="ident">nth</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">de</span>::<span class="ident">Error</span>::<span class="ident">invalid_length</span>(<span class="self">self</span>.<span class="ident">n</span>, <span class="kw-2">&amp;</span><span class="self">self</span>));
+        // Deserialize the one we care about.
+        let nth = match seq.next_element()? {
+            Some(nth) =&gt; nth,
+            None =&gt; {
+                return Err(de::Error::invalid_length(self.n, &amp;self));
             }
         };
 
-        <span class="comment">// Skip over any remaining elements in the sequence after `n`.</span>
-        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">IgnoredAny</span>) <span class="op">=</span> <span class="ident">seq</span>.<span class="ident">next_element</span>()<span class="question-mark">?</span> {
-            <span class="comment">// ignore</span>
+        // Skip over any remaining elements in the sequence after `n`.
+        while let Some(IgnoredAny) = seq.next_element()? {
+            // ignore
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">nth</span>)
+        Ok(nth)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">DeserializeSeed</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NthElement</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+impl&lt;'de, T&gt; DeserializeSeed&lt;'de&gt; for NthElement&lt;T&gt;
+where
+    T: Deserialize&lt;'de&gt;,
 {
-    <span class="kw">type</span> <span class="ident">Value</span> <span class="op">=</span> <span class="ident">T</span>;
+    type Value = T;
 
-    <span class="kw">fn</span> <span class="ident">deserialize</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">deserializer</span>: <span class="ident">D</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Value</span>, <span class="ident">D</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-    <span class="kw">where</span>
-        <span class="ident">D</span>: <span class="ident">Deserializer</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span>,
+    fn deserialize&lt;D&gt;(self, deserializer: D) -&gt; Result&lt;Self::Value, D::Error&gt;
+    where
+        D: Deserializer&lt;'de&gt;,
     {
-        <span class="ident">deserializer</span>.<span class="ident">deserialize_seq</span>(<span class="self">self</span>)
+        deserializer.deserialize_seq(self)
     }
 }
 
-<span class="comment">// Deserialize only the sequence element at index 3 from this deserializer.</span>
-<span class="comment">// The element at index 3 is required to be a string. Elements before and</span>
-<span class="comment">// after index 3 are allowed to be of any type.</span>
-<span class="kw">let</span> <span class="ident">s</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">NthElement</span>::<span class="ident">new</span>(<span class="number">3</span>).<span class="ident">deserialize</span>(<span class="ident">deserializer</span>)<span class="question-mark">?</span>;</pre>
+# fn example&lt;'de, D&gt;(deserializer: D) -&gt; Result&lt;(), D::Error&gt;
+# where
+#     D: Deserializer&lt;'de&gt;,
+# {
+// Deserialize only the sequence element at index 3 from this deserializer.
+// The element at index 3 is required to be a string. Elements before and
+// after index 3 are allowed to be of any type.
+let s: String = NthElement::new(3).deserialize(deserializer)?;
+#     Ok(())
+# }
+</code></pre>
 </div><h2 id='implementations' class='small-section-header'>Trait Implementations<a href='#implementations' class='anchor'></a></h2><div id='implementations-list'><h3 id='impl-Deserialize%3C%27de%3E' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;'de&gt; <a class="trait" href="../../serde/trait.Deserialize.html" title="trait serde::Deserialize">Deserialize</a>&lt;'de&gt; for <a class="struct" href="../../serde/de/struct.IgnoredAny.html" title="struct serde::de::IgnoredAny">IgnoredAny</a></code><a href='#impl-Deserialize%3C%27de%3E' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/serde/de/ignored_any.rs.html#210-218' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='method.deserialize' class="method"><span id='deserialize.v' class='invisible'><table class='table-display'><tbody><tr><td><code>fn <a href='../../serde/trait.Deserialize.html#tymethod.deserialize' class='fnname'>deserialize</a>&lt;D&gt;(deserializer: D) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../serde/de/struct.IgnoredAny.html" title="struct serde::de::IgnoredAny">IgnoredAny</a>, D::<a class="type" href="../../serde/trait.Deserializer.html#associatedtype.Error" title="type serde::Deserializer::Error">Error</a>&gt; <span class="where fmt-newline">where<br>&nbsp;&nbsp;&nbsp;&nbsp;D: <a class="trait" href="../../serde/trait.Deserializer.html" title="trait serde::Deserializer">Deserializer</a>&lt;'de&gt;,&nbsp;</span></code></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/serde/de/ignored_any.rs.html#212-217' title='goto source code'>[src]</a></td></tr></tbody></table></span></h4><div class='docblock'><p>Deserialize this value from the given Serde deserializer. <a href="../../serde/trait.Deserialize.html#tymethod.deserialize">Read more</a></p>
 </div></div><h3 id='impl-Visitor%3C%27de%3E' class='impl'><span class='in-band'><table class='table-display'><tbody><tr><td><code>impl&lt;'de&gt; <a class="trait" href="../../serde/de/trait.Visitor.html" title="trait serde::de::Visitor">Visitor</a>&lt;'de&gt; for <a class="struct" href="../../serde/de/struct.IgnoredAny.html" title="struct serde::de::IgnoredAny">IgnoredAny</a></code><a href='#impl-Visitor%3C%27de%3E' class='anchor'></a></span></td><td><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/serde/de/ignored_any.rs.html#112-208' title='goto source code'>[src]</a></span></td></tr></tbody></table></h3><div class='impl-items'><h4 id='associatedtype.Value' class="type"><span id='Value.t' class='invisible'><code>type <a href='../../serde/de/trait.Visitor.html#associatedtype.Value' class="type">Value</a> = <a class="struct" href="../../serde/de/struct.IgnoredAny.html" title="struct serde::de::IgnoredAny">IgnoredAny</a></code></span></h4>
 <div class='docblock'><p>The value produced by this visitor.</p>

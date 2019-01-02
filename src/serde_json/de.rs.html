@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.33/src/de.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>de.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.34/src/de.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>de.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2259,6 +2259,24 @@
 <span id="2259">2259</span>
 <span id="2260">2260</span>
 <span id="2261">2261</span>
+<span id="2262">2262</span>
+<span id="2263">2263</span>
+<span id="2264">2264</span>
+<span id="2265">2265</span>
+<span id="2266">2266</span>
+<span id="2267">2267</span>
+<span id="2268">2268</span>
+<span id="2269">2269</span>
+<span id="2270">2270</span>
+<span id="2271">2271</span>
+<span id="2272">2272</span>
+<span id="2273">2273</span>
+<span id="2274">2274</span>
+<span id="2275">2275</span>
+<span id="2276">2276</span>
+<span id="2277">2277</span>
+<span id="2278">2278</span>
+<span id="2279">2279</span>
 </pre><pre class="rust ">
 <span class="comment">// Copyright 2017 Serde Developers</span>
 <span class="comment">//</span>
@@ -4383,15 +4401,17 @@
 
 <span class="doccomment">/// Deserialize an instance of type `T` from an IO stream of JSON.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// # Errors</span>
+<span class="doccomment">/// The content of the IO stream is deserialized directly from the stream</span>
+<span class="doccomment">/// without being buffered in memory by serde_json.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// This conversion can fail if the structure of the input does not match the</span>
-<span class="doccomment">/// structure expected by `T`, for example if `T` is a struct type but the input</span>
-<span class="doccomment">/// contains something other than a JSON map. It can also fail if the structure</span>
-<span class="doccomment">/// is correct but `T`&#39;s implementation of `Deserialize` decides that something</span>
-<span class="doccomment">/// is wrong with the data, for example required struct fields are missing from</span>
-<span class="doccomment">/// the JSON map or some number is too big to fit in the expected primitive</span>
-<span class="doccomment">/// type.</span>
+<span class="doccomment">/// When reading from a source against which short reads are not efficient, such</span>
+<span class="doccomment">/// as a [`File`], you will want to apply your own buffering because serde_json</span>
+<span class="doccomment">/// will not buffer the input. See [`std::io::BufReader`].</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// [`File`]: https://doc.rust-lang.org/std/fs/struct.File.html</span>
+<span class="doccomment">/// [`BufReader`]: https://doc.rust-lang.org/std/io/struct.BufReader.html</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// #[macro_use]</span>
@@ -4402,6 +4422,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// use std::error::Error;</span>
 <span class="doccomment">/// use std::fs::File;</span>
+<span class="doccomment">/// use std::io::BufReader;</span>
 <span class="doccomment">/// use std::path::Path;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[derive(Deserialize, Debug)]</span>
@@ -4411,11 +4432,12 @@
 <span class="doccomment">/// }</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// fn read_user_from_file&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;User, Box&lt;Error&gt;&gt; {</span>
-<span class="doccomment">///     // Open the file in read-only mode.</span>
+<span class="doccomment">///     // Open the file in read-only mode with buffer.</span>
 <span class="doccomment">///     let file = File::open(path)?;</span>
+<span class="doccomment">///     let reader = BufReader::new(file);</span>
 <span class="doccomment">///</span>
 <span class="doccomment">///     // Read the JSON contents of the file as an instance of `User`.</span>
-<span class="doccomment">///     let u = serde_json::from_reader(file)?;</span>
+<span class="doccomment">///     let u = serde_json::from_reader(reader)?;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">///     // Return the `User`.</span>
 <span class="doccomment">///     Ok(u)</span>
@@ -4428,15 +4450,6 @@
 <span class="doccomment">///     println!(&quot;{:#?}&quot;, u);</span>
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_reader</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>,
-    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
-{
-    <span class="ident">from_trait</span>(<span class="ident">read</span>::<span class="ident">IoRead</span>::<span class="ident">new</span>(<span class="ident">rdr</span>))
-}
-
-<span class="doccomment">/// Deserialize an instance of type `T` from bytes of JSON text.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Errors</span>
 <span class="doccomment">///</span>
@@ -4447,6 +4460,17 @@
 <span class="doccomment">/// is wrong with the data, for example required struct fields are missing from</span>
 <span class="doccomment">/// the JSON map or some number is too big to fit in the expected primitive</span>
 <span class="doccomment">/// type.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_reader</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>,
+    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">DeserializeOwned</span>,
+{
+    <span class="ident">from_trait</span>(<span class="ident">read</span>::<span class="ident">IoRead</span>::<span class="ident">new</span>(<span class="ident">rdr</span>))
+}
+
+<span class="doccomment">/// Deserialize an instance of type `T` from bytes of JSON text.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// #[macro_use]</span>
@@ -4472,14 +4496,6 @@
 <span class="doccomment">///     println!(&quot;{:#?}&quot;, u);</span>
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_slice</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
-{
-    <span class="ident">from_trait</span>(<span class="ident">read</span>::<span class="ident">SliceRead</span>::<span class="ident">new</span>(<span class="ident">v</span>))
-}
-
-<span class="doccomment">/// Deserialize an instance of type `T` from a string of JSON text.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Errors</span>
 <span class="doccomment">///</span>
@@ -4490,6 +4506,16 @@
 <span class="doccomment">/// is wrong with the data, for example required struct fields are missing from</span>
 <span class="doccomment">/// the JSON map or some number is too big to fit in the expected primitive</span>
 <span class="doccomment">/// type.</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_slice</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+<span class="kw">where</span>
+    <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
+{
+    <span class="ident">from_trait</span>(<span class="ident">read</span>::<span class="ident">SliceRead</span>::<span class="ident">new</span>(<span class="ident">v</span>))
+}
+
+<span class="doccomment">/// Deserialize an instance of type `T` from a string of JSON text.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// #[macro_use]</span>
@@ -4515,6 +4541,16 @@
 <span class="doccomment">///     println!(&quot;{:#?}&quot;, u);</span>
 <span class="doccomment">/// }</span>
 <span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Errors</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This conversion can fail if the structure of the input does not match the</span>
+<span class="doccomment">/// structure expected by `T`, for example if `T` is a struct type but the input</span>
+<span class="doccomment">/// contains something other than a JSON map. It can also fail if the structure</span>
+<span class="doccomment">/// is correct but `T`&#39;s implementation of `Deserialize` decides that something</span>
+<span class="doccomment">/// is wrong with the data, for example required struct fields are missing from</span>
+<span class="doccomment">/// the JSON map or some number is too big to fit in the expected primitive</span>
+<span class="doccomment">/// type.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_str</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">de</span>::<span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
