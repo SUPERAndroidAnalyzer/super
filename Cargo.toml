@@ -84,13 +84,13 @@ failure = "0.1.5"
 clap = "2.32.0"
 xml-rs = "0.8.0"
 serde = { version = "1.0.84", features = ['derive'] }
-serde_json = "1.0.34"
+serde_json = "1.0.35"
 chrono = { version = "0.4.6", features = ["serde"] }
 toml = "0.4.10"
 regex = "1.1.0"
 lazy_static = "1.2.0"
 open = "1.2.2"
-bytecount = "0.4.0"
+bytecount = "0.5.0"
 log = "0.4.6"
 env_logger = "0.6.0"
 md5 = "0.6.1"
@@ -101,13 +101,13 @@ handlebars = "1.1.0"
 semver = "0.9.0"
 hex = "0.3.2"
 num_cpus = "1.9.0"
-colored = "1.6.1"
+colored = "1.7.0"
 
 [build-dependencies]
 clap = "2.32.0"
 
 [dev-dependencies]
-reqwest = "0.9.5"
+reqwest = "0.9.8"
 
 [features]
 default = []

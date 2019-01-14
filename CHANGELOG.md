@@ -6,7 +6,10 @@
 
 - Upgraded dependencies:
   - `num_cpus`: 1.8 => **1.9**
+  - `bytecount`: 0.4 => **0.5**
+  - `colored`: 1.6 => **1.7**
   - Some other minor upgrades.
+
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
