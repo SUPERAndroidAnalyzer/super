@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `syn` crate."><meta name="keywords" content="rust, rustlang, rust-lang, syn"><title>syn - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate syn</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all syn's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'syn', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/syn/lib.rs.html#1-735' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>syn</a></span></h1><div class='docblock'><p>Syn is a parsing library for parsing a stream of Rust tokens into a syntax
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `syn` crate."><meta name="keywords" content="rust, rustlang, rust-lang, syn"><title>syn - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><p class='location'>Crate syn</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all syn's items</p></a><div class="block items"><ul><li><a href="#modules">Modules</a></li><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#functions">Functions</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'syn', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/syn/lib.rs.html#1-724' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>syn</a></span></h1><div class='docblock'><p>Syn is a parsing library for parsing a stream of Rust tokens into a syntax
 tree of Rust source code.</p>
 <p>Currently this library is geared toward use in Rust procedural macros, but
 contains some APIs that may be useful more generally.</p>
@@ -55,63 +55,61 @@ quote = &quot;0.6&quot;
 [lib]
 proc-macro = true
 </code></pre>
+<pre><code class="language-edition2018">extern crate proc_macro;
 
-<pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">quote</span>;
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">syn</span>;
+use proc_macro::TokenStream;
+use quote::quote;
+use syn::{parse_macro_input, DeriveInput};
 
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
+# const IGNORE_TOKENS: &amp;str = stringify! {
+#[proc_macro_derive(MyMacro)]
+# };
+pub fn my_macro(input: TokenStream) -&gt; TokenStream {
+    // Parse the input tokens into a syntax tree
+    let input = parse_macro_input!(input as DeriveInput);
 
-<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
-<span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">DeriveInput</span>;
-
-<span class="attribute">#[<span class="ident">proc_macro_derive</span>(<span class="ident">MyMacro</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">my_macro</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-    <span class="comment">// Parse the input tokens into a syntax tree</span>
-    <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="macro">parse_macro_input</span><span class="macro">!</span>(<span class="ident">input</span> <span class="kw">as</span> <span class="ident">DeriveInput</span>);
-
-    <span class="comment">// Build the output, possibly using quasi-quotation</span>
-    <span class="kw">let</span> <span class="ident">expanded</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {
-        <span class="comment">// ...</span>
+    // Build the output, possibly using quasi-quotation
+    let expanded = quote! {
+        // ...
     };
 
-    <span class="comment">// Hand the output tokens back to the compiler</span>
-    <span class="ident">TokenStream</span>::<span class="ident">from</span>(<span class="ident">expanded</span>)
-}</pre>
+    // Hand the output tokens back to the compiler
+    TokenStream::from(expanded)
+}
+</code></pre>
 <p>The <a href="https://github.com/dtolnay/syn/tree/master/examples/heapsize"><code>heapsize</code></a> example directory shows a complete working Macros 1.1
 implementation of a custom derive. It works on any Rust compiler 1.15+.
 The example derives a <code>HeapSize</code> trait which computes an estimate of the
 amount of heap memory owned by a value.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">HeapSize</span> {
-    <span class="doccomment">/// Total number of bytes of heap memory owned by `self`.</span>
-    <span class="kw">fn</span> <span class="ident">heap_size_of_children</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span>;
-}</pre>
+<pre><code class="language-edition2018">pub trait HeapSize {
+    /// Total number of bytes of heap memory owned by `self`.
+    fn heap_size_of_children(&amp;self) -&gt; usize;
+}
+</code></pre>
 <p>The custom derive allows users to write <code>#[derive(HeapSize)]</code> on data
 structures in their program.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">HeapSize</span>)]</span>
-<span class="kw">struct</span> <span class="ident">Demo</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> {
-    <span class="ident">a</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
-    <span class="ident">b</span>: <span class="ident">u8</span>,
-    <span class="ident">c</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-    <span class="ident">d</span>: <span class="ident">String</span>,
-}</pre>
+<pre><code class="language-edition2018"># const IGNORE_TOKENS: &amp;str = stringify! {
+#[derive(HeapSize)]
+# };
+struct Demo&lt;'a, T: ?Sized&gt; {
+    a: Box&lt;T&gt;,
+    b: u8,
+    c: &amp;'a str,
+    d: String,
+}
+</code></pre>
 <h2 id="spans-and-error-reporting" class="section-header"><a href="#spans-and-error-reporting">Spans and error reporting</a></h2>
 <p>The token-based procedural macro API provides great control over where the
 compiler's error messages are displayed in user code. Consider the error the
 user sees if one of their field types does not implement <code>HeapSize</code>.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">HeapSize</span>)]</span>
-<span class="kw">struct</span> <span class="ident">Broken</span> {
-    <span class="ident">ok</span>: <span class="ident">String</span>,
-    <span class="ident">bad</span>: <span class="ident">std</span>::<span class="ident">thread</span>::<span class="ident">Thread</span>,
-}</pre>
+<pre><code class="language-edition2018"># const IGNORE_TOKENS: &amp;str = stringify! {
+#[derive(HeapSize)]
+# };
+struct Broken {
+    ok: String,
+    bad: std::thread::Thread,
+}
+</code></pre>
 <p>By tracking span information all the way through the expansion of a
 procedural macro as shown in the <code>heapsize</code> example, token-based macros in
 Syn are able to trigger errors that directly pinpoint the source of the
@@ -128,11 +126,14 @@ problem.</p>
 using Syn's parsing API.</p>
 <p>The example reimplements the popular <code>lazy_static</code> crate from crates.io as a
 procedural macro.</p>
-
-<pre class="rust rust-example-rendered">
-<span class="macro">lazy_static</span><span class="macro">!</span> {
-    <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">USERNAME</span>: <span class="ident">Regex</span> <span class="op">=</span> <span class="ident">Regex</span>::<span class="ident">new</span>(<span class="string">&quot;^[a-z0-9_-]{3,16}$&quot;</span>).<span class="ident">unwrap</span>();
-}</pre>
+<pre><code class="language-edition2018"># macro_rules! lazy_static {
+#     ($($tt:tt)*) =&gt; {}
+# }
+#
+lazy_static! {
+    static ref USERNAME: Regex = Regex::new(&quot;^[a-z0-9_-]{3,16}$&quot;).unwrap();
+}
+</code></pre>
 <p>The implementation shows how to trigger custom warnings and error messages
 on the macro input.</p>
 <pre><code class="language-text">warning: come on, pick a more creative name

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.34/src/value/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.35/src/value/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1009,139 +1009,7 @@
 <span id="1009">1009</span>
 <span id="1010">1010</span>
 <span id="1011">1011</span>
-<span id="1012">1012</span>
-<span id="1013">1013</span>
-<span id="1014">1014</span>
-<span id="1015">1015</span>
-<span id="1016">1016</span>
-<span id="1017">1017</span>
-<span id="1018">1018</span>
-<span id="1019">1019</span>
-<span id="1020">1020</span>
-<span id="1021">1021</span>
-<span id="1022">1022</span>
-<span id="1023">1023</span>
-<span id="1024">1024</span>
-<span id="1025">1025</span>
-<span id="1026">1026</span>
-<span id="1027">1027</span>
-<span id="1028">1028</span>
-<span id="1029">1029</span>
-<span id="1030">1030</span>
-<span id="1031">1031</span>
-<span id="1032">1032</span>
-<span id="1033">1033</span>
-<span id="1034">1034</span>
-<span id="1035">1035</span>
-<span id="1036">1036</span>
-<span id="1037">1037</span>
-<span id="1038">1038</span>
-<span id="1039">1039</span>
-<span id="1040">1040</span>
-<span id="1041">1041</span>
-<span id="1042">1042</span>
-<span id="1043">1043</span>
-<span id="1044">1044</span>
-<span id="1045">1045</span>
-<span id="1046">1046</span>
-<span id="1047">1047</span>
-<span id="1048">1048</span>
-<span id="1049">1049</span>
-<span id="1050">1050</span>
-<span id="1051">1051</span>
-<span id="1052">1052</span>
-<span id="1053">1053</span>
-<span id="1054">1054</span>
-<span id="1055">1055</span>
-<span id="1056">1056</span>
-<span id="1057">1057</span>
-<span id="1058">1058</span>
-<span id="1059">1059</span>
-<span id="1060">1060</span>
-<span id="1061">1061</span>
-<span id="1062">1062</span>
-<span id="1063">1063</span>
-<span id="1064">1064</span>
-<span id="1065">1065</span>
-<span id="1066">1066</span>
-<span id="1067">1067</span>
-<span id="1068">1068</span>
-<span id="1069">1069</span>
-<span id="1070">1070</span>
-<span id="1071">1071</span>
-<span id="1072">1072</span>
-<span id="1073">1073</span>
-<span id="1074">1074</span>
-<span id="1075">1075</span>
-<span id="1076">1076</span>
-<span id="1077">1077</span>
-<span id="1078">1078</span>
-<span id="1079">1079</span>
-<span id="1080">1080</span>
-<span id="1081">1081</span>
-<span id="1082">1082</span>
-<span id="1083">1083</span>
-<span id="1084">1084</span>
-<span id="1085">1085</span>
-<span id="1086">1086</span>
-<span id="1087">1087</span>
-<span id="1088">1088</span>
-<span id="1089">1089</span>
-<span id="1090">1090</span>
-<span id="1091">1091</span>
-<span id="1092">1092</span>
-<span id="1093">1093</span>
-<span id="1094">1094</span>
-<span id="1095">1095</span>
-<span id="1096">1096</span>
-<span id="1097">1097</span>
-<span id="1098">1098</span>
-<span id="1099">1099</span>
-<span id="1100">1100</span>
-<span id="1101">1101</span>
-<span id="1102">1102</span>
-<span id="1103">1103</span>
-<span id="1104">1104</span>
-<span id="1105">1105</span>
-<span id="1106">1106</span>
-<span id="1107">1107</span>
-<span id="1108">1108</span>
-<span id="1109">1109</span>
-<span id="1110">1110</span>
-<span id="1111">1111</span>
-<span id="1112">1112</span>
-<span id="1113">1113</span>
-<span id="1114">1114</span>
-<span id="1115">1115</span>
-<span id="1116">1116</span>
-<span id="1117">1117</span>
-<span id="1118">1118</span>
-<span id="1119">1119</span>
-<span id="1120">1120</span>
-<span id="1121">1121</span>
-<span id="1122">1122</span>
-<span id="1123">1123</span>
-<span id="1124">1124</span>
-<span id="1125">1125</span>
-<span id="1126">1126</span>
-<span id="1127">1127</span>
-<span id="1128">1128</span>
-<span id="1129">1129</span>
-<span id="1130">1130</span>
-<span id="1131">1131</span>
-<span id="1132">1132</span>
-<span id="1133">1133</span>
-<span id="1134">1134</span>
-<span id="1135">1135</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2017 Serde Developers</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
-<span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
-<span class="comment">// &lt;LICENSE-MIT or http://opensource.org/licenses/MIT&gt;, at your</span>
-<span class="comment">// option. This file may not be copied, modified, or distributed</span>
-<span class="comment">// except according to those terms.</span>
-
 <span class="doccomment">//! The Value enum, a loosely typed way of representing any valid JSON value.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! # Constructing JSON</span>
@@ -1150,19 +1018,18 @@
 <span class="doccomment">//! objects with very natural JSON syntax. In order to use this macro,</span>
 <span class="doccomment">//! `serde_json` needs to be imported with the `#[macro_use]` attribute.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! #[macro_use]</span>
-<span class="doccomment">//! extern crate serde_json;</span>
+<span class="doccomment">//! ```edition2018</span>
+<span class="doccomment">//! use serde_json::json;</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! fn main() {</span>
 <span class="doccomment">//!     // The type of `john` is `serde_json::Value`</span>
 <span class="doccomment">//!     let john = json!({</span>
-<span class="doccomment">//!       &quot;name&quot;: &quot;John Doe&quot;,</span>
-<span class="doccomment">//!       &quot;age&quot;: 43,</span>
-<span class="doccomment">//!       &quot;phones&quot;: [</span>
-<span class="doccomment">//!         &quot;+44 1234567&quot;,</span>
-<span class="doccomment">//!         &quot;+44 2345678&quot;</span>
-<span class="doccomment">//!       ]</span>
+<span class="doccomment">//!         &quot;name&quot;: &quot;John Doe&quot;,</span>
+<span class="doccomment">//!         &quot;age&quot;: 43,</span>
+<span class="doccomment">//!         &quot;phones&quot;: [</span>
+<span class="doccomment">//!             &quot;+44 1234567&quot;,</span>
+<span class="doccomment">//!             &quot;+44 2345678&quot;</span>
+<span class="doccomment">//!         ]</span>
 <span class="doccomment">//!     });</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!     println!(&quot;first phone number: {}&quot;, john[&quot;phones&quot;][0]);</span>
@@ -1180,26 +1047,22 @@
 <span class="doccomment">//! will check at compile time that the value you are interpolating is able to</span>
 <span class="doccomment">//! be represented as JSON.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! # #[macro_use]</span>
-<span class="doccomment">//! # extern crate serde_json;</span>
+<span class="doccomment">//! ```edition2018</span>
+<span class="doccomment">//! # use serde_json::json;</span>
 <span class="doccomment">//! #</span>
 <span class="doccomment">//! # fn random_phone() -&gt; u16 { 0 }</span>
 <span class="doccomment">//! #</span>
-<span class="doccomment">//! # fn main() {</span>
 <span class="doccomment">//! let full_name = &quot;John Doe&quot;;</span>
 <span class="doccomment">//! let age_last_year = 42;</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! // The type of `john` is `serde_json::Value`</span>
 <span class="doccomment">//! let john = json!({</span>
-<span class="doccomment">//!   &quot;name&quot;: full_name,</span>
-<span class="doccomment">//!   &quot;age&quot;: age_last_year + 1,</span>
-<span class="doccomment">//!   &quot;phones&quot;: [</span>
-<span class="doccomment">//!     format!(&quot;+44 {}&quot;, random_phone())</span>
-<span class="doccomment">//!   ]</span>
+<span class="doccomment">//!     &quot;name&quot;: full_name,</span>
+<span class="doccomment">//!     &quot;age&quot;: age_last_year + 1,</span>
+<span class="doccomment">//!     &quot;phones&quot;: [</span>
+<span class="doccomment">//!         format!(&quot;+44 {}&quot;, random_phone())</span>
+<span class="doccomment">//!     ]</span>
 <span class="doccomment">//! });</span>
-<span class="doccomment">//! #     let _ = john;</span>
-<span class="doccomment">//! # }</span>
 <span class="doccomment">//! ```</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! A string of JSON data can be parsed into a `serde_json::Value` by the</span>
@@ -1208,21 +1071,20 @@
 <span class="doccomment">//! [`from_reader`][from_reader] for parsing from any `io::Read` like a File or</span>
 <span class="doccomment">//! a TCP stream.</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! ```rust</span>
-<span class="doccomment">//! extern crate serde_json;</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! use serde_json::{Value, Error};</span>
+<span class="doccomment">//! ```edition2018</span>
+<span class="doccomment">//! use serde_json::{json, Value, Error};</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! fn untyped_example() -&gt; Result&lt;(), Error&gt; {</span>
 <span class="doccomment">//!     // Some JSON input data as a &amp;str. Maybe this comes from the user.</span>
-<span class="doccomment">//!     let data = r#&quot;{</span>
-<span class="doccomment">//!                     &quot;name&quot;: &quot;John Doe&quot;,</span>
-<span class="doccomment">//!                     &quot;age&quot;: 43,</span>
-<span class="doccomment">//!                     &quot;phones&quot;: [</span>
-<span class="doccomment">//!                       &quot;+44 1234567&quot;,</span>
-<span class="doccomment">//!                       &quot;+44 2345678&quot;</span>
-<span class="doccomment">//!                     ]</span>
-<span class="doccomment">//!                   }&quot;#;</span>
+<span class="doccomment">//!     let data = r#&quot;</span>
+<span class="doccomment">//!         {</span>
+<span class="doccomment">//!             &quot;name&quot;: &quot;John Doe&quot;,</span>
+<span class="doccomment">//!             &quot;age&quot;: 43,</span>
+<span class="doccomment">//!             &quot;phones&quot;: [</span>
+<span class="doccomment">//!                 &quot;+44 1234567&quot;,</span>
+<span class="doccomment">//!                 &quot;+44 2345678&quot;</span>
+<span class="doccomment">//!             ]</span>
+<span class="doccomment">//!         }&quot;#;</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//!     // Parse the string of data into serde_json::Value.</span>
 <span class="doccomment">//!     let v: Value = serde_json::from_str(data)?;</span>
@@ -1269,61 +1131,46 @@
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Value</span> {
     <span class="doccomment">/// Represents a JSON null value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!(null);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">Null</span>,
 
     <span class="doccomment">/// Represents a JSON boolean.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!(true);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">Bool</span>(<span class="ident">bool</span>),
 
     <span class="doccomment">/// Represents a JSON number, whether integer or floating point.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!(12.5);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">Number</span>(<span class="ident">Number</span>),
 
     <span class="doccomment">/// Represents a JSON string.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!(&quot;a string&quot;);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">String</span>(<span class="ident">String</span>),
 
     <span class="doccomment">/// Represents a JSON array.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!([&quot;an&quot;, &quot;array&quot;]);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">Array</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&gt;</span>),
 
@@ -1335,13 +1182,10 @@
     <span class="doccomment">/// allows JSON data to be deserialized into a Value and serialized to a</span>
     <span class="doccomment">/// string while retaining the order of map keys in the input.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;an&quot;: &quot;object&quot; });</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="ident">Object</span>(<span class="ident">Map</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;</span>),
 }
@@ -1383,11 +1227,9 @@
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Value</span> {
     <span class="doccomment">/// Display a JSON value as a string.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let json = json!({ &quot;city&quot;: &quot;London&quot;, &quot;street&quot;: &quot;10 Downing Street&quot; });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // Compact format:</span>
@@ -1406,7 +1248,6 @@
     <span class="doccomment">/// let pretty = format!(&quot;{:#}&quot;, json);</span>
     <span class="doccomment">/// assert_eq!(pretty,</span>
     <span class="doccomment">///     &quot;{\n  \&quot;city\&quot;: \&quot;London\&quot;,\n  \&quot;street\&quot;: \&quot;10 Downing Street\&quot;\n}&quot;);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">let</span> <span class="ident">alternate</span> <span class="op">=</span> <span class="ident">f</span>.<span class="ident">alternate</span>();
@@ -1438,11 +1279,9 @@
     <span class="doccomment">/// number. Also returns `None` if the given key does not exist in the map</span>
     <span class="doccomment">/// or the given index is not within the bounds of the array.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let object = json!({ &quot;A&quot;: 65, &quot;B&quot;: 66, &quot;C&quot;: 67 });</span>
     <span class="doccomment">/// assert_eq!(*object.get(&quot;A&quot;).unwrap(), json!(65));</span>
     <span class="doccomment">///</span>
@@ -1450,18 +1289,15 @@
     <span class="doccomment">/// assert_eq!(*array.get(2).unwrap(), json!(&quot;C&quot;));</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(array.get(&quot;A&quot;), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Square brackets can also be used to index into a value in a more concise</span>
     <span class="doccomment">/// way. This returns `Value::Null` in cases where `get` would have returned</span>
     <span class="doccomment">/// `None`.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let object = json!({</span>
     <span class="doccomment">///     &quot;A&quot;: [&quot;a&quot;, &quot;á&quot;, &quot;à&quot;],</span>
     <span class="doccomment">///     &quot;B&quot;: [&quot;b&quot;, &quot;b́&quot;],</span>
@@ -1471,7 +1307,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(object[&quot;D&quot;], json!(null));</span>
     <span class="doccomment">/// assert_eq!(object[0][&quot;x&quot;][&quot;y&quot;][&quot;z&quot;], json!(null));</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Index</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="ident">index</span>.<span class="ident">index_into</span>(<span class="self">self</span>)
@@ -1486,17 +1321,14 @@
     <span class="doccomment">/// number. Also returns `None` if the given key does not exist in the map</span>
     <span class="doccomment">/// or the given index is not within the bounds of the array.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let mut object = json!({ &quot;A&quot;: 65, &quot;B&quot;: 66, &quot;C&quot;: 67 });</span>
     <span class="doccomment">/// *object.get_mut(&quot;A&quot;).unwrap() = json!(69);</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let mut array = json!([ &quot;A&quot;, &quot;B&quot;, &quot;C&quot; ]);</span>
     <span class="doccomment">/// *array.get_mut(2).unwrap() = json!(&quot;D&quot;);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Index</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="ident">index</span>.<span class="ident">index_into_mut</span>(<span class="self">self</span>)
@@ -1508,11 +1340,9 @@
     <span class="doccomment">/// `as_object_mut` are guaranteed to return the map representation of the</span>
     <span class="doccomment">/// object.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let obj = json!({ &quot;a&quot;: { &quot;nested&quot;: true }, &quot;b&quot;: [&quot;an&quot;, &quot;array&quot;] });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(obj.is_object());</span>
@@ -1520,7 +1350,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // array, not an object</span>
     <span class="doccomment">/// assert!(!obj[&quot;b&quot;].is_object());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_object</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">as_object</span>().<span class="ident">is_some</span>()
@@ -1529,11 +1358,9 @@
     <span class="doccomment">/// If the `Value` is an Object, returns the associated Map. Returns None</span>
     <span class="doccomment">/// otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: { &quot;nested&quot;: true }, &quot;b&quot;: [&quot;an&quot;, &quot;array&quot;] });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The length of `{&quot;nested&quot;: true}` is 1 entry.</span>
@@ -1541,7 +1368,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The array `[&quot;an&quot;, &quot;array&quot;]` is not an object.</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_object(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_object</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Map</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1553,17 +1379,13 @@
     <span class="doccomment">/// If the `Value` is an Object, returns the associated mutable Map.</span>
     <span class="doccomment">/// Returns None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let mut v = json!({ &quot;a&quot;: { &quot;nested&quot;: true } });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// v[&quot;a&quot;].as_object_mut().unwrap().clear();</span>
     <span class="doccomment">/// assert_eq!(v, json!({ &quot;a&quot;: {} }));</span>
-    <span class="doccomment">/// # }</span>
-    <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_object_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Map</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Value</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1578,18 +1400,15 @@
     <span class="doccomment">/// `as_array_mut` are guaranteed to return the vector representing the</span>
     <span class="doccomment">/// array.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let obj = json!({ &quot;a&quot;: [&quot;an&quot;, &quot;array&quot;], &quot;b&quot;: { &quot;an&quot;: &quot;object&quot; } });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(obj[&quot;a&quot;].is_array());</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // an object, not an array</span>
     <span class="doccomment">/// assert!(!obj[&quot;b&quot;].is_array());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_array</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">as_array</span>().<span class="ident">is_some</span>()
@@ -1598,11 +1417,9 @@
     <span class="doccomment">/// If the `Value` is an Array, returns the associated vector. Returns None</span>
     <span class="doccomment">/// otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: [&quot;an&quot;, &quot;array&quot;], &quot;b&quot;: { &quot;an&quot;: &quot;object&quot; } });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The length of `[&quot;an&quot;, &quot;array&quot;]` is 2 elements.</span>
@@ -1610,7 +1427,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The object `{&quot;an&quot;: &quot;object&quot;}` is not an array.</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_array(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_array</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1622,16 +1438,13 @@
     <span class="doccomment">/// If the `Value` is an Array, returns the associated mutable vector.</span>
     <span class="doccomment">/// Returns None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let mut v = json!({ &quot;a&quot;: [&quot;an&quot;, &quot;array&quot;] });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// v[&quot;a&quot;].as_array_mut().unwrap().clear();</span>
     <span class="doccomment">/// assert_eq!(v, json!({ &quot;a&quot;: [] }));</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_array_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&gt;&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1645,18 +1458,15 @@
     <span class="doccomment">/// For any Value on which `is_string` returns true, `as_str` is guaranteed</span>
     <span class="doccomment">/// to return the string slice.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: &quot;some string&quot;, &quot;b&quot;: false });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_string());</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The boolean `false` is not a string.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_string());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">as_str</span>().<span class="ident">is_some</span>()
@@ -1665,11 +1475,9 @@
     <span class="doccomment">/// If the `Value` is a String, returns the associated str. Returns None</span>
     <span class="doccomment">/// otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: &quot;some string&quot;, &quot;b&quot;: false });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_str(), Some(&quot;some string&quot;));</span>
@@ -1686,7 +1494,6 @@
     <span class="doccomment">/// //</span>
     <span class="doccomment">/// //    The value is: some string</span>
     <span class="doccomment">/// println!(&quot;The value is: {}&quot;, v[&quot;a&quot;].as_str().unwrap());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1697,18 +1504,15 @@
 
     <span class="doccomment">/// Returns true if the `Value` is a Number. Returns false otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 1, &quot;b&quot;: &quot;2&quot; });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_number());</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The string `&quot;2&quot;` is a string, not a number.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_number());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_number</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1723,11 +1527,9 @@
     <span class="doccomment">/// For any Value on which `is_i64` returns true, `as_i64` is guaranteed to</span>
     <span class="doccomment">/// return the integer value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let big = i64::max_value() as u64 + 10;</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: big, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
@@ -1738,7 +1540,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // Numbers with a decimal point are not considered integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_i64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1752,11 +1553,9 @@
     <span class="doccomment">/// For any Value on which `is_u64` returns true, `as_u64` is guaranteed to</span>
     <span class="doccomment">/// return the integer value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: -64, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_u64());</span>
@@ -1766,7 +1565,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // Numbers with a decimal point are not considered integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_u64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1783,11 +1581,9 @@
     <span class="doccomment">/// Currently this function returns true if and only if both `is_i64` and</span>
     <span class="doccomment">/// `is_u64` return false but this is not a guarantee in the future.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 256.0, &quot;b&quot;: 64, &quot;c&quot;: -64 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_f64());</span>
@@ -1795,7 +1591,6 @@
     <span class="doccomment">/// // Integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_f64());</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_f64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1807,18 +1602,15 @@
     <span class="doccomment">/// If the `Value` is an integer, represent it as i64 if possible. Returns</span>
     <span class="doccomment">/// None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let big = i64::max_value() as u64 + 10;</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: big, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_i64(), Some(64));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_i64(), None);</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_i64(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1830,17 +1622,14 @@
     <span class="doccomment">/// If the `Value` is an integer, represent it as u64 if possible. Returns</span>
     <span class="doccomment">/// None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: -64, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_u64(), Some(64));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_u64(), None);</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_u64(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1852,17 +1641,14 @@
     <span class="doccomment">/// If the `Value` is a number, represent it as f64 if possible. Returns</span>
     <span class="doccomment">/// None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 256.0, &quot;b&quot;: 64, &quot;c&quot;: -64 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_f64(), Some(256.0));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_f64(), Some(64.0));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_f64(), Some(-64.0));</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1876,18 +1662,15 @@
     <span class="doccomment">/// For any Value on which `is_boolean` returns true, `as_bool` is</span>
     <span class="doccomment">/// guaranteed to return the boolean value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: false, &quot;b&quot;: &quot;false&quot; });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_boolean());</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The string `&quot;false&quot;` is a string, not a boolean.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_boolean());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_boolean</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">as_bool</span>().<span class="ident">is_some</span>()
@@ -1896,18 +1679,15 @@
     <span class="doccomment">/// If the `Value` is a Boolean, returns the associated bool. Returns None</span>
     <span class="doccomment">/// otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: false, &quot;b&quot;: &quot;false&quot; });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_bool(), Some(false));</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The string `&quot;false&quot;` is a string, not a boolean.</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_bool(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_bool</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1921,18 +1701,15 @@
     <span class="doccomment">/// For any Value on which `is_null` returns true, `as_null` is guaranteed</span>
     <span class="doccomment">/// to return `Some(())`.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: null, &quot;b&quot;: false });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_null());</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The boolean `false` is not null.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_null());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_null</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">as_null</span>().<span class="ident">is_some</span>()
@@ -1940,18 +1717,15 @@
 
     <span class="doccomment">/// If the `Value` is a Null, returns (). Returns None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: null, &quot;b&quot;: false });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_null(), Some(()));</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// // The boolean `false` is not null.</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_null(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_null</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
@@ -1974,11 +1748,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let data = json!({</span>
     <span class="doccomment">///     &quot;x&quot;: {</span>
     <span class="doccomment">///         &quot;y&quot;: [&quot;z&quot;, &quot;zz&quot;]</span>
@@ -1987,7 +1759,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(data.pointer(&quot;/x/y/1&quot;).unwrap(), &amp;json!(&quot;zz&quot;));</span>
     <span class="doccomment">/// assert_eq!(data.pointer(&quot;/a/b/c&quot;), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pointer</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">pointer</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Value</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">pointer</span> <span class="op">==</span> <span class="string">&quot;&quot;</span> {
@@ -2032,9 +1803,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example of Use</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// extern crate serde_json;</span>
-    <span class="doccomment">///</span>
+    <span class="doccomment">/// ```edition2018</span>
     <span class="doccomment">/// use serde_json::Value;</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// fn main() {</span>
@@ -2089,15 +1858,12 @@
 
     <span class="doccomment">/// Takes the value out of the `Value`, leaving a `Null` in its place.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let mut v = json!({ &quot;x&quot;: &quot;y&quot; });</span>
     <span class="doccomment">/// assert_eq!(v[&quot;x&quot;].take(), json!(&quot;y&quot;));</span>
     <span class="doccomment">/// assert_eq!(v, json!({ &quot;x&quot;: null }));</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">take</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Value</span> {
         <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, <span class="ident">Value</span>::<span class="ident">Null</span>)
@@ -2110,12 +1876,8 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Examples</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// # #[macro_use]</span>
-<span class="doccomment">/// # extern crate serde_derive;</span>
-<span class="doccomment">/// #</span>
-<span class="doccomment">/// # extern crate serde_json;</span>
-<span class="doccomment">/// #</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_derive::Deserialize;</span>
 <span class="doccomment">/// use serde_json::Value;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[derive(Deserialize)]</span>
@@ -2156,14 +1918,10 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// extern crate serde;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// #[macro_use]</span>
-<span class="doccomment">/// extern crate serde_derive;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// #[macro_use]</span>
-<span class="doccomment">/// extern crate serde_json;</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_derive::Serialize;</span>
+<span class="doccomment">/// use serde::Serialize;</span>
+<span class="doccomment">/// use serde_json::json;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// use std::error::Error;</span>
 <span class="doccomment">///</span>
@@ -2181,9 +1939,9 @@
 <span class="doccomment">///</span>
 <span class="doccomment">///     // The type of `expected` is `serde_json::Value`</span>
 <span class="doccomment">///     let expected = json!({</span>
-<span class="doccomment">///                            &quot;fingerprint&quot;: &quot;0xF9BA143B95FF6D82&quot;,</span>
-<span class="doccomment">///                            &quot;location&quot;: &quot;Menlo Park, CA&quot;,</span>
-<span class="doccomment">///                          });</span>
+<span class="doccomment">///         &quot;fingerprint&quot;: &quot;0xF9BA143B95FF6D82&quot;,</span>
+<span class="doccomment">///         &quot;location&quot;: &quot;Menlo Park, CA&quot;,</span>
+<span class="doccomment">///     });</span>
 <span class="doccomment">///</span>
 <span class="doccomment">///     let v = serde_json::to_value(u).unwrap();</span>
 <span class="doccomment">///     assert_eq!(v, expected);</span>
@@ -2201,9 +1959,7 @@
 <span class="doccomment">/// This conversion can fail if `T`&#39;s implementation of `Serialize` decides to</span>
 <span class="doccomment">/// fail, or if `T` contains a map with non-string keys.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// extern crate serde_json;</span>
-<span class="doccomment">///</span>
+<span class="doccomment">/// ```edition2018</span>
 <span class="doccomment">/// use std::collections::BTreeMap;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// fn main() {</span>
@@ -2227,14 +1983,10 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// #[macro_use]</span>
-<span class="doccomment">/// extern crate serde_json;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// #[macro_use]</span>
-<span class="doccomment">/// extern crate serde_derive;</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// extern crate serde;</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_derive::Deserialize;</span>
+<span class="doccomment">/// use serde::Deserialize;</span>
+<span class="doccomment">/// use serde_json::json;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[derive(Deserialize, Debug)]</span>
 <span class="doccomment">/// struct User {</span>
@@ -2245,9 +1997,9 @@
 <span class="doccomment">/// fn main() {</span>
 <span class="doccomment">///     // The type of `j` is `serde_json::Value`</span>
 <span class="doccomment">///     let j = json!({</span>
-<span class="doccomment">///                     &quot;fingerprint&quot;: &quot;0xF9BA143B95FF6D82&quot;,</span>
-<span class="doccomment">///                     &quot;location&quot;: &quot;Menlo Park, CA&quot;</span>
-<span class="doccomment">///                   });</span>
+<span class="doccomment">///         &quot;fingerprint&quot;: &quot;0xF9BA143B95FF6D82&quot;,</span>
+<span class="doccomment">///         &quot;location&quot;: &quot;Menlo Park, CA&quot;</span>
+<span class="doccomment">///     });</span>
 <span class="doccomment">///</span>
 <span class="doccomment">///     let u: User = serde_json::from_value(j).unwrap();</span>
 <span class="doccomment">///     println!(&quot;{:#?}&quot;, u);</span>

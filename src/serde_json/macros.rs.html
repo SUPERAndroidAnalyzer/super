@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.34/src/macros.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>macros.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.35/src/macros.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>macros.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -290,39 +290,12 @@
 <span id="290">290</span>
 <span id="291">291</span>
 <span id="292">292</span>
-<span id="293">293</span>
-<span id="294">294</span>
-<span id="295">295</span>
-<span id="296">296</span>
-<span id="297">297</span>
-<span id="298">298</span>
-<span id="299">299</span>
-<span id="300">300</span>
-<span id="301">301</span>
-<span id="302">302</span>
-<span id="303">303</span>
-<span id="304">304</span>
-<span id="305">305</span>
-<span id="306">306</span>
-<span id="307">307</span>
-<span id="308">308</span>
-<span id="309">309</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2017 Serde Developers</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
-<span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
-<span class="comment">// &lt;LICENSE-MIT or http://opensource.org/licenses/MIT&gt;, at your</span>
-<span class="comment">// option. This file may not be copied, modified, or distributed</span>
-<span class="comment">// except according to those terms.</span>
-
 <span class="doccomment">/// Construct a `serde_json::Value` from a JSON literal.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// # #[macro_use]</span>
-<span class="doccomment">/// # extern crate serde_json;</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_json::json;</span>
 <span class="doccomment">/// #</span>
-<span class="doccomment">/// # fn main() {</span>
 <span class="doccomment">/// let value = json!({</span>
 <span class="doccomment">///     &quot;code&quot;: 200,</span>
 <span class="doccomment">///     &quot;success&quot;: true,</span>
@@ -333,7 +306,6 @@
 <span class="doccomment">///         ]</span>
 <span class="doccomment">///     }</span>
 <span class="doccomment">/// });</span>
-<span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Variables or expressions can be interpolated into the JSON literal. Any type</span>
@@ -343,38 +315,32 @@
 <span class="doccomment">/// interpolated type decides to fail, or if the interpolated type contains a</span>
 <span class="doccomment">/// map with non-string keys, the `json!` macro will panic.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// # #[macro_use]</span>
-<span class="doccomment">/// # extern crate serde_json;</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_json::json;</span>
 <span class="doccomment">/// #</span>
-<span class="doccomment">/// # fn main() {</span>
 <span class="doccomment">/// let code = 200;</span>
 <span class="doccomment">/// let features = vec![&quot;serde&quot;, &quot;json&quot;];</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// let value = json!({</span>
-<span class="doccomment">///    &quot;code&quot;: code,</span>
-<span class="doccomment">///    &quot;success&quot;: code == 200,</span>
-<span class="doccomment">///    &quot;payload&quot;: {</span>
-<span class="doccomment">///        features[0]: features[1]</span>
-<span class="doccomment">///    }</span>
+<span class="doccomment">///     &quot;code&quot;: code,</span>
+<span class="doccomment">///     &quot;success&quot;: code == 200,</span>
+<span class="doccomment">///     &quot;payload&quot;: {</span>
+<span class="doccomment">///         features[0]: features[1]</span>
+<span class="doccomment">///     }</span>
 <span class="doccomment">/// });</span>
-<span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Trailing commas are allowed inside both arrays and objects.</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// ```rust</span>
-<span class="doccomment">/// # #[macro_use]</span>
-<span class="doccomment">/// # extern crate serde_json;</span>
+<span class="doccomment">/// ```edition2018</span>
+<span class="doccomment">/// # use serde_json::json;</span>
 <span class="doccomment">/// #</span>
-<span class="doccomment">/// # fn main() {</span>
 <span class="doccomment">/// let value = json!([</span>
 <span class="doccomment">///     &quot;notice&quot;,</span>
 <span class="doccomment">///     &quot;the&quot;,</span>
 <span class="doccomment">///     &quot;trailing&quot;,</span>
 <span class="doccomment">///     &quot;comma --&gt;&quot;,</span>
 <span class="doccomment">/// ]);</span>
-<span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">macro_export</span>(<span class="ident">local_inner_macros</span>)]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">json</span> {

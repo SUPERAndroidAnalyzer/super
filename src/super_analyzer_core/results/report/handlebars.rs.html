@@ -312,6 +312,7 @@
 <span id="312">312</span>
 <span id="313">313</span>
 <span id="314">314</span>
+<span id="315">315</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Handlebars report generation module.</span>
 
@@ -329,7 +330,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">config</span>::<span class="ident">Config</span>,
-    <span class="ident">copy_folder</span>, <span class="ident">error</span>,
+    <span class="ident">copy_folder</span>,
     <span class="ident">results</span>::{
         <span class="ident">handlebars_helpers</span>::{
             <span class="ident">all_code</span>, <span class="ident">all_lines</span>, <span class="ident">generate_menu</span>, <span class="ident">html_code</span>, <span class="ident">line_numbers</span>, <span class="ident">report_index</span>,
@@ -338,6 +339,7 @@
         <span class="ident">utils</span>::<span class="ident">html_escape</span>,
         <span class="ident">Results</span>,
     },
+    <span class="ident">ErrorKind</span>,
 };
 
 <span class="doccomment">/// Handlebars report generator.</span>
@@ -380,11 +382,11 @@
                     <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">dir_entry</span>.<span class="ident">path</span>();
                     <span class="kw">let</span> <span class="ident">template_file</span> <span class="op">=</span> <span class="ident">path</span>
                         .<span class="ident">file_stem</span>()
-                        .<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">TemplateName</span> {
+                        .<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">ErrorKind</span>::<span class="ident">TemplateName</span> {
                             <span class="ident">message</span>: <span class="string">&quot;template files must have a file name&quot;</span>.<span class="ident">to_owned</span>(),
                         })
                         .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">stem</span><span class="op">|</span> {
-                            <span class="ident">stem</span>.<span class="ident">to_str</span>().<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">TemplateName</span> {
+                            <span class="ident">stem</span>.<span class="ident">to_str</span>().<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">ErrorKind</span>::<span class="ident">TemplateName</span> {
                                 <span class="ident">message</span>: <span class="string">&quot;template names must be unicode&quot;</span>.<span class="ident">to_string</span>(),
                             })
                         })<span class="question-mark">?</span>;
@@ -407,7 +409,7 @@
                 <span class="string">&quot;code&quot;</span>.<span class="ident">italic</span>()
             );
 
-            <span class="prelude-val">Err</span>(<span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">TemplateName</span> { <span class="ident">message</span> }.<span class="ident">into</span>())
+            <span class="prelude-val">Err</span>(<span class="ident">ErrorKind</span>::<span class="ident">TemplateName</span> { <span class="ident">message</span> }.<span class="ident">into</span>())
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">handlebars</span>)
         }

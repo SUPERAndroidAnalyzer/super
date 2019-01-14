@@ -144,9 +144,6 @@
 <span id="144">144</span>
 <span id="145">145</span>
 <span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! SUPER Android Analyzer launcher.</span>
 <span class="doccomment">//!</span>
@@ -169,9 +166,6 @@
     <span class="ident">missing_copy_implementations</span>
 )]</span>
 
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">log</span>;
-
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">collections</span>::<span class="ident">BTreeMap</span>,
     <span class="ident">io</span>::{<span class="self">self</span>, <span class="ident">Write</span>},
@@ -181,10 +175,10 @@
 
 <span class="kw">use</span> <span class="ident">colored</span>::<span class="ident">Colorize</span>;
 <span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">Error</span>, <span class="ident">ResultExt</span>};
-<span class="kw">use</span> <span class="ident">log</span>::<span class="ident">Level</span>;
+<span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">error</span>, <span class="ident">log_enabled</span>, <span class="ident">Level</span>};
 
 <span class="kw">use</span> <span class="ident">super_analyzer_core</span>::{
-    <span class="ident">analyze_package</span>, <span class="ident">cli</span>, <span class="ident">error</span>, <span class="ident">initialize_config</span>, <span class="ident">initialize_logger</span>, <span class="ident">Benchmark</span>, <span class="ident">BANNER</span>,
+    <span class="ident">analyze_package</span>, <span class="ident">cli</span>, <span class="ident">initialize_config</span>, <span class="ident">initialize_logger</span>, <span class="ident">Benchmark</span>, <span class="ident">ErrorKind</span>, <span class="ident">BANNER</span>,
 };
 
 <span class="doccomment">/// Program entry point.</span>
@@ -245,7 +239,7 @@
             <span class="ident">error_string</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;\t- {}\n&quot;</span>, <span class="ident">file</span>.<span class="ident">display</span>()));
         }
 
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">Config</span> {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ErrorKind</span>::<span class="ident">Config</span> {
             <span class="ident">message</span>: <span class="ident">error_string</span>,
         }
         .<span class="ident">into</span>());

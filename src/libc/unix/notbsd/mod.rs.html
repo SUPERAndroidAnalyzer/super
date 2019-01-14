@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.45/src/unix/notbsd/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script src="../../../../storage.js"></script><link rel="shortcut icon" href="https://doc.rust-lang.org/favicon.ico"></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../libc/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/libc-0.2.46/src/unix/notbsd/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script src="../../../../storage.js"></script><link rel="shortcut icon" href="https://doc.rust-lang.org/favicon.ico"></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../libc/index.html'><img src='https://www.rust-lang.org/logos/rust-logo-128x128-blk-v2.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1249,6 +1249,19 @@
 <span id="1249">1249</span>
 <span id="1250">1250</span>
 <span id="1251">1251</span>
+<span id="1252">1252</span>
+<span id="1253">1253</span>
+<span id="1254">1254</span>
+<span id="1255">1255</span>
+<span id="1256">1256</span>
+<span id="1257">1257</span>
+<span id="1258">1258</span>
+<span id="1259">1259</span>
+<span id="1260">1260</span>
+<span id="1261">1261</span>
+<span id="1262">1262</span>
+<span id="1263">1263</span>
+<span id="1264">1264</span>
 </pre><pre class="rust ">
 <span class="kw">use</span> <span class="ident">dox</span>::<span class="ident">mem</span>;
 
@@ -1875,9 +1888,11 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_MULTICAST_IF</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">32</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_MULTICAST_TTL</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">33</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_MULTICAST_LOOP</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">34</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_TOS</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_TTL</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">2</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_HDRINCL</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">3</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_PKTINFO</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">8</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_RECVTOS</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">13</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_ADD_MEMBERSHIP</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">35</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_DROP_MEMBERSHIP</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">36</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IP_TRANSPARENT</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">19</span>;
@@ -1890,6 +1905,8 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPV6_V6ONLY</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">26</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPV6_RECVPKTINFO</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">49</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPV6_PKTINFO</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">50</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPV6_RECVTCLASS</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">66</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPV6_TCLASS</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">67</span>;
 
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TCP_NODELAY</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">1</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">TCP_MAXSEG</span>: ::<span class="ident">c_int</span> <span class="op">=</span> <span class="number">2</span>;
@@ -2126,6 +2143,11 @@
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_PREC_PRIORITY</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x20</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_PREC_ROUTINE</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x00</span>;
 
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_ECN_MASK</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x03</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_ECN_ECT1</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x01</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_ECN_ECT0</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x02</span>;
+<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPTOS_ECN_CE</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x03</span>;
+
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPOPT_COPY</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x80</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPOPT_CLASS_MASK</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x60</span>;
 <span class="kw">pub</span> <span class="kw">const</span> <span class="ident">IPOPT_NUMBER_MASK</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">0x1f</span>;
@@ -2338,6 +2360,10 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">IPOPT_NUMBER</span>(<span class="ident">o</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
         <span class="ident">o</span> <span class="op">&amp;</span> <span class="ident">IPOPT_NUMBER_MASK</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">IPTOS_ECN</span>(<span class="ident">x</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+        <span class="ident">x</span> <span class="op">&amp;</span> ::<span class="ident">IPTOS_ECN_MASK</span>
     }
 }
 

@@ -2021,9 +2021,9 @@
 <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">manifest</span>::{<span class="ident">Manifest</span>, <span class="ident">Permission</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">criticality</span>::<span class="ident">Criticality</span>,
-    <span class="ident">error</span>, <span class="ident">get_code</span>, <span class="ident">print_vulnerability</span>, <span class="ident">print_warning</span>,
+    <span class="ident">get_code</span>, <span class="ident">print_vulnerability</span>, <span class="ident">print_warning</span>,
     <span class="ident">results</span>::{<span class="ident">Results</span>, <span class="ident">Vulnerability</span>},
-    <span class="ident">Config</span>,
+    <span class="ident">Config</span>, <span class="ident">ErrorKind</span>,
 };
 
 <span class="doccomment">/// Analyzes the whole codebase of the application.</span>
@@ -2562,13 +2562,13 @@
                         <span class="kw">let</span> <span class="ident">fc2_in_fc</span> <span class="op">=</span> <span class="ident">forward_check</span>.<span class="ident">contains</span>(<span class="string">&quot;{fc2}&quot;</span>);
 
                         <span class="kw">if</span> <span class="ident">fc1_in_regex</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">fc1_in_fc</span> {
-                            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">Parse</span>
+                            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">ErrorKind</span>::<span class="ident">Parse</span>
                             .<span class="ident">context</span>(
                                 <span class="string">&quot;fc1 capture group used but no placeholder found in the forward \
                                  check&quot;</span>,
                             ).<span class="ident">into</span>()))
                         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">fc2_in_regex</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">fc2_in_fc</span> {
-                            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">error</span>::<span class="ident">Kind</span>::<span class="ident">Parse</span>
+                            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">ErrorKind</span>::<span class="ident">Parse</span>
                             .<span class="ident">context</span>(
                                 <span class="string">&quot;fc2 capture group used but no placeholder found in the forward \
                                  check&quot;</span>,
@@ -2793,11 +2793,11 @@
             <span class="string">&quot;throws IOException,Exception{&quot;</span>,
             <span class="string">&quot;throws SystemException,Exception{&quot;</span>,
             <span class="string">&quot;throws ApplicationException,Exception{&quot;</span>,
-            <span class="string">&quot;throws PepeException, Exception, IOException {&quot;</span>,
+            <span class="string">&quot;throws SomeException, Exception, IOException {&quot;</span>,
         ];
         <span class="kw">let</span> <span class="ident">should_not_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;throws IOException {&quot;</span>,
-            <span class="string">&quot;throws PepeException, IOException {&quot;</span>,
+            <span class="string">&quot;throws SomeException, IOException {&quot;</span>,
         ];
 
         <span class="kw">for</span> <span class="ident">m</span> <span class="kw">in</span> <span class="ident">should_match</span> {
@@ -3036,15 +3036,15 @@
         <span class="kw">let</span> <span class="ident">should_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;Thread.sleep(Usertime+Variable+Variable);&quot;</span>,
             <span class="string">&quot;Thread.sleep(Usertime+13+123+1+24);&quot;</span>,
-            <span class="string">&quot;Thread . sleep (200+asdad+adasasda );&quot;</span>,
-            <span class="string">&quot;Thread . sleep (200+asdad+adasasda+30 );&quot;</span>,
+            <span class="string">&quot;Thread . sleep (200+var1+var2 );&quot;</span>,
+            <span class="string">&quot;Thread . sleep (200+var1+var2+30 );&quot;</span>,
             <span class="string">&quot;Thread.sleep(10 + 10 + 10241 + Usertime);&quot;</span>,
             <span class="string">&quot;SystemClock.sleep(Usertime);&quot;</span>,
         ];
 
         <span class="kw">let</span> <span class="ident">should_not_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;Thread.sleep(2000);&quot;</span>,
-            <span class="string">&quot;Thread.sleep(“1000” + Usertime);&quot;</span>,
+            <span class="string">&quot;Thread.sleep(\&quot;1000\&quot; + Usertime);&quot;</span>,
             <span class="string">&quot;Thread.sleep();&quot;</span>,
             <span class="string">&quot;SystemClock.sleep(1000);&quot;</span>,
         ];
@@ -3181,7 +3181,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">it_webview_xss</span>() {
+    <span class="kw">fn</span> <span class="ident">it_web_view_xss</span>() {
         <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">Config</span>::<span class="ident">default</span>();
         <span class="kw">let</span> <span class="ident">rules</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">load_rules</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span>,
@@ -3206,7 +3206,7 @@
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">it_webview_ssl_errors</span>() {
+    <span class="kw">fn</span> <span class="ident">it_web_view_ssl_errors</span>() {
         <span class="kw">let</span> <span class="ident">config</span> <span class="op">=</span> <span class="ident">Config</span>::<span class="ident">default</span>();
         <span class="kw">let</span> <span class="ident">rules</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">load_rules</span>(<span class="kw-2">&amp;</span><span class="ident">config</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span>,
@@ -3618,8 +3618,8 @@
 
         <span class="kw">let</span> <span class="ident">should_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;super@super.es&quot;</span>,
-            <span class="string">&quot;android_analizer@dem.co.uk&quot;</span>,
-            <span class="string">&quot;foo@mywebpage.com&quot;</span>,
+            <span class="string">&quot;android_analyzer@dem.co.uk&quot;</span>,
+            <span class="string">&quot;foo@webpage.com&quot;</span>,
             <span class="string">&quot;android-rust69@tux.rox&quot;</span>,
         ];
 
@@ -3842,7 +3842,7 @@
         <span class="kw">let</span> <span class="ident">should_not_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;finally{}&quot;</span>,
             <span class="string">&quot;finally{ var;}&quot;</span>,
-            <span class="string">&quot;finally { Printf (“Hello”); return true; }&quot;</span>,
+            <span class="string">&quot;finally { Printf (\&quot;Hello\&quot;); return true; }&quot;</span>,
         ];
 
         <span class="kw">for</span> <span class="ident">m</span> <span class="kw">in</span> <span class="ident">should_match</span> {
@@ -3873,7 +3873,7 @@
 
         <span class="kw">let</span> <span class="ident">should_not_match</span> <span class="op">=</span> <span class="kw-2">&amp;</span>[
             <span class="string">&quot;int var4 = EditText.getText  Thread.sleep(100 + var);&quot;</span>,
-            <span class="string">&quot;var = .getText  Thread.sleep(100 + hola);&quot;</span>,
+            <span class="string">&quot;var = .getText  Thread.sleep(100 + hello);&quot;</span>,
             <span class="string">&quot;&quot;</span>,
             <span class="string">&quot;&quot;</span>,
         ];

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.11/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.13/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -499,6 +499,22 @@
 <span id="499">499</span>
 <span id="500">500</span>
 <span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! Demangle Rust compiler symbol names.</span>
 <span class="doccomment">//!</span>
@@ -785,7 +801,7 @@
                     }
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="string">&#39;$&#39;</span>) {
                     <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">demangle</span> {
-                        ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>:<span class="ident">expr</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">demangled</span>:<span class="ident">expr</span>),<span class="kw-2">*</span>) <span class="op">=&gt;</span> ({
+                        ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>:<span class="ident">expr</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">demangled</span>:<span class="ident">expr</span>,)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ({
                             $(<span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>) {
                                 <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">demangled</span>));
                                 <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>.<span class="ident">len</span>()..];
@@ -821,7 +837,8 @@
                         <span class="string">&quot;$u7d$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;}&quot;</span>,
                         <span class="string">&quot;$u3b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;;&quot;</span>,
                         <span class="string">&quot;$u2b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;+&quot;</span>,
-                        <span class="string">&quot;$u22$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;\&quot;&quot;</span>
+                        <span class="string">&quot;$u21$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;!&quot;</span>,
+                        <span class="string">&quot;$u22$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;\&quot;&quot;</span>,
                     }
                 } <span class="kw">else</span> {
                     <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">rest</span>.<span class="ident">char_indices</span>().<span class="ident">find</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">c</span>)<span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;$&#39;</span> <span class="op">||</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;.&#39;</span>) {
@@ -866,7 +883,14 @@
 
     <span class="kw">fn</span> <span class="ident">ok</span>(<span class="ident">sym</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">expected</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="kw">super</span>::<span class="ident">try_demangle</span>(<span class="ident">sym</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">to_string</span>() <span class="op">==</span> <span class="ident">expected</span>,
+            <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> {
+                <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">to_string</span>() <span class="op">==</span> <span class="ident">expected</span>  {
+                    <span class="bool-val">true</span>
+                } <span class="kw">else</span> {
+                    <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;\n{}\n!=\n{}\n&quot;</span>, <span class="ident">s</span>, <span class="ident">expected</span>);
+                    <span class="bool-val">false</span>
+                }
+            }
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
                 <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;error demangling&quot;</span>);
                 <span class="bool-val">false</span>
@@ -999,6 +1023,14 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">handle_assoc_types</span>() {
         <span class="macro">t</span><span class="macro">!</span>(<span class="string">&quot;_ZN151_$LT$alloc..boxed..Box$LT$alloc..boxed..FnBox$LT$A$C$$u20$Output$u3d$R$GT$$u20$$u2b$$u20$$u27$a$GT$$u20$as$u20$core..ops..function..FnOnce$LT$A$GT$$GT$9call_once17h69e8f44b3723e1caE&quot;</span>, <span class="string">&quot;&lt;alloc::boxed::Box&lt;alloc::boxed::FnBox&lt;A, Output=R&gt; + &#39;a&gt; as core::ops::function::FnOnce&lt;A&gt;&gt;::call_once::h69e8f44b3723e1ca&quot;</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">handle_bang</span>() {
+        <span class="macro">t</span><span class="macro">!</span>(
+            <span class="string">&quot;_ZN88_$LT$core..result..Result$LT$$u21$$C$$u20$E$GT$$u20$as$u20$std..process..Termination$GT$6report17hfc41d0da4a40b3e8E&quot;</span>,
+            <span class="string">&quot;&lt;core::result::Result&lt;!, E&gt; as std::process::Termination&gt;::report::hfc41d0da4a40b3e8&quot;</span>
+        );
     }
 }
 </pre>

@@ -469,6 +469,19 @@
 <span id="469">469</span>
 <span id="470">470</span>
 <span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
 </pre><pre class="rust ">
 <span class="doccomment">//! SUPER Android Analyzer core library.</span>
 <span class="doccomment">//!</span>
@@ -492,21 +505,11 @@
     <span class="ident">missing_debug_implementations</span>,
     <span class="ident">missing_copy_implementations</span>
 )]</span>
-<span class="comment">// Allowing these for now.</span>
-<span class="attribute">#![<span class="ident">allow</span>(
-    <span class="ident">clippy</span>::<span class="ident">stutter</span>,
-    <span class="ident">clippy</span>::<span class="ident">cast_possible_truncation</span>,
-    <span class="ident">clippy</span>::<span class="ident">cast_possible_wrap</span>,
-    <span class="ident">clippy</span>::<span class="ident">cast_precision_loss</span>,
-    <span class="ident">clippy</span>::<span class="ident">cast_sign_loss</span>,
-    <span class="ident">clippy</span>::<span class="ident">non_ascii_literal</span>
-)]</span>
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">cli</span>;
 <span class="kw">mod</span> <span class="ident">config</span>;
 <span class="kw">mod</span> <span class="ident">criticality</span>;
 <span class="kw">mod</span> <span class="ident">decompilation</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">error</span>;
 <span class="kw">mod</span> <span class="ident">results</span>;
 <span class="kw">mod</span> <span class="ident">static_analysis</span>;
 <span class="kw">mod</span> <span class="ident">utils</span>;
@@ -521,7 +524,7 @@
 
 <span class="kw">use</span> <span class="ident">clap</span>::<span class="ident">ArgMatches</span>;
 <span class="kw">use</span> <span class="ident">colored</span>::<span class="ident">Colorize</span>;
-<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">bail</span>, <span class="ident">format_err</span>, <span class="ident">Error</span>, <span class="ident">ResultExt</span>};
+<span class="kw">use</span> <span class="ident">failure</span>::{<span class="ident">bail</span>, <span class="ident">format_err</span>, <span class="ident">Error</span>, <span class="ident">Fail</span>, <span class="ident">ResultExt</span>};
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">config</span>::<span class="ident">Config</span>,
@@ -538,6 +541,29 @@
 
 <span class="doccomment">/// Logo ASCII art, used in verbose mode.</span>
 <span class="kw">pub</span> <span class="kw">static</span> <span class="ident">BANNER</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="macro">include_str</span><span class="macro">!</span>(<span class="string">&quot;banner.txt&quot;</span>);
+
+<span class="doccomment">/// Enumeration of the different error kinds.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Fail</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ErrorKind</span> {
+    <span class="doccomment">/// Configuration error.</span>
+    <span class="attribute">#[<span class="ident">fail</span>(<span class="ident">display</span> <span class="op">=</span> <span class="string">&quot;there was an error in the configuration: {}&quot;</span>, <span class="ident">message</span>)]</span>
+    <span class="ident">Config</span> {
+        <span class="doccomment">/// Error message.</span>
+        <span class="ident">message</span>: <span class="ident">String</span>,
+    },
+    <span class="doccomment">/// Parsing error.</span>
+    <span class="attribute">#[<span class="ident">fail</span>(<span class="ident">display</span> <span class="op">=</span> <span class="string">&quot;there was an error in the parsing process&quot;</span>)]</span>
+    <span class="ident">Parse</span>,
+    <span class="doccomment">/// Template name error.</span>
+    <span class="attribute">#[<span class="ident">fail</span>(<span class="ident">display</span> <span class="op">=</span> <span class="string">&quot;invalid template name: {}&quot;</span>, <span class="ident">message</span>)]</span>
+    <span class="ident">TemplateName</span> {
+        <span class="doccomment">/// Error message.</span>
+        <span class="ident">message</span>: <span class="ident">String</span>,
+    },
+    <span class="doccomment">/// Code not found.</span>
+    <span class="attribute">#[<span class="ident">fail</span>(<span class="ident">display</span> <span class="op">=</span> <span class="string">&quot;no code was found in the file&quot;</span>)]</span>
+    <span class="ident">CodeNotFound</span>,
+}
 
 <span class="doccomment">/// Initialize the config with the config files and command line options.</span>
 <span class="doccomment">///</span>
@@ -668,7 +694,7 @@
     <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
         <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Everything went smoothly, you can now check all the results.&quot;</span>);
         <span class="macro">println</span><span class="macro">!</span>();
-        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;I will now analyze myself for vulnerabilities…&quot;</span>);
+        <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;I will now analyze myself for vulnerabilities.&quot;</span>);
         <span class="ident">sleep</span>(<span class="ident">Duration</span>::<span class="ident">from_millis</span>(<span class="number">1500</span>));
         <span class="macro">println</span><span class="macro">!</span>(
             <span class="string">&quot;Nah, just kidding, I&#39;ve been developed in {}!&quot;</span>,

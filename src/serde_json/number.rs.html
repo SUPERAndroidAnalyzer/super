@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.34/src/number.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>number.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.35/src/number.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>number.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -750,41 +750,7 @@
 <span id="750">750</span>
 <span id="751">751</span>
 <span id="752">752</span>
-<span id="753">753</span>
-<span id="754">754</span>
-<span id="755">755</span>
-<span id="756">756</span>
-<span id="757">757</span>
-<span id="758">758</span>
-<span id="759">759</span>
-<span id="760">760</span>
-<span id="761">761</span>
-<span id="762">762</span>
-<span id="763">763</span>
-<span id="764">764</span>
-<span id="765">765</span>
-<span id="766">766</span>
-<span id="767">767</span>
-<span id="768">768</span>
-<span id="769">769</span>
-<span id="770">770</span>
-<span id="771">771</span>
-<span id="772">772</span>
-<span id="773">773</span>
-<span id="774">774</span>
-<span id="775">775</span>
-<span id="776">776</span>
-<span id="777">777</span>
-<span id="778">778</span>
 </pre><pre class="rust ">
-<span class="comment">// Copyright 2017 Serde Developers</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
-<span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
-<span class="comment">// &lt;LICENSE-MIT or http://opensource.org/licenses/MIT&gt;, at your</span>
-<span class="comment">// option. This file may not be copied, modified, or distributed</span>
-<span class="comment">// except according to those terms.</span>
-
 <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">Error</span>;
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">de</span>::{<span class="self">self</span>, <span class="ident">Unexpected</span>, <span class="ident">Visitor</span>};
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Deserializer</span>, <span class="ident">Serialize</span>, <span class="ident">Serializer</span>};
@@ -833,11 +799,9 @@
     <span class="doccomment">/// For any Number on which `is_i64` returns true, `as_i64` is guaranteed to</span>
     <span class="doccomment">/// return the integer value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let big = i64::max_value() as u64 + 10;</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: big, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
@@ -848,7 +812,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // Numbers with a decimal point are not considered integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_i64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -867,11 +830,9 @@
     <span class="doccomment">/// For any Number on which `is_u64` returns true, `as_u64` is guaranteed to</span>
     <span class="doccomment">/// return the integer value.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: -64, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_u64());</span>
@@ -881,7 +842,6 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// // Numbers with a decimal point are not considered integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_u64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -902,11 +862,9 @@
     <span class="doccomment">/// Currently this function returns true if and only if both `is_i64` and</span>
     <span class="doccomment">/// `is_u64` return false but this is not a guarantee in the future.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 256.0, &quot;b&quot;: 64, &quot;c&quot;: -64 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(v[&quot;a&quot;].is_f64());</span>
@@ -914,7 +872,6 @@
     <span class="doccomment">/// // Integers.</span>
     <span class="doccomment">/// assert!(!v[&quot;b&quot;].is_f64());</span>
     <span class="doccomment">/// assert!(!v[&quot;c&quot;].is_f64());</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -937,18 +894,15 @@
     <span class="doccomment">/// If the `Number` is an integer, represent it as i64 if possible. Returns</span>
     <span class="doccomment">/// None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let big = i64::max_value() as u64 + 10;</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: big, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_i64(), Some(64));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_i64(), None);</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_i64(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_i64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span> {
@@ -971,17 +925,14 @@
     <span class="doccomment">/// If the `Number` is an integer, represent it as u64 if possible. Returns</span>
     <span class="doccomment">/// None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 64, &quot;b&quot;: -64, &quot;c&quot;: 256.0 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_u64(), Some(64));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_u64(), None);</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_u64(), None);</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_u64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span> {
@@ -996,17 +947,14 @@
 
     <span class="doccomment">/// Represents the number as f64 if possible. Returns None otherwise.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
-    <span class="doccomment">/// # #[macro_use]</span>
-    <span class="doccomment">/// # extern crate serde_json;</span>
+    <span class="doccomment">/// ```edition2018</span>
+    <span class="doccomment">/// # use serde_json::json;</span>
     <span class="doccomment">/// #</span>
-    <span class="doccomment">/// # fn main() {</span>
     <span class="doccomment">/// let v = json!({ &quot;a&quot;: 256.0, &quot;b&quot;: 64, &quot;c&quot;: -64 });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(v[&quot;a&quot;].as_f64(), Some(256.0));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;b&quot;].as_f64(), Some(64.0));</span>
     <span class="doccomment">/// assert_eq!(v[&quot;c&quot;].as_f64(), Some(-64.0));</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
@@ -1023,7 +971,7 @@
     <span class="doccomment">/// Converts a finite `f64` to a `Number`. Infinite or NaN values are not JSON</span>
     <span class="doccomment">/// numbers.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// ```rust</span>
+    <span class="doccomment">/// ```edition2018</span>
     <span class="doccomment">/// # use std::f64;</span>
     <span class="doccomment">/// #</span>
     <span class="doccomment">/// # use serde_json::Number;</span>
