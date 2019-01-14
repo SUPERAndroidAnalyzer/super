@@ -4,9 +4,10 @@
 
 ### Internal Changes
 
+- Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
   - `num_cpus`: 1.8 => **1.9**
-  - `bytecount`: 0.4 => **0.5**
+  - `bytecount`: 0.4 => **0.5**, with SIMD
   - `colored`: 1.6 => **1.7**
   - Some other minor upgrades.
 

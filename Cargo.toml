@@ -90,7 +90,7 @@ toml = "0.4.10"
 regex = "1.1.0"
 lazy_static = "1.2.0"
 open = "1.2.2"
-bytecount = "0.5.0"
+bytecount = { version = "0.5.0", features = ["runtime-dispatch-simd"] }
 log = "0.4.6"
 env_logger = "0.6.0"
 md5 = "0.6.1"
