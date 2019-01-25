@@ -83,8 +83,8 @@ path = "src/lib.rs"
 failure = "0.1.5"
 clap = "2.32.0"
 xml-rs = "0.8.0"
-serde = { version = "1.0.84", features = ['derive'] }
-serde_json = "1.0.35"
+serde = { version = "1.0.85", features = ['derive'] }
+serde_json = "1.0.37"
 chrono = { version = "0.4.6", features = ["serde"] }
 toml = "0.4.10"
 regex = "1.1.0"
@@ -107,7 +107,7 @@ colored = "1.7.0"
 clap = "2.32.0"
 
 [dev-dependencies]
-reqwest = "0.9.8"
+reqwest = "0.9.9"
 
 [features]
 default = []
