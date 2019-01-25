@@ -16,10 +16,10 @@ complex languages.</p>
 relative to <code>src</code> and is specified between the <code>derive</code> attribute and empty <code>struct</code> that
 <code>Parser</code> will be derived on.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Parser</span>)]</span>
 <span class="attribute">#[<span class="ident">grammar</span> <span class="op">=</span> <span class="string">&quot;path/to/my_grammar.pest&quot;</span>]</span> <span class="comment">// relative to src</span>
-<span class="kw">struct</span> <span class="ident">MyParser</span>;</pre>
+<span class="kw">struct</span> <span class="ident">MyParser</span>;</pre></div>
 <h2 id="inline-grammars" class="section-header"><a href="#inline-grammars">Inline grammars</a></h2>
 <p>Grammars can also be inlined by using the <code>#[grammar_inline = &quot;...&quot;]</code> attribute.</p>
 <h2 id="grammar" class="section-header"><a href="#grammar">Grammar</a></h2>
@@ -27,13 +27,13 @@ relative to <code>src</code> and is specified between the <code>derive</code> at
 <h3 id="comments" class="section-header"><a href="#comments">Comments</a></h3>
 <p>Comments start with <code>//</code> and end at the end of the line.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="comment">// a comment</span></pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="comment">// a comment</span></pre></div>
 <h3 id="rules" class="section-header"><a href="#rules">Rules</a></h3>
 <p>Rules have the following form:</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="ident">name</span> <span class="op">=</span> <span class="ident">optional_modifier</span> { <span class="ident">expression</span> }</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="ident">name</span> <span class="op">=</span> <span class="ident">optional_modifier</span> { <span class="ident">expression</span> }</pre></div>
 <p>The name of the rule is formed from alphanumeric characters or <code>_</code> with the condition that the
 first character is not a digit and is used to create token pairs. When the rule starts being
 parsed, the starting part of the token is being produced, with the ending part being produced
@@ -48,9 +48,9 @@ behavior of the rules.</p>
 <p>Silent (<code>_</code>)</p>
 <p>Silent rules do not create token pairs during parsing, nor are they error-reported.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot;a&quot;</span> }
-<span class="ident">b</span> <span class="op">=</span>  { <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }</pre>
+<span class="ident">b</span> <span class="op">=</span>  { <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }</pre></div>
 <p>Parsing <code>&quot;ab&quot;</code> produces the token pair <code>b()</code>.</p>
 </li>
 <li>
@@ -60,11 +60,11 @@ cascading effect on any rule they call. I.e. rules that are not atomic but are c
 rules behave atomically.</p>
 <p>Any rules called by atomic rules do not generate token pairs.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span>  { <span class="string">&quot;a&quot;</span> }
 <span class="ident">b</span> <span class="op">=</span> @{ <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }
 
-<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre>
+<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
 <p>Parsing <code>&quot;ab&quot;</code> produces the token pair <code>b()</code>, while <code>&quot;a b&quot;</code> produces an error.</p>
 </li>
 <li>
@@ -72,11 +72,11 @@ rules behave atomically.</p>
 <p>Compound-atomic are identical to atomic rules with the exception that rules called by them are
 not forbidden from generating token pairs.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span>  { <span class="string">&quot;a&quot;</span> }
 <span class="ident">b</span> <span class="op">=</span> ${ <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }
 
-<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre>
+<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
 <p>Parsing <code>&quot;ab&quot;</code> produces the token pairs <code>b(a())</code>, while <code>&quot;a b&quot;</code> produces an error.</p>
 </li>
 <li>
@@ -84,12 +84,12 @@ not forbidden from generating token pairs.</p>
 <p>Non-atomic are identical to normal rules with the exception that they stop the cascading effect
 of atomic and compound-atomic rules.</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="ident">a</span> <span class="op">=</span>  { <span class="string">&quot;a&quot;</span> }
 <span class="ident">b</span> <span class="op">=</span> <span class="op">!</span>{ <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }
 <span class="ident">c</span> <span class="op">=</span> @{ <span class="ident">b</span> }
 
-<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre>
+<span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
 <p>Parsing both <code>&quot;ab&quot;</code> and <code>&quot;a b&quot;</code> produce the token pairs <code>c(a())</code>.</p>
 </li>
 </ol>
@@ -162,24 +162,24 @@ from this behavior.</p>
 they are run in repetitions.</p>
 <p>If both <code>WHITESPACE</code> and <code>COMMENT</code> are defined, this grammar:</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="ident">a</span> <span class="op">=</span> { <span class="ident">b</span> ~ <span class="ident">c</span> }</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="ident">a</span> <span class="op">=</span> { <span class="ident">b</span> ~ <span class="ident">c</span> }</pre></div>
 <p>is effectively transformed into this one behind the scenes:</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="ident">a</span> <span class="op">=</span> { <span class="ident">b</span> ~ <span class="ident">WHITESPACE</span><span class="op">*</span> ~ (<span class="ident">COMMENT</span> ~ <span class="ident">WHITESPACE</span><span class="kw-2">*</span>)<span class="op">*</span> ~ <span class="ident">c</span> }</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="ident">a</span> <span class="op">=</span> { <span class="ident">b</span> ~ <span class="ident">WHITESPACE</span><span class="op">*</span> ~ (<span class="ident">COMMENT</span> ~ <span class="ident">WHITESPACE</span><span class="kw-2">*</span>)<span class="op">*</span> ~ <span class="ident">c</span> }</pre></div>
 <h2 id="push-pop-drop-and-peek" class="section-header"><a href="#push-pop-drop-and-peek"><code>PUSH</code>, <code>POP</code>, <code>DROP</code>, and <code>PEEK</code></a></h2>
 <p><code>PUSH(e)</code> simply pushes the captured string of the expression <code>e</code> down a stack. This stack can
 then later be used to match grammar based on its content with <code>POP</code> and <code>PEEK</code>.</p>
 <p><code>PEEK</code> always matches the string at the top of stack. So, if the stack contains <code>[&quot;b&quot;, &quot;a&quot;]</code>
 (<code>&quot;a&quot;</code> being on top), this grammar:</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="ident">a</span> <span class="op">=</span> { <span class="ident">PEEK</span> }</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="ident">a</span> <span class="op">=</span> { <span class="ident">PEEK</span> }</pre></div>
 <p>is effectively transformed into at parse time:</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
-<span class="ident">a</span> <span class="op">=</span> { <span class="string">&quot;a&quot;</span> }</pre>
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
+<span class="ident">a</span> <span class="op">=</span> { <span class="string">&quot;a&quot;</span> }</pre></div>
 <p><code>POP</code> works the same way with the exception that it pops the string off of the stack if the
 match worked. With the stack from above, if <code>POP</code> matches <code>&quot;a&quot;</code>, the stack will be mutated
 to <code>[&quot;b&quot;]</code>.</p>
@@ -192,14 +192,14 @@ like Rust’s exclusive slice syntax. Additionally, negative indices can be used
 offset from the top. If the end lies before or at the start, the expression matches (as does
 a <code>PEEK_ALL</code> on an empty stack). With the stack <code>[&quot;c&quot;, &quot;b&quot;, &quot;a&quot;]</code> (<code>&quot;a&quot;</code> on top):</p>
 
-<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><pre class="rust rust-example-rendered ignore">
+<div class='information'><div class='tooltip ignore'>ⓘ<span class='tooltiptext'>This example is not tested</span></div></div><div class="example-wrap"><pre class="rust rust-example-rendered ignore">
 <span class="ident">fill</span> <span class="op">=</span> <span class="ident">PUSH</span>(<span class="string">&quot;c&quot;</span>) ~ <span class="ident">PUSH</span>(<span class="string">&quot;b&quot;</span>) ~ <span class="ident">PUSH</span>(<span class="string">&quot;a&quot;</span>)
 <span class="ident">v</span> <span class="op">=</span> { <span class="ident">PEEK_ALL</span> } <span class="op">=</span> { <span class="string">&quot;a&quot;</span> ~ <span class="string">&quot;b&quot;</span> ~ <span class="string">&quot;c&quot;</span> }  <span class="comment">// top to bottom</span>
 <span class="ident">w</span> <span class="op">=</span> { <span class="ident">PEEK</span>[..] } <span class="op">=</span> { <span class="string">&quot;c&quot;</span> ~ <span class="string">&quot;b&quot;</span> ~ <span class="string">&quot;a&quot;</span> }  <span class="comment">// bottom to top</span>
 <span class="ident">x</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..<span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..<span class="op">-</span><span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;b&quot;</span> }
 <span class="ident">y</span> <span class="op">=</span> { <span class="ident">PEEK</span>[..<span class="op">-</span><span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">0</span>..<span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;a&quot;</span> }
 <span class="ident">z</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">1</span>..] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="op">-</span><span class="number">2</span>..<span class="number">3</span>] } <span class="op">=</span> { <span class="string">&quot;c&quot;</span> ~ <span class="string">&quot;b&quot;</span> }
-<span class="ident">n</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="op">-</span><span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;&quot;</span> }</pre>
+<span class="ident">n</span> <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="op">-</span><span class="number">2</span>] } <span class="op">=</span> { <span class="ident">PEEK</span>[<span class="number">2</span>..<span class="number">1</span>] } <span class="op">=</span> { <span class="string">&quot;&quot;</span> }</pre></div>
 <p>For historical reasons, <code>PEEK_ALL</code> matches from top to bottom, while <code>PEEK[start..end]</code> matches
 from bottom to top. There is currectly no syntax to match a slice of the stack top to bottom.</p>
 <h2 id="rule" class="section-header"><a href="#rule"><code>Rule</code></a></h2>
@@ -221,11 +221,4 @@ implements <code>pest</code>'s <code>RuleType</code> and can be used throughout 
 <li><code>NEWLINE</code> - matches either &quot;\n&quot; or &quot;\r\n&quot; or &quot;\r&quot;</li>
 </ul>
 </div><h2 id='derives' class='section-header'><a href="#derives">Derive Macros</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="derive" href="derive.Parser.html"
-                                  title='derive pest_derive::Parser'>Parser</a></td>
-                           <td class='docblock-short'>
-                                
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "pest_derive";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
+<table><tr class='module-item'><td><a class="derive" href="derive.Parser.html" title='pest_derive::Parser derive'>Parser</a></td><td class='docblock-short'></td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "pest_derive";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

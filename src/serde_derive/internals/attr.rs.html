@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.84/src/internals/attr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>attr.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_derive-1.0.85/src/internals/attr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>attr.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1852,7 +1852,105 @@
 <span id="1852">1852</span>
 <span id="1853">1853</span>
 <span id="1854">1854</span>
-</pre><pre class="rust ">
+<span id="1855">1855</span>
+<span id="1856">1856</span>
+<span id="1857">1857</span>
+<span id="1858">1858</span>
+<span id="1859">1859</span>
+<span id="1860">1860</span>
+<span id="1861">1861</span>
+<span id="1862">1862</span>
+<span id="1863">1863</span>
+<span id="1864">1864</span>
+<span id="1865">1865</span>
+<span id="1866">1866</span>
+<span id="1867">1867</span>
+<span id="1868">1868</span>
+<span id="1869">1869</span>
+<span id="1870">1870</span>
+<span id="1871">1871</span>
+<span id="1872">1872</span>
+<span id="1873">1873</span>
+<span id="1874">1874</span>
+<span id="1875">1875</span>
+<span id="1876">1876</span>
+<span id="1877">1877</span>
+<span id="1878">1878</span>
+<span id="1879">1879</span>
+<span id="1880">1880</span>
+<span id="1881">1881</span>
+<span id="1882">1882</span>
+<span id="1883">1883</span>
+<span id="1884">1884</span>
+<span id="1885">1885</span>
+<span id="1886">1886</span>
+<span id="1887">1887</span>
+<span id="1888">1888</span>
+<span id="1889">1889</span>
+<span id="1890">1890</span>
+<span id="1891">1891</span>
+<span id="1892">1892</span>
+<span id="1893">1893</span>
+<span id="1894">1894</span>
+<span id="1895">1895</span>
+<span id="1896">1896</span>
+<span id="1897">1897</span>
+<span id="1898">1898</span>
+<span id="1899">1899</span>
+<span id="1900">1900</span>
+<span id="1901">1901</span>
+<span id="1902">1902</span>
+<span id="1903">1903</span>
+<span id="1904">1904</span>
+<span id="1905">1905</span>
+<span id="1906">1906</span>
+<span id="1907">1907</span>
+<span id="1908">1908</span>
+<span id="1909">1909</span>
+<span id="1910">1910</span>
+<span id="1911">1911</span>
+<span id="1912">1912</span>
+<span id="1913">1913</span>
+<span id="1914">1914</span>
+<span id="1915">1915</span>
+<span id="1916">1916</span>
+<span id="1917">1917</span>
+<span id="1918">1918</span>
+<span id="1919">1919</span>
+<span id="1920">1920</span>
+<span id="1921">1921</span>
+<span id="1922">1922</span>
+<span id="1923">1923</span>
+<span id="1924">1924</span>
+<span id="1925">1925</span>
+<span id="1926">1926</span>
+<span id="1927">1927</span>
+<span id="1928">1928</span>
+<span id="1929">1929</span>
+<span id="1930">1930</span>
+<span id="1931">1931</span>
+<span id="1932">1932</span>
+<span id="1933">1933</span>
+<span id="1934">1934</span>
+<span id="1935">1935</span>
+<span id="1936">1936</span>
+<span id="1937">1937</span>
+<span id="1938">1938</span>
+<span id="1939">1939</span>
+<span id="1940">1940</span>
+<span id="1941">1941</span>
+<span id="1942">1942</span>
+<span id="1943">1943</span>
+<span id="1944">1944</span>
+<span id="1945">1945</span>
+<span id="1946">1946</span>
+<span id="1947">1947</span>
+<span id="1948">1948</span>
+<span id="1949">1949</span>
+<span id="1950">1950</span>
+<span id="1951">1951</span>
+<span id="1952">1952</span>
+</pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">internals</span>::<span class="ident">Ctxt</span>;
 <span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">Group</span>, <span class="ident">Span</span>, <span class="ident">TokenStream</span>, <span class="ident">TokenTree</span>};
 <span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">ToTokens</span>;
@@ -1875,7 +1973,6 @@
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">internals</span>::<span class="ident">case</span>::<span class="ident">RenameRule</span>;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">struct</span> <span class="ident">Attr</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span> {
     <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">Ctxt</span>,
     <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
@@ -1945,9 +2042,52 @@
     }
 }
 
+<span class="kw">struct</span> <span class="ident">VecAttr</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">Ctxt</span>,
+    <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
+    <span class="ident">first_dup_tokens</span>: <span class="ident">TokenStream</span>,
+    <span class="ident">values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">VecAttr</span><span class="op">&lt;</span><span class="lifetime">&#39;c</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">none</span>(<span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;c</span> <span class="ident">Ctxt</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">VecAttr</span> {
+            <span class="ident">cx</span>: <span class="ident">cx</span>,
+            <span class="ident">name</span>: <span class="ident">name</span>,
+            <span class="ident">first_dup_tokens</span>: <span class="ident">TokenStream</span>::<span class="ident">new</span>(),
+            <span class="ident">values</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">insert</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">ToTokens</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">obj</span>: <span class="ident">A</span>, <span class="ident">value</span>: <span class="ident">T</span>) {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span> {
+            <span class="self">self</span>.<span class="ident">first_dup_tokens</span> <span class="op">=</span> <span class="ident">obj</span>.<span class="ident">into_token_stream</span>();
+        }
+        <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">push</span>(<span class="ident">value</span>);
+    }
+
+    <span class="kw">fn</span> <span class="ident">at_most_one</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">1</span> {
+            <span class="kw">let</span> <span class="ident">dup_token</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">first_dup_tokens</span>;
+            <span class="self">self</span>.<span class="ident">cx</span>
+                .<span class="ident">error_spanned_by</span>(<span class="ident">dup_token</span>, <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;duplicate serde attribute `{}`&quot;</span>, <span class="self">self</span>.<span class="ident">name</span>));
+            <span class="prelude-val">Err</span>(())
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">values</span>.<span class="ident">pop</span>())
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">get</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">values</span>
+    }
+}
+
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Name</span> {
     <span class="ident">serialize</span>: <span class="ident">String</span>,
+    <span class="ident">serialize_renamed</span>: <span class="ident">bool</span>,
     <span class="ident">deserialize</span>: <span class="ident">String</span>,
+    <span class="ident">deserialize_renamed</span>: <span class="ident">bool</span>,
+    <span class="ident">deserialize_aliases</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
@@ -1959,6 +2099,36 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Name</span> {
+    <span class="kw">fn</span> <span class="ident">from_attrs</span>(
+        <span class="ident">source_name</span>: <span class="ident">String</span>,
+        <span class="ident">ser_name</span>: <span class="ident">Attr</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+        <span class="ident">de_name</span>: <span class="ident">Attr</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+        <span class="ident">de_aliases</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VecAttr</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">Name</span> {
+        <span class="kw">let</span> <span class="ident">deserialize_aliases</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">de_aliases</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">de_aliases</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">alias_list</span> <span class="op">=</span> <span class="ident">BTreeSet</span>::<span class="ident">new</span>();
+                <span class="kw">for</span> <span class="ident">alias_name</span> <span class="kw">in</span> <span class="ident">de_aliases</span>.<span class="ident">get</span>() {
+                    <span class="ident">alias_list</span>.<span class="ident">insert</span>(<span class="ident">alias_name</span>);
+                }
+                <span class="ident">alias_list</span>.<span class="ident">into_iter</span>().<span class="ident">collect</span>()
+            }
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">Vec</span>::<span class="ident">new</span>(),
+        };
+
+        <span class="kw">let</span> <span class="ident">ser_name</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">get</span>();
+        <span class="kw">let</span> <span class="ident">ser_renamed</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">is_some</span>();
+        <span class="kw">let</span> <span class="ident">de_name</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">get</span>();
+        <span class="kw">let</span> <span class="ident">de_renamed</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">is_some</span>();
+        <span class="ident">Name</span> {
+            <span class="ident">serialize</span>: <span class="ident">ser_name</span>.<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">source_name</span>.<span class="ident">clone</span>()),
+            <span class="ident">serialize_renamed</span>: <span class="ident">ser_renamed</span>,
+            <span class="ident">deserialize</span>: <span class="ident">de_name</span>.<span class="ident">unwrap_or</span>(<span class="ident">source_name</span>),
+            <span class="ident">deserialize_renamed</span>: <span class="ident">de_renamed</span>,
+            <span class="ident">deserialize_aliases</span>: <span class="ident">deserialize_aliases</span>,
+        }
+    }
+
     <span class="doccomment">/// Return the container name for the container when serializing.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">serialize_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">serialize</span>.<span class="ident">clone</span>()
@@ -1967,6 +2137,15 @@
     <span class="doccomment">/// Return the container name for the container when deserializing.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deserialize_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">deserialize</span>.<span class="ident">clone</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">deserialize_aliases</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">aliases</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">deserialize_aliases</span>.<span class="ident">clone</span>();
+        <span class="kw">let</span> <span class="ident">main_name</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">deserialize_name</span>();
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">aliases</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">main_name</span>) {
+            <span class="ident">aliases</span>.<span class="ident">push</span>(<span class="ident">main_name</span>);
+        }
+        <span class="ident">aliases</span>
     }
 }
 
@@ -2369,10 +2548,7 @@
         }
 
         <span class="ident">Container</span> {
-            <span class="ident">name</span>: <span class="ident">Name</span> {
-                <span class="ident">serialize</span>: <span class="ident">ser_name</span>.<span class="ident">get</span>().<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>.<span class="ident">ident</span>)),
-                <span class="ident">deserialize</span>: <span class="ident">de_name</span>.<span class="ident">get</span>().<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>.<span class="ident">ident</span>)),
-            },
+            <span class="ident">name</span>: <span class="ident">Name</span>::<span class="ident">from_attrs</span>(<span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">item</span>.<span class="ident">ident</span>), <span class="ident">ser_name</span>, <span class="ident">de_name</span>, <span class="prelude-val">None</span>),
             <span class="ident">transparent</span>: <span class="ident">transparent</span>.<span class="ident">get</span>(),
             <span class="ident">deny_unknown_fields</span>: <span class="ident">deny_unknown_fields</span>.<span class="ident">get</span>(),
             <span class="ident">default</span>: <span class="ident">default</span>.<span class="ident">get</span>().<span class="ident">unwrap_or</span>(<span class="ident">Default</span>::<span class="prelude-val">None</span>),
@@ -2617,8 +2793,6 @@
 <span class="doccomment">/// Represents variant attribute information</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Variant</span> {
     <span class="ident">name</span>: <span class="ident">Name</span>,
-    <span class="ident">ser_renamed</span>: <span class="ident">bool</span>,
-    <span class="ident">de_renamed</span>: <span class="ident">bool</span>,
     <span class="ident">rename_all_rules</span>: <span class="ident">RenameAllRules</span>,
     <span class="ident">ser_bound</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">WherePredicate</span><span class="op">&gt;&gt;</span>,
     <span class="ident">de_bound</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">WherePredicate</span><span class="op">&gt;&gt;</span>,
@@ -2634,6 +2808,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_ast</span>(<span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="ident">Ctxt</span>, <span class="ident">variant</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Variant</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ser_name</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_name</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_aliases</span> <span class="op">=</span> <span class="ident">VecAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">skip_deserializing</span> <span class="op">=</span> <span class="ident">BoolAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;skip_deserializing&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">skip_serializing</span> <span class="op">=</span> <span class="ident">BoolAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;skip_serializing&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rename_all_ser_rule</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename_all&quot;</span>);
@@ -2652,15 +2827,26 @@
                     <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;rename&quot;</span> <span class="op">=&gt;</span> {
                         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="ident">get_lit_str</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">lit</span>) {
                             <span class="ident">ser_name</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
-                            <span class="ident">de_name</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
+                            <span class="ident">de_name</span>.<span class="ident">set_if_none</span>(<span class="ident">s</span>.<span class="ident">value</span>());
+                            <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
                         }
                     }
 
                     <span class="comment">// Parse `#[serde(rename(serialize = &quot;foo&quot;, deserialize = &quot;bar&quot;))]`</span>
                     <span class="ident">Meta</span>(<span class="ident">List</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;rename&quot;</span> <span class="op">=&gt;</span> {
-                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ser</span>, <span class="ident">de</span>)) <span class="op">=</span> <span class="ident">get_renames</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">nested</span>) {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ser</span>, <span class="ident">de</span>)) <span class="op">=</span> <span class="ident">get_multiple_renames</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">nested</span>) {
                             <span class="ident">ser_name</span>.<span class="ident">set_opt</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">ser</span>.<span class="ident">map</span>(<span class="ident">syn</span>::<span class="ident">LitStr</span>::<span class="ident">value</span>));
-                            <span class="ident">de_name</span>.<span class="ident">set_opt</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">de</span>.<span class="ident">map</span>(<span class="ident">syn</span>::<span class="ident">LitStr</span>::<span class="ident">value</span>));
+                            <span class="kw">for</span> <span class="ident">de_value</span> <span class="kw">in</span> <span class="ident">de</span> {
+                                <span class="ident">de_name</span>.<span class="ident">set_if_none</span>(<span class="ident">de_value</span>.<span class="ident">value</span>());
+                                <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">de_value</span>.<span class="ident">value</span>());
+                            }
+                        }
+                    }
+
+                    <span class="comment">// Parse `#[serde(alias = &quot;foo&quot;)]`</span>
+                    <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;alias&quot;</span> <span class="op">=&gt;</span> {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="ident">get_lit_str</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">lit</span>) {
+                            <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
                         }
                     }
 
@@ -2818,17 +3004,8 @@
             }
         }
 
-        <span class="kw">let</span> <span class="ident">ser_name</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">get</span>();
-        <span class="kw">let</span> <span class="ident">ser_renamed</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">is_some</span>();
-        <span class="kw">let</span> <span class="ident">de_name</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">get</span>();
-        <span class="kw">let</span> <span class="ident">de_renamed</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">is_some</span>();
         <span class="ident">Variant</span> {
-            <span class="ident">name</span>: <span class="ident">Name</span> {
-                <span class="ident">serialize</span>: <span class="ident">ser_name</span>.<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">variant</span>.<span class="ident">ident</span>)),
-                <span class="ident">deserialize</span>: <span class="ident">de_name</span>.<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">variant</span>.<span class="ident">ident</span>)),
-            },
-            <span class="ident">ser_renamed</span>: <span class="ident">ser_renamed</span>,
-            <span class="ident">de_renamed</span>: <span class="ident">de_renamed</span>,
+            <span class="ident">name</span>: <span class="ident">Name</span>::<span class="ident">from_attrs</span>(<span class="ident">unraw</span>(<span class="kw-2">&amp;</span><span class="ident">variant</span>.<span class="ident">ident</span>), <span class="ident">ser_name</span>, <span class="ident">de_name</span>, <span class="prelude-val">Some</span>(<span class="ident">de_aliases</span>)),
             <span class="ident">rename_all_rules</span>: <span class="ident">RenameAllRules</span> {
                 <span class="ident">serialize</span>: <span class="ident">rename_all_ser_rule</span>.<span class="ident">get</span>().<span class="ident">unwrap_or</span>(<span class="ident">RenameRule</span>::<span class="prelude-val">None</span>),
                 <span class="ident">deserialize</span>: <span class="ident">rename_all_de_rule</span>.<span class="ident">get</span>().<span class="ident">unwrap_or</span>(<span class="ident">RenameRule</span>::<span class="prelude-val">None</span>),
@@ -2848,11 +3025,15 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aliases</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize_aliases</span>()
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rename_by_rules</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">RenameAllRules</span>) {
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">ser_renamed</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize_renamed</span> {
             <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize</span> <span class="op">=</span> <span class="ident">rules</span>.<span class="ident">serialize</span>.<span class="ident">apply_to_variant</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize</span>);
         }
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">de_renamed</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize_renamed</span> {
             <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize</span> <span class="op">=</span> <span class="ident">rules</span>.<span class="ident">deserialize</span>.<span class="ident">apply_to_variant</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize</span>);
         }
     }
@@ -2893,8 +3074,6 @@
 <span class="doccomment">/// Represents field attribute information</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Field</span> {
     <span class="ident">name</span>: <span class="ident">Name</span>,
-    <span class="ident">ser_renamed</span>: <span class="ident">bool</span>,
-    <span class="ident">de_renamed</span>: <span class="ident">bool</span>,
     <span class="ident">skip_serializing</span>: <span class="ident">bool</span>,
     <span class="ident">skip_deserializing</span>: <span class="ident">bool</span>,
     <span class="ident">skip_serializing_if</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">ExprPath</span><span class="op">&gt;</span>,
@@ -2939,6 +3118,7 @@
     ) <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ser_name</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_name</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_aliases</span> <span class="op">=</span> <span class="ident">VecAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">skip_serializing</span> <span class="op">=</span> <span class="ident">BoolAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;skip_serializing&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">skip_deserializing</span> <span class="op">=</span> <span class="ident">BoolAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;skip_deserializing&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">skip_serializing_if</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="string">&quot;skip_serializing_if&quot;</span>);
@@ -2972,15 +3152,26 @@
                     <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;rename&quot;</span> <span class="op">=&gt;</span> {
                         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="ident">get_lit_str</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">lit</span>) {
                             <span class="ident">ser_name</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
-                            <span class="ident">de_name</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
+                            <span class="ident">de_name</span>.<span class="ident">set_if_none</span>(<span class="ident">s</span>.<span class="ident">value</span>());
+                            <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
                         }
                     }
 
                     <span class="comment">// Parse `#[serde(rename(serialize = &quot;foo&quot;, deserialize = &quot;bar&quot;))]`</span>
                     <span class="ident">Meta</span>(<span class="ident">List</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;rename&quot;</span> <span class="op">=&gt;</span> {
-                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ser</span>, <span class="ident">de</span>)) <span class="op">=</span> <span class="ident">get_renames</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">nested</span>) {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>((<span class="ident">ser</span>, <span class="ident">de</span>)) <span class="op">=</span> <span class="ident">get_multiple_renames</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">nested</span>) {
                             <span class="ident">ser_name</span>.<span class="ident">set_opt</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">ser</span>.<span class="ident">map</span>(<span class="ident">syn</span>::<span class="ident">LitStr</span>::<span class="ident">value</span>));
-                            <span class="ident">de_name</span>.<span class="ident">set_opt</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">de</span>.<span class="ident">map</span>(<span class="ident">syn</span>::<span class="ident">LitStr</span>::<span class="ident">value</span>));
+                            <span class="kw">for</span> <span class="ident">de_value</span> <span class="kw">in</span> <span class="ident">de</span> {
+                                <span class="ident">de_name</span>.<span class="ident">set_if_none</span>(<span class="ident">de_value</span>.<span class="ident">value</span>());
+                                <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">de_value</span>.<span class="ident">value</span>());
+                            }
+                        }
+                    }
+
+                    <span class="comment">// Parse `#[serde(alias = &quot;foo&quot;)]`</span>
+                    <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">m</span>)) <span class="kw">if</span> <span class="ident">m</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;alias&quot;</span> <span class="op">=&gt;</span> {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="ident">get_lit_str</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">lit</span>) {
+                            <span class="ident">de_aliases</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">m</span>.<span class="ident">ident</span>, <span class="ident">s</span>.<span class="ident">value</span>());
                         }
                     }
 
@@ -3187,17 +3378,8 @@
             <span class="ident">collect_lifetimes</span>(<span class="kw-2">&amp;</span><span class="ident">field</span>.<span class="ident">ty</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">borrowed_lifetimes</span>);
         }
 
-        <span class="kw">let</span> <span class="ident">ser_name</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">get</span>();
-        <span class="kw">let</span> <span class="ident">ser_renamed</span> <span class="op">=</span> <span class="ident">ser_name</span>.<span class="ident">is_some</span>();
-        <span class="kw">let</span> <span class="ident">de_name</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">get</span>();
-        <span class="kw">let</span> <span class="ident">de_renamed</span> <span class="op">=</span> <span class="ident">de_name</span>.<span class="ident">is_some</span>();
         <span class="ident">Field</span> {
-            <span class="ident">name</span>: <span class="ident">Name</span> {
-                <span class="ident">serialize</span>: <span class="ident">ser_name</span>.<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">ident</span>.<span class="ident">clone</span>()),
-                <span class="ident">deserialize</span>: <span class="ident">de_name</span>.<span class="ident">unwrap_or</span>(<span class="ident">ident</span>),
-            },
-            <span class="ident">ser_renamed</span>: <span class="ident">ser_renamed</span>,
-            <span class="ident">de_renamed</span>: <span class="ident">de_renamed</span>,
+            <span class="ident">name</span>: <span class="ident">Name</span>::<span class="ident">from_attrs</span>(<span class="ident">ident</span>, <span class="ident">ser_name</span>, <span class="ident">de_name</span>, <span class="prelude-val">Some</span>(<span class="ident">de_aliases</span>)),
             <span class="ident">skip_serializing</span>: <span class="ident">skip_serializing</span>.<span class="ident">get</span>(),
             <span class="ident">skip_deserializing</span>: <span class="ident">skip_deserializing</span>.<span class="ident">get</span>(),
             <span class="ident">skip_serializing_if</span>: <span class="ident">skip_serializing_if</span>.<span class="ident">get</span>(),
@@ -3217,11 +3399,15 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>
     }
 
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">aliases</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize_aliases</span>()
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rename_by_rules</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">RenameAllRules</span>) {
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">ser_renamed</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize_renamed</span> {
             <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize</span> <span class="op">=</span> <span class="ident">rules</span>.<span class="ident">serialize</span>.<span class="ident">apply_to_field</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">serialize</span>);
         }
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">de_renamed</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize_renamed</span> {
             <span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize</span> <span class="op">=</span> <span class="ident">rules</span>.<span class="ident">deserialize</span>.<span class="ident">apply_to_field</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name</span>.<span class="ident">deserialize</span>);
         }
     }
@@ -3281,31 +3467,31 @@
 
 <span class="kw">type</span> <span class="ident">SerAndDe</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
 
-<span class="kw">fn</span> <span class="ident">get_ser_and_de</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span>(
-    <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="ident">Ctxt</span>,
+<span class="kw">fn</span> <span class="ident">get_ser_and_de</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, <span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span>(
+    <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">Ctxt</span>,
     <span class="ident">attr_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
     <span class="ident">metas</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Punctuated</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">NestedMeta</span>, <span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span>,
     <span class="ident">f</span>: <span class="ident">F</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SerAndDe</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span>
+) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">VecAttr</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">VecAttr</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span>, <span class="ident">T</span><span class="op">&gt;</span>), ()<span class="op">&gt;</span>
 <span class="kw">where</span>
     <span class="ident">T</span>: <span class="lifetime">&#39;a</span>,
     <span class="ident">F</span>: <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">Ctxt</span>, <span class="kw-2">&amp;</span><span class="ident">Ident</span>, <span class="kw-2">&amp;</span><span class="ident">Ident</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">syn</span>::<span class="ident">Lit</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, ()<span class="op">&gt;</span>,
 {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ser_meta</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="ident">attr_name</span>);
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_meta</span> <span class="op">=</span> <span class="ident">Attr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="ident">attr_name</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ser_meta</span> <span class="op">=</span> <span class="ident">VecAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="ident">attr_name</span>);
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">de_meta</span> <span class="op">=</span> <span class="ident">VecAttr</span>::<span class="ident">none</span>(<span class="ident">cx</span>, <span class="ident">attr_name</span>);
     <span class="kw">let</span> <span class="ident">attr_name</span> <span class="op">=</span> <span class="ident">Ident</span>::<span class="ident">new</span>(<span class="ident">attr_name</span>, <span class="ident">Span</span>::<span class="ident">call_site</span>());
 
     <span class="kw">for</span> <span class="ident">meta</span> <span class="kw">in</span> <span class="ident">metas</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">meta</span> {
             <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">meta</span>)) <span class="kw">if</span> <span class="ident">meta</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;serialize&quot;</span> <span class="op">=&gt;</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">lit</span>) {
-                    <span class="ident">ser_meta</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="ident">v</span>);
+                    <span class="ident">ser_meta</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="ident">v</span>);
                 }
             }
 
             <span class="ident">Meta</span>(<span class="ident">NameValue</span>(<span class="kw-2">ref</span> <span class="ident">meta</span>)) <span class="kw">if</span> <span class="ident">meta</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;deserialize&quot;</span> <span class="op">=&gt;</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">cx</span>, <span class="kw-2">&amp;</span><span class="ident">attr_name</span>, <span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">lit</span>) {
-                    <span class="ident">de_meta</span>.<span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="ident">v</span>);
+                    <span class="ident">de_meta</span>.<span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="ident">meta</span>.<span class="ident">ident</span>, <span class="ident">v</span>);
                 }
             }
 
@@ -3323,21 +3509,31 @@
         }
     }
 
-    <span class="prelude-val">Ok</span>((<span class="ident">ser_meta</span>.<span class="ident">get</span>(), <span class="ident">de_meta</span>.<span class="ident">get</span>()))
+    <span class="prelude-val">Ok</span>((<span class="ident">ser_meta</span>, <span class="ident">de_meta</span>))
 }
 
 <span class="kw">fn</span> <span class="ident">get_renames</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
     <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="ident">Ctxt</span>,
     <span class="ident">items</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Punctuated</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">NestedMeta</span>, <span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span>,
 ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SerAndDe</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">syn</span>::<span class="ident">LitStr</span><span class="op">&gt;</span>, ()<span class="op">&gt;</span> {
-    <span class="ident">get_ser_and_de</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>, <span class="ident">items</span>, <span class="ident">get_lit_str</span>)
+    <span class="kw">let</span> (<span class="ident">ser</span>, <span class="ident">de</span>) <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">get_ser_and_de</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>, <span class="ident">items</span>, <span class="ident">get_lit_str</span>));
+    <span class="prelude-val">Ok</span>((<span class="macro">try</span><span class="macro">!</span>(<span class="ident">ser</span>.<span class="ident">at_most_one</span>()), <span class="macro">try</span><span class="macro">!</span>(<span class="ident">de</span>.<span class="ident">at_most_one</span>())))
+}
+
+<span class="kw">fn</span> <span class="ident">get_multiple_renames</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
+    <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="ident">Ctxt</span>,
+    <span class="ident">items</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Punctuated</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">NestedMeta</span>, <span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span>,
+) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">syn</span>::<span class="ident">LitStr</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">syn</span>::<span class="ident">LitStr</span><span class="op">&gt;</span>), ()<span class="op">&gt;</span> {
+    <span class="kw">let</span> (<span class="ident">ser</span>, <span class="ident">de</span>) <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">get_ser_and_de</span>(<span class="ident">cx</span>, <span class="string">&quot;rename&quot;</span>, <span class="ident">items</span>, <span class="ident">get_lit_str</span>));
+    <span class="prelude-val">Ok</span>((<span class="macro">try</span><span class="macro">!</span>(<span class="ident">ser</span>.<span class="ident">at_most_one</span>()), <span class="ident">de</span>.<span class="ident">get</span>()))
 }
 
 <span class="kw">fn</span> <span class="ident">get_where_predicates</span>(
     <span class="ident">cx</span>: <span class="kw-2">&amp;</span><span class="ident">Ctxt</span>,
     <span class="ident">items</span>: <span class="kw-2">&amp;</span><span class="ident">Punctuated</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">NestedMeta</span>, <span class="macro">Token</span><span class="macro">!</span>[,]<span class="op">&gt;</span>,
 ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">SerAndDe</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">WherePredicate</span><span class="op">&gt;&gt;</span>, ()<span class="op">&gt;</span> {
-    <span class="ident">get_ser_and_de</span>(<span class="ident">cx</span>, <span class="string">&quot;bound&quot;</span>, <span class="ident">items</span>, <span class="ident">parse_lit_into_where</span>)
+    <span class="kw">let</span> (<span class="ident">ser</span>, <span class="ident">de</span>) <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">get_ser_and_de</span>(<span class="ident">cx</span>, <span class="string">&quot;bound&quot;</span>, <span class="ident">items</span>, <span class="ident">parse_lit_into_where</span>));
+    <span class="prelude-val">Ok</span>((<span class="macro">try</span><span class="macro">!</span>(<span class="ident">ser</span>.<span class="ident">at_most_one</span>()), <span class="macro">try</span><span class="macro">!</span>(<span class="ident">de</span>.<span class="ident">at_most_one</span>())))
 }
 
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_serde_meta_items</span>(<span class="ident">attr</span>: <span class="kw-2">&amp;</span><span class="ident">syn</span>::<span class="ident">Attribute</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">syn</span>::<span class="ident">NestedMeta</span><span class="op">&gt;&gt;</span> {
@@ -3707,5 +3903,5 @@
     <span class="ident">token</span>.<span class="ident">set_span</span>(<span class="ident">span</span>);
     <span class="ident">token</span>
 }
-</pre>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "serde_derive";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "serde_derive";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-files.js"></script><script src="../../../source-script.js"></script><script defer src="../../../search-index.js"></script></body></html>

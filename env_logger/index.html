@@ -2,7 +2,7 @@
 to stdout or stderr, for use with the logging facade exposed by the
 <a href="https://docs.rs/log/"><code>log</code> crate</a>.</p>
 <h2 id="example" class="section-header"><a href="#example">Example</a></h2>
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="attribute">#[<span class="ident">macro_use</span>]</span> <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">log</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">env_logger</span>;
 
@@ -18,7 +18,7 @@ to stdout or stderr, for use with the logging facade exposed by the
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="number">3</span> <span class="op">*</span> <span class="number">4</span>; <span class="comment">// expensive computation</span>
         <span class="macro">info</span><span class="macro">!</span>(<span class="string">&quot;the answer was: {}&quot;</span>, <span class="ident">x</span>);
     }
-}</pre>
+}</pre></div>
 <p>Assumes the binary is <code>main</code>:</p>
 <pre><code class="language-{.bash}">$ RUST_LOG=error ./main
 [2017-11-09T02:12:24Z ERROR main] this is printed by default
@@ -113,12 +113,12 @@ This includes emitting ANSI colors on Windows if the console API is unavailable.
 <p>Parts of the default format can be excluded from the log output using the <a href="struct.Builder.html"><code>Builder</code></a>.
 The following example excludes the timestamp from the log output:</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">env_logger</span>::<span class="ident">Builder</span>;
 
 <span class="ident">Builder</span>::<span class="ident">from_default_env</span>()
     .<span class="ident">default_format_timestamp</span>(<span class="bool-val">false</span>)
-    .<span class="ident">init</span>();</pre>
+    .<span class="ident">init</span>();</pre></div>
 <h3 id="stability-of-the-default-format" class="section-header"><a href="#stability-of-the-default-format">Stability of the default format</a></h3>
 <p>The default format won't optimise for long-term stability, and explicitly makes no
 guarantees about the stability of its output across major, minor or patch version
@@ -129,7 +129,7 @@ then you should use a custom format.</p>
 <p>Custom formats can be provided as closures to the <a href="struct.Builder.html"><code>Builder</code></a>.
 These closures take a [<code>Formatter</code>] and <code>log::Record</code> as arguments:</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
 <span class="kw">use</span> <span class="ident">env_logger</span>::<span class="ident">Builder</span>;
 
@@ -137,7 +137,7 @@ These closures take a [<code>Formatter</code>] and <code>log::Record</code> as a
     .<span class="ident">format</span>(<span class="op">|</span><span class="ident">buf</span>, <span class="ident">record</span><span class="op">|</span> {
         <span class="macro">writeln</span><span class="macro">!</span>(<span class="ident">buf</span>, <span class="string">&quot;{}: {}&quot;</span>, <span class="ident">record</span>.<span class="ident">level</span>(), <span class="ident">record</span>.<span class="ident">args</span>())
     })
-    .<span class="ident">init</span>();</pre>
+    .<span class="ident">init</span>();</pre></div>
 <p>See the <a href="fmt/index.html"><code>fmt</code></a> module for more details about custom formats.</p>
 <h2 id="specifying-defaults-for-environment-variables" class="section-header"><a href="#specifying-defaults-for-environment-variables">Specifying defaults for environment variables</a></h2>
 <p><code>env_logger</code> can read configuration from environment variables.
@@ -145,119 +145,28 @@ If these variables aren't present, the default value to use can be tweaked with 
 The following example defaults to log <code>warn</code> and above if the <code>RUST_LOG</code> environment variable
 isn't set:</p>
 
-<pre class="rust rust-example-rendered">
+<div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">use</span> <span class="ident">env_logger</span>::{<span class="ident">Builder</span>, <span class="ident">Env</span>};
 
-<span class="ident">Builder</span>::<span class="ident">from_env</span>(<span class="ident">Env</span>::<span class="ident">default</span>().<span class="ident">default_filter_or</span>(<span class="string">&quot;warn&quot;</span>)).<span class="ident">init</span>();</pre>
+<span class="ident">Builder</span>::<span class="ident">from_env</span>(<span class="ident">Env</span>::<span class="ident">default</span>().<span class="ident">default_filter_or</span>(<span class="string">&quot;warn&quot;</span>)).<span class="ident">init</span>();</pre></div>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="filter/index.html"
-                                  title='mod env_logger::filter'>filter</a></td>
-                           <td class='docblock-short'>
-                                <p>Filtering for log records.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="mod" href="fmt/index.html"
-                                  title='mod env_logger::fmt'>fmt</a></td>
-                           <td class='docblock-short'>
-                                <p>Formatting for log records.</p>
-
-                           </td>
-                       </tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Builder.html"
-                                  title='struct env_logger::Builder'>Builder</a></td>
-                           <td class='docblock-short'>
-                                <p><code>Builder</code> acts as builder for initializing a <code>Logger</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Env.html"
-                                  title='struct env_logger::Env'>Env</a></td>
-                           <td class='docblock-short'>
-                                <p>Set of environment variables to configure from.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="struct" href="struct.Logger.html"
-                                  title='struct env_logger::Logger'>Logger</a></td>
-                           <td class='docblock-short'>
-                                <p>The env logger.</p>
-
-                           </td>
-                       </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.Target.html"
-                                  title='enum env_logger::Target'>Target</a></td>
-                           <td class='docblock-short'>
-                                <p>Log target, either <code>stdout</code> or <code>stderr</code>.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="enum" href="enum.WriteStyle.html"
-                                  title='enum env_logger::WriteStyle'>WriteStyle</a></td>
-                           <td class='docblock-short'>
-                                <p>Whether or not to print styles to the target.</p>
-
-                           </td>
-                       </tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.DEFAULT_FILTER_ENV.html"
-                                  title='constant env_logger::DEFAULT_FILTER_ENV'>DEFAULT_FILTER_ENV</a></td>
-                           <td class='docblock-short'>
-                                <p>The default name for the environment variable to read filters from.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="constant" href="constant.DEFAULT_WRITE_STYLE_ENV.html"
-                                  title='constant env_logger::DEFAULT_WRITE_STYLE_ENV'>DEFAULT_WRITE_STYLE_ENV</a></td>
-                           <td class='docblock-short'>
-                                <p>The default name for the environment variable to read style preferences from.</p>
-
-                           </td>
-                       </tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
-<table>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.init.html"
-                                  title='fn env_logger::init'>init</a></td>
-                           <td class='docblock-short'>
-                                <p>Initializes the global logger with an env logger.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.init_from_env.html"
-                                  title='fn env_logger::init_from_env'>init_from_env</a></td>
-                           <td class='docblock-short'>
-                                <p>Initializes the global logger with an env logger from the given environment
+<table><tr class='module-item'><td><a class="mod" href="filter/index.html" title='env_logger::filter mod'>filter</a></td><td class='docblock-short'><p>Filtering for log records.</p>
+</td></tr><tr class='module-item'><td><a class="mod" href="fmt/index.html" title='env_logger::fmt mod'>fmt</a></td><td class='docblock-short'><p>Formatting for log records.</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.Builder.html" title='env_logger::Builder struct'>Builder</a></td><td class='docblock-short'><p><code>Builder</code> acts as builder for initializing a <code>Logger</code>.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Env.html" title='env_logger::Env struct'>Env</a></td><td class='docblock-short'><p>Set of environment variables to configure from.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Logger.html" title='env_logger::Logger struct'>Logger</a></td><td class='docblock-short'><p>The env logger.</p>
+</td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.Target.html" title='env_logger::Target enum'>Target</a></td><td class='docblock-short'><p>Log target, either <code>stdout</code> or <code>stderr</code>.</p>
+</td></tr><tr class='module-item'><td><a class="enum" href="enum.WriteStyle.html" title='env_logger::WriteStyle enum'>WriteStyle</a></td><td class='docblock-short'><p>Whether or not to print styles to the target.</p>
+</td></tr></table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table><tr class='module-item'><td><a class="constant" href="constant.DEFAULT_FILTER_ENV.html" title='env_logger::DEFAULT_FILTER_ENV constant'>DEFAULT_FILTER_ENV</a></td><td class='docblock-short'><p>The default name for the environment variable to read filters from.</p>
+</td></tr><tr class='module-item'><td><a class="constant" href="constant.DEFAULT_WRITE_STYLE_ENV.html" title='env_logger::DEFAULT_WRITE_STYLE_ENV constant'>DEFAULT_WRITE_STYLE_ENV</a></td><td class='docblock-short'><p>The default name for the environment variable to read style preferences from.</p>
+</td></tr></table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table><tr class='module-item'><td><a class="fn" href="fn.init.html" title='env_logger::init fn'>init</a></td><td class='docblock-short'><p>Initializes the global logger with an env logger.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.init_from_env.html" title='env_logger::init_from_env fn'>init_from_env</a></td><td class='docblock-short'><p>Initializes the global logger with an env logger from the given environment
 variables.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.try_init.html"
-                                  title='fn env_logger::try_init'>try_init</a></td>
-                           <td class='docblock-short'>
-                                <p>Attempts to initialize the global logger with an env logger.</p>
-
-                           </td>
-                       </tr>
-                       <tr class=' module-item'>
-                           <td><a class="fn" href="fn.try_init_from_env.html"
-                                  title='fn env_logger::try_init_from_env'>try_init_from_env</a></td>
-                           <td class='docblock-short'>
-                                <p>Attempts to initialize the global logger with an env logger from the given
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.try_init.html" title='env_logger::try_init fn'>try_init</a></td><td class='docblock-short'><p>Attempts to initialize the global logger with an env logger.</p>
+</td></tr><tr class='module-item'><td><a class="fn" href="fn.try_init_from_env.html" title='env_logger::try_init_from_env fn'>try_init_from_env</a></td><td class='docblock-short'><p>Attempts to initialize the global logger with an env logger from the given
 environment variables.</p>
-
-                           </td>
-                       </tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "env_logger";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g. <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g. <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g. <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "env_logger";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>
