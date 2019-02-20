@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-0.4.26/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-0.4.27/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1147,8 +1147,6 @@
 <span id="1147">1147</span>
 <span id="1148">1148</span>
 <span id="1149">1149</span>
-<span id="1150">1150</span>
-<span id="1151">1151</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A wrapper around the procedural macro API of the compiler&#39;s [`proc_macro`]</span>
 <span class="doccomment">//! crate. This library serves three purposes:</span>
@@ -1231,11 +1229,9 @@
 <span class="doccomment">//! Semver exempt methods are marked as such in the proc-macro2 documentation.</span>
 
 <span class="comment">// Proc-macro2 types in rustdoc of other crates get linked to here.</span>
-<span class="attribute">#![<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;https://docs.rs/proc-macro2/0.4.26&quot;</span>)]</span>
-<span class="attribute">#![<span class="ident">cfg_attr</span>(
-    <span class="ident">super_unstable</span>,
-    <span class="ident">feature</span>(<span class="ident">proc_macro_raw_ident</span>, <span class="ident">proc_macro_span</span>, <span class="ident">proc_macro_def_site</span>)
-)]</span>
+<span class="attribute">#![<span class="ident">doc</span>(<span class="ident">html_root_url</span> <span class="op">=</span> <span class="string">&quot;https://docs.rs/proc-macro2/0.4.27&quot;</span>)]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">nightly</span>, <span class="ident">feature</span>(<span class="ident">proc_macro_span</span>))]</span>
+<span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">super_unstable</span>, <span class="ident">feature</span>(<span class="ident">proc_macro_raw_ident</span>, <span class="ident">proc_macro_def_site</span>))]</span>
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">use_proc_macro</span>)]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
@@ -1454,7 +1450,7 @@
 <span class="doccomment">/// A line-column pair representing the start or end of a `Span`.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This type is semver exempt and not exposed by default.</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">procmacro2_semver_exempt</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">span_locations</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LineColumn</span> {
     <span class="doccomment">/// The 1-indexed line in the source file on which the span starts or ends</span>
     <span class="doccomment">/// (inclusive).</span>
@@ -1553,8 +1549,8 @@
 
     <span class="doccomment">/// Get the starting line/column in the source file for this span.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// This method is semver exempt and not exposed by default.</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">procmacro2_semver_exempt</span>)]</span>
+    <span class="doccomment">/// This method requires the `&quot;span-locations&quot;` feature to be enabled.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">span_locations</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">LineColumn</span> {
         <span class="kw">let</span> <span class="ident">imp</span>::<span class="ident">LineColumn</span> { <span class="ident">line</span>, <span class="ident">column</span> } <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">start</span>();
         <span class="ident">LineColumn</span> {
@@ -1565,8 +1561,8 @@
 
     <span class="doccomment">/// Get the ending line/column in the source file for this span.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// This method is semver exempt and not exposed by default.</span>
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">procmacro2_semver_exempt</span>)]</span>
+    <span class="doccomment">/// This method requires the `&quot;span-locations&quot;` feature to be enabled.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">span_locations</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">LineColumn</span> {
         <span class="kw">let</span> <span class="ident">imp</span>::<span class="ident">LineColumn</span> { <span class="ident">line</span>, <span class="ident">column</span> } <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">end</span>();
         <span class="ident">LineColumn</span> {

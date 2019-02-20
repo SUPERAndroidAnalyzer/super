@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.13/src/capture.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>capture.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.14/src/capture.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>capture.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -274,6 +274,21 @@
 <span id="274">274</span>
 <span id="275">275</span>
 <span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">prelude</span>::<span class="ident">v1</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
@@ -506,7 +521,22 @@
         };
 
         <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">frame</span>) <span class="kw">in</span> <span class="ident">iter</span>.<span class="ident">enumerate</span>() {
-            <span class="kw">let</span> <span class="ident">ip</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">ip</span>();
+            <span class="comment">// To reduce TCB size in Sgx enclave, we do not want to implement symbol resolution functionality.</span>
+            <span class="comment">// Rather, we can print the offset of the address here, which could be later mapped to</span>
+            <span class="comment">// correct function.</span>
+            <span class="kw">let</span> <span class="ident">ip</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>;
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;sgx&quot;</span>)]</span>
+            {
+                <span class="ident">ip</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">wrapping_sub</span>(
+                    <span class="ident">frame</span>.<span class="ident">ip</span>() <span class="kw">as</span> <span class="kw">_</span>,
+                    <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">fortanix_sgx</span>::<span class="ident">mem</span>::<span class="ident">image_base</span>() <span class="kw">as</span> <span class="kw">_</span>,
+                ) <span class="kw">as</span> <span class="kw">_</span>;
+            }
+            <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;sgx&quot;</span>))]</span>
+            {
+                <span class="ident">ip</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">ip</span>();
+            }
+
             <span class="macro">write</span><span class="macro">!</span>(<span class="ident">fmt</span>, <span class="string">&quot;\n{:4}: &quot;</span>, <span class="ident">idx</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let</span> <span class="ident">symbols</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">frame</span>.<span class="ident">symbols</span> {

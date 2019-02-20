@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/libflate-0.1.19/src/gzip.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gzip.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/libflate-0.1.20/src/gzip.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>gzip.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1189,6 +1189,82 @@
 <span id="1189">1189</span>
 <span id="1190">1190</span>
 <span id="1191">1191</span>
+<span id="1192">1192</span>
+<span id="1193">1193</span>
+<span id="1194">1194</span>
+<span id="1195">1195</span>
+<span id="1196">1196</span>
+<span id="1197">1197</span>
+<span id="1198">1198</span>
+<span id="1199">1199</span>
+<span id="1200">1200</span>
+<span id="1201">1201</span>
+<span id="1202">1202</span>
+<span id="1203">1203</span>
+<span id="1204">1204</span>
+<span id="1205">1205</span>
+<span id="1206">1206</span>
+<span id="1207">1207</span>
+<span id="1208">1208</span>
+<span id="1209">1209</span>
+<span id="1210">1210</span>
+<span id="1211">1211</span>
+<span id="1212">1212</span>
+<span id="1213">1213</span>
+<span id="1214">1214</span>
+<span id="1215">1215</span>
+<span id="1216">1216</span>
+<span id="1217">1217</span>
+<span id="1218">1218</span>
+<span id="1219">1219</span>
+<span id="1220">1220</span>
+<span id="1221">1221</span>
+<span id="1222">1222</span>
+<span id="1223">1223</span>
+<span id="1224">1224</span>
+<span id="1225">1225</span>
+<span id="1226">1226</span>
+<span id="1227">1227</span>
+<span id="1228">1228</span>
+<span id="1229">1229</span>
+<span id="1230">1230</span>
+<span id="1231">1231</span>
+<span id="1232">1232</span>
+<span id="1233">1233</span>
+<span id="1234">1234</span>
+<span id="1235">1235</span>
+<span id="1236">1236</span>
+<span id="1237">1237</span>
+<span id="1238">1238</span>
+<span id="1239">1239</span>
+<span id="1240">1240</span>
+<span id="1241">1241</span>
+<span id="1242">1242</span>
+<span id="1243">1243</span>
+<span id="1244">1244</span>
+<span id="1245">1245</span>
+<span id="1246">1246</span>
+<span id="1247">1247</span>
+<span id="1248">1248</span>
+<span id="1249">1249</span>
+<span id="1250">1250</span>
+<span id="1251">1251</span>
+<span id="1252">1252</span>
+<span id="1253">1253</span>
+<span id="1254">1254</span>
+<span id="1255">1255</span>
+<span id="1256">1256</span>
+<span id="1257">1257</span>
+<span id="1258">1258</span>
+<span id="1259">1259</span>
+<span id="1260">1260</span>
+<span id="1261">1261</span>
+<span id="1262">1262</span>
+<span id="1263">1263</span>
+<span id="1264">1264</span>
+<span id="1265">1265</span>
+<span id="1266">1266</span>
+<span id="1267">1267</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! The encoder and decoder of the GZIP format.</span>
 <span class="doccomment">//!</span>
@@ -1413,9 +1489,10 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Examples</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// use libflate::gzip::{HeaderBuilder, ExtraField};</span>
+    <span class="doccomment">/// use libflate::gzip::{HeaderBuilder, ExtraField, ExtraSubField};</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// let extra = ExtraField{id: [0, 1], data: vec![2, 3, 4]};</span>
+    <span class="doccomment">/// let subfield = ExtraSubField{id: [0, 1], data: vec![2, 3, 4]};</span>
+    <span class="doccomment">/// let extra = ExtraField{subfields: vec![subfield]};</span>
     <span class="doccomment">/// let header = HeaderBuilder::new().extra_field(extra.clone()).finish();</span>
     <span class="doccomment">/// assert_eq!(header.extra_field(), Some(&amp;extra));</span>
     <span class="doccomment">/// ```</span>
@@ -1526,10 +1603,10 @@
             (<span class="ident">F_NAME</span>, <span class="self">self</span>.<span class="ident">filename</span>.<span class="ident">is_some</span>()),
             (<span class="ident">F_COMMENT</span>, <span class="self">self</span>.<span class="ident">comment</span>.<span class="ident">is_some</span>()),
         ]
-            .<span class="ident">iter</span>()
-            .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="number">1</span>)
-            .<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="number">0</span>)
-            .<span class="ident">sum</span>()
+        .<span class="ident">iter</span>()
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="number">1</span>)
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">e</span>.<span class="number">0</span>)
+        .<span class="ident">sum</span>()
     }
     <span class="kw">fn</span> <span class="ident">crc16</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">crc</span> <span class="op">=</span> <span class="ident">checksum</span>::<span class="ident">Crc32</span>::<span class="ident">new</span>();
@@ -1537,7 +1614,8 @@
         <span class="ident">Header</span> {
             <span class="ident">is_verified</span>: <span class="bool-val">false</span>,
             ..<span class="self">self</span>.<span class="ident">clone</span>()
-        }.<span class="ident">write_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)
+        }
+        .<span class="ident">write_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>)
         .<span class="ident">unwrap</span>();
         <span class="ident">crc</span>.<span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>);
         <span class="ident">crc</span>.<span class="ident">value</span>() <span class="kw">as</span> <span class="ident">u16</span>
@@ -1639,35 +1717,63 @@
 <span class="doccomment">/// Extra field of a GZIP header.</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExtraField</span> {
-    <span class="doccomment">/// ID of the extra field.</span>
-    <span class="kw">pub</span> <span class="ident">id</span>: [<span class="ident">u8</span>; <span class="number">2</span>],
-
     <span class="doccomment">/// Data of the extra field.</span>
-    <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">subfields</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ExtraSubField</span><span class="op">&gt;</span>,
 }
 <span class="kw">impl</span> <span class="ident">ExtraField</span> {
     <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>,
     {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">extra</span> <span class="op">=</span> <span class="ident">ExtraField</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">subfields</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="ident">data_size</span> <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()<span class="question-mark">?</span> <span class="kw">as</span> <span class="ident">usize</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">take</span>(<span class="ident">data_size</span> <span class="kw">as</span> <span class="ident">u64</span>);
+        <span class="kw">while</span> <span class="ident">reader</span>.<span class="ident">limit</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="ident">subfields</span>.<span class="ident">push</span>(<span class="ident">ExtraSubField</span>::<span class="ident">read_from</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">reader</span>)<span class="question-mark">?</span>);
+        }
+        <span class="prelude-val">Ok</span>(<span class="ident">ExtraField</span> { <span class="ident">subfields</span> })
+    }
+    <span class="kw">fn</span> <span class="ident">write_to</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">W</span>: <span class="ident">io</span>::<span class="ident">Write</span>,
+    {
+        <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">subfields</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">f</span><span class="op">|</span> <span class="ident">f</span>.<span class="ident">write_len</span>()).<span class="ident">sum</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>();
+        <span class="kw">if</span> <span class="ident">len</span> <span class="op">&gt;</span> <span class="number">0xFFFF</span> {
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">invalid_data_error</span><span class="macro">!</span>(<span class="string">&quot;extra field too long: {}&quot;</span>, <span class="ident">len</span>));
+        }
+        <span class="ident">writer</span>.<span class="ident">write_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>(<span class="ident">len</span> <span class="kw">as</span> <span class="ident">u16</span>)<span class="question-mark">?</span>;
+        <span class="kw">for</span> <span class="ident">f</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">subfields</span> {
+            <span class="ident">f</span>.<span class="ident">write_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">writer</span>)<span class="question-mark">?</span>;
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="doccomment">/// A sub field in the extra field of a GZIP header.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExtraSubField</span> {
+    <span class="doccomment">/// ID of the field.</span>
+    <span class="kw">pub</span> <span class="ident">id</span>: [<span class="ident">u8</span>; <span class="number">2</span>],
+
+    <span class="doccomment">/// Data of the field.</span>
+    <span class="kw">pub</span> <span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
+}
+<span class="kw">impl</span> <span class="ident">ExtraSubField</span> {
+    <span class="kw">fn</span> <span class="ident">read_from</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="ident">reader</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+    <span class="kw">where</span>
+        <span class="ident">R</span>: <span class="ident">io</span>::<span class="ident">Read</span>,
+    {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">field</span> <span class="op">=</span> <span class="ident">ExtraSubField</span> {
             <span class="ident">id</span>: [<span class="number">0</span>; <span class="number">2</span>],
             <span class="ident">data</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
         };
+
+        <span class="ident">reader</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">field</span>.<span class="ident">id</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">data_size</span> <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">read_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>()<span class="question-mark">?</span> <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="kw">if</span> <span class="ident">data_size</span> <span class="op">&lt;</span> <span class="number">2</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">invalid_data_error</span><span class="macro">!</span>(
-                <span class="string">&quot;extra field is too short: {}&quot;</span>,
-                <span class="ident">data_size</span>
-            ));
-        }
+        <span class="ident">field</span>.<span class="ident">data</span>.<span class="ident">resize</span>(<span class="ident">data_size</span>, <span class="number">0</span>);
+        <span class="ident">reader</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">field</span>.<span class="ident">data</span>)<span class="question-mark">?</span>;
 
-        <span class="ident">reader</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">extra</span>.<span class="ident">id</span>)<span class="question-mark">?</span>;
-
-        <span class="ident">extra</span>.<span class="ident">data</span>.<span class="ident">resize</span>(<span class="ident">data_size</span> <span class="op">-</span> <span class="number">2</span>, <span class="number">0</span>);
-        <span class="ident">reader</span>.<span class="ident">read_exact</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">extra</span>.<span class="ident">data</span>)<span class="question-mark">?</span>;
-
-        <span class="prelude-val">Ok</span>(<span class="ident">extra</span>)
+        <span class="prelude-val">Ok</span>(<span class="ident">field</span>)
     }
     <span class="kw">fn</span> <span class="ident">write_to</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">writer</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
     <span class="kw">where</span>
@@ -1677,6 +1783,9 @@
         <span class="ident">writer</span>.<span class="ident">write_u16</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u16</span>)<span class="question-mark">?</span>;
         <span class="ident">writer</span>.<span class="ident">write_all</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">data</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
+    }
+    <span class="kw">fn</span> <span class="ident">write_len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+        <span class="number">4</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">len</span>()
     }
 }
 
@@ -2306,7 +2415,7 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
     <span class="kw">use</span> <span class="ident">finish</span>::<span class="ident">AutoFinish</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::{<span class="self">self</span>, <span class="ident">Write</span>};
 
     <span class="kw">fn</span> <span class="ident">decode</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">new</span>(<span class="ident">buf</span>).<span class="ident">unwrap</span>();
@@ -2379,6 +2488,49 @@
     <span class="kw">fn</span> <span class="ident">issue_15_3</span>() {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="string">b&quot;\x1F\x8B\x08\xC1\x91\x28\x71\xDC\xF2\x2D\x34\x35\x31\x35\x34\x30\x70\x6E\x60\x35\x31\x32\x32\x33\x32\x33\x37\x32\x36\x38\xDD\x1C\xE5\x2A\xDD\xDD\xDD\x22\xDD\xDD\xDD\xDC\x88\x13\xC9\x40\x60\xA7&quot;</span>;
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[..]).<span class="ident">is_err</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">extra_field</span>() {
+        <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> <span class="ident">ExtraField</span> {
+            <span class="ident">subfields</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ExtraSubField</span> {
+                <span class="ident">id</span>: [<span class="number">0</span>, <span class="number">0x42</span>],
+                <span class="ident">data</span>: <span class="string">&quot;abc&quot;</span>.<span class="ident">into</span>(),
+            }],
+        };
+
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="ident">f</span>.<span class="ident">write_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>).<span class="ident">unwrap</span>();
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ExtraField</span>::<span class="ident">read_from</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..]).<span class="ident">unwrap</span>(), <span class="ident">f</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">encode_with_extra_field</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="ident">extra_field</span> <span class="op">=</span> <span class="ident">ExtraField</span> {
+            <span class="ident">subfields</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">ExtraSubField</span> {
+                <span class="ident">id</span>: [<span class="number">0</span>, <span class="number">0x42</span>],
+                <span class="ident">data</span>: <span class="string">&quot;abc&quot;</span>.<span class="ident">into</span>(),
+            }],
+        };
+        {
+            <span class="comment">// encode</span>
+            <span class="kw">let</span> <span class="ident">header</span> <span class="op">=</span> <span class="ident">HeaderBuilder</span>::<span class="ident">new</span>()
+                .<span class="ident">extra_field</span>(<span class="ident">extra_field</span>.<span class="ident">clone</span>())
+                .<span class="ident">finish</span>();
+
+            <span class="kw">let</span> <span class="ident">ops</span> <span class="op">=</span> <span class="ident">EncodeOptions</span>::<span class="ident">new</span>().<span class="ident">header</span>(<span class="ident">header</span>);
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">Encoder</span>::<span class="ident">with_options</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">ops</span>).<span class="ident">unwrap</span>();
+            <span class="macro">write</span><span class="macro">!</span>(<span class="ident">encoder</span>, <span class="string">&quot;hello world&quot;</span>).<span class="ident">unwrap</span>();
+            <span class="ident">encoder</span>.<span class="ident">finish</span>().<span class="ident">as_result</span>().<span class="ident">unwrap</span>();
+        }
+        {
+            <span class="comment">// decode</span>
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..]).<span class="ident">unwrap</span>();
+            <span class="ident">io</span>::<span class="ident">copy</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">decoder</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">io</span>::<span class="ident">sink</span>()).<span class="ident">unwrap</span>();
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">decoder</span>.<span class="ident">header</span>().<span class="ident">extra_field</span>(), <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">extra_field</span>));
+        }
     }
 }
 </pre></div>
