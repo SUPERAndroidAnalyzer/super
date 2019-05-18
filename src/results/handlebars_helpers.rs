@@ -306,7 +306,7 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
             renderer.write("<li>")?;
             let name = item
                 .get("name")
-                .and_then(|n| n.as_str())
+                .and_then(Value::as_str)
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
                 renderer.write(
@@ -323,11 +323,11 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
             } else {
                 let path = item
                     .get("path")
-                    .and_then(|n| n.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 let file_type = item
                     .get("type")
-                    .and_then(|n| n.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 renderer.write(
                     format!(

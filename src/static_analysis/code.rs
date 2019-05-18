@@ -2,6 +2,7 @@
 
 use std::{
     borrow::Borrow,
+    ffi::OsStr,
     fmt,
     fs::{self, DirEntry, File},
     path::Path,
@@ -169,7 +170,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
             continue 'check;
         }
 
-        let filename = path.as_ref().file_name().and_then(|f| f.to_str());
+        let filename = path.as_ref().file_name().and_then(OsStr::to_str);
 
         if let Some(f) = filename {
             if !rule.has_to_check(f) {

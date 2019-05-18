@@ -2367,6 +2367,7 @@ impl PermissionChecklist {
     }
 }
 
+#[allow(clippy::too_many_lines)]
 impl Default for PermissionChecklist {
     fn default() -> Self {
         Self {

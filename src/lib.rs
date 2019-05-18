@@ -330,7 +330,7 @@ pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
 
     // Initialize the logger.
     if let Ok(env_log) = env::var("RUST_LOG") {
-        builder.format(format).parse(&env_log).try_init()
+        builder.format(format).parse_filters(&env_log).try_init()
     } else {
         builder
             .format(format)

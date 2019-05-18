@@ -95,13 +95,13 @@ impl ConfigDeserializer {
             Value::Table(ref table) => {
                 let criticality_str = table
                     .get("criticality")
-                    .and_then(|v| v.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| {
                         de::Error::custom("criticality field not found for unknown permission")
                     })?;
                 let string = table
                     .get("description")
-                    .and_then(|v| v.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| {
                         de::Error::custom("description field not found for unknown permission")
                     })?;
