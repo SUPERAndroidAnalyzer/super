@@ -6,6 +6,7 @@
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
+  - `highlight.js`: 9.13 => **9.15**
   - `num_cpus`: 1.8 => **1.10**
   - `bytecount`: 0.4 => **0.5**, with SIMD
   - `colored`: 1.6 => **1.8**
