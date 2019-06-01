@@ -13,7 +13,6 @@ use xml::{
 
 use crate::{config::Config, criticality::Criticality};
 
-/// Configuration for the XML parser.
 lazy_static! {
     /// XML parser configuration.
     #[allow(missing_debug_implementations)]

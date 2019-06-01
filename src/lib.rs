@@ -354,7 +354,7 @@ mod tests {
     ///
     /// It checks the conversion both from and to strings, the comparisons between
     /// criticality levels and the debug format.
-    #[allow(clippy::cyclomatic_complexity)]
+    #[allow(clippy::cognitive_complexity)]
     #[test]
     fn it_criticality() {
         // Check "warnings" from strings

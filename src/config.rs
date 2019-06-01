@@ -602,7 +602,7 @@ mod tests {
     use crate::{criticality::Criticality, static_analysis::manifest};
 
     /// Test for the default configuration function.
-    #[allow(clippy::cyclomatic_complexity)]
+    #[allow(clippy::cognitive_complexity)]
     #[test]
     fn it_config() {
         // Create config object.
