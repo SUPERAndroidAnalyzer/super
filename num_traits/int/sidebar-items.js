@@ -1,1 +1,1 @@
-initSidebarItems({"trait":[["PrimInt",""]]});
+initSidebarItems({"trait":[["PrimInt","Generic trait for primitive integers."]]});

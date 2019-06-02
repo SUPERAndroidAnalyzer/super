@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.13/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.15/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../rustc_demangle/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -363,158 +363,6 @@
 <span id="363">363</span>
 <span id="364">364</span>
 <span id="365">365</span>
-<span id="366">366</span>
-<span id="367">367</span>
-<span id="368">368</span>
-<span id="369">369</span>
-<span id="370">370</span>
-<span id="371">371</span>
-<span id="372">372</span>
-<span id="373">373</span>
-<span id="374">374</span>
-<span id="375">375</span>
-<span id="376">376</span>
-<span id="377">377</span>
-<span id="378">378</span>
-<span id="379">379</span>
-<span id="380">380</span>
-<span id="381">381</span>
-<span id="382">382</span>
-<span id="383">383</span>
-<span id="384">384</span>
-<span id="385">385</span>
-<span id="386">386</span>
-<span id="387">387</span>
-<span id="388">388</span>
-<span id="389">389</span>
-<span id="390">390</span>
-<span id="391">391</span>
-<span id="392">392</span>
-<span id="393">393</span>
-<span id="394">394</span>
-<span id="395">395</span>
-<span id="396">396</span>
-<span id="397">397</span>
-<span id="398">398</span>
-<span id="399">399</span>
-<span id="400">400</span>
-<span id="401">401</span>
-<span id="402">402</span>
-<span id="403">403</span>
-<span id="404">404</span>
-<span id="405">405</span>
-<span id="406">406</span>
-<span id="407">407</span>
-<span id="408">408</span>
-<span id="409">409</span>
-<span id="410">410</span>
-<span id="411">411</span>
-<span id="412">412</span>
-<span id="413">413</span>
-<span id="414">414</span>
-<span id="415">415</span>
-<span id="416">416</span>
-<span id="417">417</span>
-<span id="418">418</span>
-<span id="419">419</span>
-<span id="420">420</span>
-<span id="421">421</span>
-<span id="422">422</span>
-<span id="423">423</span>
-<span id="424">424</span>
-<span id="425">425</span>
-<span id="426">426</span>
-<span id="427">427</span>
-<span id="428">428</span>
-<span id="429">429</span>
-<span id="430">430</span>
-<span id="431">431</span>
-<span id="432">432</span>
-<span id="433">433</span>
-<span id="434">434</span>
-<span id="435">435</span>
-<span id="436">436</span>
-<span id="437">437</span>
-<span id="438">438</span>
-<span id="439">439</span>
-<span id="440">440</span>
-<span id="441">441</span>
-<span id="442">442</span>
-<span id="443">443</span>
-<span id="444">444</span>
-<span id="445">445</span>
-<span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
-<span id="453">453</span>
-<span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
-<span id="459">459</span>
-<span id="460">460</span>
-<span id="461">461</span>
-<span id="462">462</span>
-<span id="463">463</span>
-<span id="464">464</span>
-<span id="465">465</span>
-<span id="466">466</span>
-<span id="467">467</span>
-<span id="468">468</span>
-<span id="469">469</span>
-<span id="470">470</span>
-<span id="471">471</span>
-<span id="472">472</span>
-<span id="473">473</span>
-<span id="474">474</span>
-<span id="475">475</span>
-<span id="476">476</span>
-<span id="477">477</span>
-<span id="478">478</span>
-<span id="479">479</span>
-<span id="480">480</span>
-<span id="481">481</span>
-<span id="482">482</span>
-<span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
-<span id="487">487</span>
-<span id="488">488</span>
-<span id="489">489</span>
-<span id="490">490</span>
-<span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
-<span id="495">495</span>
-<span id="496">496</span>
-<span id="497">497</span>
-<span id="498">498</span>
-<span id="499">499</span>
-<span id="500">500</span>
-<span id="501">501</span>
-<span id="502">502</span>
-<span id="503">503</span>
-<span id="504">504</span>
-<span id="505">505</span>
-<span id="506">506</span>
-<span id="507">507</span>
-<span id="508">508</span>
-<span id="509">509</span>
-<span id="510">510</span>
-<span id="511">511</span>
-<span id="512">512</span>
-<span id="513">513</span>
-<span id="514">514</span>
-<span id="515">515</span>
-<span id="516">516</span>
-<span id="517">517</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Demangle Rust compiler symbol names.</span>
 <span class="doccomment">//!</span>
@@ -548,24 +396,24 @@
 <span class="attribute">#[<span class="ident">macro_use</span>]</span>
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">std</span>;
 
+<span class="kw">mod</span> <span class="ident">legacy</span>;
+<span class="kw">mod</span> <span class="ident">v0</span>;
+
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
 
 <span class="doccomment">/// Representation of a demangled symbol name.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Demangle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">style</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">DemangleStyle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>,
     <span class="ident">original</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-    <span class="ident">inner</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
     <span class="ident">suffix</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
-    <span class="ident">valid</span>: <span class="ident">bool</span>,
-    <span class="doccomment">/// The number of ::-separated elements in the original name.</span>
-    <span class="ident">elements</span>: <span class="ident">usize</span>,
+}
+
+<span class="kw">enum</span> <span class="ident">DemangleStyle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="ident">Legacy</span>(<span class="ident">legacy</span>::<span class="ident">Demangle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>),
+    <span class="ident">V0</span>(<span class="ident">v0</span>::<span class="ident">Demangle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>),
 }
 
 <span class="doccomment">/// De-mangles a Rust symbol into a more readable version</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// All Rust symbols by default are mangled as they contain characters that</span>
-<span class="doccomment">/// cannot be represented in all object files. The mangling mechanism is similar</span>
-<span class="doccomment">/// to C++&#39;s, but Rust has a few specifics to handle items like lifetimes in</span>
-<span class="doccomment">/// symbols.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// This function will take a **mangled** symbol and return a value. When printed,</span>
 <span class="doccomment">/// the de-mangled version will be written. If the symbol does not look like</span>
@@ -580,24 +428,6 @@
 <span class="doccomment">/// assert_eq!(demangle(&quot;_ZN3foo3barE&quot;).to_string(), &quot;foo::bar&quot;);</span>
 <span class="doccomment">/// assert_eq!(demangle(&quot;foo&quot;).to_string(), &quot;foo&quot;);</span>
 <span class="doccomment">/// ```</span>
-
-<span class="comment">// All Rust symbols are in theory lists of &quot;::&quot;-separated identifiers. Some</span>
-<span class="comment">// assemblers, however, can&#39;t handle these characters in symbol names. To get</span>
-<span class="comment">// around this, we use C++-style mangling. The mangling method is:</span>
-<span class="comment">//</span>
-<span class="comment">// 1. Prefix the symbol with &quot;_ZN&quot;</span>
-<span class="comment">// 2. For each element of the path, emit the length plus the element</span>
-<span class="comment">// 3. End the path with &quot;E&quot;</span>
-<span class="comment">//</span>
-<span class="comment">// For example, &quot;_ZN4testE&quot; =&gt; &quot;test&quot; and &quot;_ZN3foo3barE&quot; =&gt; &quot;foo::bar&quot;.</span>
-<span class="comment">//</span>
-<span class="comment">// We&#39;re the ones printing our backtraces, so we can&#39;t rely on anything else to</span>
-<span class="comment">// demangle our symbols. It&#39;s *much* nicer to look at demangled symbols, so</span>
-<span class="comment">// this function is implemented to give us nice pretty output.</span>
-<span class="comment">//</span>
-<span class="comment">// Note that this demangler isn&#39;t quite as fancy as it could be. We have lots</span>
-<span class="comment">// of other information in our symbols like hashes, version, type information,</span>
-<span class="comment">// etc. Additionally, this doesn&#39;t handle glue symbols at all.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">demangle</span>(<span class="kw-2">mut</span> <span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">Demangle</span> {
     <span class="comment">// During ThinLTO LLVM may import and rename internal symbols, so strip out</span>
     <span class="comment">// those endings first as they&#39;re one of the last manglings applied to symbol</span>
@@ -629,67 +459,17 @@
         }
     }
 
-    <span class="comment">// First validate the symbol. If it doesn&#39;t look like anything we&#39;re</span>
-    <span class="comment">// expecting, we just print it literally. Note that we must handle non-Rust</span>
-    <span class="comment">// symbols because we could have any function in the backtrace.</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">valid</span> <span class="op">=</span> <span class="bool-val">true</span>;
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">s</span>;
-    <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">4</span> <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">starts_with</span>(<span class="string">&quot;_ZN&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&#39;E&#39;</span>) {
-        <span class="ident">inner</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="number">3</span>..<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>];
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">3</span> <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">starts_with</span>(<span class="string">&quot;ZN&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&#39;E&#39;</span>) {
-        <span class="comment">// On Windows, dbghelp strips leading underscores, so we accept &quot;ZN...E&quot;</span>
-        <span class="comment">// form too.</span>
-        <span class="ident">inner</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="number">2</span>..<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>];
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">5</span> <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">starts_with</span>(<span class="string">&quot;__ZN&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">s</span>.<span class="ident">ends_with</span>(<span class="string">&#39;E&#39;</span>) {
-        <span class="comment">// On OSX, symbols are prefixed with an extra _</span>
-        <span class="ident">inner</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="number">4</span>..<span class="ident">s</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>];
-    } <span class="kw">else</span> {
-        <span class="ident">valid</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    }
-
-    <span class="comment">// only work with ascii text</span>
-    <span class="kw">if</span> <span class="ident">inner</span>.<span class="ident">bytes</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span> <span class="op">&amp;</span> <span class="number">0x80</span> <span class="op">!=</span> <span class="number">0</span>) {
-        <span class="ident">valid</span> <span class="op">=</span> <span class="bool-val">false</span>;
-    }
-
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">elements</span> <span class="op">=</span> <span class="number">0</span>;
-    <span class="kw">if</span> <span class="ident">valid</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">inner</span>.<span class="ident">chars</span>().<span class="ident">peekable</span>();
-        <span class="kw">while</span> <span class="ident">valid</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">i</span> <span class="op">=</span> <span class="number">0usize</span>;
-            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">c</span>) <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">peek</span>() {
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">c</span>.<span class="ident">is_digit</span>(<span class="number">10</span>) {
-                    <span class="kw">break</span>
-                }
-                <span class="ident">chars</span>.<span class="ident">next</span>();
-                <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">i</span>.<span class="ident">checked_mul</span>(<span class="number">10</span>)
-                    .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="ident">i</span>.<span class="ident">checked_add</span>(<span class="ident">c</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">-</span> <span class="string">&#39;0&#39;</span> <span class="kw">as</span> <span class="ident">usize</span>));
-                <span class="ident">i</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">next</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="ident">i</span>,
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
-                        <span class="ident">valid</span> <span class="op">=</span> <span class="bool-val">false</span>;
-                        <span class="kw">break</span>
-                    }
-                };
-            }
-
-            <span class="kw">if</span> <span class="ident">i</span> <span class="op">==</span> <span class="number">0</span> {
-                <span class="ident">valid</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">next</span>().<span class="ident">is_none</span>();
-                <span class="kw">break</span>;
-            } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">chars</span>.<span class="ident">by_ref</span>().<span class="ident">take</span>(<span class="ident">i</span>).<span class="ident">count</span>() <span class="op">!=</span> <span class="ident">i</span> {
-                <span class="ident">valid</span> <span class="op">=</span> <span class="bool-val">false</span>;
-            } <span class="kw">else</span> {
-                <span class="ident">elements</span> <span class="op">+=</span> <span class="number">1</span>;
-            }
-        }
-    }
-
+    <span class="kw">let</span> <span class="ident">style</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">legacy</span>::<span class="ident">demangle</span>(<span class="ident">s</span>) {
+        <span class="prelude-val">Ok</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">DemangleStyle</span>::<span class="ident">Legacy</span>(<span class="ident">d</span>)),
+        <span class="prelude-val">Err</span>(()) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">v0</span>::<span class="ident">demangle</span>(<span class="ident">s</span>) {
+            <span class="prelude-val">Ok</span>(<span class="ident">d</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">DemangleStyle</span>::<span class="ident">V0</span>(<span class="ident">d</span>)),
+            <span class="prelude-val">Err</span>(<span class="ident">v0</span>::<span class="ident">Invalid</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+        },
+    };
     <span class="ident">Demangle</span> {
-        <span class="ident">inner</span>: <span class="ident">inner</span>,
-        <span class="ident">suffix</span>: <span class="ident">suffix</span>,
-        <span class="ident">valid</span>: <span class="ident">valid</span>,
-        <span class="ident">elements</span>: <span class="ident">elements</span>,
+        <span class="ident">style</span>: <span class="ident">style</span>,
         <span class="ident">original</span>: <span class="ident">s</span>,
+        <span class="ident">suffix</span>: <span class="ident">suffix</span>,
     }
 }
 
@@ -715,7 +495,7 @@
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_demangle</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Demangle</span>, <span class="ident">TryDemangleError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">sym</span> <span class="op">=</span> <span class="ident">demangle</span>(<span class="ident">s</span>);
-    <span class="kw">if</span> <span class="ident">sym</span>.<span class="ident">valid</span> {
+    <span class="kw">if</span> <span class="ident">sym</span>.<span class="ident">style</span>.<span class="ident">is_some</span>() {
         <span class="prelude-val">Ok</span>(<span class="ident">sym</span>)
     } <span class="kw">else</span> {
         <span class="prelude-val">Err</span>(<span class="ident">TryDemangleError</span> { <span class="ident">_priv</span>: () })
@@ -727,11 +507,6 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_str</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span> {
         <span class="self">self</span>.<span class="ident">original</span>
     }
-}
-
-<span class="comment">// Rust hashes are hex digits with an `h` prepended.</span>
-<span class="kw">fn</span> <span class="ident">is_rust_hash</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-    <span class="ident">s</span>.<span class="ident">starts_with</span>(<span class="string">&#39;h&#39;</span>) <span class="op">&amp;&amp;</span> <span class="ident">s</span>[<span class="number">1</span>..].<span class="ident">chars</span>().<span class="ident">all</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_digit</span>(<span class="number">16</span>))
 }
 
 <span class="kw">fn</span> <span class="ident">is_symbol_like</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
@@ -765,95 +540,16 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Demangle</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="comment">// Alright, let&#39;s do this.</span>
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">valid</span> {
-            <span class="kw">return</span> <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">original</span>);
-        }
-
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>;
-        <span class="kw">for</span> <span class="ident">element</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">elements</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rest</span> <span class="op">=</span> <span class="ident">inner</span>;
-            <span class="kw">while</span> <span class="ident">rest</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">is_digit</span>(<span class="number">10</span>) {
-                <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="number">1</span>..];
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">style</span> {
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">original</span>)),
+            <span class="prelude-val">Some</span>(<span class="ident">DemangleStyle</span>::<span class="ident">Legacy</span>(<span class="kw-2">ref</span> <span class="ident">d</span>)) <span class="op">=&gt;</span> {
+                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">fmt</span>::<span class="ident">Display</span>::<span class="ident">fmt</span>(<span class="ident">d</span>, <span class="ident">f</span>))
             }
-            <span class="kw">let</span> <span class="ident">i</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">inner</span>[..(<span class="ident">inner</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">rest</span>.<span class="ident">len</span>())].<span class="ident">parse</span>().<span class="ident">unwrap</span>();
-            <span class="ident">inner</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="ident">i</span>..];
-            <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[..<span class="ident">i</span>];
-            <span class="comment">// Skip printing the hash if alternate formatting</span>
-            <span class="comment">// was requested.</span>
-            <span class="kw">if</span> <span class="ident">f</span>.<span class="ident">alternate</span>() <span class="op">&amp;&amp;</span> <span class="ident">element</span><span class="op">+</span><span class="number">1</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">elements</span> <span class="op">&amp;&amp;</span> <span class="ident">is_rust_hash</span>(<span class="kw-2">&amp;</span><span class="ident">rest</span>) {
-                <span class="kw">break</span>;
-            }
-            <span class="kw">if</span> <span class="ident">element</span> <span class="op">!=</span> <span class="number">0</span> {
-                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;::&quot;</span>));
-            }
-            <span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="string">&quot;_$&quot;</span>) {
-                <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="number">1</span>..];
-            }
-            <span class="kw">while</span> <span class="op">!</span><span class="ident">rest</span>.<span class="ident">is_empty</span>() {
-                <span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="string">&#39;.&#39;</span>) {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="string">&#39;.&#39;</span>) <span class="op">=</span> <span class="ident">rest</span>[<span class="number">1</span>..].<span class="ident">chars</span>().<span class="ident">next</span>() {
-                        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;::&quot;</span>));
-                        <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="number">2</span>..];
-                    } <span class="kw">else</span> {
-                        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;.&quot;</span>));
-                        <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="number">1</span>..];
-                    }
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="string">&#39;$&#39;</span>) {
-                    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">demangle</span> {
-                        ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>:<span class="ident">expr</span> <span class="op">=&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">demangled</span>:<span class="ident">expr</span>,)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ({
-                            $(<span class="kw">if</span> <span class="ident">rest</span>.<span class="ident">starts_with</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>) {
-                                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">demangled</span>));
-                                <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">pat</span>.<span class="ident">len</span>()..];
-                              } <span class="kw">else</span>)<span class="op">*</span>
-                            {
-                                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="ident">rest</span>));
-                                <span class="kw">break</span>;
-                            }
-
-                        })
-                    }
-
-                    <span class="comment">// see src/librustc/back/link.rs for these mappings</span>
-                    <span class="macro">demangle</span><span class="macro">!</span> {
-                        <span class="string">&quot;$SP$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;@&quot;</span>,
-                        <span class="string">&quot;$BP$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;*&quot;</span>,
-                        <span class="string">&quot;$RF$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;&amp;&quot;</span>,
-                        <span class="string">&quot;$LT$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;&lt;&quot;</span>,
-                        <span class="string">&quot;$GT$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;&gt;&quot;</span>,
-                        <span class="string">&quot;$LP$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;(&quot;</span>,
-                        <span class="string">&quot;$RP$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;)&quot;</span>,
-                        <span class="string">&quot;$C$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;,&quot;</span>,
-
-                        <span class="comment">// in theory we can demangle any Unicode code point, but</span>
-                        <span class="comment">// for simplicity we just catch the common ones.</span>
-                        <span class="string">&quot;$u7e$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;~&quot;</span>,
-                        <span class="string">&quot;$u20$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot; &quot;</span>,
-                        <span class="string">&quot;$u27$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;&#39;&quot;</span>,
-                        <span class="string">&quot;$u3d$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;=&quot;</span>,
-                        <span class="string">&quot;$u5b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;[&quot;</span>,
-                        <span class="string">&quot;$u5d$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;]&quot;</span>,
-                        <span class="string">&quot;$u7b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;{&quot;</span>,
-                        <span class="string">&quot;$u7d$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;}&quot;</span>,
-                        <span class="string">&quot;$u3b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;;&quot;</span>,
-                        <span class="string">&quot;$u2b$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;+&quot;</span>,
-                        <span class="string">&quot;$u21$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;!&quot;</span>,
-                        <span class="string">&quot;$u22$&quot;</span> <span class="op">=&gt;</span> <span class="string">&quot;\&quot;&quot;</span>,
-                    }
-                } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">rest</span>.<span class="ident">char_indices</span>().<span class="ident">find</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="kw">_</span>, <span class="ident">c</span>)<span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;$&#39;</span> <span class="op">||</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;.&#39;</span>) {
-                        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="ident">rest</span>.<span class="ident">len</span>(),
-                        <span class="prelude-val">Some</span>((<span class="ident">i</span>, <span class="kw">_</span>)) <span class="op">=&gt;</span> <span class="ident">i</span>,
-                    };
-                    <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="kw-2">&amp;</span><span class="ident">rest</span>[..<span class="ident">idx</span>]));
-                    <span class="ident">rest</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">rest</span>[<span class="ident">idx</span>..];
-                }
+            <span class="prelude-val">Some</span>(<span class="ident">DemangleStyle</span>::<span class="ident">V0</span>(<span class="kw-2">ref</span> <span class="ident">d</span>)) <span class="op">=&gt;</span> {
+                <span class="macro">try</span><span class="macro">!</span>(<span class="ident">fmt</span>::<span class="ident">Display</span>::<span class="ident">fmt</span>(<span class="ident">d</span>, <span class="ident">f</span>))
             }
         }
-
-        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">suffix</span>));
-
-        <span class="prelude-val">Ok</span>(())
+        <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">suffix</span>)
     }
 }
 

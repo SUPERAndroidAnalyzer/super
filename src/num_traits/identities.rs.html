@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/num-traits-0.2.6/src/identities.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>identities.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/num-traits-0.2.8/src/identities.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>identities.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../num_traits/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -183,21 +183,42 @@
 <span id="183">183</span>
 <span id="184">184</span>
 <span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">num</span>::<span class="ident">Wrapping</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">ops</span>::{<span class="ident">Add</span>, <span class="ident">Mul</span>};
 
 <span class="doccomment">/// Defines an additive identity element for `Self`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Laws</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```{.text}</span>
+<span class="doccomment">/// a + 0 = a       ∀ a ∈ Self</span>
+<span class="doccomment">/// 0 + a = a       ∀ a ∈ Self</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Zero</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Returns the additive identity element of `Self`, `0`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Laws</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```{.text}</span>
-    <span class="doccomment">/// a + 0 = a       ∀ a ∈ Self</span>
-    <span class="doccomment">/// 0 + a = a       ∀ a ∈ Self</span>
-    <span class="doccomment">/// ```</span>
-    <span class="doccomment">///</span>
     <span class="doccomment">/// # Purity</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function should return the same result at all times regardless of</span>
@@ -205,6 +226,11 @@
     <span class="doccomment">/// `static mut`s.</span>
     <span class="comment">// This cannot be an associated constant, because of bignums.</span>
     <span class="kw">fn</span> <span class="ident">zero</span>() <span class="op">-&gt;</span> <span class="self">Self</span>;
+
+    <span class="doccomment">/// Sets `self` to the additive identity element of `Self`, `0`.</span>
+    <span class="kw">fn</span> <span class="ident">set_zero</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="ident">Zero</span>::<span class="ident">zero</span>();
+    }
 
     <span class="doccomment">/// Returns `true` if `self` is equal to the additive identity.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -252,21 +278,26 @@
     <span class="kw">fn</span> <span class="ident">is_zero</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">is_zero</span>()
     }
+
+    <span class="kw">fn</span> <span class="ident">set_zero</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">set_zero</span>();
+    }
+
     <span class="kw">fn</span> <span class="ident">zero</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">Wrapping</span>(<span class="ident">T</span>::<span class="ident">zero</span>())
     }
 }
 
 <span class="doccomment">/// Defines a multiplicative identity element for `Self`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Laws</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```{.text}</span>
+<span class="doccomment">/// a * 1 = a       ∀ a ∈ Self</span>
+<span class="doccomment">/// 1 * a = a       ∀ a ∈ Self</span>
+<span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">One</span>: <span class="ident">Sized</span> <span class="op">+</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Returns the multiplicative identity element of `Self`, `1`.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// # Laws</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// ```{.text}</span>
-    <span class="doccomment">/// a * 1 = a       ∀ a ∈ Self</span>
-    <span class="doccomment">/// 1 * a = a       ∀ a ∈ Self</span>
-    <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Purity</span>
     <span class="doccomment">///</span>
@@ -275,6 +306,11 @@
     <span class="doccomment">/// `static mut`s.</span>
     <span class="comment">// This cannot be an associated constant, because of bignums.</span>
     <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-&gt;</span> <span class="self">Self</span>;
+
+    <span class="doccomment">/// Sets `self` to the multiplicative identity element of `Self`, `1`.</span>
+    <span class="kw">fn</span> <span class="ident">set_one</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="ident">One</span>::<span class="ident">one</span>();
+    }
 
     <span class="doccomment">/// Returns `true` if `self` is equal to the multiplicative identity.</span>
     <span class="doccomment">///</span>
@@ -296,6 +332,10 @@
             <span class="attribute">#[<span class="ident">inline</span>]</span>
             <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
                 <span class="macro-nonterminal">$</span><span class="macro-nonterminal">v</span>
+            }
+            <span class="attribute">#[<span class="ident">inline</span>]</span>
+            <span class="kw">fn</span> <span class="ident">is_one</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+                <span class="kw-2">*</span><span class="self">self</span> <span class="op">==</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">v</span>
             }
         }
     };
@@ -324,6 +364,10 @@
 <span class="kw">where</span>
     <span class="ident">Wrapping</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">Wrapping</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
 {
+    <span class="kw">fn</span> <span class="ident">set_one</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">set_one</span>();
+    }
+
     <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
         <span class="ident">Wrapping</span>(<span class="ident">T</span>::<span class="ident">one</span>())
     }

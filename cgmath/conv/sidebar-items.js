@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["array2","Force a conversion into a 2-element array."],["array2x2","Force a conversion into a 2x2-element array."],["array3","Force a conversion into a 3-element array."],["array3x3","Force a conversion into a 3x3-element array."],["array4","Force a conversion into a 4-element array."],["array4x4","Force a conversion into a 4x4-element array."]]});

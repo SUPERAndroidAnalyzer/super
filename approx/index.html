@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `approx` crate."><meta name="keywords" content="rust, rustlang, rust-lang, approx"><title>approx - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../approx/index.html'><img src='../rust-logo.png' alt='logo' width='100'></a><p class='location'>Crate approx</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all approx's items</p></a><div class="block items"><ul><li><a href="#macros">Macros</a></li><li><a href="#structs">Structs</a></li><li><a href="#traits">Traits</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'approx', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/approx/lib.rs.html#15-415' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>approx</a></span></h1><div class='docblock'><p>A crate that provides facilities for testing the approximate equality of floating-point
+based types, using either relative difference, or units in the last place (ULPs)
+comparisons.</p>
+<p>You can also use the <code>approx_{eq, ne}!</code> <code>assert_approx_{eq, ne}!</code> macros to test for equality
+using a more positional style.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">approx</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">f64</span>;
+
+<span class="macro">relative_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);
+<span class="macro">relative_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>);
+<span class="macro">relative_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">max_relative</span> <span class="op">=</span> <span class="number">1.0</span>);
+<span class="macro">relative_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>, <span class="ident">max_relative</span> <span class="op">=</span> <span class="number">1.0</span>);
+<span class="macro">relative_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">max_relative</span> <span class="op">=</span> <span class="number">1.0</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>);
+
+<span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);
+<span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>);
+<span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">max_ulps</span> <span class="op">=</span> <span class="number">4</span>);
+<span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>, <span class="ident">max_ulps</span> <span class="op">=</span> <span class="number">4</span>);
+<span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="ident">max_ulps</span> <span class="op">=</span> <span class="number">4</span>, <span class="ident">epsilon</span> <span class="op">=</span> <span class="ident">f64</span>::<span class="ident">EPSILON</span>);</pre></div>
+<h2 id="implementing-approximate-equality-for-custom-types" class="section-header"><a href="#implementing-approximate-equality-for-custom-types">Implementing approximate equality for custom types</a></h2>
+<p>The <code>ApproxEq</code> trait allows approximate equalities to be implemented on types, based on the
+fundamental floating point implementations.</p>
+<p>For example, we might want to be able to do approximate assertions on a complex number type:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="attribute">#[<span class="ident">macro_use</span>]</span>
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">approx</span>;
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Complex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="ident">x</span>: <span class="ident">T</span>,
+    <span class="ident">i</span>: <span class="ident">T</span>,
+}
+
+<span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">Complex</span> { <span class="ident">x</span>: <span class="number">1.2</span>, <span class="ident">i</span>: <span class="number">2.3</span> };
+
+<span class="macro">assert_relative_eq</span><span class="macro">!</span>(<span class="ident">x</span>, <span class="ident">x</span>);
+<span class="macro">assert_ulps_eq</span><span class="macro">!</span>(<span class="ident">x</span>, <span class="ident">x</span>, <span class="ident">max_ulps</span> <span class="op">=</span> <span class="number">4</span>);</pre></div>
+<p>To do this we can implement <code>ApproxEq</code> generically in terms of a type parameter that also
+implements <code>ApproxEq</code>. This means that we can make comparisons for either <code>Complex&lt;f32&gt;</code> or
+<code>Complex&lt;f64&gt;</code>:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ApproxEq</span><span class="op">&gt;</span> <span class="ident">ApproxEq</span> <span class="kw">for</span> <span class="ident">Complex</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span>
+    <span class="ident">T</span>::<span class="ident">Epsilon</span>: <span class="ident">Copy</span>,
+{
+    <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">T</span>::<span class="ident">Epsilon</span>;
+
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
+        <span class="ident">T</span>::<span class="ident">default_epsilon</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
+        <span class="ident">T</span>::<span class="ident">default_max_relative</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="ident">T</span>::<span class="ident">default_max_ulps</span>()
+    }
+
+    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">T</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">T</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">i</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">T</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>) <span class="op">&amp;&amp;</span>
+        <span class="ident">T</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">i</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>)
+    }
+}</pre></div>
+<h1 id="references" class="section-header"><a href="#references">References</a></h1>
+<p>Floating point is hard! Thanks goes to these links for helping to make things a <em>little</em>
+easier to understand:</p>
+<ul>
+<li>[Comparing Floating Point Numbers, 2012 Edition]
+(https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/)</li>
+<li><a href="http://floating-point-gui.de/errors/comparison/">The Floating Point Guide - Comparison</a></li>
+<li>[What Every Computer Scientist Should Know About Floating-Point Arithmetic]
+(https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)</li>
+</ul>
+</div><h2 id='macros' class='section-header'><a href="#macros">Macros</a></h2>
+<table><tr class='module-item'><td><a class="macro" href="macro.assert_relative_eq.html" title='approx::assert_relative_eq macro'>assert_relative_eq</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="macro" href="macro.assert_relative_ne.html" title='approx::assert_relative_ne macro'>assert_relative_ne</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="macro" href="macro.assert_ulps_eq.html" title='approx::assert_ulps_eq macro'>assert_ulps_eq</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="macro" href="macro.assert_ulps_ne.html" title='approx::assert_ulps_ne macro'>assert_ulps_ne</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="macro" href="macro.relative_eq.html" title='approx::relative_eq macro'>relative_eq</a></td><td class='docblock-short'><p>Predicate for testing the approximate equality of two values.</p>
+</td></tr><tr class='module-item'><td><a class="macro" href="macro.relative_ne.html" title='approx::relative_ne macro'>relative_ne</a></td><td class='docblock-short'><p>Predicate for testing the approximate inequality of two values.</p>
+</td></tr><tr class='module-item'><td><a class="macro" href="macro.ulps_eq.html" title='approx::ulps_eq macro'>ulps_eq</a></td><td class='docblock-short'><p>Predicate for testing the approximate equality of two values using a maximum ULPs (Units
+in Last Place).</p>
+</td></tr><tr class='module-item'><td><a class="macro" href="macro.ulps_ne.html" title='approx::ulps_ne macro'>ulps_ne</a></td><td class='docblock-short'><p>Predicate for testing the approximate inequality of two values using a maximum ULPs (Units
+in Last Place).</p>
+</td></tr></table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.Relative.html" title='approx::Relative struct'>Relative</a></td><td class='docblock-short'><p>The requisite parameters for testing for approximate equality.</p>
+</td></tr><tr class='module-item'><td><a class="struct" href="struct.Ulps.html" title='approx::Ulps struct'>Ulps</a></td><td class='docblock-short'><p>The requisite parameters for testing for approximate equality.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.ApproxEq.html" title='approx::ApproxEq trait'>ApproxEq</a></td><td class='docblock-short'><p>Equality comparisons based on floating point tolerances.</p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "approx";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

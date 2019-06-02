@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.7.0/src/control.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>control.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.8.0/src/control.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>control.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../colored/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -357,12 +357,62 @@
 <span id="357">357</span>
 <span id="358">358</span>
 <span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A couple of functions to enable and disable coloring.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">default</span>::<span class="ident">Default</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">env</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+<span class="kw">use</span> <span class="ident">winconsole</span>::{<span class="ident">console</span>, <span class="ident">errors</span>::<span class="ident">WinResult</span>};
+
+<span class="doccomment">/// Sets a flag to the console to use a virtual terminal environment.</span>
+<span class="doccomment">/// This is primarily used for Windows 10 environments which will not correctly colorize the outputs based on ansi escape codes.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Notes</span>
+<span class="doccomment">/// &gt; Only available to `Windows` build targets.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">/// ```rust</span>
+<span class="doccomment">/// use colored::*;</span>
+<span class="doccomment">/// control::set_virtual_terminal(false);</span>
+<span class="doccomment">/// println!(&quot;{}&quot;, &quot;bright cyan&quot;.bright_cyan());	// will print &#39;[96mbright cyan[0m&#39; on windows 10</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// control::set_virtual_terminal(true);</span>
+<span class="doccomment">/// println!(&quot;{}&quot;, &quot;bright cyan&quot;.bright_cyan());	// will print correctly</span>
+<span class="doccomment">/// ```</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_virtual_terminal</span>(<span class="ident">use_virtual</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">WinResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mode</span> <span class="op">=</span> <span class="ident">console</span>::<span class="ident">get_output_mode</span>()<span class="question-mark">?</span>;
+	<span class="ident">mode</span>.<span class="ident">VirtualTerminalProcessing</span> <span class="op">=</span> <span class="ident">use_virtual</span>;
+	<span class="ident">console</span>::<span class="ident">set_output_mode</span>(<span class="ident">mode</span>)<span class="question-mark">?</span>;
+	<span class="prelude-val">Ok</span>(())
+}
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShouldColorize</span> {
     <span class="ident">clicolor</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,

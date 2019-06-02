@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/block-padding-0.1.3/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../block_padding/index.html'><img src='https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/block-padding-0.1.4/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../block_padding/index.html'><img src='https://raw.githubusercontent.com/RustCrypto/meta/master/logo_small.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -274,6 +274,7 @@
 <span id="274">274</span>
 <span id="275">275</span>
 <span id="276">276</span>
+<span id="277">277</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Padding and unpadding of messages divided into blocks.</span>
 <span class="doccomment">//!</span>
@@ -308,21 +309,17 @@
 
     <span class="doccomment">/// Pads message with length `pos` in the provided buffer.</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// `&amp;buf[..pos]` is percieved as the message, buffer must contain at</span>
-    <span class="doccomment">/// least one block of leftover space, i.e. `buf.len() - pos &gt;= block_size`</span>
-    <span class="doccomment">/// must be true. Otherwise method will return `PadError`.</span>
+    <span class="doccomment">/// `&amp;buf[..pos]` is perceived as the message, the buffer must contain</span>
+    <span class="doccomment">/// enough leftover space for padding: `block_size - (pos % block_size)`</span>
+    <span class="doccomment">/// extra bytes must be available. Otherwise method will return</span>
+    <span class="doccomment">/// `PadError`.</span>
     <span class="kw">fn</span> <span class="ident">pad</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>], <span class="ident">pos</span>: <span class="ident">usize</span>, <span class="ident">block_size</span>: <span class="ident">usize</span>)
         <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>], <span class="ident">PadError</span><span class="op">&gt;</span>
     {
-        <span class="kw">if</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">pos</span> <span class="op">&lt;</span> <span class="ident">block_size</span> { <span class="prelude-val">Err</span>(<span class="ident">PadError</span>)<span class="question-mark">?</span> }
-        <span class="kw">if</span> <span class="ident">pos</span> <span class="op">%</span> <span class="ident">block_size</span> <span class="op">==</span> <span class="number">0</span> {
-            <span class="self">Self</span>::<span class="ident">pad_block</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[<span class="ident">pos</span>..<span class="ident">pos</span> <span class="op">+</span> <span class="ident">block_size</span>], <span class="number">0</span>)<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="ident">pos</span><span class="op">+</span><span class="ident">block_size</span>])
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">bs</span> <span class="op">=</span> <span class="ident">block_size</span> <span class="op">*</span> (<span class="ident">pos</span> <span class="op">/</span> <span class="ident">block_size</span>);
-            <span class="self">Self</span>::<span class="ident">pad_block</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[<span class="ident">bs</span>..<span class="ident">bs</span><span class="op">+</span><span class="ident">block_size</span>], <span class="ident">pos</span> <span class="op">-</span> <span class="ident">bs</span>)<span class="question-mark">?</span>;
-            <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="ident">bs</span><span class="op">+</span><span class="ident">block_size</span>])
-        }
+        <span class="kw">let</span> <span class="ident">bs</span> <span class="op">=</span> <span class="ident">block_size</span> <span class="op">*</span> (<span class="ident">pos</span> <span class="op">/</span> <span class="ident">block_size</span>);
+        <span class="kw">if</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="ident">bs</span> <span class="op">||</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">bs</span> <span class="op">&lt;</span> <span class="ident">block_size</span> { <span class="prelude-val">Err</span>(<span class="ident">PadError</span>)<span class="question-mark">?</span> }
+        <span class="self">Self</span>::<span class="ident">pad_block</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[<span class="ident">bs</span>..<span class="ident">bs</span><span class="op">+</span><span class="ident">block_size</span>], <span class="ident">pos</span> <span class="op">-</span> <span class="ident">bs</span>)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="ident">bs</span><span class="op">+</span><span class="ident">block_size</span>])
     }
 
     <span class="doccomment">/// Unpad given `data` by truncating it according to the used padding.</span>
@@ -400,7 +397,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// let msg = b&quot;test&quot;;</span>
 <span class="doccomment">/// let n = msg.len();</span>
-<span class="doccomment">/// let mut buffer = [0xff; 16];</span>
+<span class="doccomment">/// let mut buffer = [0xff; 8];</span>
 <span class="doccomment">/// buffer[..n].copy_from_slice(msg);</span>
 <span class="doccomment">/// let padded_msg = Pkcs7::pad(&amp;mut buffer, n, 8).unwrap();</span>
 <span class="doccomment">/// assert_eq!(padded_msg, b&quot;test\x04\x04\x04\x04&quot;);</span>
@@ -410,11 +407,16 @@
 <span class="doccomment">/// # use block_padding::{Pkcs7, Padding};</span>
 <span class="doccomment">/// # let msg = b&quot;test&quot;;</span>
 <span class="doccomment">/// # let n = msg.len();</span>
-<span class="doccomment">/// # let mut buffer = [0xff; 16];</span>
+<span class="doccomment">/// # let mut buffer = [0xff; 8];</span>
 <span class="doccomment">/// # buffer[..n].copy_from_slice(msg);</span>
 <span class="doccomment">/// let padded_msg = Pkcs7::pad(&amp;mut buffer, n, 2).unwrap();</span>
 <span class="doccomment">/// assert_eq!(padded_msg, b&quot;test\x02\x02&quot;);</span>
 <span class="doccomment">/// assert_eq!(Pkcs7::unpad(&amp;padded_msg).unwrap(), msg);</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// # use block_padding::{Pkcs7, Padding};</span>
+<span class="doccomment">/// let mut buffer = [0xff; 5];</span>
+<span class="doccomment">/// assert!(Pkcs7::pad(&amp;mut buffer, 4, 2).is_err());</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// ```</span>
 <span class="doccomment">/// # use block_padding::{Pkcs7, Padding};</span>
@@ -448,7 +450,7 @@
     }
 }
 
-<span class="doccomment">/// Pad block with zeros excpet the last byte which will be set to the number</span>
+<span class="doccomment">/// Pad block with zeros except the last byte which will be set to the number</span>
 <span class="doccomment">/// bytes.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
