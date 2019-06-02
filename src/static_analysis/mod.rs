@@ -9,8 +9,6 @@ pub mod code;
 pub mod manifest;
 
 #[cfg(feature = "certificate")]
-use self::certificate::certificate_analysis;
-#[cfg(feature = "certificate")]
 use crate::print_warning;
 use crate::{results::Results, Config};
 
@@ -32,7 +30,7 @@ pub fn static_analysis<S: AsRef<str>>(config: &Config, package: S, results: &mut
     #[cfg(feature = "certificate")]
     {
         // Run analysis for certificate file.
-        if let Err(e) = certificate_analysis(config, package.as_ref(), results) {
+        if let Err(e) = certificate::analysis(config, package.as_ref(), results) {
             print_warning(format!(
                 "there was an error analyzing the certificate: {}",
                 e

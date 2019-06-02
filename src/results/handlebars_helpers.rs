@@ -16,7 +16,7 @@ pub fn line_numbers(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -72,7 +72,7 @@ pub fn all_lines(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
         .param(0)
@@ -112,7 +112,7 @@ pub fn all_code(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
         .param(0)
@@ -164,7 +164,7 @@ pub fn html_code(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -239,7 +239,7 @@ pub fn report_index(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -286,7 +286,7 @@ pub fn generate_menu(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let menu = h
         .param(0)
@@ -300,7 +300,7 @@ pub fn generate_menu(
     Ok(())
 }
 
-fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError> {
+fn render_menu(menu: &[Value], renderer: &mut dyn Output) -> Result<(), RenderError> {
     for value in menu {
         if let Value::Object(ref item) = *value {
             renderer.write("<li>")?;

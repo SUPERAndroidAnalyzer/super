@@ -37,13 +37,13 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
 /// Performs the certificate analysis.
 ///
 /// *Note: This requires OpenSSL.*
-pub fn certificate_analysis<S: AsRef<str>>(
+pub fn analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
 ) -> Result<(), Error> {
     if config.is_verbose() {
-        println!("Reading and analyzing the certificates…")
+        println!("Reading and analyzing the certificates\u{2026}")
     }
 
     // Gets the path to the certificate files.
@@ -113,7 +113,7 @@ pub fn certificate_analysis<S: AsRef<str>>(
 
                 println!("{}", cmd);
             }
-            results.set_certificate(cmd.borrow());
+            results.set_certificate::<&str>(cmd.borrow());
 
             // Get the information we need.
             let mut issuer = String::new();
