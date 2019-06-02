@@ -1,6 +1,11 @@
 # Changelog
 
-## SUPER 0.6.0
+## SUPER 0.5.2
+
+This release fixes a bug in the rule checking for insecure `sleep()` usage, where some variables
+were not being checked properly. Also, improves the speed of the report generation and upgrades
+the libraries in charge of the visual representation of the reports. There have also been some
+internal improvements and dependency upgrades.
 
 ### Internal Changes
 
