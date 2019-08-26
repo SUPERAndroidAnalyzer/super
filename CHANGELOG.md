@@ -6,9 +6,13 @@
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
-  - `num_cpus`: 1.8 => **1.9**
+  - `num_cpus`: 1.8 => **1.10**
   - `bytecount`: 0.4 => **0.5**, with SIMD
-  - `colored`: 1.6 => **1.7**
+  - `colored`: 1.6 => **1.8**
+  - `open`: 1.2 => **1.3**
+  - `clap`: 2.32 => **2.33**
+  - `lazy_static`: 1.2 => **1.4**
+  - `toml`: 0.4 => **0.5**
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of

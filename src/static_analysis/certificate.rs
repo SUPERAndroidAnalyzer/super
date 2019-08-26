@@ -1,6 +1,6 @@
 //! This module performs the static analysis of the certificate of the application.
 
-use std::{borrow::Borrow, fs, process::Command};
+use std::{fs, process::Command};
 
 use chrono::{Datelike, Local};
 use colored::Colorize;
@@ -37,13 +37,13 @@ fn parse_month<S: AsRef<str>>(month_str: S) -> u32 {
 /// Performs the certificate analysis.
 ///
 /// *Note: This requires OpenSSL.*
-pub fn certificate_analysis<S: AsRef<str>>(
+pub fn analysis<S: AsRef<str>>(
     config: &Config,
     package: S,
     results: &mut Results,
 ) -> Result<(), Error> {
     if config.is_verbose() {
-        println!("Reading and analyzing the certificates…")
+        println!("Reading and analyzing the certificates.")
     }
 
     // Gets the path to the certificate files.
@@ -68,18 +68,16 @@ pub fn certificate_analysis<S: AsRef<str>>(
             }
         };
 
-        let path_file = match f.path().file_name() {
-            Some(n) => n.to_os_string().into_string().unwrap(),
-            None => String::new(),
-        };
+        let path_file = f
+            .path()
+            .file_name()
+            .map(|n| n.to_os_string().into_string().unwrap())
+            .unwrap_or_default();
 
         let mut is_cert = false;
-        match f.path().extension() {
-            None => {}
-            Some(e) => {
-                if e.to_string_lossy() == "RSA" || e.to_string_lossy() == "DSA" {
-                    is_cert = true;
-                }
+        if let Some(e) = f.path().extension() {
+            if e.to_string_lossy() == "RSA" || e.to_string_lossy() == "DSA" {
+                is_cert = true;
             }
         }
 
@@ -113,7 +111,6 @@ pub fn certificate_analysis<S: AsRef<str>>(
 
                 println!("{}", cmd);
             }
-            results.set_certificate(cmd.borrow());
 
             // Get the information we need.
             let mut issuer = String::new();
@@ -130,6 +127,8 @@ pub fn certificate_analysis<S: AsRef<str>>(
                     after = line.to_owned();
                 }
             }
+
+            results.set_certificate(cmd);
 
             let mut issuer = issuer.split(": ");
             let mut subject = subject.split(": ");

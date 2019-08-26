@@ -5,12 +5,13 @@ use std::{
     str::FromStr,
 };
 
-use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
+use serde::{Deserialize, Serialize};
 
 use crate::ErrorKind;
 
 /// Vulnerability criticality
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum Criticality {
     /// Warning.
     Warning,
@@ -28,32 +29,6 @@ impl Display for Criticality {
     #[allow(clippy::use_debug)]
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
         write!(f, "{}", format!("{:?}", self).to_lowercase())
-    }
-}
-
-impl Serialize for Criticality {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        serializer.serialize_str(format!("{}", self).as_str())
-    }
-}
-
-impl<'de> Deserialize<'de> for Criticality {
-    fn deserialize<D>(de: D) -> Result<Self, D::Error>
-    where
-        D: Deserializer<'de>,
-    {
-        let criticality_str: String = Deserialize::deserialize(de)?;
-
-        match Self::from_str(criticality_str.as_str()) {
-            Ok(criticality) => Ok(criticality),
-            Err(_) => Err(de::Error::custom(format!(
-                "unknown criticality: `{}`",
-                criticality_str
-            ))),
-        }
     }
 }
 

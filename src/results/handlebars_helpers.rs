@@ -16,7 +16,7 @@ pub fn line_numbers(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -27,18 +27,17 @@ pub fn line_numbers(
                  vulnerability",
             )
         })?;
-    let line_separator = match h.param(1) {
-        Some(s) => {
-            if let Value::String(ref s) = *s.value() {
-                s
-            } else {
-                return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                     not a string",
-                ));
-            }
+    let line_separator = if let Some(s) = h.param(1) {
+        if let Value::String(ref s) = *s.value() {
+            s
+        } else {
+            return Err(RenderError::new(
+                "the provided line separator for the code lines was \
+                 not a string",
+            ));
         }
-        None => "<br>",
+    } else {
+        "<br>"
     };
     let (start_line, end_line) = if let Some(l) = vulnerability.get("line") {
         let line = l.as_i64().unwrap();
@@ -72,24 +71,23 @@ pub fn all_lines(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
         .param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
-    let line_separator = match h.param(1) {
-        Some(s) => {
-            if let Value::String(ref s) = *s.value() {
-                s
-            } else {
-                return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                     not a string",
-                ));
-            }
+    let line_separator = if let Some(s) = h.param(1) {
+        if let Value::String(ref s) = *s.value() {
+            s
+        } else {
+            return Err(RenderError::new(
+                "the provided line separator for the code lines was \
+                 not a string",
+            ));
         }
-        None => "<br>",
+    } else {
+        "<br>"
     };
 
     let line_count = count(code.as_bytes(), b'\n');
@@ -112,24 +110,23 @@ pub fn all_code(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
         .param(0)
         .and_then(|v| v.value().as_str())
         .ok_or_else(|| RenderError::new("the code must be a string"))?;
-    let line_separator = match h.param(1) {
-        Some(s) => {
-            if let Value::String(ref s) = *s.value() {
-                s
-            } else {
-                return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                     not a string",
-                ));
-            }
+    let line_separator = if let Some(s) = h.param(1) {
+        if let Value::String(ref s) = *s.value() {
+            s
+        } else {
+            return Err(RenderError::new(
+                "the provided line separator for the code lines was \
+                 not a string",
+            ));
         }
-        None => "<br>",
+    } else {
+        "<br>"
     };
 
     for (i, line) in code.lines().enumerate() {
@@ -164,7 +161,7 @@ pub fn html_code(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -175,19 +172,20 @@ pub fn html_code(
                  vulnerability",
             )
         })?;
-    let line_separator = match h.param(1) {
-        Some(s) => {
-            if let Value::String(ref s) = *s.value() {
-                s
-            } else {
-                return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                     not a string",
-                ));
-            }
+
+    let line_separator = if let Some(s) = h.param(1) {
+        if let Value::String(ref s) = *s.value() {
+            s
+        } else {
+            return Err(RenderError::new(
+                "the provided line separator for the code lines was \
+                 not a string",
+            ));
         }
-        None => "<br>",
+    } else {
+        "<br>"
     };
+
     let (start_line, end_line) = if let Some(l) = vulnerability.get("line") {
         let line = l.as_i64().unwrap();
         (line, line)
@@ -239,7 +237,7 @@ pub fn report_index(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
         .param(0)
@@ -286,7 +284,7 @@ pub fn generate_menu(
     _: &Registry,
     _: &Context,
     _: &mut RenderContext,
-    out: &mut Output,
+    out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let menu = h
         .param(0)
@@ -300,13 +298,13 @@ pub fn generate_menu(
     Ok(())
 }
 
-fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError> {
+fn render_menu(menu: &[Value], renderer: &mut dyn Output) -> Result<(), RenderError> {
     for value in menu {
         if let Value::Object(ref item) = *value {
             renderer.write("<li>")?;
             let name = item
                 .get("name")
-                .and_then(|n| n.as_str())
+                .and_then(Value::as_str)
                 .ok_or_else(|| RenderError::new("invalid menu object type"))?;
             if let Some(&Value::Array(ref menu)) = item.get("menu") {
                 renderer.write(
@@ -323,11 +321,11 @@ fn render_menu(menu: &[Value], renderer: &mut Output) -> Result<(), RenderError>
             } else {
                 let path = item
                     .get("path")
-                    .and_then(|n| n.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 let file_type = item
                     .get("type")
-                    .and_then(|n| n.as_str())
+                    .and_then(Value::as_str)
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 renderer.write(
                     format!(

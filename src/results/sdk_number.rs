@@ -71,217 +71,217 @@ impl SdkNumber {
     /// Gets the SDK API version number.
     pub fn number(self) -> u32 {
         match self {
-            SdkNumber::Api1 => 1,
-            SdkNumber::Api2 => 2,
-            SdkNumber::Api3 => 3,
-            SdkNumber::Api4 => 4,
-            SdkNumber::Api5 => 5,
-            SdkNumber::Api6 => 6,
-            SdkNumber::Api7 => 7,
-            SdkNumber::Api8 => 8,
-            SdkNumber::Api9 => 9,
-            SdkNumber::Api10 => 10,
-            SdkNumber::Api11 => 11,
-            SdkNumber::Api12 => 12,
-            SdkNumber::Api13 => 13,
-            SdkNumber::Api14 => 14,
-            SdkNumber::Api15 => 15,
-            SdkNumber::Api16 => 16,
-            SdkNumber::Api17 => 17,
-            SdkNumber::Api18 => 18,
-            SdkNumber::Api19 => 19,
-            SdkNumber::Api20 => 20,
-            SdkNumber::Api21 => 21,
-            SdkNumber::Api22 => 22,
-            SdkNumber::Api23 => 23,
-            SdkNumber::Api24 => 24,
-            SdkNumber::Api25 => 25,
-            SdkNumber::Api26 => 26,
+            Self::Api1 => 1,
+            Self::Api2 => 2,
+            Self::Api3 => 3,
+            Self::Api4 => 4,
+            Self::Api5 => 5,
+            Self::Api6 => 6,
+            Self::Api7 => 7,
+            Self::Api8 => 8,
+            Self::Api9 => 9,
+            Self::Api10 => 10,
+            Self::Api11 => 11,
+            Self::Api12 => 12,
+            Self::Api13 => 13,
+            Self::Api14 => 14,
+            Self::Api15 => 15,
+            Self::Api16 => 16,
+            Self::Api17 => 17,
+            Self::Api18 => 18,
+            Self::Api19 => 19,
+            Self::Api20 => 20,
+            Self::Api21 => 21,
+            Self::Api22 => 22,
+            Self::Api23 => 23,
+            Self::Api24 => 24,
+            Self::Api25 => 25,
+            Self::Api26 => 26,
 
-            SdkNumber::Development => 10_000,
-            SdkNumber::Unknown(v) => v,
+            Self::Development => 10_000,
+            Self::Unknown(v) => v,
         }
     }
 
     /// Gets the Android version number.
     pub fn version(self) -> Option<Version> {
         match self {
-            SdkNumber::Api1 => Some(Version {
+            Self::Api1 => Some(Version {
                 major: 1,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api2 => Some(Version {
+            Self::Api2 => Some(Version {
                 major: 1,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api3 => Some(Version {
+            Self::Api3 => Some(Version {
                 major: 1,
                 minor: 5,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api4 => Some(Version {
+            Self::Api4 => Some(Version {
                 major: 1,
                 minor: 6,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api5 => Some(Version {
+            Self::Api5 => Some(Version {
                 major: 2,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api6 => Some(Version {
+            Self::Api6 => Some(Version {
                 major: 2,
                 minor: 0,
                 patch: 1,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api7 => Some(Version {
+            Self::Api7 => Some(Version {
                 major: 2,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api8 => Some(Version {
+            Self::Api8 => Some(Version {
                 major: 2,
                 minor: 2,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api9 => Some(Version {
+            Self::Api9 => Some(Version {
                 major: 2,
                 minor: 3,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api10 => Some(Version {
+            Self::Api10 => Some(Version {
                 major: 2,
                 minor: 3,
                 patch: 3,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api11 => Some(Version {
+            Self::Api11 => Some(Version {
                 major: 3,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api12 => Some(Version {
+            Self::Api12 => Some(Version {
                 major: 3,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api13 => Some(Version {
+            Self::Api13 => Some(Version {
                 major: 3,
                 minor: 2,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api14 => Some(Version {
+            Self::Api14 => Some(Version {
                 major: 4,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api15 => Some(Version {
+            Self::Api15 => Some(Version {
                 major: 4,
                 minor: 0,
                 patch: 3,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api16 => Some(Version {
+            Self::Api16 => Some(Version {
                 major: 4,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api17 => Some(Version {
+            Self::Api17 => Some(Version {
                 major: 4,
                 minor: 2,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api18 => Some(Version {
+            Self::Api18 => Some(Version {
                 major: 4,
                 minor: 3,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api19 => Some(Version {
+            Self::Api19 => Some(Version {
                 major: 4,
                 minor: 4,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api20 => Some(Version {
+            Self::Api20 => Some(Version {
                 major: 4,
                 minor: 4,
                 patch: 0,
                 pre: vec![],
                 build: vec![Identifier::AlphaNumeric("W".to_owned())],
             }),
-            SdkNumber::Api21 => Some(Version {
+            Self::Api21 => Some(Version {
                 major: 5,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api22 => Some(Version {
+            Self::Api22 => Some(Version {
                 major: 5,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api23 => Some(Version {
+            Self::Api23 => Some(Version {
                 major: 6,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api24 => Some(Version {
+            Self::Api24 => Some(Version {
                 major: 7,
                 minor: 0,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api25 => Some(Version {
+            Self::Api25 => Some(Version {
                 major: 7,
                 minor: 1,
                 patch: 0,
                 pre: vec![],
                 build: vec![],
             }),
-            SdkNumber::Api26 => Some(Version {
+            Self::Api26 => Some(Version {
                 major: 8,
                 minor: 0,
                 patch: 0,
@@ -289,40 +289,40 @@ impl SdkNumber {
                 build: vec![],
             }),
 
-            SdkNumber::Development | SdkNumber::Unknown(_) => None,
+            Self::Development | Self::Unknown(_) => None,
         }
     }
 
     /// Gets the name of the Android release.
     pub fn name(&self) -> &str {
         match self {
-            SdkNumber::Api1 | SdkNumber::Api2 => "Base",
-            SdkNumber::Api3 => "Cupcake",
-            SdkNumber::Api4 => "Donut",
-            SdkNumber::Api5 | SdkNumber::Api6 => "Eclair",
-            SdkNumber::Api7 => "Eclair MR1",
-            SdkNumber::Api8 => "Froyo",
-            SdkNumber::Api9 => "Gingerbread",
-            SdkNumber::Api10 => "Gingerbread MR1",
-            SdkNumber::Api11 => "Honeycomb",
-            SdkNumber::Api12 => "Honeycomb MR1",
-            SdkNumber::Api13 => "Honeycomb MR2",
-            SdkNumber::Api14 => "Ice Cream Sandwich",
-            SdkNumber::Api15 => "Ice Cream Sandwich MR1",
-            SdkNumber::Api16 => "Jelly Bean",
-            SdkNumber::Api17 => "Jelly Bean MR1",
-            SdkNumber::Api18 => "Jelly Bean MR2",
-            SdkNumber::Api19 => "KitKat",
-            SdkNumber::Api20 => "KitKat Watch",
-            SdkNumber::Api21 => "Lollipop",
-            SdkNumber::Api22 => "Lollipop MR1",
-            SdkNumber::Api23 => "Marshmallow",
-            SdkNumber::Api24 => "Nougat",
-            SdkNumber::Api25 => "Nougat MR1",
-            SdkNumber::Api26 => "Oreo",
+            Self::Api1 | Self::Api2 => "Base",
+            Self::Api3 => "Cupcake",
+            Self::Api4 => "Donut",
+            Self::Api5 | Self::Api6 => "Eclair",
+            Self::Api7 => "Eclair MR1",
+            Self::Api8 => "Froyo",
+            Self::Api9 => "Gingerbread",
+            Self::Api10 => "Gingerbread MR1",
+            Self::Api11 => "Honeycomb",
+            Self::Api12 => "Honeycomb MR1",
+            Self::Api13 => "Honeycomb MR2",
+            Self::Api14 => "Ice Cream Sandwich",
+            Self::Api15 => "Ice Cream Sandwich MR1",
+            Self::Api16 => "Jelly Bean",
+            Self::Api17 => "Jelly Bean MR1",
+            Self::Api18 => "Jelly Bean MR2",
+            Self::Api19 => "KitKat",
+            Self::Api20 => "KitKat Watch",
+            Self::Api21 => "Lollipop",
+            Self::Api22 => "Lollipop MR1",
+            Self::Api23 => "Marshmallow",
+            Self::Api24 => "Nougat",
+            Self::Api25 => "Nougat MR1",
+            Self::Api26 => "Oreo",
 
-            SdkNumber::Development => "Development",
-            SdkNumber::Unknown(_) => "Unknown",
+            Self::Development => "Development",
+            Self::Unknown(_) => "Unknown",
         }
     }
 }
@@ -330,35 +330,35 @@ impl SdkNumber {
 impl From<u32> for SdkNumber {
     fn from(version: u32) -> Self {
         match version {
-            1 => SdkNumber::Api1,
-            2 => SdkNumber::Api2,
-            3 => SdkNumber::Api3,
-            4 => SdkNumber::Api4,
-            5 => SdkNumber::Api5,
-            6 => SdkNumber::Api6,
-            7 => SdkNumber::Api7,
-            8 => SdkNumber::Api8,
-            9 => SdkNumber::Api9,
-            10 => SdkNumber::Api10,
-            11 => SdkNumber::Api11,
-            12 => SdkNumber::Api12,
-            13 => SdkNumber::Api13,
-            14 => SdkNumber::Api14,
-            15 => SdkNumber::Api15,
-            16 => SdkNumber::Api16,
-            17 => SdkNumber::Api17,
-            18 => SdkNumber::Api18,
-            19 => SdkNumber::Api19,
-            20 => SdkNumber::Api20,
-            21 => SdkNumber::Api21,
-            22 => SdkNumber::Api22,
-            23 => SdkNumber::Api23,
-            24 => SdkNumber::Api24,
-            25 => SdkNumber::Api25,
-            26 => SdkNumber::Api26,
+            1 => Self::Api1,
+            2 => Self::Api2,
+            3 => Self::Api3,
+            4 => Self::Api4,
+            5 => Self::Api5,
+            6 => Self::Api6,
+            7 => Self::Api7,
+            8 => Self::Api8,
+            9 => Self::Api9,
+            10 => Self::Api10,
+            11 => Self::Api11,
+            12 => Self::Api12,
+            13 => Self::Api13,
+            14 => Self::Api14,
+            15 => Self::Api15,
+            16 => Self::Api16,
+            17 => Self::Api17,
+            18 => Self::Api18,
+            19 => Self::Api19,
+            20 => Self::Api20,
+            21 => Self::Api21,
+            22 => Self::Api22,
+            23 => Self::Api23,
+            24 => Self::Api24,
+            25 => Self::Api25,
+            26 => Self::Api26,
 
-            10_000 => SdkNumber::Development,
-            t => SdkNumber::Unknown(t),
+            10_000 => Self::Development,
+            t => Self::Unknown(t),
         }
     }
 }
@@ -383,7 +383,7 @@ pub fn prettify_android_version(version: &Version) -> String {
 }
 
 #[cfg(test)]
-#[allow(clippy::cyclomatic_complexity)]
+#[allow(clippy::cognitive_complexity)]
 mod tests {
     use super::{prettify_android_version, Identifier, SdkNumber, Version};
 

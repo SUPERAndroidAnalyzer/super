@@ -2,6 +2,7 @@
 
 use std::{
     borrow::Borrow,
+    ffi::OsStr,
     fmt,
     fs::{self, DirEntry, File},
     path::Path,
@@ -77,29 +78,22 @@ pub fn analysis<S: AsRef<str>>(
             let thread_vulnerabilities = Arc::clone(&found_vulnerabilities);
             let thread_dist_folder = Arc::clone(&dist_folder);
 
-            thread::spawn(move || loop {
-                let f = {
-                    let mut files = thread_files.lock().unwrap();
-                    files.pop()
-                };
-                match f {
-                    Some(f) => {
-                        if let Err(e) = analyze_file(
-                            f.path(),
-                            &*thread_dist_folder,
-                            &thread_rules,
-                            &thread_manifest,
-                            &thread_vulnerabilities,
-                        ) {
-                            print_warning(format!(
-                                "could not analyze `{}`. The analysis will continue, though. \
-                                 Error: {}",
-                                f.path().display(),
-                                e
-                            ))
-                        }
+            thread::spawn(move || {
+                while let Some(f) = thread_files.lock().unwrap().pop() {
+                    if let Err(e) = analyze_file(
+                        f.path(),
+                        &*thread_dist_folder,
+                        &thread_rules,
+                        &thread_manifest,
+                        &thread_vulnerabilities,
+                    ) {
+                        print_warning(format!(
+                            "could not analyze `{}`. The analysis will continue, though. \
+                             Error: {}",
+                            f.path().display(),
+                            e
+                        ))
                     }
-                    None => break,
                 }
             })
         })
@@ -108,15 +102,13 @@ pub fn analysis<S: AsRef<str>>(
     if config.is_verbose() {
         let mut last_print = 0;
 
-        while match files.lock() {
-            Ok(f) => f.len(),
-            Err(_) => 1,
-        } > 0
-        {
-            let left = match files.lock() {
-                Ok(f) => f.len(),
-                Err(_) => continue,
+        while files.lock().map(|f| f.len()).unwrap_or(1) > 0 {
+            let left = if let Ok(f) = files.lock() {
+                f.len()
+            } else {
+                continue;
             };
+
             let done = total_files - left;
             if done - last_print > total_files / 10 {
                 last_print = done;
@@ -169,7 +161,7 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
             continue 'check;
         }
 
-        let filename = path.as_ref().file_name().and_then(|f| f.to_str());
+        let filename = path.as_ref().file_name().and_then(OsStr::to_str);
 
         if let Some(f) = filename {
             if !rule.has_to_check(f) {
@@ -195,8 +187,34 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                     continue 'rule;
                 }
             }
-            match rule.forward_check() {
-                None => {
+            if let Some(check) = rule.forward_check() {
+                let caps = rule.regex().captures(&code[m.start()..m.end()]).unwrap();
+
+                let forward_check1 = caps.name("fc1");
+                let forward_check2 = caps.name("fc2");
+                let mut r = check.clone();
+
+                if let Some(fc1) = forward_check1 {
+                    r = r.replace("{fc1}", fc1.as_str());
+                }
+
+                if let Some(fc2) = forward_check2 {
+                    r = r.replace("{fc2}", fc2.as_str());
+                }
+
+                let regex = match Regex::new(r.as_str()) {
+                    Ok(r) => r,
+                    Err(e) => {
+                        print_warning(format!(
+                            "there was an error creating the forward_check '{}'. The rule will \
+                             be skipped. {}",
+                            r, e
+                        ));
+                        break 'rule;
+                    }
+                };
+
+                for m in regex.find_iter(code.as_str()) {
                     let start_line = get_line_for(m.start(), code.as_str());
                     let end_line = get_line_for(m.end(), code.as_str());
                     let mut results = results.lock().unwrap();
@@ -212,51 +230,21 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
 
                     print_vulnerability(rule.description(), rule.criticality());
                 }
-                Some(check) => {
-                    let caps = rule.regex().captures(&code[m.start()..m.end()]).unwrap();
+            } else {
+                let start_line = get_line_for(m.start(), code.as_str());
+                let end_line = get_line_for(m.end(), code.as_str());
+                let mut results = results.lock().unwrap();
+                results.push(Vulnerability::new(
+                    rule.criticality(),
+                    rule.label(),
+                    rule.description(),
+                    Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
+                    Some(start_line),
+                    Some(end_line),
+                    Some(get_code(code.as_str(), start_line, end_line)),
+                ));
 
-                    let forward_check1 = caps.name("fc1");
-                    let forward_check2 = caps.name("fc2");
-                    let mut r = check.clone();
-
-                    if let Some(fc1) = forward_check1 {
-                        r = r.replace("{fc1}", fc1.as_str());
-                    }
-
-                    if let Some(fc2) = forward_check2 {
-                        r = r.replace("{fc2}", fc2.as_str());
-                    }
-
-                    let regex = match Regex::new(r.as_str()) {
-                        Ok(r) => r,
-                        Err(e) => {
-                            print_warning(format!(
-                                "there was an error creating the forward_check '{}'. The rule will \
-                                 be skipped. {}",
-                                r,
-                                e
-                            ));
-                            break 'rule;
-                        }
-                    };
-
-                    for m in regex.find_iter(code.as_str()) {
-                        let start_line = get_line_for(m.start(), code.as_str());
-                        let end_line = get_line_for(m.end(), code.as_str());
-                        let mut results = results.lock().unwrap();
-                        results.push(Vulnerability::new(
-                            rule.criticality(),
-                            rule.label(),
-                            rule.description(),
-                            Some(path.as_ref().strip_prefix(&dist_folder).unwrap()),
-                            Some(start_line),
-                            Some(end_line),
-                            Some(get_code(code.as_str(), start_line, end_line)),
-                        ));
-
-                        print_vulnerability(rule.description(), rule.criticality());
-                    }
-                }
+                print_vulnerability(rule.description(), rule.criticality());
             }
         }
     }

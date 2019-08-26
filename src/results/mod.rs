@@ -169,16 +169,16 @@ impl Results {
     }
 
     /// Adds a vulnerability to the results.
-    #[allow(unused_variables)] // Until we remove the debug assertions
+    //#[allow(unused_variables)] // Until we remove the debug assertions
     pub fn add_vulnerability(&mut self, vulnerability: Vulnerability) {
         match vulnerability.get_criticality() {
             Criticality::Warning => {
-                let new = self.warnings.insert(vulnerability);
+                let _new = self.warnings.insert(vulnerability);
                 // FIXME should we maintain it?
                 //debug_assert!(new, "trying to insert the same warning twice");
             }
             Criticality::Low => {
-                let new = self.low.insert(vulnerability);
+                let _new = self.low.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -186,7 +186,7 @@ impl Results {
                 // );
             }
             Criticality::Medium => {
-                let new = self.medium.insert(vulnerability);
+                let _new = self.medium.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -194,7 +194,7 @@ impl Results {
                 // );
             }
             Criticality::High => {
-                let new = self.high.insert(vulnerability);
+                let _new = self.high.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
@@ -202,7 +202,7 @@ impl Results {
                 // );
             }
             Criticality::Critical => {
-                let new = self.critical.insert(vulnerability);
+                let _new = self.critical.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,

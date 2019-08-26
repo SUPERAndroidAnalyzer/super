@@ -54,16 +54,10 @@ impl Vulnerability {
             criticality,
             name: name.into(),
             description: description.into(),
-            file: match file {
-                Some(p) => Some(p.as_ref().to_path_buf()),
-                None => None,
-            },
+            file: file.map(|p| p.as_ref().to_path_buf()),
             start_line,
             end_line,
-            code: match code {
-                Some(c) => Some(c.into()),
-                None => None,
-            },
+            code: code.map(C::into),
         }
     }
 

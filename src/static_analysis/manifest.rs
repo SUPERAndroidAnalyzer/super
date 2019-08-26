@@ -96,10 +96,7 @@ pub fn analysis<S: AsRef<str>>(
                                only be used while in development.";
 
             let line = get_line(manifest.code(), "android:debuggable=\"true\"").ok();
-            let code = match line {
-                Some(l) => Some(get_code(manifest.code(), l, l)),
-                None => None,
-            };
+            let code = line.map(|l| get_code(manifest.code(), l, l));
 
             let vulnerability = Vulnerability::new(
                 criticality,
@@ -125,10 +122,7 @@ pub fn analysis<S: AsRef<str>>(
                                heap is actually needed.";
 
             let line = get_line(manifest.code(), "android:largeHeap=\"true\"").ok();
-            let code = match line {
-                Some(l) => Some(get_code(manifest.code(), l, l)),
-                None => None,
-            };
+            let code = line.map(|l| get_code(manifest.code(), l, l));
 
             let vulnerability = Vulnerability::new(
                 criticality,
@@ -153,10 +147,7 @@ pub fn analysis<S: AsRef<str>>(
                                data of your app into their PC.";
 
             let line = get_line(manifest.code(), "android:allowBackup=\"true\"").ok();
-            let code = match line {
-                Some(l) => Some(get_code(manifest.code(), l, l)),
-                None => None,
-            };
+            let code = line.map(|l| get_code(manifest.code(), l, l));
 
             let vulnerability = Vulnerability::new(
                 criticality,
@@ -179,10 +170,7 @@ pub fn analysis<S: AsRef<str>>(
             && permission.criticality() >= config.min_criticality()
         {
             let line = get_line(manifest.code(), permission.name().as_str()).ok();
-            let code = match line {
-                Some(l) => Some(get_code(manifest.code(), l, l)),
-                None => None,
-            };
+            let code = line.map(|l| get_code(manifest.code(), l, l));
 
             let vulnerability = Vulnerability::new(
                 permission.criticality(),
@@ -468,10 +456,7 @@ impl Manifest {
                     p
                 } else {
                     let line = get_line(self.code(), attr.value.as_str()).ok();
-                    let code = match line {
-                        Some(l) => Some(get_code(self.code(), l, l)),
-                        None => None,
-                    };
+                    let code = line.map(|l| get_code(self.code(), l, l));
 
                     let criticality = config.unknown_permission_criticality();
                     let description = config.unknown_permission_description();
@@ -526,10 +511,7 @@ impl Manifest {
                     if tag != "provider" || exported.is_some() || self.min_sdk() < 17 {
                         let line =
                             get_line(self.code(), &format!("android:name=\"{}\"", name)).ok();
-                        let code = match line {
-                            Some(l) => Some(get_code(self.code(), l, l)),
-                            None => None,
-                        };
+                        let code = line.map(|l| get_code(self.code(), l, l));
 
                         let criticality = Criticality::Warning;
 
