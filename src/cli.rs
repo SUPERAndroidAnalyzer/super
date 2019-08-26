@@ -7,6 +7,7 @@
 use clap::{crate_version, App, Arg};
 
 /// Generates the command line interface.
+#[allow(clippy::too_many_lines)]
 pub fn generate() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())

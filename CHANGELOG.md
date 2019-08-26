@@ -1,15 +1,22 @@
 # Changelog
 
-## SUPER 0.6.0
+## SUPER 0.5.2
+
+This release fixes a bug in the rule checking for insecure `sleep()` usage, where some variables
+were not being checked properly. Also, improves the speed of the report generation and upgrades
+the libraries in charge of the visual representation of the reports. There have also been some
+internal improvements and dependency upgrades.
 
 ### Internal Changes
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
+  - `highlight.js`: 9.13 => **9.15**
   - `num_cpus`: 1.8 => **1.10**
   - `bytecount`: 0.4 => **0.5**, with SIMD
   - `colored`: 1.6 => **1.8**
   - `open`: 1.2 => **1.3**
+  - `handlebars`: 1.1 => **2.0**
   - `clap`: 2.32 => **2.33**
   - `lazy_static`: 1.2 => **1.4**
   - `toml`: 0.4 => **0.5**
