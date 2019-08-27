@@ -25,6 +25,8 @@ internal improvements and dependency upgrades.
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
+- Many syntax improvements, that should bring some minor performance enhancements.
+- SUPER now requires Rust 1.37 to be build. This also brings smaller binary sizes.
 
 ## SUPER 0.5.1
 

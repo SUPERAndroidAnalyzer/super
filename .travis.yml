@@ -2,7 +2,7 @@ language: rust
 cache:
   cargo: true
   timeout: 500
-dist: xenial
+dist: bionic
 sudo: true
 
 # Run builds in Linux, MacOS X and Windows
@@ -13,7 +13,7 @@ os:
 
 # Run builds for all the supported trains
 rust:
-- 1.31.1
+- 1.37.0
 - stable
 - beta
 - nightly
