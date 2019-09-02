@@ -12,8 +12,9 @@ internal improvements and dependency upgrades.
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
   - `highlight.js`: 9.13 => **9.15**
+  - `jQuery`: 3.3 => **3.4**
   - `num_cpus`: 1.8 => **1.10**
-  - `bytecount`: 0.4 => **0.5**, with SIMD
+  - `bytecount`: 0.4 => **0.6**, with SIMD
   - `colored`: 1.6 => **1.8**
   - `open`: 1.2 => **1.3**
   - `handlebars`: 1.1 => **2.0**
