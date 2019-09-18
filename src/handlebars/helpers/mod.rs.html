@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-1.1.0/src/helpers/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../handlebars/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-2.0.1/src/helpers/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../handlebars/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -253,15 +253,13 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
-<span id="256">256</span>
-<span id="257">257</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">context</span>::<span class="ident">Context</span>;
-<span class="kw">use</span> <span class="ident">error</span>::<span class="ident">RenderError</span>;
-<span class="kw">use</span> <span class="ident">output</span>::<span class="ident">Output</span>;
-<span class="kw">use</span> <span class="ident">registry</span>::<span class="ident">Registry</span>;
-<span class="kw">use</span> <span class="ident">render</span>::{<span class="ident">Helper</span>, <span class="ident">RenderContext</span>};
-<span class="kw">use</span> <span class="ident">value</span>::<span class="ident">ScopedJson</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">Context</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">RenderError</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">output</span>::<span class="ident">Output</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">registry</span>::<span class="ident">Registry</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">render</span>::{<span class="ident">Helper</span>, <span class="ident">RenderContext</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">value</span>::<span class="ident">ScopedJson</span>;
 
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">helper_each</span>::<span class="ident">EACH_HELPER</span>;
 <span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">helper_if</span>::{<span class="ident">IF_HELPER</span>, <span class="ident">UNLESS_HELPER</span>};
@@ -280,7 +278,7 @@
 <span class="doccomment">/// * `&amp;Registry`: the global registry, you can find templates by name from registry</span>
 <span class="doccomment">/// * `&amp;Context`: the whole data to render, in most case you can use data from `Helper`</span>
 <span class="doccomment">/// * `&amp;mut RenderContext`: you can access data or modify variables (starts with @)/partials in render context, for example, @index of #each. See its document for detail.</span>
-<span class="doccomment">/// * `&amp;mut Output`: where you write output to</span>
+<span class="doccomment">/// * `&amp;mut dyn Output`: where you write output to</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// By default, you can use bare function as helper definition because we have supported unboxed_closure. If you have stateful or configurable helper, you can create a struct to implement `HelperDef`.</span>
 <span class="doccomment">///</span>
@@ -310,7 +308,7 @@
 <span class="doccomment">///     r: &amp;&#39;reg Handlebars,</span>
 <span class="doccomment">///     ctx: &amp;Context,</span>
 <span class="doccomment">///     rc: &amp;mut RenderContext&lt;&#39;reg&gt;,</span>
-<span class="doccomment">///     out: &amp;mut Output,</span>
+<span class="doccomment">///     out: &amp;mut dyn Output,</span>
 <span class="doccomment">/// ) -&gt; HelperResult {</span>
 <span class="doccomment">///     h.template()</span>
 <span class="doccomment">///         .map(|t| t.render(r, ctx, rc, out))</span>
@@ -349,10 +347,14 @@
         <span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
-        <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span>,
+        <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
     ) <span class="op">-&gt;</span> <span class="ident">HelperResult</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">call_inner</span>(<span class="ident">h</span>, <span class="ident">r</span>, <span class="ident">ctx</span>, <span class="ident">rc</span>)<span class="question-mark">?</span> {
-            <span class="ident">out</span>.<span class="ident">write</span>(<span class="ident">result</span>.<span class="ident">render</span>().<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
+            <span class="kw">if</span> <span class="ident">r</span>.<span class="ident">strict_mode</span>() <span class="op">&amp;&amp;</span> <span class="ident">result</span>.<span class="ident">is_missing</span>() {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">RenderError</span>::<span class="ident">strict_error</span>(<span class="prelude-val">None</span>));
+            } <span class="kw">else</span> {
+                <span class="ident">out</span>.<span class="ident">write</span>(<span class="ident">result</span>.<span class="ident">render</span>().<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
+            }
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -368,7 +370,7 @@
                 <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
                 <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
-                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span>,
+                <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
             ) <span class="op">-&gt;</span> <span class="ident">HelperResult</span>,
     <span class="op">&gt;</span> <span class="ident">HelperDef</span> <span class="kw">for</span> <span class="ident">F</span>
 {
@@ -378,7 +380,7 @@
         <span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
-        <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span>,
+        <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
     ) <span class="op">-&gt;</span> <span class="ident">HelperResult</span> {
         (<span class="kw-2">*</span><span class="self">self</span>)(<span class="ident">h</span>, <span class="ident">r</span>, <span class="ident">ctx</span>, <span class="ident">rc</span>, <span class="ident">out</span>)
     }
@@ -403,13 +405,13 @@
 <span class="kw">mod</span> <span class="ident">test</span> {
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">BTreeMap</span>;
 
-    <span class="kw">use</span> <span class="ident">context</span>::<span class="ident">Context</span>;
-    <span class="kw">use</span> <span class="ident">error</span>::<span class="ident">RenderError</span>;
-    <span class="kw">use</span> <span class="ident">helpers</span>::<span class="ident">HelperDef</span>;
-    <span class="kw">use</span> <span class="ident">output</span>::<span class="ident">Output</span>;
-    <span class="kw">use</span> <span class="ident">registry</span>::<span class="ident">Registry</span>;
-    <span class="kw">use</span> <span class="ident">render</span>::{<span class="ident">Helper</span>, <span class="ident">RenderContext</span>, <span class="ident">Renderable</span>};
-    <span class="kw">use</span> <span class="ident">value</span>::<span class="ident">JsonRender</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">context</span>::<span class="ident">Context</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">RenderError</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">helpers</span>::<span class="ident">HelperDef</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">output</span>::<span class="ident">Output</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">registry</span>::<span class="ident">Registry</span>;
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">render</span>::{<span class="ident">Helper</span>, <span class="ident">RenderContext</span>, <span class="ident">Renderable</span>};
+    <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">value</span>::<span class="ident">JsonRender</span>;
 
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
     <span class="kw">struct</span> <span class="ident">MetaHelper</span>;
@@ -421,7 +423,7 @@
             <span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
             <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
             <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
-            <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span>,
+            <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
         ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">h</span>.<span class="ident">param</span>(<span class="number">0</span>).<span class="ident">unwrap</span>();
 
@@ -441,16 +443,12 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_meta_helper</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">handlebars</span> <span class="op">=</span> <span class="ident">Registry</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">handlebars</span>
-                .<span class="ident">register_template_string</span>(<span class="string">&quot;t0&quot;</span>, <span class="string">&quot;{{foo this}}&quot;</span>)
-                .<span class="ident">is_ok</span>()
-        );
-        <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">handlebars</span>
-                .<span class="ident">register_template_string</span>(<span class="string">&quot;t1&quot;</span>, <span class="string">&quot;{{#bar this}}nice{{/bar}}&quot;</span>)
-                .<span class="ident">is_ok</span>()
-        );
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">handlebars</span>
+            .<span class="ident">register_template_string</span>(<span class="string">&quot;t0&quot;</span>, <span class="string">&quot;{{foo this}}&quot;</span>)
+            .<span class="ident">is_ok</span>());
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">handlebars</span>
+            .<span class="ident">register_template_string</span>(<span class="string">&quot;t1&quot;</span>, <span class="string">&quot;{{#bar this}}nice{{/bar}}&quot;</span>)
+            .<span class="ident">is_ok</span>());
 
         <span class="kw">let</span> <span class="ident">meta_helper</span> <span class="op">=</span> <span class="ident">MetaHelper</span>;
         <span class="ident">handlebars</span>.<span class="ident">register_helper</span>(<span class="string">&quot;helperMissing&quot;</span>, <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">meta_helper</span>));
@@ -466,11 +464,9 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_helper_for_subexpression</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">handlebars</span> <span class="op">=</span> <span class="ident">Registry</span>::<span class="ident">new</span>();
-        <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">handlebars</span>
-                .<span class="ident">register_template_string</span>(<span class="string">&quot;t2&quot;</span>, <span class="string">&quot;{{foo value=(bar 0)}}&quot;</span>)
-                .<span class="ident">is_ok</span>()
-        );
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">handlebars</span>
+            .<span class="ident">register_template_string</span>(<span class="string">&quot;t2&quot;</span>, <span class="string">&quot;{{foo value=(bar 0)}}&quot;</span>)
+            .<span class="ident">is_ok</span>());
 
         <span class="ident">handlebars</span>.<span class="ident">register_helper</span>(
             <span class="string">&quot;helperMissing&quot;</span>,
@@ -479,7 +475,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
-                 <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span><span class="op">|</span>
+                 <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span><span class="op">|</span>
                  <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}{}&quot;</span>, <span class="ident">h</span>.<span class="ident">name</span>(), <span class="ident">h</span>.<span class="ident">param</span>(<span class="number">0</span>).<span class="ident">unwrap</span>().<span class="ident">value</span>());
                     <span class="ident">out</span>.<span class="ident">write</span>(<span class="ident">output</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
@@ -494,7 +490,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
-                 <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Output</span><span class="op">|</span>
+                 <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span><span class="op">|</span>
                  <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">h</span>.<span class="ident">hash_get</span>(<span class="string">&quot;value&quot;</span>).<span class="ident">unwrap</span>().<span class="ident">value</span>().<span class="ident">render</span>());
                     <span class="ident">out</span>.<span class="ident">write</span>(<span class="ident">output</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;

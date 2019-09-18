@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest-2.1.1/src/error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../pest/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/pest-2.1.2/src/error.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>error.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../pest/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -774,6 +774,37 @@
 <span id="774">774</span>
 <span id="775">775</span>
 <span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// pest. The Elegant Parser</span>
 <span class="comment">// Copyright (c) 2018 Dragoș Tiselice</span>
@@ -1064,9 +1095,13 @@
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         };
         <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="ident">start</span> <span class="op">-</span> <span class="number">1</span>;
+        <span class="kw">let</span> <span class="ident">line_chars</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">line</span>.<span class="ident">chars</span>();
 
-        <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">offset</span> {
-            <span class="ident">underline</span>.<span class="ident">push</span>(<span class="string">&#39; &#39;</span>);
+        <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="ident">line_chars</span>.<span class="ident">take</span>(<span class="ident">offset</span>) {
+            <span class="kw">match</span> <span class="ident">c</span> {
+                <span class="string">&#39;\t&#39;</span> <span class="op">=&gt;</span> <span class="ident">underline</span>.<span class="ident">push</span>(<span class="string">&#39;\t&#39;</span>),
+                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">underline</span>.<span class="ident">push</span>(<span class="string">&#39; &#39;</span>),
+            }
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">end</span>) <span class="op">=</span> <span class="ident">end</span> {
@@ -1544,6 +1579,33 @@
                 <span class="string">&quot;  |&quot;</span>,
                 <span class="string">&quot;2 | cd␊&quot;</span>,
                 <span class="string">&quot;  |  ^---&quot;</span>,
+                <span class="string">&quot;  |&quot;</span>,
+                <span class="string">&quot;  = unexpected 4, 5, or 6; expected 1, 2, or 3&quot;</span>,
+            ]
+            .<span class="ident">join</span>(<span class="string">&quot;\n&quot;</span>)
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">underline_with_tabs</span>() {
+        <span class="kw">let</span> <span class="ident">input</span> <span class="op">=</span> <span class="string">&quot;a\txbc&quot;</span>;
+        <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">position</span>::<span class="ident">Position</span>::<span class="ident">new</span>(<span class="ident">input</span>, <span class="number">2</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">error</span>: <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new_from_pos</span>(
+            <span class="ident">ErrorVariant</span>::<span class="ident">ParsingError</span> {
+                <span class="ident">positives</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>],
+                <span class="ident">negatives</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>],
+            },
+            <span class="ident">pos</span>,
+        )
+        .<span class="ident">with_path</span>(<span class="string">&quot;file.rs&quot;</span>);
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">error</span>),
+            <span class="macro">vec</span><span class="macro">!</span>[
+                <span class="string">&quot; --&gt; file.rs:1:3&quot;</span>,
+                <span class="string">&quot;  |&quot;</span>,
+                <span class="string">&quot;1 | a	xbc&quot;</span>,
+                <span class="string">&quot;  |  	^---&quot;</span>,
                 <span class="string">&quot;  |&quot;</span>,
                 <span class="string">&quot;  = unexpected 4, 5, or 6; expected 1, 2, or 3&quot;</span>,
             ]

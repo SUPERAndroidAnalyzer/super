@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `pest_derive` crate."><meta name="keywords" content="rust, rustlang, rust-lang, pest_derive"><title>pest_derive - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../pest_derive/index.html'><img src='../rust-logo.png' alt='logo' width='100'></a><p class='location'>Crate pest_derive</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all pest_derive's items</p></a><p class='location'></p><script>window.sidebarCurrent = {name: 'pest_derive', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/pest_derive/lib.rs.html#10-302' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>pest_derive</a></span></h1><div class='docblock'><h1 id="pest-the-elegant-parser" class="section-header"><a href="#pest-the-elegant-parser">pest. The Elegant Parser</a></h1>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `pest_derive` crate."><meta name="keywords" content="rust, rustlang, rust-lang, pest_derive"><title>pest_derive - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../pest_derive/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate pest_derive</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all pest_derive's items</p></a><p class='location'></p><script>window.sidebarCurrent = {name: 'pest_derive', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/pest_derive/lib.rs.html#10-302' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>pest_derive</a></span></h1><div class='docblock'><h1 id="pest-the-elegant-parser" class="section-header"><a href="#pest-the-elegant-parser">pest. The Elegant Parser</a></h1>
 <p>pest is a general purpose parser written in Rust with a focus on accessibility, correctness,
 and performance. It uses parsing expression grammars (or <a href="https://en.wikipedia.org/wiki/Parsing_expression_grammar">PEG</a>) as input, which are similar in
 spirit to regular expressions, but which offer the enhanced expressivity needed to parse
@@ -65,7 +65,7 @@ rules behave atomically.</p>
 <span class="ident">b</span> <span class="op">=</span> @{ <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }
 
 <span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
-<p>Parsing <code>&quot;ab&quot;</code> produces the token pair <code>b()</code>, while <code>&quot;a b&quot;</code> produces an error.</p>
+<p>Parsing <code>&quot;ab&quot;</code> produces the token pair <code>b()</code>, while <code>&quot;a   b&quot;</code> produces an error.</p>
 </li>
 <li>
 <p>Compound-atomic (<code>$</code>)</p>
@@ -77,7 +77,7 @@ not forbidden from generating token pairs.</p>
 <span class="ident">b</span> <span class="op">=</span> ${ <span class="ident">a</span> ~ <span class="string">&quot;b&quot;</span> }
 
 <span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
-<p>Parsing <code>&quot;ab&quot;</code> produces the token pairs <code>b(a())</code>, while <code>&quot;a b&quot;</code> produces an error.</p>
+<p>Parsing <code>&quot;ab&quot;</code> produces the token pairs <code>b(a())</code>, while <code>&quot;a   b&quot;</code> produces an error.</p>
 </li>
 <li>
 <p>Non-atomic (<code>!</code>)</p>
@@ -90,7 +90,7 @@ of atomic and compound-atomic rules.</p>
 <span class="ident">c</span> <span class="op">=</span> @{ <span class="ident">b</span> }
 
 <span class="ident">WHITESPACE</span> <span class="op">=</span> <span class="kw">_</span>{ <span class="string">&quot; &quot;</span> }</pre></div>
-<p>Parsing both <code>&quot;ab&quot;</code> and <code>&quot;a b&quot;</code> produce the token pairs <code>c(a())</code>.</p>
+<p>Parsing both <code>&quot;ab&quot;</code> and <code>&quot;a   b&quot;</code> produce the token pairs <code>c(a())</code>.</p>
 </li>
 </ol>
 <h4 id="expressions" class="section-header"><a href="#expressions">Expressions</a></h4>
@@ -98,12 +98,12 @@ of atomic and compound-atomic rules.</p>
 <ol>
 <li>
 <p>Terminals</p>
-<table><thead><tr><th> Terminal   </th><th> Usage                                                          </th></tr></thead><tbody>
-<tr><td> <code>&quot;a&quot;</code>      </td><td> matches the exact string <code>&quot;a&quot;</code>                                 </td></tr>
-<tr><td> <code>^&quot;a&quot;</code>     </td><td> matches the exact string <code>&quot;a&quot;</code> case insensitively (ASCII only) </td></tr>
-<tr><td> <code>'a'..'z'</code> </td><td> matches one character between <code>'a'</code> and <code>'z'</code>                  </td></tr>
-<tr><td> <code>a</code>        </td><td> matches rule <code>a</code>                                               </td></tr>
-</tbody></table>
+<p>| Terminal   | Usage                                                          |
+|------------|----------------------------------------------------------------|
+| <code>&quot;a&quot;</code>      | matches the exact string <code>&quot;a&quot;</code>                                 |
+| <code>^&quot;a&quot;</code>     | matches the exact string <code>&quot;a&quot;</code> case insensitively (ASCII only) |
+| <code>'a'..'z'</code> | matches one character between <code>'a'</code> and <code>'z'</code>                  |
+| <code>a</code>        | matches rule <code>a</code>                                               |</p>
 </li>
 </ol>
 <p>Strings and characters follow
@@ -113,21 +113,21 @@ start with a digit.</p>
 <ol start="2">
 <li>
 <p>Non-terminals</p>
-<table><thead><tr><th> Non-terminal          </th><th> Usage                                                      </th></tr></thead><tbody>
-<tr><td> <code>(e)</code>                 </td><td> matches <code>e</code>                                                </td></tr>
-<tr><td> <code>e1 ~ e2</code>             </td><td> matches the sequence <code>e1</code> <code>e2</code>                             </td></tr>
-<tr><td> <code>e1 | e2</code> </td><td> matches either <code>e1</code> or <code>e2</code>                                </td></tr>
-<tr><td> <code>e*</code>                  </td><td> matches <code>e</code> zero or more times                             </td></tr>
-<tr><td> <code>e+</code>                  </td><td> matches <code>e</code> one or more times                              </td></tr>
-<tr><td> <code>e{n}</code>                </td><td> matches <code>e</code> exactly <code>n</code> times                              </td></tr>
-<tr><td> <code>e{, n}</code>              </td><td> matches <code>e</code> at most <code>n</code> times                              </td></tr>
-<tr><td> <code>e{n,}</code>              </td><td> matches <code>e</code> at least <code>n</code> times                             </td></tr>
-<tr><td> <code>e{m, n}</code>             </td><td> matches <code>e</code> between <code>m</code> and <code>n</code> times inclusively          </td></tr>
-<tr><td> <code>e?</code>                  </td><td> optionally matches <code>e</code>                                     </td></tr>
-<tr><td> <code>&amp;e</code>                  </td><td> matches <code>e</code> without making progress                        </td></tr>
-<tr><td> <code>!e</code>                  </td><td> matches if <code>e</code> doesn't match without making progress       </td></tr>
-<tr><td> <code>PUSH(e)</code>             </td><td> matches <code>e</code> and pushes it's captured string down the stack </td></tr>
-</tbody></table>
+<p>| Non-terminal          | Usage                                                      |
+|-----------------------|------------------------------------------------------------|
+| <code>(e)</code>                 | matches <code>e</code>                                                |
+| <code>e1 ~ e2</code>             | matches the sequence <code>e1</code> <code>e2</code>                             |
+| <code>e1 | e2</code> | matches either <code>e1</code> or <code>e2</code>                                |
+| <code>e*</code>                  | matches <code>e</code> zero or more times                             |
+| <code>e+</code>                  | matches <code>e</code> one or more times                              |
+| <code>e{n}</code>                | matches <code>e</code> exactly <code>n</code> times                              |
+| <code>e{, n}</code>              | matches <code>e</code> at most <code>n</code> times                              |
+| <code>e{n,} </code>              | matches <code>e</code> at least <code>n</code> times                             |
+| <code>e{m, n}</code>             | matches <code>e</code> between <code>m</code> and <code>n</code> times inclusively          |
+| <code>e?</code>                  | optionally matches <code>e</code>                                     |
+| <code>&amp;e</code>                  | matches <code>e</code> without making progress                        |
+| <code>!e</code>                  | matches if <code>e</code> doesn't match without making progress       |
+| <code>PUSH(e)</code>             | matches <code>e</code> and pushes it's captured string down the stack |</p>
 <p>where <code>e</code>, <code>e1</code>, and <code>e2</code> are expressions.</p>
 </li>
 </ol>

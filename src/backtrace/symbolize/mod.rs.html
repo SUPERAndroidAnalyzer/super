@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.26/src/symbolize/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.35/src/symbolize/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -444,20 +444,84 @@
 <span id="444">444</span>
 <span id="445">445</span>
 <span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">fmt</span>, <span class="ident">str</span>};
 
-<span class="macro">cfg_if</span><span class="macro">!</span> {
+<span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">prelude</span>::<span class="ident">v1</span>::<span class="kw-2">*</span>;
     }
 }
 
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">backtrace</span>::<span class="ident">Frame</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">types</span>::<span class="ident">BytesOrWideString</span>;
+<span class="kw">use</span> <span class="ident">core</span>::<span class="ident">ffi</span>::<span class="ident">c_void</span>;
 <span class="kw">use</span> <span class="ident">rustc_demangle</span>::{<span class="ident">try_demangle</span>, <span class="ident">Demangle</span>};
-<span class="kw">use</span> <span class="ident">types</span>::{<span class="ident">c_void</span>, <span class="ident">BytesOrWideString</span>};
-
-<span class="kw">use</span> <span class="ident">backtrace</span>::<span class="ident">Frame</span>;
 
 <span class="doccomment">/// Resolve an address to a symbol, passing the symbol to the specified</span>
 <span class="doccomment">/// closure.</span>
@@ -506,7 +570,7 @@
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">Symbol</span>)<span class="op">&gt;</span>(<span class="ident">addr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>, <span class="ident">cb</span>: <span class="ident">F</span>) {
-    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> ::<span class="ident">lock</span>::<span class="ident">lock</span>();
+    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">lock</span>::<span class="ident">lock</span>();
     <span class="kw">unsafe</span> { <span class="ident">resolve_unsynchronized</span>(<span class="ident">addr</span>, <span class="ident">cb</span>) }
 }
 
@@ -548,7 +612,7 @@
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">resolve_frame</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">Symbol</span>)<span class="op">&gt;</span>(<span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="ident">Frame</span>, <span class="ident">cb</span>: <span class="ident">F</span>) {
-    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> ::<span class="ident">lock</span>::<span class="ident">lock</span>();
+    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">lock</span>::<span class="ident">lock</span>();
     <span class="kw">unsafe</span> { <span class="ident">resolve_frame_unsynchronized</span>(<span class="ident">frame</span>, <span class="ident">cb</span>) }
 }
 
@@ -560,10 +624,36 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">ResolveWhat</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
     <span class="kw">fn</span> <span class="ident">address_or_ip</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">ResolveWhat</span>::<span class="ident">Address</span>(<span class="ident">a</span>) <span class="op">=&gt;</span> <span class="ident">a</span>,
-            <span class="ident">ResolveWhat</span>::<span class="ident">Frame</span>(<span class="kw-2">ref</span> <span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">f</span>.<span class="ident">ip</span>(),
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">ResolveWhat</span>::<span class="ident">Address</span>(<span class="ident">a</span>) <span class="op">=&gt;</span> <span class="ident">adjust_ip</span>(<span class="kw-2">*</span><span class="ident">a</span>),
+            <span class="ident">ResolveWhat</span>::<span class="ident">Frame</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">adjust_ip</span>(<span class="ident">f</span>.<span class="ident">ip</span>()),
         }
+    }
+}
+
+<span class="comment">// IP values from stack frames are typically (always?) the instruction</span>
+<span class="comment">// *after* the call that&#39;s the actual stack trace. Symbolizing this on</span>
+<span class="comment">// causes the filename/line number to be one ahead and perhaps into</span>
+<span class="comment">// the void if it&#39;s near the end of the function.</span>
+<span class="comment">//</span>
+<span class="comment">// This appears to basically always be the case on all platforms, so we always</span>
+<span class="comment">// subtract one from a resolved ip to resolve it to the previous call</span>
+<span class="comment">// instruction instead of the instruction being returned to.</span>
+<span class="comment">//</span>
+<span class="comment">// Ideally we would not do this. Ideally we would require callers of the</span>
+<span class="comment">// `resolve` APIs here to manually do the -1 and account that they want location</span>
+<span class="comment">// information for the *previous* instruction, not the current. Ideally we&#39;d</span>
+<span class="comment">// also expose on `Frame` if we are indeed the address of the next instruction</span>
+<span class="comment">// or the current.</span>
+<span class="comment">//</span>
+<span class="comment">// For now though this is a pretty niche concern so we just internally always</span>
+<span class="comment">// subtract one. Consumers should keep working and getting pretty good results,</span>
+<span class="comment">// so we should be good enough.</span>
+<span class="kw">fn</span> <span class="ident">adjust_ip</span>(<span class="ident">a</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span> {
+    <span class="kw">if</span> <span class="ident">a</span>.<span class="ident">is_null</span>() {
+        <span class="ident">a</span>
+    } <span class="kw">else</span> {
+        (<span class="ident">a</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">-</span> <span class="number">1</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>
     }
 }
 
@@ -609,7 +699,10 @@
 <span class="doccomment">/// name, filename, line number, precise address, etc. Not all information is</span>
 <span class="doccomment">/// always available in a symbol, however, so all methods return an `Option`.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Symbol</span> {
-    <span class="ident">inner</span>: <span class="ident">SymbolImp</span>,
+    <span class="comment">// TODO: this lifetime bound needs to be persisted eventually to `Symbol`,</span>
+    <span class="comment">// but that&#39;s currently a breaking change. For now this is safe since</span>
+    <span class="comment">// `Symbol` is only ever handed out by reference and can&#39;t be cloned.</span>
+    <span class="ident">inner</span>: <span class="ident">SymbolImp</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Symbol</span> {
@@ -687,7 +780,7 @@
     }
 }
 
-<span class="macro">cfg_if</span><span class="macro">!</span> {
+<span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cpp_demangle&quot;</span>)]</span> {
         <span class="comment">// Maybe a parsed C++ symbol, if parsing the mangled symbol as Rust</span>
         <span class="comment">// failed.</span>
@@ -790,7 +883,7 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="macro">cfg_if</span><span class="macro">!</span> {
+<span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cpp_demangle&quot;</span>)]</span> {
         <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">SymbolName</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
@@ -816,7 +909,7 @@
     }
 }
 
-<span class="macro">cfg_if</span><span class="macro">!</span> {
+<span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cpp_demangle&quot;</span>))]</span> {
         <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">SymbolName</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
             <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
@@ -852,17 +945,48 @@
     }
 }
 
-<span class="macro">cfg_if</span><span class="macro">!</span> {
+<span class="doccomment">/// Attempt to reclaim that cached memory used to symbolicate addresses.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This method will attempt to release any global data structures that have</span>
+<span class="doccomment">/// otherwise been cached globally or in the thread which typically represent</span>
+<span class="doccomment">/// parsed DWARF information or similar.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Caveats</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// While this function is always available it doesn&#39;t actually do anything on</span>
+<span class="doccomment">/// most implementations. Libraries like dbghelp or libbacktrace do not provide</span>
+<span class="doccomment">/// facilities to deallocate state and manage the allocated memory. For now the</span>
+<span class="doccomment">/// `gimli-symbolize` feature of this crate is the only feature where this</span>
+<span class="doccomment">/// function has any effect.</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache</span>() {
+    <span class="kw">let</span> <span class="ident">_guard</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">lock</span>::<span class="ident">lock</span>();
+    <span class="kw">unsafe</span> {
+        <span class="ident">clear_symbol_cache_imp</span>();
+    }
+}
+
+<span class="kw">mod</span> <span class="ident">dladdr</span>;
+
+<span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
     <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">windows</span>, <span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;msvc&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;dbghelp&quot;</span>))]</span> {
         <span class="kw">mod</span> <span class="ident">dbghelp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dbghelp</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dbghelp</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
-    } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>,
-                        <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gimli-symbolize&quot;</span>,
-                        <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;linux&quot;</span>))]</span> {
+        <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache_imp</span>() {}
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(
+        <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>,
+        <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;gimli-symbolize&quot;</span>,
+        <span class="ident">any</span>(
+            <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;linux&quot;</span>,
+            <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>,
+            <span class="ident">windows</span>,
+        ),
+    ))]</span> {
         <span class="kw">mod</span> <span class="ident">gimli</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">gimli</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">gimli</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">gimli</span>::<span class="ident">clear_symbol_cache</span> <span class="kw">as</span> <span class="ident">clear_symbol_cache_imp</span>;
     <span class="comment">// Note that we only enable coresymbolication on iOS when debug assertions</span>
     <span class="comment">// are enabled because it&#39;s helpful in debug mode but it looks like apps get</span>
     <span class="comment">// rejected from the app store if they use this API, see #92 for more info</span>
@@ -872,23 +996,27 @@
         <span class="kw">mod</span> <span class="ident">coresymbolication</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">coresymbolication</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">coresymbolication</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache_imp</span>() {}
     } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;libbacktrace&quot;</span>,
-                        <span class="ident">any</span>(<span class="ident">unix</span>, <span class="ident">all</span>(<span class="ident">windows</span>, <span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;gnu&quot;</span>)),
+                        <span class="ident">any</span>(<span class="ident">unix</span>, <span class="ident">all</span>(<span class="ident">windows</span>, <span class="ident">not</span>(<span class="ident">target_vendor</span> <span class="op">=</span> <span class="string">&quot;uwp&quot;</span>), <span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;gnu&quot;</span>)),
                         <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>),
                         <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;emscripten&quot;</span>)))]</span> {
         <span class="kw">mod</span> <span class="ident">libbacktrace</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">libbacktrace</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">libbacktrace</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache_imp</span>() {}
     } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>,
                         <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;emscripten&quot;</span>),
                         <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;dladdr&quot;</span>))]</span> {
-        <span class="kw">mod</span> <span class="ident">dladdr</span>;
-        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dladdr</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
-        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dladdr</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">mod</span> <span class="ident">dladdr_resolve</span>;
+        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dladdr_resolve</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
+        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">dladdr_resolve</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache_imp</span>() {}
     } <span class="kw">else</span> {
         <span class="kw">mod</span> <span class="ident">noop</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">noop</span>::<span class="ident">resolve</span> <span class="kw">as</span> <span class="ident">resolve_imp</span>;
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">noop</span>::<span class="ident">Symbol</span> <span class="kw">as</span> <span class="ident">SymbolImp</span>;
+        <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">clear_symbol_cache_imp</span>() {}
     }
 }
 </pre></div>

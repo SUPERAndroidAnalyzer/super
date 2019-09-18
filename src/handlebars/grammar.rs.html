@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-1.1.0/src/grammar.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>grammar.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-2.0.1/src/grammar.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>grammar.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -331,9 +331,6 @@
 <span id="331">331</span>
 <span id="332">332</span>
 <span id="333">333</span>
-<span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// const _GRAMMAR: &amp;&#39;static str = include_str!(&quot;grammar.pest&quot;);</span>
 
@@ -352,7 +349,7 @@
                 .<span class="macro-nonterminal">unwrap</span>()
                 .<span class="ident">last</span>()
                 .<span class="ident">unwrap</span>()
-                .<span class="ident">into_span</span>()
+                .<span class="ident">as_span</span>()
                 .<span class="ident">end</span>(),
             <span class="macro-nonterminal">$</span><span class="kw">in</span>.<span class="macro-nonterminal">len</span>()
         );
@@ -368,8 +365,9 @@
                     .<span class="macro-nonterminal">unwrap</span>()
                     .<span class="ident">last</span>()
                     .<span class="ident">unwrap</span>()
-                    .<span class="ident">into_span</span>()
-                    .<span class="ident">end</span>() <span class="op">!=</span> <span class="macro-nonterminal">$</span><span class="kw">in</span>.<span class="macro-nonterminal">len</span>()
+                    .<span class="ident">as_span</span>()
+                    .<span class="ident">end</span>()
+                    <span class="op">!=</span> <span class="macro-nonterminal">$</span><span class="kw">in</span>.<span class="macro-nonterminal">len</span>()
         );
     };
 }
@@ -497,15 +495,10 @@
 
 <span class="attribute">#[<span class="ident">test</span>]</span>
 <span class="kw">fn</span> <span class="ident">test_expression</span>() {
-    <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;{{exp}}&quot;</span>, <span class="string">&quot;{{(exp)}}&quot;</span>, <span class="string">&quot;{{this.name}}&quot;</span>, <span class="string">&quot;{{this.[0].name}}&quot;</span>];
-    <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">s</span>.<span class="ident">iter</span>() {
-        <span class="macro">assert_rule</span><span class="macro">!</span>(<span class="ident">Rule</span>::<span class="ident">expression</span>, <span class="ident">i</span>);
-    }
-}
-
-<span class="attribute">#[<span class="ident">test</span>]</span>
-<span class="kw">fn</span> <span class="ident">test_helper_expression</span>() {
     <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[
+        <span class="string">&quot;{{exp}}&quot;</span>,
+        <span class="string">&quot;{{(exp)}}&quot;</span>,
+        <span class="string">&quot;{{../exp}}&quot;</span>,
         <span class="string">&quot;{{exp 1}}&quot;</span>,
         <span class="string">&quot;{{exp \&quot;literal\&quot;}}&quot;</span>,
         <span class="string">&quot;{{exp ref}}&quot;</span>,
@@ -517,9 +510,10 @@
         <span class="string">&quot;{{exp key=ref}}&quot;</span>,
         <span class="string">&quot;{{exp key=(sub)}}&quot;</span>,
         <span class="string">&quot;{{exp key=(sub 0)}}&quot;</span>,
+        <span class="string">&quot;{{exp key=(sub 0 key=1)}}&quot;</span>,
     ];
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">s</span>.<span class="ident">iter</span>() {
-        <span class="macro">assert_rule</span><span class="macro">!</span>(<span class="ident">Rule</span>::<span class="ident">helper_expression</span>, <span class="ident">i</span>);
+        <span class="macro">assert_rule</span><span class="macro">!</span>(<span class="ident">Rule</span>::<span class="ident">expression</span>, <span class="ident">i</span>);
     }
 }
 
@@ -551,7 +545,7 @@
         <span class="string">&quot;{{#if}}&quot;</span>,
         <span class="string">&quot;{{~#if hello~}}&quot;</span>,
         <span class="string">&quot;{{#each people as |person|}}&quot;</span>,
-        <span class="string">&quot;{{#each-obj obj as |key val|}}&quot;</span>,
+        <span class="string">&quot;{{#each-obj obj as |val key|}}&quot;</span>,
         <span class="string">&quot;{{#each assets}}&quot;</span>,
     ];
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">s</span>.<span class="ident">iter</span>() {
@@ -599,7 +593,7 @@
 
 <span class="attribute">#[<span class="ident">test</span>]</span>
 <span class="kw">fn</span> <span class="ident">test_block_param</span>() {
-    <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;as |person|&quot;</span>, <span class="string">&quot;as |key val|&quot;</span>];
+    <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;as |person|&quot;</span>, <span class="string">&quot;as |val key|&quot;</span>];
     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">s</span>.<span class="ident">iter</span>() {
         <span class="macro">assert_rule</span><span class="macro">!</span>(<span class="ident">Rule</span>::<span class="ident">block_param</span>, <span class="ident">i</span>);
     }

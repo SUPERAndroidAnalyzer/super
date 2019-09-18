@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.26/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.35/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -446,6 +446,15 @@
 <span id="446">446</span>
 <span id="447">447</span>
 <span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2014-2015 The Rust Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution and at</span>
@@ -485,15 +494,13 @@
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">backtrace_sys</span> <span class="kw">as</span> <span class="ident">bt</span>;
 
 <span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">ptr</span>, <span class="ident">slice</span>};
-
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="self">self</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_void</span>, <span class="ident">uintptr_t</span>};
 
-<span class="kw">use</span> <span class="ident">SymbolName</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbolize</span>::{<span class="ident">ResolveWhat</span>, <span class="ident">SymbolName</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbolize</span>::<span class="ident">dladdr</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">types</span>::<span class="ident">BytesOrWideString</span>;
 
-<span class="kw">use</span> <span class="ident">symbolize</span>::<span class="ident">ResolveWhat</span>;
-<span class="kw">use</span> <span class="ident">types</span>::<span class="ident">BytesOrWideString</span>;
-
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Symbol</span> {
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="ident">Syminfo</span> {
         <span class="ident">pc</span>: <span class="ident">uintptr_t</span>,
         <span class="ident">symname</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
@@ -505,9 +512,10 @@
         <span class="ident">function</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
         <span class="ident">symname</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
     },
+    <span class="ident">Dladdr</span>(<span class="ident">dladdr</span>::<span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>),
 }
 
-<span class="kw">impl</span> <span class="ident">Symbol</span> {
+<span class="kw">impl</span> <span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymbolName</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="op">|</span><span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span><span class="op">|</span> {
             <span class="kw">unsafe</span> {
@@ -539,6 +547,7 @@
                 }
                 <span class="ident">symbol</span>(<span class="ident">symname</span>)
             }
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">name</span>(),
         }
     }
 
@@ -546,6 +555,7 @@
         <span class="kw">let</span> <span class="ident">pc</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
             <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">pc</span>, .. } <span class="op">=&gt;</span> <span class="ident">pc</span>,
             <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">pc</span>, .. } <span class="op">=&gt;</span> <span class="ident">pc</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">s</span>.<span class="ident">addr</span>(),
         };
         <span class="kw">if</span> <span class="ident">pc</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="prelude-val">None</span>
@@ -564,6 +574,7 @@
                     <span class="prelude-val">Some</span>(<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="ident">ptr</span>, <span class="ident">len</span>))
                 }
             }
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
@@ -595,6 +606,7 @@
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
             <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
             <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">lineno</span>, .. } <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">lineno</span> <span class="kw">as</span> <span class="ident">u32</span>),
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">lineno</span>(),
         }
     }
 }
@@ -616,7 +628,7 @@
     <span class="ident">_symval</span>: <span class="ident">uintptr_t</span>,
     <span class="ident">_symsize</span>: <span class="ident">uintptr_t</span>,
 ) {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bomb</span> <span class="op">=</span> ::<span class="ident">Bomb</span> { <span class="ident">enabled</span>: <span class="bool-val">true</span> };
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bomb</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">Bomb</span> { <span class="ident">enabled</span>: <span class="bool-val">true</span> };
 
     <span class="comment">// Once this callback is invoked from `backtrace_syminfo` when we start</span>
     <span class="comment">// resolving we go further to call `backtrace_pcinfo`. The</span>
@@ -669,7 +681,7 @@
     <span class="kw">if</span> <span class="ident">filename</span>.<span class="ident">is_null</span>() <span class="op">||</span> <span class="ident">function</span>.<span class="ident">is_null</span>() {
         <span class="kw">return</span> <span class="op">-</span><span class="number">1</span>;
     }
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bomb</span> <span class="op">=</span> ::<span class="ident">Bomb</span> { <span class="ident">enabled</span>: <span class="bool-val">true</span> };
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bomb</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">Bomb</span> { <span class="ident">enabled</span>: <span class="bool-val">true</span> };
 
     <span class="kw">unsafe</span> {
         <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span>(<span class="ident">data</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">PcinfoState</span>);
@@ -744,7 +756,7 @@
     <span class="comment">//</span>
     <span class="comment">// Given all that we try as hard as possible to *not* pass in a filename,</span>
     <span class="comment">// but we must on platforms that don&#39;t support /proc/self/exe at all.</span>
-    <span class="macro">cfg_if</span><span class="macro">!</span> {
+    <span class="ident">cfg_if</span>::<span class="macro">cfg_if</span><span class="macro">!</span> {
         <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">any</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;macos&quot;</span>, <span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;ios&quot;</span>))]</span> {
             <span class="comment">// Note that ideally we&#39;d use `std::env::current_exe`, but we can&#39;t</span>
             <span class="comment">// require `std` here.</span>
@@ -772,7 +784,7 @@
                 }
             }
         } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span> {
-            <span class="kw">use</span> <span class="ident">windows</span>::<span class="kw-2">*</span>;
+            <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">windows</span>::<span class="kw-2">*</span>;
 
             <span class="comment">// Windows has a mode of opening files where after it&#39;s opened it</span>
             <span class="comment">// can&#39;t be deleted. That&#39;s in general what we want here because we</span>
@@ -857,24 +869,12 @@
 }
 
 <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">resolve</span>(<span class="ident">what</span>: <span class="ident">ResolveWhat</span>, <span class="ident">cb</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw">super</span>::<span class="ident">Symbol</span>)) {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">symaddr</span> <span class="op">=</span> <span class="ident">what</span>.<span class="ident">address_or_ip</span>() <span class="kw">as</span> <span class="ident">usize</span>;
-
-    <span class="comment">// It&#39;s sort of unclear why this is necessary, but it appears that the ip</span>
-    <span class="comment">// values from stack traces are typically the instruction *after* the call</span>
-    <span class="comment">// that&#39;s the actual stack trace. Symbolizing this on Windows causes the</span>
-    <span class="comment">// filename/line number to be one ahead and perhaps into the void if it&#39;s</span>
-    <span class="comment">// near the end of the function. Apparently on Unix though it&#39;s roughly fine</span>
-    <span class="comment">// in that the filename/line number turn out alright. For now just try to</span>
-    <span class="comment">// get good backtraces with this, and hopefully one day we can figure out</span>
-    <span class="comment">// why the `-=1` is here.</span>
-    <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">windows</span>) <span class="op">&amp;&amp;</span> <span class="ident">symaddr</span> <span class="op">&gt;</span> <span class="number">0</span> {
-        <span class="ident">symaddr</span> <span class="op">-=</span> <span class="number">1</span>;
-    }
+    <span class="kw">let</span> <span class="ident">symaddr</span> <span class="op">=</span> <span class="ident">what</span>.<span class="ident">address_or_ip</span>() <span class="kw">as</span> <span class="ident">usize</span>;
 
     <span class="comment">// backtrace errors are currently swept under the rug</span>
     <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">init_state</span>();
     <span class="kw">if</span> <span class="ident">state</span>.<span class="ident">is_null</span>() {
-        <span class="kw">return</span>;
+        <span class="kw">return</span> <span class="ident">dladdr_fallback</span>(<span class="ident">what</span>.<span class="ident">address_or_ip</span>(), <span class="ident">cb</span>);
     }
 
     <span class="comment">// Call the `backtrace_syminfo` API first. This is (from reading the code)</span>
@@ -883,17 +883,35 @@
     <span class="comment">//</span>
     <span class="comment">// Note that we do this since `syminfo` will consult the symbol table,</span>
     <span class="comment">// finding symbol names even if there&#39;s no debug information in the binary.</span>
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">syminfo_state</span> <span class="op">=</span> <span class="ident">SyminfoState</span> {
-        <span class="ident">pc</span>: <span class="ident">symaddr</span>,
-        <span class="ident">cb</span>: <span class="ident">cb</span>,
-    };
-    <span class="ident">bt</span>::<span class="ident">backtrace_syminfo</span>(
-        <span class="ident">state</span>,
-        <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
-        <span class="ident">syminfo_cb</span>,
-        <span class="ident">error_cb</span>,
-        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">syminfo_state</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
-    );
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">called</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">syminfo_state</span> <span class="op">=</span> <span class="ident">SyminfoState</span> {
+            <span class="ident">pc</span>: <span class="ident">symaddr</span>,
+            <span class="ident">cb</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">sym</span><span class="op">|</span> {
+                <span class="ident">called</span> <span class="op">=</span> <span class="bool-val">true</span>;
+                <span class="ident">cb</span>(<span class="ident">sym</span>);
+            },
+        };
+        <span class="ident">bt</span>::<span class="ident">backtrace_syminfo</span>(
+            <span class="ident">state</span>,
+            <span class="ident">symaddr</span> <span class="kw">as</span> <span class="ident">uintptr_t</span>,
+            <span class="ident">syminfo_cb</span>,
+            <span class="ident">error_cb</span>,
+            <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">syminfo_state</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
+        );
+    }
+
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">called</span> {
+        <span class="ident">dladdr_fallback</span>(<span class="ident">what</span>.<span class="ident">address_or_ip</span>(), <span class="ident">cb</span>);
+    }
+}
+
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">dladdr_fallback</span>(<span class="ident">addr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>, <span class="ident">cb</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw">super</span>::<span class="ident">Symbol</span>)) {
+    <span class="ident">dladdr</span>::<span class="ident">resolve</span>(<span class="ident">addr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">sym</span><span class="op">|</span> {
+        <span class="ident">cb</span>(<span class="kw-2">&amp;</span><span class="kw">super</span>::<span class="ident">Symbol</span> {
+            <span class="ident">inner</span>: <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="ident">sym</span>),
+        })
+    });
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "backtrace";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

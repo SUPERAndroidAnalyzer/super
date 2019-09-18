@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Criticality","Vulnerability criticality"]]});
+initSidebarItems({"constant":[["_IMPL_DESERIALIZE_FOR_Criticality",""],["_IMPL_SERIALIZE_FOR_Criticality",""]],"enum":[["Criticality","Vulnerability criticality"]]});

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.6/src/unicode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>unicode.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex_syntax/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.11/src/unicode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>unicode.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex_syntax/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -453,11 +453,121 @@
 <span id="453">453</span>
 <span id="454">454</span>
 <span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">result</span>;
-
-<span class="kw">use</span> <span class="ident">ucd_util</span>::{<span class="self">self</span>, <span class="ident">PropertyValues</span>};
 
 <span class="kw">use</span> <span class="ident">hir</span>;
 <span class="kw">use</span> <span class="ident">unicode_tables</span>::<span class="ident">age</span>;
@@ -534,7 +644,8 @@
             } <span class="kw">else</span> {
                 <span class="ident">Ordering</span>::<span class="ident">Less</span>
             }
-        }).<span class="ident">is_ok</span>()
+        })
+        .<span class="ident">is_ok</span>()
 }
 
 <span class="doccomment">/// A query for finding a character class defined by Unicode. This supports</span>
@@ -577,8 +688,8 @@
             <span class="ident">ClassQuery</span>::<span class="ident">OneLetter</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">canonical_binary</span>(<span class="kw-2">&amp;</span><span class="ident">c</span>.<span class="ident">to_string</span>()),
             <span class="ident">ClassQuery</span>::<span class="ident">Binary</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">canonical_binary</span>(<span class="ident">name</span>),
             <span class="ident">ClassQuery</span>::<span class="ident">ByValue</span> { <span class="ident">property_name</span>, <span class="ident">property_value</span> } <span class="op">=&gt;</span> {
-                <span class="kw">let</span> <span class="ident">property_name</span> <span class="op">=</span> <span class="ident">normalize</span>(<span class="ident">property_name</span>);
-                <span class="kw">let</span> <span class="ident">property_value</span> <span class="op">=</span> <span class="ident">normalize</span>(<span class="ident">property_value</span>);
+                <span class="kw">let</span> <span class="ident">property_name</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize</span>(<span class="ident">property_name</span>);
+                <span class="kw">let</span> <span class="ident">property_value</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize</span>(<span class="ident">property_value</span>);
 
                 <span class="kw">let</span> <span class="ident">canon_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">canonical_prop</span>(<span class="kw-2">&amp;</span><span class="ident">property_name</span>) {
                     <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">PropertyNotFound</span>),
@@ -604,13 +715,13 @@
                             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
                             <span class="prelude-val">Some</span>(<span class="ident">vals</span>) <span class="op">=&gt;</span> <span class="ident">vals</span>,
                         };
-                        <span class="kw">let</span> <span class="ident">canon_val</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">canonical_value</span>(
-                            <span class="ident">vals</span>,
-                            <span class="kw-2">&amp;</span><span class="ident">property_value</span>,
-                        ) {
-                            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">canon_val</span>) <span class="op">=&gt;</span> <span class="ident">canon_val</span>,
-                        };
+                        <span class="kw">let</span> <span class="ident">canon_val</span> <span class="op">=</span>
+                            <span class="kw">match</span> <span class="ident">canonical_value</span>(<span class="ident">vals</span>, <span class="kw-2">&amp;</span><span class="ident">property_value</span>) {
+                                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>)
+                                }
+                                <span class="prelude-val">Some</span>(<span class="ident">canon_val</span>) <span class="op">=&gt;</span> <span class="ident">canon_val</span>,
+                            };
                         <span class="ident">CanonicalClassQuery</span>::<span class="ident">ByValue</span> {
                             <span class="ident">property_name</span>: <span class="ident">canon_name</span>,
                             <span class="ident">property_value</span>: <span class="ident">canon_val</span>,
@@ -622,7 +733,7 @@
     }
 
     <span class="kw">fn</span> <span class="ident">canonical_binary</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">CanonicalClassQuery</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">norm</span> <span class="op">=</span> <span class="ident">normalize</span>(<span class="ident">name</span>);
+        <span class="kw">let</span> <span class="ident">norm</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize</span>(<span class="ident">name</span>);
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">canon</span>) <span class="op">=</span> <span class="ident">canonical_prop</span>(<span class="kw-2">&amp;</span><span class="ident">norm</span>) {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">CanonicalClassQuery</span>::<span class="ident">Binary</span>(<span class="ident">canon</span>));
@@ -668,14 +779,10 @@
     <span class="kw">use</span> <span class="self">self</span>::<span class="ident">CanonicalClassQuery</span>::<span class="kw-2">*</span>;
 
     <span class="kw">match</span> <span class="ident">query</span>.<span class="ident">canonicalize</span>()<span class="question-mark">?</span> {
-        <span class="ident">Binary</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> {
-            <span class="ident">property_set</span>(<span class="ident">property_bool</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
-                .<span class="ident">map</span>(<span class="ident">hir_class</span>)
-                .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyNotFound</span>)
-        }
-        <span class="ident">GeneralCategory</span>(<span class="string">&quot;Any&quot;</span>) <span class="op">=&gt;</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">hir_class</span>(<span class="kw-2">&amp;</span>[(<span class="string">&#39;\0&#39;</span>, <span class="string">&#39;\u{10FFFF}&#39;</span>)]))
-        }
+        <span class="ident">Binary</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> <span class="ident">property_set</span>(<span class="ident">property_bool</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
+            .<span class="ident">map</span>(<span class="ident">hir_class</span>)
+            .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyNotFound</span>),
+        <span class="ident">GeneralCategory</span>(<span class="string">&quot;Any&quot;</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">hir_class</span>(<span class="kw-2">&amp;</span>[(<span class="string">&#39;\0&#39;</span>, <span class="string">&#39;\u{10FFFF}&#39;</span>)])),
         <span class="ident">GeneralCategory</span>(<span class="string">&quot;Assigned&quot;</span>) <span class="op">=&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cls</span> <span class="op">=</span>
                 <span class="ident">property_set</span>(<span class="ident">general_category</span>::<span class="ident">BY_NAME</span>, <span class="string">&quot;Unassigned&quot;</span>)
@@ -684,19 +791,13 @@
             <span class="ident">cls</span>.<span class="ident">negate</span>();
             <span class="prelude-val">Ok</span>(<span class="ident">cls</span>)
         }
-        <span class="ident">GeneralCategory</span>(<span class="string">&quot;ASCII&quot;</span>) <span class="op">=&gt;</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">hir_class</span>(<span class="kw-2">&amp;</span>[(<span class="string">&#39;\0&#39;</span>, <span class="string">&#39;\x7F&#39;</span>)]))
-        }
-        <span class="ident">GeneralCategory</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> {
-            <span class="ident">property_set</span>(<span class="ident">general_category</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
-                .<span class="ident">map</span>(<span class="ident">hir_class</span>)
-                .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>)
-        }
-        <span class="ident">Script</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> {
-            <span class="ident">property_set</span>(<span class="ident">script</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
-                .<span class="ident">map</span>(<span class="ident">hir_class</span>)
-                .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>)
-        }
+        <span class="ident">GeneralCategory</span>(<span class="string">&quot;ASCII&quot;</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">hir_class</span>(<span class="kw-2">&amp;</span>[(<span class="string">&#39;\0&#39;</span>, <span class="string">&#39;\x7F&#39;</span>)])),
+        <span class="ident">GeneralCategory</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> <span class="ident">property_set</span>(<span class="ident">general_category</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
+            .<span class="ident">map</span>(<span class="ident">hir_class</span>)
+            .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
+        <span class="ident">Script</span>(<span class="ident">name</span>) <span class="op">=&gt;</span> <span class="ident">property_set</span>(<span class="ident">script</span>::<span class="ident">BY_NAME</span>, <span class="ident">name</span>)
+            .<span class="ident">map</span>(<span class="ident">hir_class</span>)
+            .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
         <span class="ident">ByValue</span> { <span class="ident">property_name</span>: <span class="string">&quot;Age&quot;</span>, <span class="ident">property_value</span> } <span class="op">=&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">class</span> <span class="op">=</span> <span class="ident">hir</span>::<span class="ident">ClassUnicode</span>::<span class="ident">empty</span>();
             <span class="kw">for</span> <span class="ident">set</span> <span class="kw">in</span> <span class="ident">ages</span>(<span class="ident">property_value</span>)<span class="question-mark">?</span> {
@@ -709,11 +810,12 @@
                 .<span class="ident">map</span>(<span class="ident">hir_class</span>)
                 .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>)
         }
-        <span class="ident">ByValue</span> { <span class="ident">property_name</span>: <span class="string">&quot;Grapheme_Cluster_Break&quot;</span>, <span class="ident">property_value</span> } <span class="op">=&gt;</span> {
-            <span class="ident">property_set</span>(<span class="ident">grapheme_cluster_break</span>::<span class="ident">BY_NAME</span>, <span class="ident">property_value</span>)
-                .<span class="ident">map</span>(<span class="ident">hir_class</span>)
-                .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>)
-        }
+        <span class="ident">ByValue</span> {
+            <span class="ident">property_name</span>: <span class="string">&quot;Grapheme_Cluster_Break&quot;</span>,
+            <span class="ident">property_value</span>,
+        } <span class="op">=&gt;</span> <span class="ident">property_set</span>(<span class="ident">grapheme_cluster_break</span>::<span class="ident">BY_NAME</span>, <span class="ident">property_value</span>)
+            .<span class="ident">map</span>(<span class="ident">hir_class</span>)
+            .<span class="ident">ok_or</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
         <span class="ident">ByValue</span> { <span class="ident">property_name</span>: <span class="string">&quot;Sentence_Break&quot;</span>, <span class="ident">property_value</span> } <span class="op">=&gt;</span> {
             <span class="ident">property_set</span>(<span class="ident">sentence_break</span>::<span class="ident">BY_NAME</span>, <span class="ident">property_value</span>)
                 .<span class="ident">map</span>(<span class="ident">hir_class</span>)
@@ -740,9 +842,12 @@
     <span class="ident">hir</span>::<span class="ident">ClassUnicode</span>::<span class="ident">new</span>(<span class="ident">hir_ranges</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">canonical_prop</span>(<span class="ident">normalized_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-    <span class="ident">ucd_util</span>::<span class="ident">canonical_property_name</span>(<span class="ident">PROPERTY_NAMES</span>, <span class="ident">normalized_name</span>)
-}
+<span class="doccomment">/// A mapping of property values for a specific property.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The first element of each tuple is a normalized property value while the</span>
+<span class="doccomment">/// second element of each tuple is the corresponding canonical property</span>
+<span class="doccomment">/// value.</span>
+<span class="kw">type</span> <span class="ident">PropertyValues</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [(<span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>)];
 
 <span class="kw">fn</span> <span class="ident">canonical_gencat</span>(<span class="ident">normalized_value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
     <span class="kw">match</span> <span class="ident">normalized_value</span> {
@@ -761,24 +866,45 @@
     <span class="ident">canonical_value</span>(<span class="ident">scripts</span>, <span class="ident">normalized_value</span>)
 }
 
+<span class="doccomment">/// Find the canonical property name for the given normalized property name.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If no such property exists, then `None` is returned.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The normalized property name must have been normalized according to</span>
+<span class="doccomment">/// UAX44 LM3, which can be done using `symbolic_name_normalize`.</span>
+<span class="kw">fn</span> <span class="ident">canonical_prop</span>(<span class="ident">normalized_name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="ident">PROPERTY_NAMES</span>
+        .<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">normalized_name</span>, <span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">n</span>)
+        .<span class="ident">ok</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="ident">PROPERTY_NAMES</span>[<span class="ident">i</span>].<span class="number">1</span>)
+}
+
+<span class="doccomment">/// Find the canonical property value for the given normalized property</span>
+<span class="doccomment">/// value.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The given property values should correspond to the values for the property</span>
+<span class="doccomment">/// under question, which can be found using `property_values`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// If no such property value exists, then `None` is returned.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The normalized property value must have been normalized according to</span>
+<span class="doccomment">/// UAX44 LM3, which can be done using `symbolic_name_normalize`.</span>
 <span class="kw">fn</span> <span class="ident">canonical_value</span>(
     <span class="ident">vals</span>: <span class="ident">PropertyValues</span>,
     <span class="ident">normalized_value</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
 ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-    <span class="ident">ucd_util</span>::<span class="ident">canonical_property_value</span>(<span class="ident">vals</span>, <span class="ident">normalized_value</span>)
-}
-
-<span class="kw">fn</span> <span class="ident">normalize</span>(<span class="ident">x</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">x</span>.<span class="ident">to_string</span>();
-    <span class="ident">ucd_util</span>::<span class="ident">symbolic_name_normalize</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">x</span>);
-    <span class="ident">x</span>
+    <span class="ident">vals</span>.<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">normalized_value</span>, <span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">n</span>)
+        .<span class="ident">ok</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="ident">vals</span>[<span class="ident">i</span>].<span class="number">1</span>)
 }
 
 <span class="kw">fn</span> <span class="ident">property_values</span>(
     <span class="ident">canonical_property_name</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PropertyValues</span><span class="op">&gt;</span>
-{
-    <span class="ident">ucd_util</span>::<span class="ident">property_values</span>(<span class="ident">PROPERTY_VALUES</span>, <span class="ident">canonical_property_name</span>)
+) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PropertyValues</span><span class="op">&gt;</span> {
+    <span class="ident">PROPERTY_VALUES</span>
+        .<span class="ident">binary_search_by_key</span>(<span class="kw-2">&amp;</span><span class="ident">canonical_property_name</span>, <span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">n</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">n</span>)
+        .<span class="ident">ok</span>()
+        .<span class="ident">map</span>(<span class="op">|</span><span class="ident">i</span><span class="op">|</span> <span class="ident">PROPERTY_VALUES</span>[<span class="ident">i</span>].<span class="number">1</span>)
 }
 
 <span class="kw">fn</span> <span class="ident">property_set</span>(
@@ -821,13 +947,15 @@
         (<span class="string">&quot;V9_0&quot;</span>, <span class="ident">age</span>::<span class="ident">V9_0</span>),
         (<span class="string">&quot;V10_0&quot;</span>, <span class="ident">age</span>::<span class="ident">V10_0</span>),
         (<span class="string">&quot;V11_0&quot;</span>, <span class="ident">age</span>::<span class="ident">V11_0</span>),
+        (<span class="string">&quot;V12_0&quot;</span>, <span class="ident">age</span>::<span class="ident">V12_0</span>),
+        (<span class="string">&quot;V12_1&quot;</span>, <span class="ident">age</span>::<span class="ident">V12_1</span>),
     ];
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">AGES</span>.<span class="ident">len</span>(), <span class="ident">age</span>::<span class="ident">BY_NAME</span>.<span class="ident">len</span>(), <span class="string">&quot;ages are out of sync&quot;</span>);
 
     <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">AGES</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span>(<span class="ident">age</span>, <span class="kw">_</span>)<span class="op">|</span> <span class="ident">canonical_age</span> <span class="op">==</span> <span class="ident">age</span>);
     <span class="kw">match</span> <span class="ident">pos</span> {
         <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">PropertyValueNotFound</span>),
-        <span class="prelude-val">Some</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">AgeIter</span> { <span class="ident">ages</span>: <span class="kw-2">&amp;</span><span class="ident">AGES</span>[..<span class="ident">i</span><span class="op">+</span><span class="number">1</span>] }),
+        <span class="prelude-val">Some</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">AgeIter</span> { <span class="ident">ages</span>: <span class="kw-2">&amp;</span><span class="ident">AGES</span>[..<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] }),
     }
 }
 
@@ -845,9 +973,80 @@
     }
 }
 
+<span class="doccomment">/// Like symbolic_name_normalize_bytes, but operates on a string.</span>
+<span class="kw">fn</span> <span class="ident">symbolic_name_normalize</span>(<span class="ident">x</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tmp</span> <span class="op">=</span> <span class="ident">x</span>.<span class="ident">as_bytes</span>().<span class="ident">to_vec</span>();
+    <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">tmp</span>).<span class="ident">len</span>();
+    <span class="ident">tmp</span>.<span class="ident">truncate</span>(<span class="ident">len</span>);
+    <span class="comment">// This should always succeed because `symbolic_name_normalize_bytes`</span>
+    <span class="comment">// guarantees that `&amp;tmp[..len]` is always valid UTF-8.</span>
+    <span class="comment">//</span>
+    <span class="comment">// N.B. We could use unsafe here to avoid the additional UTF-8 check here,</span>
+    <span class="comment">// but it&#39;s unlikely to be worth it. A benchmark must justify it first.</span>
+    <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">tmp</span>).<span class="ident">unwrap</span>()
+}
+
+<span class="doccomment">/// Normalize the given symbolic name in place according to UAX44-LM3.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// A &quot;symbolic name&quot; typically corresponds to property names and property</span>
+<span class="doccomment">/// value aliases. Note, though, that it should not be applied to property</span>
+<span class="doccomment">/// string values.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The slice returned is guaranteed to be valid UTF-8 for all possible values</span>
+<span class="doccomment">/// of `slice`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// See: http://unicode.org/reports/tr44/#UAX44-LM3</span>
+<span class="kw">fn</span> <span class="ident">symbolic_name_normalize_bytes</span>(<span class="ident">slice</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>] {
+    <span class="comment">// I couldn&#39;t find a place in the standard that specified that property</span>
+    <span class="comment">// names/aliases had a particular structure (unlike character names), but</span>
+    <span class="comment">// we assume that it&#39;s ASCII only and drop anything that isn&#39;t ASCII.</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">start</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">starts_with_is</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="kw">if</span> <span class="ident">slice</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="number">2</span> {
+        <span class="comment">// Ignore any &quot;is&quot; prefix.</span>
+        <span class="ident">starts_with_is</span> <span class="op">=</span> <span class="ident">slice</span>[<span class="number">0</span>..<span class="number">2</span>] <span class="op">==</span> <span class="string">b&quot;is&quot;</span>[..]
+            <span class="op">||</span> <span class="ident">slice</span>[<span class="number">0</span>..<span class="number">2</span>] <span class="op">==</span> <span class="string">b&quot;IS&quot;</span>[..]
+            <span class="op">||</span> <span class="ident">slice</span>[<span class="number">0</span>..<span class="number">2</span>] <span class="op">==</span> <span class="string">b&quot;iS&quot;</span>[..]
+            <span class="op">||</span> <span class="ident">slice</span>[<span class="number">0</span>..<span class="number">2</span>] <span class="op">==</span> <span class="string">b&quot;Is&quot;</span>[..];
+        <span class="kw">if</span> <span class="ident">starts_with_is</span> {
+            <span class="ident">start</span> <span class="op">=</span> <span class="number">2</span>;
+        }
+    }
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next_write</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">start</span>..<span class="ident">slice</span>.<span class="ident">len</span>() {
+        <span class="comment">// SAFETY ARGUMENT: To guarantee that the resulting slice is valid</span>
+        <span class="comment">// UTF-8, we ensure that the slice contains only ASCII bytes. In</span>
+        <span class="comment">// particular, we drop every non-ASCII byte from the normalized string.</span>
+        <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">slice</span>[<span class="ident">i</span>];
+        <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="string">b&#39; &#39;</span> <span class="op">||</span> <span class="ident">b</span> <span class="op">==</span> <span class="string">b&#39;_&#39;</span> <span class="op">||</span> <span class="ident">b</span> <span class="op">==</span> <span class="string">b&#39;-&#39;</span> {
+            <span class="kw">continue</span>;
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="string">b&#39;A&#39;</span> <span class="op">&lt;=</span> <span class="ident">b</span> <span class="op">&amp;&amp;</span> <span class="ident">b</span> <span class="op">&lt;=</span> <span class="string">b&#39;Z&#39;</span> {
+            <span class="ident">slice</span>[<span class="ident">next_write</span>] <span class="op">=</span> <span class="ident">b</span> <span class="op">+</span> (<span class="string">b&#39;a&#39;</span> <span class="op">-</span> <span class="string">b&#39;A&#39;</span>);
+            <span class="ident">next_write</span> <span class="op">+=</span> <span class="number">1</span>;
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">&lt;=</span> <span class="number">0x7F</span> {
+            <span class="ident">slice</span>[<span class="ident">next_write</span>] <span class="op">=</span> <span class="ident">b</span>;
+            <span class="ident">next_write</span> <span class="op">+=</span> <span class="number">1</span>;
+        }
+    }
+    <span class="comment">// Special case: ISO_Comment has a &#39;isc&#39; abbreviation. Since we generally</span>
+    <span class="comment">// ignore &#39;is&#39; prefixes, the &#39;isc&#39; abbreviation gets caught in the cross</span>
+    <span class="comment">// fire and ends up creating an alias for &#39;c&#39; to &#39;ISO_Comment&#39;, but it</span>
+    <span class="comment">// is actually an alias for the &#39;Other&#39; general category.</span>
+    <span class="kw">if</span> <span class="ident">starts_with_is</span> <span class="op">&amp;&amp;</span> <span class="ident">next_write</span> <span class="op">==</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">slice</span>[<span class="number">0</span>] <span class="op">==</span> <span class="string">b&#39;c&#39;</span> {
+        <span class="ident">slice</span>[<span class="number">0</span>] <span class="op">=</span> <span class="string">b&#39;i&#39;</span>;
+        <span class="ident">slice</span>[<span class="number">1</span>] <span class="op">=</span> <span class="string">b&#39;s&#39;</span>;
+        <span class="ident">slice</span>[<span class="number">2</span>] <span class="op">=</span> <span class="string">b&#39;c&#39;</span>;
+        <span class="ident">next_write</span> <span class="op">=</span> <span class="number">3</span>;
+    }
+    <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">slice</span>[..<span class="ident">next_write</span>]
+}
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">contains_simple_case_mapping</span>, <span class="ident">simple_fold</span>};
+    <span class="kw">use</span> <span class="kw">super</span>::{
+        <span class="ident">contains_simple_case_mapping</span>, <span class="ident">simple_fold</span>, <span class="ident">symbolic_name_normalize</span>,
+        <span class="ident">symbolic_name_normalize_bytes</span>,
+    };
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">simple_fold_k</span>() {
@@ -906,7 +1105,32 @@
         <span class="kw">let</span> <span class="ident">q</span> <span class="op">=</span> <span class="ident">ClassQuery</span>::<span class="ident">OneLetter</span>(<span class="string">&#39;C&#39;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">q</span>.<span class="ident">canonicalize</span>().<span class="ident">unwrap</span>(),
-            <span class="ident">CanonicalClassQuery</span>::<span class="ident">GeneralCategory</span>(<span class="string">&quot;Other&quot;</span>));
+            <span class="ident">CanonicalClassQuery</span>::<span class="ident">GeneralCategory</span>(<span class="string">&quot;Other&quot;</span>)
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">sym_normalize</span>() {
+        <span class="kw">let</span> <span class="ident">sym_norm</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize</span>;
+
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;Line_Break&quot;</span>), <span class="string">&quot;linebreak&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;Line-break&quot;</span>), <span class="string">&quot;linebreak&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;linebreak&quot;</span>), <span class="string">&quot;linebreak&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;BA&quot;</span>), <span class="string">&quot;ba&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;ba&quot;</span>), <span class="string">&quot;ba&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;Greek&quot;</span>), <span class="string">&quot;greek&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;isGreek&quot;</span>), <span class="string">&quot;greek&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;IS_Greek&quot;</span>), <span class="string">&quot;greek&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;isc&quot;</span>), <span class="string">&quot;isc&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;is c&quot;</span>), <span class="string">&quot;isc&quot;</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">sym_norm</span>(<span class="string">&quot;is_c&quot;</span>), <span class="string">&quot;isc&quot;</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">valid_utf8_symbolic</span>() {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">x</span> <span class="op">=</span> <span class="string">b&quot;abc\xFFxyz&quot;</span>.<span class="ident">to_vec</span>();
+        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">symbolic_name_normalize_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">x</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">y</span>, <span class="string">b&quot;abcxyz&quot;</span>);
     }
 }
 </pre></div>

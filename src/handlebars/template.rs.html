@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-1.1.0/src/template.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>template.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-2.0.1/src/template.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>template.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1122,20 +1122,30 @@
 <span id="1122">1122</span>
 <span id="1123">1123</span>
 <span id="1124">1124</span>
+<span id="1125">1125</span>
+<span id="1126">1126</span>
+<span id="1127">1127</span>
+<span id="1128">1128</span>
+<span id="1129">1129</span>
+<span id="1130">1130</span>
+<span id="1131">1131</span>
+<span id="1132">1132</span>
+<span id="1133">1133</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::{<span class="ident">BTreeMap</span>, <span class="ident">VecDeque</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">VecDeque</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">iter</span>::<span class="ident">Peekable</span>;
 
-<span class="kw">use</span> <span class="ident">grammar</span>::{<span class="ident">HandlebarsParser</span>, <span class="ident">Rule</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">grammar</span>::{<span class="ident">HandlebarsParser</span>, <span class="ident">Rule</span>};
 <span class="kw">use</span> <span class="ident">pest</span>::<span class="ident">error</span>::<span class="ident">LineColLocation</span>;
 <span class="kw">use</span> <span class="ident">pest</span>::<span class="ident">iterators</span>::<span class="ident">Pair</span>;
 <span class="kw">use</span> <span class="ident">pest</span>::{<span class="ident">Parser</span>, <span class="ident">Position</span>};
 
+<span class="kw">use</span> <span class="ident">hashbrown</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">value</span>::<span class="ident">Value</span> <span class="kw">as</span> <span class="ident">Json</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
 
-<span class="kw">use</span> <span class="ident">error</span>::{<span class="ident">TemplateError</span>, <span class="ident">TemplateErrorReason</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::{<span class="ident">TemplateError</span>, <span class="ident">TemplateErrorReason</span>};
 
 <span class="kw">use</span> <span class="self">self</span>::<span class="ident">TemplateElement</span>::<span class="kw-2">*</span>;
 
@@ -1160,30 +1170,24 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">name</span>: <span class="ident">String</span>,
         <span class="ident">params</span>: <span class="kw-2">&amp;</span>[<span class="ident">Parameter</span>],
-        <span class="ident">hash</span>: <span class="kw-2">&amp;</span><span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
+        <span class="ident">hash</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
     ) <span class="op">-&gt;</span> <span class="ident">Subexpression</span> {
-        <span class="kw">if</span> <span class="ident">params</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="ident">hash</span>.<span class="ident">is_empty</span>() {
-            <span class="ident">Subexpression</span> {
-                <span class="ident">element</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expression</span>(<span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">name</span>))),
-            }
-        } <span class="kw">else</span> {
-            <span class="ident">Subexpression</span> {
-                <span class="ident">element</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">HelperExpression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">HelperTemplate</span> {
-                    <span class="ident">name</span>,
-                    <span class="ident">params</span>: <span class="ident">params</span>.<span class="ident">to_owned</span>(),
-                    <span class="ident">hash</span>: <span class="ident">hash</span>.<span class="ident">clone</span>(),
-                    <span class="ident">template</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">inverse</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">block_param</span>: <span class="prelude-val">None</span>,
-                    <span class="ident">block</span>: <span class="bool-val">false</span>,
-                }))),
-            }
+        <span class="ident">Subexpression</span> {
+            <span class="ident">element</span>: <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Expression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">HelperTemplate</span> {
+                <span class="ident">name</span>: <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">name</span>),
+                <span class="ident">params</span>: <span class="ident">params</span>.<span class="ident">to_owned</span>(),
+                <span class="ident">hash</span>: <span class="ident">hash</span>.<span class="ident">clone</span>(),
+                <span class="ident">template</span>: <span class="prelude-val">None</span>,
+                <span class="ident">inverse</span>: <span class="prelude-val">None</span>,
+                <span class="ident">block_param</span>: <span class="prelude-val">None</span>,
+                <span class="ident">block</span>: <span class="bool-val">false</span>,
+            }))),
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_helper</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_element</span>() {
-            <span class="kw-2">&amp;</span><span class="ident">TemplateElement</span>::<span class="ident">HelperExpression</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_element</span>() {
+            <span class="ident">TemplateElement</span>::<span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="op">!</span><span class="ident">ht</span>.<span class="ident">is_name_only</span>(),
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
         }
     }
@@ -1193,26 +1197,23 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_element</span>() {
-            <span class="kw-2">&amp;</span><span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">ht</span>.<span class="ident">name</span>,
-            <span class="kw-2">&amp;</span><span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">p</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">p</span> {
-                <span class="kw-2">&amp;</span><span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>,
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
-            },
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_element</span>() {
+            <span class="comment">// FIXME: avoid unwrap here</span>
+            <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="ident">ht</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(),
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">params</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Parameter</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_element</span>() {
-            <span class="kw-2">&amp;</span><span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ht</span>.<span class="ident">params</span>),
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_element</span>() {
+            <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ht</span>.<span class="ident">params</span>),
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">as_element</span>() {
-            <span class="kw-2">&amp;</span><span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ht</span>.<span class="ident">hash</span>),
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;&gt;</span> {
+        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_element</span>() {
+            <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ht</span>.<span class="ident">hash</span>),
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
@@ -1228,7 +1229,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ExpressionSpec</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Parameter</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Parameter</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">block_param</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BlockParam</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">omit_pre_ws</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">omit_pro_ws</span>: <span class="ident">bool</span>,
@@ -1243,24 +1244,50 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">HelperTemplate</span> {
-    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Parameter</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Parameter</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">block_param</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BlockParam</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">template</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Template</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">inverse</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Template</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">block</span>: <span class="ident">bool</span>,
 }
 
+<span class="kw">impl</span> <span class="ident">HelperTemplate</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">with_name</span>(<span class="ident">name</span>: <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="ident">HelperTemplate</span> {
+        <span class="ident">HelperTemplate</span> {
+            <span class="ident">name</span>: <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">name</span>),
+            <span class="ident">params</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
+            <span class="ident">hash</span>: <span class="ident">HashMap</span>::<span class="ident">new</span>(),
+            <span class="ident">block_param</span>: <span class="prelude-val">None</span>,
+            <span class="ident">template</span>: <span class="prelude-val">None</span>,
+            <span class="ident">inverse</span>: <span class="prelude-val">None</span>,
+            <span class="ident">block</span>: <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_name_only</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="op">!</span><span class="self">self</span>.<span class="ident">block</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">params</span>.<span class="ident">is_empty</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">hash</span>.<span class="ident">is_empty</span>()
+    }
+}
+
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DirectiveTemplate</span> {
     <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">Parameter</span>,
     <span class="kw">pub</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Parameter</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">hash</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">template</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Template</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Parameter</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="kw-2">ref</span> <span class="ident">n</span>) <span class="op">=</span> <span class="self">self</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">n</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        }
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_name</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="prelude-val">Some</span>(<span class="ident">n</span>)
@@ -1329,7 +1356,7 @@
     {
         <span class="kw">let</span> <span class="ident">name_node</span> <span class="op">=</span> <span class="ident">it</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">rule</span> <span class="op">=</span> <span class="ident">name_node</span>.<span class="ident">as_rule</span>();
-        <span class="kw">let</span> <span class="ident">name_span</span> <span class="op">=</span> <span class="ident">name_node</span>.<span class="ident">into_span</span>();
+        <span class="kw">let</span> <span class="ident">name_span</span> <span class="op">=</span> <span class="ident">name_node</span>.<span class="ident">as_span</span>();
         <span class="kw">match</span> <span class="ident">rule</span> {
             <span class="ident">Rule</span>::<span class="ident">identifier</span> <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">reference</span> <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">invert_tag_item</span> <span class="op">=&gt;</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">name_span</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>()))
@@ -1354,7 +1381,7 @@
             <span class="ident">param</span> <span class="op">=</span> <span class="ident">it</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
         }
         <span class="kw">let</span> <span class="ident">param_rule</span> <span class="op">=</span> <span class="ident">param</span>.<span class="ident">as_rule</span>();
-        <span class="kw">let</span> <span class="ident">param_span</span> <span class="op">=</span> <span class="ident">param</span>.<span class="ident">into_span</span>();
+        <span class="kw">let</span> <span class="ident">param_span</span> <span class="op">=</span> <span class="ident">param</span>.<span class="ident">as_span</span>();
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">param_rule</span> {
             <span class="ident">Rule</span>::<span class="ident">reference</span> <span class="op">=&gt;</span> <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="ident">param_span</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>()),
             <span class="ident">Rule</span>::<span class="ident">literal</span> <span class="op">=&gt;</span> {
@@ -1371,16 +1398,11 @@
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
         };
 
-        <span class="kw">loop</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="ident">it</span>.<span class="ident">peek</span>() {
-                <span class="kw">let</span> <span class="ident">n_span</span> <span class="op">=</span> <span class="ident">n</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>();
-                <span class="kw">if</span> <span class="ident">n_span</span>.<span class="ident">end</span>() <span class="op">&gt;</span> <span class="ident">param_span</span>.<span class="ident">end</span>() {
-                    <span class="kw">break</span>;
-                }
-            } <span class="kw">else</span> {
+        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="ident">it</span>.<span class="ident">peek</span>() {
+            <span class="kw">let</span> <span class="ident">n_span</span> <span class="op">=</span> <span class="ident">n</span>.<span class="ident">as_span</span>();
+            <span class="kw">if</span> <span class="ident">n_span</span>.<span class="ident">end</span>() <span class="op">&gt;</span> <span class="ident">param_span</span>.<span class="ident">end</span>() {
                 <span class="kw">break</span>;
             }
-
             <span class="ident">it</span>.<span class="ident">next</span>();
         }
 
@@ -1396,7 +1418,7 @@
         <span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
     {
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">it</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">name_node</span> <span class="op">=</span> <span class="ident">name</span>.<span class="ident">into_span</span>();
+        <span class="kw">let</span> <span class="ident">name_node</span> <span class="op">=</span> <span class="ident">name</span>.<span class="ident">as_span</span>();
         <span class="comment">// identifier</span>
         <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">name_node</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>();
 
@@ -1413,12 +1435,12 @@
         <span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
     {
         <span class="kw">let</span> <span class="ident">p1_name</span> <span class="op">=</span> <span class="ident">it</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">p1_name_span</span> <span class="op">=</span> <span class="ident">p1_name</span>.<span class="ident">into_span</span>();
+        <span class="kw">let</span> <span class="ident">p1_name_span</span> <span class="op">=</span> <span class="ident">p1_name</span>.<span class="ident">as_span</span>();
         <span class="comment">// identifier</span>
         <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">p1_name_span</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>();
 
         <span class="kw">let</span> <span class="ident">p2</span> <span class="op">=</span> <span class="ident">it</span>.<span class="ident">peek</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">p2_name</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">p2_name_span</span> <span class="op">=</span> <span class="ident">p2_name</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>();
+            <span class="kw">let</span> <span class="ident">p2_name_span</span> <span class="op">=</span> <span class="ident">p2_name</span>.<span class="ident">as_span</span>();
             <span class="kw">if</span> <span class="ident">p2_name_span</span>.<span class="ident">end</span>() <span class="op">&lt;=</span> <span class="ident">limit</span> {
                 <span class="prelude-val">Some</span>(<span class="ident">p2_name_span</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>())
             } <span class="kw">else</span> {
@@ -1446,7 +1468,7 @@
         <span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">params</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Parameter</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hashes</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BTreeMap</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">hashes</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Parameter</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">HashMap</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">omit_pre_ws</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">omit_pro_ws</span> <span class="op">=</span> <span class="bool-val">false</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">block_param</span> <span class="op">=</span> <span class="prelude-val">None</span>;
@@ -1462,7 +1484,7 @@
             <span class="kw">let</span> <span class="ident">rule</span>;
             <span class="kw">let</span> <span class="ident">end</span>;
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pair</span>) <span class="op">=</span> <span class="ident">it</span>.<span class="ident">peek</span>() {
-                <span class="kw">let</span> <span class="ident">pair_span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>();
+                <span class="kw">let</span> <span class="ident">pair_span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">as_span</span>();
                 <span class="kw">if</span> <span class="ident">pair_span</span>.<span class="ident">end</span>() <span class="op">&lt;</span> <span class="ident">limit</span> {
                     <span class="ident">rule</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>();
                     <span class="ident">end</span> <span class="op">=</span> <span class="ident">pair_span</span>.<span class="ident">end</span>();
@@ -1506,7 +1528,7 @@
         <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">el</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">pop</span>() {
             <span class="kw">if</span> <span class="kw">let</span> <span class="ident">RawString</span>(<span class="kw-2">ref</span> <span class="ident">text</span>) <span class="op">=</span> <span class="ident">el</span> {
-                <span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">RawString</span>(<span class="ident">text</span>.<span class="ident">trim_right</span>().<span class="ident">to_owned</span>()));
+                <span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">RawString</span>(<span class="ident">text</span>.<span class="ident">trim_end</span>().<span class="ident">to_owned</span>()));
             } <span class="kw">else</span> {
                 <span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">push</span>(<span class="ident">el</span>);
             }
@@ -1516,14 +1538,14 @@
     <span class="kw">fn</span> <span class="ident">raw_string</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
         <span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>,
         <span class="ident">pair</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
-        <span class="ident">trim_left</span>: <span class="ident">bool</span>,
+        <span class="ident">trim_start</span>: <span class="ident">bool</span>,
     ) <span class="op">-&gt;</span> <span class="ident">TemplateElement</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">source</span>);
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pair</span>) <span class="op">=</span> <span class="ident">pair</span> {
             <span class="comment">// the source may contains leading space because of pest&#39;s limitation</span>
             <span class="comment">// we calculate none space start here in order to correct the offset</span>
-            <span class="kw">let</span> <span class="ident">pair_span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>();
+            <span class="kw">let</span> <span class="ident">pair_span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">as_span</span>();
 
             <span class="kw">let</span> <span class="ident">current_start</span> <span class="op">=</span> <span class="ident">pair_span</span>.<span class="ident">start</span>();
             <span class="kw">let</span> <span class="ident">span_length</span> <span class="op">=</span> <span class="ident">pair_span</span>.<span class="ident">end</span>() <span class="op">-</span> <span class="ident">current_start</span>;
@@ -1536,7 +1558,7 @@
             <span class="kw">for</span> <span class="ident">sub_pair</span> <span class="kw">in</span> <span class="ident">pairs</span>.<span class="ident">into_iter</span>().<span class="ident">rev</span>() {
                 <span class="comment">// remove escaped backslash</span>
                 <span class="kw">if</span> <span class="ident">sub_pair</span>.<span class="ident">as_rule</span>() <span class="op">==</span> <span class="ident">Rule</span>::<span class="ident">escape</span> {
-                    <span class="kw">let</span> <span class="ident">escape_span</span> <span class="op">=</span> <span class="ident">sub_pair</span>.<span class="ident">into_span</span>();
+                    <span class="kw">let</span> <span class="ident">escape_span</span> <span class="op">=</span> <span class="ident">sub_pair</span>.<span class="ident">as_span</span>();
 
                     <span class="kw">let</span> <span class="ident">backslash_pos</span> <span class="op">=</span> <span class="ident">escape_span</span>.<span class="ident">start</span>();
                     <span class="kw">let</span> <span class="ident">backslash_rel_pos</span> <span class="op">=</span> <span class="ident">leading_space_offset</span> <span class="op">+</span> <span class="ident">backslash_pos</span> <span class="op">-</span> <span class="ident">current_start</span>;
@@ -1545,8 +1567,8 @@
             }
         }
 
-        <span class="kw">if</span> <span class="ident">trim_left</span> {
-            <span class="ident">RawString</span>(<span class="ident">s</span>.<span class="ident">trim_left</span>().<span class="ident">to_owned</span>())
+        <span class="kw">if</span> <span class="ident">trim_start</span> {
+            <span class="ident">RawString</span>(<span class="ident">s</span>.<span class="ident">trim_start</span>().<span class="ident">to_owned</span>())
         } <span class="kw">else</span> {
             <span class="ident">RawString</span>(<span class="ident">s</span>)
         }
@@ -1580,7 +1602,7 @@
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">pair</span>) <span class="op">=</span> <span class="ident">it</span>.<span class="ident">next</span>() {
                 <span class="kw">let</span> <span class="ident">prev_end</span> <span class="op">=</span> <span class="ident">end_pos</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">p</span>.<span class="ident">pos</span>()).<span class="ident">unwrap_or</span>(<span class="number">0</span>);
                 <span class="kw">let</span> <span class="ident">rule</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>();
-                <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>();
+                <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">as_span</span>();
 
                 <span class="kw">let</span> <span class="ident">is_trailing_string</span> <span class="op">=</span> <span class="ident">rule</span> <span class="op">!=</span> <span class="ident">Rule</span>::<span class="ident">template</span>
                     <span class="op">&amp;&amp;</span> <span class="ident">span</span>.<span class="ident">start</span>() <span class="op">!=</span> <span class="ident">prev_end</span>
@@ -1642,7 +1664,7 @@
                         <span class="kw">match</span> <span class="ident">rule</span> {
                             <span class="ident">Rule</span>::<span class="ident">helper_block_start</span> <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">raw_block_start</span> <span class="op">=&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">helper_template</span> <span class="op">=</span> <span class="ident">HelperTemplate</span> {
-                                    <span class="ident">name</span>: <span class="ident">exp</span>.<span class="ident">name</span>.<span class="ident">into_name</span>().<span class="ident">unwrap</span>(),
+                                    <span class="ident">name</span>: <span class="ident">exp</span>.<span class="ident">name</span>,
                                     <span class="ident">params</span>: <span class="ident">exp</span>.<span class="ident">params</span>,
                                     <span class="ident">hash</span>: <span class="ident">exp</span>.<span class="ident">hash</span>,
                                     <span class="ident">block_param</span>: <span class="ident">exp</span>.<span class="ident">block_param</span>,
@@ -1699,7 +1721,6 @@
                     }
                     <span class="ident">Rule</span>::<span class="ident">expression</span>
                     <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">html_expression</span>
-                    <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">helper_expression</span>
                     <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">directive_expression</span>
                     <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">partial_expression</span>
                     <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">helper_block_end</span>
@@ -1714,19 +1735,14 @@
                         <span class="ident">omit_pro_ws</span> <span class="op">=</span> <span class="ident">exp</span>.<span class="ident">omit_pro_ws</span>;
 
                         <span class="kw">match</span> <span class="ident">rule</span> {
-                            <span class="ident">Rule</span>::<span class="ident">expression</span> <span class="op">=&gt;</span> {
-                                <span class="kw">let</span> <span class="ident">el</span> <span class="op">=</span> <span class="ident">Expression</span>(<span class="ident">exp</span>.<span class="ident">name</span>);
-                                <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
-                                <span class="ident">t</span>.<span class="ident">push_element</span>(<span class="ident">el</span>, <span class="ident">line_no</span>, <span class="ident">col_no</span>);
-                            }
                             <span class="ident">Rule</span>::<span class="ident">html_expression</span> <span class="op">=&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">el</span> <span class="op">=</span> <span class="ident">HTMLExpression</span>(<span class="ident">exp</span>.<span class="ident">name</span>);
                                 <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
                                 <span class="ident">t</span>.<span class="ident">push_element</span>(<span class="ident">el</span>, <span class="ident">line_no</span>, <span class="ident">col_no</span>);
                             }
-                            <span class="ident">Rule</span>::<span class="ident">helper_expression</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">expression</span> <span class="op">=&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">helper_template</span> <span class="op">=</span> <span class="ident">HelperTemplate</span> {
-                                    <span class="ident">name</span>: <span class="ident">exp</span>.<span class="ident">name</span>.<span class="ident">into_name</span>().<span class="ident">unwrap</span>(),
+                                    <span class="ident">name</span>: <span class="ident">exp</span>.<span class="ident">name</span>,
                                     <span class="ident">params</span>: <span class="ident">exp</span>.<span class="ident">params</span>,
                                     <span class="ident">hash</span>: <span class="ident">exp</span>.<span class="ident">hash</span>,
                                     <span class="ident">block_param</span>: <span class="ident">exp</span>.<span class="ident">block_param</span>,
@@ -1734,7 +1750,7 @@
                                     <span class="ident">template</span>: <span class="prelude-val">None</span>,
                                     <span class="ident">inverse</span>: <span class="prelude-val">None</span>,
                                 };
-                                <span class="kw">let</span> <span class="ident">el</span> <span class="op">=</span> <span class="ident">HelperExpression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">helper_template</span>));
+                                <span class="kw">let</span> <span class="ident">el</span> <span class="op">=</span> <span class="ident">Expression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">helper_template</span>));
                                 <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
                                 <span class="ident">t</span>.<span class="ident">push_element</span>(<span class="ident">el</span>, <span class="ident">line_no</span>, <span class="ident">col_no</span>);
                             }
@@ -1755,7 +1771,7 @@
                             }
                             <span class="ident">Rule</span>::<span class="ident">helper_block_end</span> <span class="op">|</span> <span class="ident">Rule</span>::<span class="ident">raw_block_end</span> <span class="op">=&gt;</span> {
                                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">h</span> <span class="op">=</span> <span class="ident">helper_stack</span>.<span class="ident">pop_front</span>().<span class="ident">unwrap</span>();
-                                <span class="kw">let</span> <span class="ident">close_tag_name</span> <span class="op">=</span> <span class="ident">exp</span>.<span class="ident">name</span>.<span class="ident">into_name</span>().<span class="ident">unwrap</span>();
+                                <span class="kw">let</span> <span class="ident">close_tag_name</span> <span class="op">=</span> <span class="ident">exp</span>.<span class="ident">name</span>;
                                 <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">name</span> <span class="op">==</span> <span class="ident">close_tag_name</span> {
                                     <span class="kw">let</span> <span class="ident">prev_t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">pop_front</span>().<span class="ident">unwrap</span>();
                                     <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">template</span>.<span class="ident">is_some</span>() {
@@ -1768,8 +1784,8 @@
                                 } <span class="kw">else</span> {
                                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">TemplateError</span>::<span class="ident">of</span>(
                                         <span class="ident">TemplateErrorReason</span>::<span class="ident">MismatchingClosedHelper</span>(
-                                            <span class="ident">h</span>.<span class="ident">name</span>,
-                                            <span class="ident">close_tag_name</span>,
+                                            <span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">into_name</span>().<span class="ident">unwrap</span>(),
+                                            <span class="ident">close_tag_name</span>.<span class="ident">into_name</span>().<span class="ident">unwrap</span>(),
                                         ),
                                     )
                                     .<span class="ident">at</span>(<span class="ident">source</span>, <span class="ident">line_no</span>, <span class="ident">col_no</span>));
@@ -1803,16 +1819,16 @@
                     <span class="ident">Rule</span>::<span class="ident">hbs_comment_compact</span> <span class="op">=&gt;</span> {
                         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">span</span>
                             .<span class="ident">as_str</span>()
-                            .<span class="ident">trim_left_matches</span>(<span class="string">&quot;{{!&quot;</span>)
-                            .<span class="ident">trim_right_matches</span>(<span class="string">&quot;}}&quot;</span>);
+                            .<span class="ident">trim_start_matches</span>(<span class="string">&quot;{{!&quot;</span>)
+                            .<span class="ident">trim_end_matches</span>(<span class="string">&quot;}}&quot;</span>);
                         <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
                         <span class="ident">t</span>.<span class="ident">push_element</span>(<span class="ident">Comment</span>(<span class="ident">text</span>.<span class="ident">to_owned</span>()), <span class="ident">line_no</span>, <span class="ident">col_no</span>);
                     }
                     <span class="ident">Rule</span>::<span class="ident">hbs_comment</span> <span class="op">=&gt;</span> {
                         <span class="kw">let</span> <span class="ident">text</span> <span class="op">=</span> <span class="ident">span</span>
                             .<span class="ident">as_str</span>()
-                            .<span class="ident">trim_left_matches</span>(<span class="string">&quot;{{!--&quot;</span>)
-                            .<span class="ident">trim_right_matches</span>(<span class="string">&quot;--}}&quot;</span>);
+                            .<span class="ident">trim_start_matches</span>(<span class="string">&quot;{{!--&quot;</span>)
+                            .<span class="ident">trim_end_matches</span>(<span class="string">&quot;--}}&quot;</span>);
                         <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">template_stack</span>.<span class="ident">front_mut</span>().<span class="ident">unwrap</span>();
                         <span class="ident">t</span>.<span class="ident">push_element</span>(<span class="ident">Comment</span>(<span class="ident">text</span>.<span class="ident">to_owned</span>()), <span class="ident">line_no</span>, <span class="ident">col_no</span>);
                     }
@@ -1854,9 +1870,8 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TemplateElement</span> {
     <span class="ident">RawString</span>(<span class="ident">String</span>),
-    <span class="ident">Expression</span>(<span class="ident">Parameter</span>),
     <span class="ident">HTMLExpression</span>(<span class="ident">Parameter</span>),
-    <span class="ident">HelperExpression</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HelperTemplate</span><span class="op">&gt;</span>),
+    <span class="ident">Expression</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HelperTemplate</span><span class="op">&gt;</span>),
     <span class="ident">HelperBlock</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">HelperTemplate</span><span class="op">&gt;</span>),
     <span class="ident">DirectiveExpression</span>(<span class="ident">DirectiveTemplate</span>),
     <span class="ident">DirectiveBlock</span>(<span class="ident">DirectiveTemplate</span>),
@@ -1907,7 +1922,7 @@
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">unwrap</span>(), <span class="ident">RawString</span>(<span class="string">&quot;&lt;h1&gt;&quot;</span>.<span class="ident">to_string</span>()));
     <span class="macro">assert_eq</span><span class="macro">!</span>(
         <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">1</span>).<span class="ident">unwrap</span>(),
-        <span class="ident">Expression</span>(<span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="string">&quot;title&quot;</span>.<span class="ident">to_string</span>()))
+        <span class="ident">Expression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">HelperTemplate</span>::<span class="ident">with_name</span>(<span class="string">&quot;title&quot;</span>.<span class="ident">to_string</span>())))
     );
 
     <span class="macro">assert_eq</span><span class="macro">!</span>(
@@ -1917,7 +1932,7 @@
 
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">5</span>).<span class="ident">unwrap</span>() {
         <span class="ident">HelperBlock</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;if&quot;</span>.<span class="ident">to_string</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;if&quot;</span>.<span class="ident">to_string</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">template</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">elements</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         }
@@ -1927,8 +1942,8 @@
     };
 
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">7</span>).<span class="ident">unwrap</span>() {
-        <span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>());
+        <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">*</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">unwrap</span>()), <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="string">&quot;bar&quot;</span>.<span class="ident">into</span>()));
         }
@@ -1939,7 +1954,7 @@
 
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">9</span>).<span class="ident">unwrap</span>() {
         <span class="ident">HelperBlock</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;unless&quot;</span>.<span class="ident">to_string</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;unless&quot;</span>.<span class="ident">to_string</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">inverse</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>().<span class="ident">elements</span>.<span class="ident">len</span>(), <span class="number">1</span>);
         }
@@ -1968,8 +1983,8 @@
 
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">len</span>(), <span class="number">4</span>);
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">unwrap</span>() {
-        <span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;foo&quot;</span>.<span class="ident">to_owned</span>());
+        <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;foo&quot;</span>.<span class="ident">to_owned</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="kw">if</span> <span class="kw">let</span> <span class="kw-2">&amp;</span><span class="ident">Parameter</span>::<span class="ident">Subexpression</span>(<span class="kw-2">ref</span> <span class="ident">t</span>) <span class="op">=</span> <span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">unwrap</span>() {
                 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">name</span>(), <span class="string">&quot;bar&quot;</span>.<span class="ident">to_owned</span>());
@@ -1983,8 +1998,8 @@
     };
 
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">1</span>).<span class="ident">unwrap</span>() {
-        <span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>());
+        <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;foo&quot;</span>.<span class="ident">to_string</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="kw">if</span> <span class="kw">let</span> <span class="kw-2">&amp;</span><span class="ident">Parameter</span>::<span class="ident">Subexpression</span>(<span class="kw-2">ref</span> <span class="ident">t</span>) <span class="op">=</span> <span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">get</span>(<span class="number">0</span>).<span class="ident">unwrap</span>() {
                 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">name</span>(), <span class="string">&quot;bar&quot;</span>.<span class="ident">to_owned</span>());
@@ -2004,7 +2019,7 @@
 
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">get</span>(<span class="number">3</span>).<span class="ident">unwrap</span>() {
         <span class="ident">HelperBlock</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;if&quot;</span>.<span class="ident">to_string</span>());
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;if&quot;</span>.<span class="ident">to_string</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">params</span>.<span class="ident">len</span>(), <span class="number">1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">hash</span>.<span class="ident">len</span>(), <span class="number">1</span>);
 
@@ -2039,7 +2054,10 @@
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>.<span class="ident">len</span>(), <span class="number">4</span>);
 
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">0</span>], <span class="ident">RawString</span>(<span class="string">&quot;hello~&quot;</span>.<span class="ident">to_string</span>()));
-    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">1</span>], <span class="ident">Expression</span>(<span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="string">&quot;world&quot;</span>.<span class="ident">into</span>())));
+    <span class="macro">assert_eq</span><span class="macro">!</span>(
+        <span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">1</span>],
+        <span class="ident">Expression</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">HelperTemplate</span>::<span class="ident">with_name</span>(<span class="string">&quot;world&quot;</span>.<span class="ident">into</span>())))
+    );
     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">2</span>], <span class="ident">RawString</span>(<span class="string">&quot;!&quot;</span>.<span class="ident">to_string</span>()));
 
     <span class="kw">let</span> <span class="ident">t2</span> <span class="op">=</span> <span class="ident">Template</span>::<span class="ident">compile</span>(<span class="string">&quot;{{#if true}}1  {{~ else ~}} 2 {{~/if}}&quot;</span>.<span class="ident">to_string</span>())
@@ -2089,7 +2107,7 @@
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">2</span>], <span class="ident">RawString</span>(<span class="string">&quot;world&quot;</span>.<span class="ident">to_owned</span>()));
             <span class="kw">match</span> <span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">1</span>] {
                 <span class="ident">HelperBlock</span>(<span class="kw-2">ref</span> <span class="ident">h</span>) <span class="op">=&gt;</span> {
-                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>, <span class="string">&quot;raw&quot;</span>.<span class="ident">to_owned</span>());
+                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">h</span>.<span class="ident">name</span>.<span class="ident">as_name</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;raw&quot;</span>.<span class="ident">to_owned</span>());
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=</span> <span class="ident">h</span>.<span class="ident">template</span> {
                         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ht</span>.<span class="ident">elements</span>.<span class="ident">len</span>(), <span class="number">1</span>);
                         <span class="macro">assert_eq</span><span class="macro">!</span>(
@@ -2115,7 +2133,7 @@
 <span class="kw">fn</span> <span class="ident">test_literal_parameter_parser</span>() {
     <span class="kw">match</span> <span class="ident">Template</span>::<span class="ident">compile</span>(<span class="string">&quot;{{hello 1 name=\&quot;value\&quot; valid=false ref=someref}}&quot;</span>) {
         <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HelperExpression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">0</span>] {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Expression</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">0</span>] {
                 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ht</span>.<span class="ident">params</span>[<span class="number">0</span>], <span class="ident">Parameter</span>::<span class="ident">Literal</span>(<span class="macro">json</span><span class="macro">!</span>(<span class="number">1</span>)));
                 <span class="macro">assert_eq</span><span class="macro">!</span>(
                     <span class="ident">ht</span>.<span class="ident">hash</span>[<span class="string">&quot;name&quot;</span>],
@@ -2172,14 +2190,14 @@
         <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">e</span>),
     }
 
-    <span class="kw">match</span> <span class="ident">Template</span>::<span class="ident">compile</span>(<span class="string">&quot;{{#each people as |key val|}}{{person}}{{/each}}&quot;</span>) {
+    <span class="kw">match</span> <span class="ident">Template</span>::<span class="ident">compile</span>(<span class="string">&quot;{{#each people as |val key|}}{{person}}{{/each}}&quot;</span>) {
         <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="ident">HelperBlock</span>(<span class="kw-2">ref</span> <span class="ident">ht</span>) <span class="op">=</span> <span class="ident">t</span>.<span class="ident">elements</span>[<span class="number">0</span>] {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">BlockParam</span>::<span class="ident">Pair</span>((<span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="kw-2">ref</span> <span class="ident">n1</span>), <span class="ident">Parameter</span>::<span class="ident">Name</span>(<span class="kw-2">ref</span> <span class="ident">n2</span>)))) <span class="op">=</span>
                     <span class="ident">ht</span>.<span class="ident">block_param</span>
                 {
-                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">n1</span>, <span class="string">&quot;key&quot;</span>);
-                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">n2</span>, <span class="string">&quot;val&quot;</span>);
+                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">n1</span>, <span class="string">&quot;val&quot;</span>);
+                    <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">n2</span>, <span class="string">&quot;key&quot;</span>);
                 } <span class="kw">else</span> {
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;helper block param expected.&quot;</span>);
                 }

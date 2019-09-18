@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.15/src/v0.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>v0.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../rustc_demangle/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/rustc-demangle-0.1.16/src/v0.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>v0.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../rustc_demangle/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1065,6 +1065,23 @@
 <span id="1065">1065</span>
 <span id="1066">1066</span>
 <span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
+<span id="1071">1071</span>
+<span id="1072">1072</span>
+<span id="1073">1073</span>
+<span id="1074">1074</span>
+<span id="1075">1075</span>
+<span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">char</span>;
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>;
@@ -1080,7 +1097,7 @@
 <span class="doccomment">/// This function will take a **mangled** symbol and return a value. When printed,</span>
 <span class="doccomment">/// the de-mangled version will be written. If the symbol does not look like</span>
 <span class="doccomment">/// a mangled symbol, the original value will be written instead.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">demangle</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Demangle</span>, <span class="ident">Invalid</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">demangle</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Demangle</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>), <span class="ident">Invalid</span><span class="op">&gt;</span> {
     <span class="comment">// First validate the symbol. If it doesn&#39;t look like anything we&#39;re</span>
     <span class="comment">// expecting, we just print it literally. Note that we must handle non-Rust</span>
     <span class="comment">// symbols because we could have any function in the backtrace.</span>
@@ -1115,17 +1132,18 @@
         <span class="ident">next</span>: <span class="number">0</span>,
     };
     <span class="macro">try</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">skip_path</span>());
-    <span class="kw">if</span> <span class="ident">parser</span>.<span class="ident">next</span> <span class="op">&lt;</span> <span class="ident">parser</span>.<span class="ident">sym</span>.<span class="ident">len</span>() {
-        <span class="comment">// Instantiating crate.</span>
-        <span class="macro">try</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">skip_path</span>());
-    }
-    <span class="kw">if</span> <span class="ident">parser</span>.<span class="ident">next</span> <span class="op">!=</span> <span class="ident">parser</span>.<span class="ident">sym</span>.<span class="ident">len</span>() {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Invalid</span>);
+
+    <span class="comment">// Instantiating crate (paths always start with uppercase characters).</span>
+    <span class="kw">match</span> <span class="ident">parser</span>.<span class="ident">sym</span>.<span class="ident">as_bytes</span>().<span class="ident">get</span>(<span class="ident">parser</span>.<span class="ident">next</span>) {
+        <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="string">b&#39;A&#39;</span>...<span class="string">b&#39;Z&#39;</span>) <span class="op">=&gt;</span> {
+            <span class="macro">try</span><span class="macro">!</span>(<span class="ident">parser</span>.<span class="ident">skip_path</span>());
+        }
+        <span class="kw">_</span> <span class="op">=&gt;</span> {}
     }
 
-    <span class="prelude-val">Ok</span>(<span class="ident">Demangle</span> {
+    <span class="prelude-val">Ok</span>((<span class="ident">Demangle</span> {
         <span class="ident">inner</span>: <span class="ident">inner</span>,
-    })
+    }, <span class="kw-2">&amp;</span><span class="ident">parser</span>.<span class="ident">sym</span>[<span class="ident">parser</span>.<span class="ident">next</span>..]))
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Demangle</span><span class="op">&lt;</span><span class="lifetime">&#39;s</span><span class="op">&gt;</span> {
@@ -2130,6 +2148,22 @@
                ((((_, _), (_, _)), ((_, _), (_, _))), (((_, _), (_, _)), ((_, _), (_, _))))), \
               (((((_, _), (_, _)), ((_, _), (_, _))), (((_, _), (_, _)), ((_, _), (_, _)))), \
                ((((_, _), (_, _)), ((_, _), (_, _))), (((_, _), (_, _)), ((_, _), (_, _))))))&quot;</span>
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">demangle_thinlto</span>() {
+        <span class="macro">t_nohash</span><span class="macro">!</span>(<span class="string">&quot;_RC3foo.llvm.9D1C9369&quot;</span>, <span class="string">&quot;foo&quot;</span>);
+        <span class="macro">t_nohash</span><span class="macro">!</span>(<span class="string">&quot;_RC3foo.llvm.9D1C9369@@16&quot;</span>, <span class="string">&quot;foo&quot;</span>);
+        <span class="macro">t_nohash</span><span class="macro">!</span>(<span class="string">&quot;_RNvC9backtrace3foo.llvm.A5310EB9&quot;</span>, <span class="string">&quot;backtrace::foo&quot;</span>);
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">demangle_extra_suffix</span>() {
+        <span class="comment">// From alexcrichton/rustc-demangle#27:</span>
+        <span class="macro">t_nohash</span><span class="macro">!</span>(
+            <span class="string">&quot;_RNvNtNtNtNtCs92dm3009vxr_4rand4rngs7adapter9reseeding4fork23FORK_HANDLER_REGISTERED.0.0&quot;</span>,
+            <span class="string">&quot;rand::rngs::adapter::reseeding::fork::FORK_HANDLER_REGISTERED.0.0&quot;</span>
         );
     }
 }

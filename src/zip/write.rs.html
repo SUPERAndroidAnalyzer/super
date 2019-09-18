@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.2/src/write.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>write.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../zip/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/zip-0.5.3/src/write.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>write.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../zip/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -614,6 +614,14 @@
 <span id="614">614</span>
 <span id="615">615</span>
 <span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Structs for creating a new zip archive</span>
 
@@ -631,7 +639,9 @@
 <span class="kw">use</span> <span class="ident">podio</span>::{<span class="ident">WritePodExt</span>, <span class="ident">LittleEndian</span>};
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;deflate&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">libflate</span>;
+<span class="kw">use</span> <span class="ident">flate2</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;deflate&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">flate2</span>::<span class="ident">write</span>::<span class="ident">DeflateEncoder</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">bzip2</span>;
@@ -643,7 +653,7 @@
     <span class="ident">Closed</span>,
     <span class="ident">Storer</span>(<span class="ident">W</span>),
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;deflate&quot;</span>)]</span>
-    <span class="ident">Deflater</span>(<span class="ident">libflate</span>::<span class="ident">deflate</span>::<span class="ident">Encoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>),
+    <span class="ident">Deflater</span>(<span class="ident">DeflateEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>),
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
     <span class="ident">Bzip2</span>(<span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>),
 }
@@ -735,6 +745,12 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unix_permissions</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mode</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">FileOptions</span> {
         <span class="self">self</span>.<span class="ident">permissions</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">mode</span> <span class="op">&amp;</span> <span class="number">0o777</span>);
         <span class="self">self</span>
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">FileOptions</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="self">Self</span>::<span class="ident">default</span>()
     }
 }
 
@@ -985,7 +1001,7 @@
         {
             <span class="ident">GenericZipWriter</span>::<span class="ident">Storer</span>(<span class="ident">w</span>) <span class="op">=&gt;</span> <span class="ident">w</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;deflate&quot;</span>)]</span>
-            <span class="ident">GenericZipWriter</span>::<span class="ident">Deflater</span>(<span class="ident">w</span>) <span class="op">=&gt;</span>  <span class="ident">w</span>.<span class="ident">finish</span>().<span class="ident">into_result</span>()<span class="question-mark">?</span>,
+            <span class="ident">GenericZipWriter</span>::<span class="ident">Deflater</span>(<span class="ident">w</span>) <span class="op">=&gt;</span> <span class="ident">w</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>,
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
             <span class="ident">GenericZipWriter</span>::<span class="ident">Bzip2</span>(<span class="ident">w</span>) <span class="op">=&gt;</span> <span class="ident">w</span>.<span class="ident">finish</span>()<span class="question-mark">?</span>,
             <span class="ident">GenericZipWriter</span>::<span class="ident">Closed</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">BrokenPipe</span>, <span class="string">&quot;ZipWriter was already closed&quot;</span>))<span class="question-mark">?</span>,
@@ -995,7 +1011,7 @@
         {
             <span class="ident">CompressionMethod</span>::<span class="ident">Stored</span> <span class="op">=&gt;</span> <span class="ident">GenericZipWriter</span>::<span class="ident">Storer</span>(<span class="ident">bare</span>),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;deflate&quot;</span>)]</span>
-            <span class="ident">CompressionMethod</span>::<span class="ident">Deflated</span> <span class="op">=&gt;</span> <span class="ident">GenericZipWriter</span>::<span class="ident">Deflater</span>(<span class="ident">libflate</span>::<span class="ident">deflate</span>::<span class="ident">Encoder</span>::<span class="ident">new</span>(<span class="ident">bare</span>)),
+            <span class="ident">CompressionMethod</span>::<span class="ident">Deflated</span> <span class="op">=&gt;</span> <span class="ident">GenericZipWriter</span>::<span class="ident">Deflater</span>(<span class="ident">DeflateEncoder</span>::<span class="ident">new</span>(<span class="ident">bare</span>, <span class="ident">flate2</span>::<span class="ident">Compression</span>::<span class="ident">default</span>())),
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
             <span class="ident">CompressionMethod</span>::<span class="ident">Bzip2</span> <span class="op">=&gt;</span> <span class="ident">GenericZipWriter</span>::<span class="ident">Bzip2</span>(<span class="ident">BzEncoder</span>::<span class="ident">new</span>(<span class="ident">bare</span>, <span class="ident">bzip2</span>::<span class="ident">Compression</span>::<span class="ident">Default</span>)),
             <span class="ident">CompressionMethod</span>::<span class="ident">Unsupported</span>(..) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ZipError</span>::<span class="ident">UnsupportedArchive</span>(<span class="string">&quot;Unsupported compression&quot;</span>)),

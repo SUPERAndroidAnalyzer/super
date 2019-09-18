@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-1.1.0/src/value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>value.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/handlebars-2.0.1/src/value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>value.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../handlebars/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -165,9 +165,82 @@
 <span id="165">165</span>
 <span id="166">166</span>
 <span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Serialize</span>;
 <span class="kw">use</span> <span class="ident">serde_json</span>::<span class="ident">value</span>::{<span class="ident">to_value</span>, <span class="ident">Value</span> <span class="kw">as</span> <span class="ident">Json</span>};
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">static</span> <span class="ident">DEFAULT_VALUE</span>: <span class="ident">Json</span> <span class="op">=</span> <span class="ident">Json</span>::<span class="ident">Null</span>;
 
 <span class="doccomment">/// A JSON wrapper designed for handlebars internal use case</span>
 <span class="doccomment">///</span>
@@ -180,20 +253,45 @@
     <span class="ident">Constant</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Json</span>),
     <span class="ident">Derived</span>(<span class="ident">Json</span>),
     <span class="ident">Context</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Json</span>),
+    <span class="comment">// represents a block param json with resolve full path</span>
+    <span class="comment">// this path is different from `PathAndJson`</span>
+    <span class="ident">BlockContext</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Json</span>, <span class="ident">String</span>),
+    <span class="ident">Missing</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>: <span class="lifetime">&#39;rc</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> <span class="ident">ScopedJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
     <span class="doccomment">/// get the JSON reference</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_json</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Json</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="kw-2">&amp;</span><span class="ident">ScopedJson</span>::<span class="ident">Constant</span>(<span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
-            <span class="kw-2">&amp;</span><span class="ident">ScopedJson</span>::<span class="ident">Derived</span>(<span class="kw-2">ref</span> <span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
-            <span class="kw-2">&amp;</span><span class="ident">ScopedJson</span>::<span class="ident">Context</span>(<span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
+            <span class="ident">ScopedJson</span>::<span class="ident">Constant</span>(<span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
+            <span class="ident">ScopedJson</span>::<span class="ident">Derived</span>(<span class="kw-2">ref</span> <span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
+            <span class="ident">ScopedJson</span>::<span class="ident">Context</span>(<span class="ident">j</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
+            <span class="ident">ScopedJson</span>::<span class="ident">BlockContext</span>(<span class="ident">j</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">j</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">DEFAULT_VALUE</span>,
         }
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">render</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">as_json</span>().<span class="ident">render</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_missing</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">ScopedJson</span>::<span class="ident">Missing</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_derived</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ScopedJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">as_json</span>();
+        <span class="ident">ScopedJson</span>::<span class="ident">Derived</span>(<span class="ident">v</span>.<span class="ident">clone</span>())
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">block_context_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">String</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">ScopedJson</span>::<span class="ident">BlockContext</span>(<span class="kw">_</span>, <span class="kw-2">ref</span> <span class="ident">p</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">p</span>),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+        }
     }
 }
 
@@ -203,35 +301,79 @@
     }
 }
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="kw">enum</span> <span class="ident">Path</span> {
+    <span class="ident">Relative</span>(<span class="ident">String</span>),
+    <span class="ident">Absolute</span>(<span class="ident">String</span>),
+}
+
+<span class="kw">impl</span> <span class="ident">Path</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">String</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Path</span>::<span class="ident">Relative</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>,
+            <span class="ident">Path</span>::<span class="ident">Absolute</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>,
+        }
+    }
+}
+
 <span class="doccomment">/// Json wrapper that holds the Json value and reference path information</span>
 <span class="doccomment">///</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PathAndJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>: <span class="lifetime">&#39;rc</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
-    <span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+    <span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>,
     <span class="ident">value</span>: <span class="ident">ScopedJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>: <span class="lifetime">&#39;rc</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> <span class="ident">PathAndJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">value</span>: <span class="ident">ScopedJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">PathAndJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
-        <span class="ident">PathAndJson</span> { <span class="ident">path</span>, <span class="ident">value</span> }
+        <span class="ident">PathAndJson</span> {
+            <span class="ident">path</span>: <span class="ident">path</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">Path</span>::<span class="ident">Relative</span>(<span class="ident">p</span>)),
+            <span class="ident">value</span>,
+        }
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_absolute</span>(
+        <span class="ident">path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
+        <span class="ident">value</span>: <span class="ident">ScopedJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">PathAndJson</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span> {
+        <span class="ident">PathAndJson</span> {
+            <span class="ident">path</span>: <span class="ident">path</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">Path</span>::<span class="ident">Absolute</span>(<span class="ident">p</span>)),
+            <span class="ident">value</span>,
+        }
     }
 
     <span class="doccomment">/// Returns relative path when the value is referenced</span>
     <span class="doccomment">/// If the value is from a literal, the path is `None`</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">String</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">as_ref</span>()
+        <span class="self">self</span>.<span class="ident">path</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">p</span>.<span class="ident">get</span>())
     }
 
     <span class="doccomment">/// Return root level of this path if any</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">path_root</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">path</span>
             .<span class="ident">as_ref</span>()
-            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">p</span>.<span class="ident">split</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;.&#39;</span> <span class="op">||</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;/&#39;</span>).<span class="ident">nth</span>(<span class="number">0</span>))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">p</span><span class="op">|</span> <span class="ident">p</span>.<span class="ident">get</span>().<span class="ident">split</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;.&#39;</span> <span class="op">||</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;/&#39;</span>).<span class="ident">nth</span>(<span class="number">0</span>))
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_absolute_path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">path</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">Path</span>::<span class="ident">Absolute</span>(<span class="kw">_</span>)) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
     }
 
     <span class="doccomment">/// Returns the value</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Json</span> {
         <span class="self">self</span>.<span class="ident">value</span>.<span class="ident">as_json</span>()
+    }
+
+    <span class="doccomment">/// Test if value is missing</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_value_missing</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">value</span>.<span class="ident">is_missing</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">render</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+        <span class="self">self</span>.<span class="ident">value</span>.<span class="ident">render</span>()
     }
 }
 

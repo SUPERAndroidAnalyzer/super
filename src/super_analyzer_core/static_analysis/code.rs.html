@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/static_analysis/code.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>code.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../super_analyzer_core/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/static_analysis/code.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>code.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../super_analyzer_core/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1984,19 +1984,6 @@
 <span id="1984">1984</span>
 <span id="1985">1985</span>
 <span id="1986">1986</span>
-<span id="1987">1987</span>
-<span id="1988">1988</span>
-<span id="1989">1989</span>
-<span id="1990">1990</span>
-<span id="1991">1991</span>
-<span id="1992">1992</span>
-<span id="1993">1993</span>
-<span id="1994">1994</span>
-<span id="1995">1995</span>
-<span id="1996">1996</span>
-<span id="1997">1997</span>
-<span id="1998">1998</span>
-<span id="1999">1999</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Code analysis module.</span>
 
@@ -2078,29 +2065,22 @@
             <span class="kw">let</span> <span class="ident">thread_vulnerabilities</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="ident">found_vulnerabilities</span>);
             <span class="kw">let</span> <span class="ident">thread_dist_folder</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="ident">dist_folder</span>);
 
-            <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span> <span class="op">||</span> <span class="kw">loop</span> {
-                <span class="kw">let</span> <span class="ident">f</span> <span class="op">=</span> {
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">files</span> <span class="op">=</span> <span class="ident">thread_files</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
-                    <span class="ident">files</span>.<span class="ident">pop</span>()
-                };
-                <span class="kw">match</span> <span class="ident">f</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> {
-                        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">analyze_file</span>(
-                            <span class="ident">f</span>.<span class="ident">path</span>(),
-                            <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">thread_dist_folder</span>,
-                            <span class="kw-2">&amp;</span><span class="ident">thread_rules</span>,
-                            <span class="kw-2">&amp;</span><span class="ident">thread_manifest</span>,
-                            <span class="kw-2">&amp;</span><span class="ident">thread_vulnerabilities</span>,
-                        ) {
-                            <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(
-                                <span class="string">&quot;could not analyze `{}`. The analysis will continue, though. \
-                                 Error: {}&quot;</span>,
-                                <span class="ident">f</span>.<span class="ident">path</span>().<span class="ident">display</span>(),
-                                <span class="ident">e</span>
-                            ))
-                        }
+            <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span> <span class="op">||</span> {
+                <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">f</span>) <span class="op">=</span> <span class="ident">thread_files</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>().<span class="ident">pop</span>() {
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span> <span class="ident">analyze_file</span>(
+                        <span class="ident">f</span>.<span class="ident">path</span>(),
+                        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">thread_dist_folder</span>,
+                        <span class="kw-2">&amp;</span><span class="ident">thread_rules</span>,
+                        <span class="kw-2">&amp;</span><span class="ident">thread_manifest</span>,
+                        <span class="kw-2">&amp;</span><span class="ident">thread_vulnerabilities</span>,
+                    ) {
+                        <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(
+                            <span class="string">&quot;could not analyze `{}`. The analysis will continue, though. \
+                             Error: {}&quot;</span>,
+                            <span class="ident">f</span>.<span class="ident">path</span>().<span class="ident">display</span>(),
+                            <span class="ident">e</span>
+                        ))
                     }
-                    <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">break</span>,
                 }
             })
         })
@@ -2109,15 +2089,13 @@
     <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">last_print</span> <span class="op">=</span> <span class="number">0</span>;
 
-        <span class="kw">while</span> <span class="kw">match</span> <span class="ident">files</span>.<span class="ident">lock</span>() {
-            <span class="prelude-val">Ok</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">f</span>.<span class="ident">len</span>(),
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="number">1</span>,
-        } <span class="op">&gt;</span> <span class="number">0</span>
-        {
-            <span class="kw">let</span> <span class="ident">left</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">files</span>.<span class="ident">lock</span>() {
-                <span class="prelude-val">Ok</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">f</span>.<span class="ident">len</span>(),
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">continue</span>,
+        <span class="kw">while</span> <span class="ident">files</span>.<span class="ident">lock</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">f</span><span class="op">|</span> <span class="ident">f</span>.<span class="ident">len</span>()).<span class="ident">unwrap_or</span>(<span class="number">1</span>) <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="ident">left</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">f</span>) <span class="op">=</span> <span class="ident">files</span>.<span class="ident">lock</span>() {
+                <span class="ident">f</span>.<span class="ident">len</span>()
+            } <span class="kw">else</span> {
+                <span class="kw">continue</span>;
             };
+
             <span class="kw">let</span> <span class="ident">done</span> <span class="op">=</span> <span class="ident">total_files</span> <span class="op">-</span> <span class="ident">left</span>;
             <span class="kw">if</span> <span class="ident">done</span> <span class="op">-</span> <span class="ident">last_print</span> <span class="op">&gt;</span> <span class="ident">total_files</span> <span class="op">/</span> <span class="number">10</span> {
                 <span class="ident">last_print</span> <span class="op">=</span> <span class="ident">done</span>;
@@ -2196,8 +2174,34 @@
                     <span class="kw">continue</span> <span class="lifetime">&#39;rule</span>;
                 }
             }
-            <span class="kw">match</span> <span class="ident">rule</span>.<span class="ident">forward_check</span>() {
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">check</span>) <span class="op">=</span> <span class="ident">rule</span>.<span class="ident">forward_check</span>() {
+                <span class="kw">let</span> <span class="ident">caps</span> <span class="op">=</span> <span class="ident">rule</span>.<span class="ident">regex</span>().<span class="ident">captures</span>(<span class="kw-2">&amp;</span><span class="ident">code</span>[<span class="ident">m</span>.<span class="ident">start</span>()..<span class="ident">m</span>.<span class="ident">end</span>()]).<span class="ident">unwrap</span>();
+
+                <span class="kw">let</span> <span class="ident">forward_check1</span> <span class="op">=</span> <span class="ident">caps</span>.<span class="ident">name</span>(<span class="string">&quot;fc1&quot;</span>);
+                <span class="kw">let</span> <span class="ident">forward_check2</span> <span class="op">=</span> <span class="ident">caps</span>.<span class="ident">name</span>(<span class="string">&quot;fc2&quot;</span>);
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">check</span>.<span class="ident">clone</span>();
+
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fc1</span>) <span class="op">=</span> <span class="ident">forward_check1</span> {
+                    <span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">replace</span>(<span class="string">&quot;{fc1}&quot;</span>, <span class="ident">fc1</span>.<span class="ident">as_str</span>());
+                }
+
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fc2</span>) <span class="op">=</span> <span class="ident">forward_check2</span> {
+                    <span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">replace</span>(<span class="string">&quot;{fc2}&quot;</span>, <span class="ident">fc2</span>.<span class="ident">as_str</span>());
+                }
+
+                <span class="kw">let</span> <span class="ident">regex</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">Regex</span>::<span class="ident">new</span>(<span class="ident">r</span>.<span class="ident">as_str</span>()) {
+                    <span class="prelude-val">Ok</span>(<span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span>,
+                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+                        <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(
+                            <span class="string">&quot;there was an error creating the forward_check &#39;{}&#39;. The rule will \
+                             be skipped. {}&quot;</span>,
+                            <span class="ident">r</span>, <span class="ident">e</span>
+                        ));
+                        <span class="kw">break</span> <span class="lifetime">&#39;rule</span>;
+                    }
+                };
+
+                <span class="kw">for</span> <span class="ident">m</span> <span class="kw">in</span> <span class="ident">regex</span>.<span class="ident">find_iter</span>(<span class="ident">code</span>.<span class="ident">as_str</span>()) {
                     <span class="kw">let</span> <span class="ident">start_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">start</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
                     <span class="kw">let</span> <span class="ident">end_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">end</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">results</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
@@ -2213,51 +2217,21 @@
 
                     <span class="ident">print_vulnerability</span>(<span class="ident">rule</span>.<span class="ident">description</span>(), <span class="ident">rule</span>.<span class="ident">criticality</span>());
                 }
-                <span class="prelude-val">Some</span>(<span class="ident">check</span>) <span class="op">=&gt;</span> {
-                    <span class="kw">let</span> <span class="ident">caps</span> <span class="op">=</span> <span class="ident">rule</span>.<span class="ident">regex</span>().<span class="ident">captures</span>(<span class="kw-2">&amp;</span><span class="ident">code</span>[<span class="ident">m</span>.<span class="ident">start</span>()..<span class="ident">m</span>.<span class="ident">end</span>()]).<span class="ident">unwrap</span>();
+            } <span class="kw">else</span> {
+                <span class="kw">let</span> <span class="ident">start_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">start</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
+                <span class="kw">let</span> <span class="ident">end_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">end</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">results</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
+                <span class="ident">results</span>.<span class="ident">push</span>(<span class="ident">Vulnerability</span>::<span class="ident">new</span>(
+                    <span class="ident">rule</span>.<span class="ident">criticality</span>(),
+                    <span class="ident">rule</span>.<span class="ident">label</span>(),
+                    <span class="ident">rule</span>.<span class="ident">description</span>(),
+                    <span class="prelude-val">Some</span>(<span class="ident">path</span>.<span class="ident">as_ref</span>().<span class="ident">strip_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">dist_folder</span>).<span class="ident">unwrap</span>()),
+                    <span class="prelude-val">Some</span>(<span class="ident">start_line</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">end_line</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">code</span>.<span class="ident">as_str</span>(), <span class="ident">start_line</span>, <span class="ident">end_line</span>)),
+                ));
 
-                    <span class="kw">let</span> <span class="ident">forward_check1</span> <span class="op">=</span> <span class="ident">caps</span>.<span class="ident">name</span>(<span class="string">&quot;fc1&quot;</span>);
-                    <span class="kw">let</span> <span class="ident">forward_check2</span> <span class="op">=</span> <span class="ident">caps</span>.<span class="ident">name</span>(<span class="string">&quot;fc2&quot;</span>);
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">check</span>.<span class="ident">clone</span>();
-
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fc1</span>) <span class="op">=</span> <span class="ident">forward_check1</span> {
-                        <span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">replace</span>(<span class="string">&quot;{fc1}&quot;</span>, <span class="ident">fc1</span>.<span class="ident">as_str</span>());
-                    }
-
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">fc2</span>) <span class="op">=</span> <span class="ident">forward_check2</span> {
-                        <span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">replace</span>(<span class="string">&quot;{fc2}&quot;</span>, <span class="ident">fc2</span>.<span class="ident">as_str</span>());
-                    }
-
-                    <span class="kw">let</span> <span class="ident">regex</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">Regex</span>::<span class="ident">new</span>(<span class="ident">r</span>.<span class="ident">as_str</span>()) {
-                        <span class="prelude-val">Ok</span>(<span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span>,
-                        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
-                            <span class="ident">print_warning</span>(<span class="macro">format</span><span class="macro">!</span>(
-                                <span class="string">&quot;there was an error creating the forward_check &#39;{}&#39;. The rule will \
-                                 be skipped. {}&quot;</span>,
-                                <span class="ident">r</span>,
-                                <span class="ident">e</span>
-                            ));
-                            <span class="kw">break</span> <span class="lifetime">&#39;rule</span>;
-                        }
-                    };
-
-                    <span class="kw">for</span> <span class="ident">m</span> <span class="kw">in</span> <span class="ident">regex</span>.<span class="ident">find_iter</span>(<span class="ident">code</span>.<span class="ident">as_str</span>()) {
-                        <span class="kw">let</span> <span class="ident">start_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">start</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
-                        <span class="kw">let</span> <span class="ident">end_line</span> <span class="op">=</span> <span class="ident">get_line_for</span>(<span class="ident">m</span>.<span class="ident">end</span>(), <span class="ident">code</span>.<span class="ident">as_str</span>());
-                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">results</span> <span class="op">=</span> <span class="ident">results</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>();
-                        <span class="ident">results</span>.<span class="ident">push</span>(<span class="ident">Vulnerability</span>::<span class="ident">new</span>(
-                            <span class="ident">rule</span>.<span class="ident">criticality</span>(),
-                            <span class="ident">rule</span>.<span class="ident">label</span>(),
-                            <span class="ident">rule</span>.<span class="ident">description</span>(),
-                            <span class="prelude-val">Some</span>(<span class="ident">path</span>.<span class="ident">as_ref</span>().<span class="ident">strip_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">dist_folder</span>).<span class="ident">unwrap</span>()),
-                            <span class="prelude-val">Some</span>(<span class="ident">start_line</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">end_line</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">code</span>.<span class="ident">as_str</span>(), <span class="ident">start_line</span>, <span class="ident">end_line</span>)),
-                        ));
-
-                        <span class="ident">print_vulnerability</span>(<span class="ident">rule</span>.<span class="ident">description</span>(), <span class="ident">rule</span>.<span class="ident">criticality</span>());
-                    }
-                }
+                <span class="ident">print_vulnerability</span>(<span class="ident">rule</span>.<span class="ident">description</span>(), <span class="ident">rule</span>.<span class="ident">criticality</span>());
             }
         }
     }

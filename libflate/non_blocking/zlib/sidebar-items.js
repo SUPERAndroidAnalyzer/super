@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Decoder","ZLIB decoder which supports non-blocking I/O."]]});

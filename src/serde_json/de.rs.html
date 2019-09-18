@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.39/src/de.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>de.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../serde_json/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/serde_json-1.0.40/src/de.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>de.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../serde_json/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2315,6 +2315,23 @@
 <span id="2315">2315</span>
 <span id="2316">2316</span>
 <span id="2317">2317</span>
+<span id="2318">2318</span>
+<span id="2319">2319</span>
+<span id="2320">2320</span>
+<span id="2321">2321</span>
+<span id="2322">2322</span>
+<span id="2323">2323</span>
+<span id="2324">2324</span>
+<span id="2325">2325</span>
+<span id="2326">2326</span>
+<span id="2327">2327</span>
+<span id="2328">2328</span>
+<span id="2329">2329</span>
+<span id="2330">2330</span>
+<span id="2331">2331</span>
+<span id="2332">2332</span>
+<span id="2333">2333</span>
+<span id="2334">2334</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Deserialize JSON data to a Rust data structure.</span>
 
@@ -2698,7 +2715,14 @@
     }
 
     <span class="kw">fn</span> <span class="ident">parse_integer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">positive</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNumber</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_char_or_null</span>()) {
+        <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_char</span>()) {
+            <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=&gt;</span> <span class="ident">b</span>,
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">error</span>(<span class="ident">ErrorCode</span>::<span class="ident">EofWhileParsingValue</span>));
+            }
+        };
+
+        <span class="kw">match</span> <span class="ident">next</span> {
             <span class="string">b&#39;0&#39;</span> <span class="op">=&gt;</span> {
                 <span class="comment">// There can be only one leading &#39;0&#39;.</span>
                 <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek_or_null</span>()) {
@@ -2814,7 +2838,10 @@
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">at_least_one_digit</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>));
+            <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek</span>()) {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>)),
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">EofWhileParsingValue</span>)),
+            }
         }
 
         <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek_or_null</span>()) {
@@ -2843,8 +2870,15 @@
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
         };
 
+        <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_char</span>()) {
+            <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=&gt;</span> <span class="ident">b</span>,
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">error</span>(<span class="ident">ErrorCode</span>::<span class="ident">EofWhileParsingValue</span>));
+            }
+        };
+
         <span class="comment">// Make sure a digit follows the exponent place.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">exp</span> <span class="op">=</span> <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_char_or_null</span>()) {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">exp</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">next</span> {
             <span class="ident">c</span> @ <span class="string">b&#39;0&#39;</span>...<span class="string">b&#39;9&#39;</span> <span class="op">=&gt;</span> (<span class="ident">c</span> <span class="op">-</span> <span class="string">b&#39;0&#39;</span>) <span class="kw">as</span> <span class="ident">i32</span>,
             <span class="kw">_</span> <span class="op">=&gt;</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>));
@@ -2941,19 +2975,19 @@
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">scan_or_null</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">scan_or_eof</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">next_char</span>()) {
             <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=&gt;</span> {
                 <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">b</span> <span class="kw">as</span> <span class="ident">char</span>);
                 <span class="prelude-val">Ok</span>(<span class="ident">b</span>)
             }
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="string">b&#39;\x00&#39;</span>),
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">error</span>(<span class="ident">ErrorCode</span>::<span class="ident">EofWhileParsingValue</span>))
         }
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;arbitrary_precision&quot;</span>)]</span>
     <span class="kw">fn</span> <span class="ident">scan_integer</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">scan_or_null</span>(<span class="ident">buf</span>)) {
+        <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">scan_or_eof</span>(<span class="ident">buf</span>)) {
             <span class="string">b&#39;0&#39;</span> <span class="op">=&gt;</span> {
                 <span class="comment">// There can be only one leading &#39;0&#39;.</span>
                 <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek_or_null</span>()) {
@@ -2998,7 +3032,10 @@
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">at_least_one_digit</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>));
+            <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek</span>()) {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>)),
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">peek_error</span>(<span class="ident">ErrorCode</span>::<span class="ident">EofWhileParsingValue</span>)),
+            }
         }
 
         <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">peek_or_null</span>()) {
@@ -3024,7 +3061,7 @@
         }
 
         <span class="comment">// Make sure a digit follows the exponent place.</span>
-        <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">scan_or_null</span>(<span class="ident">buf</span>)) {
+        <span class="kw">match</span> <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">scan_or_eof</span>(<span class="ident">buf</span>)) {
             <span class="string">b&#39;0&#39;</span>...<span class="string">b&#39;9&#39;</span> <span class="op">=&gt;</span> {}
             <span class="kw">_</span> <span class="op">=&gt;</span> {
                 <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="self">self</span>.<span class="ident">error</span>(<span class="ident">ErrorCode</span>::<span class="ident">InvalidNumber</span>));
@@ -4497,7 +4534,6 @@
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```edition2018</span>
-<span class="doccomment">/// # use serde_derive::Deserialize;</span>
 <span class="doccomment">/// use serde::Deserialize;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// use std::error::Error;</span>
@@ -4553,7 +4589,6 @@
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```edition2018</span>
-<span class="doccomment">/// # use serde_derive::Deserialize;</span>
 <span class="doccomment">/// use serde::Deserialize;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[derive(Deserialize, Debug)]</span>
@@ -4596,7 +4631,6 @@
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```edition2018</span>
-<span class="doccomment">/// # use serde_derive::Deserialize;</span>
 <span class="doccomment">/// use serde::Deserialize;</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// #[derive(Deserialize, Debug)]</span>

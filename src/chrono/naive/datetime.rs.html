@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.4.6/src/naive/datetime.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>datetime.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../chrono/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/chrono-0.4.8/src/naive/datetime.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>datetime.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../chrono/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2349,6 +2349,38 @@
 <span id="2349">2349</span>
 <span id="2350">2350</span>
 <span id="2351">2351</span>
+<span id="2352">2352</span>
+<span id="2353">2353</span>
+<span id="2354">2354</span>
+<span id="2355">2355</span>
+<span id="2356">2356</span>
+<span id="2357">2357</span>
+<span id="2358">2358</span>
+<span id="2359">2359</span>
+<span id="2360">2360</span>
+<span id="2361">2361</span>
+<span id="2362">2362</span>
+<span id="2363">2363</span>
+<span id="2364">2364</span>
+<span id="2365">2365</span>
+<span id="2366">2366</span>
+<span id="2367">2367</span>
+<span id="2368">2368</span>
+<span id="2369">2369</span>
+<span id="2370">2370</span>
+<span id="2371">2371</span>
+<span id="2372">2372</span>
+<span id="2373">2373</span>
+<span id="2374">2374</span>
+<span id="2375">2375</span>
+<span id="2376">2376</span>
+<span id="2377">2377</span>
+<span id="2378">2378</span>
+<span id="2379">2379</span>
+<span id="2380">2380</span>
+<span id="2381">2381</span>
+<span id="2382">2382</span>
+<span id="2383">2383</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// This is a part of Chrono.</span>
 <span class="comment">// See README.md and LICENSE.txt for details.</span>
@@ -2657,21 +2689,33 @@
     <span class="doccomment">/// Note that this does *not* account for the timezone!</span>
     <span class="doccomment">/// The true &quot;UNIX timestamp&quot; would count seconds since the midnight *UTC* on the epoch.</span>
     <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// Note also that this does reduce the number of years that can be</span>
-    <span class="doccomment">/// represented from ~584 Billion to ~584. (If this is a problem,</span>
-    <span class="doccomment">/// please file an issue to let me know what domain needs nanosecond</span>
-    <span class="doccomment">/// precision over millenia, I&#39;m curious.)</span>
+    <span class="doccomment">/// represented from ~584 Billion to ~584 years. The dates that can be</span>
+    <span class="doccomment">/// represented as nanoseconds are between 1677-09-21T00:12:44.0 and</span>
+    <span class="doccomment">/// 2262-04-11T23:47:16.854775804.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// (If this is a problem, please file an issue to let me know what domain</span>
+    <span class="doccomment">/// needs nanosecond precision over millenia, I&#39;m curious.)</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ~~~~</span>
-    <span class="doccomment">/// use chrono::NaiveDate;</span>
+    <span class="doccomment">/// use chrono::{NaiveDate, NaiveDateTime};</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let dt = NaiveDate::from_ymd(1970, 1, 1).and_hms_nano(0, 0, 1, 444);</span>
     <span class="doccomment">/// assert_eq!(dt.timestamp_nanos(), 1_000_000_444);</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// let dt = NaiveDate::from_ymd(2001, 9, 9).and_hms_nano(1, 46, 40, 555);</span>
-    <span class="doccomment">/// assert_eq!(dt.timestamp_nanos(), 1_000_000_000_000_000_555);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// const A_BILLION: i64 = 1_000_000_000;</span>
+    <span class="doccomment">/// let nanos = dt.timestamp_nanos();</span>
+    <span class="doccomment">/// assert_eq!(nanos, 1_000_000_000_000_000_555);</span>
+    <span class="doccomment">/// assert_eq!(</span>
+    <span class="doccomment">///     dt,</span>
+    <span class="doccomment">///     NaiveDateTime::from_timestamp(nanos / A_BILLION, (nanos % A_BILLION) as u32)</span>
+    <span class="doccomment">/// );</span>
     <span class="doccomment">/// ~~~~</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timestamp_nanos</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">i64</span> {
@@ -4699,6 +4743,26 @@
         <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="op">-</span><span class="number">946684799990000</span>;
         <span class="kw">let</span> <span class="ident">time</span> <span class="op">=</span> <span class="ident">base</span> <span class="op">+</span> <span class="ident">Duration</span>::<span class="ident">microseconds</span>(<span class="ident">t</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">t</span>, <span class="ident">time</span>.<span class="ident">signed_duration_since</span>(<span class="ident">base</span>).<span class="ident">num_microseconds</span>().<span class="ident">unwrap</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_nanosecond_range</span>() {
+        <span class="kw">const</span> <span class="ident">A_BILLION</span>: <span class="ident">i64</span> <span class="op">=</span> <span class="number">1_000_000_000</span>;
+        <span class="kw">let</span> <span class="ident">maximum</span> <span class="op">=</span> <span class="string">&quot;2262-04-11T23:47:16.854775804&quot;</span>;
+        <span class="kw">let</span> <span class="ident">parsed</span>: <span class="ident">NaiveDateTime</span> <span class="op">=</span> <span class="ident">maximum</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">nanos</span> <span class="op">=</span> <span class="ident">parsed</span>.<span class="ident">timestamp_nanos</span>();
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">parsed</span>,
+            <span class="ident">NaiveDateTime</span>::<span class="ident">from_timestamp</span>(<span class="ident">nanos</span> <span class="op">/</span> <span class="ident">A_BILLION</span>, (<span class="ident">nanos</span> <span class="op">%</span> <span class="ident">A_BILLION</span>) <span class="kw">as</span> <span class="ident">u32</span>)
+        );
+
+        <span class="kw">let</span> <span class="ident">minimum</span> <span class="op">=</span> <span class="string">&quot;1677-09-21T00:12:44.000000000&quot;</span>;
+        <span class="kw">let</span> <span class="ident">parsed</span>: <span class="ident">NaiveDateTime</span> <span class="op">=</span> <span class="ident">minimum</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">nanos</span> <span class="op">=</span> <span class="ident">parsed</span>.<span class="ident">timestamp_nanos</span>();
+        <span class="macro">assert_eq</span><span class="macro">!</span>(
+            <span class="ident">parsed</span>,
+            <span class="ident">NaiveDateTime</span>::<span class="ident">from_timestamp</span>(<span class="ident">nanos</span> <span class="op">/</span> <span class="ident">A_BILLION</span>, (<span class="ident">nanos</span> <span class="op">%</span> <span class="ident">A_BILLION</span>) <span class="kw">as</span> <span class="ident">u32</span>)
+        );
     }
 }
 </pre></div>

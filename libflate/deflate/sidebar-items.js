@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["DEFAULT_BLOCK_SIZE","The default size of a DEFLATE block."]],"struct":[["Decoder","DEFLATE decoder."],["EncodeOptions","Options for a DEFLATE encoder."],["Encoder","DEFLATE encoder."]]});

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.6/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex_syntax/index.html'><img src='../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.11/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex_syntax/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -217,26 +217,7 @@
 <span id="217">217</span>
 <span id="218">218</span>
 <span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">// Copyright 2018 The Rust Project Developers. See the COPYRIGHT</span>
-<span class="comment">// file at the top-level directory of this distribution and at</span>
-<span class="comment">// http://rust-lang.org/COPYRIGHT.</span>
-<span class="comment">//</span>
-<span class="comment">// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
-<span class="comment">// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
-<span class="comment">// &lt;LICENSE-MIT or http://opensource.org/licenses/MIT&gt;, at your</span>
-<span class="comment">// option. This file may not be copied, modified, or distributed</span>
-<span class="comment">// except according to those terms.</span>
-
 <span class="doccomment">/*!
 This crate provides a robust regular expression parser.
 
@@ -255,7 +236,7 @@ This crate defines two primary types:
   syntax and the low level compiled opcodes that are eventually responsible for
   executing a regular expression search. Given some high-level IR, it is not
   possible to produce the original concrete syntax (although it is possible to
-  produce an equivalent conrete syntax, but it will likely scarcely resemble
+  produce an equivalent concrete syntax, but it will likely scarcely resemble
   the original pattern). To a first approximation, the high-level IR is simple
   and easy to analyze.
 
@@ -334,8 +315,6 @@ done automatically in the `regex` crate.
 
 <span class="attribute">#![<span class="ident">deny</span>(<span class="ident">missing_docs</span>)]</span>
 
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">ucd_util</span>;
-
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">error</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">parser</span>::{<span class="ident">Parser</span>, <span class="ident">ParserBuilder</span>};
 
@@ -346,6 +325,7 @@ done automatically in the `regex` crate.
 <span class="kw">mod</span> <span class="ident">parser</span>;
 <span class="kw">mod</span> <span class="ident">unicode</span>;
 <span class="kw">mod</span> <span class="ident">unicode_tables</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">utf8</span>;
 
 <span class="doccomment">/// Escapes all regular expression meta characters in `text`.</span>
 <span class="doccomment">///</span>
@@ -381,8 +361,8 @@ done automatically in the `regex` crate.
 <span class="doccomment">/// `false` is fixed and won&#39;t change in a semver compatible release.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_meta_character</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">&#39;\\&#39;</span> <span class="op">|</span> <span class="string">&#39;.&#39;</span> <span class="op">|</span> <span class="string">&#39;+&#39;</span> <span class="op">|</span> <span class="string">&#39;*&#39;</span> <span class="op">|</span> <span class="string">&#39;?&#39;</span> <span class="op">|</span> <span class="string">&#39;(&#39;</span> <span class="op">|</span> <span class="string">&#39;)&#39;</span> <span class="op">|</span> <span class="string">&#39;|&#39;</span> <span class="op">|</span>
-        <span class="string">&#39;[&#39;</span> <span class="op">|</span> <span class="string">&#39;]&#39;</span> <span class="op">|</span> <span class="string">&#39;{&#39;</span> <span class="op">|</span> <span class="string">&#39;}&#39;</span> <span class="op">|</span> <span class="string">&#39;^&#39;</span> <span class="op">|</span> <span class="string">&#39;$&#39;</span> <span class="op">|</span> <span class="string">&#39;#&#39;</span> <span class="op">|</span> <span class="string">&#39;&amp;&#39;</span> <span class="op">|</span> <span class="string">&#39;-&#39;</span> <span class="op">|</span> <span class="string">&#39;~&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+        <span class="string">&#39;\\&#39;</span> <span class="op">|</span> <span class="string">&#39;.&#39;</span> <span class="op">|</span> <span class="string">&#39;+&#39;</span> <span class="op">|</span> <span class="string">&#39;*&#39;</span> <span class="op">|</span> <span class="string">&#39;?&#39;</span> <span class="op">|</span> <span class="string">&#39;(&#39;</span> <span class="op">|</span> <span class="string">&#39;)&#39;</span> <span class="op">|</span> <span class="string">&#39;|&#39;</span> <span class="op">|</span> <span class="string">&#39;[&#39;</span> <span class="op">|</span> <span class="string">&#39;]&#39;</span> <span class="op">|</span> <span class="string">&#39;{&#39;</span>
+        <span class="op">|</span> <span class="string">&#39;}&#39;</span> <span class="op">|</span> <span class="string">&#39;^&#39;</span> <span class="op">|</span> <span class="string">&#39;$&#39;</span> <span class="op">|</span> <span class="string">&#39;#&#39;</span> <span class="op">|</span> <span class="string">&#39;&amp;&#39;</span> <span class="op">|</span> <span class="string">&#39;-&#39;</span> <span class="op">|</span> <span class="string">&#39;~&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
         <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
     }
 }
@@ -412,7 +392,8 @@ done automatically in the `regex` crate.
             } <span class="kw">else</span> {
                 <span class="ident">Ordering</span>::<span class="ident">Less</span>
             }
-        }).<span class="ident">is_ok</span>()
+        })
+        .<span class="ident">is_ok</span>()
 }
 
 <span class="doccomment">/// Returns true if and only if the given character is an ASCII word character.</span>
@@ -421,7 +402,7 @@ done automatically in the `regex` crate.
 <span class="doccomment">/// `[_0-9a-zA-Z]&#39;.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_word_byte</span>(<span class="ident">c</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">b&#39;_&#39;</span> <span class="op">|</span> <span class="string">b&#39;0&#39;</span> ... <span class="string">b&#39;9&#39;</span> <span class="op">|</span> <span class="string">b&#39;a&#39;</span> ... <span class="string">b&#39;z&#39;</span> <span class="op">|</span> <span class="string">b&#39;A&#39;</span> ... <span class="string">b&#39;Z&#39;</span>  <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+        <span class="string">b&#39;_&#39;</span> <span class="op">|</span> <span class="string">b&#39;0&#39;</span>..=<span class="string">b&#39;9&#39;</span> <span class="op">|</span> <span class="string">b&#39;a&#39;</span>..=<span class="string">b&#39;z&#39;</span> <span class="op">|</span> <span class="string">b&#39;A&#39;</span>..=<span class="string">b&#39;Z&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
         <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
     }
 }
@@ -434,7 +415,8 @@ done automatically in the `regex` crate.
     <span class="kw">fn</span> <span class="ident">escape_meta</span>() {
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">escape</span>(<span class="string">r&quot;\.+*?()|[]{}^$#&amp;-~&quot;</span>),
-            <span class="string">r&quot;\\\.\+\*\?\(\)\|\[\]\{\}\^\$\#\&amp;\-\~&quot;</span>.<span class="ident">to_string</span>());
+            <span class="string">r&quot;\\\.\+\*\?\(\)\|\[\]\{\}\^\$\#\&amp;\-\~&quot;</span>.<span class="ident">to_string</span>()
+        );
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>

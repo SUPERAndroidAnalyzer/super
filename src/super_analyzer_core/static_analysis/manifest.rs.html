@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/static_analysis/manifest.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>manifest.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../super_analyzer_core/index.html'><img src='../../../rust-logo.png' alt='logo' width='100'></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/static_analysis/manifest.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>manifest.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../super_analyzer_core/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -4129,24 +4129,6 @@
 <span id="4129">4129</span>
 <span id="4130">4130</span>
 <span id="4131">4131</span>
-<span id="4132">4132</span>
-<span id="4133">4133</span>
-<span id="4134">4134</span>
-<span id="4135">4135</span>
-<span id="4136">4136</span>
-<span id="4137">4137</span>
-<span id="4138">4138</span>
-<span id="4139">4139</span>
-<span id="4140">4140</span>
-<span id="4141">4141</span>
-<span id="4142">4142</span>
-<span id="4143">4143</span>
-<span id="4144">4144</span>
-<span id="4145">4145</span>
-<span id="4146">4146</span>
-<span id="4147">4147</span>
-<span id="4148">4148</span>
-<span id="4149">4149</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Module containing the manifest analysis logic.</span>
 
@@ -4246,10 +4228,7 @@
                                only be used while in development.&quot;</span>;
 
             <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">get_line</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="string">&quot;android:debuggable=\&quot;true\&quot;&quot;</span>).<span class="ident">ok</span>();
-            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            };
+            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
             <span class="kw">let</span> <span class="ident">vulnerability</span> <span class="op">=</span> <span class="ident">Vulnerability</span>::<span class="ident">new</span>(
                 <span class="ident">criticality</span>,
@@ -4275,10 +4254,7 @@
                                heap is actually needed.&quot;</span>;
 
             <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">get_line</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="string">&quot;android:largeHeap=\&quot;true\&quot;&quot;</span>).<span class="ident">ok</span>();
-            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            };
+            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
             <span class="kw">let</span> <span class="ident">vulnerability</span> <span class="op">=</span> <span class="ident">Vulnerability</span>::<span class="ident">new</span>(
                 <span class="ident">criticality</span>,
@@ -4303,10 +4279,7 @@
                                data of your app into their PC.&quot;</span>;
 
             <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">get_line</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="string">&quot;android:allowBackup=\&quot;true\&quot;&quot;</span>).<span class="ident">ok</span>();
-            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            };
+            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
             <span class="kw">let</span> <span class="ident">vulnerability</span> <span class="op">=</span> <span class="ident">Vulnerability</span>::<span class="ident">new</span>(
                 <span class="ident">criticality</span>,
@@ -4329,10 +4302,7 @@
             <span class="op">&amp;&amp;</span> <span class="ident">permission</span>.<span class="ident">criticality</span>() <span class="op">&gt;=</span> <span class="ident">config</span>.<span class="ident">min_criticality</span>()
         {
             <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">get_line</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">permission</span>.<span class="ident">name</span>().<span class="ident">as_str</span>()).<span class="ident">ok</span>();
-            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            };
+            <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="ident">manifest</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
             <span class="kw">let</span> <span class="ident">vulnerability</span> <span class="op">=</span> <span class="ident">Vulnerability</span>::<span class="ident">new</span>(
                 <span class="ident">permission</span>.<span class="ident">criticality</span>(),
@@ -4618,10 +4588,7 @@
                     <span class="ident">p</span>
                 } <span class="kw">else</span> {
                     <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span> <span class="ident">get_line</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="ident">attr</span>.<span class="ident">value</span>.<span class="ident">as_str</span>()).<span class="ident">ok</span>();
-                    <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                        <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                    };
+                    <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
                     <span class="kw">let</span> <span class="ident">criticality</span> <span class="op">=</span> <span class="ident">config</span>.<span class="ident">unknown_permission_criticality</span>();
                     <span class="kw">let</span> <span class="ident">description</span> <span class="op">=</span> <span class="ident">config</span>.<span class="ident">unknown_permission_description</span>();
@@ -4676,10 +4643,7 @@
                     <span class="kw">if</span> <span class="ident">tag</span> <span class="op">!=</span> <span class="string">&quot;provider&quot;</span> <span class="op">||</span> <span class="ident">exported</span>.<span class="ident">is_some</span>() <span class="op">||</span> <span class="self">self</span>.<span class="ident">min_sdk</span>() <span class="op">&lt;</span> <span class="number">17</span> {
                         <span class="kw">let</span> <span class="ident">line</span> <span class="op">=</span>
                             <span class="ident">get_line</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;android:name=\&quot;{}\&quot;&quot;</span>, <span class="ident">name</span>)).<span class="ident">ok</span>();
-                        <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">line</span> {
-                            <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">get_code</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>)),
-                            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                        };
+                        <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">line</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">get_code</span>(<span class="self">self</span>.<span class="ident">code</span>(), <span class="ident">l</span>, <span class="ident">l</span>));
 
                         <span class="kw">let</span> <span class="ident">criticality</span> <span class="op">=</span> <span class="ident">Criticality</span>::<span class="ident">Warning</span>;
 
