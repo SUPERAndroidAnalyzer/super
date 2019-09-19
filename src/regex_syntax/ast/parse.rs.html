@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.11/src/ast/parse.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parse.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../regex_syntax/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.12/src/ast/parse.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>parse.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../regex_syntax/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -5851,6 +5851,34 @@
 <span id="5851">5851</span>
 <span id="5852">5852</span>
 <span id="5853">5853</span>
+<span id="5854">5854</span>
+<span id="5855">5855</span>
+<span id="5856">5856</span>
+<span id="5857">5857</span>
+<span id="5858">5858</span>
+<span id="5859">5859</span>
+<span id="5860">5860</span>
+<span id="5861">5861</span>
+<span id="5862">5862</span>
+<span id="5863">5863</span>
+<span id="5864">5864</span>
+<span id="5865">5865</span>
+<span id="5866">5866</span>
+<span id="5867">5867</span>
+<span id="5868">5868</span>
+<span id="5869">5869</span>
+<span id="5870">5870</span>
+<span id="5871">5871</span>
+<span id="5872">5872</span>
+<span id="5873">5873</span>
+<span id="5874">5874</span>
+<span id="5875">5875</span>
+<span id="5876">5876</span>
+<span id="5877">5877</span>
+<span id="5878">5878</span>
+<span id="5879">5879</span>
+<span id="5880">5880</span>
+<span id="5881">5881</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">/*!
 This module provides a regular expression parser.
@@ -6497,6 +6525,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// This assumes the parser is currently positioned at `|` and will advance</span>
     <span class="doccomment">/// the parser to the character following `|`.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">push_alternate</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Concat</span><span class="op">&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>(), <span class="string">&#39;|&#39;</span>);
         <span class="ident">concat</span>.<span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>();
@@ -6534,6 +6563,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// If there was a problem parsing the start of the group, then an error</span>
     <span class="doccomment">/// is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">push_group</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Concat</span><span class="op">&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>(), <span class="string">&#39;(&#39;</span>);
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">parse_group</span>()<span class="question-mark">?</span> {
@@ -6574,6 +6604,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// If no such group could be popped, then an unopened group error is</span>
     <span class="doccomment">/// returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">pop_group</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">group_concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Concat</span><span class="op">&gt;</span> {
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">GroupState</span>::<span class="kw-2">*</span>;
 
@@ -6625,6 +6656,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// error.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This assumes that the parser has advanced to the end.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">pop_group_end</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Ast</span><span class="op">&gt;</span> {
         <span class="ident">concat</span>.<span class="ident">span</span>.<span class="ident">end</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parser</span>().<span class="ident">stack_group</span>.<span class="ident">borrow_mut</span>();
@@ -6667,6 +6699,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// If there was a problem parsing the opening of the class, then an error</span>
     <span class="doccomment">/// is returned. Otherwise, a new union of set items for the class is</span>
     <span class="doccomment">/// returned (which may be populated with either a `]` or a `-`).</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">push_class_open</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">parent_union</span>: <span class="ident">ast</span>::<span class="ident">ClassSetUnion</span>,
@@ -6695,6 +6728,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// If there is no corresponding opening bracket on the parser&#39;s stack,</span>
     <span class="doccomment">/// then an error is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">pop_class</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">nested_union</span>: <span class="ident">ast</span>::<span class="ident">ClassSetUnion</span>,
@@ -6743,6 +6777,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// recently opened class.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This should only be called while parsing a character class.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">unclosed_class_error</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ast</span>::<span class="ident">Error</span> {
         <span class="kw">for</span> <span class="ident">state</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">parser</span>().<span class="ident">stack_class</span>.<span class="ident">borrow</span>().<span class="ident">iter</span>().<span class="ident">rev</span>() {
             <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">state</span> {
@@ -6763,6 +6798,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// A fresh set union is returned, which should be used to build the right</span>
     <span class="doccomment">/// hand side of this operator.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">push_class_op</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">next_kind</span>: <span class="ident">ast</span>::<span class="ident">ClassSetBinaryOpKind</span>,
@@ -6782,6 +6818,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// given set unchanged. If the top of the stack is an operation, then the</span>
     <span class="doccomment">/// given set will be used as the rhs of the operation on the top of the</span>
     <span class="doccomment">/// stack. In that case, the binary operation is returned as a set.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">pop_class_op</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">ast</span>::<span class="ident">ClassSet</span>) <span class="op">-&gt;</span> <span class="ident">ast</span>::<span class="ident">ClassSet</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">stack</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parser</span>().<span class="ident">stack_class</span>.<span class="ident">borrow_mut</span>();
         <span class="kw">let</span> (<span class="ident">kind</span>, <span class="ident">lhs</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">stack</span>.<span class="ident">pop</span>() {
@@ -6875,6 +6912,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// The caller should include the concatenation that is being built. The</span>
     <span class="doccomment">/// concatenation returned includes the repetition operator applied to the</span>
     <span class="doccomment">/// last expression in the given concatenation.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_uncounted_repetition</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="kw-2">mut</span> <span class="ident">concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>,
@@ -6929,6 +6967,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// The caller should include the concatenation that is being built. The</span>
     <span class="doccomment">/// concatenation returned includes the repetition operator applied to the</span>
     <span class="doccomment">/// last expression in the given concatenation.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_counted_repetition</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="kw-2">mut</span> <span class="ident">concat</span>: <span class="ident">ast</span>::<span class="ident">Concat</span>,
@@ -7036,6 +7075,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// If a capture name is given and it is incorrectly specified, then a</span>
     <span class="doccomment">/// corresponding error is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_group</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Either</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">SetFlags</span>, <span class="ident">ast</span>::<span class="ident">Group</span><span class="op">&gt;&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>(), <span class="string">&#39;(&#39;</span>);
         <span class="kw">let</span> <span class="ident">open_span</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">span_char</span>();
@@ -7102,6 +7142,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// following the closing `&gt;`.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The caller must provide the capture index of the group for this name.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_capture_name</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">capture_index</span>: <span class="ident">u32</span>,
@@ -7162,6 +7203,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// If no flags could be found or if the negation operation is not followed</span>
     <span class="doccomment">/// by any flags, then an error is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_flags</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Flags</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">ast</span>::<span class="ident">Flags</span> { <span class="ident">span</span>: <span class="self">self</span>.<span class="ident">span</span>(), <span class="ident">items</span>: <span class="macro">vec</span><span class="macro">!</span>[] };
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">last_was_negation</span> <span class="op">=</span> <span class="prelude-val">None</span>;
@@ -7213,6 +7255,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// # Errors</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// If the flag is not recognized, then an error is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_flag</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Flag</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">char</span>() {
             <span class="string">&#39;i&#39;</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">ast</span>::<span class="ident">Flag</span>::<span class="ident">CaseInsensitive</span>),
@@ -7279,6 +7322,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// This assumes the parser is positioned at the start of the escape</span>
     <span class="doccomment">/// sequence, i.e., `\`. It advances the parser to the first position</span>
     <span class="doccomment">/// immediately following the escape sequence.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_escape</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Primitive</span><span class="op">&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>(), <span class="string">&#39;\\&#39;</span>);
         <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>();
@@ -7380,6 +7424,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// escapes is enabled.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Assuming the preconditions are met, this routine can never fail.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_octal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ast</span>::<span class="ident">Literal</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">char</span>;
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">u32</span>;
@@ -7413,6 +7458,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// hex notations, i.e., `\xFF` and `\x{FFFF}`. This expects the parser to</span>
     <span class="doccomment">/// be positioned at the `x`, `u` or `U` prefix. The parser is advanced to</span>
     <span class="doccomment">/// the first character immediately following the hexadecimal literal.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_hex</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Literal</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
             <span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;x&#39;</span> <span class="op">||</span> <span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;u&#39;</span> <span class="op">||</span> <span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;U&#39;</span>
@@ -7442,6 +7488,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// The number of digits given must be 2 (for `\xNN`), 4 (for `\uNNNN`)</span>
     <span class="doccomment">/// or 8 (for `\UNNNNNNNN`).</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_hex_digits</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">kind</span>: <span class="ident">ast</span>::<span class="ident">HexLiteralKind</span>,
@@ -7487,6 +7534,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// Parse a hex representation of any Unicode scalar value. This expects</span>
     <span class="doccomment">/// the parser to be positioned at the opening brace `{` and will advance</span>
     <span class="doccomment">/// the parser to the first character following the closing brace `}`.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_hex_brace</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         <span class="ident">kind</span>: <span class="ident">ast</span>::<span class="ident">HexLiteralKind</span>,
@@ -7580,6 +7628,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// This assumes the parser is positioned at the opening `[`. If parsing</span>
     <span class="doccomment">/// is successful, then the parser is advanced to the position immediately</span>
     <span class="doccomment">/// following the closing `]`.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_set_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Class</span><span class="op">&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>(), <span class="string">&#39;[&#39;</span>);
 
@@ -7646,6 +7695,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// If an invalid escape is found, or if a character class is found where</span>
     <span class="doccomment">/// a simple literal is expected (e.g., in a range), then an error is</span>
     <span class="doccomment">/// returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_set_class_range</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">ClassSetItem</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">prim1</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">parse_set_class_item</span>()<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">bump_space</span>();
@@ -7692,6 +7742,7 @@ This module provides a regular expression parser.
     <span class="doccomment">///</span>
     <span class="doccomment">/// Note that it is the caller&#39;s responsibility to report an error if an</span>
     <span class="doccomment">/// illegal primitive was parsed.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_set_class_item</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Primitive</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;\\&#39;</span> {
             <span class="self">self</span>.<span class="ident">parse_escape</span>()
@@ -7722,6 +7773,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// the parser to the first non-special byte of the character class.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// An error is returned if EOF is found.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_set_class_open</span>(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">ast</span>::<span class="ident">ClassBracketed</span>, <span class="ident">ast</span>::<span class="ident">ClassSetUnion</span>)<span class="op">&gt;</span> {
@@ -7795,6 +7847,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// advance the parser and `None` is returned. Otherwise, the parser is</span>
     <span class="doccomment">/// advanced to the first byte following the closing `]` and the</span>
     <span class="doccomment">/// corresponding ASCII class is returned.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">maybe_parse_ascii_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">ClassAscii</span><span class="op">&gt;</span> {
         <span class="comment">// ASCII character classes are interesting from a parsing perspective</span>
         <span class="comment">// because parsing cannot fail with any interesting error. For example,</span>
@@ -7865,6 +7918,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// advance the parser to the character immediately following the class.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Note that this does not check whether the class name is valid or not.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_unicode_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">ClassUnicode</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;p&#39;</span> <span class="op">||</span> <span class="self">self</span>.<span class="ident">char</span>() <span class="op">==</span> <span class="string">&#39;P&#39;</span>);
 
@@ -7937,6 +7991,7 @@ This module provides a regular expression parser.
     <span class="doccomment">/// Parse a Perl character class, e.g., `\d` or `\W`. This assumes the</span>
     <span class="doccomment">/// parser is currently at a valid character class name and will be</span>
     <span class="doccomment">/// advanced to the character immediately following the class.</span>
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">parse_perl_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">ast</span>::<span class="ident">ClassPerl</span> {
         <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">char</span>();
         <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">span_char</span>();
@@ -7969,6 +8024,7 @@ This module provides a regular expression parser.
         <span class="ident">NestLimiter</span> { <span class="ident">p</span>: <span class="ident">p</span>, <span class="ident">depth</span>: <span class="number">0</span> }
     }
 
+    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">never</span>)]</span>
     <span class="kw">fn</span> <span class="ident">check</span>(<span class="self">self</span>, <span class="ident">ast</span>: <span class="kw-2">&amp;</span><span class="ident">Ast</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="ident">ast</span>::<span class="ident">visit</span>(<span class="ident">ast</span>, <span class="self">self</span>)
     }

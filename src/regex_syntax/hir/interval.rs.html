@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.11/src/hir/interval.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>interval.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../regex_syntax/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.12/src/hir/interval.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>interval.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../regex_syntax/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -505,12 +505,27 @@
 <span id="505">505</span>
 <span id="506">506</span>
 <span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">char</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cmp</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Debug</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">slice</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">u8</span>;
+
+<span class="kw">use</span> <span class="ident">unicode</span>;
 
 <span class="comment">// This module contains an *internal* implementation of interval sets.</span>
 <span class="comment">//</span>
@@ -522,7 +537,8 @@
 <span class="comment">//</span>
 <span class="comment">// Since case folding (as implemented below) breaks that invariant, we roll</span>
 <span class="comment">// that into this API even though it is a little out of place in an otherwise</span>
-<span class="comment">// generic interval set.</span>
+<span class="comment">// generic interval set. (Hence the reason why the `unicode` module is imported</span>
+<span class="comment">// here.)</span>
 <span class="comment">//</span>
 <span class="comment">// Some of the implementation complexity here is a result of me wanting to</span>
 <span class="comment">// preserve the sequential representation without using additional memory.</span>
@@ -580,13 +596,20 @@
     <span class="doccomment">/// characters. For example, if this class consists of the range `a-z`,</span>
     <span class="doccomment">/// then applying case folding will result in the class containing both the</span>
     <span class="doccomment">/// ranges `a-z` and `A-Z`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">case_fold_simple</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This returns an error if the necessary case mapping data is not</span>
+    <span class="doccomment">/// available.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">case_fold_simple</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">unicode</span>::<span class="ident">CaseFoldError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ranges</span>.<span class="ident">len</span>();
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">len</span> {
             <span class="kw">let</span> <span class="ident">range</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">ranges</span>[<span class="ident">i</span>];
-            <span class="ident">range</span>.<span class="ident">case_fold_simple</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">ranges</span>);
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="ident">range</span>.<span class="ident">case_fold_simple</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">ranges</span>) {
+                <span class="self">self</span>.<span class="ident">canonicalize</span>();
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>);
+            }
         }
         <span class="self">self</span>.<span class="ident">canonicalize</span>();
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Union this set with the given set, in place.</span>
@@ -839,7 +862,10 @@
     <span class="kw">fn</span> <span class="ident">upper</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Bound</span>;
     <span class="kw">fn</span> <span class="ident">set_lower</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">bound</span>: <span class="self">Self</span>::<span class="ident">Bound</span>);
     <span class="kw">fn</span> <span class="ident">set_upper</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">bound</span>: <span class="self">Self</span>::<span class="ident">Bound</span>);
-    <span class="kw">fn</span> <span class="ident">case_fold_simple</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">intervals</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>);
+    <span class="kw">fn</span> <span class="ident">case_fold_simple</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">intervals</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>,
+    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">unicode</span>::<span class="ident">CaseFoldError</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Create a new interval.</span>
     <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">lower</span>: <span class="self">Self</span>::<span class="ident">Bound</span>, <span class="ident">upper</span>: <span class="self">Self</span>::<span class="ident">Bound</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {

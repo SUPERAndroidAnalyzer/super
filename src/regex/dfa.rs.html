@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.2.1/src/dfa.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dfa.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-1.3.1/src/dfa.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dfa.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../regex/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1939,6 +1939,7 @@
 <span id="1939">1939</span>
 <span id="1940">1940</span>
 <span id="1941">1941</span>
+<span id="1942">1942</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">/*!
 The DFA matching engine.
@@ -2166,6 +2167,7 @@ implementation.)
     <span class="doccomment">/// Maps the given function onto T and returns the result.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// If this isn&#39;t a match, then this is a no-op.</span>
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-literal&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
             <span class="prelude-ty">Result</span>::<span class="ident">Match</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-ty">Result</span>::<span class="ident">Match</span>(<span class="ident">f</span>(<span class="ident">t</span>)),
@@ -2384,7 +2386,7 @@ implementation.)
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Fsm</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">forward</span>(
         <span class="ident">prog</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Program</span>,
         <span class="ident">cache</span>: <span class="kw-2">&amp;</span><span class="ident">ProgramCache</span>,
@@ -2414,7 +2416,7 @@ implementation.)
         <span class="ident">dfa</span>.<span class="ident">exec_at</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cache</span>.<span class="ident">qcur</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cache</span>.<span class="ident">qnext</span>, <span class="ident">text</span>)
     }
 
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reverse</span>(
         <span class="ident">prog</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Program</span>,
         <span class="ident">cache</span>: <span class="kw-2">&amp;</span><span class="ident">ProgramCache</span>,
@@ -2444,7 +2446,7 @@ implementation.)
         <span class="ident">dfa</span>.<span class="ident">exec_at_reverse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cache</span>.<span class="ident">qcur</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">cache</span>.<span class="ident">qnext</span>, <span class="ident">text</span>)
     }
 
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">forward_many</span>(
         <span class="ident">prog</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Program</span>,
         <span class="ident">cache</span>: <span class="kw-2">&amp;</span><span class="ident">ProgramCache</span>,
@@ -2492,7 +2494,7 @@ implementation.)
     <span class="doccomment">/// Executes the DFA on a forward NFA.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// {qcur,qnext} are scratch ordered sets which may be non-empty.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">fn</span> <span class="ident">exec_at</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">qcur</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SparseSet</span>,
@@ -2685,7 +2687,7 @@ implementation.)
     }
 
     <span class="doccomment">/// Executes the DFA on a reverse NFA.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">fn</span> <span class="ident">exec_at_reverse</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">qcur</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SparseSet</span>,
@@ -2790,7 +2792,7 @@ implementation.)
     <span class="doccomment">/// corresponds to text[i].</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This elides bounds checks, and is therefore unsafe.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">next_si</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">si</span>: <span class="ident">StatePtr</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">i</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">StatePtr</span> {
         <span class="comment">// What is the argument for safety here?</span>
         <span class="comment">// We have three unchecked accesses that could possibly violate safety:</span>
@@ -3305,7 +3307,7 @@ implementation.)
     <span class="doccomment">/// then it is computed, cached and a pointer to it is returned.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This may return STATE_DEAD but never STATE_UNKNOWN.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span> <span class="comment">// reduces constant overhead</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">fn</span> <span class="ident">start_state</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">q</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SparseSet</span>,
@@ -3467,7 +3469,7 @@ implementation.)
 
     <span class="doccomment">/// Given an input byte or the special EOF sentinel, return its</span>
     <span class="doccomment">/// corresponding byte class.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">fn</span> <span class="ident">byte_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">b</span>: <span class="ident">Byte</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
         <span class="kw">match</span> <span class="ident">b</span>.<span class="ident">as_byte</span>() {
             <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">num_byte_classes</span>() <span class="op">-</span> <span class="number">1</span>,
@@ -3476,7 +3478,7 @@ implementation.)
     }
 
     <span class="doccomment">/// Like byte_class, but explicitly for u8s.</span>
-    <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;perf-inline&quot;</span>, <span class="ident">inline</span>(<span class="ident">always</span>))]</span>
     <span class="kw">fn</span> <span class="ident">u8_class</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">b</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">prog</span>.<span class="ident">byte_classes</span>[<span class="ident">b</span> <span class="kw">as</span> <span class="ident">usize</span>] <span class="kw">as</span> <span class="ident">usize</span>
     }
