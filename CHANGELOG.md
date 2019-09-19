@@ -21,6 +21,8 @@ internal improvements and dependency upgrades.
   - `clap`: 2.32 => **2.33**
   - `lazy_static`: 1.2 => **1.4**
   - `toml`: 0.4 => **0.5**
+  - `regex`: 1.1 => **1.3**
+  - `hex`: 0.3 => **0.4**
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of

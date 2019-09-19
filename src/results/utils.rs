@@ -177,12 +177,8 @@ impl Serialize for FingerPrint {
         let mut ser_struct = serializer.serialize_struct("fingerprint", 3)?;
         ser_struct.serialize_field("md5", &format!("{:x}", self.md5))?;
         ser_struct.serialize_field("sha1", &self.sha1.to_string())?;
-        let mut sha256_hex = String::new();
-        // It should never fail, we are writing directly to memory, without I/O access
-        // That's why the `expect()` should never panic.
-        self.sha256
-            .write_hex(&mut sha256_hex)
-            .expect("the SHA-256 fingerprinting of the application failed");
+
+        let sha256_hex = self.sha256.encode_hex::<String>();
         ser_struct.serialize_field("sha256", &sha256_hex)?;
         ser_struct.end()
     }
