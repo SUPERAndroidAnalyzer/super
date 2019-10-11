@@ -23,6 +23,7 @@ internal improvements and dependency upgrades.
   - `toml`: 0.4 => **0.5**
   - `regex`: 1.1 => **1.3**
   - `hex`: 0.3 => **0.4**
+  - `env_logger`: 0.6 => **0.7**
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
@@ -46,6 +47,7 @@ dependencies.
   - `md5`: 0.5 => **0.6**
   - `regex`: 1.0 => **1.1**
   - `abxml`: 0.6 => **0.7**
+  - `env_logger`: 0.5 => **0.6**
   - Some other minor upgrades.
 
 - Multiple syntax changes to adapt the codebase to Rust 2018.
