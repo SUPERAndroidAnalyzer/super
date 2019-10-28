@@ -5,7 +5,7 @@ use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
 use colored::Colorize;
 use failure::Error;
 use lazy_static::lazy_static;
-use log::{log_enabled, warn, Level::Debug};
+use log::{log_enabled, warn, Level};
 use xml::{
     reader::{EventReader, XmlEvent},
     ParserConfig,
@@ -30,10 +30,10 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
     if cfg!(not(test)) {
         warn!("{}", warning.as_ref());
 
-        if log_enabled!(Debug) {
-            sleep(Duration::from_millis(200));
-        } else {
-            println!(
+        if log_enabled!(Level::Debug) {
+            sleep(Duration::from_millis(250));
+        } else if log_enabled!(Level::Warn) {
+            eprintln!(
                 "If you need more information, try to run the program again with the {} flag.",
                 "-v".bold()
             )
@@ -44,7 +44,7 @@ pub fn print_warning<S: AsRef<str>>(warning: S) {
 /// Prints a vulnerability to `stdout` in a color depending on the criticality.
 #[allow(clippy::print_stdout)]
 pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
-    if cfg!(not(test)) && log_enabled!(Debug) {
+    if cfg!(not(test)) && log_enabled!(Level::Debug) {
         let message = format!(
             "Possible {} criticality vulnerability found!: {}",
             criticality,
@@ -59,7 +59,7 @@ pub fn print_vulnerability<S: AsRef<str>>(text: S, criticality: Criticality) {
         };
 
         println!("{}", formatted_message);
-        sleep(Duration::from_millis(200));
+        sleep(Duration::from_millis(250));
     }
 }
 
