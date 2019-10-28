@@ -4,8 +4,9 @@
 
 This release fixes a bug in the rule checking for insecure `sleep()` usage, where some variables
 were not being checked properly. Also, improves the speed of the report generation and upgrades
-the libraries in charge of the visual representation of the reports. There have also been some
-internal improvements and dependency upgrades.
+the libraries in charge of the visual representation of the reports. One of this improvements
+brings support for Android SDK 27, 28 and 29, which are the SDKs for Android 8.1.0, Android 9 and
+Android 10. There have also been some internal improvements and dependency upgrades.
 
 ### Internal Changes
 
