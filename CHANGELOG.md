@@ -26,6 +26,7 @@ Android 10. There have also been some internal improvements and dependency upgra
   - `hex`: 0.3 => **0.4**
   - `env_logger`: 0.6 => **0.7**
   - `md5`: 0.6 => **0.7**
+  - `abxml`: 0.7 => **0.8**, with Android SDK 29 support
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
