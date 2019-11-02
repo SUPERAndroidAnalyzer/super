@@ -36,11 +36,11 @@ impl FromStr for Criticality {
     type Err = ErrorKind;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "critical" => Ok(Criticality::Critical),
-            "high" => Ok(Criticality::High),
-            "medium" => Ok(Criticality::Medium),
-            "low" => Ok(Criticality::Low),
-            "warning" => Ok(Criticality::Warning),
+            "critical" => Ok(Self::Critical),
+            "high" => Ok(Self::High),
+            "medium" => Ok(Self::Medium),
+            "low" => Ok(Self::Low),
+            "warning" => Ok(Self::Warning),
             _ => Err(ErrorKind::Parse),
         }
     }

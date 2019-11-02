@@ -61,17 +61,14 @@ impl Results {
     /// Initializes the results structure.
     #[allow(clippy::print_stdout)]
     pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self, Error> {
-        let fingerprint = match FingerPrint::from_package(package) {
-            Ok(f) => f,
-            Err(e) => {
-                print_warning(format!(
-                    "An error occurred when trying to fingerprint the \
-                     application: {}",
-                    e
-                ));
-                return Err(e)?;
-            }
-        };
+        let fingerprint = FingerPrint::from_package(package).map_err(|e| {
+            print_warning(format!(
+                "An error occurred when trying to fingerprint the \
+                 application: {}",
+                e
+            ));
+            e
+        })?;
         if config.is_verbose() {
             println!(
                 "The results struct has been created. All the vulnerabilities will now \

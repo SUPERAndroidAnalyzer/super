@@ -13,7 +13,7 @@ internal improvements and dependency upgrades.
 - Upgraded dependencies:
   - `highlight.js`: 9.13 => **9.15**
   - `jQuery`: 3.3 => **3.4**
-  - `num_cpus`: 1.8 => **1.10**
+  - `num_cpus`: 1.8 => **1.11**
   - `bytecount`: 0.4 => **0.6**, with SIMD
   - `colored`: 1.6 => **1.8**
   - `open`: 1.2 => **1.3**
@@ -24,6 +24,7 @@ internal improvements and dependency upgrades.
   - `regex`: 1.1 => **1.3**
   - `hex`: 0.3 => **0.4**
   - `env_logger`: 0.6 => **0.7**
+  - `md5`: 0.6 => **0.7**
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of

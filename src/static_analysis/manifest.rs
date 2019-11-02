@@ -655,7 +655,7 @@ pub enum InstallLocation {
 
 impl Default for InstallLocation {
     fn default() -> Self {
-        InstallLocation::InternalOnly
+        Self::InternalOnly
     }
 }
 
@@ -663,9 +663,9 @@ impl FromStr for InstallLocation {
     type Err = ErrorKind;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "internalOnly" => Ok(InstallLocation::InternalOnly),
-            "auto" => Ok(InstallLocation::Auto),
-            "preferExternal" => Ok(InstallLocation::PreferExternal),
+            "internalOnly" => Ok(Self::InternalOnly),
+            "auto" => Ok(Self::Auto),
+            "preferExternal" => Ok(Self::PreferExternal),
             _ => Err(ErrorKind::Parse),
         }
     }
@@ -2901,586 +2901,514 @@ impl Permission {
     /// Gets the string representation of the permission.
     pub fn as_str(&self) -> &str {
         match self {
-            Permission::AndroidPermissionAccessAllExternalStorage => {
+            Self::AndroidPermissionAccessAllExternalStorage => {
                 "android.permission.ACCESS_ALL_EXTERNAL_STORAGE"
             }
-            Permission::AndroidPermissionAccessCheckinProperties => {
+            Self::AndroidPermissionAccessCheckinProperties => {
                 "android.permission.ACCESS_CHECKIN_PROPERTIES"
             }
-            Permission::AndroidPermissionAccessCoarseLocation => {
+            Self::AndroidPermissionAccessCoarseLocation => {
                 "android.permission.ACCESS_COARSE_LOCATION"
             }
-            Permission::AndroidPermissionAccessFineLocation => {
-                "android.permission.ACCESS_FINE_LOCATION"
-            }
-            Permission::AndroidPermissionAccessLocationExtraCommands => {
+            Self::AndroidPermissionAccessFineLocation => "android.permission.ACCESS_FINE_LOCATION",
+            Self::AndroidPermissionAccessLocationExtraCommands => {
                 "android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"
             }
-            Permission::AndroidPermissionAccessMockLocation => {
-                "android.permission.ACCESS_MOCK_LOCATION"
-            }
-            Permission::AndroidPermissionAccessMtp => "android.permission.ACCESS_MTP",
-            Permission::AndroidPermissionAccessNetworkState => {
-                "android.permission.ACCESS_NETWORK_STATE"
-            }
-            Permission::AndroidPermissionAccessNotificationPolicy => {
+            Self::AndroidPermissionAccessMockLocation => "android.permission.ACCESS_MOCK_LOCATION",
+            Self::AndroidPermissionAccessMtp => "android.permission.ACCESS_MTP",
+            Self::AndroidPermissionAccessNetworkState => "android.permission.ACCESS_NETWORK_STATE",
+            Self::AndroidPermissionAccessNotificationPolicy => {
                 "android.permission.ACCESS_NOTIFICATION_POLICY"
             }
-            Permission::AndroidPermissionAccessWimaxState => {
-                "android.permission.ACCESS_WIMAX_STATE"
-            }
-            Permission::AndroidPermissionAccessWifiState => "android.permission.ACCESS_WIFI_STATE",
-            Permission::AndroidPermissionAccountManager => "android.permission.ACCOUNT_MANAGER",
-            Permission::AndroidPermissionAsecAccess => "android.permission.ASEC_ACCESS",
-            Permission::AndroidPermissionAsecCreate => "android.permission.ASEC_CREATE",
-            Permission::AndroidPermissionAsecDestroy => "android.permission.ASEC_DESTROY",
-            Permission::AndroidPermissionAsecMountUnmount => {
-                "android.permission.ASEC_MOUNT_UNMOUNT"
-            }
-            Permission::AndroidPermissionAsecRename => "android.permission.ASEC_RENAME",
-            Permission::AndroidPermissionAuthenticateAccounts => {
+            Self::AndroidPermissionAccessWimaxState => "android.permission.ACCESS_WIMAX_STATE",
+            Self::AndroidPermissionAccessWifiState => "android.permission.ACCESS_WIFI_STATE",
+            Self::AndroidPermissionAccountManager => "android.permission.ACCOUNT_MANAGER",
+            Self::AndroidPermissionAsecAccess => "android.permission.ASEC_ACCESS",
+            Self::AndroidPermissionAsecCreate => "android.permission.ASEC_CREATE",
+            Self::AndroidPermissionAsecDestroy => "android.permission.ASEC_DESTROY",
+            Self::AndroidPermissionAsecMountUnmount => "android.permission.ASEC_MOUNT_UNMOUNT",
+            Self::AndroidPermissionAsecRename => "android.permission.ASEC_RENAME",
+            Self::AndroidPermissionAuthenticateAccounts => {
                 "android.permission.AUTHENTICATE_ACCOUNTS"
             }
-            Permission::AndroidPermissionBatteryStats => "android.permission.BATTERY_STATS",
-            Permission::AndroidPermissionBindAccessibilityService => {
+            Self::AndroidPermissionBatteryStats => "android.permission.BATTERY_STATS",
+            Self::AndroidPermissionBindAccessibilityService => {
                 "android.permission.BIND_ACCESSIBILITY_SERVICE"
             }
-            Permission::AndroidPermissionBindAppwidget => "android.permission.BIND_APPWIDGET",
-            Permission::AndroidPermissionBindCallService => "android.permission.BIND_CALL_SERVICE",
-            Permission::AndroidPermissionBindCarrierMessagingService => {
+            Self::AndroidPermissionBindAppwidget => "android.permission.BIND_APPWIDGET",
+            Self::AndroidPermissionBindCallService => "android.permission.BIND_CALL_SERVICE",
+            Self::AndroidPermissionBindCarrierMessagingService => {
                 "android.permission.BIND_CARRIER_MESSAGING_SERVICE"
             }
-            Permission::AndroidPermissionBindCarrierServices => {
+            Self::AndroidPermissionBindCarrierServices => {
                 "android.permission.BIND_CARRIER_SERVICES"
             }
-            Permission::AndroidPermissionBindChooserTargetService => {
+            Self::AndroidPermissionBindChooserTargetService => {
                 "android.permission.BIND_CHOOSER_TARGET_SERVICE"
             }
-            Permission::AndroidPermissionBindDeviceAdmin => "android.permission.BIND_DEVICE_ADMIN",
-            Permission::AndroidPermissionBindDirectorySearch => {
+            Self::AndroidPermissionBindDeviceAdmin => "android.permission.BIND_DEVICE_ADMIN",
+            Self::AndroidPermissionBindDirectorySearch => {
                 "android.permission.BIND_DIRECTORY_SEARCH"
             }
-            Permission::AndroidPermissionBindDreamService => {
-                "android.permission.BIND_DREAM_SERVICE"
-            }
-            Permission::AndroidPermissionBindIncallService => {
-                "android.permission.BIND_INCALL_SERVICE"
-            }
-            Permission::AndroidPermissionBindInputMethod => "android.permission.BIND_INPUT_METHOD",
-            Permission::AndroidPermissionBindKeyguardAppwidget => {
+            Self::AndroidPermissionBindDreamService => "android.permission.BIND_DREAM_SERVICE",
+            Self::AndroidPermissionBindIncallService => "android.permission.BIND_INCALL_SERVICE",
+            Self::AndroidPermissionBindInputMethod => "android.permission.BIND_INPUT_METHOD",
+            Self::AndroidPermissionBindKeyguardAppwidget => {
                 "android.permission.BIND_KEYGUARD_APPWIDGET"
             }
-            Permission::AndroidPermissionBindMidiDeviceService => {
+            Self::AndroidPermissionBindMidiDeviceService => {
                 "android.permission.BIND_MIDI_DEVICE_SERVICE"
             }
-            Permission::AndroidPermissionBindNfcService => "android.permission.BIND_NFC_SERVICE",
-            Permission::AndroidPermissionBindNotificationListenerService => {
+            Self::AndroidPermissionBindNfcService => "android.permission.BIND_NFC_SERVICE",
+            Self::AndroidPermissionBindNotificationListenerService => {
                 "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             }
-            Permission::AndroidPermissionBindPrintService => {
-                "android.permission.BIND_PRINT_SERVICE"
-            }
-            Permission::AndroidPermissionBindRemoteviews => "android.permission.BIND_REMOTEVIEWS",
-            Permission::AndroidPermissionBindTelecomConnectionService => {
+            Self::AndroidPermissionBindPrintService => "android.permission.BIND_PRINT_SERVICE",
+            Self::AndroidPermissionBindRemoteviews => "android.permission.BIND_REMOTEVIEWS",
+            Self::AndroidPermissionBindTelecomConnectionService => {
                 "android.permission.BIND_TELECOM_CONNECTION_SERVICE"
             }
-            Permission::AndroidPermissionBindTextService => "android.permission.BIND_TEXT_SERVICE",
-            Permission::AndroidPermissionBindTvInput => "android.permission.BIND_TV_INPUT",
-            Permission::AndroidPermissionBindVoiceInteraction => {
+            Self::AndroidPermissionBindTextService => "android.permission.BIND_TEXT_SERVICE",
+            Self::AndroidPermissionBindTvInput => "android.permission.BIND_TV_INPUT",
+            Self::AndroidPermissionBindVoiceInteraction => {
                 "android.permission.BIND_VOICE_INTERACTION"
             }
-            Permission::AndroidPermissionBindVpnService => "android.permission.BIND_VPN_SERVICE",
-            Permission::AndroidPermissionBindWallpaper => "android.permission.BIND_WALLPAPER",
-            Permission::AndroidPermissionBluetooth => "android.permission.BLUETOOTH",
-            Permission::AndroidPermissionBluetoothAdmin => "android.permission.BLUETOOTH_ADMIN",
-            Permission::AndroidPermissionBluetoothPrivileged => {
-                "android.permission.BLUETOOTH_PRIVILEGED"
-            }
-            Permission::AndroidPermissionBluetoothStack => "android.permission.BLUETOOTH_STACK",
-            Permission::AndroidPermissionBodySensors => "android.permission.BODY_SENSORS",
-            Permission::AndroidPermissionBroadcastPackageRemoved => {
+            Self::AndroidPermissionBindVpnService => "android.permission.BIND_VPN_SERVICE",
+            Self::AndroidPermissionBindWallpaper => "android.permission.BIND_WALLPAPER",
+            Self::AndroidPermissionBluetooth => "android.permission.BLUETOOTH",
+            Self::AndroidPermissionBluetoothAdmin => "android.permission.BLUETOOTH_ADMIN",
+            Self::AndroidPermissionBluetoothPrivileged => "android.permission.BLUETOOTH_PRIVILEGED",
+            Self::AndroidPermissionBluetoothStack => "android.permission.BLUETOOTH_STACK",
+            Self::AndroidPermissionBodySensors => "android.permission.BODY_SENSORS",
+            Self::AndroidPermissionBroadcastPackageRemoved => {
                 "android.permission.BROADCAST_PACKAGE_REMOVED"
             }
-            Permission::AndroidPermissionBroadcastSms => "android.permission.BROADCAST_SMS",
-            Permission::AndroidPermissionBroadcastSticky => "android.permission.BROADCAST_STICKY",
-            Permission::AndroidPermissionBroadcastWapPush => {
-                "android.permission.BROADCAST_WAP_PUSH"
-            }
-            Permission::AndroidPermissionCallPhone => "android.permission.CALL_PHONE",
-            Permission::AndroidPermissionCallPrivileged => "android.permission.CALL_PRIVILEGED",
-            Permission::AndroidPermissionCamera => "android.permission.CAMERA",
-            Permission::AndroidPermissionCameraDisableTransmitLed => {
+            Self::AndroidPermissionBroadcastSms => "android.permission.BROADCAST_SMS",
+            Self::AndroidPermissionBroadcastSticky => "android.permission.BROADCAST_STICKY",
+            Self::AndroidPermissionBroadcastWapPush => "android.permission.BROADCAST_WAP_PUSH",
+            Self::AndroidPermissionCallPhone => "android.permission.CALL_PHONE",
+            Self::AndroidPermissionCallPrivileged => "android.permission.CALL_PRIVILEGED",
+            Self::AndroidPermissionCamera => "android.permission.CAMERA",
+            Self::AndroidPermissionCameraDisableTransmitLed => {
                 "android.permission.CAMERA_DISABLE_TRANSMIT_LED"
             }
-            Permission::AndroidPermissionCaptureAudioOutput => {
-                "android.permission.CAPTURE_AUDIO_OUTPUT"
-            }
-            Permission::AndroidPermissionCaptureSecureVideoOutput => {
+            Self::AndroidPermissionCaptureAudioOutput => "android.permission.CAPTURE_AUDIO_OUTPUT",
+            Self::AndroidPermissionCaptureSecureVideoOutput => {
                 "android.permission.CAPTURE_SECURE_VIDEO_OUTPUT"
             }
-            Permission::AndroidPermissionCaptureVideoOutput => {
-                "android.permission.CAPTURE_VIDEO_OUTPUT"
-            }
-            Permission::AndroidPermissionChangeBackgroundDataSetting => {
+            Self::AndroidPermissionCaptureVideoOutput => "android.permission.CAPTURE_VIDEO_OUTPUT",
+            Self::AndroidPermissionChangeBackgroundDataSetting => {
                 "android.permission.CHANGE_BACKGROUND_DATA_SETTING"
             }
-            Permission::AndroidPermissionChangeComponentEnabledState => {
+            Self::AndroidPermissionChangeComponentEnabledState => {
                 "android.permission.CHANGE_COMPONENT_ENABLED_STATE"
             }
-            Permission::AndroidPermissionChangeConfiguration => {
-                "android.permission.CHANGE_CONFIGURATION"
-            }
-            Permission::AndroidPermissionChangeNetworkState => {
-                "android.permission.CHANGE_NETWORK_STATE"
-            }
-            Permission::AndroidPermissionChangeWimaxState => {
-                "android.permission.CHANGE_WIMAX_STATE"
-            }
-            Permission::AndroidPermissionChangeWifiMulticastState => {
+            Self::AndroidPermissionChangeConfiguration => "android.permission.CHANGE_CONFIGURATION",
+            Self::AndroidPermissionChangeNetworkState => "android.permission.CHANGE_NETWORK_STATE",
+            Self::AndroidPermissionChangeWimaxState => "android.permission.CHANGE_WIMAX_STATE",
+            Self::AndroidPermissionChangeWifiMulticastState => {
                 "android.permission.CHANGE_WIFI_MULTICAST_STATE"
             }
-            Permission::AndroidPermissionChangeWifiState => "android.permission.CHANGE_WIFI_STATE",
-            Permission::AndroidPermissionClearAppCache => "android.permission.CLEAR_APP_CACHE",
-            Permission::AndroidPermissionConnectivityInternal => {
+            Self::AndroidPermissionChangeWifiState => "android.permission.CHANGE_WIFI_STATE",
+            Self::AndroidPermissionClearAppCache => "android.permission.CLEAR_APP_CACHE",
+            Self::AndroidPermissionConnectivityInternal => {
                 "android.permission.CONNECTIVITY_INTERNAL"
             }
-            Permission::AndroidPermissionControlLocationUpdates => {
+            Self::AndroidPermissionControlLocationUpdates => {
                 "android.permission.CONTROL_LOCATION_UPDATES"
             }
-            Permission::AndroidPermissionDeleteCacheFiles => {
-                "android.permission.DELETE_CACHE_FILES"
-            }
-            Permission::AndroidPermissionDeletePackages => "android.permission.DELETE_PACKAGES",
-            Permission::AndroidPermissionDiagnostic => "android.permission.DIAGNOSTIC",
-            Permission::AndroidPermissionDisableKeyguard => "android.permission.DISABLE_KEYGUARD",
-            Permission::AndroidPermissionDownloadWithoutNotification => {
+            Self::AndroidPermissionDeleteCacheFiles => "android.permission.DELETE_CACHE_FILES",
+            Self::AndroidPermissionDeletePackages => "android.permission.DELETE_PACKAGES",
+            Self::AndroidPermissionDiagnostic => "android.permission.DIAGNOSTIC",
+            Self::AndroidPermissionDisableKeyguard => "android.permission.DISABLE_KEYGUARD",
+            Self::AndroidPermissionDownloadWithoutNotification => {
                 "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION"
             }
-            Permission::AndroidPermissionDump => "android.permission.DUMP",
-            Permission::AndroidPermissionExpandStatusBar => "android.permission.EXPAND_STATUS_BAR",
-            Permission::AndroidPermissionFactoryTest => "android.permission.FACTORY_TEST",
-            Permission::AndroidPermissionFlashlight => "android.permission.FLASHLIGHT",
-            Permission::AndroidPermissionForceStopPackages => {
-                "android.permission.FORCE_STOP_PACKAGES"
-            }
-            Permission::AndroidPermissionGetAccounts => "android.permission.GET_ACCOUNTS",
-            Permission::AndroidPermissionGetAccountsPrivileged => {
+            Self::AndroidPermissionDump => "android.permission.DUMP",
+            Self::AndroidPermissionExpandStatusBar => "android.permission.EXPAND_STATUS_BAR",
+            Self::AndroidPermissionFactoryTest => "android.permission.FACTORY_TEST",
+            Self::AndroidPermissionFlashlight => "android.permission.FLASHLIGHT",
+            Self::AndroidPermissionForceStopPackages => "android.permission.FORCE_STOP_PACKAGES",
+            Self::AndroidPermissionGetAccounts => "android.permission.GET_ACCOUNTS",
+            Self::AndroidPermissionGetAccountsPrivileged => {
                 "android.permission.GET_ACCOUNTS_PRIVILEGED"
             }
-            Permission::AndroidPermissionGetAppOpsStats => "android.permission.GET_APP_OPS_STATS",
-            Permission::AndroidPermissionGetDetailedTasks => {
-                "android.permission.GET_DETAILED_TASKS"
-            }
-            Permission::AndroidPermissionGetPackageSize => "android.permission.GET_PACKAGE_SIZE",
-            Permission::AndroidPermissionGetTasks => "android.permission.GET_TASKS",
-            Permission::AndroidPermissionGlobalSearch => "android.permission.GLOBAL_SEARCH",
-            Permission::AndroidPermissionGlobalSearchControl => {
+            Self::AndroidPermissionGetAppOpsStats => "android.permission.GET_APP_OPS_STATS",
+            Self::AndroidPermissionGetDetailedTasks => "android.permission.GET_DETAILED_TASKS",
+            Self::AndroidPermissionGetPackageSize => "android.permission.GET_PACKAGE_SIZE",
+            Self::AndroidPermissionGetTasks => "android.permission.GET_TASKS",
+            Self::AndroidPermissionGlobalSearch => "android.permission.GLOBAL_SEARCH",
+            Self::AndroidPermissionGlobalSearchControl => {
                 "android.permission.GLOBAL_SEARCH_CONTROL"
             }
-            Permission::AndroidPermissionHardwareTest => "android.permission.HARDWARE_TEST",
-            Permission::AndroidPermissionInstallLocationProvider => {
+            Self::AndroidPermissionHardwareTest => "android.permission.HARDWARE_TEST",
+            Self::AndroidPermissionInstallLocationProvider => {
                 "android.permission.INSTALL_LOCATION_PROVIDER"
             }
-            Permission::AndroidPermissionInstallPackages => "android.permission.INSTALL_PACKAGES",
-            Permission::AndroidPermissionInteractAcrossUsers => {
+            Self::AndroidPermissionInstallPackages => "android.permission.INSTALL_PACKAGES",
+            Self::AndroidPermissionInteractAcrossUsers => {
                 "android.permission.INTERACT_ACROSS_USERS"
             }
-            Permission::AndroidPermissionInteractAcrossUsersFull => {
+            Self::AndroidPermissionInteractAcrossUsersFull => {
                 "android.permission.INTERACT_ACROSS_USERS_FULL"
             }
-            Permission::AndroidPermissionInternet => "android.permission.INTERNET",
-            Permission::AndroidPermissionKillBackgroundProcesses => {
+            Self::AndroidPermissionInternet => "android.permission.INTERNET",
+            Self::AndroidPermissionKillBackgroundProcesses => {
                 "android.permission.KILL_BACKGROUND_PROCESSES"
             }
-            Permission::AndroidPermissionLocationHardware => "android.permission.LOCATION_HARDWARE",
-            Permission::AndroidPermissionLoopRadio => "android.permission.LOOP_RADIO",
-            Permission::AndroidPermissionManageAccounts => "android.permission.MANAGE_ACCOUNTS",
-            Permission::AndroidPermissionManageActivityStacks => {
+            Self::AndroidPermissionLocationHardware => "android.permission.LOCATION_HARDWARE",
+            Self::AndroidPermissionLoopRadio => "android.permission.LOOP_RADIO",
+            Self::AndroidPermissionManageAccounts => "android.permission.MANAGE_ACCOUNTS",
+            Self::AndroidPermissionManageActivityStacks => {
                 "android.permission.MANAGE_ACTIVITY_STACKS"
             }
-            Permission::AndroidPermissionManageDocuments => "android.permission.MANAGE_DOCUMENTS",
-            Permission::AndroidPermissionManageUsb => "android.permission.MANAGE_USB",
-            Permission::AndroidPermissionManageUsers => "android.permission.MANAGE_USERS",
-            Permission::AndroidPermissionMasterClear => "android.permission.MASTER_CLEAR",
-            Permission::AndroidPermissionMediaContentControl => {
+            Self::AndroidPermissionManageDocuments => "android.permission.MANAGE_DOCUMENTS",
+            Self::AndroidPermissionManageUsb => "android.permission.MANAGE_USB",
+            Self::AndroidPermissionManageUsers => "android.permission.MANAGE_USERS",
+            Self::AndroidPermissionMasterClear => "android.permission.MASTER_CLEAR",
+            Self::AndroidPermissionMediaContentControl => {
                 "android.permission.MEDIA_CONTENT_CONTROL"
             }
-            Permission::AndroidPermissionModifyAppwidgetBindPermissions => {
+            Self::AndroidPermissionModifyAppwidgetBindPermissions => {
                 "android.permission.MODIFY_APPWIDGET_BIND_PERMISSIONS"
             }
-            Permission::AndroidPermissionModifyAudioSettings => {
+            Self::AndroidPermissionModifyAudioSettings => {
                 "android.permission.MODIFY_AUDIO_SETTINGS"
             }
-            Permission::AndroidPermissionModifyPhoneState => {
-                "android.permission.MODIFY_PHONE_STATE"
-            }
-            Permission::AndroidPermissionMountFormatFilesystems => {
+            Self::AndroidPermissionModifyPhoneState => "android.permission.MODIFY_PHONE_STATE",
+            Self::AndroidPermissionMountFormatFilesystems => {
                 "android.permission.MOUNT_FORMAT_FILESYSTEMS"
             }
-            Permission::AndroidPermissionMountUnmountFilesystems => {
+            Self::AndroidPermissionMountUnmountFilesystems => {
                 "android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
             }
-            Permission::AndroidPermissionNetAdmin => "android.permission.NET_ADMIN",
-            Permission::AndroidPermissionNetTunneling => "android.permission.NET_TUNNELING",
-            Permission::AndroidPermissionNfc => "android.permission.NFC",
-            Permission::AndroidPermissionPackageUsageStats => {
-                "android.permission.PACKAGE_USAGE_STATS"
-            }
-            Permission::AndroidPermissionPersistentActivity => {
-                "android.permission.PERSISTENT_ACTIVITY"
-            }
-            Permission::AndroidPermissionProcessOutgoingCalls => {
+            Self::AndroidPermissionNetAdmin => "android.permission.NET_ADMIN",
+            Self::AndroidPermissionNetTunneling => "android.permission.NET_TUNNELING",
+            Self::AndroidPermissionNfc => "android.permission.NFC",
+            Self::AndroidPermissionPackageUsageStats => "android.permission.PACKAGE_USAGE_STATS",
+            Self::AndroidPermissionPersistentActivity => "android.permission.PERSISTENT_ACTIVITY",
+            Self::AndroidPermissionProcessOutgoingCalls => {
                 "android.permission.PROCESS_OUTGOING_CALLS"
             }
-            Permission::AndroidPermissionReadCalendar => "android.permission.READ_CALENDAR",
-            Permission::AndroidPermissionReadCallLog => "android.permission.READ_CALL_LOG",
-            Permission::AndroidPermissionReadCellBroadcasts => {
-                "android.permission.READ_CELL_BROADCASTS"
-            }
-            Permission::AndroidPermissionReadContacts => "android.permission.READ_CONTACTS",
-            Permission::AndroidPermissionReadDreamState => "android.permission.READ_DREAM_STATE",
-            Permission::AndroidPermissionReadExternalStorage => {
+            Self::AndroidPermissionReadCalendar => "android.permission.READ_CALENDAR",
+            Self::AndroidPermissionReadCallLog => "android.permission.READ_CALL_LOG",
+            Self::AndroidPermissionReadCellBroadcasts => "android.permission.READ_CELL_BROADCASTS",
+            Self::AndroidPermissionReadContacts => "android.permission.READ_CONTACTS",
+            Self::AndroidPermissionReadDreamState => "android.permission.READ_DREAM_STATE",
+            Self::AndroidPermissionReadExternalStorage => {
                 "android.permission.READ_EXTERNAL_STORAGE"
             }
-            Permission::AndroidPermissionReadFrameBuffer => "android.permission.READ_FRAME_BUFFER",
-            Permission::AndroidPermissionReadInputState => "android.permission.READ_INPUT_STATE",
-            Permission::AndroidPermissionReadLogs => "android.permission.READ_LOGS",
-            Permission::AndroidPermissionReadPhoneState => "android.permission.READ_PHONE_STATE",
-            Permission::AndroidPermissionReadPrivilegedPhoneState => {
+            Self::AndroidPermissionReadFrameBuffer => "android.permission.READ_FRAME_BUFFER",
+            Self::AndroidPermissionReadInputState => "android.permission.READ_INPUT_STATE",
+            Self::AndroidPermissionReadLogs => "android.permission.READ_LOGS",
+            Self::AndroidPermissionReadPhoneState => "android.permission.READ_PHONE_STATE",
+            Self::AndroidPermissionReadPrivilegedPhoneState => {
                 "android.permission.READ_PRIVILEGED_PHONE_STATE"
             }
-            Permission::AndroidPermissionReadProfile => "android.permission.READ_PROFILE",
-            Permission::AndroidPermissionReadSms => "android.permission.READ_SMS",
-            Permission::AndroidPermissionReadSocialStream => {
-                "android.permission.READ_SOCIAL_STREAM"
-            }
-            Permission::AndroidPermissionReadSyncSettings => {
-                "android.permission.READ_SYNC_SETTINGS"
-            }
-            Permission::AndroidPermissionReadSyncStats => "android.permission.READ_SYNC_STATS",
-            Permission::AndroidPermissionReadUserDictionary => {
-                "android.permission.READ_USER_DICTIONARY"
-            }
-            Permission::AndroidPermissionReboot => "android.permission.REBOOT",
-            Permission::AndroidPermissionReceiveBootCompleted => {
+            Self::AndroidPermissionReadProfile => "android.permission.READ_PROFILE",
+            Self::AndroidPermissionReadSms => "android.permission.READ_SMS",
+            Self::AndroidPermissionReadSocialStream => "android.permission.READ_SOCIAL_STREAM",
+            Self::AndroidPermissionReadSyncSettings => "android.permission.READ_SYNC_SETTINGS",
+            Self::AndroidPermissionReadSyncStats => "android.permission.READ_SYNC_STATS",
+            Self::AndroidPermissionReadUserDictionary => "android.permission.READ_USER_DICTIONARY",
+            Self::AndroidPermissionReboot => "android.permission.REBOOT",
+            Self::AndroidPermissionReceiveBootCompleted => {
                 "android.permission.RECEIVE_BOOT_COMPLETED"
             }
-            Permission::AndroidPermissionReceiveDataActivityChange => {
+            Self::AndroidPermissionReceiveDataActivityChange => {
                 "android.permission.RECEIVE_DATA_ACTIVITY_CHANGE"
             }
-            Permission::AndroidPermissionReceiveEmergencyBroadcast => {
+            Self::AndroidPermissionReceiveEmergencyBroadcast => {
                 "android.permission.RECEIVE_EMERGENCY_BROADCAST"
             }
-            Permission::AndroidPermissionReceiveMms => "android.permission.RECEIVE_MMS",
-            Permission::AndroidPermissionReceiveSms => "android.permission.RECEIVE_SMS",
-            Permission::AndroidPermissionReceiveWapPush => "android.permission.RECEIVE_WAP_PUSH",
-            Permission::AndroidPermissionRecordAudio => "android.permission.RECORD_AUDIO",
-            Permission::AndroidPermissionRemoteAudioPlayback => {
+            Self::AndroidPermissionReceiveMms => "android.permission.RECEIVE_MMS",
+            Self::AndroidPermissionReceiveSms => "android.permission.RECEIVE_SMS",
+            Self::AndroidPermissionReceiveWapPush => "android.permission.RECEIVE_WAP_PUSH",
+            Self::AndroidPermissionRecordAudio => "android.permission.RECORD_AUDIO",
+            Self::AndroidPermissionRemoteAudioPlayback => {
                 "android.permission.REMOTE_AUDIO_PLAYBACK"
             }
-            Permission::AndroidPermissionRemoveTasks => "android.permission.REMOVE_TASKS",
-            Permission::AndroidPermissionReorderTasks => "android.permission.REORDER_TASKS",
-            Permission::AndroidPermissionRequestIgnoreBatteryOptimizations => {
+            Self::AndroidPermissionRemoveTasks => "android.permission.REMOVE_TASKS",
+            Self::AndroidPermissionReorderTasks => "android.permission.REORDER_TASKS",
+            Self::AndroidPermissionRequestIgnoreBatteryOptimizations => {
                 "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"
             }
-            Permission::AndroidPermissionRequestInstallPackages => {
+            Self::AndroidPermissionRequestInstallPackages => {
                 "android.permission.REQUEST_INSTALL_PACKAGES"
             }
-            Permission::AndroidPermissionRestartPackages => "android.permission.RESTART_PACKAGES",
-            Permission::AndroidPermissionRetrieveWindowContent => {
+            Self::AndroidPermissionRestartPackages => "android.permission.RESTART_PACKAGES",
+            Self::AndroidPermissionRetrieveWindowContent => {
                 "android.permission.RETRIEVE_WINDOW_CONTENT"
             }
-            Permission::AndroidPermissionSendRespondViaMessage => {
+            Self::AndroidPermissionSendRespondViaMessage => {
                 "android.permission.SEND_RESPOND_VIA_MESSAGE"
             }
-            Permission::AndroidPermissionSendSms => "android.permission.SEND_SMS",
-            Permission::AndroidPermissionSetAlwaysFinish => "android.permission.SET_ALWAYS_FINISH",
-            Permission::AndroidPermissionSetAnimationScale => {
-                "android.permission.SET_ANIMATION_SCALE"
-            }
-            Permission::AndroidPermissionSetDebugApp => "android.permission.SET_DEBUG_APP",
-            Permission::AndroidPermissionSetPreferredApplications => {
+            Self::AndroidPermissionSendSms => "android.permission.SEND_SMS",
+            Self::AndroidPermissionSetAlwaysFinish => "android.permission.SET_ALWAYS_FINISH",
+            Self::AndroidPermissionSetAnimationScale => "android.permission.SET_ANIMATION_SCALE",
+            Self::AndroidPermissionSetDebugApp => "android.permission.SET_DEBUG_APP",
+            Self::AndroidPermissionSetPreferredApplications => {
                 "android.permission.SET_PREFERRED_APPLICATIONS"
             }
-            Permission::AndroidPermissionSetProcessLimit => "android.permission.SET_PROCESS_LIMIT",
-            Permission::AndroidPermissionSetScreenCompatibility => {
+            Self::AndroidPermissionSetProcessLimit => "android.permission.SET_PROCESS_LIMIT",
+            Self::AndroidPermissionSetScreenCompatibility => {
                 "android.permission.SET_SCREEN_COMPATIBILITY"
             }
-            Permission::AndroidPermissionSetTime => "android.permission.SET_TIME",
-            Permission::AndroidPermissionSetTimeZone => "android.permission.SET_TIME_ZONE",
-            Permission::AndroidPermissionSetWallpaper => "android.permission.SET_WALLPAPER",
-            Permission::AndroidPermissionSetWallpaperComponent => {
+            Self::AndroidPermissionSetTime => "android.permission.SET_TIME",
+            Self::AndroidPermissionSetTimeZone => "android.permission.SET_TIME_ZONE",
+            Self::AndroidPermissionSetWallpaper => "android.permission.SET_WALLPAPER",
+            Self::AndroidPermissionSetWallpaperComponent => {
                 "android.permission.SET_WALLPAPER_COMPONENT"
             }
-            Permission::AndroidPermissionSetWallpaperHints => {
-                "android.permission.SET_WALLPAPER_HINTS"
-            }
-            Permission::AndroidPermissionSignalPersistentProcesses => {
+            Self::AndroidPermissionSetWallpaperHints => "android.permission.SET_WALLPAPER_HINTS",
+            Self::AndroidPermissionSignalPersistentProcesses => {
                 "android.permission.SIGNAL_PERSISTENT_PROCESSES"
             }
-            Permission::AndroidPermissionStartAnyActivity => {
-                "android.permission.START_ANY_ACTIVITY"
-            }
-            Permission::AndroidPermissionStatusBar => "android.permission.STATUS_BAR",
-            Permission::AndroidPermissionSubscribedFeedsRead => {
+            Self::AndroidPermissionStartAnyActivity => "android.permission.START_ANY_ACTIVITY",
+            Self::AndroidPermissionStatusBar => "android.permission.STATUS_BAR",
+            Self::AndroidPermissionSubscribedFeedsRead => {
                 "android.permission.SUBSCRIBED_FEEDS_READ"
             }
-            Permission::AndroidPermissionSystemAlertWindow => {
-                "android.permission.SYSTEM_ALERT_WINDOW"
-            }
-            Permission::AndroidPermissionSubscribedFeedsWrite => {
+            Self::AndroidPermissionSystemAlertWindow => "android.permission.SYSTEM_ALERT_WINDOW",
+            Self::AndroidPermissionSubscribedFeedsWrite => {
                 "android.permission.SUBSCRIBED_FEEDS_WRITE"
             }
-            Permission::AndroidPermissionTransmitIr => "android.permission.TRANSMIT_IR",
-            Permission::AndroidPermissionUpdateDeviceStats => {
-                "android.permission.UPDATE_DEVICE_STATS"
-            }
-            Permission::AndroidPermissionUseCredentials => "android.permission.USE_CREDENTIALS",
-            Permission::AndroidPermissionUseFingerprint => "android.permission.USE_FINGERPRINT",
-            Permission::AndroidPermissionUseSip => "android.permission.USE_SIP",
-            Permission::AndroidPermissionVibrate => "android.permission.VIBRATE",
-            Permission::AndroidPermissionWakeLock => "android.permission.WAKE_LOCK",
-            Permission::AndroidPermissionWriteApnSettings => {
-                "android.permission.WRITE_APN_SETTINGS"
-            }
-            Permission::AndroidPermissionWriteCalendar => "android.permission.WRITE_CALENDAR",
-            Permission::AndroidPermissionWriteCallLog => "android.permission.WRITE_CALL_LOG",
-            Permission::AndroidPermissionWriteContacts => "android.permission.WRITE_CONTACTS",
-            Permission::AndroidPermissionWriteDreamState => "android.permission.WRITE_DREAM_STATE",
-            Permission::AndroidPermissionWriteExternalStorage => {
+            Self::AndroidPermissionTransmitIr => "android.permission.TRANSMIT_IR",
+            Self::AndroidPermissionUpdateDeviceStats => "android.permission.UPDATE_DEVICE_STATS",
+            Self::AndroidPermissionUseCredentials => "android.permission.USE_CREDENTIALS",
+            Self::AndroidPermissionUseFingerprint => "android.permission.USE_FINGERPRINT",
+            Self::AndroidPermissionUseSip => "android.permission.USE_SIP",
+            Self::AndroidPermissionVibrate => "android.permission.VIBRATE",
+            Self::AndroidPermissionWakeLock => "android.permission.WAKE_LOCK",
+            Self::AndroidPermissionWriteApnSettings => "android.permission.WRITE_APN_SETTINGS",
+            Self::AndroidPermissionWriteCalendar => "android.permission.WRITE_CALENDAR",
+            Self::AndroidPermissionWriteCallLog => "android.permission.WRITE_CALL_LOG",
+            Self::AndroidPermissionWriteContacts => "android.permission.WRITE_CONTACTS",
+            Self::AndroidPermissionWriteDreamState => "android.permission.WRITE_DREAM_STATE",
+            Self::AndroidPermissionWriteExternalStorage => {
                 "android.permission.WRITE_EXTERNAL_STORAGE"
             }
-            Permission::AndroidPermissionWriteGservices => "android.permission.WRITE_GSERVICES",
-            Permission::AndroidPermissionWriteMediaStorage => {
-                "android.permission.WRITE_MEDIA_STORAGE"
-            }
-            Permission::AndroidPermissionWriteProfile => "android.permission.WRITE_PROFILE",
-            Permission::AndroidPermissionWriteSecureSettings => {
+            Self::AndroidPermissionWriteGservices => "android.permission.WRITE_GSERVICES",
+            Self::AndroidPermissionWriteMediaStorage => "android.permission.WRITE_MEDIA_STORAGE",
+            Self::AndroidPermissionWriteProfile => "android.permission.WRITE_PROFILE",
+            Self::AndroidPermissionWriteSecureSettings => {
                 "android.permission.WRITE_SECURE_SETTINGS"
             }
-            Permission::AndroidPermissionWriteSettings => "android.permission.WRITE_SETTINGS",
-            Permission::AndroidPermissionWriteSms => "android.permission.WRITE_SMS",
-            Permission::AndroidPermissionWriteSocialStream => {
-                "android.permission.WRITE_SOCIAL_STREAM"
-            }
-            Permission::AndroidPermissionWriteSyncSettings => {
-                "android.permission.WRITE_SYNC_SETTINGS"
-            }
-            Permission::AndroidPermissionWriteUserDictionary => {
+            Self::AndroidPermissionWriteSettings => "android.permission.WRITE_SETTINGS",
+            Self::AndroidPermissionWriteSms => "android.permission.WRITE_SMS",
+            Self::AndroidPermissionWriteSocialStream => "android.permission.WRITE_SOCIAL_STREAM",
+            Self::AndroidPermissionWriteSyncSettings => "android.permission.WRITE_SYNC_SETTINGS",
+            Self::AndroidPermissionWriteUserDictionary => {
                 "android.permission.WRITE_USER_DICTIONARY"
             }
-            Permission::ComAndroidAlarmPermissionSetAlarm => {
-                "com.android.alarm.permission.SET_ALARM"
-            }
-            Permission::ComAndroidBrowserPermissionReadHistoryBookmarks => {
+            Self::ComAndroidAlarmPermissionSetAlarm => "com.android.alarm.permission.SET_ALARM",
+            Self::ComAndroidBrowserPermissionReadHistoryBookmarks => {
                 "com.android.browser.permission.READ_HISTORY_BOOKMARKS"
             }
-            Permission::ComAndroidBrowserPermissionWriteHistoryBookmarks => {
+            Self::ComAndroidBrowserPermissionWriteHistoryBookmarks => {
                 "com.android.browser.permission.WRITE_HISTORY_BOOKMARKS"
             }
-            Permission::ComAndroidEmailPermissionReadAttachment => {
+            Self::ComAndroidEmailPermissionReadAttachment => {
                 "com.android.email.permission.READ_ATTACHMENT"
             }
-            Permission::ComAndroidLauncherPermissionInstallShortcut => {
+            Self::ComAndroidLauncherPermissionInstallShortcut => {
                 "com.android.launcher.permission.INSTALL_SHORTCUT"
             }
-            Permission::ComAndroidLauncherPermissionPreloadWorkspace => {
+            Self::ComAndroidLauncherPermissionPreloadWorkspace => {
                 "com.android.launcher.permission.PRELOAD_WORKSPACE"
             }
-            Permission::ComAndroidLauncherPermissionReadSettings => {
+            Self::ComAndroidLauncherPermissionReadSettings => {
                 "com.android.launcher.permission.READ_SETTINGS"
             }
-            Permission::ComAndroidLauncherPermissionUninstallShortcut => {
+            Self::ComAndroidLauncherPermissionUninstallShortcut => {
                 "com.android.launcher.permission.UNINSTALL_SHORTCUT"
             }
-            Permission::ComAndroidLauncherPermissionWriteSettings => {
+            Self::ComAndroidLauncherPermissionWriteSettings => {
                 "com.android.launcher.permission.WRITE_SETTINGS"
             }
-            Permission::ComAndroidVendingCheckLicense => "com.android.vending.CHECK_LICENSE",
-            Permission::ComAndroidVoicemailPermissionAddVoicemail => {
+            Self::ComAndroidVendingCheckLicense => "com.android.vending.CHECK_LICENSE",
+            Self::ComAndroidVoicemailPermissionAddVoicemail => {
                 "com.android.voicemail.permission.ADD_VOICEMAIL"
             }
-            Permission::ComAndroidVoicemailPermissionReadVoicemail => {
+            Self::ComAndroidVoicemailPermissionReadVoicemail => {
                 "com.android.voicemail.permission.READ_VOICEMAIL"
             }
-            Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail => {
+            Self::ComAndroidVoicemailPermissionReadWriteAllVoicemail => {
                 "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL"
             }
-            Permission::ComAndroidVoicemailPermissionWriteVoicemail => {
+            Self::ComAndroidVoicemailPermissionWriteVoicemail => {
                 "com.android.voicemail.permission.WRITE_VOICEMAIL"
             }
-            Permission::ComGoogleAndroidC2dmPermissionReceive => {
+            Self::ComGoogleAndroidC2dmPermissionReceive => {
                 "com.google.android.c2dm.permission.RECEIVE"
             }
-            Permission::ComGoogleAndroidC2dmPermissionSend => {
-                "com.google.android.c2dm.permission.SEND"
-            }
-            Permission::ComGoogleAndroidGmsPermissionActivityRecognition => {
+            Self::ComGoogleAndroidC2dmPermissionSend => "com.google.android.c2dm.permission.SEND",
+            Self::ComGoogleAndroidGmsPermissionActivityRecognition => {
                 "com.google.android.gms.permission.ACTIVITY_RECOGNITION"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuth => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.ah"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.android"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.cl"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.cp"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.finance"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2 => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2 => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.health"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.ig"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.knol"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2 => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2 => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.local"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.mail"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.news"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.print"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.reader"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.speech"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.talk"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.wise"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.writely"
             }
-            Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube => {
+            Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube => {
                 "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube"
             }
-            Permission::ComGoogleAndroidGtalkservicePermissionGtalkService => {
+            Self::ComGoogleAndroidGtalkservicePermissionGtalkService => {
                 "com.google.android.gtalkservice.permission.GTALK_SERVICE"
             }
-            Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat => {
+            Self::ComGoogleAndroidGtalkservicePermissionSendHeartbeat => {
                 "com.google.android.gtalkservice.permission.SEND_HEARTBEAT"
             }
-            Permission::ComGoogleAndroidPermissionBroadcastDataMessage => {
+            Self::ComGoogleAndroidPermissionBroadcastDataMessage => {
                 "com.google.android.permission.BROADCAST_DATA_MESSAGE"
             }
-            Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices => {
+            Self::ComGoogleAndroidProvidersGsfPermissionReadGservices => {
                 "com.google.android.providers.gsf.permission.READ_GSERVICES"
             }
-            Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly => {
+            Self::ComGoogleAndroidProvidersTalkPermissionReadOnly => {
                 "com.google.android.providers.talk.permission.READ_ONLY"
             }
-            Permission::ComGoogleAndroidProvidersTalkPermissionWriteOnly => {
+            Self::ComGoogleAndroidProvidersTalkPermissionWriteOnly => {
                 "com.google.android.providers.talk.permission.WRITE_ONLY"
             }
-            Permission::ComGoogleAndroidXmppPermissionBroadcast => {
+            Self::ComGoogleAndroidXmppPermissionBroadcast => {
                 "com.google.android.xmpp.permission.BROADCAST"
             }
-            Permission::ComGoogleAndroidXmppPermissionSendReceive => {
+            Self::ComGoogleAndroidXmppPermissionSendReceive => {
                 "com.google.android.xmpp.permission.SEND_RECEIVE"
             }
-            Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint => {
+            Self::ComGoogleAndroidXmppPermissionUseXmppEndpoint => {
                 "com.google.android.xmpp.permission.USE_XMPP_ENDPOINT"
             }
-            Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast => {
+            Self::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast => {
                 "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST"
             }
         }
@@ -3492,638 +3420,558 @@ impl FromStr for Permission {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "android.permission.ACCESS_ALL_EXTERNAL_STORAGE" => {
-                Ok(Permission::AndroidPermissionAccessAllExternalStorage)
+                Ok(Self::AndroidPermissionAccessAllExternalStorage)
             }
             "android.permission.ACCESS_CHECKIN_PROPERTIES" => {
-                Ok(Permission::AndroidPermissionAccessCheckinProperties)
+                Ok(Self::AndroidPermissionAccessCheckinProperties)
             }
             "android.permission.ACCESS_COARSE_LOCATION" => {
-                Ok(Permission::AndroidPermissionAccessCoarseLocation)
+                Ok(Self::AndroidPermissionAccessCoarseLocation)
             }
             "android.permission.ACCESS_FINE_LOCATION" => {
-                Ok(Permission::AndroidPermissionAccessFineLocation)
+                Ok(Self::AndroidPermissionAccessFineLocation)
             }
             "android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" => {
-                Ok(Permission::AndroidPermissionAccessLocationExtraCommands)
+                Ok(Self::AndroidPermissionAccessLocationExtraCommands)
             }
             "android.permission.ACCESS_MOCK_LOCATION" => {
-                Ok(Permission::AndroidPermissionAccessMockLocation)
+                Ok(Self::AndroidPermissionAccessMockLocation)
             }
-            "android.permission.ACCESS_MTP" => Ok(Permission::AndroidPermissionAccessMtp),
+            "android.permission.ACCESS_MTP" => Ok(Self::AndroidPermissionAccessMtp),
             "android.permission.ACCESS_NETWORK_STATE" => {
-                Ok(Permission::AndroidPermissionAccessNetworkState)
+                Ok(Self::AndroidPermissionAccessNetworkState)
             }
             "android.permission.ACCESS_NOTIFICATION_POLICY" => {
-                Ok(Permission::AndroidPermissionAccessNotificationPolicy)
+                Ok(Self::AndroidPermissionAccessNotificationPolicy)
             }
-            "android.permission.ACCESS_WIMAX_STATE" => {
-                Ok(Permission::AndroidPermissionAccessWimaxState)
-            }
-            "android.permission.ACCESS_WIFI_STATE" => {
-                Ok(Permission::AndroidPermissionAccessWifiState)
-            }
-            "android.permission.ACCOUNT_MANAGER" => Ok(Permission::AndroidPermissionAccountManager),
-            "android.permission.ASEC_ACCESS" => Ok(Permission::AndroidPermissionAsecAccess),
-            "android.permission.ASEC_CREATE" => Ok(Permission::AndroidPermissionAsecCreate),
-            "android.permission.ASEC_DESTROY" => Ok(Permission::AndroidPermissionAsecDestroy),
-            "android.permission.ASEC_MOUNT_UNMOUNT" => {
-                Ok(Permission::AndroidPermissionAsecMountUnmount)
-            }
-            "android.permission.ASEC_RENAME" => Ok(Permission::AndroidPermissionAsecRename),
+            "android.permission.ACCESS_WIMAX_STATE" => Ok(Self::AndroidPermissionAccessWimaxState),
+            "android.permission.ACCESS_WIFI_STATE" => Ok(Self::AndroidPermissionAccessWifiState),
+            "android.permission.ACCOUNT_MANAGER" => Ok(Self::AndroidPermissionAccountManager),
+            "android.permission.ASEC_ACCESS" => Ok(Self::AndroidPermissionAsecAccess),
+            "android.permission.ASEC_CREATE" => Ok(Self::AndroidPermissionAsecCreate),
+            "android.permission.ASEC_DESTROY" => Ok(Self::AndroidPermissionAsecDestroy),
+            "android.permission.ASEC_MOUNT_UNMOUNT" => Ok(Self::AndroidPermissionAsecMountUnmount),
+            "android.permission.ASEC_RENAME" => Ok(Self::AndroidPermissionAsecRename),
             "android.permission.AUTHENTICATE_ACCOUNTS" => {
-                Ok(Permission::AndroidPermissionAuthenticateAccounts)
+                Ok(Self::AndroidPermissionAuthenticateAccounts)
             }
-            "android.permission.BATTERY_STATS" => Ok(Permission::AndroidPermissionBatteryStats),
+            "android.permission.BATTERY_STATS" => Ok(Self::AndroidPermissionBatteryStats),
             "android.permission.BIND_ACCESSIBILITY_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindAccessibilityService)
+                Ok(Self::AndroidPermissionBindAccessibilityService)
             }
-            "android.permission.BIND_APPWIDGET" => Ok(Permission::AndroidPermissionBindAppwidget),
-            "android.permission.BIND_CALL_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindCallService)
-            }
+            "android.permission.BIND_APPWIDGET" => Ok(Self::AndroidPermissionBindAppwidget),
+            "android.permission.BIND_CALL_SERVICE" => Ok(Self::AndroidPermissionBindCallService),
             "android.permission.BIND_CARRIER_MESSAGING_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindCarrierMessagingService)
+                Ok(Self::AndroidPermissionBindCarrierMessagingService)
             }
             "android.permission.BIND_CARRIER_SERVICES" => {
-                Ok(Permission::AndroidPermissionBindCarrierServices)
+                Ok(Self::AndroidPermissionBindCarrierServices)
             }
             "android.permission.BIND_CHOOSER_TARGET_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindChooserTargetService)
+                Ok(Self::AndroidPermissionBindChooserTargetService)
             }
-            "android.permission.BIND_DEVICE_ADMIN" => {
-                Ok(Permission::AndroidPermissionBindDeviceAdmin)
-            }
+            "android.permission.BIND_DEVICE_ADMIN" => Ok(Self::AndroidPermissionBindDeviceAdmin),
             "android.permission.BIND_DIRECTORY_SEARCH" => {
-                Ok(Permission::AndroidPermissionBindDirectorySearch)
+                Ok(Self::AndroidPermissionBindDirectorySearch)
             }
-            "android.permission.BIND_DREAM_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindDreamService)
-            }
+            "android.permission.BIND_DREAM_SERVICE" => Ok(Self::AndroidPermissionBindDreamService),
             "android.permission.BIND_INCALL_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindIncallService)
+                Ok(Self::AndroidPermissionBindIncallService)
             }
-            "android.permission.BIND_INPUT_METHOD" => {
-                Ok(Permission::AndroidPermissionBindInputMethod)
-            }
+            "android.permission.BIND_INPUT_METHOD" => Ok(Self::AndroidPermissionBindInputMethod),
             "android.permission.BIND_KEYGUARD_APPWIDGET" => {
-                Ok(Permission::AndroidPermissionBindKeyguardAppwidget)
+                Ok(Self::AndroidPermissionBindKeyguardAppwidget)
             }
             "android.permission.BIND_MIDI_DEVICE_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindMidiDeviceService)
+                Ok(Self::AndroidPermissionBindMidiDeviceService)
             }
-            "android.permission.BIND_NFC_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindNfcService)
-            }
+            "android.permission.BIND_NFC_SERVICE" => Ok(Self::AndroidPermissionBindNfcService),
             "android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindNotificationListenerService)
+                Ok(Self::AndroidPermissionBindNotificationListenerService)
             }
-            "android.permission.BIND_PRINT_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindPrintService)
-            }
-            "android.permission.BIND_REMOTEVIEWS" => {
-                Ok(Permission::AndroidPermissionBindRemoteviews)
-            }
+            "android.permission.BIND_PRINT_SERVICE" => Ok(Self::AndroidPermissionBindPrintService),
+            "android.permission.BIND_REMOTEVIEWS" => Ok(Self::AndroidPermissionBindRemoteviews),
             "android.permission.BIND_TELECOM_CONNECTION_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindTelecomConnectionService)
+                Ok(Self::AndroidPermissionBindTelecomConnectionService)
             }
-            "android.permission.BIND_TEXT_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindTextService)
-            }
-            "android.permission.BIND_TV_INPUT" => Ok(Permission::AndroidPermissionBindTvInput),
+            "android.permission.BIND_TEXT_SERVICE" => Ok(Self::AndroidPermissionBindTextService),
+            "android.permission.BIND_TV_INPUT" => Ok(Self::AndroidPermissionBindTvInput),
             "android.permission.BIND_VOICE_INTERACTION" => {
-                Ok(Permission::AndroidPermissionBindVoiceInteraction)
+                Ok(Self::AndroidPermissionBindVoiceInteraction)
             }
-            "android.permission.BIND_VPN_SERVICE" => {
-                Ok(Permission::AndroidPermissionBindVpnService)
-            }
-            "android.permission.BIND_WALLPAPER" => Ok(Permission::AndroidPermissionBindWallpaper),
-            "android.permission.BLUETOOTH" => Ok(Permission::AndroidPermissionBluetooth),
-            "android.permission.BLUETOOTH_ADMIN" => Ok(Permission::AndroidPermissionBluetoothAdmin),
+            "android.permission.BIND_VPN_SERVICE" => Ok(Self::AndroidPermissionBindVpnService),
+            "android.permission.BIND_WALLPAPER" => Ok(Self::AndroidPermissionBindWallpaper),
+            "android.permission.BLUETOOTH" => Ok(Self::AndroidPermissionBluetooth),
+            "android.permission.BLUETOOTH_ADMIN" => Ok(Self::AndroidPermissionBluetoothAdmin),
             "android.permission.BLUETOOTH_PRIVILEGED" => {
-                Ok(Permission::AndroidPermissionBluetoothPrivileged)
+                Ok(Self::AndroidPermissionBluetoothPrivileged)
             }
-            "android.permission.BLUETOOTH_STACK" => Ok(Permission::AndroidPermissionBluetoothStack),
-            "android.permission.BODY_SENSORS" => Ok(Permission::AndroidPermissionBodySensors),
+            "android.permission.BLUETOOTH_STACK" => Ok(Self::AndroidPermissionBluetoothStack),
+            "android.permission.BODY_SENSORS" => Ok(Self::AndroidPermissionBodySensors),
             "android.permission.BROADCAST_PACKAGE_REMOVED" => {
-                Ok(Permission::AndroidPermissionBroadcastPackageRemoved)
+                Ok(Self::AndroidPermissionBroadcastPackageRemoved)
             }
-            "android.permission.BROADCAST_SMS" => Ok(Permission::AndroidPermissionBroadcastSms),
-            "android.permission.BROADCAST_STICKY" => {
-                Ok(Permission::AndroidPermissionBroadcastSticky)
-            }
-            "android.permission.BROADCAST_WAP_PUSH" => {
-                Ok(Permission::AndroidPermissionBroadcastWapPush)
-            }
-            "android.permission.CALL_PHONE" => Ok(Permission::AndroidPermissionCallPhone),
-            "android.permission.CALL_PRIVILEGED" => Ok(Permission::AndroidPermissionCallPrivileged),
-            "android.permission.CAMERA" => Ok(Permission::AndroidPermissionCamera),
+            "android.permission.BROADCAST_SMS" => Ok(Self::AndroidPermissionBroadcastSms),
+            "android.permission.BROADCAST_STICKY" => Ok(Self::AndroidPermissionBroadcastSticky),
+            "android.permission.BROADCAST_WAP_PUSH" => Ok(Self::AndroidPermissionBroadcastWapPush),
+            "android.permission.CALL_PHONE" => Ok(Self::AndroidPermissionCallPhone),
+            "android.permission.CALL_PRIVILEGED" => Ok(Self::AndroidPermissionCallPrivileged),
+            "android.permission.CAMERA" => Ok(Self::AndroidPermissionCamera),
             "android.permission.CAMERA_DISABLE_TRANSMIT_LED" => {
-                Ok(Permission::AndroidPermissionCameraDisableTransmitLed)
+                Ok(Self::AndroidPermissionCameraDisableTransmitLed)
             }
             "android.permission.CAPTURE_AUDIO_OUTPUT" => {
-                Ok(Permission::AndroidPermissionCaptureAudioOutput)
+                Ok(Self::AndroidPermissionCaptureAudioOutput)
             }
             "android.permission.CAPTURE_SECURE_VIDEO_OUTPUT" => {
-                Ok(Permission::AndroidPermissionCaptureSecureVideoOutput)
+                Ok(Self::AndroidPermissionCaptureSecureVideoOutput)
             }
             "android.permission.CAPTURE_VIDEO_OUTPUT" => {
-                Ok(Permission::AndroidPermissionCaptureVideoOutput)
+                Ok(Self::AndroidPermissionCaptureVideoOutput)
             }
             "android.permission.CHANGE_BACKGROUND_DATA_SETTING" => {
-                Ok(Permission::AndroidPermissionChangeBackgroundDataSetting)
+                Ok(Self::AndroidPermissionChangeBackgroundDataSetting)
             }
             "android.permission.CHANGE_COMPONENT_ENABLED_STATE" => {
-                Ok(Permission::AndroidPermissionChangeComponentEnabledState)
+                Ok(Self::AndroidPermissionChangeComponentEnabledState)
             }
             "android.permission.CHANGE_CONFIGURATION" => {
-                Ok(Permission::AndroidPermissionChangeConfiguration)
+                Ok(Self::AndroidPermissionChangeConfiguration)
             }
             "android.permission.CHANGE_NETWORK_STATE" => {
-                Ok(Permission::AndroidPermissionChangeNetworkState)
+                Ok(Self::AndroidPermissionChangeNetworkState)
             }
-            "android.permission.CHANGE_WIMAX_STATE" => {
-                Ok(Permission::AndroidPermissionChangeWimaxState)
-            }
+            "android.permission.CHANGE_WIMAX_STATE" => Ok(Self::AndroidPermissionChangeWimaxState),
             "android.permission.CHANGE_WIFI_MULTICAST_STATE" => {
-                Ok(Permission::AndroidPermissionChangeWifiMulticastState)
+                Ok(Self::AndroidPermissionChangeWifiMulticastState)
             }
-            "android.permission.CHANGE_WIFI_STATE" => {
-                Ok(Permission::AndroidPermissionChangeWifiState)
-            }
-            "android.permission.CLEAR_APP_CACHE" => Ok(Permission::AndroidPermissionClearAppCache),
+            "android.permission.CHANGE_WIFI_STATE" => Ok(Self::AndroidPermissionChangeWifiState),
+            "android.permission.CLEAR_APP_CACHE" => Ok(Self::AndroidPermissionClearAppCache),
             "android.permission.CONNECTIVITY_INTERNAL" => {
-                Ok(Permission::AndroidPermissionConnectivityInternal)
+                Ok(Self::AndroidPermissionConnectivityInternal)
             }
             "android.permission.CONTROL_LOCATION_UPDATES" => {
-                Ok(Permission::AndroidPermissionControlLocationUpdates)
+                Ok(Self::AndroidPermissionControlLocationUpdates)
             }
-            "android.permission.DELETE_CACHE_FILES" => {
-                Ok(Permission::AndroidPermissionDeleteCacheFiles)
-            }
-            "android.permission.DELETE_PACKAGES" => Ok(Permission::AndroidPermissionDeletePackages),
-            "android.permission.DIAGNOSTIC" => Ok(Permission::AndroidPermissionDiagnostic),
-            "android.permission.DISABLE_KEYGUARD" => {
-                Ok(Permission::AndroidPermissionDisableKeyguard)
-            }
+            "android.permission.DELETE_CACHE_FILES" => Ok(Self::AndroidPermissionDeleteCacheFiles),
+            "android.permission.DELETE_PACKAGES" => Ok(Self::AndroidPermissionDeletePackages),
+            "android.permission.DIAGNOSTIC" => Ok(Self::AndroidPermissionDiagnostic),
+            "android.permission.DISABLE_KEYGUARD" => Ok(Self::AndroidPermissionDisableKeyguard),
             "android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" => {
-                Ok(Permission::AndroidPermissionDownloadWithoutNotification)
+                Ok(Self::AndroidPermissionDownloadWithoutNotification)
             }
-            "android.permission.DUMP" => Ok(Permission::AndroidPermissionDump),
-            "android.permission.EXPAND_STATUS_BAR" => {
-                Ok(Permission::AndroidPermissionExpandStatusBar)
-            }
-            "android.permission.FACTORY_TEST" => Ok(Permission::AndroidPermissionFactoryTest),
-            "android.permission.FLASHLIGHT" => Ok(Permission::AndroidPermissionFlashlight),
+            "android.permission.DUMP" => Ok(Self::AndroidPermissionDump),
+            "android.permission.EXPAND_STATUS_BAR" => Ok(Self::AndroidPermissionExpandStatusBar),
+            "android.permission.FACTORY_TEST" => Ok(Self::AndroidPermissionFactoryTest),
+            "android.permission.FLASHLIGHT" => Ok(Self::AndroidPermissionFlashlight),
             "android.permission.FORCE_STOP_PACKAGES" => {
-                Ok(Permission::AndroidPermissionForceStopPackages)
+                Ok(Self::AndroidPermissionForceStopPackages)
             }
-            "android.permission.GET_ACCOUNTS" => Ok(Permission::AndroidPermissionGetAccounts),
+            "android.permission.GET_ACCOUNTS" => Ok(Self::AndroidPermissionGetAccounts),
             "android.permission.GET_ACCOUNTS_PRIVILEGED" => {
-                Ok(Permission::AndroidPermissionGetAccountsPrivileged)
+                Ok(Self::AndroidPermissionGetAccountsPrivileged)
             }
-            "android.permission.GET_APP_OPS_STATS" => {
-                Ok(Permission::AndroidPermissionGetAppOpsStats)
-            }
-            "android.permission.GET_DETAILED_TASKS" => {
-                Ok(Permission::AndroidPermissionGetDetailedTasks)
-            }
-            "android.permission.GET_PACKAGE_SIZE" => {
-                Ok(Permission::AndroidPermissionGetPackageSize)
-            }
-            "android.permission.GET_TASKS" => Ok(Permission::AndroidPermissionGetTasks),
-            "android.permission.GLOBAL_SEARCH" => Ok(Permission::AndroidPermissionGlobalSearch),
+            "android.permission.GET_APP_OPS_STATS" => Ok(Self::AndroidPermissionGetAppOpsStats),
+            "android.permission.GET_DETAILED_TASKS" => Ok(Self::AndroidPermissionGetDetailedTasks),
+            "android.permission.GET_PACKAGE_SIZE" => Ok(Self::AndroidPermissionGetPackageSize),
+            "android.permission.GET_TASKS" => Ok(Self::AndroidPermissionGetTasks),
+            "android.permission.GLOBAL_SEARCH" => Ok(Self::AndroidPermissionGlobalSearch),
             "android.permission.GLOBAL_SEARCH_CONTROL" => {
-                Ok(Permission::AndroidPermissionGlobalSearchControl)
+                Ok(Self::AndroidPermissionGlobalSearchControl)
             }
-            "android.permission.HARDWARE_TEST" => Ok(Permission::AndroidPermissionHardwareTest),
+            "android.permission.HARDWARE_TEST" => Ok(Self::AndroidPermissionHardwareTest),
             "android.permission.INSTALL_LOCATION_PROVIDER" => {
-                Ok(Permission::AndroidPermissionInstallLocationProvider)
+                Ok(Self::AndroidPermissionInstallLocationProvider)
             }
-            "android.permission.INSTALL_PACKAGES" => {
-                Ok(Permission::AndroidPermissionInstallPackages)
-            }
+            "android.permission.INSTALL_PACKAGES" => Ok(Self::AndroidPermissionInstallPackages),
             "android.permission.INTERACT_ACROSS_USERS" => {
-                Ok(Permission::AndroidPermissionInteractAcrossUsers)
+                Ok(Self::AndroidPermissionInteractAcrossUsers)
             }
             "android.permission.INTERACT_ACROSS_USERS_FULL" => {
-                Ok(Permission::AndroidPermissionInteractAcrossUsersFull)
+                Ok(Self::AndroidPermissionInteractAcrossUsersFull)
             }
-            "android.permission.INTERNET" => Ok(Permission::AndroidPermissionInternet),
+            "android.permission.INTERNET" => Ok(Self::AndroidPermissionInternet),
             "android.permission.KILL_BACKGROUND_PROCESSES" => {
-                Ok(Permission::AndroidPermissionKillBackgroundProcesses)
+                Ok(Self::AndroidPermissionKillBackgroundProcesses)
             }
-            "android.permission.LOCATION_HARDWARE" => {
-                Ok(Permission::AndroidPermissionLocationHardware)
-            }
-            "android.permission.LOOP_RADIO" => Ok(Permission::AndroidPermissionLoopRadio),
-            "android.permission.MANAGE_ACCOUNTS" => Ok(Permission::AndroidPermissionManageAccounts),
+            "android.permission.LOCATION_HARDWARE" => Ok(Self::AndroidPermissionLocationHardware),
+            "android.permission.LOOP_RADIO" => Ok(Self::AndroidPermissionLoopRadio),
+            "android.permission.MANAGE_ACCOUNTS" => Ok(Self::AndroidPermissionManageAccounts),
             "android.permission.MANAGE_ACTIVITY_STACKS" => {
-                Ok(Permission::AndroidPermissionManageActivityStacks)
+                Ok(Self::AndroidPermissionManageActivityStacks)
             }
-            "android.permission.MANAGE_DOCUMENTS" => {
-                Ok(Permission::AndroidPermissionManageDocuments)
-            }
-            "android.permission.MANAGE_USB" => Ok(Permission::AndroidPermissionManageUsb),
-            "android.permission.MANAGE_USERS" => Ok(Permission::AndroidPermissionManageUsers),
-            "android.permission.MASTER_CLEAR" => Ok(Permission::AndroidPermissionMasterClear),
+            "android.permission.MANAGE_DOCUMENTS" => Ok(Self::AndroidPermissionManageDocuments),
+            "android.permission.MANAGE_USB" => Ok(Self::AndroidPermissionManageUsb),
+            "android.permission.MANAGE_USERS" => Ok(Self::AndroidPermissionManageUsers),
+            "android.permission.MASTER_CLEAR" => Ok(Self::AndroidPermissionMasterClear),
             "android.permission.MEDIA_CONTENT_CONTROL" => {
-                Ok(Permission::AndroidPermissionMediaContentControl)
+                Ok(Self::AndroidPermissionMediaContentControl)
             }
             "android.permission.MODIFY_APPWIDGET_BIND_PERMISSIONS" => {
-                Ok(Permission::AndroidPermissionModifyAppwidgetBindPermissions)
+                Ok(Self::AndroidPermissionModifyAppwidgetBindPermissions)
             }
             "android.permission.MODIFY_AUDIO_SETTINGS" => {
-                Ok(Permission::AndroidPermissionModifyAudioSettings)
+                Ok(Self::AndroidPermissionModifyAudioSettings)
             }
-            "android.permission.MODIFY_PHONE_STATE" => {
-                Ok(Permission::AndroidPermissionModifyPhoneState)
-            }
+            "android.permission.MODIFY_PHONE_STATE" => Ok(Self::AndroidPermissionModifyPhoneState),
             "android.permission.MOUNT_FORMAT_FILESYSTEMS" => {
-                Ok(Permission::AndroidPermissionMountFormatFilesystems)
+                Ok(Self::AndroidPermissionMountFormatFilesystems)
             }
             "android.permission.MOUNT_UNMOUNT_FILESYSTEMS" => {
-                Ok(Permission::AndroidPermissionMountUnmountFilesystems)
+                Ok(Self::AndroidPermissionMountUnmountFilesystems)
             }
-            "android.permission.NET_ADMIN" => Ok(Permission::AndroidPermissionNetAdmin),
-            "android.permission.NET_TUNNELING" => Ok(Permission::AndroidPermissionNetTunneling),
-            "android.permission.NFC" => Ok(Permission::AndroidPermissionNfc),
+            "android.permission.NET_ADMIN" => Ok(Self::AndroidPermissionNetAdmin),
+            "android.permission.NET_TUNNELING" => Ok(Self::AndroidPermissionNetTunneling),
+            "android.permission.NFC" => Ok(Self::AndroidPermissionNfc),
             "android.permission.PACKAGE_USAGE_STATS" => {
-                Ok(Permission::AndroidPermissionPackageUsageStats)
+                Ok(Self::AndroidPermissionPackageUsageStats)
             }
             "android.permission.PERSISTENT_ACTIVITY" => {
-                Ok(Permission::AndroidPermissionPersistentActivity)
+                Ok(Self::AndroidPermissionPersistentActivity)
             }
             "android.permission.PROCESS_OUTGOING_CALLS" => {
-                Ok(Permission::AndroidPermissionProcessOutgoingCalls)
+                Ok(Self::AndroidPermissionProcessOutgoingCalls)
             }
-            "android.permission.READ_CALENDAR" => Ok(Permission::AndroidPermissionReadCalendar),
-            "android.permission.READ_CALL_LOG" => Ok(Permission::AndroidPermissionReadCallLog),
+            "android.permission.READ_CALENDAR" => Ok(Self::AndroidPermissionReadCalendar),
+            "android.permission.READ_CALL_LOG" => Ok(Self::AndroidPermissionReadCallLog),
             "android.permission.READ_CELL_BROADCASTS" => {
-                Ok(Permission::AndroidPermissionReadCellBroadcasts)
+                Ok(Self::AndroidPermissionReadCellBroadcasts)
             }
-            "android.permission.READ_CONTACTS" => Ok(Permission::AndroidPermissionReadContacts),
-            "android.permission.READ_DREAM_STATE" => {
-                Ok(Permission::AndroidPermissionReadDreamState)
-            }
+            "android.permission.READ_CONTACTS" => Ok(Self::AndroidPermissionReadContacts),
+            "android.permission.READ_DREAM_STATE" => Ok(Self::AndroidPermissionReadDreamState),
             "android.permission.READ_EXTERNAL_STORAGE" => {
-                Ok(Permission::AndroidPermissionReadExternalStorage)
+                Ok(Self::AndroidPermissionReadExternalStorage)
             }
-            "android.permission.READ_FRAME_BUFFER" => {
-                Ok(Permission::AndroidPermissionReadFrameBuffer)
-            }
-            "android.permission.READ_INPUT_STATE" => {
-                Ok(Permission::AndroidPermissionReadInputState)
-            }
-            "android.permission.READ_LOGS" => Ok(Permission::AndroidPermissionReadLogs),
-            "android.permission.READ_PHONE_STATE" => {
-                Ok(Permission::AndroidPermissionReadPhoneState)
-            }
+            "android.permission.READ_FRAME_BUFFER" => Ok(Self::AndroidPermissionReadFrameBuffer),
+            "android.permission.READ_INPUT_STATE" => Ok(Self::AndroidPermissionReadInputState),
+            "android.permission.READ_LOGS" => Ok(Self::AndroidPermissionReadLogs),
+            "android.permission.READ_PHONE_STATE" => Ok(Self::AndroidPermissionReadPhoneState),
             "android.permission.READ_PRIVILEGED_PHONE_STATE" => {
-                Ok(Permission::AndroidPermissionReadPrivilegedPhoneState)
+                Ok(Self::AndroidPermissionReadPrivilegedPhoneState)
             }
-            "android.permission.READ_PROFILE" => Ok(Permission::AndroidPermissionReadProfile),
-            "android.permission.READ_SMS" => Ok(Permission::AndroidPermissionReadSms),
-            "android.permission.READ_SOCIAL_STREAM" => {
-                Ok(Permission::AndroidPermissionReadSocialStream)
-            }
-            "android.permission.READ_SYNC_SETTINGS" => {
-                Ok(Permission::AndroidPermissionReadSyncSettings)
-            }
-            "android.permission.READ_SYNC_STATS" => Ok(Permission::AndroidPermissionReadSyncStats),
+            "android.permission.READ_PROFILE" => Ok(Self::AndroidPermissionReadProfile),
+            "android.permission.READ_SMS" => Ok(Self::AndroidPermissionReadSms),
+            "android.permission.READ_SOCIAL_STREAM" => Ok(Self::AndroidPermissionReadSocialStream),
+            "android.permission.READ_SYNC_SETTINGS" => Ok(Self::AndroidPermissionReadSyncSettings),
+            "android.permission.READ_SYNC_STATS" => Ok(Self::AndroidPermissionReadSyncStats),
             "android.permission.READ_USER_DICTIONARY" => {
-                Ok(Permission::AndroidPermissionReadUserDictionary)
+                Ok(Self::AndroidPermissionReadUserDictionary)
             }
-            "android.permission.REBOOT" => Ok(Permission::AndroidPermissionReboot),
+            "android.permission.REBOOT" => Ok(Self::AndroidPermissionReboot),
             "android.permission.RECEIVE_BOOT_COMPLETED" => {
-                Ok(Permission::AndroidPermissionReceiveBootCompleted)
+                Ok(Self::AndroidPermissionReceiveBootCompleted)
             }
             "android.permission.RECEIVE_DATA_ACTIVITY_CHANGE" => {
-                Ok(Permission::AndroidPermissionReceiveDataActivityChange)
+                Ok(Self::AndroidPermissionReceiveDataActivityChange)
             }
             "android.permission.RECEIVE_EMERGENCY_BROADCAST" => {
-                Ok(Permission::AndroidPermissionReceiveEmergencyBroadcast)
+                Ok(Self::AndroidPermissionReceiveEmergencyBroadcast)
             }
-            "android.permission.RECEIVE_MMS" => Ok(Permission::AndroidPermissionReceiveMms),
-            "android.permission.RECEIVE_SMS" => Ok(Permission::AndroidPermissionReceiveSms),
-            "android.permission.RECEIVE_WAP_PUSH" => {
-                Ok(Permission::AndroidPermissionReceiveWapPush)
-            }
-            "android.permission.RECORD_AUDIO" => Ok(Permission::AndroidPermissionRecordAudio),
+            "android.permission.RECEIVE_MMS" => Ok(Self::AndroidPermissionReceiveMms),
+            "android.permission.RECEIVE_SMS" => Ok(Self::AndroidPermissionReceiveSms),
+            "android.permission.RECEIVE_WAP_PUSH" => Ok(Self::AndroidPermissionReceiveWapPush),
+            "android.permission.RECORD_AUDIO" => Ok(Self::AndroidPermissionRecordAudio),
             "android.permission.REMOTE_AUDIO_PLAYBACK" => {
-                Ok(Permission::AndroidPermissionRemoteAudioPlayback)
+                Ok(Self::AndroidPermissionRemoteAudioPlayback)
             }
-            "android.permission.REMOVE_TASKS" => Ok(Permission::AndroidPermissionRemoveTasks),
-            "android.permission.REORDER_TASKS" => Ok(Permission::AndroidPermissionReorderTasks),
+            "android.permission.REMOVE_TASKS" => Ok(Self::AndroidPermissionRemoveTasks),
+            "android.permission.REORDER_TASKS" => Ok(Self::AndroidPermissionReorderTasks),
             "android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" => {
-                Ok(Permission::AndroidPermissionRequestIgnoreBatteryOptimizations)
+                Ok(Self::AndroidPermissionRequestIgnoreBatteryOptimizations)
             }
             "android.permission.REQUEST_INSTALL_PACKAGES" => {
-                Ok(Permission::AndroidPermissionRequestInstallPackages)
+                Ok(Self::AndroidPermissionRequestInstallPackages)
             }
-            "android.permission.RESTART_PACKAGES" => {
-                Ok(Permission::AndroidPermissionRestartPackages)
-            }
+            "android.permission.RESTART_PACKAGES" => Ok(Self::AndroidPermissionRestartPackages),
             "android.permission.RETRIEVE_WINDOW_CONTENT" => {
-                Ok(Permission::AndroidPermissionRetrieveWindowContent)
+                Ok(Self::AndroidPermissionRetrieveWindowContent)
             }
             "android.permission.SEND_RESPOND_VIA_MESSAGE" => {
-                Ok(Permission::AndroidPermissionSendRespondViaMessage)
+                Ok(Self::AndroidPermissionSendRespondViaMessage)
             }
-            "android.permission.SEND_SMS" => Ok(Permission::AndroidPermissionSendSms),
-            "android.permission.SET_ALWAYS_FINISH" => {
-                Ok(Permission::AndroidPermissionSetAlwaysFinish)
-            }
+            "android.permission.SEND_SMS" => Ok(Self::AndroidPermissionSendSms),
+            "android.permission.SET_ALWAYS_FINISH" => Ok(Self::AndroidPermissionSetAlwaysFinish),
             "android.permission.SET_ANIMATION_SCALE" => {
-                Ok(Permission::AndroidPermissionSetAnimationScale)
+                Ok(Self::AndroidPermissionSetAnimationScale)
             }
-            "android.permission.SET_DEBUG_APP" => Ok(Permission::AndroidPermissionSetDebugApp),
+            "android.permission.SET_DEBUG_APP" => Ok(Self::AndroidPermissionSetDebugApp),
             "android.permission.SET_PREFERRED_APPLICATIONS" => {
-                Ok(Permission::AndroidPermissionSetPreferredApplications)
+                Ok(Self::AndroidPermissionSetPreferredApplications)
             }
-            "android.permission.SET_PROCESS_LIMIT" => {
-                Ok(Permission::AndroidPermissionSetProcessLimit)
-            }
+            "android.permission.SET_PROCESS_LIMIT" => Ok(Self::AndroidPermissionSetProcessLimit),
             "android.permission.SET_SCREEN_COMPATIBILITY" => {
-                Ok(Permission::AndroidPermissionSetScreenCompatibility)
+                Ok(Self::AndroidPermissionSetScreenCompatibility)
             }
-            "android.permission.SET_TIME" => Ok(Permission::AndroidPermissionSetTime),
-            "android.permission.SET_TIME_ZONE" => Ok(Permission::AndroidPermissionSetTimeZone),
-            "android.permission.SET_WALLPAPER" => Ok(Permission::AndroidPermissionSetWallpaper),
+            "android.permission.SET_TIME" => Ok(Self::AndroidPermissionSetTime),
+            "android.permission.SET_TIME_ZONE" => Ok(Self::AndroidPermissionSetTimeZone),
+            "android.permission.SET_WALLPAPER" => Ok(Self::AndroidPermissionSetWallpaper),
             "android.permission.SET_WALLPAPER_COMPONENT" => {
-                Ok(Permission::AndroidPermissionSetWallpaperComponent)
+                Ok(Self::AndroidPermissionSetWallpaperComponent)
             }
             "android.permission.SET_WALLPAPER_HINTS" => {
-                Ok(Permission::AndroidPermissionSetWallpaperHints)
+                Ok(Self::AndroidPermissionSetWallpaperHints)
             }
             "android.permission.SIGNAL_PERSISTENT_PROCESSES" => {
-                Ok(Permission::AndroidPermissionSignalPersistentProcesses)
+                Ok(Self::AndroidPermissionSignalPersistentProcesses)
             }
-            "android.permission.START_ANY_ACTIVITY" => {
-                Ok(Permission::AndroidPermissionStartAnyActivity)
-            }
-            "android.permission.STATUS_BAR" => Ok(Permission::AndroidPermissionStatusBar),
+            "android.permission.START_ANY_ACTIVITY" => Ok(Self::AndroidPermissionStartAnyActivity),
+            "android.permission.STATUS_BAR" => Ok(Self::AndroidPermissionStatusBar),
             "android.permission.SUBSCRIBED_FEEDS_READ" => {
-                Ok(Permission::AndroidPermissionSubscribedFeedsRead)
+                Ok(Self::AndroidPermissionSubscribedFeedsRead)
             }
             "android.permission.SYSTEM_ALERT_WINDOW" => {
-                Ok(Permission::AndroidPermissionSystemAlertWindow)
+                Ok(Self::AndroidPermissionSystemAlertWindow)
             }
             "android.permission.SUBSCRIBED_FEEDS_WRITE" => {
-                Ok(Permission::AndroidPermissionSubscribedFeedsWrite)
+                Ok(Self::AndroidPermissionSubscribedFeedsWrite)
             }
-            "android.permission.TRANSMIT_IR" => Ok(Permission::AndroidPermissionTransmitIr),
+            "android.permission.TRANSMIT_IR" => Ok(Self::AndroidPermissionTransmitIr),
             "android.permission.UPDATE_DEVICE_STATS" => {
-                Ok(Permission::AndroidPermissionUpdateDeviceStats)
+                Ok(Self::AndroidPermissionUpdateDeviceStats)
             }
-            "android.permission.USE_CREDENTIALS" => Ok(Permission::AndroidPermissionUseCredentials),
-            "android.permission.USE_FINGERPRINT" => Ok(Permission::AndroidPermissionUseFingerprint),
-            "android.permission.USE_SIP" => Ok(Permission::AndroidPermissionUseSip),
-            "android.permission.VIBRATE" => Ok(Permission::AndroidPermissionVibrate),
-            "android.permission.WAKE_LOCK" => Ok(Permission::AndroidPermissionWakeLock),
-            "android.permission.WRITE_APN_SETTINGS" => {
-                Ok(Permission::AndroidPermissionWriteApnSettings)
-            }
-            "android.permission.WRITE_CALENDAR" => Ok(Permission::AndroidPermissionWriteCalendar),
-            "android.permission.WRITE_CALL_LOG" => Ok(Permission::AndroidPermissionWriteCallLog),
-            "android.permission.WRITE_CONTACTS" => Ok(Permission::AndroidPermissionWriteContacts),
-            "android.permission.WRITE_DREAM_STATE" => {
-                Ok(Permission::AndroidPermissionWriteDreamState)
-            }
+            "android.permission.USE_CREDENTIALS" => Ok(Self::AndroidPermissionUseCredentials),
+            "android.permission.USE_FINGERPRINT" => Ok(Self::AndroidPermissionUseFingerprint),
+            "android.permission.USE_SIP" => Ok(Self::AndroidPermissionUseSip),
+            "android.permission.VIBRATE" => Ok(Self::AndroidPermissionVibrate),
+            "android.permission.WAKE_LOCK" => Ok(Self::AndroidPermissionWakeLock),
+            "android.permission.WRITE_APN_SETTINGS" => Ok(Self::AndroidPermissionWriteApnSettings),
+            "android.permission.WRITE_CALENDAR" => Ok(Self::AndroidPermissionWriteCalendar),
+            "android.permission.WRITE_CALL_LOG" => Ok(Self::AndroidPermissionWriteCallLog),
+            "android.permission.WRITE_CONTACTS" => Ok(Self::AndroidPermissionWriteContacts),
+            "android.permission.WRITE_DREAM_STATE" => Ok(Self::AndroidPermissionWriteDreamState),
             "android.permission.WRITE_EXTERNAL_STORAGE" => {
-                Ok(Permission::AndroidPermissionWriteExternalStorage)
+                Ok(Self::AndroidPermissionWriteExternalStorage)
             }
-            "android.permission.WRITE_GSERVICES" => Ok(Permission::AndroidPermissionWriteGservices),
+            "android.permission.WRITE_GSERVICES" => Ok(Self::AndroidPermissionWriteGservices),
             "android.permission.WRITE_MEDIA_STORAGE" => {
-                Ok(Permission::AndroidPermissionWriteMediaStorage)
+                Ok(Self::AndroidPermissionWriteMediaStorage)
             }
-            "android.permission.WRITE_PROFILE" => Ok(Permission::AndroidPermissionWriteProfile),
+            "android.permission.WRITE_PROFILE" => Ok(Self::AndroidPermissionWriteProfile),
             "android.permission.WRITE_SECURE_SETTINGS" => {
-                Ok(Permission::AndroidPermissionWriteSecureSettings)
+                Ok(Self::AndroidPermissionWriteSecureSettings)
             }
-            "android.permission.WRITE_SETTINGS" => Ok(Permission::AndroidPermissionWriteSettings),
-            "android.permission.WRITE_SMS" => Ok(Permission::AndroidPermissionWriteSms),
+            "android.permission.WRITE_SETTINGS" => Ok(Self::AndroidPermissionWriteSettings),
+            "android.permission.WRITE_SMS" => Ok(Self::AndroidPermissionWriteSms),
             "android.permission.WRITE_SOCIAL_STREAM" => {
-                Ok(Permission::AndroidPermissionWriteSocialStream)
+                Ok(Self::AndroidPermissionWriteSocialStream)
             }
             "android.permission.WRITE_SYNC_SETTINGS" => {
-                Ok(Permission::AndroidPermissionWriteSyncSettings)
+                Ok(Self::AndroidPermissionWriteSyncSettings)
             }
             "android.permission.WRITE_USER_DICTIONARY" => {
-                Ok(Permission::AndroidPermissionWriteUserDictionary)
+                Ok(Self::AndroidPermissionWriteUserDictionary)
             }
-            "com.android.alarm.permission.SET_ALARM" => {
-                Ok(Permission::ComAndroidAlarmPermissionSetAlarm)
-            }
+            "com.android.alarm.permission.SET_ALARM" => Ok(Self::ComAndroidAlarmPermissionSetAlarm),
             "com.android.browser.permission.READ_HISTORY_BOOKMARKS" => {
-                Ok(Permission::ComAndroidBrowserPermissionReadHistoryBookmarks)
+                Ok(Self::ComAndroidBrowserPermissionReadHistoryBookmarks)
             }
             "com.android.browser.permission.WRITE_HISTORY_BOOKMARKS" => {
-                Ok(Permission::ComAndroidBrowserPermissionWriteHistoryBookmarks)
+                Ok(Self::ComAndroidBrowserPermissionWriteHistoryBookmarks)
             }
             "com.android.email.permission.READ_ATTACHMENT" => {
-                Ok(Permission::ComAndroidEmailPermissionReadAttachment)
+                Ok(Self::ComAndroidEmailPermissionReadAttachment)
             }
             "com.android.launcher.permission.INSTALL_SHORTCUT" => {
-                Ok(Permission::ComAndroidLauncherPermissionInstallShortcut)
+                Ok(Self::ComAndroidLauncherPermissionInstallShortcut)
             }
             "com.android.launcher.permission.PRELOAD_WORKSPACE" => {
-                Ok(Permission::ComAndroidLauncherPermissionPreloadWorkspace)
+                Ok(Self::ComAndroidLauncherPermissionPreloadWorkspace)
             }
             "com.android.launcher.permission.READ_SETTINGS" => {
-                Ok(Permission::ComAndroidLauncherPermissionReadSettings)
+                Ok(Self::ComAndroidLauncherPermissionReadSettings)
             }
             "com.android.launcher.permission.UNINSTALL_SHORTCUT" => {
-                Ok(Permission::ComAndroidLauncherPermissionUninstallShortcut)
+                Ok(Self::ComAndroidLauncherPermissionUninstallShortcut)
             }
             "com.android.launcher.permission.WRITE_SETTINGS" => {
-                Ok(Permission::ComAndroidLauncherPermissionWriteSettings)
+                Ok(Self::ComAndroidLauncherPermissionWriteSettings)
             }
-            "com.android.vending.CHECK_LICENSE" => Ok(Permission::ComAndroidVendingCheckLicense),
+            "com.android.vending.CHECK_LICENSE" => Ok(Self::ComAndroidVendingCheckLicense),
             "com.android.voicemail.permission.ADD_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionAddVoicemail)
+                Ok(Self::ComAndroidVoicemailPermissionAddVoicemail)
             }
             "com.android.voicemail.permission.READ_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionReadVoicemail)
+                Ok(Self::ComAndroidVoicemailPermissionReadVoicemail)
             }
             "com.android.voicemail.permission.READ_WRITE_ALL_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionReadWriteAllVoicemail)
+                Ok(Self::ComAndroidVoicemailPermissionReadWriteAllVoicemail)
             }
             "com.android.voicemail.permission.WRITE_VOICEMAIL" => {
-                Ok(Permission::ComAndroidVoicemailPermissionWriteVoicemail)
+                Ok(Self::ComAndroidVoicemailPermissionWriteVoicemail)
             }
             "com.google.android.c2dm.permission.RECEIVE" => {
-                Ok(Permission::ComGoogleAndroidC2dmPermissionReceive)
+                Ok(Self::ComGoogleAndroidC2dmPermissionReceive)
             }
             "com.google.android.c2dm.permission.SEND" => {
-                Ok(Permission::ComGoogleAndroidC2dmPermissionSend)
+                Ok(Self::ComGoogleAndroidC2dmPermissionSend)
             }
             "com.google.android.gms.permission.ACTIVITY_RECOGNITION" => {
-                Ok(Permission::ComGoogleAndroidGmsPermissionActivityRecognition)
+                Ok(Self::ComGoogleAndroidGmsPermissionActivityRecognition)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuth)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ALL_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAllServices)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.OTHER_SERVICES" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthOtherServices)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.YouTubeUser" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutubeuser)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adsense" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdsense)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.adwords" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAdwords)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ah" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAh)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.android" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroid)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.androidsecure" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthAndroidsecure)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.blogger" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthBlogger)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.cl" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthCl)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.cp" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthCp)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.dodgeball" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthDodgeball)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.doraemon" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthDoraemon)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.finance" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthFinance)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.gbase" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGbase)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.geowiki" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGeowiki)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.goanna_mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGoannaMobile)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.grandcentral" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGrandcentral)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.groups2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthGroups2)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.health" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthHealth)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.ig" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthIg)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.jotspot" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthJotspot)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.knol" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthKnol)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.lh2" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthLh2)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.local" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthLocal)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mail" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthMail)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.mobile" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthMobile)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.news" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthNews)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.notebook" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthNotebook)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.orkut" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthOrkut)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.panoramio" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthPanoramio)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.print" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthPrint)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.reader" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthReader)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierra" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierra)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierraqa" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierraqa)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sierrasandbox" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSierrasandbox)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.sitemaps" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSitemaps)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speech" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeech)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.speechpersonalization" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthSpeechpersonalization)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.talk" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthTalk)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wifi" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWifi)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.wise" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWise)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.writely" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthWritely)
             }
             "com.google.android.googleapps.permission.GOOGLE_AUTH.youtube" => {
-                Ok(Permission::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube)
+                Ok(Self::ComGoogleAndroidGoogleappsPermissionGoogleAuthYoutube)
             }
             "com.google.android.gtalkservice.permission.GTALK_SERVICE" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionGtalkService)
+                Ok(Self::ComGoogleAndroidGtalkservicePermissionGtalkService)
             }
             "com.google.android.gtalkservice.permission.SEND_HEARTBEAT" => {
-                Ok(Permission::ComGoogleAndroidGtalkservicePermissionSendHeartbeat)
+                Ok(Self::ComGoogleAndroidGtalkservicePermissionSendHeartbeat)
             }
             "com.google.android.permission.BROADCAST_DATA_MESSAGE" => {
-                Ok(Permission::ComGoogleAndroidPermissionBroadcastDataMessage)
+                Ok(Self::ComGoogleAndroidPermissionBroadcastDataMessage)
             }
             "com.google.android.providers.gsf.permission.READ_GSERVICES" => {
-                Ok(Permission::ComGoogleAndroidProvidersGsfPermissionReadGservices)
+                Ok(Self::ComGoogleAndroidProvidersGsfPermissionReadGservices)
             }
             "com.google.android.providers.talk.permission.READ_ONLY" => {
-                Ok(Permission::ComGoogleAndroidProvidersTalkPermissionReadOnly)
+                Ok(Self::ComGoogleAndroidProvidersTalkPermissionReadOnly)
             }
             "com.google.android.providers.talk.permission.WRITE_ONLY" => {
-                Ok(Permission::ComGoogleAndroidProvidersTalkPermissionWriteOnly)
+                Ok(Self::ComGoogleAndroidProvidersTalkPermissionWriteOnly)
             }
             "com.google.android.xmpp.permission.BROADCAST" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionBroadcast)
+                Ok(Self::ComGoogleAndroidXmppPermissionBroadcast)
             }
             "com.google.android.xmpp.permission.SEND_RECEIVE" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionSendReceive)
+                Ok(Self::ComGoogleAndroidXmppPermissionSendReceive)
             }
             "com.google.android.xmpp.permission.USE_XMPP_ENDPOINT" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionUseXmppEndpoint)
+                Ok(Self::ComGoogleAndroidXmppPermissionUseXmppEndpoint)
             }
             "com.google.android.xmpp.permission.XMPP_ENDPOINT_BROADCAST" => {
-                Ok(Permission::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
+                Ok(Self::ComGoogleAndroidXmppPermissionXmppEndpointBroadcast)
             }
             _ => Err(ErrorKind::Parse),
         }
