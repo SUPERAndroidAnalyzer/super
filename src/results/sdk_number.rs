@@ -57,6 +57,12 @@ pub enum SdkNumber {
     Api25,
     /// API version 26.
     Api26,
+    /// API version 27.
+    Api27,
+    /// API version 28.
+    Api28,
+    /// API version 29.
+    Api29,
 
     /// Development API version.
     Development,
@@ -97,6 +103,9 @@ impl SdkNumber {
             Self::Api24 => 24,
             Self::Api25 => 25,
             Self::Api26 => 26,
+            Self::Api27 => 27,
+            Self::Api28 => 28,
+            Self::Api29 => 29,
 
             Self::Development => 10_000,
             Self::Unknown(v) => v,
@@ -288,6 +297,27 @@ impl SdkNumber {
                 pre: vec![],
                 build: vec![],
             }),
+            Self::Api27 => Some(Version {
+                major: 8,
+                minor: 1,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
+            Self::Api28 => Some(Version {
+                major: 9,
+                minor: 0,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
+            Self::Api29 => Some(Version {
+                major: 10,
+                minor: 0,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
 
             Self::Development | Self::Unknown(_) => None,
         }
@@ -319,7 +349,9 @@ impl SdkNumber {
             Self::Api23 => "Marshmallow",
             Self::Api24 => "Nougat",
             Self::Api25 => "Nougat MR1",
-            Self::Api26 => "Oreo",
+            Self::Api26 | Self::Api27 => "Oreo",
+            Self::Api28 => "Pie",
+            Self::Api29 => "Android 10",
 
             Self::Development => "Development",
             Self::Unknown(_) => "Unknown",
@@ -356,6 +388,9 @@ impl From<u32> for SdkNumber {
             24 => Self::Api24,
             25 => Self::Api25,
             26 => Self::Api26,
+            27 => Self::Api27,
+            28 => Self::Api28,
+            29 => Self::Api29,
 
             10_000 => Self::Development,
             t => Self::Unknown(t),
@@ -366,10 +401,14 @@ impl From<u32> for SdkNumber {
 /// Prettifies the android version number so that it's shown as the official version.
 pub fn prettify_android_version(version: &Version) -> String {
     format!(
-        "{}.{}{}{}",
+        "{}{}{}{}",
         version.major,
-        version.minor,
-        if version.patch == 0 {
+        if version.major < 9 {
+            format!(".{}", version.minor)
+        } else {
+            String::new()
+        },
+        if version.patch == 0 && version.major != 8 {
             String::new()
         } else {
             format!(".{}", version.patch)
@@ -416,9 +455,12 @@ mod tests {
         assert_eq!(SdkNumber::from(24), SdkNumber::Api24);
         assert_eq!(SdkNumber::from(25), SdkNumber::Api25);
         assert_eq!(SdkNumber::from(26), SdkNumber::Api26);
+        assert_eq!(SdkNumber::from(27), SdkNumber::Api27);
+        assert_eq!(SdkNumber::from(28), SdkNumber::Api28);
+        assert_eq!(SdkNumber::from(29), SdkNumber::Api29);
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::from(27), SdkNumber::Unknown(27));
+        assert_eq!(SdkNumber::from(30), SdkNumber::Unknown(30));
         assert_eq!(SdkNumber::from(77), SdkNumber::Unknown(77));
         assert_eq!(SdkNumber::from(2345), SdkNumber::Unknown(2345));
 
@@ -455,9 +497,12 @@ mod tests {
         assert_eq!(SdkNumber::Api24.number(), 24);
         assert_eq!(SdkNumber::Api25.number(), 25);
         assert_eq!(SdkNumber::Api26.number(), 26);
+        assert_eq!(SdkNumber::Api27.number(), 27);
+        assert_eq!(SdkNumber::Api28.number(), 28);
+        assert_eq!(SdkNumber::Api29.number(), 29);
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::Unknown(27).number(), 27);
+        assert_eq!(SdkNumber::Unknown(30).number(), 30);
         assert_eq!(SdkNumber::Unknown(133).number(), 133);
         assert_eq!(SdkNumber::Unknown(4392).number(), 4392);
 
@@ -578,9 +623,21 @@ mod tests {
             SdkNumber::Api26.version().unwrap(),
             Version::parse("8.0.0").unwrap()
         );
+        assert_eq!(
+            SdkNumber::Api27.version().unwrap(),
+            Version::parse("8.1.0").unwrap()
+        );
+        assert_eq!(
+            SdkNumber::Api28.version().unwrap(),
+            Version::parse("9.0.0").unwrap()
+        );
+        assert_eq!(
+            SdkNumber::Api29.version().unwrap(),
+            Version::parse("10.0.0").unwrap()
+        );
 
         // Unknown APIs.
-        assert!(SdkNumber::Unknown(27).version().is_none());
+        assert!(SdkNumber::Unknown(30).version().is_none());
         assert!(SdkNumber::Unknown(201).version().is_none());
         assert!(SdkNumber::Unknown(5602).version().is_none());
 
@@ -617,9 +674,12 @@ mod tests {
         assert_eq!(SdkNumber::Api24.name(), "Nougat");
         assert_eq!(SdkNumber::Api25.name(), "Nougat MR1");
         assert_eq!(SdkNumber::Api26.name(), "Oreo");
+        assert_eq!(SdkNumber::Api27.name(), "Oreo");
+        assert_eq!(SdkNumber::Api28.name(), "Pie");
+        assert_eq!(SdkNumber::Api29.name(), "Android 10");
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::Unknown(27).name(), "Unknown");
+        assert_eq!(SdkNumber::Unknown(30).name(), "Unknown");
         assert_eq!(SdkNumber::Unknown(302).name(), "Unknown");
         assert_eq!(SdkNumber::Unknown(7302).name(), "Unknown");
 
@@ -732,7 +792,19 @@ mod tests {
         );
         assert_eq!(
             prettify_android_version(&SdkNumber::Api26.version().unwrap()),
-            "8.0"
+            "8.0.0"
+        );
+        assert_eq!(
+            prettify_android_version(&SdkNumber::Api27.version().unwrap()),
+            "8.1.0"
+        );
+        assert_eq!(
+            prettify_android_version(&SdkNumber::Api28.version().unwrap()),
+            "9"
+        );
+        assert_eq!(
+            prettify_android_version(&SdkNumber::Api29.version().unwrap()),
+            "10"
         );
     }
 }
