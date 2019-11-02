@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/miniz_oxide-0.3.2/src/inflate/core.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>core.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../miniz_oxide/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/miniz_oxide-0.3.5/src/inflate/core.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>core.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../miniz_oxide/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1890,12 +1890,6 @@
 <span id="1890">1890</span>
 <span id="1891">1891</span>
 <span id="1892">1892</span>
-<span id="1893">1893</span>
-<span id="1894">1894</span>
-<span id="1895">1895</span>
-<span id="1896">1896</span>
-<span id="1897">1897</span>
-<span id="1898">1898</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Streaming decompression functionality.</span>
 
@@ -2051,8 +2045,6 @@
     <span class="ident">table_sizes</span>: [<span class="ident">u32</span>; <span class="ident">MAX_HUFF_TABLES</span>],
     <span class="doccomment">/// Buffer of input data.</span>
     <span class="ident">bit_buf</span>: <span class="ident">BitBuffer</span>,
-    <span class="doccomment">/// Position in the output buffer.</span>
-    <span class="ident">dist_from_out_buf_start</span>: <span class="ident">usize</span>,
     <span class="doccomment">/// Huffman tables.</span>
     <span class="ident">tables</span>: [<span class="ident">HuffmanTable</span>; <span class="ident">MAX_HUFF_TABLES</span>],
     <span class="doccomment">/// Raw block header.</span>
@@ -2103,7 +2095,6 @@
             <span class="ident">num_extra</span>: <span class="number">0</span>,
             <span class="ident">table_sizes</span>: [<span class="number">0</span>; <span class="ident">MAX_HUFF_TABLES</span>],
             <span class="ident">bit_buf</span>: <span class="number">0</span>,
-            <span class="ident">dist_from_out_buf_start</span>: <span class="number">0</span>,
             <span class="comment">// TODO:(oyvindln) Check that copies here are optimized out in release mode.</span>
             <span class="ident">tables</span>: [
                 <span class="ident">HuffmanTable</span>::<span class="ident">new</span>(),
@@ -2642,7 +2633,6 @@
     <span class="kw">pub</span> <span class="ident">dist</span>: <span class="ident">u32</span>,
     <span class="kw">pub</span> <span class="ident">counter</span>: <span class="ident">u32</span>,
     <span class="kw">pub</span> <span class="ident">num_extra</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">dist_from_out_buf_start</span>: <span class="ident">usize</span>,
 }
 
 <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -2653,8 +2643,6 @@
     <span class="ident">match_len</span>: <span class="ident">usize</span>,
     <span class="ident">out_buf_size_mask</span>: <span class="ident">usize</span>,
 ) {
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">out_pos</span> <span class="op">+</span> <span class="ident">match_len</span> <span class="op">&lt;=</span> <span class="ident">out_slice</span>.<span class="ident">len</span>());
-
     <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">match_len</span> <span class="op">&gt;&gt;</span> <span class="number">2</span> {
         <span class="ident">out_slice</span>[<span class="ident">out_pos</span>] <span class="op">=</span> <span class="ident">out_slice</span>[<span class="ident">source_pos</span> <span class="op">&amp;</span> <span class="ident">out_buf_size_mask</span>];
         <span class="ident">out_slice</span>[<span class="ident">out_pos</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> <span class="ident">out_slice</span>[(<span class="ident">source_pos</span> <span class="op">+</span> <span class="number">1</span>) <span class="op">&amp;</span> <span class="ident">out_buf_size_mask</span>];
@@ -2861,8 +2849,8 @@
                 <span class="ident">l</span>.<span class="ident">dist</span> <span class="op">+=</span> <span class="ident">extra_bits</span> <span class="kw">as</span> <span class="ident">u32</span>;
             }
 
-            <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>();
-            <span class="kw">if</span> <span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&gt;</span> <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span>
+            <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>();
+            <span class="kw">if</span> <span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&gt;</span> <span class="ident">out_buf</span>.<span class="ident">position</span>()
                 <span class="op">&amp;&amp;</span> (<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF</span> <span class="op">!=</span> <span class="number">0</span>)
             {
                 <span class="comment">// We encountered a distance that refers a position before</span>
@@ -2873,13 +2861,13 @@
 
             <span class="ident">apply_match</span>(
                 <span class="ident">out_buf</span>.<span class="ident">get_mut</span>(),
-                <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span>,
+                <span class="ident">position</span>,
                 <span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span>,
                 <span class="ident">l</span>.<span class="ident">counter</span> <span class="kw">as</span> <span class="ident">usize</span>,
                 <span class="ident">out_buf_size_mask</span>,
             );
 
-            <span class="ident">out_buf</span>.<span class="ident">set_position</span>(<span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">+</span> <span class="ident">l</span>.<span class="ident">counter</span> <span class="kw">as</span> <span class="ident">usize</span>);
+            <span class="ident">out_buf</span>.<span class="ident">set_position</span>(<span class="ident">position</span> <span class="op">+</span> <span class="ident">l</span>.<span class="ident">counter</span> <span class="kw">as</span> <span class="ident">usize</span>);
         }
     };
 
@@ -2887,9 +2875,9 @@
     (<span class="ident">status</span>, <span class="ident">state</span>)
 }
 
-<span class="doccomment">/// Main decompression function. Keeps decompressing data from `in_buf` until the in_buf is emtpy,</span>
-<span class="doccomment">/// out_cur is full, the end of the deflate stream is hit, or there is an error in the deflate</span>
-<span class="doccomment">/// stream.</span>
+<span class="doccomment">/// Main decompression function. Keeps decompressing data from `in_buf` until the `in_buf` is</span>
+<span class="doccomment">/// empty, `out_cur` is full, the end of the deflate stream is hit, or there is an error in the</span>
+<span class="doccomment">/// deflate stream.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Arguments</span>
 <span class="doccomment">///</span>
@@ -2900,6 +2888,8 @@
 <span class="doccomment">/// stores previously decompressed data if any.</span>
 <span class="doccomment">/// * The position of the output cursor indicates where in the output buffer slice writing should</span>
 <span class="doccomment">/// start.</span>
+<span class="doccomment">/// * If TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF is not set, the output buffer is used in a</span>
+<span class="doccomment">/// wrapping manner, and it&#39;s size is required to be a power of 2.</span>
 <span class="doccomment">/// * The decompression function normally needs access to 32KiB of the previously decompressed data</span>
 <span class="doccomment">///(or to the beginning of the decompressed data if less than 32KiB has been decompressed.)</span>
 <span class="doccomment">///     - If this data is not available, decompression may fail.</span>
@@ -2965,14 +2955,14 @@
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out_buf</span> <span class="op">=</span> <span class="ident">OutputBuffer</span>::<span class="ident">from_slice_and_pos</span>(<span class="ident">out_cur</span>.<span class="ident">get_mut</span>(), <span class="ident">out_buf_start_pos</span>);
 
-    <span class="comment">// TODO: Borrow instead of Copy</span>
+
+    <span class="comment">// Make a local copy of the important variables here so we can work with them on the stack.</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">l</span> <span class="op">=</span> <span class="ident">LocalVars</span> {
         <span class="ident">bit_buf</span>: <span class="ident">r</span>.<span class="ident">bit_buf</span>,
         <span class="ident">num_bits</span>: <span class="ident">r</span>.<span class="ident">num_bits</span>,
         <span class="ident">dist</span>: <span class="ident">r</span>.<span class="ident">dist</span>,
         <span class="ident">counter</span>: <span class="ident">r</span>.<span class="ident">counter</span>,
         <span class="ident">num_extra</span>: <span class="ident">r</span>.<span class="ident">num_extra</span>,
-        <span class="ident">dist_from_out_buf_start</span>: <span class="ident">r</span>.<span class="ident">dist_from_out_buf_start</span>,
     };
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">status</span> <span class="op">=</span> <span class="lifetime">&#39;state_machine</span>: <span class="kw">loop</span> {
@@ -3393,8 +3383,7 @@
             }),
 
             <span class="ident">HuffDecodeOuterLoop2</span> <span class="op">=&gt;</span> <span class="macro">generate_state</span><span class="macro">!</span>(<span class="ident">state</span>, <span class="lifetime">&#39;state_machine</span>, {
-                <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>();
-                <span class="kw">if</span> <span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&gt;</span> <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">&amp;&amp;</span>
+                <span class="kw">if</span> <span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">&gt;</span> <span class="ident">out_buf</span>.<span class="ident">position</span>() <span class="op">&amp;&amp;</span>
                     (<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">TINFL_FLAG_USING_NON_WRAPPING_OUTPUT_BUF</span> <span class="op">!=</span> <span class="number">0</span>)
                 {
                     <span class="comment">// We encountered a distance that refers a position before</span>
@@ -3402,7 +3391,7 @@
                     <span class="ident">Action</span>::<span class="ident">Jump</span>(<span class="ident">DistanceOutOfBounds</span>)
                 } <span class="kw">else</span> {
                     <span class="kw">let</span> <span class="ident">out_pos</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>();
-                    <span class="kw">let</span> <span class="ident">source_pos</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span>
+                    <span class="kw">let</span> <span class="ident">source_pos</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>()
                         .<span class="ident">wrapping_sub</span>(<span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&amp;</span> <span class="ident">out_buf_size_mask</span>;
 
                     <span class="kw">let</span> <span class="ident">out_len</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">get_ref</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">usize</span>;
@@ -3436,14 +3425,15 @@
 
             <span class="ident">WriteLenBytesToEnd</span> <span class="op">=&gt;</span> <span class="macro">generate_state</span><span class="macro">!</span>(<span class="ident">state</span>, <span class="lifetime">&#39;state_machine</span>, {
                 <span class="kw">if</span> <span class="ident">out_buf</span>.<span class="ident">bytes_left</span>() <span class="op">&gt;</span> <span class="number">0</span> {
-                    <span class="kw">let</span> <span class="ident">source_pos</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span>
-                        .<span class="ident">wrapping_sub</span>(<span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&amp;</span> <span class="ident">out_buf_size_mask</span>;
                     <span class="kw">let</span> <span class="ident">out_pos</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>();
+                    <span class="kw">let</span> <span class="ident">source_pos</span> <span class="op">=</span> <span class="ident">out_buf</span>.<span class="ident">position</span>()
+                        .<span class="ident">wrapping_sub</span>(<span class="ident">l</span>.<span class="ident">dist</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">&amp;</span> <span class="ident">out_buf_size_mask</span>;
+
 
                     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">out_buf</span>.<span class="ident">bytes_left</span>(), <span class="ident">l</span>.<span class="ident">counter</span> <span class="kw">as</span> <span class="ident">usize</span>);
+
                     <span class="ident">transfer</span>(<span class="ident">out_buf</span>.<span class="ident">get_mut</span>(), <span class="ident">source_pos</span>, <span class="ident">out_pos</span>, <span class="ident">len</span>, <span class="ident">out_buf_size_mask</span>);
 
-                    <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">+=</span> <span class="ident">len</span>;
                     <span class="ident">out_buf</span>.<span class="ident">set_position</span>(<span class="ident">out_pos</span> <span class="op">+</span> <span class="ident">len</span>);
                     <span class="ident">l</span>.<span class="ident">counter</span> <span class="op">-=</span> <span class="ident">len</span> <span class="kw">as</span> <span class="ident">u32</span>;
                     <span class="kw">if</span> <span class="ident">l</span>.<span class="ident">counter</span> <span class="op">==</span> <span class="number">0</span> {
@@ -3526,7 +3516,6 @@
     <span class="ident">r</span>.<span class="ident">dist</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">dist</span>;
     <span class="ident">r</span>.<span class="ident">counter</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">counter</span>;
     <span class="ident">r</span>.<span class="ident">num_extra</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">num_extra</span>;
-    <span class="ident">r</span>.<span class="ident">dist_from_out_buf_start</span> <span class="op">=</span> <span class="ident">l</span>.<span class="ident">dist_from_out_buf_start</span>;
 
     <span class="ident">r</span>.<span class="ident">bit_buf</span> <span class="op">&amp;=</span> ((<span class="number">1</span> <span class="kw">as</span> <span class="ident">BitBuffer</span>) <span class="op">&lt;&lt;</span> <span class="ident">r</span>.<span class="ident">num_bits</span>) <span class="op">-</span> <span class="number">1</span>;
 
@@ -3652,7 +3641,6 @@
             <span class="ident">dist</span>: <span class="ident">d</span>.<span class="ident">dist</span>,
             <span class="ident">counter</span>: <span class="ident">d</span>.<span class="ident">counter</span>,
             <span class="ident">num_extra</span>: <span class="ident">d</span>.<span class="ident">num_extra</span>,
-            <span class="ident">dist_from_out_buf_start</span>: <span class="ident">d</span>.<span class="ident">dist_from_out_buf_start</span>,
         };
         <span class="ident">init_tree</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">d</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">l</span>);
         <span class="kw">let</span> <span class="ident">llt</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">d</span>.<span class="ident">tables</span>[<span class="ident">LITLEN_TABLE</span>];

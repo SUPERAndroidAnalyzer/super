@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/synstructure-0.10.2/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../synstructure/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/synstructure-0.12.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../synstructure/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2299,6 +2299,65 @@
 <span id="2299">2299</span>
 <span id="2300">2300</span>
 <span id="2301">2301</span>
+<span id="2302">2302</span>
+<span id="2303">2303</span>
+<span id="2304">2304</span>
+<span id="2305">2305</span>
+<span id="2306">2306</span>
+<span id="2307">2307</span>
+<span id="2308">2308</span>
+<span id="2309">2309</span>
+<span id="2310">2310</span>
+<span id="2311">2311</span>
+<span id="2312">2312</span>
+<span id="2313">2313</span>
+<span id="2314">2314</span>
+<span id="2315">2315</span>
+<span id="2316">2316</span>
+<span id="2317">2317</span>
+<span id="2318">2318</span>
+<span id="2319">2319</span>
+<span id="2320">2320</span>
+<span id="2321">2321</span>
+<span id="2322">2322</span>
+<span id="2323">2323</span>
+<span id="2324">2324</span>
+<span id="2325">2325</span>
+<span id="2326">2326</span>
+<span id="2327">2327</span>
+<span id="2328">2328</span>
+<span id="2329">2329</span>
+<span id="2330">2330</span>
+<span id="2331">2331</span>
+<span id="2332">2332</span>
+<span id="2333">2333</span>
+<span id="2334">2334</span>
+<span id="2335">2335</span>
+<span id="2336">2336</span>
+<span id="2337">2337</span>
+<span id="2338">2338</span>
+<span id="2339">2339</span>
+<span id="2340">2340</span>
+<span id="2341">2341</span>
+<span id="2342">2342</span>
+<span id="2343">2343</span>
+<span id="2344">2344</span>
+<span id="2345">2345</span>
+<span id="2346">2346</span>
+<span id="2347">2347</span>
+<span id="2348">2348</span>
+<span id="2349">2349</span>
+<span id="2350">2350</span>
+<span id="2351">2351</span>
+<span id="2352">2352</span>
+<span id="2353">2353</span>
+<span id="2354">2354</span>
+<span id="2355">2355</span>
+<span id="2356">2356</span>
+<span id="2357">2357</span>
+<span id="2358">2358</span>
+<span id="2359">2359</span>
+<span id="2360">2360</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This crate provides helper types for matching against enum variants, and</span>
 <span class="doccomment">//! extracting bindings to each of the fields in the deriving Struct or Enum in</span>
@@ -2320,12 +2379,7 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ### Custom Derive</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! #[macro_use]</span>
-<span class="doccomment">//! extern crate synstructure;</span>
-<span class="doccomment">//! #[macro_use]</span>
-<span class="doccomment">//! extern crate quote;</span>
-<span class="doccomment">//! extern crate proc_macro2;</span>
-<span class="doccomment">//!</span>
+<span class="doccomment">//! # use quote::quote;</span>
 <span class="doccomment">//! fn walkfields_derive(s: synstructure::Structure) -&gt; proc_macro2::TokenStream {</span>
 <span class="doccomment">//!     let body = s.each(|bi| quote!{</span>
 <span class="doccomment">//!         walk(#bi)</span>
@@ -2342,14 +2396,14 @@
 <span class="doccomment">//!     })</span>
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! # const _IGNORE: &amp;&#39;static str = stringify!(</span>
-<span class="doccomment">//! decl_derive!([WalkFields] =&gt; walkfields_derive);</span>
+<span class="doccomment">//! synstructure::decl_derive!([WalkFields] =&gt; walkfields_derive);</span>
 <span class="doccomment">//! # );</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! /*</span>
 <span class="doccomment">//!  * Test Case</span>
 <span class="doccomment">//!  */</span>
 <span class="doccomment">//! fn main() {</span>
-<span class="doccomment">//!     test_derive! {</span>
+<span class="doccomment">//!     synstructure::test_derive! {</span>
 <span class="doccomment">//!         walkfields_derive {</span>
 <span class="doccomment">//!             enum A&lt;T&gt; {</span>
 <span class="doccomment">//!                 B(i32, T),</span>
@@ -2394,12 +2448,7 @@
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ### Custom Derive</span>
 <span class="doccomment">//! ```</span>
-<span class="doccomment">//! #[macro_use]</span>
-<span class="doccomment">//! extern crate synstructure;</span>
-<span class="doccomment">//! #[macro_use]</span>
-<span class="doccomment">//! extern crate quote;</span>
-<span class="doccomment">//! extern crate proc_macro2;</span>
-<span class="doccomment">//!</span>
+<span class="doccomment">//! # use quote::quote;</span>
 <span class="doccomment">//! fn interest_derive(mut s: synstructure::Structure) -&gt; proc_macro2::TokenStream {</span>
 <span class="doccomment">//!     let body = s.fold(false, |acc, bi| quote!{</span>
 <span class="doccomment">//!         #acc || synstructure_test_traits::Interest::interesting(#bi)</span>
@@ -2417,14 +2466,14 @@
 <span class="doccomment">//!     })</span>
 <span class="doccomment">//! }</span>
 <span class="doccomment">//! # const _IGNORE: &amp;&#39;static str = stringify!(</span>
-<span class="doccomment">//! decl_derive!([Interest] =&gt; interest_derive);</span>
+<span class="doccomment">//! synstructure::decl_derive!([Interest] =&gt; interest_derive);</span>
 <span class="doccomment">//! # );</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! /*</span>
 <span class="doccomment">//!  * Test Case</span>
 <span class="doccomment">//!  */</span>
 <span class="doccomment">//! fn main() {</span>
-<span class="doccomment">//!     test_derive!{</span>
+<span class="doccomment">//!     synstructure::test_derive!{</span>
 <span class="doccomment">//!         interest_derive {</span>
 <span class="doccomment">//!             enum A&lt;T&gt; {</span>
 <span class="doccomment">//!                 B(i32, T),</span>
@@ -2462,31 +2511,26 @@
 <span class="doccomment">//! which makes use of this crate, and is fairly simple.</span>
 
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro2</span>;
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">quote</span>;
-<span class="attribute">#[<span class="ident">macro_use</span>]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">syn</span>;
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">unicode_xid</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashSet</span>;
 
+<span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">parse</span>::{<span class="ident">ParseStream</span>, <span class="ident">Parser</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">visit</span>::{<span class="self">self</span>, <span class="ident">Visit</span>};
 <span class="kw">use</span> <span class="ident">syn</span>::{
-    <span class="ident">punctuated</span>, <span class="ident">token</span>, <span class="ident">Attribute</span>, <span class="ident">Data</span>, <span class="ident">DeriveInput</span>, <span class="ident">Expr</span>, <span class="ident">Field</span>, <span class="ident">Fields</span>, <span class="ident">FieldsNamed</span>,
-    <span class="ident">FieldsUnnamed</span>, <span class="ident">GenericParam</span>, <span class="ident">Generics</span>, <span class="ident">Ident</span>, <span class="ident">PredicateType</span>, <span class="ident">TraitBound</span>, <span class="ident">Type</span>, <span class="ident">TypeMacro</span>,
-    <span class="ident">TypeParamBound</span>, <span class="ident">TypePath</span>, <span class="ident">WhereClause</span>, <span class="ident">WherePredicate</span>,
+    <span class="ident">braced</span>, <span class="ident">punctuated</span>, <span class="ident">token</span>, <span class="ident">Attribute</span>, <span class="ident">Data</span>, <span class="ident">DeriveInput</span>, <span class="ident">Error</span>, <span class="ident">Expr</span>, <span class="ident">Field</span>, <span class="ident">Fields</span>,
+    <span class="ident">FieldsNamed</span>, <span class="ident">FieldsUnnamed</span>, <span class="ident">GenericParam</span>, <span class="ident">Generics</span>, <span class="ident">Ident</span>, <span class="ident">PredicateType</span>, <span class="prelude-ty">Result</span>, <span class="ident">Token</span>,
+    <span class="ident">TraitBound</span>, <span class="ident">Type</span>, <span class="ident">TypeMacro</span>, <span class="ident">TypeParamBound</span>, <span class="ident">TypePath</span>, <span class="ident">WhereClause</span>, <span class="ident">WherePredicate</span>,
 };
 
+<span class="kw">use</span> <span class="ident">quote</span>::{<span class="ident">quote_spanned</span>, <span class="ident">format_ident</span>, <span class="ident">ToTokens</span>};
 <span class="comment">// re-export the quote! macro so we can depend on it being around in our macro&#39;s</span>
 <span class="comment">// implementations.</span>
-<span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">TokenStream</span>, <span class="ident">TokenTree</span>};
 <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">quote</span>::<span class="kw-2">*</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">quote</span>::<span class="ident">quote</span>;
 
 <span class="kw">use</span> <span class="ident">unicode_xid</span>::<span class="ident">UnicodeXID</span>;
 
-<span class="kw">use</span> <span class="ident">proc_macro2</span>::<span class="ident">Span</span>;
+<span class="kw">use</span> <span class="ident">proc_macro2</span>::{<span class="ident">Span</span>, <span class="ident">TokenStream</span>, <span class="ident">TokenTree</span>};
 
 <span class="comment">// NOTE: This module has documentation hidden, as it only exports macros (which</span>
 <span class="comment">// always appear in the root of the crate) and helper methods / re-exports used</span>
@@ -2524,7 +2568,7 @@
 
 <span class="kw">impl</span> <span class="ident">ToTokens</span> <span class="kw">for</span> <span class="ident">BindStyle</span> {
     <span class="kw">fn</span> <span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tokens</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TokenStream</span>) {
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
             <span class="ident">BindStyle</span>::<span class="ident">Move</span> <span class="op">=&gt;</span> {}
             <span class="ident">BindStyle</span>::<span class="ident">MoveMut</span> <span class="op">=&gt;</span> <span class="macro">quote_spanned</span><span class="macro">!</span>(<span class="ident">Span</span>::<span class="ident">call_site</span>() <span class="op">=&gt;</span> <span class="kw-2">mut</span>).<span class="ident">to_tokens</span>(<span class="ident">tokens</span>),
             <span class="ident">BindStyle</span>::<span class="ident">Ref</span> <span class="op">=&gt;</span> <span class="macro">quote_spanned</span><span class="macro">!</span>(<span class="ident">Span</span>::<span class="ident">call_site</span>() <span class="op">=&gt;</span> <span class="kw-2">ref</span>).<span class="ident">to_tokens</span>(<span class="ident">tokens</span>),
@@ -2550,9 +2594,8 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tys</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">seen</span>, <span class="ident">param</span>) <span class="kw">in</span> <span class="ident">set</span>.<span class="ident">iter</span>().<span class="ident">zip</span>(<span class="ident">generics</span>.<span class="ident">params</span>.<span class="ident">iter</span>()) {
         <span class="kw">if</span> <span class="ident">seen</span> {
-            <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">param</span> {
-                <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="kw-2">ref</span> <span class="ident">tparam</span>) <span class="op">=&gt;</span> <span class="ident">tys</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">tparam</span>.<span class="ident">ident</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> {}
+            <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="ident">tparam</span>) <span class="op">=</span> <span class="ident">param</span> {
+                <span class="ident">tys</span>.<span class="ident">push</span>(<span class="kw-2">&amp;</span><span class="ident">tparam</span>.<span class="ident">ident</span>)
             }
         }
     }
@@ -2576,29 +2619,35 @@
 }
 
 <span class="comment">// Internal method to merge two Generics objects together intelligently.</span>
-<span class="kw">fn</span> <span class="ident">merge_generics</span>(<span class="ident">into</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Generics</span>, <span class="ident">from</span>: <span class="kw-2">&amp;</span><span class="ident">Generics</span>) {
+<span class="kw">fn</span> <span class="ident">merge_generics</span>(<span class="ident">into</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Generics</span>, <span class="ident">from</span>: <span class="kw-2">&amp;</span><span class="ident">Generics</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="comment">// Try to add the param into `into`, and merge parmas with identical names.</span>
-    <span class="lifetime">&#39;outer</span>: <span class="kw">for</span> <span class="ident">p</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">from</span>.<span class="ident">params</span> {
+    <span class="kw">for</span> <span class="ident">p</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">from</span>.<span class="ident">params</span> {
         <span class="kw">for</span> <span class="ident">op</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">into</span>.<span class="ident">params</span> {
             <span class="kw">match</span> (<span class="ident">op</span>, <span class="ident">p</span>) {
-                (<span class="kw-2">&amp;</span><span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="kw-2">ref</span> <span class="ident">otp</span>), <span class="kw-2">&amp;</span><span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="kw-2">ref</span> <span class="ident">tp</span>)) <span class="op">=&gt;</span> {
+                (<span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="ident">otp</span>), <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="ident">tp</span>)) <span class="op">=&gt;</span> {
                     <span class="comment">// NOTE: This is only OK because syn ignores the span for equality purposes.</span>
                     <span class="kw">if</span> <span class="ident">otp</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="ident">tp</span>.<span class="ident">ident</span> {
-                        <span class="macro">panic</span><span class="macro">!</span>(
-                            <span class="string">&quot;Attempted to merge conflicting generic params: {} and {}&quot;</span>,
-                            <span class="macro">quote</span><span class="macro">!</span> {#<span class="ident">op</span>},
-                            <span class="macro">quote</span><span class="macro">!</span> {#<span class="ident">p</span>}
-                        );
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                            <span class="ident">p</span>,
+                            <span class="macro">format</span><span class="macro">!</span>(
+                                <span class="string">&quot;Attempted to merge conflicting generic parameters: {} and {}&quot;</span>,
+                                <span class="macro">quote</span><span class="macro">!</span>(#<span class="ident">op</span>),
+                                <span class="macro">quote</span><span class="macro">!</span>(#<span class="ident">p</span>)
+                            ),
+                        ));
                     }
                 }
-                (<span class="kw-2">&amp;</span><span class="ident">GenericParam</span>::<span class="ident">Lifetime</span>(<span class="kw-2">ref</span> <span class="ident">olp</span>), <span class="kw-2">&amp;</span><span class="ident">GenericParam</span>::<span class="ident">Lifetime</span>(<span class="kw-2">ref</span> <span class="ident">lp</span>)) <span class="op">=&gt;</span> {
+                (<span class="ident">GenericParam</span>::<span class="ident">Lifetime</span>(<span class="ident">olp</span>), <span class="ident">GenericParam</span>::<span class="ident">Lifetime</span>(<span class="ident">lp</span>)) <span class="op">=&gt;</span> {
                     <span class="comment">// NOTE: This is only OK because syn ignores the span for equality purposes.</span>
                     <span class="kw">if</span> <span class="ident">olp</span>.<span class="ident">lifetime</span> <span class="op">==</span> <span class="ident">lp</span>.<span class="ident">lifetime</span> {
-                        <span class="macro">panic</span><span class="macro">!</span>(
-                            <span class="string">&quot;Attempted to merge conflicting generic params: {} and {}&quot;</span>,
-                            <span class="macro">quote</span><span class="macro">!</span> {#<span class="ident">op</span>},
-                            <span class="macro">quote</span><span class="macro">!</span> {#<span class="ident">p</span>}
-                        );
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                            <span class="ident">p</span>,
+                            <span class="macro">format</span><span class="macro">!</span>(
+                                <span class="string">&quot;Attempted to merge conflicting generic parameters: {} and {}&quot;</span>,
+                                <span class="macro">quote</span><span class="macro">!</span>(#<span class="ident">op</span>),
+                                <span class="macro">quote</span><span class="macro">!</span>(#<span class="ident">p</span>)
+                            ),
+                        ));
                     }
                 }
                 <span class="comment">// We don&#39;t support merging Const parameters, because that wouldn&#39;t make much sense.</span>
@@ -2609,10 +2658,29 @@
     }
 
     <span class="comment">// Add any where clauses from the input generics object.</span>
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">from_clause</span>) <span class="op">=</span> <span class="ident">from</span>.<span class="ident">where_clause</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">from_clause</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">from</span>.<span class="ident">where_clause</span> {
         <span class="ident">into</span>.<span class="ident">make_where_clause</span>()
             .<span class="ident">predicates</span>
             .<span class="ident">extend</span>(<span class="ident">from_clause</span>.<span class="ident">predicates</span>.<span class="ident">iter</span>().<span class="ident">cloned</span>());
+    }
+
+    <span class="prelude-val">Ok</span>(())
+}
+
+<span class="doccomment">/// Helper method which does the same thing as rustc 1.20&#39;s</span>
+<span class="doccomment">/// `Option::get_or_insert_with`. This method is used to keep backwards</span>
+<span class="doccomment">/// compatibility with rustc 1.15.</span>
+<span class="kw">fn</span> <span class="ident">get_or_insert_with</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">F</span><span class="op">&gt;</span>(<span class="ident">opt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">T</span>
+<span class="kw">where</span>
+    <span class="ident">F</span>: <span class="ident">FnOnce</span>() <span class="op">-&gt;</span> <span class="ident">T</span>,
+{
+    <span class="kw">if</span> <span class="ident">opt</span>.<span class="ident">is_none</span>() {
+        <span class="kw-2">*</span><span class="ident">opt</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">f</span>());
+    }
+
+    <span class="kw">match</span> <span class="ident">opt</span> {
+        <span class="prelude-val">Some</span>(<span class="ident">v</span>) <span class="op">=&gt;</span> <span class="ident">v</span>,
+        <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
     }
 }
 
@@ -2654,12 +2722,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B{ a: i32, b: i32 },</span>
     <span class="doccomment">///         C(u32),</span>
@@ -2673,14 +2737,13 @@
     <span class="doccomment">///         ref __binding_0</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
         <span class="kw">let</span> <span class="ident">BindingInfo</span> {
-            <span class="kw-2">ref</span> <span class="ident">binding</span>,
-            <span class="kw-2">ref</span> <span class="ident">style</span>,
+            <span class="ident">binding</span>,
+            <span class="ident">style</span>,
             ..
-        } <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>;
+        } <span class="op">=</span> <span class="self">self</span>;
         <span class="macro">quote</span><span class="macro">!</span>(#<span class="ident">style</span> #<span class="ident">binding</span>)
     }
 
@@ -2695,13 +2758,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
-    <span class="doccomment">/// # extern crate proc_macro2;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     struct A&lt;T, U&gt; {</span>
     <span class="doccomment">///         a: Option&lt;T&gt;,</span>
     <span class="doccomment">///         b: U,</span>
@@ -2711,9 +2769,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
     <span class="doccomment">///     s.variants()[0].bindings()[0].referenced_ty_params(),</span>
-    <span class="doccomment">///     &amp;[&amp;(syn::Ident::new(&quot;T&quot;, proc_macro2::Span::call_site()))]</span>
+    <span class="doccomment">///     &amp;[&amp;quote::format_ident!(&quot;T&quot;)]</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">referenced_ty_params</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Ident</span><span class="op">&gt;</span> {
         <span class="ident">fetch_generics</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">seen_generics</span>, <span class="self">self</span>.<span class="ident">generics</span>)
@@ -2746,7 +2803,7 @@
 <span class="doccomment">/// Helper function used by the VariantInfo constructor. Walks all of the types</span>
 <span class="doccomment">/// in `field` and returns a list of the type parameters from `ty_params` which</span>
 <span class="doccomment">/// are referenced in the field.</span>
-<span class="kw">fn</span> <span class="ident">get_ty_params</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>, <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">Generics</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">get_ty_params</span>(<span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>, <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="ident">Generics</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
     <span class="comment">// Helper type. Discovers all identifiers inside of the visited type,</span>
     <span class="comment">// and calls a callback with them.</span>
     <span class="kw">struct</span> <span class="ident">BoundTypeLocator</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
@@ -2759,7 +2816,7 @@
         <span class="comment">// this desirable?</span>
         <span class="kw">fn</span> <span class="ident">visit_ident</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="kw-2">&amp;</span><span class="ident">Ident</span>) {
             <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">i</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">generics</span>.<span class="ident">params</span>.<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="kw-2">ref</span> <span class="ident">tparam</span>) <span class="op">=</span> <span class="kw-2">*</span><span class="ident">i</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">GenericParam</span>::<span class="ident">Type</span>(<span class="ident">tparam</span>) <span class="op">=</span> <span class="ident">i</span> {
                     <span class="kw">if</span> <span class="ident">tparam</span>.<span class="ident">ident</span> <span class="op">==</span> <span class="kw-2">*</span><span class="ident">id</span> {
                         <span class="self">self</span>.<span class="ident">result</span>[<span class="ident">idx</span>] <span class="op">=</span> <span class="bool-val">true</span>;
                     }
@@ -2779,7 +2836,7 @@
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">btl</span> <span class="op">=</span> <span class="ident">BoundTypeLocator</span> {
         <span class="ident">result</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="bool-val">false</span>; <span class="ident">generics</span>.<span class="ident">params</span>.<span class="ident">len</span>()],
-        <span class="ident">generics</span>: <span class="ident">generics</span>,
+        <span class="ident">generics</span>,
     };
 
     <span class="ident">btl</span>.<span class="ident">visit_type</span>(<span class="kw-2">&amp;</span><span class="ident">field</span>.<span class="ident">ty</span>);
@@ -2789,14 +2846,14 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">VariantInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ast</span>: <span class="ident">VariantAst</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>, <span class="ident">prefix</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Ident</span><span class="op">&gt;</span>, <span class="ident">generics</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Generics</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">bindings</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">ast</span>.<span class="ident">fields</span> {
+        <span class="kw">let</span> <span class="ident">bindings</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">ast</span>.<span class="ident">fields</span> {
             <span class="ident">Fields</span>::<span class="ident">Unit</span> <span class="op">=&gt;</span> <span class="macro">vec</span><span class="macro">!</span>[],
             <span class="ident">Fields</span>::<span class="ident">Unnamed</span>(<span class="ident">FieldsUnnamed</span> {
-                <span class="ident">unnamed</span>: <span class="kw-2">ref</span> <span class="ident">fields</span>,
+                <span class="ident">unnamed</span>: <span class="ident">fields</span>,
                 ..
             })
             <span class="op">|</span> <span class="ident">Fields</span>::<span class="ident">Named</span>(<span class="ident">FieldsNamed</span> {
-                <span class="ident">named</span>: <span class="kw-2">ref</span> <span class="ident">fields</span>, ..
+                <span class="ident">named</span>: <span class="ident">fields</span>, ..
             }) <span class="op">=&gt;</span> {
                 <span class="ident">fields</span>
                     .<span class="ident">into_iter</span>()
@@ -2805,10 +2862,10 @@
                         <span class="ident">BindingInfo</span> {
                             <span class="comment">// XXX: This has to be call_site to avoid privacy</span>
                             <span class="comment">// when deriving on private fields.</span>
-                            <span class="ident">binding</span>: <span class="ident">Ident</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;__binding_{}&quot;</span>, <span class="ident">i</span>), <span class="ident">Span</span>::<span class="ident">call_site</span>()),
+                            <span class="ident">binding</span>: <span class="macro">format_ident</span><span class="macro">!</span>(<span class="string">&quot;__binding_{}&quot;</span>, <span class="ident">i</span>),
                             <span class="ident">style</span>: <span class="ident">BindStyle</span>::<span class="ident">Ref</span>,
-                            <span class="ident">field</span>: <span class="ident">field</span>,
-                            <span class="ident">generics</span>: <span class="ident">generics</span>,
+                            <span class="ident">field</span>,
+                            <span class="ident">generics</span>,
                             <span class="ident">seen_generics</span>: <span class="ident">get_ty_params</span>(<span class="ident">field</span>, <span class="ident">generics</span>),
                         }
                     })
@@ -2817,11 +2874,11 @@
         };
 
         <span class="ident">VariantInfo</span> {
-            <span class="ident">prefix</span>: <span class="ident">prefix</span>,
-            <span class="ident">bindings</span>: <span class="ident">bindings</span>,
+            <span class="ident">prefix</span>,
+            <span class="ident">bindings</span>,
             <span class="ident">omitted_fields</span>: <span class="bool-val">false</span>,
-            <span class="ident">ast</span>: <span class="ident">ast</span>,
-            <span class="ident">generics</span>: <span class="ident">generics</span>,
+            <span class="ident">ast</span>,
+            <span class="ident">generics</span>,
         }
     }
 
@@ -2850,12 +2907,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -2869,7 +2922,6 @@
     <span class="doccomment">///         A::B(ref __binding_0, ref __binding_1,)</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">TokenStream</span>::<span class="ident">new</span>();
@@ -2878,9 +2930,9 @@
             <span class="macro">quote</span><span class="macro">!</span>(::).<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>);
         }
         <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">ident</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>);
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">fields</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">fields</span> {
             <span class="ident">Fields</span>::<span class="ident">Unit</span> <span class="op">=&gt;</span> {
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">bindings</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span>);
+                <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">bindings</span>.<span class="ident">is_empty</span>());
             }
             <span class="ident">Fields</span>::<span class="ident">Unnamed</span>(..) <span class="op">=&gt;</span> <span class="ident">token</span>::<span class="ident">Paren</span>(<span class="ident">Span</span>::<span class="ident">call_site</span>()).<span class="ident">surround</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>, <span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
                 <span class="kw">for</span> <span class="ident">binding</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">bindings</span> {
@@ -2913,12 +2965,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(usize, usize),</span>
     <span class="doccomment">///         C{ v: usize },</span>
@@ -2941,7 +2989,6 @@
     <span class="doccomment">///         A::C{ v: 0usize, }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">construct</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">func</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
@@ -2954,9 +3001,9 @@
         }
         <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">ident</span>.<span class="ident">to_tokens</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>);
 
-        <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">fields</span> {
+        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">fields</span> {
             <span class="ident">Fields</span>::<span class="ident">Unit</span> <span class="op">=&gt;</span> (),
-            <span class="ident">Fields</span>::<span class="ident">Unnamed</span>(<span class="ident">FieldsUnnamed</span> { <span class="kw-2">ref</span> <span class="ident">unnamed</span>, .. }) <span class="op">=&gt;</span> {
+            <span class="ident">Fields</span>::<span class="ident">Unnamed</span>(<span class="ident">FieldsUnnamed</span> { <span class="ident">unnamed</span>, .. }) <span class="op">=&gt;</span> {
                 <span class="ident">token</span>::<span class="ident">Paren</span>::<span class="ident">default</span>().<span class="ident">surround</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>, <span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
                     <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">field</span>) <span class="kw">in</span> <span class="ident">unnamed</span>.<span class="ident">into_iter</span>().<span class="ident">enumerate</span>() {
                         <span class="ident">func</span>(<span class="ident">field</span>, <span class="ident">i</span>).<span class="ident">to_tokens</span>(<span class="ident">t</span>);
@@ -2964,7 +3011,7 @@
                     }
                 })
             }
-            <span class="ident">Fields</span>::<span class="ident">Named</span>(<span class="ident">FieldsNamed</span> { <span class="kw-2">ref</span> <span class="ident">named</span>, .. }) <span class="op">=&gt;</span> {
+            <span class="ident">Fields</span>::<span class="ident">Named</span>(<span class="ident">FieldsNamed</span> { <span class="ident">named</span>, .. }) <span class="op">=&gt;</span> {
                 <span class="ident">token</span>::<span class="ident">Brace</span>::<span class="ident">default</span>().<span class="ident">surround</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">t</span>, <span class="op">|</span><span class="ident">t</span><span class="op">|</span> {
                     <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">field</span>) <span class="kw">in</span> <span class="ident">named</span>.<span class="ident">into_iter</span>().<span class="ident">enumerate</span>() {
                         <span class="ident">field</span>.<span class="ident">ident</span>.<span class="ident">to_tokens</span>(<span class="ident">t</span>);
@@ -2986,12 +3033,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3009,11 +3052,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">each</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
         <span class="ident">R</span>: <span class="ident">ToTokens</span>,
     {
         <span class="kw">let</span> <span class="ident">pat</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pat</span>();
@@ -3035,12 +3077,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3057,11 +3095,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fold</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">I</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">init</span>: <span class="ident">I</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">TokenStream</span>, <span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">TokenStream</span>, <span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
         <span class="ident">I</span>: <span class="ident">ToTokens</span>,
         <span class="ident">R</span>: <span class="ident">ToTokens</span>,
     {
@@ -3084,13 +3121,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
-    <span class="doccomment">/// # extern crate proc_macro2;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B{ a: i32, b: i32 },</span>
     <span class="doccomment">///         C{ a: u32 },</span>
@@ -3099,7 +3131,7 @@
     <span class="doccomment">/// let mut s = Structure::new(&amp;di);</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// s.variants_mut()[0].filter(|bi| {</span>
-    <span class="doccomment">///     bi.ast().ident == Some(syn::Ident::new(&quot;b&quot;, proc_macro2::Span::call_site()))</span>
+    <span class="doccomment">///     bi.ast().ident == Some(quote::format_ident!(&quot;b&quot;))</span>
     <span class="doccomment">/// });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
@@ -3114,11 +3146,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
     {
         <span class="kw">let</span> <span class="ident">before_len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">bindings</span>.<span class="ident">len</span>();
         <span class="self">self</span>.<span class="ident">bindings</span>.<span class="ident">retain</span>(<span class="ident">f</span>);
@@ -3144,12 +3175,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3172,11 +3199,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind_with</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">BindStyle</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">BindStyle</span>,
     {
         <span class="kw">for</span> <span class="ident">binding</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">bindings</span> {
             <span class="ident">binding</span>.<span class="ident">style</span> <span class="op">=</span> <span class="ident">f</span>(<span class="kw-2">&amp;</span><span class="ident">binding</span>);
@@ -3195,12 +3221,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B{ a: i32, b: i32 },</span>
     <span class="doccomment">///         C{ a: u32 },</span>
@@ -3223,7 +3245,6 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">binding_name</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
@@ -3246,13 +3267,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
-    <span class="doccomment">/// # extern crate proc_macro2;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     struct A&lt;T, U&gt; {</span>
     <span class="doccomment">///         a: Option&lt;T&gt;,</span>
     <span class="doccomment">///         b: U,</span>
@@ -3262,9 +3278,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
     <span class="doccomment">///     s.variants()[0].bindings()[0].referenced_ty_params(),</span>
-    <span class="doccomment">///     &amp;[&amp;(syn::Ident::new(&quot;T&quot;, proc_macro2::Span::call_site()))]</span>
+    <span class="doccomment">///     &amp;[&amp;quote::format_ident!(&quot;T&quot;)]</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">referenced_ty_params</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Ident</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
@@ -3283,15 +3298,30 @@
     <span class="ident">omitted_variants</span>: <span class="ident">bool</span>,
     <span class="ident">ast</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">DeriveInput</span>,
     <span class="ident">extra_impl</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">GenericParam</span><span class="op">&gt;</span>,
+    <span class="ident">extra_predicates</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">WherePredicate</span><span class="op">&gt;</span>,
     <span class="ident">add_bounds</span>: <span class="ident">AddBounds</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Structure</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new `Structure` with the variants and fields from the passed-in</span>
     <span class="doccomment">/// `DeriveInput`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This method will panic if the provided AST node represents an untagged</span>
+    <span class="doccomment">/// union.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ast</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">DeriveInput</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">variants</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">ast</span>.<span class="ident">data</span> {
-            <span class="ident">Data</span>::<span class="ident">Enum</span>(<span class="kw-2">ref</span> <span class="ident">data</span>) <span class="op">=&gt;</span> (<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">variants</span>)
+        <span class="self">Self</span>::<span class="ident">try_new</span>(<span class="ident">ast</span>).<span class="ident">expect</span>(<span class="string">&quot;Unable to create synstructure::Structure&quot;</span>)
+    }
+
+    <span class="doccomment">/// Create a new `Structure` with the variants and fields from the passed-in</span>
+    <span class="doccomment">/// `DeriveInput`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Unlike `Structure::new`, this method does not panic if the provided AST</span>
+    <span class="doccomment">/// node represents an untagged union.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_new</span>(<span class="ident">ast</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">DeriveInput</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">variants</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">ast</span>.<span class="ident">data</span> {
+            <span class="ident">Data</span>::<span class="ident">Enum</span>(<span class="ident">data</span>) <span class="op">=&gt;</span> (<span class="kw-2">&amp;</span><span class="ident">data</span>.<span class="ident">variants</span>)
                 .<span class="ident">into_iter</span>()
                 .<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span><span class="op">|</span> {
                     <span class="ident">VariantInfo</span>::<span class="ident">new</span>(
@@ -3306,7 +3336,7 @@
                     )
                 })
                 .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>(),
-            <span class="ident">Data</span>::<span class="ident">Struct</span>(<span class="kw-2">ref</span> <span class="ident">data</span>) <span class="op">=&gt;</span> {
+            <span class="ident">Data</span>::<span class="ident">Struct</span>(<span class="ident">data</span>) <span class="op">=&gt;</span> {
                 <span class="comment">// SAFETY NOTE: Normally putting an `Expr` in static storage</span>
                 <span class="comment">// wouldn&#39;t be safe, because it could contain `Term` objects</span>
                 <span class="comment">// which use thread-local interning. However, this static always</span>
@@ -3328,20 +3358,21 @@
                 )]
             }
             <span class="ident">Data</span>::<span class="ident">Union</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-                <span class="macro">panic</span><span class="macro">!</span>(
-                    <span class="string">&quot;synstructure does not handle untagged unions \
-                     (https://github.com/mystor/synstructure/issues/6)&quot;</span>
-                );
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">new_spanned</span>(
+                    <span class="ident">ast</span>,
+                    <span class="string">&quot;unexpected unsupported untagged union&quot;</span>,
+                ));
             }
         };
 
-        <span class="ident">Structure</span> {
-            <span class="ident">variants</span>: <span class="ident">variants</span>,
+        <span class="prelude-val">Ok</span>(<span class="ident">Structure</span> {
+            <span class="ident">variants</span>,
             <span class="ident">omitted_variants</span>: <span class="bool-val">false</span>,
-            <span class="ident">ast</span>: <span class="ident">ast</span>,
+            <span class="ident">ast</span>,
             <span class="ident">extra_impl</span>: <span class="macro">vec</span><span class="macro">!</span>[],
+            <span class="ident">extra_predicates</span>: <span class="macro">vec</span><span class="macro">!</span>[],
             <span class="ident">add_bounds</span>: <span class="ident">AddBounds</span>::<span class="ident">Both</span>,
-        }
+        })
     }
 
     <span class="doccomment">/// Returns a slice of the variants in this Structure.</span>
@@ -3373,12 +3404,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3399,11 +3426,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">each</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
         <span class="ident">R</span>: <span class="ident">ToTokens</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">TokenStream</span>::<span class="ident">new</span>();
@@ -3427,12 +3453,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3452,11 +3474,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fold</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">I</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">init</span>: <span class="ident">I</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">TokenStream</span>, <span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">TokenStream</span>, <span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
         <span class="ident">I</span>: <span class="ident">ToTokens</span>,
         <span class="ident">R</span>: <span class="ident">ToTokens</span>,
     {
@@ -3479,12 +3500,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3507,11 +3524,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">each_variant</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">VariantInfo</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">VariantInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">R</span>,
         <span class="ident">R</span>: <span class="ident">ToTokens</span>,
     {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">TokenStream</span>::<span class="ident">new</span>();
@@ -3537,13 +3553,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
-    <span class="doccomment">/// # extern crate proc_macro2;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B{ a: i32, b: i32 },</span>
     <span class="doccomment">///         C{ a: u32 },</span>
@@ -3552,7 +3563,7 @@
     <span class="doccomment">/// let mut s = Structure::new(&amp;di);</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// s.filter(|bi| {</span>
-    <span class="doccomment">///     bi.ast().ident == Some(syn::Ident::new(&quot;a&quot;, proc_macro2::Span::call_site()))</span>
+    <span class="doccomment">///     bi.ast().ident == Some(quote::format_ident!(&quot;a&quot;))</span>
     <span class="doccomment">/// });</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
@@ -3567,15 +3578,58 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
     {
         <span class="kw">for</span> <span class="ident">variant</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">variants</span> {
             <span class="ident">variant</span>.<span class="ident">filter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">f</span>);
         }
+        <span class="self">self</span>
+    }
+
+    <span class="doccomment">/// Specify additional where predicate bounds which should be generated by</span>
+    <span class="doccomment">/// impl-generating functions such as `gen_impl`, `bound_impl`, and</span>
+    <span class="doccomment">/// `unsafe_bound_impl`.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Example</span>
+    <span class="doccomment">/// ```</span>
+    <span class="doccomment">/// # use synstructure::*;</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
+    <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
+    <span class="doccomment">///         B(T),</span>
+    <span class="doccomment">///         C(Option&lt;U&gt;),</span>
+    <span class="doccomment">///     }</span>
+    <span class="doccomment">/// };</span>
+    <span class="doccomment">/// let mut s = Structure::new(&amp;di);</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // Add an additional where predicate.</span>
+    <span class="doccomment">/// s.add_where_predicate(syn::parse_quote!(T: std::fmt::Display));</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// assert_eq!(</span>
+    <span class="doccomment">///     s.bound_impl(quote!(krate::Trait), quote!{</span>
+    <span class="doccomment">///         fn a() {}</span>
+    <span class="doccomment">///     }).to_string(),</span>
+    <span class="doccomment">///     quote!{</span>
+    <span class="doccomment">///         #[allow(non_upper_case_globals)]</span>
+    <span class="doccomment">///         #[doc(hidden)]</span>
+    <span class="doccomment">///         const _DERIVE_krate_Trait_FOR_A: () = {</span>
+    <span class="doccomment">///             extern crate krate;</span>
+    <span class="doccomment">///             impl&lt;T, U&gt; krate::Trait for A&lt;T, U&gt;</span>
+    <span class="doccomment">///                 where T: std::fmt::Display,</span>
+    <span class="doccomment">///                       T: krate::Trait,</span>
+    <span class="doccomment">///                       Option&lt;U&gt;: krate::Trait,</span>
+    <span class="doccomment">///                       U: krate::Trait</span>
+    <span class="doccomment">///             {</span>
+    <span class="doccomment">///                 fn a() {}</span>
+    <span class="doccomment">///             }</span>
+    <span class="doccomment">///         };</span>
+    <span class="doccomment">///     }.to_string()</span>
+    <span class="doccomment">/// );</span>
+    <span class="doccomment">/// ```</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_where_predicate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">pred</span>: <span class="ident">WherePredicate</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+        <span class="self">self</span>.<span class="ident">extra_predicates</span>.<span class="ident">push</span>(<span class="ident">pred</span>);
         <span class="self">self</span>
     }
 
@@ -3587,12 +3641,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -3621,7 +3671,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_bounds</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">mode</span>: <span class="ident">AddBounds</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">add_bounds</span> <span class="op">=</span> <span class="ident">mode</span>;
@@ -3639,12 +3688,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3665,11 +3710,10 @@
     <span class="doccomment">///         _ =&gt; {}</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter_variants</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">VariantInfo</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">VariantInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>,
     {
         <span class="kw">let</span> <span class="ident">before_len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">variants</span>.<span class="ident">len</span>();
         <span class="self">self</span>.<span class="ident">variants</span>.<span class="ident">retain</span>(<span class="ident">f</span>);
@@ -3695,12 +3739,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B(i32, i32),</span>
     <span class="doccomment">///         C(u32),</span>
@@ -3723,11 +3763,10 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bind_with</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span>) <span class="op">-&gt;</span> <span class="ident">BindStyle</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">BindingInfo</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">BindStyle</span>,
     {
         <span class="kw">for</span> <span class="ident">variant</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">variants</span> {
             <span class="ident">variant</span>.<span class="ident">bind_with</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">f</span>);
@@ -3746,12 +3785,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A {</span>
     <span class="doccomment">///         B{ a: i32, b: i32 },</span>
     <span class="doccomment">///         C{ a: u32 },</span>
@@ -3774,7 +3809,6 @@
     <span class="doccomment">///         }</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">binding_name</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
     <span class="kw">where</span>
@@ -3797,13 +3831,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
-    <span class="doccomment">/// # extern crate proc_macro2;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T, i32),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -3815,9 +3844,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
     <span class="doccomment">///     s.referenced_ty_params(),</span>
-    <span class="doccomment">///     &amp;[&amp;(syn::Ident::new(&quot;T&quot;, proc_macro2::Span::call_site()))]</span>
+    <span class="doccomment">///     &amp;[&amp;quote::format_ident!(&quot;T&quot;)]</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">referenced_ty_params</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Ident</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">flags</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
@@ -3834,20 +3862,15 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #![recursion_limit=&quot;128&quot;]</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
     <span class="doccomment">///     }</span>
     <span class="doccomment">/// };</span>
     <span class="doccomment">/// let mut s = Structure::new(&amp;di);</span>
-    <span class="doccomment">/// let generic: syn::GenericParam = parse_quote!(X: krate::AnotherTrait);</span>
+    <span class="doccomment">/// let generic: syn::GenericParam = syn::parse_quote!(X: krate::AnotherTrait);</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(</span>
     <span class="doccomment">///     s.add_impl_generic(generic)</span>
@@ -3871,7 +3894,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_impl_generic</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">param</span>: <span class="ident">GenericParam</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">extra_impl</span>.<span class="ident">push</span>(<span class="ident">param</span>);
@@ -3892,23 +3914,27 @@
         <span class="ident">where_clause</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">WhereClause</span><span class="op">&gt;</span>,
         <span class="ident">mode</span>: <span class="ident">AddBounds</span>,
     ) {
+        <span class="comment">// If we have any explicit where predicates, make sure to add them first.</span>
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">extra_predicates</span>.<span class="ident">is_empty</span>() {
+            <span class="kw">let</span> <span class="ident">clause</span> <span class="op">=</span> <span class="ident">get_or_insert_with</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">where_clause</span>, <span class="op">||</span> <span class="ident">WhereClause</span> {
+                <span class="ident">where_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
+                <span class="ident">predicates</span>: <span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">new</span>(),
+            });
+            <span class="ident">clause</span>
+                .<span class="ident">predicates</span>
+                .<span class="ident">extend</span>(<span class="self">self</span>.<span class="ident">extra_predicates</span>.<span class="ident">iter</span>().<span class="ident">cloned</span>());
+        }
+
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">seen</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pred</span> <span class="op">=</span> <span class="op">|</span><span class="ident">ty</span>: <span class="ident">Type</span><span class="op">|</span> {
             <span class="kw">if</span> <span class="op">!</span><span class="ident">seen</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">ty</span>) {
                 <span class="ident">seen</span>.<span class="ident">insert</span>(<span class="ident">ty</span>.<span class="ident">clone</span>());
 
-                <span class="comment">// Ensure we have a where clause, because we need to use it. We</span>
-                <span class="comment">// can&#39;t use `get_or_insert_with`, because it isn&#39;t supported on all</span>
-                <span class="comment">// rustc versions we support (this is a Rust 1.20+ feature).</span>
-                <span class="kw">if</span> <span class="ident">where_clause</span>.<span class="ident">is_none</span>() {
-                    <span class="kw-2">*</span><span class="ident">where_clause</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">WhereClause</span> {
-                        <span class="ident">where_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
-                        <span class="ident">predicates</span>: <span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">new</span>(),
-                    });
-                }
-                <span class="kw">let</span> <span class="ident">clause</span> <span class="op">=</span> <span class="ident">where_clause</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>();
-
                 <span class="comment">// Add a predicate.</span>
+                <span class="kw">let</span> <span class="ident">clause</span> <span class="op">=</span> <span class="ident">get_or_insert_with</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">where_clause</span>, <span class="op">||</span> <span class="ident">WhereClause</span> {
+                    <span class="ident">where_token</span>: <span class="ident">Default</span>::<span class="ident">default</span>(),
+                    <span class="ident">predicates</span>: <span class="ident">punctuated</span>::<span class="ident">Punctuated</span>::<span class="ident">new</span>(),
+                });
                 <span class="ident">clause</span>.<span class="ident">predicates</span>.<span class="ident">push</span>(<span class="ident">WherePredicate</span>::<span class="ident">Type</span>(<span class="ident">PredicateType</span> {
                     <span class="ident">lifetimes</span>: <span class="prelude-val">None</span>,
                     <span class="ident">bounded_ty</span>: <span class="ident">ty</span>,
@@ -3980,12 +4006,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -4013,7 +4035,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bound_impl</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">ToTokens</span>, <span class="ident">B</span>: <span class="ident">ToTokens</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">body</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
         <span class="self">self</span>.<span class="ident">impl_internal</span>(
@@ -4055,12 +4076,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -4088,7 +4105,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unsafe_bound_impl</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">ToTokens</span>, <span class="ident">B</span>: <span class="ident">ToTokens</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">body</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
         <span class="self">self</span>.<span class="ident">impl_internal</span>(
@@ -4123,12 +4139,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -4153,7 +4165,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unbound_impl</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">ToTokens</span>, <span class="ident">B</span>: <span class="ident">ToTokens</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">body</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
         <span class="self">self</span>.<span class="ident">impl_internal</span>(
@@ -4188,12 +4199,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -4218,7 +4225,6 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">deprecated</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unsafe_unbound_impl</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">ToTokens</span>, <span class="ident">B</span>: <span class="ident">ToTokens</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">path</span>: <span class="ident">P</span>, <span class="ident">body</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
@@ -4244,7 +4250,7 @@
         <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">gen_clone</span>.<span class="ident">split_for_impl</span>();
         <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">ty_generics</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
 
-        <span class="kw">let</span> <span class="ident">bound</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">parse2</span>::<span class="op">&lt;</span><span class="ident">TraitBound</span><span class="op">&gt;</span>(<span class="ident">path</span>.<span class="ident">into</span>())
+        <span class="kw">let</span> <span class="ident">bound</span> <span class="op">=</span> <span class="ident">syn</span>::<span class="ident">parse2</span>::<span class="op">&lt;</span><span class="ident">TraitBound</span><span class="op">&gt;</span>(<span class="ident">path</span>)
             .<span class="ident">expect</span>(<span class="string">&quot;`path` argument must be a valid rust trait bound&quot;</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">where_clause</span> <span class="op">=</span> <span class="ident">where_clause</span>.<span class="ident">cloned</span>();
@@ -4262,8 +4268,8 @@
         <span class="comment">// scope.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">extern_crate</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span>();
         <span class="kw">if</span> <span class="ident">bound</span>.<span class="ident">path</span>.<span class="ident">leading_colon</span>.<span class="ident">is_none</span>() {
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">seg</span>) <span class="op">=</span> <span class="ident">bound</span>.<span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">first</span>() {
-                <span class="kw">let</span> <span class="ident">seg</span> <span class="op">=</span> <span class="ident">seg</span>.<span class="ident">value</span>();
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">seg</span>) <span class="op">=</span> <span class="ident">bound</span>.<span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">first</span>() {
+                <span class="kw">let</span> <span class="ident">seg</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">seg</span>.<span class="ident">ident</span>;
                 <span class="ident">extern_crate</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> { <span class="kw">extern</span> <span class="kw">crate</span> #<span class="ident">seg</span>; };
             }
         }
@@ -4370,22 +4376,21 @@
     <span class="doccomment">/// be considered bound. This is because we cannot determine which type</span>
     <span class="doccomment">/// parameters are bound by type macros.</span>
     <span class="doccomment">///</span>
+    <span class="doccomment">/// # Errors</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This function will generate a `compile_error!` if additional type</span>
+    <span class="doccomment">/// parameters added by `impl&lt;..&gt;` conflict with generic type parameters on</span>
+    <span class="doccomment">/// the original struct.</span>
+    <span class="doccomment">///</span>
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
-    <span class="doccomment">/// This function will panic if the input `TokenStream` is not well-formed, or</span>
-    <span class="doccomment">/// if additional type parameters added by `impl&lt;..&gt;` conflict with generic</span>
-    <span class="doccomment">/// type parameters on the original struct.</span>
+    <span class="doccomment">/// This function will panic if the input `TokenStream` is not well-formed.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Example Usage</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// ```</span>
-    <span class="doccomment">/// # #![recursion_limit=&quot;128&quot;]</span>
-    <span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-    <span class="doccomment">/// # extern crate synstructure;</span>
-    <span class="doccomment">/// # #[macro_use] extern crate syn;</span>
     <span class="doccomment">/// # use synstructure::*;</span>
-    <span class="doccomment">/// # fn main() {</span>
-    <span class="doccomment">/// let di: syn::DeriveInput = parse_quote! {</span>
+    <span class="doccomment">/// let di: syn::DeriveInput = syn::parse_quote! {</span>
     <span class="doccomment">///     enum A&lt;T, U&gt; {</span>
     <span class="doccomment">///         B(T),</span>
     <span class="doccomment">///         C(Option&lt;U&gt;),</span>
@@ -4443,68 +4448,129 @@
     <span class="doccomment">///         };</span>
     <span class="doccomment">///     }.to_string()</span>
     <span class="doccomment">/// );</span>
-    <span class="doccomment">/// # }</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// // NOTE: you can generate multiple traits with a single call</span>
+    <span class="doccomment">/// assert_eq!(</span>
+    <span class="doccomment">///     s.gen_impl(quote! {</span>
+    <span class="doccomment">///         extern crate krate;</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///         gen impl krate::Trait for @Self {</span>
+    <span class="doccomment">///             fn a() {}</span>
+    <span class="doccomment">///         }</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///         gen impl krate::OtherTrait for @Self {</span>
+    <span class="doccomment">///             fn b() {}</span>
+    <span class="doccomment">///         }</span>
+    <span class="doccomment">///     }).to_string(),</span>
+    <span class="doccomment">///     quote!{</span>
+    <span class="doccomment">///         #[allow(non_upper_case_globals)]</span>
+    <span class="doccomment">///         const _DERIVE_krate_Trait_FOR_A: () = {</span>
+    <span class="doccomment">///             extern crate krate;</span>
+    <span class="doccomment">///             impl&lt;T, U&gt; krate::Trait for A&lt;T, U&gt;</span>
+    <span class="doccomment">///             where</span>
+    <span class="doccomment">///                 Option&lt;U&gt;: krate::Trait,</span>
+    <span class="doccomment">///                 U: krate::Trait</span>
+    <span class="doccomment">///             {</span>
+    <span class="doccomment">///                 fn a() {}</span>
+    <span class="doccomment">///             }</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">///             impl&lt;T, U&gt; krate::OtherTrait for A&lt;T, U&gt;</span>
+    <span class="doccomment">///             where</span>
+    <span class="doccomment">///                 Option&lt;U&gt;: krate::OtherTrait,</span>
+    <span class="doccomment">///                 U: krate::OtherTrait</span>
+    <span class="doccomment">///             {</span>
+    <span class="doccomment">///                 fn b() {}</span>
+    <span class="doccomment">///             }</span>
+    <span class="doccomment">///         };</span>
+    <span class="doccomment">///     }.to_string()</span>
+    <span class="doccomment">/// );</span>
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Use `add_bounds` to change which bounds are generated.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">gen_impl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">cfg</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
-        <span class="kw">use</span> <span class="ident">syn</span>::<span class="ident">parse</span>::{<span class="ident">ParseStream</span>, <span class="ident">Parser</span>, <span class="prelude-ty">Result</span>};
+        <span class="ident">Parser</span>::<span class="ident">parse2</span>(
+            <span class="op">|</span><span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> { <span class="self">self</span>.<span class="ident">gen_impl_parse</span>(<span class="ident">input</span>, <span class="bool-val">true</span>) },
+            <span class="ident">cfg</span>,
+        )
+        .<span class="ident">expect</span>(<span class="string">&quot;Failed to parse gen_impl&quot;</span>)
+    }
 
-        <span class="comment">// Syn requires parsers to be methods conforming to a strict signature</span>
-        <span class="kw">let</span> <span class="ident">do_parse</span> <span class="op">=</span> <span class="op">|</span><span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> {
-            <span class="comment">// Helper lambda to parse the prefix of a gen block.</span>
-            <span class="kw">let</span> <span class="ident">parse_prefix</span> <span class="op">=</span> <span class="op">|</span><span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> {
-                <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Ident</span><span class="op">&gt;</span>()<span class="question-mark">?</span> <span class="op">!=</span> <span class="string">&quot;gen&quot;</span> {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">input</span>.<span class="ident">error</span>(<span class="string">&quot;&quot;</span>));
-                }
-                <span class="kw">let</span> <span class="ident">safety</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">unsafe</span>]<span class="op">&gt;&gt;</span>()<span class="question-mark">?</span>;
-                <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">impl</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">safety</span>)
-            };
-
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">before</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
-            <span class="kw">loop</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span> <span class="ident">parse_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">fork</span>()) {
-                    <span class="kw">break</span>;
-                }
-                <span class="ident">before</span>.<span class="ident">push</span>(<span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenTree</span><span class="op">&gt;</span>()<span class="question-mark">?</span>);
+    <span class="kw">fn</span> <span class="ident">gen_impl_parse</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>, <span class="ident">wrap</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">parse_prefix</span>(<span class="ident">input</span>: <span class="ident">ParseStream</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">unsafe</span>]<span class="op">&gt;&gt;</span> {
+            <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Ident</span><span class="op">&gt;</span>()<span class="question-mark">?</span> <span class="op">!=</span> <span class="string">&quot;gen&quot;</span> {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">input</span>.<span class="ident">error</span>(<span class="string">&quot;Expected keyword `gen`&quot;</span>));
             }
+            <span class="kw">let</span> <span class="ident">safety</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">unsafe</span>]<span class="op">&gt;&gt;</span>()<span class="question-mark">?</span>;
+            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">impl</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
+            <span class="prelude-val">Ok</span>(<span class="ident">safety</span>)
+        }
 
-            <span class="comment">// Parse the prefix &quot;for real&quot;</span>
-            <span class="kw">let</span> <span class="ident">safety</span> <span class="op">=</span> <span class="ident">parse_prefix</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">before</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
+        <span class="kw">loop</span> {
+            <span class="kw">if</span> <span class="ident">parse_prefix</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">fork</span>()).<span class="ident">is_ok</span>() {
+                <span class="kw">break</span>;
+            }
+            <span class="ident">before</span>.<span class="ident">push</span>(<span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenTree</span><span class="op">&gt;</span>()<span class="question-mark">?</span>);
+        }
 
-            <span class="comment">// optional `&lt;&gt;`</span>
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">generics</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Generics</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="comment">// Parse the prefix &quot;for real&quot;</span>
+        <span class="kw">let</span> <span class="ident">safety</span> <span class="op">=</span> <span class="ident">parse_prefix</span>(<span class="ident">input</span>)<span class="question-mark">?</span>;
 
-            <span class="comment">// @bound</span>
-            <span class="kw">let</span> <span class="ident">bound</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TraitBound</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="comment">// optional `&lt;&gt;`</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">generics</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">Generics</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
 
-            <span class="comment">// `for @Self`</span>
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">for</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[@]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="self">Self</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="comment">// @bound</span>
+        <span class="kw">let</span> <span class="ident">bound</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TraitBound</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
 
-            <span class="comment">// optional `where ...`</span>
-            <span class="ident">generics</span>.<span class="ident">where_clause</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
+        <span class="comment">// `for @Self`</span>
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="kw">for</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[@]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">Token</span><span class="macro">!</span>[<span class="self">Self</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
 
-            <span class="comment">// Body of the impl</span>
-            <span class="kw">let</span> <span class="ident">body</span>;
-            <span class="macro">braced</span><span class="macro">!</span>(<span class="ident">body</span> <span class="kw">in</span> <span class="ident">input</span>);
-            <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">body</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="comment">// optional `where ...`</span>
+        <span class="ident">generics</span>.<span class="ident">where_clause</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>()<span class="question-mark">?</span>;
 
-            <span class="comment">// Tokens following impl</span>
-            <span class="kw">let</span> <span class="ident">after</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="comment">// Body of the impl</span>
+        <span class="kw">let</span> <span class="ident">body</span>;
+        <span class="macro">braced</span><span class="macro">!</span>(<span class="ident">body</span> <span class="kw">in</span> <span class="ident">input</span>);
+        <span class="kw">let</span> <span class="ident">body</span> <span class="op">=</span> <span class="ident">body</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
 
-            <span class="comment">/* Codegen Logic */</span>
-            <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">ident</span>;
+        <span class="comment">// Try to parse the next entry in sequence. If this fails, we&#39;ll fall</span>
+        <span class="comment">// back to just parsing the entire rest of the TokenStream.</span>
+        <span class="kw">let</span> <span class="ident">maybe_next_impl</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">gen_impl_parse</span>(<span class="kw-2">&amp;</span><span class="ident">input</span>.<span class="ident">fork</span>(), <span class="bool-val">false</span>);
 
-            <span class="comment">// Add the generics from the original struct in, and then add any</span>
-            <span class="comment">// additional trait bounds which we need on the type.</span>
-            <span class="ident">merge_generics</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">generics</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">generics</span>);
-            <span class="self">self</span>.<span class="ident">add_trait_bounds</span>(<span class="kw-2">&amp;</span><span class="ident">bound</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">generics</span>.<span class="ident">where_clause</span>, <span class="self">self</span>.<span class="ident">add_bounds</span>);
-            <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="kw">_</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
-            <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">ty_generics</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
+        <span class="comment">// Eat tokens to the end. Whether or not our speculative nested parse</span>
+        <span class="comment">// succeeded, we&#39;re going to want to consume the rest of our input.</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">after</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">stream</span>) <span class="op">=</span> <span class="ident">maybe_next_impl</span> {
+            <span class="ident">after</span> <span class="op">=</span> <span class="ident">stream</span>;
+        }
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">input</span>.<span class="ident">is_empty</span>(), <span class="string">&quot;Should&#39;ve consumed the rest of our input&quot;</span>);
 
+        <span class="comment">/* Codegen Logic */</span>
+        <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">ident</span>;
+
+        <span class="comment">// Add the generics from the original struct in, and then add any</span>
+        <span class="comment">// additional trait bounds which we need on the type.</span>
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span> <span class="ident">merge_generics</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">generics</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">generics</span>) {
+            <span class="comment">// Report the merge error as a `compile_error!`, as it may be</span>
+            <span class="comment">// triggerable by an end-user.</span>
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">err</span>.<span class="ident">to_compile_error</span>());
+        }
+
+        <span class="self">self</span>.<span class="ident">add_trait_bounds</span>(<span class="kw-2">&amp;</span><span class="ident">bound</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">generics</span>.<span class="ident">where_clause</span>, <span class="self">self</span>.<span class="ident">add_bounds</span>);
+        <span class="kw">let</span> (<span class="ident">impl_generics</span>, <span class="kw">_</span>, <span class="ident">where_clause</span>) <span class="op">=</span> <span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
+        <span class="kw">let</span> (<span class="kw">_</span>, <span class="ident">ty_generics</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">ast</span>.<span class="ident">generics</span>.<span class="ident">split_for_impl</span>();
+
+        <span class="kw">let</span> <span class="ident">generated</span> <span class="op">=</span> <span class="macro">quote</span><span class="macro">!</span> {
+            #(#<span class="ident">before</span>)<span class="op">*</span>
+            #<span class="ident">safety</span> <span class="kw">impl</span> #<span class="ident">impl_generics</span> #<span class="ident">bound</span> <span class="kw">for</span> #<span class="ident">name</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
+                #<span class="ident">body</span>
+            }
+            #<span class="ident">after</span>
+        };
+
+        <span class="kw">if</span> <span class="ident">wrap</span> {
             <span class="kw">let</span> <span class="ident">dummy_const</span>: <span class="ident">Ident</span> <span class="op">=</span> <span class="ident">sanitize_ident</span>(<span class="kw-2">&amp;</span><span class="macro">format</span><span class="macro">!</span>(
                 <span class="string">&quot;_DERIVE_{}_FOR_{}&quot;</span>,
                 (<span class="kw-2">&amp;</span><span class="ident">bound</span>).<span class="ident">into_token_stream</span>(),
@@ -4514,15 +4580,12 @@
             <span class="prelude-val">Ok</span>(<span class="macro">quote</span><span class="macro">!</span> {
                 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_upper_case_globals</span>)]</span>
                 <span class="kw">const</span> #<span class="ident">dummy_const</span>: () <span class="op">=</span> {
-                    #(#<span class="ident">before</span>)<span class="op">*</span>
-                    #<span class="ident">safety</span> <span class="kw">impl</span> #<span class="ident">impl_generics</span> #<span class="ident">bound</span> <span class="kw">for</span> #<span class="ident">name</span> #<span class="ident">ty_generics</span> #<span class="ident">where_clause</span> {
-                        #<span class="ident">body</span>
-                    }
-                    #<span class="ident">after</span>
+                    #<span class="ident">generated</span>
                 };
             })
-        };
-        <span class="ident">Parser</span>::<span class="ident">parse2</span>(<span class="ident">do_parse</span>, <span class="ident">cfg</span>).<span class="ident">expect</span>(<span class="string">&quot;Failed to parse gen_impl&quot;</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">generated</span>)
+        }
     }
 }
 
@@ -4542,9 +4605,7 @@
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// ```</span>
-<span class="doccomment">/// # extern crate synstructure;</span>
-<span class="doccomment">/// # #[macro_use] extern crate quote;</span>
-<span class="doccomment">/// # fn main() {</span>
+<span class="doccomment">/// # use quote::quote;</span>
 <span class="doccomment">/// assert_eq!(</span>
 <span class="doccomment">///     synstructure::unpretty_print(quote! {</span>
 <span class="doccomment">///         #[allow(non_upper_case_globals)]</span>
@@ -4577,7 +4638,6 @@
 <span class="doccomment">/// ;</span>
 <span class="doccomment">/// &quot;</span>
 <span class="doccomment">/// )</span>
-<span class="doccomment">/// # }</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unpretty_print</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Display</span><span class="op">&gt;</span>(<span class="ident">ts</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
@@ -4586,20 +4646,78 @@
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">s</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">raw_s</span>[..];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">indent</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">i</span>) <span class="op">=</span> <span class="ident">s</span>.<span class="ident">find</span>(<span class="kw-2">&amp;</span>[<span class="string">&#39;(&#39;</span>, <span class="string">&#39;{&#39;</span>, <span class="string">&#39;[&#39;</span>, <span class="string">&#39;)&#39;</span>, <span class="string">&#39;}&#39;</span>, <span class="string">&#39;]&#39;</span>, <span class="string">&#39;;&#39;</span>][..]) {
-        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="ident">i</span>..<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] {
+        <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="ident">i</span>..=<span class="ident">i</span>] {
             <span class="string">&quot;(&quot;</span> <span class="op">|</span> <span class="string">&quot;{&quot;</span> <span class="op">|</span> <span class="string">&quot;[&quot;</span> <span class="op">=&gt;</span> <span class="ident">indent</span> <span class="op">+=</span> <span class="number">1</span>,
             <span class="string">&quot;)&quot;</span> <span class="op">|</span> <span class="string">&quot;}&quot;</span> <span class="op">|</span> <span class="string">&quot;]&quot;</span> <span class="op">=&gt;</span> <span class="ident">indent</span> <span class="op">-=</span> <span class="number">1</span>,
             <span class="kw">_</span> <span class="op">=&gt;</span> {}
         }
-        <span class="ident">res</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>[..<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>]);
+        <span class="ident">res</span>.<span class="ident">push_str</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>[..=<span class="ident">i</span>]);
         <span class="ident">res</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>);
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">indent</span> {
             <span class="ident">res</span>.<span class="ident">push_str</span>(<span class="string">&quot;    &quot;</span>);
         }
-        <span class="ident">s</span> <span class="op">=</span> <span class="ident">s</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>..].<span class="ident">trim_left_matches</span>(<span class="string">&#39; &#39;</span>);
+        <span class="ident">s</span> <span class="op">=</span> <span class="ident">trim_start_matches</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>..], <span class="string">&#39; &#39;</span>);
     }
     <span class="ident">res</span>.<span class="ident">push_str</span>(<span class="ident">s</span>);
     <span class="ident">res</span>
+}
+
+<span class="doccomment">/// `trim_left_matches` has been deprecated in favor of `trim_start_matches`.</span>
+<span class="doccomment">/// This helper silences the warning, as we need to continue using</span>
+<span class="doccomment">/// `trim_left_matches` for rust 1.15 support.</span>
+<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
+<span class="kw">fn</span> <span class="ident">trim_start_matches</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
+    <span class="ident">s</span>.<span class="ident">trim_left_matches</span>(<span class="ident">c</span>)
+}
+
+<span class="doccomment">/// Helper trait describing values which may be returned by macro implementation</span>
+<span class="doccomment">/// methods used by this crate&#39;s macros.</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">MacroResult</span> {
+    <span class="doccomment">/// Convert this result into a `Result` for further processing / validation.</span>
+    <span class="kw">fn</span> <span class="ident">into_result</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span>;
+
+    <span class="doccomment">/// Convert this result into a `proc_macro::TokenStream`, ready to return</span>
+    <span class="doccomment">/// from a native `proc_macro` implementation.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If `into_result()` would return an `Err`, this method should instead</span>
+    <span class="doccomment">/// generate a `compile_error!` invocation to nicely report the error.</span>
+    <span class="kw">fn</span> <span class="ident">into_stream</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+}
+
+<span class="kw">impl</span> <span class="ident">MacroResult</span> <span class="kw">for</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
+    <span class="kw">fn</span> <span class="ident">into_result</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">into</span>())
+    }
+
+    <span class="kw">fn</span> <span class="ident">into_stream</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
+        <span class="self">self</span>
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">MacroResult</span> <span class="kw">for</span> <span class="ident">TokenStream</span> {
+    <span class="kw">fn</span> <span class="ident">into_result</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>)
+    }
+
+    <span class="kw">fn</span> <span class="ident">into_stream</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
+        <span class="self">self</span>.<span class="ident">into</span>()
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">MacroResult</span><span class="op">&gt;</span> <span class="ident">MacroResult</span> <span class="kw">for</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">into_result</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">TokenStream</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=&gt;</span> <span class="ident">v</span>.<span class="ident">into_result</span>(),
+            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+        }
+    }
+
+    <span class="kw">fn</span> <span class="ident">into_stream</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=&gt;</span> <span class="ident">v</span>.<span class="ident">into_stream</span>(),
+            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="ident">err</span>.<span class="ident">to_compile_error</span>().<span class="ident">into</span>(),
+        }
+    }
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "synstructure";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
