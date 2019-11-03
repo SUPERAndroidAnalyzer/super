@@ -97,10 +97,6 @@ jobs:
         repo: SUPERAndroidAnalyzer/super
         tags: true
 
-matrix:
-  allow_failures:
-  - os: windows
-
 before_script:
 - export PATH=$PATH:~/.cargo/bin
   # TODO: change tag when bumping version number. (Maintain in sync with Cargo.toml)
