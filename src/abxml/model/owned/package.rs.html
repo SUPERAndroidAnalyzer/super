@@ -162,14 +162,14 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PackageBuf</span> {
     <span class="ident">id</span>: <span class="ident">u32</span>,
     <span class="ident">package_name</span>: <span class="ident">String</span>,
-    <span class="ident">inner_chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">OwnedBuf</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">inner_chunks</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">OwnedBuf</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">impl</span> <span class="ident">PackageBuf</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">package_name</span>: <span class="ident">String</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">package_name</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">ensure</span><span class="macro">!</span>(
-            <span class="ident">package_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="op">&lt;=</span> <span class="number">256</span>,
+            <span class="ident">package_name</span>.<span class="ident">as_bytes</span>().<span class="ident">len</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">256</span>,
             <span class="string">&quot;can not create a package with a length greater than 256&quot;</span>
         );
 
@@ -186,11 +186,11 @@
 }
 
 <span class="kw">impl</span> <span class="ident">OwnedBuf</span> <span class="kw">for</span> <span class="ident">PackageBuf</span> {
-    <span class="kw">fn</span> <span class="ident">get_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">fn</span> <span class="ident">get_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
         <span class="ident">TOKEN_PACKAGE</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">get_body_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_body_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner_chunks</span> {
@@ -201,7 +201,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">out</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">get_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="ident">utf_16</span>::<span class="ident">UTF_16LE_ENCODING</span>.<span class="ident">raw_encoder</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoded_string</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
@@ -268,22 +268,22 @@
         <span class="kw">let</span> <span class="ident">third_chunk</span> <span class="op">=</span> <span class="ident">stream</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">match</span> <span class="ident">first_chunk</span> {
-            <span class="ident">Chunk</span>::<span class="ident">Package</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> (),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;First chunk should be a Package&quot;</span>),
+            <span class="ident">Chunk</span>::<span class="ident">Package</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> (),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;First chunk should be a Package&quot;</span>),
         }
 
         <span class="kw">match</span> <span class="ident">second_chunk</span> {
-            <span class="ident">Chunk</span>::<span class="ident">StringTable</span>(<span class="ident">st</span>) <span class="op">=&gt;</span> {
+            <span class="ident">Chunk</span>::<span class="ident">StringTable</span>(<span class="ident">st</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">st</span>.<span class="ident">get_strings_len</span>(), <span class="number">0</span>);
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Second chunk should be a string table&quot;</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Second chunk should be a string table&quot;</span>),
         }
 
         <span class="kw">match</span> <span class="ident">third_chunk</span> {
-            <span class="ident">Chunk</span>::<span class="ident">StringTable</span>(<span class="ident">st</span>) <span class="op">=&gt;</span> {
+            <span class="ident">Chunk</span>::<span class="ident">StringTable</span>(<span class="ident">st</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">st</span>.<span class="ident">get_strings_len</span>(), <span class="number">2</span>);
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Second chunk should be string table&quot;</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Second chunk should be string table&quot;</span>),
         }
     }
 

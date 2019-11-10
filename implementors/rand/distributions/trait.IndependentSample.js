@@ -6,5 +6,4 @@ implementors["rand"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

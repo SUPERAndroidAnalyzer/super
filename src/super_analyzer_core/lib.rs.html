@@ -574,12 +574,12 @@
 <span class="doccomment">/// analysis.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// It will then add the configuration selected with the command line interface options.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize_config</span>(<span class="ident">cli</span>: <span class="kw-2">&amp;</span><span class="ident">ArgMatches</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Config</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize_config</span>(<span class="ident">cli</span>: <span class="kw-2">&amp;</span><span class="ident">ArgMatches</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Config</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">config_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;config.toml&quot;</span>);
     <span class="kw">let</span> <span class="ident">global_config_path</span> <span class="op">=</span> <span class="ident">Path</span>::<span class="ident">new</span>(<span class="string">&quot;/etc/super-analyzer/config.toml&quot;</span>);
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">config</span> <span class="op">=</span>
-        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_family</span> <span class="op">=</span> <span class="string">&quot;unix&quot;</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">config_path</span>.<span class="ident">exists</span>() <span class="op">&amp;&amp;</span> <span class="ident">global_config_path</span>.<span class="ident">exists</span>() {
+        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">target_family</span> <span class="op">=</span> <span class="string">&quot;unix&quot;</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">config_path</span>.<span class="ident">exists</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">global_config_path</span>.<span class="ident">exists</span>() {
             <span class="ident">Config</span>::<span class="ident">from_file</span>(<span class="kw-2">&amp;</span><span class="ident">global_config_path</span>).<span class="ident">context</span>(
                 <span class="string">&quot;there was an error when reading the /etc/super-analyzer/config.toml file&quot;</span>,
             )<span class="question-mark">?</span>
@@ -600,11 +600,11 @@
 
 <span class="doccomment">/// Analyzes the given package with the given configuration.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">print_stdout</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">analyze_package</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">analyze_package</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(
     <span class="ident">package</span>: <span class="ident">P</span>,
     <span class="ident">config</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Config</span>,
-    <span class="ident">benchmarks</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Benchmark</span><span class="op">&gt;&gt;</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="ident">benchmarks</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Benchmark</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">package_name</span> <span class="op">=</span> <span class="ident">get_package_name</span>(<span class="kw-2">&amp;</span><span class="ident">package</span>);
     <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_bench</span>() {
         <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">benchmarks</span>.<span class="ident">insert</span>(<span class="ident">package_name</span>.<span class="ident">clone</span>(), <span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">4</span>));
@@ -745,7 +745,7 @@
 <span class="doccomment">/// If the destination folder doesn&#39;t exist is created. Note that the parent folder must exist. If</span>
 <span class="doccomment">/// files in the destination folder exist with the same name as in the origin folder, they will be</span>
 <span class="doccomment">/// overwritten.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">copy_folder</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(<span class="ident">from</span>: <span class="ident">P</span>, <span class="ident">to</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">copy_folder</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">from</span>: <span class="ident">P</span>, <span class="ident">to</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="op">!</span><span class="ident">to</span>.<span class="ident">as_ref</span>().<span class="ident">exists</span>() {
         <span class="ident">fs</span>::<span class="ident">create_dir</span>(<span class="ident">to</span>.<span class="ident">as_ref</span>())<span class="question-mark">?</span>;
     }
@@ -774,7 +774,7 @@
 <span class="doccomment">/// This will initialize the environment logger structure so that it generates the</span>
 <span class="doccomment">/// proper messages using the right colors. It&#39;s called from the launcher.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">print_stdout</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize_logger</span>(<span class="ident">is_verbose</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">log</span>::<span class="ident">SetLoggerError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">initialize_logger</span>(<span class="ident">is_verbose</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">log</span>::<span class="ident">SetLoggerError</span><span class="op">&gt;</span> {
     <span class="kw">use</span> <span class="ident">env_logger</span>::<span class="ident">fmt</span>::{<span class="ident">Color</span>, <span class="ident">Formatter</span>};
     <span class="kw">use</span> <span class="ident">env_logger</span>::<span class="ident">Builder</span>;
     <span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">Level</span>, <span class="ident">LevelFilter</span>, <span class="ident">Record</span>};
@@ -784,16 +784,16 @@
     <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="op">|</span><span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span><span class="op">|</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">level_style</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">style</span>();
         <span class="kw">match</span> <span class="ident">record</span>.<span class="ident">level</span>() {
-            <span class="ident">Level</span>::<span class="ident">Warn</span> <span class="op">=&gt;</span> {
+            <span class="ident">Level</span>::<span class="ident">Warn</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">level_style</span>.<span class="ident">set_color</span>(<span class="ident">Color</span>::<span class="ident">Yellow</span>).<span class="ident">set_bold</span>(<span class="bool-val">true</span>);
             }
-            <span class="ident">Level</span>::<span class="ident">Error</span> <span class="op">=&gt;</span> {
+            <span class="ident">Level</span>::<span class="ident">Error</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">level_style</span>.<span class="ident">set_color</span>(<span class="ident">Color</span>::<span class="ident">Red</span>).<span class="ident">set_bold</span>(<span class="bool-val">true</span>);
             }
-            <span class="ident">Level</span>::<span class="ident">Debug</span> <span class="op">=&gt;</span> {
+            <span class="ident">Level</span>::<span class="ident">Debug</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="kw">_</span> <span class="op">=</span> <span class="ident">level_style</span>.<span class="ident">set_bold</span>(<span class="bool-val">true</span>);
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> {}
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
         }
 
         <span class="macro">writeln</span><span class="macro">!</span>(

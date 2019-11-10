@@ -6,5 +6,4 @@ implementors["termcolor"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

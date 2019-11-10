@@ -118,29 +118,29 @@
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">str</span>::<span class="ident">Utf8Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CharReadError</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">str</span>::<span class="ident">Utf8Error</span>) <span class="op">-&gt;</span> <span class="ident">CharReadError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">str</span>::<span class="ident">Utf8Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CharReadError</span> {
         <span class="ident">CharReadError</span>::<span class="ident">Utf8</span>(<span class="ident">e</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CharReadError</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">io</span>::<span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">CharReadError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">e</span>: <span class="ident">io</span>::<span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CharReadError</span> {
         <span class="ident">CharReadError</span>::<span class="ident">Io</span>(<span class="ident">e</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">CharReadError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">CharReadError</span>::<span class="kw-2">*</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">UnexpectedEof</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;unexpected end of stream&quot;</span>),
-            <span class="ident">Utf8</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;UTF-8 decoding error: {}&quot;</span>, <span class="ident">e</span>),
-            <span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;I/O error: {}&quot;</span>, <span class="ident">e</span>)
+            <span class="ident">UnexpectedEof</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;unexpected end of stream&quot;</span>),
+            <span class="ident">Utf8</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;UTF-8 decoding error: {}&quot;</span>, <span class="ident">e</span>),
+            <span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;I/O error: {}&quot;</span>, <span class="ident">e</span>)
         }
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_char_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span>, <span class="ident">CharReadError</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next_char_from</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">char</span><span class="op">&gt;</span>, <span class="ident">CharReadError</span><span class="op">&gt;</span> {
     <span class="kw">const</span> <span class="ident">MAX_CODEPOINT_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">4</span>;
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="ident">source</span>.<span class="ident">bytes</span>();
@@ -149,18 +149,18 @@
 
     <span class="kw">loop</span> {
         <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">bytes</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">b</span>)) <span class="op">=&gt;</span> <span class="ident">b</span>,
-            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
-            <span class="prelude-val">None</span> <span class="kw">if</span> <span class="ident">pos</span> <span class="op">==</span> <span class="number">0</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">CharReadError</span>::<span class="ident">UnexpectedEof</span>)
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">b</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">b</span>,
+            <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
+            <span class="prelude-val">None</span> <span class="kw">if</span> <span class="ident">pos</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">CharReadError</span>::<span class="ident">UnexpectedEof</span>)
         };
         <span class="ident">buf</span>[<span class="ident">pos</span>] <span class="op">=</span> <span class="ident">next</span>;
-        <span class="ident">pos</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
 
         <span class="kw">match</span> <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..<span class="ident">pos</span>]) {
-            <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">next</span>()),  <span class="comment">// always Some(..)</span>
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="ident">pos</span> <span class="op">&lt;</span> <span class="ident">MAX_CODEPOINT_LEN</span> <span class="op">=&gt;</span> {},
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>())
+            <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">next</span>()),  <span class="comment">// always Some(..)</span>
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="ident">pos</span> <span class="op">&lt;</span> <span class="ident">MAX_CODEPOINT_LEN</span> <span class="op">=</span><span class="op">&gt;</span> {},
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>())
         }
     }
 }
@@ -186,30 +186,30 @@
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;\xf0\x9f\x98&quot;</span>;         <span class="comment">// incomplete code point</span>
         <span class="kw">match</span> <span class="kw">super</span>::<span class="ident">next_char_from</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>() {
-            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">UnexpectedEof</span> <span class="op">=&gt;</span> {},
-            <span class="ident">e</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
+            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">UnexpectedEof</span> <span class="op">=</span><span class="op">&gt;</span> {},
+            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
         };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;\xff\x9f\x98\x32&quot;</span>;     <span class="comment">// invalid code point</span>
         <span class="kw">match</span> <span class="kw">super</span>::<span class="ident">next_char_from</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>() {
-            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">Utf8</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {},
-            <span class="ident">e</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
+            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">Utf8</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {},
+            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
         };
 
 
         <span class="comment">// error during read</span>
         <span class="kw">struct</span> <span class="ident">ErrorReader</span>;
         <span class="kw">impl</span> <span class="ident">io</span>::<span class="ident">Read</span> <span class="kw">for</span> <span class="ident">ErrorReader</span> {
-            <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+            <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                 <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;test error&quot;</span>))
             }
         }
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">ErrorReader</span>;
         <span class="kw">match</span> <span class="kw">super</span>::<span class="ident">next_char_from</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">r</span>).<span class="ident">unwrap_err</span>() {
-            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span> <span class="op">&amp;&amp;</span>
-                                               <span class="ident">e</span>.<span class="ident">description</span>() <span class="op">==</span> <span class="string">&quot;test error&quot;</span> <span class="op">=&gt;</span> {},
-            <span class="ident">e</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
+            <span class="kw">super</span>::<span class="ident">CharReadError</span>::<span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span>
+                                               <span class="ident">e</span>.<span class="ident">description</span>() <span class="op">=</span><span class="op">=</span> <span class="string">&quot;test error&quot;</span> <span class="op">=</span><span class="op">&gt;</span> {},
+            <span class="ident">e</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Unexpected result: {:?}&quot;</span>, <span class="ident">e</span>)
         }
     }
 }

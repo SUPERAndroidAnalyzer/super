@@ -157,41 +157,41 @@
 <span class="kw">impl</span> <span class="ident">TextPosition</span> {
     <span class="doccomment">/// Creates a new position initialized to the beginning of the document</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">TextPosition</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TextPosition</span> {
         <span class="ident">TextPosition</span> { <span class="ident">row</span>: <span class="number">0</span>, <span class="ident">column</span>: <span class="number">0</span> }
     }
 
     <span class="doccomment">/// Advances the position in a line</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">count</span>: <span class="ident">u8</span>) {
-        <span class="self">self</span>.<span class="ident">column</span> <span class="op">+=</span> <span class="ident">count</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">column</span> <span class="op">+</span><span class="op">=</span> <span class="ident">count</span> <span class="kw">as</span> <span class="ident">u64</span>;
     }
 
     <span class="doccomment">/// Advances the position in a line to the next tab position</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">advance_to_tab</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">width</span>: <span class="ident">u8</span>) {
         <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="ident">width</span> <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="self">self</span>.<span class="ident">column</span> <span class="op">+=</span> <span class="ident">width</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">column</span> <span class="op">%</span> <span class="ident">width</span>
+        <span class="self">self</span>.<span class="ident">column</span> <span class="op">+</span><span class="op">=</span> <span class="ident">width</span> <span class="op">-</span> <span class="self">self</span>.<span class="ident">column</span> <span class="op">%</span> <span class="ident">width</span>
     }
 
     <span class="doccomment">/// Advances the position to the beginning of the next line</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_line</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">column</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="self">self</span>.<span class="ident">row</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="self">self</span>.<span class="ident">row</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">TextPosition</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">row</span> <span class="op">+</span> <span class="number">1</span>, <span class="self">self</span>.<span class="ident">column</span> <span class="op">+</span> <span class="number">1</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TextPosition</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">row</span> <span class="op">+</span> <span class="number">1</span>, <span class="self">self</span>.<span class="ident">column</span> <span class="op">+</span> <span class="number">1</span>)
     }
 }
@@ -201,12 +201,12 @@
 <span class="doccomment">/// This trait is implemented by parsers, lexers and errors.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Position</span> {
     <span class="doccomment">/// Returns the current position or a position corresponding to the object.</span>
-    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">TextPosition</span>;
+    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TextPosition</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">Position</span> <span class="kw">for</span> <span class="ident">TextPosition</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">TextPosition</span> {
+    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TextPosition</span> {
         <span class="kw-2">*</span><span class="self">self</span>
     }
 }
@@ -222,16 +222,16 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">XmlVersion</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">XmlVersion</span>::<span class="ident">Version10</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;1.0&quot;</span>),
-            <span class="ident">XmlVersion</span>::<span class="ident">Version11</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;1.1&quot;</span>)
+            <span class="ident">XmlVersion</span>::<span class="ident">Version10</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;1.0&quot;</span>),
+            <span class="ident">XmlVersion</span>::<span class="ident">Version11</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;1.1&quot;</span>)
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">XmlVersion</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="ident">fmt</span>::<span class="ident">Display</span>::<span class="ident">fmt</span>(<span class="self">self</span>, <span class="ident">f</span>)
     }
 }
@@ -240,17 +240,17 @@
 <span class="doccomment">/// as is defined by XML 1.1 specification, [section 2.3][1].</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [1]: http://www.w3.org/TR/2006/REC-xml11-20060816/#sec-common-syn</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_whitespace_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_whitespace_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="string">&#39;\x20&#39;</span> <span class="op">|</span> <span class="string">&#39;\x09&#39;</span> <span class="op">|</span> <span class="string">&#39;\x0d&#39;</span> <span class="op">|</span> <span class="string">&#39;\x0a&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>
+        <span class="string">&#39;\x20&#39;</span> <span class="op">|</span> <span class="string">&#39;\x09&#39;</span> <span class="op">|</span> <span class="string">&#39;\x0d&#39;</span> <span class="op">|</span> <span class="string">&#39;\x0a&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>
     }
 }
 
 <span class="doccomment">/// Checks whether the given string is compound only by white space</span>
 <span class="doccomment">/// characters (`S`) using the previous is_whitespace_char to check</span>
 <span class="doccomment">/// all characters of this string</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_whitespace_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_whitespace_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="ident">s</span>.<span class="ident">chars</span>().<span class="ident">all</span>(<span class="ident">is_whitespace_char</span>)
 }
 
@@ -258,7 +258,7 @@
 <span class="doccomment">/// as is defined by XML 1.1 specification, [section 2.3][1].</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [1]: http://www.w3.org/TR/2006/REC-xml11-20060816/#sec-common-syn</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_name_start_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_name_start_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="ident">c</span> {
         <span class="string">&#39;:&#39;</span> <span class="op">|</span> <span class="string">&#39;A&#39;</span>...<span class="string">&#39;Z&#39;</span> <span class="op">|</span> <span class="string">&#39;_&#39;</span> <span class="op">|</span> <span class="string">&#39;a&#39;</span>...<span class="string">&#39;z&#39;</span> <span class="op">|</span>
         <span class="string">&#39;\u{C0}&#39;</span>...<span class="string">&#39;\u{D6}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{D8}&#39;</span>...<span class="string">&#39;\u{F6}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{F8}&#39;</span>...<span class="string">&#39;\u{2FF}&#39;</span> <span class="op">|</span>
@@ -266,8 +266,8 @@
         <span class="string">&#39;\u{200C}&#39;</span>...<span class="string">&#39;\u{200D}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{2070}&#39;</span>...<span class="string">&#39;\u{218F}&#39;</span> <span class="op">|</span>
         <span class="string">&#39;\u{2C00}&#39;</span>...<span class="string">&#39;\u{2FEF}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{3001}&#39;</span>...<span class="string">&#39;\u{D7FF}&#39;</span> <span class="op">|</span>
         <span class="string">&#39;\u{F900}&#39;</span>...<span class="string">&#39;\u{FDCF}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{FDF0}&#39;</span>...<span class="string">&#39;\u{FFFD}&#39;</span> <span class="op">|</span>
-        <span class="string">&#39;\u{10000}&#39;</span>...<span class="string">&#39;\u{EFFFF}&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>
+        <span class="string">&#39;\u{10000}&#39;</span>...<span class="string">&#39;\u{EFFFF}&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>
     }
 }
 
@@ -275,12 +275,12 @@
 <span class="doccomment">/// as is defined by XML 1.1 specification, [section 2.3][1].</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// [1]: http://www.w3.org/TR/2006/REC-xml11-20060816/#sec-common-syn</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_name_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_name_char</span>(<span class="ident">c</span>: <span class="ident">char</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="ident">c</span> {
-        <span class="kw">_</span> <span class="kw">if</span> <span class="ident">is_name_start_char</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+        <span class="kw">_</span> <span class="kw">if</span> <span class="ident">is_name_start_char</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
         <span class="string">&#39;-&#39;</span> <span class="op">|</span> <span class="string">&#39;.&#39;</span> <span class="op">|</span> <span class="string">&#39;0&#39;</span>...<span class="string">&#39;9&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{B7}&#39;</span> <span class="op">|</span>
-        <span class="string">&#39;\u{300}&#39;</span>...<span class="string">&#39;\u{3F6}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{203F}&#39;</span>...<span class="string">&#39;\u{2040}&#39;</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>
+        <span class="string">&#39;\u{300}&#39;</span>...<span class="string">&#39;\u{3F6}&#39;</span> <span class="op">|</span> <span class="string">&#39;\u{203F}&#39;</span>...<span class="string">&#39;\u{2040}&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>
     }
 }
 </pre></div>

@@ -239,13 +239,13 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StandardNormal</span>(<span class="kw">pub</span> <span class="ident">f64</span>);
 
 <span class="kw">impl</span> <span class="ident">Rand</span> <span class="kw">for</span> <span class="ident">StandardNormal</span> {
-    <span class="kw">fn</span> <span class="ident">rand</span><span class="op">&lt;</span><span class="ident">R</span>:<span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">StandardNormal</span> {
+    <span class="kw">fn</span> <span class="ident">rand</span><span class="op">&lt;</span><span class="ident">R</span>:<span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">StandardNormal</span> {
         <span class="attribute">#[<span class="ident">inline</span>]</span>
-        <span class="kw">fn</span> <span class="ident">pdf</span>(<span class="ident">x</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> {
+        <span class="kw">fn</span> <span class="ident">pdf</span>(<span class="ident">x</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
             (<span class="op">-</span><span class="ident">x</span><span class="kw-2">*</span><span class="ident">x</span><span class="op">/</span><span class="number">2.0</span>).<span class="ident">exp</span>()
         }
         <span class="attribute">#[<span class="ident">inline</span>]</span>
-        <span class="kw">fn</span> <span class="ident">zero_case</span><span class="op">&lt;</span><span class="ident">R</span>:<span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>, <span class="ident">u</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> {
+        <span class="kw">fn</span> <span class="ident">zero_case</span><span class="op">&lt;</span><span class="ident">R</span>:<span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>, <span class="ident">u</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
             <span class="comment">// compute a random number in the tail by hand</span>
 
             <span class="comment">// strange initial conditions, because the loop is not</span>
@@ -256,8 +256,8 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">y</span> <span class="op">=</span> <span class="number">0.0f64</span>;
 
             <span class="kw">while</span> <span class="op">-</span><span class="number">2.0</span> <span class="op">*</span> <span class="ident">y</span> <span class="op">&lt;</span> <span class="ident">x</span> <span class="op">*</span> <span class="ident">x</span> {
-                <span class="kw">let</span> <span class="ident">Open01</span>(<span class="ident">x_</span>) <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">Open01</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;&gt;</span>();
-                <span class="kw">let</span> <span class="ident">Open01</span>(<span class="ident">y_</span>) <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">Open01</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;&gt;</span>();
+                <span class="kw">let</span> <span class="ident">Open01</span>(<span class="ident">x_</span>) <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">Open01</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+                <span class="kw">let</span> <span class="ident">Open01</span>(<span class="ident">y_</span>) <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">Open01</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span>();
 
                 <span class="ident">x</span> <span class="op">=</span> <span class="ident">x_</span>.<span class="ident">ln</span>() <span class="op">/</span> <span class="ident">ziggurat_tables</span>::<span class="ident">ZIG_NORM_R</span>;
                 <span class="ident">y</span> <span class="op">=</span> <span class="ident">y_</span>.<span class="ident">ln</span>();
@@ -304,8 +304,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if `std_dev &lt; 0`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">mean</span>: <span class="ident">f64</span>, <span class="ident">std_dev</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="ident">Normal</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">std_dev</span> <span class="op">&gt;=</span> <span class="number">0.0</span>, <span class="string">&quot;Normal::new called with `std_dev` &lt; 0&quot;</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">mean</span>: <span class="ident">f64</span>, <span class="ident">std_dev</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Normal</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">std_dev</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0.0</span>, <span class="string">&quot;Normal::new called with `std_dev` &lt; 0&quot;</span>);
         <span class="ident">Normal</span> {
             <span class="ident">mean</span>: <span class="ident">mean</span>,
             <span class="ident">std_dev</span>: <span class="ident">std_dev</span>
@@ -313,10 +313,10 @@
     }
 }
 <span class="kw">impl</span> <span class="ident">Sample</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Normal</span> {
-    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>) }
+    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>) }
 }
 <span class="kw">impl</span> <span class="ident">IndependentSample</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Normal</span> {
-    <span class="kw">fn</span> <span class="ident">ind_sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> {
+    <span class="kw">fn</span> <span class="ident">ind_sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
         <span class="kw">let</span> <span class="ident">StandardNormal</span>(<span class="ident">n</span>) <span class="op">=</span> <span class="ident">rng</span>.<span class="ident">gen</span>::<span class="op">&lt;</span><span class="ident">StandardNormal</span><span class="op">&gt;</span>();
         <span class="self">self</span>.<span class="ident">mean</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">std_dev</span> <span class="op">*</span> <span class="ident">n</span>
     }
@@ -351,16 +351,16 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if `std_dev &lt; 0`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">mean</span>: <span class="ident">f64</span>, <span class="ident">std_dev</span>: <span class="ident">f64</span>) <span class="op">-&gt;</span> <span class="ident">LogNormal</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">std_dev</span> <span class="op">&gt;=</span> <span class="number">0.0</span>, <span class="string">&quot;LogNormal::new called with `std_dev` &lt; 0&quot;</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">mean</span>: <span class="ident">f64</span>, <span class="ident">std_dev</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LogNormal</span> {
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">std_dev</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0.0</span>, <span class="string">&quot;LogNormal::new called with `std_dev` &lt; 0&quot;</span>);
         <span class="ident">LogNormal</span> { <span class="ident">norm</span>: <span class="ident">Normal</span>::<span class="ident">new</span>(<span class="ident">mean</span>, <span class="ident">std_dev</span>) }
     }
 }
 <span class="kw">impl</span> <span class="ident">Sample</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LogNormal</span> {
-    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>) }
+    <span class="kw">fn</span> <span class="ident">sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> { <span class="self">self</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>) }
 }
 <span class="kw">impl</span> <span class="ident">IndependentSample</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">LogNormal</span> {
-    <span class="kw">fn</span> <span class="ident">ind_sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">f64</span> {
+    <span class="kw">fn</span> <span class="ident">ind_sample</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
         <span class="self">self</span>.<span class="ident">norm</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>).<span class="ident">exp</span>()
     }
 }

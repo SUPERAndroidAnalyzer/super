@@ -697,32 +697,32 @@
 
 <span class="kw">impl</span> <span class="ident">OsRng</span> {
     <span class="doccomment">/// Create a new `OsRng`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
         <span class="ident">imp</span>::<span class="ident">OsRng</span>::<span class="ident">new</span>().<span class="ident">map</span>(<span class="ident">OsRng</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-    <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">next_u32</span>() }
-    <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">next_u64</span>() }
+    <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">next_u32</span>() }
+    <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">next_u64</span>() }
     <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) { <span class="self">self</span>.<span class="number">0</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>) }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;OsRng {{}}&quot;</span>)
     }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;sgx&quot;</span>))]</span>
-<span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="ident">fill_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+<span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="ident">fill_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: [<span class="ident">u8</span>; <span class="number">4</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="number">4</span>];
     <span class="ident">fill_buf</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
     <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>::<span class="op">&lt;</span>[<span class="ident">u8</span>; <span class="number">4</span>], <span class="ident">u32</span><span class="op">&gt;</span>(<span class="ident">buf</span>) }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_env</span> <span class="op">=</span> <span class="string">&quot;sgx&quot;</span>))]</span>
-<span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="ident">fill_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+<span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="ident">fill_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: [<span class="ident">u8</span>; <span class="number">8</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
     <span class="ident">fill_buf</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
     <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>::<span class="op">&lt;</span>[<span class="ident">u8</span>; <span class="number">8</span>], <span class="ident">u64</span><span class="op">&gt;</span>(<span class="ident">buf</span>) }
@@ -751,9 +751,9 @@
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;arm&quot;</span>,
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>,
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;powerpc&quot;</span>)))]</span>
-    <span class="kw">fn</span> <span class="ident">getrandom</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span> {
+    <span class="kw">fn</span> <span class="ident">getrandom</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span> {
         <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> {
-            <span class="kw">fn</span> <span class="ident">syscall</span>(<span class="ident">number</span>: <span class="ident">libc</span>::<span class="ident">c_long</span>, ...) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
+            <span class="kw">fn</span> <span class="ident">syscall</span>(<span class="ident">number</span>: <span class="ident">libc</span>::<span class="ident">c_long</span>, ...) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span>;
         }
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;x86_64&quot;</span>)]</span>
@@ -778,22 +778,22 @@
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;arm&quot;</span>,
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>,
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;powerpc&quot;</span>))))]</span>
-    <span class="kw">fn</span> <span class="ident">getrandom</span>(<span class="ident">_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span> { <span class="op">-</span><span class="number">1</span> }
+    <span class="kw">fn</span> <span class="ident">getrandom</span>(<span class="ident">_buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_long</span> { <span class="op">-</span><span class="number">1</span> }
 
     <span class="kw">fn</span> <span class="ident">getrandom_fill_bytes</span>(<span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">read</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">v</span>.<span class="ident">len</span>();
         <span class="kw">while</span> <span class="ident">read</span> <span class="op">&lt;</span> <span class="ident">len</span> {
             <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">getrandom</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">v</span>[<span class="ident">read</span>..]);
-            <span class="kw">if</span> <span class="ident">result</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
+            <span class="kw">if</span> <span class="ident">result</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
                 <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>();
-                <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> {
+                <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> {
                     <span class="kw">continue</span>
                 } <span class="kw">else</span> {
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected getrandom error: {}&quot;</span>, <span class="ident">err</span>);
                 }
             } <span class="kw">else</span> {
-                <span class="ident">read</span> <span class="op">+=</span> <span class="ident">result</span> <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="ident">read</span> <span class="op">+</span><span class="op">=</span> <span class="ident">result</span> <span class="kw">as</span> <span class="ident">usize</span>;
             }
         }
     }
@@ -804,19 +804,19 @@
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;arm&quot;</span>,
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>,
                   <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;powerpc&quot;</span>)))]</span>
-    <span class="kw">fn</span> <span class="ident">is_getrandom_available</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">is_getrandom_available</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">ATOMIC_BOOL_INIT</span>, <span class="ident">Ordering</span>};
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Once</span>, <span class="ident">ONCE_INIT</span>};
 
         <span class="kw">static</span> <span class="ident">CHECKER</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">ONCE_INIT</span>;
         <span class="kw">static</span> <span class="ident">AVAILABLE</span>: <span class="ident">AtomicBool</span> <span class="op">=</span> <span class="ident">ATOMIC_BOOL_INIT</span>;
 
-        <span class="ident">CHECKER</span>.<span class="ident">call_once</span>(<span class="op">||</span> {
+        <span class="ident">CHECKER</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: [<span class="ident">u8</span>; <span class="number">0</span>] <span class="op">=</span> [];
             <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">getrandom</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-            <span class="kw">let</span> <span class="ident">available</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">result</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
+            <span class="kw">let</span> <span class="ident">available</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">result</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
                 <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>().<span class="ident">raw_os_error</span>();
-                <span class="ident">err</span> <span class="op">!=</span> <span class="prelude-val">Some</span>(<span class="ident">libc</span>::<span class="ident">ENOSYS</span>)
+                <span class="ident">err</span> <span class="op">!</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">libc</span>::<span class="ident">ENOSYS</span>)
             } <span class="kw">else</span> {
                 <span class="bool-val">true</span>
             };
@@ -832,7 +832,7 @@
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;arm&quot;</span>,
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;aarch64&quot;</span>,
                       <span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;powerpc&quot;</span>))))]</span>
-    <span class="kw">fn</span> <span class="ident">is_getrandom_available</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">false</span> }
+    <span class="kw">fn</span> <span class="ident">is_getrandom_available</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> { <span class="bool-val">false</span> }
 
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span> {
         <span class="ident">inner</span>: <span class="ident">OsRngInner</span>,
@@ -844,7 +844,7 @@
     }
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="ident">is_getrandom_available</span>() {
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span> { <span class="ident">inner</span>: <span class="ident">OsGetrandomRng</span> });
             }
@@ -857,22 +857,22 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span> {
-                <span class="ident">OsGetrandomRng</span> <span class="op">=&gt;</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">getrandom_fill_bytes</span>),
-                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=&gt;</span> <span class="ident">rng</span>.<span class="ident">next_u32</span>(),
+                <span class="ident">OsGetrandomRng</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">getrandom_fill_bytes</span>),
+                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">rng</span>.<span class="ident">next_u32</span>(),
             }
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span> {
-                <span class="ident">OsGetrandomRng</span> <span class="op">=&gt;</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">getrandom_fill_bytes</span>),
-                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=&gt;</span> <span class="ident">rng</span>.<span class="ident">next_u64</span>(),
+                <span class="ident">OsGetrandomRng</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">getrandom_fill_bytes</span>),
+                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">rng</span>.<span class="ident">next_u64</span>(),
             }
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span> {
-                <span class="ident">OsGetrandomRng</span> <span class="op">=&gt;</span> <span class="ident">getrandom_fill_bytes</span>(<span class="ident">v</span>),
-                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=&gt;</span> <span class="ident">rng</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>)
+                <span class="ident">OsGetrandomRng</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">getrandom_fill_bytes</span>(<span class="ident">v</span>),
+                <span class="ident">OsReadRng</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">rng</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">rng</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>)
             }
         }
     }
@@ -899,27 +899,27 @@
     <span class="attribute">#[<span class="ident">link</span>(<span class="ident">name</span> <span class="op">=</span> <span class="string">&quot;Security&quot;</span>, <span class="ident">kind</span> <span class="op">=</span> <span class="string">&quot;framework&quot;</span>)]</span>
     <span class="kw">extern</span> {
         <span class="kw">fn</span> <span class="ident">SecRandomCopyBytes</span>(<span class="ident">rnd</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">SecRandom</span>,
-                              <span class="ident">count</span>: <span class="ident">size_t</span>, <span class="ident">bytes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">c_int</span>;
+                              <span class="ident">count</span>: <span class="ident">size_t</span>, <span class="ident">bytes</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span>;
     }
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span>)
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
             <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
                 <span class="ident">SecRandomCopyBytes</span>(<span class="ident">kSecRandomDefault</span>, <span class="ident">v</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">size_t</span>, <span class="ident">v</span>.<span class="ident">as_mut_ptr</span>())
             };
-            <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
+            <span class="kw">if</span> <span class="ident">ret</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
                 <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;couldn&#39;t generate random bytes: {}&quot;</span>, <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>());
             }
         }
@@ -939,16 +939,16 @@
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>;
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span>)
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -961,7 +961,7 @@
                                  <span class="ident">s</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s_len</span>,
                                  <span class="ident">ptr</span>::<span class="ident">null</span>(), <span class="number">0</span>)
                 };
-                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> <span class="op">||</span> <span class="ident">s_len</span> <span class="op">!=</span> <span class="ident">s</span>.<span class="ident">len</span>() {
+                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> <span class="op">|</span><span class="op">|</span> <span class="ident">s_len</span> <span class="op">!</span><span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() {
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;kern.arandom sysctl failed! (returned {}, s.len() {}, oldlenp {})&quot;</span>,
                            <span class="ident">ret</span>, <span class="ident">s</span>.<span class="ident">len</span>(), <span class="ident">s_len</span>);
                 }
@@ -983,16 +983,16 @@
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>;
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span>)
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -1001,7 +1001,7 @@
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
                     <span class="ident">libc</span>::<span class="ident">getentropy</span>(<span class="ident">s</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_void</span>, <span class="ident">s</span>.<span class="ident">len</span>())
                 };
-                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="op">-</span><span class="number">1</span> {
+                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">=</span><span class="op">=</span> <span class="op">-</span><span class="number">1</span> {
                     <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>();
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;getentropy failed: {}&quot;</span>, <span class="ident">err</span>);
                 }
@@ -1023,7 +1023,7 @@
     }
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="macro">try</span><span class="macro">!</span>(<span class="ident">File</span>::<span class="ident">open</span>(<span class="string">&quot;rand:&quot;</span>));
             <span class="kw">let</span> <span class="ident">reader_rng</span> <span class="op">=</span> <span class="ident">ReadRng</span>::<span class="ident">new</span>(<span class="ident">reader</span>);
 
@@ -1032,10 +1032,10 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">next_u32</span>()
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">next_u64</span>()
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -1057,16 +1057,16 @@
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>;
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span>)
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -1092,16 +1092,16 @@
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>;
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span>)
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -1111,7 +1111,7 @@
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">unsafe</span> {
                     <span class="ident">RtlGenRandom</span>(<span class="ident">slice</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="ident">PVOID</span>, <span class="ident">slice</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">ULONG</span>)
                 };
-                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">==</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">ret</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;couldn&#39;t generate random bytes: {}&quot;</span>,
                            <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">last_os_error</span>());
                 }
@@ -1133,12 +1133,12 @@
     <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>(<span class="kw">extern</span> <span class="kw">fn</span>(<span class="ident">dest</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_void</span>,
                                <span class="ident">bytes</span>: <span class="ident">libc</span>::<span class="ident">size_t</span>,
-                               <span class="ident">read</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span>);
+                               <span class="ident">read</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span>);
 
     <span class="kw">extern</span> {
         <span class="kw">fn</span> <span class="ident">nacl_interface_query</span>(<span class="ident">name</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span>,
                                 <span class="ident">table</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_void</span>,
-                                <span class="ident">table_size</span>: <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">size_t</span>;
+                                <span class="ident">table_size</span>: <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">size_t</span>;
     }
 
     <span class="kw">const</span> <span class="ident">INTERFACE</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> [<span class="ident">u8</span>] <span class="op">=</span> <span class="string">b&quot;nacl-irt-random-0.1\0&quot;</span>;
@@ -1147,11 +1147,11 @@
     <span class="kw">struct</span> <span class="ident">NaClIRTRandom</span> {
         <span class="ident">get_random_bytes</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">extern</span> <span class="kw">fn</span>(<span class="ident">dest</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_void</span>,
                                            <span class="ident">bytes</span>: <span class="ident">libc</span>::<span class="ident">size_t</span>,
-                                           <span class="ident">read</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span><span class="op">&gt;</span>,
+                                           <span class="ident">read</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">size_t</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span><span class="op">&gt;</span>,
     }
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iface</span> <span class="op">=</span> <span class="ident">NaClIRTRandom</span> {
                 <span class="ident">get_random_bytes</span>: <span class="prelude-val">None</span>,
             };
@@ -1160,7 +1160,7 @@
                                      <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">iface</span>),
                                      <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">NaClIRTRandom</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">size_t</span>)
             };
-            <span class="kw">if</span> <span class="ident">result</span> <span class="op">!=</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="ident">result</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
                 <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">iface</span>.<span class="ident">get_random_bytes</span>.<span class="ident">is_some</span>());
                 <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">OsRng</span>(<span class="ident">iface</span>.<span class="ident">get_random_bytes</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>());
                 <span class="prelude-val">Ok</span>(<span class="ident">result</span>)
@@ -1173,10 +1173,10 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
-        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="op">|</span><span class="ident">v</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">fill_bytes</span>(<span class="ident">v</span>))
         }
         <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
@@ -1187,10 +1187,10 @@
                 <span class="kw">let</span> <span class="ident">error</span> <span class="op">=</span> (<span class="self">self</span>.<span class="number">0</span>)(<span class="ident">v</span>[<span class="ident">read</span>..].<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>,
                                      (<span class="ident">len</span> <span class="op">-</span> <span class="ident">read</span>) <span class="kw">as</span> <span class="ident">libc</span>::<span class="ident">size_t</span>,
                                      <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">r</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>);
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">error</span> <span class="op">==</span> <span class="number">0</span>, <span class="string">&quot;`get_random_bytes` failed!&quot;</span>);
-                <span class="ident">read</span> <span class="op">+=</span> <span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">error</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>, <span class="string">&quot;`get_random_bytes` failed!&quot;</span>);
+                <span class="ident">read</span> <span class="op">+</span><span class="op">=</span> <span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>;
 
-                <span class="kw">if</span> <span class="ident">read</span> <span class="op">&gt;=</span> <span class="ident">v</span>.<span class="ident">len</span>() { <span class="kw">break</span>; }
+                <span class="kw">if</span> <span class="ident">read</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">v</span>.<span class="ident">len</span>() { <span class="kw">break</span>; }
             }
         }
     }
@@ -1205,13 +1205,13 @@
     <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">OsRng</span>;
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;Not supported&quot;</span>))
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">OsRng</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Not supported&quot;</span>)
         }
     }
@@ -1228,31 +1228,31 @@
     }
 
     <span class="kw">impl</span> <span class="ident">OsRng</span> {
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">OsRng</span><span class="op">&gt;</span> {
             <span class="kw">match</span> <span class="ident">RdRand</span>::<span class="ident">new</span>() {
-                <span class="prelude-val">Ok</span>(<span class="ident">rng</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span> { <span class="ident">gen</span>: <span class="ident">rng</span> }),
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;Not supported&quot;</span>))
+                <span class="prelude-val">Ok</span>(<span class="ident">rng</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">OsRng</span> { <span class="ident">gen</span>: <span class="ident">rng</span> }),
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;Not supported&quot;</span>))
             }
         }
 
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">gen</span>.<span class="ident">try_next_u32</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span>,
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
+                <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">n</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
             }
         }
 
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">gen</span>.<span class="ident">try_next_u64</span>() {
-                <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span>,
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
+                <span class="prelude-val">Some</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">n</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
             }
         }
 
         <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
             <span class="kw">match</span> <span class="self">self</span>.<span class="ident">gen</span>.<span class="ident">try_fill_bytes</span>(<span class="ident">v</span>) {
-                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {},
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
+                <span class="prelude-val">Ok</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {},
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Non-recoverable hardware failure has occured&quot;</span>)
             }
         }
     }
@@ -1284,7 +1284,7 @@
             <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">channel</span>();
             <span class="ident">txs</span>.<span class="ident">push</span>(<span class="ident">tx</span>);
 
-            <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span><span class="op">||</span> {
+            <span class="ident">thread</span>::<span class="ident">spawn</span>(<span class="kw">move</span><span class="op">|</span><span class="op">|</span> {
                 <span class="comment">// wait until all the tasks are ready to go.</span>
                 <span class="ident">rx</span>.<span class="ident">recv</span>().<span class="ident">unwrap</span>();
 

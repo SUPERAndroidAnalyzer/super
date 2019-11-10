@@ -131,7 +131,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Apk</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_path</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_path</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buffer</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">fs</span>::<span class="ident">File</span>::<span class="ident">open</span>(<span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">zip_handler</span> <span class="op">=</span> <span class="ident">ZipArchive</span>::<span class="ident">new</span>(<span class="ident">file</span>)<span class="question-mark">?</span>;
@@ -147,7 +147,7 @@
 
     <span class="doccomment">/// It exports to target output_path the contents of the APK, transcoding the binary XML files</span>
     <span class="doccomment">/// found on it.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">output_path</span>: <span class="ident">P</span>, <span class="ident">force</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">export</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">output_path</span>: <span class="ident">P</span>, <span class="ident">force</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">visitor</span>::<span class="ident">XmlVisitor</span>;
 
         <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="self">self</span>
@@ -155,7 +155,7 @@
             .<span class="ident">get_decoder</span>()
             .<span class="ident">context</span>(<span class="string">&quot;could not get the decoder&quot;</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">if</span> <span class="ident">fs</span>::<span class="ident">create_dir_all</span>(<span class="kw-2">&amp;</span><span class="ident">output_path</span>).<span class="ident">is_err</span>() <span class="op">&amp;&amp;</span> <span class="ident">force</span> {
+        <span class="kw">if</span> <span class="ident">fs</span>::<span class="ident">create_dir_all</span>(<span class="kw-2">&amp;</span><span class="ident">output_path</span>).<span class="ident">is_err</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">force</span> {
             <span class="ident">fs</span>::<span class="ident">remove_dir_all</span>(<span class="kw-2">&amp;</span><span class="ident">output_path</span>).<span class="ident">context</span>(<span class="macro">format_err</span><span class="macro">!</span>(
                 <span class="string">&quot;could not clean target directory: {}&quot;</span>,
                 <span class="ident">output_path</span>.<span class="ident">as_ref</span>().<span class="ident">display</span>()
@@ -182,8 +182,8 @@
                 (<span class="ident">is_xml</span>, <span class="ident">contents</span>)
             };
 
-            <span class="kw">let</span> <span class="ident">contents</span> <span class="op">=</span> <span class="kw">if</span> (<span class="ident">file_name</span>.<span class="ident">starts_with</span>(<span class="string">&quot;res/&quot;</span>) <span class="op">&amp;&amp;</span> <span class="ident">file_name</span>.<span class="ident">ends_with</span>(<span class="string">&quot;.xml&quot;</span>))
-                <span class="op">||</span> <span class="ident">file_name</span> <span class="op">==</span> <span class="string">&quot;AndroidManifest.xml&quot;</span>
+            <span class="kw">let</span> <span class="ident">contents</span> <span class="op">=</span> <span class="kw">if</span> (<span class="ident">file_name</span>.<span class="ident">starts_with</span>(<span class="string">&quot;res/&quot;</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">file_name</span>.<span class="ident">ends_with</span>(<span class="string">&quot;.xml&quot;</span>))
+                <span class="op">|</span><span class="op">|</span> <span class="ident">file_name</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;AndroidManifest.xml&quot;</span>
             {
                 <span class="ident">decoder</span>
                     .<span class="ident">xml_visitor</span>(<span class="kw-2">&amp;</span><span class="ident">contents</span>)
@@ -200,11 +200,11 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">write_file</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">R</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(
+    <span class="kw">fn</span> <span class="ident">write_file</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span>, <span class="ident">R</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(
         <span class="ident">base_path</span>: <span class="ident">B</span>,
         <span class="ident">relative</span>: <span class="ident">R</span>,
         <span class="ident">content</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">full_path</span> <span class="op">=</span> <span class="ident">base_path</span>.<span class="ident">as_ref</span>().<span class="ident">join</span>(<span class="kw-2">&amp;</span><span class="ident">relative</span>);
         <span class="comment">// println!(&quot;Full path: {}&quot;, full_path.display());</span>
         <span class="ident">fs</span>::<span class="ident">create_dir_all</span>(<span class="ident">full_path</span>.<span class="ident">parent</span>().<span class="ident">unwrap</span>())

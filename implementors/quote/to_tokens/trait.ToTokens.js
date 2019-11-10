@@ -7,5 +7,4 @@ implementors["synstructure"] = [{text:"impl <a class=\"trait\" href=\"quote/to_t
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

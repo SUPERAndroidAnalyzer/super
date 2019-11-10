@@ -6,5 +6,4 @@ implementors["hex"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

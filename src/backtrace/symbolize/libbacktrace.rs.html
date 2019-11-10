@@ -530,7 +530,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymbolName</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymbolName</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="op">|</span><span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span><span class="op">|</span> {
             <span class="kw">unsafe</span> {
                 <span class="kw">if</span> <span class="ident">ptr</span>.<span class="ident">is_null</span>() {
@@ -545,8 +545,8 @@
             }
         };
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">symname</span>, .. } <span class="op">=&gt;</span> <span class="ident">symbol</span>(<span class="ident">symname</span>),
-            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">function</span>, <span class="ident">symname</span>, .. } <span class="op">=&gt;</span> {
+            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">symname</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">symbol</span>(<span class="ident">symname</span>),
+            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">function</span>, <span class="ident">symname</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// If possible prefer the `function` name which comes from</span>
                 <span class="comment">// debuginfo and can typically be more accurate for inline</span>
                 <span class="comment">// frames for example. If that&#39;s not present though fall back to</span>
@@ -561,54 +561,54 @@
                 }
                 <span class="ident">symbol</span>(<span class="ident">symname</span>)
             }
-            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">name</span>(),
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">s</span>.<span class="ident">name</span>(),
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">addr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">addr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pc</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">pc</span>, .. } <span class="op">=&gt;</span> <span class="ident">pc</span>,
-            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">pc</span>, .. } <span class="op">=&gt;</span> <span class="ident">pc</span>,
-            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">s</span>.<span class="ident">addr</span>(),
+            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">pc</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">pc</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">pc</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">pc</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">s</span>.<span class="ident">addr</span>(),
         };
-        <span class="kw">if</span> <span class="ident">pc</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="ident">pc</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
             <span class="prelude-val">Some</span>(<span class="ident">pc</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>)
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">filename_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">filename_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">filename</span>, .. } <span class="op">=&gt;</span> {
+            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">filename</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">filename</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>;
                 <span class="kw">unsafe</span> {
                     <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">strlen</span>(<span class="ident">filename</span>);
                     <span class="prelude-val">Some</span>(<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(<span class="ident">ptr</span>, <span class="ident">len</span>))
                 }
             }
-            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesOrWideString</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename_raw</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesOrWideString</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">filename_bytes</span>().<span class="ident">map</span>(<span class="ident">BytesOrWideString</span>::<span class="ident">Bytes</span>)
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filename</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span><span class="op">&gt;</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>;
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">unix</span>)]</span>
-        <span class="kw">fn</span> <span class="ident">bytes2path</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Path</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">bytes2path</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Path</span><span class="op">&gt;</span> {
             <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ffi</span>::<span class="ident">OsStr</span>;
             <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
             <span class="prelude-val">Some</span>(<span class="ident">Path</span>::<span class="ident">new</span>(<span class="ident">OsStr</span>::<span class="ident">from_bytes</span>(<span class="ident">bytes</span>)))
         }
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
-        <span class="kw">fn</span> <span class="ident">bytes2path</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Path</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">bytes2path</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Path</span><span class="op">&gt;</span> {
             <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>;
             <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">bytes</span>).<span class="ident">ok</span>().<span class="ident">map</span>(<span class="ident">Path</span>::<span class="ident">new</span>)
         }
@@ -616,11 +616,11 @@
         <span class="self">self</span>.<span class="ident">filename_bytes</span>().<span class="ident">and_then</span>(<span class="ident">bytes2path</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lineno</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lineno</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">lineno</span>, .. } <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">lineno</span> <span class="kw">as</span> <span class="ident">u32</span>),
-            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">lineno</span>(),
+            <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { .. } <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">lineno</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">lineno</span> <span class="kw">as</span> <span class="ident">u32</span>),
+            <span class="ident">Symbol</span>::<span class="ident">Dladdr</span>(<span class="kw-2">ref</span> <span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">s</span>.<span class="ident">lineno</span>(),
         }
     }
 }
@@ -691,8 +691,8 @@
     <span class="ident">filename</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
     <span class="ident">lineno</span>: <span class="ident">c_int</span>,
     <span class="ident">function</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
-) <span class="op">-&gt;</span> <span class="ident">c_int</span> {
-    <span class="kw">if</span> <span class="ident">filename</span>.<span class="ident">is_null</span>() <span class="op">||</span> <span class="ident">function</span>.<span class="ident">is_null</span>() {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span> {
+    <span class="kw">if</span> <span class="ident">filename</span>.<span class="ident">is_null</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">function</span>.<span class="ident">is_null</span>() {
         <span class="kw">return</span> <span class="op">-</span><span class="number">1</span>;
     }
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bomb</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">Bomb</span> { <span class="ident">enabled</span>: <span class="bool-val">true</span> };
@@ -728,7 +728,7 @@
 <span class="comment">//</span>
 <span class="comment">// Note the lack of synchronization here is due to the requirement that</span>
 <span class="comment">// `resolve` is externally synchronized.</span>
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">init_state</span>() <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">bt</span>::<span class="ident">backtrace_state</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">init_state</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">bt</span>::<span class="ident">backtrace_state</span> {
     <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">STATE</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">bt</span>::<span class="ident">backtrace_state</span> <span class="op">=</span> <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
 
     <span class="kw">if</span> <span class="op">!</span><span class="ident">STATE</span>.<span class="ident">is_null</span>() {
@@ -780,18 +780,18 @@
             <span class="comment">//</span>
             <span class="comment">// Note that we&#39;re seriously trusting libbacktrace here to not die</span>
             <span class="comment">// on corrupt executables, but it surely does...</span>
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
                 <span class="kw">const</span> <span class="ident">N</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">256</span>;
                 <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">BUF</span>: [<span class="ident">u8</span>; <span class="ident">N</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">N</span>];
                 <span class="kw">extern</span> {
                     <span class="kw">fn</span> <span class="ident">_NSGetExecutablePath</span>(
                         <span class="ident">buf</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_char</span>,
                         <span class="ident">bufsize</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u32</span>,
-                    ) <span class="op">-&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span>;
+                    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">libc</span>::<span class="ident">c_int</span>;
                 }
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sz</span>: <span class="ident">u32</span> <span class="op">=</span> <span class="ident">BUF</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
                 <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="ident">BUF</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">c_char</span>;
-                <span class="kw">if</span> <span class="ident">_NSGetExecutablePath</span>(<span class="ident">ptr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">sz</span>) <span class="op">==</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">_NSGetExecutablePath</span>(<span class="ident">ptr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">sz</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="ident">ptr</span>
                 } <span class="kw">else</span> {
                     <span class="ident">ptr</span>::<span class="ident">null</span>()
@@ -818,11 +818,11 @@
             <span class="comment">// file and we&#39;re guaranteed it won&#39;t change. FWIW a bunch of this</span>
             <span class="comment">// is copied from libstd historically, so this is my best</span>
             <span class="comment">// interpretation of what was happening.</span>
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
                 <span class="ident">load_filename_opt</span>().<span class="ident">unwrap_or</span>(<span class="ident">ptr</span>::<span class="ident">null</span>())
             }
 
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename_opt</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span>, ()<span class="op">&gt;</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename_opt</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span>, ()<span class="op">&gt;</span> {
                 <span class="kw">const</span> <span class="ident">N</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">256</span>;
                 <span class="comment">// This lives in static memory so we can return it..</span>
                 <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">BUF</span>: [<span class="ident">i8</span>; <span class="ident">N</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">N</span>];
@@ -844,7 +844,7 @@
                 }
 
                 <span class="kw">let</span> <span class="ident">name2</span> <span class="op">=</span> <span class="ident">query_full_name</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">stack_buf</span>)<span class="question-mark">?</span>;
-                <span class="kw">if</span> <span class="ident">name1</span> <span class="op">!=</span> <span class="ident">name2</span> {
+                <span class="kw">if</span> <span class="ident">name1</span> <span class="op">!</span><span class="op">=</span> <span class="ident">name2</span> {
                     <span class="ident">CloseHandle</span>(<span class="ident">handle</span>);
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(())
                 }
@@ -853,7 +853,7 @@
                 <span class="prelude-val">Ok</span>(<span class="ident">name1</span>.<span class="ident">as_ptr</span>())
             }
 
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">query_full_name</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">i8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">i8</span>], ()<span class="op">&gt;</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">query_full_name</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">i8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">i8</span>], ()<span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">OpenProcess</span>(<span class="ident">PROCESS_QUERY_INFORMATION</span>, <span class="ident">FALSE</span>, <span class="ident">GetCurrentProcessId</span>());
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
                 <span class="kw">let</span> <span class="ident">rc</span> <span class="op">=</span> <span class="ident">QueryFullProcessImageNameA</span>(<span class="ident">p1</span>, <span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">as_mut_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">len</span>);
@@ -865,7 +865,7 @@
                 <span class="comment">//</span>
                 <span class="comment">// Otherwise when returning success make sure the nul byte is</span>
                 <span class="comment">// included in the slice.</span>
-                <span class="kw">if</span> <span class="ident">rc</span> <span class="op">==</span> <span class="number">0</span> <span class="op">||</span> <span class="ident">len</span> <span class="op">==</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> {
+                <span class="kw">if</span> <span class="ident">rc</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">len</span> <span class="op">=</span><span class="op">=</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> {
                     <span class="prelude-val">Err</span>(())
                 } <span class="kw">else</span> {
                     <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">buf</span>[<span class="ident">len</span> <span class="kw">as</span> <span class="ident">usize</span>], <span class="number">0</span>);
@@ -873,7 +873,7 @@
                 }
             }
         } <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;vxworks&quot;</span>)]</span> {
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
                 <span class="kw">use</span> <span class="ident">libc</span>;
                 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">mem</span>;
                 
@@ -881,7 +881,7 @@
                 <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">BUF</span>: [<span class="ident">libc</span>::<span class="ident">c_char</span>; <span class="ident">N</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">N</span>];
                 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rtp_desc</span> : <span class="ident">libc</span>::<span class="ident">RTP_DESC</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
-                <span class="kw">if</span> (<span class="ident">libc</span>::<span class="ident">rtpInfoGet</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rtp_desc</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">RTP_DESC</span>) <span class="op">==</span> <span class="number">0</span>) {
+                <span class="kw">if</span> (<span class="ident">libc</span>::<span class="ident">rtpInfoGet</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rtp_desc</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">RTP_DESC</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
                     <span class="ident">BUF</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">rtp_desc</span>.<span class="ident">pathName</span>);
                     <span class="ident">BUF</span>.<span class="ident">as_ptr</span>()
                 } <span class="kw">else</span> {
@@ -889,7 +889,7 @@
                 }
             }
         } <span class="kw">else</span> {
-            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
+            <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
                 <span class="ident">ptr</span>::<span class="ident">null</span>()
             }
         }

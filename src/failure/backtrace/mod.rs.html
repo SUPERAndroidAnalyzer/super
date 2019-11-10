@@ -160,8 +160,8 @@
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">fmt</span>::{<span class="self">self</span>, <span class="ident">Debug</span>, <span class="ident">Display</span>};
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">with_backtrace</span> { ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;backtrace&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)<span class="kw-2">*</span>) }
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">without_backtrace</span> { ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> ($(<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;backtrace&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)))]</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)<span class="kw-2">*</span>) }
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">with_backtrace</span> { ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> ($(<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;backtrace&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>))]</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)<span class="kw-2">*</span>) }
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">without_backtrace</span> { ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> ($(<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">all</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;backtrace&quot;</span>, <span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)))]</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">i</span>)<span class="kw-2">*</span>) }
 
 <span class="macro">without_backtrace</span><span class="macro">!</span> {
     <span class="doccomment">/// A `Backtrace`.</span>
@@ -199,17 +199,17 @@
         <span class="doccomment">/// &gt; (We have detected that this crate was documented with no_std</span>
         <span class="doccomment">/// &gt; compatibility turned on. The version of this crate that has been</span>
         <span class="doccomment">/// &gt; documented here will never generate a backtrace.)</span>
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span> { <span class="ident">_secret</span>: () }
         }
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">none</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">none</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span> { <span class="ident">_secret</span>: () }
         }
 
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_none</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_none</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="bool-val">true</span>
         }
 
@@ -219,25 +219,25 @@
         <span class="doccomment">/// &gt; compatibility turned on. The version of this crate that has been</span>
         <span class="doccomment">/// &gt; documented here will never generate a backtrace and this method</span>
         <span class="doccomment">/// &gt; will always return true.)</span>
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="bool-val">true</span>
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span>::<span class="ident">new</span>()
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="prelude-val">Ok</span>(())
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="prelude-val">Ok</span>(())
         }
     }
@@ -277,32 +277,32 @@
         <span class="doccomment">/// Constructs a new backtrace. This will only create a real backtrace</span>
         <span class="doccomment">/// if the crate is compiled in std mode and the `RUST_BACKTRACE`</span>
         <span class="doccomment">/// environmental variable is activated.</span>
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span> { <span class="ident">internal</span>: <span class="ident">InternalBacktrace</span>::<span class="ident">new</span>() }
         }
 
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">none</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">none</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span> { <span class="ident">internal</span>: <span class="ident">InternalBacktrace</span>::<span class="ident">none</span>() }
         }
 
-        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_none</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">is_none</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="self">self</span>.<span class="ident">internal</span>.<span class="ident">is_none</span>()
         }
 
         <span class="doccomment">/// Returns true if displaying this backtrace would be an empty string.</span>
-        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="self">self</span>.<span class="ident">internal</span>.<span class="ident">is_none</span>()
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">Backtrace</span> {
+        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Backtrace</span> {
             <span class="ident">Backtrace</span>::<span class="ident">new</span>()
         }
     }
 
     <span class="kw">impl</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">bt</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">internal</span>.<span class="ident">as_backtrace</span>() {
                 <span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">bt</span>, <span class="ident">f</span>)
             } <span class="kw">else</span> { <span class="prelude-val">Ok</span>(()) }
@@ -310,7 +310,7 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Backtrace</span> {
-        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">bt</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">internal</span>.<span class="ident">as_backtrace</span>() {
                 <span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="ident">bt</span>, <span class="ident">f</span>)
             } <span class="kw">else</span> { <span class="prelude-val">Ok</span>(()) }

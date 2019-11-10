@@ -6,5 +6,4 @@ implementors["super_analyzer_core"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

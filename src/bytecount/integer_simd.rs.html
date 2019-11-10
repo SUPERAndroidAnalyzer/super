@@ -115,12 +115,12 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;runtime-dispatch-simd&quot;</span>)]</span>
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">mem</span>, <span class="ident">ptr</span>, <span class="ident">usize</span>};
 
-<span class="kw">fn</span> <span class="ident">splat</span>(<span class="ident">byte</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">splat</span>(<span class="ident">byte</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="ident">lo</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">/</span> <span class="number">0xFF</span>;
     <span class="ident">lo</span> <span class="op">*</span> <span class="ident">byte</span> <span class="kw">as</span> <span class="ident">usize</span>
 }
 
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">usize_load_unchecked</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">usize_load_unchecked</span>(<span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">output</span> <span class="op">=</span> <span class="number">0</span>;
     <span class="ident">ptr</span>::<span class="ident">copy_nonoverlapping</span>(
         <span class="ident">bytes</span>.<span class="ident">as_ptr</span>().<span class="ident">offset</span>(<span class="ident">offset</span> <span class="kw">as</span> <span class="ident">isize</span>),
@@ -130,33 +130,33 @@
     <span class="ident">output</span>
 }
 
-<span class="kw">fn</span> <span class="ident">bytewise_equal</span>(<span class="ident">lhs</span>: <span class="ident">usize</span>, <span class="ident">rhs</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">bytewise_equal</span>(<span class="ident">lhs</span>: <span class="ident">usize</span>, <span class="ident">rhs</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="ident">lo</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">/</span> <span class="number">0xFF</span>;
-    <span class="kw">let</span> <span class="ident">hi</span> <span class="op">=</span> <span class="ident">lo</span> <span class="op">&lt;&lt;</span> <span class="number">7</span>;
+    <span class="kw">let</span> <span class="ident">hi</span> <span class="op">=</span> <span class="ident">lo</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>;
 
     <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">lhs</span> <span class="op">^</span> <span class="ident">rhs</span>;
-    <span class="op">!</span>((((<span class="ident">x</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">hi</span>) <span class="op">+</span> <span class="op">!</span><span class="ident">hi</span>) <span class="op">|</span> <span class="ident">x</span>) <span class="op">&gt;&gt;</span> <span class="number">7</span>) <span class="op">&amp;</span> <span class="ident">lo</span>
+    <span class="op">!</span>((((<span class="ident">x</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">hi</span>) <span class="op">+</span> <span class="op">!</span><span class="ident">hi</span>) <span class="op">|</span> <span class="ident">x</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">7</span>) <span class="op">&amp;</span> <span class="ident">lo</span>
 }
 
-<span class="kw">fn</span> <span class="ident">sum_usize</span>(<span class="ident">values</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">sum_usize</span>(<span class="ident">values</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="ident">every_other_byte_lo</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="op">/</span> <span class="number">0xFFFF</span>;
     <span class="kw">let</span> <span class="ident">every_other_byte</span> <span class="op">=</span> <span class="ident">every_other_byte_lo</span> <span class="op">*</span> <span class="number">0xFF</span>;
 
     <span class="comment">// Pairwise reduction to avoid overflow on next step.</span>
-    <span class="kw">let</span> <span class="ident">pair_sum</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">values</span> <span class="op">&amp;</span> <span class="ident">every_other_byte</span>) <span class="op">+</span> ((<span class="ident">values</span> <span class="op">&gt;&gt;</span> <span class="number">8</span>) <span class="op">&amp;</span> <span class="ident">every_other_byte</span>);
+    <span class="kw">let</span> <span class="ident">pair_sum</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">values</span> <span class="op">&amp;</span> <span class="ident">every_other_byte</span>) <span class="op">+</span> ((<span class="ident">values</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="op">&amp;</span> <span class="ident">every_other_byte</span>);
 
     <span class="comment">// Multiplication results in top two bytes holding sum.</span>
-    <span class="ident">pair_sum</span>.<span class="ident">wrapping_mul</span>(<span class="ident">every_other_byte_lo</span>) <span class="op">&gt;&gt;</span> ((<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>() <span class="op">-</span> <span class="number">2</span>) <span class="op">*</span> <span class="number">8</span>)
+    <span class="ident">pair_sum</span>.<span class="ident">wrapping_mul</span>(<span class="ident">every_other_byte_lo</span>) <span class="op">&gt;</span><span class="op">&gt;</span> ((<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>() <span class="op">-</span> <span class="number">2</span>) <span class="op">*</span> <span class="number">8</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">values</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">values</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="comment">// a leading UTF-8 byte is one which does not start with the bits 10.</span>
-    ((<span class="op">!</span><span class="ident">values</span> <span class="op">&gt;&gt;</span> <span class="number">7</span>) <span class="op">|</span> (<span class="ident">values</span> <span class="op">&gt;&gt;</span> <span class="number">6</span>)) <span class="op">&amp;</span> <span class="ident">splat</span>(<span class="number">1</span>)
+    ((<span class="op">!</span><span class="ident">values</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">7</span>) <span class="op">|</span> (<span class="ident">values</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">6</span>)) <span class="op">&amp;</span> <span class="ident">splat</span>(<span class="number">1</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunk_count</span>(<span class="ident">haystack</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">needle</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunk_count</span>(<span class="ident">haystack</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">needle</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="ident">chunksize</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>();
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="ident">chunksize</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">chunksize</span>);
 
     <span class="kw">unsafe</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">0</span>;
@@ -165,58 +165,58 @@
         <span class="kw">let</span> <span class="ident">needles</span> <span class="op">=</span> <span class="ident">splat</span>(<span class="ident">needle</span>);
 
         <span class="comment">// 2040</span>
-        <span class="kw">while</span> <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">chunksize</span> <span class="op">*</span> <span class="number">255</span> {
+        <span class="kw">while</span> <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">chunksize</span> <span class="op">*</span> <span class="number">255</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counts</span> <span class="op">=</span> <span class="number">0</span>;
             <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">255</span> {
-                <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">offset</span>), <span class="ident">needles</span>);
-                <span class="ident">offset</span> <span class="op">+=</span> <span class="ident">chunksize</span>;
+                <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">offset</span>), <span class="ident">needles</span>);
+                <span class="ident">offset</span> <span class="op">+</span><span class="op">=</span> <span class="ident">chunksize</span>;
             }
-            <span class="ident">count</span> <span class="op">+=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
+            <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
         }
 
         <span class="comment">// 8</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counts</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..(<span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">offset</span>) <span class="op">/</span> <span class="ident">chunksize</span> {
-            <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">offset</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">*</span> <span class="ident">chunksize</span>), <span class="ident">needles</span>);
+            <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">offset</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">*</span> <span class="ident">chunksize</span>), <span class="ident">needles</span>);
         }
-        <span class="kw">if</span> <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="number">8</span> <span class="op">!=</span> <span class="number">0</span> {
-            <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">from_le</span>(<span class="op">!</span>(<span class="op">!</span><span class="number">0</span> <span class="op">&gt;&gt;</span> ((<span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="ident">chunksize</span>) <span class="op">*</span> <span class="number">8</span>)));
-            <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">chunksize</span>), <span class="ident">needles</span>) <span class="op">&amp;</span> <span class="ident">mask</span>;
+        <span class="kw">if</span> <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="number">8</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">from_le</span>(<span class="op">!</span>(<span class="op">!</span><span class="number">0</span> <span class="op">&gt;</span><span class="op">&gt;</span> ((<span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="ident">chunksize</span>) <span class="op">*</span> <span class="number">8</span>)));
+            <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">bytewise_equal</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">haystack</span>, <span class="ident">haystack</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">chunksize</span>), <span class="ident">needles</span>) <span class="op">&amp;</span> <span class="ident">mask</span>;
         }
-        <span class="ident">count</span> <span class="op">+=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
+        <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
 
         <span class="ident">count</span>
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunk_num_chars</span>(<span class="ident">utf8_chars</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunk_num_chars</span>(<span class="ident">utf8_chars</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">let</span> <span class="ident">chunksize</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>();
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="ident">chunksize</span>);
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">chunksize</span>);
 
     <span class="kw">unsafe</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">count</span> <span class="op">=</span> <span class="number">0</span>;
 
         <span class="comment">// 2040</span>
-        <span class="kw">while</span> <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">&gt;=</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">chunksize</span> <span class="op">*</span> <span class="number">255</span> {
+        <span class="kw">while</span> <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> <span class="ident">chunksize</span> <span class="op">*</span> <span class="number">255</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counts</span> <span class="op">=</span> <span class="number">0</span>;
             <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">255</span> {
-                <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">offset</span>));
-                <span class="ident">offset</span> <span class="op">+=</span> <span class="ident">chunksize</span>;
+                <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">offset</span>));
+                <span class="ident">offset</span> <span class="op">+</span><span class="op">=</span> <span class="ident">chunksize</span>;
             }
-            <span class="ident">count</span> <span class="op">+=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
+            <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
         }
 
         <span class="comment">// 8</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counts</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..(<span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">offset</span>) <span class="op">/</span> <span class="ident">chunksize</span> {
-            <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">offset</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">*</span> <span class="ident">chunksize</span>));
+            <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">offset</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">*</span> <span class="ident">chunksize</span>));
         }
-        <span class="kw">if</span> <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="number">8</span> <span class="op">!=</span> <span class="number">0</span> {
-            <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">from_le</span>(<span class="op">!</span>(<span class="op">!</span><span class="number">0</span> <span class="op">&gt;&gt;</span> ((<span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="ident">chunksize</span>) <span class="op">*</span> <span class="number">8</span>)));
-            <span class="ident">counts</span> <span class="op">+=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">chunksize</span>)) <span class="op">&amp;</span> <span class="ident">mask</span>;
+        <span class="kw">if</span> <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="number">8</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="ident">mask</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">from_le</span>(<span class="op">!</span>(<span class="op">!</span><span class="number">0</span> <span class="op">&gt;</span><span class="op">&gt;</span> ((<span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">%</span> <span class="ident">chunksize</span>) <span class="op">*</span> <span class="number">8</span>)));
+            <span class="ident">counts</span> <span class="op">+</span><span class="op">=</span> <span class="ident">is_leading_utf8_byte</span>(<span class="ident">usize_load_unchecked</span>(<span class="ident">utf8_chars</span>, <span class="ident">utf8_chars</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">chunksize</span>)) <span class="op">&amp;</span> <span class="ident">mask</span>;
         }
-        <span class="ident">count</span> <span class="op">+=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
+        <span class="ident">count</span> <span class="op">+</span><span class="op">=</span> <span class="ident">sum_usize</span>(<span class="ident">counts</span>);
 
         <span class="ident">count</span>
     }

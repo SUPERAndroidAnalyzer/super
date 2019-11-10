@@ -366,7 +366,7 @@
         <span class="ident">r</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">DirectiveResult</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DirectiveResult</span>;
 }
 
 <span class="doccomment">/// implement DirectiveDef for bare function so we can use function as directive</span>
@@ -378,7 +378,7 @@
                 <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
                 <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
                 <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
-            ) <span class="op">-&gt;</span> <span class="ident">DirectiveResult</span>,
+            ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DirectiveResult</span>,
     <span class="op">&gt;</span> <span class="ident">DirectiveDef</span> <span class="kw">for</span> <span class="ident">F</span>
 {
     <span class="kw">fn</span> <span class="ident">call</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>: <span class="lifetime">&#39;rc</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span>(
@@ -387,7 +387,7 @@
         <span class="ident">reg</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;reg</span> <span class="ident">Registry</span>,
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">DirectiveResult</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DirectiveResult</span> {
         (<span class="kw-2">*</span><span class="self">self</span>)(<span class="ident">d</span>, <span class="ident">reg</span>, <span class="ident">ctx</span>, <span class="ident">rc</span>)
     }
 }
@@ -411,7 +411,7 @@
             .<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">btreemap</span><span class="macro">!</span> {
-            <span class="string">&quot;hello&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="string">&quot;world&quot;</span>.<span class="ident">to_string</span>()
+            <span class="string">&quot;hello&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;world&quot;</span>.<span class="ident">to_string</span>()
         };
 
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">handlebars</span>.<span class="ident">render</span>(<span class="string">&quot;t0&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>).<span class="ident">is_err</span>());
@@ -423,7 +423,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> { <span class="prelude-val">Ok</span>(()) },
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> { <span class="prelude-val">Ok</span>(()) },
             ),
         );
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">handlebars</span>.<span class="ident">render</span>(<span class="string">&quot;t0&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>).<span class="ident">ok</span>().<span class="ident">unwrap</span>(), <span class="string">&quot;&quot;</span>.<span class="ident">to_string</span>());
@@ -438,7 +438,7 @@
             .<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">btreemap</span><span class="macro">!</span> {
-            <span class="string">&quot;hello&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="string">&quot;world&quot;</span>.<span class="ident">to_string</span>()
+            <span class="string">&quot;hello&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;world&quot;</span>.<span class="ident">to_string</span>()
         };
 
         <span class="ident">handlebars</span>.<span class="ident">register_decorator</span>(
@@ -448,7 +448,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="comment">// modify json object</span>
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new_ctx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">clone</span>();
                     {
@@ -476,7 +476,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="comment">// modify value</span>
                     <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">d</span>
                         .<span class="ident">param</span>(<span class="number">0</span>)
@@ -534,7 +534,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
                  <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
                         <span class="string">&quot;{}m&quot;</span>,
                         <span class="ident">h</span>.<span class="ident">param</span>(<span class="number">0</span>)
@@ -554,7 +554,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">new_unit</span> <span class="op">=</span> <span class="ident">d</span>
                         .<span class="ident">param</span>(<span class="number">0</span>)
                         .<span class="ident">as_ref</span>()
@@ -566,7 +566,7 @@
                                            <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                                            <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>,
                                            <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span><span class="op">|</span>
-                          <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                          <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
                             <span class="string">&quot;{}{}&quot;</span>,
                             <span class="ident">h</span>.<span class="ident">param</span>(<span class="number">0</span>)
@@ -591,7 +591,7 @@
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Registry</span>,
                  <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>,
                  <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">|</span>
-                 <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+                 <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
                     <span class="ident">rc</span>.<span class="ident">unregister_local_helper</span>(<span class="string">&quot;distance&quot;</span>);
                     <span class="prelude-val">Ok</span>(())
                 },

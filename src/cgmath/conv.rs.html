@@ -134,37 +134,37 @@
 
 <span class="doccomment">/// Force a conversion into a 2-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array2</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">2</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [<span class="ident">T</span>; <span class="number">2</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array2</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">2</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">T</span>; <span class="number">2</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 
 <span class="doccomment">/// Force a conversion into a 3-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array3</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">3</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [<span class="ident">T</span>; <span class="number">3</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array3</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">3</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">T</span>; <span class="number">3</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 
 <span class="doccomment">/// Force a conversion into a 4-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array4</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">4</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [<span class="ident">T</span>; <span class="number">4</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array4</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[<span class="ident">T</span>; <span class="number">4</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">T</span>; <span class="number">4</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 
 <span class="doccomment">/// Force a conversion into a 2x2-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array2x2</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">2</span>]; <span class="number">2</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [[<span class="ident">T</span>; <span class="number">2</span>]; <span class="number">2</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array2x2</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">2</span>]; <span class="number">2</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [[<span class="ident">T</span>; <span class="number">2</span>]; <span class="number">2</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 
 <span class="doccomment">/// Force a conversion into a 3x3-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array3x3</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">3</span>]; <span class="number">3</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [[<span class="ident">T</span>; <span class="number">3</span>]; <span class="number">3</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array3x3</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">3</span>]; <span class="number">3</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [[<span class="ident">T</span>; <span class="number">3</span>]; <span class="number">3</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 
 <span class="doccomment">/// Force a conversion into a 4x4-element array.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array4x4</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">4</span>]; <span class="number">4</span>]<span class="op">&gt;&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> [[<span class="ident">T</span>; <span class="number">4</span>]; <span class="number">4</span>] {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">array4x4</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span>[[<span class="ident">T</span>; <span class="number">4</span>]; <span class="number">4</span>]<span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">value</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> [[<span class="ident">T</span>; <span class="number">4</span>]; <span class="number">4</span>] {
     <span class="ident">value</span>.<span class="ident">into</span>()
 }
 </pre></div>

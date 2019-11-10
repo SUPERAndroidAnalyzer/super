@@ -6,5 +6,4 @@ implementors["approx"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

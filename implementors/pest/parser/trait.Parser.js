@@ -6,5 +6,4 @@ implementors["pest_meta"] = [{text:"impl <a class=\"trait\" href=\"pest/parser/t
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

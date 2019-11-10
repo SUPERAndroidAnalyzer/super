@@ -6,5 +6,4 @@ implementors["walkdir"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

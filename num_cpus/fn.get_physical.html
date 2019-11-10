@@ -12,7 +12,7 @@ CPUS.</p>
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;We have simultaneous multithreading with about {:.2} \
               logical cores to 1 physical core.&quot;</span>, 
               (<span class="ident">logical_cpus</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="op">/</span> (<span class="ident">physical_cpus</span> <span class="kw">as</span> <span class="ident">f64</span>));
-} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">logical_cpus</span> <span class="op">==</span> <span class="ident">physical_cpus</span> {
+} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">logical_cpus</span> <span class="op">=</span><span class="op">=</span> <span class="ident">physical_cpus</span> {
     <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Either we don&#39;t have simultaneous multithreading, or our \
               system doesn&#39;t support getting the number of physical CPUs.&quot;</span>);
 } <span class="kw">else</span> {

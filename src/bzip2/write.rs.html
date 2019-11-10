@@ -403,7 +403,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new compression stream which will compress at the given level</span>
     <span class="doccomment">/// to write compress output to the give output stream.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">obj</span>: <span class="ident">W</span>, <span class="ident">level</span>: <span class="ident">Compression</span>) <span class="op">-&gt;</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">obj</span>: <span class="ident">W</span>, <span class="ident">level</span>: <span class="ident">Compression</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
         <span class="ident">BzEncoder</span> {
             <span class="ident">data</span>: <span class="ident">Compress</span>::<span class="ident">new</span>(<span class="ident">level</span>, <span class="number">30</span>),
             <span class="ident">obj</span>: <span class="prelude-val">Some</span>(<span class="ident">obj</span>),
@@ -412,12 +412,12 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">dump</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">dump</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">while</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buf</span>) {
-                <span class="prelude-val">Ok</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span>,
-                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+                <span class="prelude-val">Ok</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">n</span>,
+                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">continue</span>,
+                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
             };
             <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">drain</span>(..<span class="ident">n</span>);
         }
@@ -425,7 +425,7 @@
     }
 
     <span class="doccomment">/// Acquires a reference to the underlying writer.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">W</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">W</span> {
         <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()
     }
 
@@ -433,7 +433,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Note that mutating the output/input state of the stream may corrupt this</span>
     <span class="doccomment">/// object, so care must be taken when using this method.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span> {
         <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>()
     }
 
@@ -447,11 +447,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Attempts to write data to this stream may result in a panic after this</span>
     <span class="doccomment">/// function is called.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">while</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">done</span> {
             <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">dump</span>());
             <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">compress_vec</span>(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buf</span>, <span class="ident">Action</span>::<span class="ident">Finish</span>);
-            <span class="kw">if</span> <span class="ident">res</span> <span class="op">==</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>) {
+            <span class="kw">if</span> <span class="ident">res</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>) {
                 <span class="self">self</span>.<span class="ident">done</span> <span class="op">=</span> <span class="bool-val">true</span>;
                 <span class="kw">break</span>
             }
@@ -469,7 +469,7 @@
     <span class="doccomment">/// the `try_finish` (or `shutdown`) method should be used instead. To</span>
     <span class="doccomment">/// re-acquire ownership of a stream it is safe to call this method after</span>
     <span class="doccomment">/// `try_finish` or `shutdown` has returned `Ok`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
         <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">try_finish</span>());
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>())
     }
@@ -479,19 +479,19 @@
     <span class="doccomment">/// Note that, due to buffering, this only bears any relation to</span>
     <span class="doccomment">/// `total_in()` after a call to `flush()`.  At that point,</span>
     <span class="doccomment">/// `total_out() / total_in()` is the compression ratio.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">total_out</span>()
     }
 
     <span class="doccomment">/// Returns the number of bytes consumed by the compressor</span>
     <span class="doccomment">/// (e.g. the number of bytes written to this stream.)</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">total_in</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">Write</span> <span class="kw">for</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">loop</span> {
             <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">dump</span>());
 
@@ -500,20 +500,20 @@
                 .<span class="ident">unwrap</span>();
             <span class="kw">let</span> <span class="ident">written</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">total_in</span>() <span class="op">-</span> <span class="ident">total_in</span>) <span class="kw">as</span> <span class="ident">usize</span>;
 
-            <span class="kw">if</span> <span class="ident">written</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">||</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="ident">written</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">written</span>)
             }
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">loop</span> {
             <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">dump</span>());
             <span class="kw">let</span> <span class="ident">before</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">total_out</span>();
             <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">compress_vec</span>(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buf</span>, <span class="ident">Action</span>::<span class="ident">Flush</span>)
                 .<span class="ident">unwrap</span>();
 
-            <span class="kw">if</span> <span class="ident">before</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">total_out</span>() {
+            <span class="kw">if</span> <span class="ident">before</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">total_out</span>() {
                 <span class="kw">break</span>
             }
         }
@@ -523,14 +523,14 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tokio&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">AsyncWrite</span><span class="op">&gt;</span> <span class="ident">AsyncWrite</span> <span class="kw">for</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">shutdown</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">shutdown</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">try_nb</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">try_finish</span>());
         <span class="self">self</span>.<span class="ident">get_mut</span>().<span class="ident">shutdown</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Read</span> <span class="op">+</span> <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">Read</span> <span class="kw">for</span> <span class="ident">BzEncoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">get_mut</span>().<span class="ident">read</span>(<span class="ident">buf</span>)
     }
 }
@@ -550,7 +550,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new decoding stream which will decompress all data written</span>
     <span class="doccomment">/// to it into `obj`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">obj</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">obj</span>: <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
         <span class="ident">BzDecoder</span> {
             <span class="ident">data</span>: <span class="ident">Decompress</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
             <span class="ident">obj</span>: <span class="prelude-val">Some</span>(<span class="ident">obj</span>),
@@ -560,7 +560,7 @@
     }
 
     <span class="doccomment">/// Acquires a reference to the underlying writer.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">W</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">W</span> {
         <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_ref</span>().<span class="ident">unwrap</span>()
     }
 
@@ -568,16 +568,16 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Note that mutating the output/input state of the stream may corrupt this</span>
     <span class="doccomment">/// object, so care must be taken when using this method.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span> {
         <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">dump</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">dump</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">while</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buf</span>) {
-                <span class="prelude-val">Ok</span>(<span class="ident">n</span>) <span class="op">=&gt;</span> <span class="ident">n</span>,
-                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> <span class="op">=&gt;</span> <span class="kw">continue</span>,
-                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+                <span class="prelude-val">Ok</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">n</span>,
+                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">err</span>) <span class="kw">if</span> <span class="ident">err</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">continue</span>,
+                <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
             };
             <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">drain</span>(..<span class="ident">n</span>);
         }
@@ -594,7 +594,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Attempts to write data to this stream may result in a panic after this</span>
     <span class="doccomment">/// function is called.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">while</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">done</span> {
             <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">write</span>(<span class="kw-2">&amp;</span>[]));
         }
@@ -608,7 +608,7 @@
     <span class="doccomment">/// the `try_finish` (or `shutdown`) method should be used instead. To</span>
     <span class="doccomment">/// re-acquire ownership of a stream it is safe to call this method after</span>
     <span class="doccomment">/// `try_finish` or `shutdown` has returned `Ok`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
         <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">try_finish</span>());
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>())
     }
@@ -618,19 +618,19 @@
     <span class="doccomment">/// Note that, due to buffering, this only bears any relation to</span>
     <span class="doccomment">/// `total_in()` after a call to `flush()`.  At that point,</span>
     <span class="doccomment">/// `total_in() / total_out()` is the compression ratio.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">total_out</span>()
     }
 
     <span class="doccomment">/// Returns the number of bytes consumed by the decompressor</span>
     <span class="doccomment">/// (e.g. the number of bytes written to this stream.)</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">total_in</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">Write</span> <span class="kw">for</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">done</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="number">0</span>)
         }
@@ -645,16 +645,16 @@
                 <span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="ident">e</span>)
             }));
 
-            <span class="kw">if</span> <span class="ident">res</span> <span class="op">==</span> <span class="ident">Status</span>::<span class="ident">StreamEnd</span> {
+            <span class="kw">if</span> <span class="ident">res</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Status</span>::<span class="ident">StreamEnd</span> {
                 <span class="self">self</span>.<span class="ident">done</span> <span class="op">=</span> <span class="bool-val">true</span>;
             }
-            <span class="kw">if</span> <span class="ident">written</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">||</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">||</span> <span class="self">self</span>.<span class="ident">done</span> {
+            <span class="kw">if</span> <span class="ident">written</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">data</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">done</span> {
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">written</span>)
             }
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="macro">try</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">dump</span>());
         <span class="self">self</span>.<span class="ident">obj</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">flush</span>()
     }
@@ -662,14 +662,14 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;tokio&quot;</span>)]</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">AsyncWrite</span><span class="op">&gt;</span> <span class="ident">AsyncWrite</span> <span class="kw">for</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">shutdown</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">shutdown</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">try_nb</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">try_finish</span>());
         <span class="self">self</span>.<span class="ident">get_mut</span>().<span class="ident">shutdown</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Read</span> <span class="op">+</span> <span class="ident">Write</span><span class="op">&gt;</span> <span class="ident">Read</span> <span class="kw">for</span> <span class="ident">BzDecoder</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">get_mut</span>().<span class="ident">read</span>(<span class="ident">buf</span>)
     }
 }
@@ -703,7 +703,7 @@
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">c</span>.<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">finish</span>().<span class="ident">unwrap</span>();
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="ident">data</span>[<span class="number">0</span>..<span class="number">5</span>], <span class="string">b&quot;12834&quot;</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">data</span>.<span class="ident">len</span>(), <span class="number">500005</span>);
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;12834{}&quot;</span>, <span class="ident">s</span>).<span class="ident">as_bytes</span>() <span class="op">==</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">data</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;12834{}&quot;</span>, <span class="ident">s</span>).<span class="ident">as_bytes</span>() <span class="op">=</span><span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">data</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -717,27 +717,27 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">qc</span>() {
-        ::<span class="ident">quickcheck</span>::<span class="ident">quickcheck</span>(<span class="ident">test</span> <span class="kw">as</span> <span class="kw">fn</span>(<span class="kw">_</span>) <span class="op">-&gt;</span> <span class="kw">_</span>);
+        ::<span class="ident">quickcheck</span>::<span class="ident">quickcheck</span>(<span class="ident">test</span> <span class="kw">as</span> <span class="kw">fn</span>(<span class="kw">_</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">_</span>);
 
-        <span class="kw">fn</span> <span class="ident">test</span>(<span class="ident">v</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">fn</span> <span class="ident">test</span>(<span class="ident">v</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">BzDecoder</span>::<span class="ident">new</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">BzEncoder</span>::<span class="ident">new</span>(<span class="ident">w</span>, ::<span class="ident">Compression</span>::<span class="ident">Default</span>);
             <span class="ident">w</span>.<span class="ident">write_all</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>).<span class="ident">unwrap</span>();
-            <span class="ident">v</span> <span class="op">==</span> <span class="ident">w</span>.<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">finish</span>().<span class="ident">unwrap</span>()
+            <span class="ident">v</span> <span class="op">=</span><span class="op">=</span> <span class="ident">w</span>.<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">finish</span>().<span class="ident">unwrap</span>()
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">qc_partial</span>() {
-        ::<span class="ident">quickcheck</span>::<span class="ident">quickcheck</span>(<span class="ident">test</span> <span class="kw">as</span> <span class="kw">fn</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="op">-&gt;</span> <span class="kw">_</span>);
+        ::<span class="ident">quickcheck</span>::<span class="ident">quickcheck</span>(<span class="ident">test</span> <span class="kw">as</span> <span class="kw">fn</span>(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw">_</span>);
 
         <span class="kw">fn</span> <span class="ident">test</span>(<span class="ident">v</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
                 <span class="ident">encode_ops</span>: <span class="ident">PartialWithErrors</span><span class="op">&lt;</span><span class="ident">GenInterrupted</span><span class="op">&gt;</span>,
-                <span class="ident">decode_ops</span>: <span class="ident">PartialWithErrors</span><span class="op">&lt;</span><span class="ident">GenInterrupted</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+                <span class="ident">decode_ops</span>: <span class="ident">PartialWithErrors</span><span class="op">&lt;</span><span class="ident">GenInterrupted</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
             <span class="kw">let</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">BzDecoder</span>::<span class="ident">new</span>(<span class="ident">PartialWrite</span>::<span class="ident">new</span>(<span class="ident">Vec</span>::<span class="ident">new</span>(), <span class="ident">decode_ops</span>));
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">w</span> <span class="op">=</span> <span class="ident">BzEncoder</span>::<span class="ident">new</span>(<span class="ident">PartialWrite</span>::<span class="ident">new</span>(<span class="ident">w</span>, <span class="ident">encode_ops</span>), ::<span class="ident">Compression</span>::<span class="ident">Default</span>);
             <span class="ident">w</span>.<span class="ident">write_all</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>).<span class="ident">unwrap</span>();
-            <span class="ident">v</span> <span class="op">==</span> <span class="ident">w</span>.<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">into_inner</span>().<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">into_inner</span>()
+            <span class="ident">v</span> <span class="op">=</span><span class="op">=</span> <span class="ident">w</span>.<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">into_inner</span>().<span class="ident">finish</span>().<span class="ident">unwrap</span>().<span class="ident">into_inner</span>()
         }
     }
 }

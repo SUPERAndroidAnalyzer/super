@@ -60,7 +60,7 @@
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
         <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">HelperResult</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HelperResult</span> {
         <span class="kw">let</span> <span class="ident">tpl</span> <span class="op">=</span> <span class="ident">h</span>.<span class="ident">template</span>();
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=</span> <span class="ident">tpl</span> {
             <span class="ident">t</span>.<span class="ident">render</span>(<span class="ident">r</span>, <span class="ident">ctx</span>, <span class="ident">rc</span>, <span class="ident">out</span>)

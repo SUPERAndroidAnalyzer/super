@@ -20,7 +20,7 @@ logged based on the parsed filters when log records are received.</p>
 }
 
 <span class="kw">impl</span> <span class="ident">MyLogger</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">MyLogger</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">MyLogger</span> {
         <span class="kw">use</span> <span class="ident">env_logger</span>::<span class="ident">filter</span>::<span class="ident">Builder</span>;
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">builder</span> <span class="op">=</span> <span class="ident">Builder</span>::<span class="ident">new</span>();
 
@@ -36,7 +36,7 @@ logged based on the parsed filters when log records are received.</p>
 }
 
 <span class="kw">impl</span> <span class="ident">Log</span> <span class="kw">for</span> <span class="ident">MyLogger</span> {
-    <span class="kw">fn</span> <span class="ident">enabled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="kw-2">&amp;</span><span class="ident">Metadata</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">enabled</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">metadata</span>: <span class="kw-2">&amp;</span><span class="ident">Metadata</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">filter</span>.<span class="ident">enabled</span>(<span class="ident">metadata</span>)
     }
 

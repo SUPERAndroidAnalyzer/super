@@ -6,5 +6,4 @@ implementors["num_traits"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

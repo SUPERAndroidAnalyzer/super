@@ -236,7 +236,7 @@
     <span class="doccomment">///     .normalize_empty_elements(false);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">EmitterConfig</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EmitterConfig</span> {
         <span class="ident">EmitterConfig</span> {
             <span class="ident">line_separator</span>: <span class="string">&quot;\n&quot;</span>.<span class="ident">into</span>(),
             <span class="ident">indent_string</span>: <span class="string">&quot;  &quot;</span>.<span class="ident">into</span>(),  <span class="comment">// two spaces</span>
@@ -269,14 +269,14 @@
     <span class="doccomment">/// This method is exactly equivalent to calling `EventWriter::new_with_config()` with</span>
     <span class="doccomment">/// this configuration object.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_writer</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">sink</span>: <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="ident">EventWriter</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create_writer</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">sink</span>: <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EventWriter</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span> {
         <span class="ident">EventWriter</span>::<span class="ident">new_with_config</span>(<span class="ident">sink</span>, <span class="self">self</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">EmitterConfig</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">EmitterConfig</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EmitterConfig</span> {
         <span class="ident">EmitterConfig</span>::<span class="ident">new</span>()
     }
 }

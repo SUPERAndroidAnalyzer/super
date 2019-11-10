@@ -6,5 +6,4 @@ implementors["chrono"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

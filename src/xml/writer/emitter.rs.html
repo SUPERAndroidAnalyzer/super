@@ -484,37 +484,37 @@
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">EmitterError</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">io</span>::<span class="ident">Error</span>) <span class="op">-&gt;</span> <span class="ident">EmitterError</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">err</span>: <span class="ident">io</span>::<span class="ident">Error</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EmitterError</span> {
         <span class="ident">EmitterError</span>::<span class="ident">Io</span>(<span class="ident">err</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">EmitterError</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
 
         <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;emitter error: &quot;</span>)<span class="question-mark">?</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">EmitterError</span>::<span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">Io</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span>
                 <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;I/O error: {}&quot;</span>, <span class="ident">e</span>),
-            <span class="kw-2">ref</span> <span class="ident">other</span> <span class="op">=&gt;</span>
+            <span class="kw-2">ref</span> <span class="ident">other</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">other</span>.<span class="ident">description</span>()),
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Error</span> <span class="kw">for</span> <span class="ident">EmitterError</span> {
-    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
+    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">EmitterError</span>::<span class="ident">Io</span>(<span class="kw">_</span>) <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">Io</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span>
                 <span class="string">&quot;I/O error&quot;</span>,
-            <span class="ident">EmitterError</span>::<span class="ident">DocumentStartAlreadyEmitted</span> <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">DocumentStartAlreadyEmitted</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="string">&quot;document start event has already been emitted&quot;</span>,
-            <span class="ident">EmitterError</span>::<span class="ident">LastElementNameNotAvailable</span> <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">LastElementNameNotAvailable</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="string">&quot;last element name is not available&quot;</span>,
-            <span class="ident">EmitterError</span>::<span class="ident">EndElementNameIsNotEqualToLastStartElementName</span> <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">EndElementNameIsNotEqualToLastStartElementName</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="string">&quot;end element name is not equal to last start element name&quot;</span>,
-            <span class="ident">EmitterError</span>::<span class="ident">EndElementNameIsNotSpecified</span> <span class="op">=&gt;</span>
+            <span class="ident">EmitterError</span>::<span class="ident">EndElementNameIsNotSpecified</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="string">&quot;end element name is not specified and can&#39;t be inferred&quot;</span>,
         }
     }
@@ -540,7 +540,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Emitter</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">config</span>: <span class="ident">EmitterConfig</span>) <span class="op">-&gt;</span> <span class="ident">Emitter</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">config</span>: <span class="ident">EmitterConfig</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Emitter</span> {
         <span class="ident">Emitter</span> {
             <span class="ident">config</span>,
 
@@ -567,18 +567,18 @@
 <span class="kw">impl</span> <span class="ident">Emitter</span> {
     <span class="doccomment">/// Returns the current state of namespaces.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">namespace_stack_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">NamespaceStack</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">namespace_stack_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">NamespaceStack</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">nst</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">wrote_text</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">IndentFlags</span>::<span class="ident">WroteText</span>
+    <span class="kw">fn</span> <span class="ident">wrote_text</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">IndentFlags</span>::<span class="ident">WroteText</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">wrote_markup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>() <span class="op">==</span> <span class="ident">IndentFlags</span>::<span class="ident">WroteMarkup</span>
+    <span class="kw">fn</span> <span class="ident">wrote_markup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">IndentFlags</span>::<span class="ident">WroteMarkup</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -596,7 +596,7 @@
         <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">last_mut</span>().<span class="ident">unwrap</span>() <span class="op">=</span> <span class="ident">IndentFlags</span>::<span class="ident">WroteNothing</span>;
     }
 
-    <span class="kw">fn</span> <span class="ident">write_newline</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">level</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_newline</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">level</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="ident">target</span>.<span class="ident">write</span>(<span class="self">self</span>.<span class="ident">config</span>.<span class="ident">line_separator</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">level</span> {
             <span class="ident">target</span>.<span class="ident">write</span>(<span class="self">self</span>.<span class="ident">config</span>.<span class="ident">indent_string</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
@@ -604,12 +604,12 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">before_markup</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">perform_indent</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">wrote_text</span>() <span class="op">&amp;&amp;</span>
-           (<span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">||</span> <span class="self">self</span>.<span class="ident">wrote_markup</span>()) {
+    <span class="kw">fn</span> <span class="ident">before_markup</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">perform_indent</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">wrote_text</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span>
+           (<span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">wrote_markup</span>()) {
             <span class="kw">let</span> <span class="ident">indent_level</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">indent_level</span>;
             <span class="self">self</span>.<span class="ident">write_newline</span>(<span class="ident">target</span>, <span class="ident">indent_level</span>)<span class="question-mark">?</span>;
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">indent_string</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">indent_string</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
                 <span class="self">self</span>.<span class="ident">after_markup</span>();
             }
         }
@@ -620,7 +620,7 @@
         <span class="self">self</span>.<span class="ident">set_wrote_markup</span>();
     }
 
-    <span class="kw">fn</span> <span class="ident">before_start_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">before_start_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">before_markup</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">push</span>(<span class="ident">IndentFlags</span>::<span class="ident">WroteNothing</span>);
         <span class="prelude-val">Ok</span>(())
@@ -628,11 +628,11 @@
 
     <span class="kw">fn</span> <span class="ident">after_start_element</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">after_markup</span>();
-        <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
     }
 
-    <span class="kw">fn</span> <span class="ident">before_end_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">perform_indent</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">wrote_markup</span>() <span class="op">&amp;&amp;</span>
+    <span class="kw">fn</span> <span class="ident">before_end_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">perform_indent</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">wrote_markup</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span>
            <span class="op">!</span><span class="self">self</span>.<span class="ident">wrote_text</span>() {
             <span class="kw">let</span> <span class="ident">indent_level</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">indent_level</span>;
             <span class="self">self</span>.<span class="ident">write_newline</span>(<span class="ident">target</span>, <span class="ident">indent_level</span> <span class="op">-</span> <span class="number">1</span>)
@@ -643,7 +643,7 @@
 
     <span class="kw">fn</span> <span class="ident">after_end_element</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">&gt;</span> <span class="number">0</span> {
-            <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">-=</span> <span class="number">1</span>;
+            <span class="self">self</span>.<span class="ident">indent_level</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
             <span class="self">self</span>.<span class="ident">indent_stack</span>.<span class="ident">pop</span>();
         }
         <span class="self">self</span>.<span class="ident">set_wrote_markup</span>();
@@ -656,7 +656,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_start_document</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
                                          <span class="ident">version</span>: <span class="ident">XmlVersion</span>,
                                          <span class="ident">encoding</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-                                         <span class="ident">standalone</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                                         <span class="ident">standalone</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">start_document_emitted</span> {
             <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">EmitterError</span>::<span class="ident">DocumentStartAlreadyEmitted</span>);
         }
@@ -664,7 +664,7 @@
 
         <span class="self">self</span>.<span class="ident">before_markup</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">write</span> <span class="op">=</span> <span class="kw">move</span> <span class="op">||</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">write</span> <span class="op">=</span> <span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
                 <span class="macro">write</span><span class="macro">!</span>(<span class="ident">target</span>, <span class="string">&quot;&lt;?xml version=\&quot;{}\&quot; encoding=\&quot;{}\&quot;&quot;</span>, <span class="ident">version</span>, <span class="ident">encoding</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">standalone</span>) <span class="op">=</span> <span class="ident">standalone</span> {
@@ -682,16 +682,16 @@
         <span class="ident">result</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">check_document_started</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">start_document_emitted</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">write_document_declaration</span> {
+    <span class="kw">fn</span> <span class="ident">check_document_started</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">start_document_emitted</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">write_document_declaration</span> {
             <span class="self">self</span>.<span class="ident">emit_start_document</span>(<span class="ident">target</span>, <span class="ident">common</span>::<span class="ident">XmlVersion</span>::<span class="ident">Version10</span>, <span class="string">&quot;utf-8&quot;</span>, <span class="prelude-val">None</span>)
         } <span class="kw">else</span> {
             <span class="prelude-val">Ok</span>(())
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">fix_non_empty_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">normalize_empty_elements</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> {
+    <span class="kw">fn</span> <span class="ident">fix_non_empty_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">normalize_empty_elements</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> {
             <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> <span class="op">=</span> <span class="bool-val">false</span>;
             <span class="ident">target</span>.<span class="ident">write</span>(<span class="string">b&quot;&gt;&quot;</span>).<span class="ident">map</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> ()).<span class="ident">map_err</span>(<span class="ident">From</span>::<span class="ident">from</span>)
         } <span class="kw">else</span> {
@@ -702,14 +702,14 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_processing_instruction</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
                                                  <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
                                                  <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>,
-                                                 <span class="ident">data</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                                                 <span class="ident">data</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">check_document_started</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">fix_non_empty_element</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
 
         <span class="self">self</span>.<span class="ident">before_markup</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">write</span> <span class="op">=</span> <span class="op">||</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">write</span> <span class="op">=</span> <span class="op">|</span><span class="op">|</span> {
                 <span class="macro">write</span><span class="macro">!</span>(<span class="ident">target</span>, <span class="string">&quot;&lt;?{}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">data</span>) <span class="op">=</span> <span class="ident">data</span> {
@@ -730,7 +730,7 @@
 
     <span class="kw">fn</span> <span class="ident">emit_start_element_initial</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
                                      <span class="ident">name</span>: <span class="ident">Name</span>,
-                                     <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+                                     <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">W</span>: <span class="ident">Write</span>
     {
         <span class="self">self</span>.<span class="ident">check_document_started</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
@@ -745,7 +745,7 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_start_element</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
                                  <span class="ident">name</span>: <span class="ident">Name</span>,
-                                 <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+                                 <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">W</span>: <span class="ident">Write</span>
     {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">keep_element_names_stack</span> {
@@ -762,28 +762,28 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_current_namespace_attributes</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_current_namespace_attributes</span><span class="op">&lt;</span><span class="ident">W</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">W</span>: <span class="ident">Write</span>
     {
         <span class="kw">for</span> (<span class="ident">prefix</span>, <span class="ident">uri</span>) <span class="kw">in</span> <span class="self">self</span>.<span class="ident">nst</span>.<span class="ident">peek</span>() {
             <span class="kw">match</span> <span class="ident">prefix</span> {
                 <span class="comment">// internal namespaces are not emitted</span>
-                <span class="ident">NS_XMLNS_PREFIX</span> <span class="op">|</span> <span class="ident">NS_XML_PREFIX</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(()),
+                <span class="ident">NS_XMLNS_PREFIX</span> <span class="op">|</span> <span class="ident">NS_XML_PREFIX</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(()),
                 <span class="comment">//// there is already a namespace binding with this prefix in scope</span>
                 <span class="comment">//prefix if self.nst.get(prefix) == Some(uri) =&gt; Ok(()),</span>
                 <span class="comment">// emit xmlns only if it is overridden</span>
-                <span class="ident">NS_NO_PREFIX</span> <span class="op">=&gt;</span> <span class="kw">if</span> <span class="ident">uri</span> <span class="op">!=</span> <span class="ident">NS_EMPTY_URI</span> {
+                <span class="ident">NS_NO_PREFIX</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">if</span> <span class="ident">uri</span> <span class="op">!</span><span class="op">=</span> <span class="ident">NS_EMPTY_URI</span> {
                     <span class="macro">write</span><span class="macro">!</span>(<span class="ident">target</span>, <span class="string">&quot; xmlns=\&quot;{}\&quot;&quot;</span>, <span class="ident">uri</span>)
                 } <span class="kw">else</span> { <span class="prelude-val">Ok</span>(()) },
                 <span class="comment">// everything else</span>
-                <span class="ident">prefix</span> <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">target</span>, <span class="string">&quot; xmlns:{}=\&quot;{}\&quot;&quot;</span>, <span class="ident">prefix</span>, <span class="ident">uri</span>)
+                <span class="ident">prefix</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">target</span>, <span class="string">&quot; xmlns:{}=\&quot;{}\&quot;&quot;</span>, <span class="ident">prefix</span>, <span class="ident">uri</span>)
             }<span class="question-mark">?</span>;
         }
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_attributes</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
-                                      <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                                      <span class="ident">attributes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Attribute</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">for</span> <span class="ident">attr</span> <span class="kw">in</span> <span class="ident">attributes</span>.<span class="ident">iter</span>() {
             <span class="macro">write</span><span class="macro">!</span>(
                 <span class="ident">target</span>, <span class="string">&quot; {}=\&quot;{}\&quot;&quot;</span>,
@@ -795,7 +795,7 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_end_element</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
-                                      <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Name</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                                      <span class="ident">name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Name</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">owned_name</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">keep_element_names_stack</span> {
             <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">element_names</span>.<span class="ident">pop</span>().<span class="ident">ok_or</span>(<span class="ident">EmitterError</span>::<span class="ident">LastElementNameNotAvailable</span>)<span class="question-mark">?</span>)
         } <span class="kw">else</span> {
@@ -805,14 +805,14 @@
         <span class="comment">// Check that last started element name equals to the provided name, if there are both</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">last_name</span>) <span class="op">=</span> <span class="ident">owned_name</span> {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">name</span>) <span class="op">=</span> <span class="ident">name</span> {
-                <span class="kw">if</span> <span class="ident">last_name</span>.<span class="ident">borrow</span>() <span class="op">!=</span> <span class="kw-2">*</span><span class="ident">name</span> {
+                <span class="kw">if</span> <span class="ident">last_name</span>.<span class="ident">borrow</span>() <span class="op">!</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">name</span> {
                     <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">EmitterError</span>::<span class="ident">EndElementNameIsNotEqualToLastStartElementName</span>);
                 }
             }
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">name</span>) <span class="op">=</span> <span class="ident">owned_name</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span>.<span class="ident">borrow</span>()).<span class="ident">or</span>(<span class="ident">name</span>) {
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">normalize_empty_elements</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> {
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">normalize_empty_elements</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> {
                 <span class="self">self</span>.<span class="ident">just_wrote_start_element</span> <span class="op">=</span> <span class="bool-val">false</span>;
                 <span class="comment">// TODO: make this space configurable</span>
                 <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">target</span>.<span class="ident">write</span>(<span class="string">b&quot; /&gt;&quot;</span>).<span class="ident">map_err</span>(<span class="ident">From</span>::<span class="ident">from</span>);
@@ -832,7 +832,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_cdata</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_cdata</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">fix_non_empty_element</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">cdata_to_characters</span> {
             <span class="self">self</span>.<span class="ident">emit_characters</span>(<span class="ident">target</span>, <span class="ident">content</span>)
@@ -849,7 +849,7 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_characters</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>,
-                                      <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                                      <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">fix_non_empty_element</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
         <span class="ident">target</span>.<span class="ident">write</span>(
             (<span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">perform_escaping</span> {
@@ -862,22 +862,22 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_comment</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">emit_comment</span><span class="op">&lt;</span><span class="ident">W</span>: <span class="ident">Write</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span>, <span class="ident">content</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">fix_non_empty_element</span>(<span class="ident">target</span>)<span class="question-mark">?</span>;
 
         <span class="comment">// TODO: add escaping dashes at the end of the comment</span>
 
         <span class="kw">let</span> <span class="ident">autopad_comments</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">autopad_comments</span>;
-        <span class="kw">let</span> <span class="ident">write</span> <span class="op">=</span> <span class="op">|</span><span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span><span class="op">|</span> <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">write</span> <span class="op">=</span> <span class="op">|</span><span class="ident">target</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">W</span><span class="op">|</span> <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
             <span class="ident">target</span>.<span class="ident">write</span>(<span class="string">b&quot;&lt;!--&quot;</span>)<span class="question-mark">?</span>;
 
-            <span class="kw">if</span> <span class="ident">autopad_comments</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">content</span>.<span class="ident">starts_with</span>(<span class="ident">char</span>::<span class="ident">is_whitespace</span>) {
+            <span class="kw">if</span> <span class="ident">autopad_comments</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">content</span>.<span class="ident">starts_with</span>(<span class="ident">char</span>::<span class="ident">is_whitespace</span>) {
                 <span class="ident">target</span>.<span class="ident">write</span>(<span class="string">b&quot; &quot;</span>)<span class="question-mark">?</span>;
             }
 
             <span class="ident">target</span>.<span class="ident">write</span>(<span class="ident">content</span>.<span class="ident">as_bytes</span>())<span class="question-mark">?</span>;
 
-            <span class="kw">if</span> <span class="ident">autopad_comments</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">content</span>.<span class="ident">ends_with</span>(<span class="ident">char</span>::<span class="ident">is_whitespace</span>) {
+            <span class="kw">if</span> <span class="ident">autopad_comments</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">content</span>.<span class="ident">ends_with</span>(<span class="ident">char</span>::<span class="ident">is_whitespace</span>) {
                 <span class="ident">target</span>.<span class="ident">write</span>(<span class="string">b&quot; &quot;</span>)<span class="question-mark">?</span>;
             }
 

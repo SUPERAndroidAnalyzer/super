@@ -239,7 +239,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">EntryHeader</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">header_size</span>: <span class="ident">u16</span>, <span class="ident">flags</span>: <span class="ident">u16</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">header_size</span>: <span class="ident">u16</span>, <span class="ident">flags</span>: <span class="ident">u16</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">header_size</span>,
             <span class="ident">flags</span>,
@@ -247,11 +247,11 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_complex</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        (<span class="self">self</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">MASK_COMPLEX</span>) <span class="op">==</span> <span class="ident">MASK_COMPLEX</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_complex</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        (<span class="self">self</span>.<span class="ident">flags</span> <span class="op">&amp;</span> <span class="ident">MASK_COMPLEX</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">MASK_COMPLEX</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key_index</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key_index</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">key_index</span>
     }
 }
@@ -265,7 +265,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">SimpleEntry</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>, <span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">value_data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>, <span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">value_data</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">id</span>,
             <span class="ident">key_index</span>,
@@ -274,23 +274,23 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">id</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">key_index</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">value_type</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">value_data</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="comment">// Header size</span>
@@ -323,7 +323,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ComplexEntry</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>, <span class="ident">parent_entry_id</span>: <span class="ident">u32</span>, <span class="ident">entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SimpleEntry</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">id</span>: <span class="ident">u32</span>, <span class="ident">key_index</span>: <span class="ident">u32</span>, <span class="ident">parent_entry_id</span>: <span class="ident">u32</span>, <span class="ident">entries</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SimpleEntry</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">id</span>,
             <span class="ident">key_index</span>,
@@ -332,17 +332,17 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">id</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">key_index</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_referent_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_referent_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">value</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
         <span class="kw">for</span> <span class="ident">e</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">entries</span> {
-            <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">get_value</span>() <span class="op">==</span> <span class="ident">value</span> {
+            <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">get_value</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">value</span> {
                 <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">e</span>.<span class="ident">get_id</span>());
             }
         }
@@ -350,11 +350,11 @@
         <span class="prelude-val">None</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_entries</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SimpleEntry</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_entries</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">SimpleEntry</span><span class="op">&gt;</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">entries</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="comment">// Header size</span>
@@ -371,7 +371,7 @@
 
         <span class="comment">// Children entry amount</span>
         <span class="kw">let</span> <span class="ident">children_amount</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">entries</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
-        <span class="kw">if</span> <span class="ident">children_amount</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="ident">children_amount</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">out</span>.<span class="ident">write_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>(<span class="number">0xFFFF_FFFF</span>)<span class="question-mark">?</span>;
         } <span class="kw">else</span> {
             <span class="ident">out</span>.<span class="ident">write_u32</span>::<span class="op">&lt;</span><span class="ident">LittleEndian</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">entries</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>)<span class="question-mark">?</span>;
@@ -403,7 +403,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Entry</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">simple</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SimpleEntry</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">simple</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SimpleEntry</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">simple</span>)
         } <span class="kw">else</span> {
@@ -411,7 +411,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">complex</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ComplexEntry</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">complex</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">ComplexEntry</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">complex</span>)
         } <span class="kw">else</span> {
@@ -419,7 +419,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span> {
             <span class="bool-val">true</span>
         } <span class="kw">else</span> {
@@ -427,27 +427,27 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_id</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=&gt;</span> <span class="ident">complex</span>.<span class="ident">get_id</span>(),
-            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=&gt;</span> <span class="ident">simple</span>.<span class="ident">get_id</span>(),
-            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="ident">id</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw-2">*</span><span class="ident">id</span>,
+            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">complex</span>.<span class="ident">get_id</span>(),
+            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">simple</span>.<span class="ident">get_id</span>(),
+            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="ident">id</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">id</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_key</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=&gt;</span> <span class="ident">complex</span>.<span class="ident">get_key</span>(),
-            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=&gt;</span> <span class="ident">simple</span>.<span class="ident">get_key</span>(),
-            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="kw">_</span>, <span class="ident">key</span>) <span class="op">=&gt;</span> <span class="kw-2">*</span><span class="ident">key</span>,
+            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">complex</span>.<span class="ident">get_key</span>(),
+            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">simple</span>.<span class="ident">get_key</span>(),
+            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="kw">_</span>, <span class="ident">key</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">key</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=&gt;</span> <span class="ident">complex</span>.<span class="ident">to_vec</span>(),
-            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=&gt;</span> <span class="ident">simple</span>.<span class="ident">to_vec</span>(),
-            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Vec</span>::<span class="ident">new</span>()),
+            <span class="self">Self</span>::<span class="ident">Complex</span>(<span class="ident">complex</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">complex</span>.<span class="ident">to_vec</span>(),
+            <span class="self">Self</span>::<span class="ident">Simple</span>(<span class="ident">simple</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">simple</span>.<span class="ident">to_vec</span>(),
+            <span class="self">Self</span>::<span class="ident">Empty</span>(<span class="kw">_</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Vec</span>::<span class="ident">new</span>()),
         }
     }
 }

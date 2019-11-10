@@ -6,5 +6,4 @@ implementors["abxml"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

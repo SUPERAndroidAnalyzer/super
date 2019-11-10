@@ -139,7 +139,7 @@
 
 <span class="doccomment">/// Generates the command line interface.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">too_many_lines</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">generate</span>() <span class="op">-&gt;</span> <span class="ident">App</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="lifetime">&#39;static</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">generate</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">App</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="lifetime">&#39;static</span><span class="op">&gt;</span> {
     <span class="ident">App</span>::<span class="ident">new</span>(<span class="string">&quot;SUPER Android Analyzer&quot;</span>)
         .<span class="ident">version</span>(<span class="macro">crate_version</span><span class="macro">!</span>())
         .<span class="ident">author</span>(<span class="string">&quot;SUPER Team &lt;contact@superanalyzer.rocks&gt;&quot;</span>)

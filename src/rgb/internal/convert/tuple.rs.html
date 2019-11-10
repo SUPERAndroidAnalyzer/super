@@ -92,7 +92,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">r</span>: <span class="ident">other</span>.<span class="number">0</span>,
             <span class="ident">g</span>: <span class="ident">other</span>.<span class="number">1</span>,
@@ -103,14 +103,14 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Into</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>) {
+    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>) {
         (<span class="self">self</span>.<span class="ident">r</span>, <span class="self">self</span>.<span class="ident">g</span>, <span class="self">self</span>.<span class="ident">b</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">r</span>: <span class="ident">other</span>.<span class="number">0</span>,
             <span class="ident">g</span>: <span class="ident">other</span>.<span class="number">1</span>,
@@ -122,13 +122,13 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> <span class="ident">Into</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>) {
+    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>) {
         (<span class="self">self</span>.<span class="ident">r</span>, <span class="self">self</span>.<span class="ident">g</span>, <span class="self">self</span>.<span class="ident">b</span>, <span class="self">self</span>.<span class="ident">a</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BGR</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">b</span>: <span class="ident">other</span>.<span class="number">0</span>,
             <span class="ident">g</span>: <span class="ident">other</span>.<span class="number">1</span>,
@@ -138,13 +138,13 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Into</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BGR</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>) {
+    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>) {
         (<span class="self">self</span>.<span class="ident">b</span>, <span class="self">self</span>.<span class="ident">g</span>, <span class="self">self</span>.<span class="ident">r</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BGRA</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">other</span>: (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">b</span>: <span class="ident">other</span>.<span class="number">0</span>,
             <span class="ident">g</span>: <span class="ident">other</span>.<span class="number">1</span>,
@@ -155,7 +155,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> <span class="ident">Into</span><span class="op">&lt;</span>(<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>)<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">BGRA</span><span class="op">&lt;</span><span class="ident">T</span>,<span class="ident">A</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>) {
+    <span class="kw">fn</span> <span class="ident">into</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">T</span>,<span class="ident">A</span>) {
         (<span class="self">self</span>.<span class="ident">b</span>, <span class="self">self</span>.<span class="ident">g</span>, <span class="self">self</span>.<span class="ident">r</span>, <span class="self">self</span>.<span class="ident">a</span>)
     }
 }

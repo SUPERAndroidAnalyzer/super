@@ -6,5 +6,4 @@ implementors["podio"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

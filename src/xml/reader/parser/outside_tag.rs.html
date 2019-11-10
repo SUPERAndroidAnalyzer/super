@@ -140,26 +140,26 @@
 };
 
 <span class="kw">impl</span> <span class="ident">PullParser</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">outside_tag</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">outside_tag</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">t</span> {
-            <span class="ident">Token</span>::<span class="ident">ReferenceStart</span> <span class="op">=&gt;</span>
+            <span class="ident">Token</span>::<span class="ident">ReferenceStart</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideReference</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">State</span>::<span class="ident">OutsideTag</span>))),
 
-            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace outside of the root element</span>
+            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace outside of the root element</span>
 
-            <span class="kw">_</span> <span class="kw">if</span> <span class="ident">t</span>.<span class="ident">contains_char_data</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">=&gt;</span>
+            <span class="kw">_</span> <span class="kw">if</span> <span class="ident">t</span>.<span class="ident">contains_char_data</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span>
                 <span class="prelude-val">Some</span>(<span class="macro">self_error</span><span class="macro">!</span>(<span class="self">self</span>; <span class="string">&quot;Unexpected characters outside the root element: {}&quot;</span>, <span class="ident">t</span>)),
 
-            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">trim_whitespace</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">buf_has_data</span>() <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">trim_whitespace</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">buf_has_data</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
 
-            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> {
+            <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">buf_has_data</span>() {
                     <span class="self">self</span>.<span class="ident">push_pos</span>();
                 }
                 <span class="self">self</span>.<span class="ident">append_char_continue</span>(<span class="ident">c</span>)
             }
 
-            <span class="kw">_</span> <span class="kw">if</span> <span class="ident">t</span>.<span class="ident">contains_char_data</span>() <span class="op">=&gt;</span> {  <span class="comment">// Non-whitespace char data</span>
+            <span class="kw">_</span> <span class="kw">if</span> <span class="ident">t</span>.<span class="ident">contains_char_data</span>() <span class="op">=</span><span class="op">&gt;</span> {  <span class="comment">// Non-whitespace char data</span>
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">buf_has_data</span>() {
                     <span class="self">self</span>.<span class="ident">push_pos</span>();
                 }
@@ -168,19 +168,19 @@
                 <span class="prelude-val">None</span>
             }
 
-            <span class="ident">Token</span>::<span class="ident">ReferenceEnd</span> <span class="op">=&gt;</span> { <span class="comment">// Semi-colon in a text outside an entity</span>
+            <span class="ident">Token</span>::<span class="ident">ReferenceEnd</span> <span class="op">=</span><span class="op">&gt;</span> { <span class="comment">// Semi-colon in a text outside an entity</span>
                 <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="op">=</span> <span class="bool-val">false</span>;
                 <span class="ident">Token</span>::<span class="ident">ReferenceEnd</span>.<span class="ident">push_to_string</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">buf</span>);
                 <span class="prelude-val">None</span>
             }
 
-            <span class="ident">Token</span>::<span class="ident">CommentStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">coalesce_characters</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">ignore_comments</span> <span class="op">=&gt;</span> {
+            <span class="ident">Token</span>::<span class="ident">CommentStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">coalesce_characters</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">ignore_comments</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// We need to switch the lexer into a comment mode inside comments</span>
                 <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">inside_comment</span>();
                 <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideComment</span>)
             }
 
-            <span class="ident">Token</span>::<span class="ident">CDataStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">coalesce_characters</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">cdata_to_characters</span> <span class="op">=&gt;</span> {
+            <span class="ident">Token</span>::<span class="ident">CDataStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">coalesce_characters</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">cdata_to_characters</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">buf_has_data</span>() {
                     <span class="self">self</span>.<span class="ident">push_pos</span>();
                 }
@@ -189,14 +189,14 @@
                 <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideCData</span>)
             }
 
-            <span class="kw">_</span> <span class="op">=&gt;</span> {
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// Encountered some markup event, flush the buffer as characters</span>
                 <span class="comment">// or a whitespace</span>
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next_event</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">buf_has_data</span>() {
                     <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">take_buf</span>();
-                    <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">trim_whitespace</span> {
+                    <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">trim_whitespace</span> {
                         <span class="prelude-val">None</span>
-                    } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">config</span>.<span class="ident">whitespace_to_characters</span> {
+                    } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">config</span>.<span class="ident">whitespace_to_characters</span> {
                         <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">Whitespace</span>(<span class="ident">buf</span>)))
                     } <span class="kw">else</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">config</span>.<span class="ident">trim_whitespace</span> {
                         <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">Characters</span>(<span class="ident">buf</span>.<span class="ident">trim_matches</span>(<span class="ident">is_whitespace_char</span>).<span class="ident">into</span>())))
@@ -207,10 +207,10 @@
                 <span class="self">self</span>.<span class="ident">inside_whitespace</span> <span class="op">=</span> <span class="bool-val">true</span>;  <span class="comment">// Reset inside_whitespace flag</span>
                 <span class="self">self</span>.<span class="ident">push_pos</span>();
                 <span class="kw">match</span> <span class="ident">t</span> {
-                    <span class="ident">Token</span>::<span class="ident">ProcessingInstructionStart</span> <span class="op">=&gt;</span>
+                    <span class="ident">Token</span>::<span class="ident">ProcessingInstructionStart</span> <span class="op">=</span><span class="op">&gt;</span>
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideProcessingInstruction</span>(<span class="ident">ProcessingInstructionSubstate</span>::<span class="ident">PIInsideName</span>), <span class="ident">next_event</span>),
 
-                    <span class="ident">Token</span>::<span class="ident">DoctypeStart</span> <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">encountered_element</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Token</span>::<span class="ident">DoctypeStart</span> <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">encountered_element</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="comment">// We don&#39;t have a doctype event so skip this position</span>
                         <span class="comment">// FIXME: update when we have a doctype event</span>
                         <span class="self">self</span>.<span class="ident">next_pos</span>();
@@ -218,7 +218,7 @@
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideDoctype</span>, <span class="ident">next_event</span>)
                     }
 
-                    <span class="ident">Token</span>::<span class="ident">OpeningTagStart</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Token</span>::<span class="ident">OpeningTagStart</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="comment">// If declaration was not parsed and we have encountered an element,</span>
                         <span class="comment">// emit this declaration as the next event.</span>
                         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">parsed_declaration</span> {
@@ -238,22 +238,22 @@
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideOpeningTag</span>(<span class="ident">OpeningTagSubstate</span>::<span class="ident">InsideName</span>), <span class="ident">next_event</span>)
                     }
 
-                    <span class="ident">Token</span>::<span class="ident">ClosingTagStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">&gt;</span> <span class="number">0</span> <span class="op">=&gt;</span>
+                    <span class="ident">Token</span>::<span class="ident">ClosingTagStart</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">depth</span>() <span class="op">&gt;</span> <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span>
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideClosingTag</span>(<span class="ident">ClosingTagSubstate</span>::<span class="ident">CTInsideName</span>), <span class="ident">next_event</span>),
 
-                    <span class="ident">Token</span>::<span class="ident">CommentStart</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Token</span>::<span class="ident">CommentStart</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="comment">// We need to switch the lexer into a comment mode inside comments</span>
                         <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">inside_comment</span>();
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideComment</span>, <span class="ident">next_event</span>)
                     }
 
-                    <span class="ident">Token</span>::<span class="ident">CDataStart</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Token</span>::<span class="ident">CDataStart</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="comment">// We need to disable lexing errors inside CDATA</span>
                         <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">disable_errors</span>();
                         <span class="self">self</span>.<span class="ident">into_state</span>(<span class="ident">State</span>::<span class="ident">InsideCData</span>, <span class="ident">next_event</span>)
                     }
 
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="macro">self_error</span><span class="macro">!</span>(<span class="self">self</span>; <span class="string">&quot;Unexpected token: {}&quot;</span>, <span class="ident">t</span>))
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="macro">self_error</span><span class="macro">!</span>(<span class="self">self</span>; <span class="string">&quot;Unexpected token: {}&quot;</span>, <span class="ident">t</span>))
                 }
             }
         }

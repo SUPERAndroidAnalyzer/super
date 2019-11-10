@@ -200,7 +200,7 @@
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">mem</span>;
 
-<span class="kw">fn</span> <span class="ident">format_from_bool</span>(<span class="ident">zlib_header</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">DataFormat</span> {
+<span class="kw">fn</span> <span class="ident">format_from_bool</span>(<span class="ident">zlib_header</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DataFormat</span> {
     <span class="kw">if</span> <span class="ident">zlib_header</span> {
         <span class="ident">DataFormat</span>::<span class="ident">Zlib</span>
     } <span class="kw">else</span> {
@@ -215,7 +215,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Inflate</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">write</span><span class="macro">!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;miniz_oxide inflate internal state. total_in: {}, total_out: {}&quot;</span>,
@@ -225,9 +225,9 @@
 }
 
 <span class="kw">impl</span> <span class="ident">InflateBackend</span> <span class="kw">for</span> <span class="ident">Inflate</span> {
-    <span class="kw">fn</span> <span class="ident">make</span>(<span class="ident">zlib_header</span>: <span class="ident">bool</span>, <span class="ident">window_bits</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">make</span>(<span class="ident">zlib_header</span>: <span class="ident">bool</span>, <span class="ident">window_bits</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">window_bits</span> <span class="op">&gt;</span> <span class="number">8</span> <span class="op">&amp;&amp;</span> <span class="ident">window_bits</span> <span class="op">&lt;</span> <span class="number">16</span>,
+            <span class="ident">window_bits</span> <span class="op">&gt;</span> <span class="number">8</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">window_bits</span> <span class="op">&lt;</span> <span class="number">16</span>,
             <span class="string">&quot;window_bits must be within 9 ..= 15&quot;</span>
         );
 
@@ -245,24 +245,24 @@
         <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
         <span class="ident">flush</span>: <span class="ident">FlushDecompress</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">DecompressError</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">DecompressError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">flush</span> <span class="op">=</span> <span class="ident">MZFlush</span>::<span class="ident">new</span>(<span class="ident">flush</span> <span class="kw">as</span> <span class="ident">i32</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">inflate</span>::<span class="ident">stream</span>::<span class="ident">inflate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">inner</span>, <span class="ident">input</span>, <span class="ident">output</span>, <span class="ident">flush</span>);
-        <span class="self">self</span>.<span class="ident">total_in</span> <span class="op">+=</span> <span class="ident">res</span>.<span class="ident">bytes_consumed</span> <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="self">self</span>.<span class="ident">total_out</span> <span class="op">+=</span> <span class="ident">res</span>.<span class="ident">bytes_written</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">total_in</span> <span class="op">+</span><span class="op">=</span> <span class="ident">res</span>.<span class="ident">bytes_consumed</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">total_out</span> <span class="op">+</span><span class="op">=</span> <span class="ident">res</span>.<span class="ident">bytes_written</span> <span class="kw">as</span> <span class="ident">u64</span>;
 
         <span class="kw">match</span> <span class="ident">res</span>.<span class="ident">status</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">status</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
-                <span class="ident">MZStatus</span>::<span class="prelude-val">Ok</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
-                <span class="ident">MZStatus</span>::<span class="ident">StreamEnd</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
-                <span class="ident">MZStatus</span>::<span class="ident">NeedDict</span> <span class="op">=&gt;</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">status</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
+                <span class="ident">MZStatus</span>::<span class="prelude-val">Ok</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
+                <span class="ident">MZStatus</span>::<span class="ident">StreamEnd</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
+                <span class="ident">MZStatus</span>::<span class="ident">NeedDict</span> <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">mem</span>::<span class="ident">decompress_need_dict</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">decompressor</span>().<span class="ident">adler32</span>().<span class="ident">unwrap_or</span>(<span class="number">0</span>))
                 }
             },
-            <span class="prelude-val">Err</span>(<span class="ident">status</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
-                <span class="ident">MZError</span>::<span class="ident">Buf</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">BufError</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">mem</span>::<span class="ident">decompress_failed</span>(),
+            <span class="prelude-val">Err</span>(<span class="ident">status</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
+                <span class="ident">MZError</span>::<span class="ident">Buf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">BufError</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">mem</span>::<span class="ident">decompress_failed</span>(),
             },
         }
     }
@@ -276,12 +276,12 @@
 
 <span class="kw">impl</span> <span class="ident">Backend</span> <span class="kw">for</span> <span class="ident">Inflate</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">total_in</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">total_out</span>
     }
 }
@@ -293,7 +293,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Deflate</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">write</span><span class="macro">!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;miniz_oxide deflate internal state. total_in: {}, total_out: {}&quot;</span>,
@@ -303,14 +303,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">DeflateBackend</span> <span class="kw">for</span> <span class="ident">Deflate</span> {
-    <span class="kw">fn</span> <span class="ident">make</span>(<span class="ident">level</span>: <span class="ident">Compression</span>, <span class="ident">zlib_header</span>: <span class="ident">bool</span>, <span class="ident">window_bits</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">make</span>(<span class="ident">level</span>: <span class="ident">Compression</span>, <span class="ident">zlib_header</span>: <span class="ident">bool</span>, <span class="ident">window_bits</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">window_bits</span> <span class="op">&gt;</span> <span class="number">8</span> <span class="op">&amp;&amp;</span> <span class="ident">window_bits</span> <span class="op">&lt;</span> <span class="number">16</span>,
+            <span class="ident">window_bits</span> <span class="op">&gt;</span> <span class="number">8</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">window_bits</span> <span class="op">&lt;</span> <span class="number">16</span>,
             <span class="string">&quot;window_bits must be within 9 ..= 15&quot;</span>
         );
 
         <span class="comment">// Check in case the integer value changes at some point.</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">level</span>.<span class="ident">level</span>() <span class="op">&lt;=</span> <span class="number">10</span>);
+        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">level</span>.<span class="ident">level</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="number">10</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">CompressorOxide</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">default</span>();
         <span class="kw">let</span> <span class="ident">format</span> <span class="op">=</span> <span class="ident">format_from_bool</span>(<span class="ident">zlib_header</span>);
@@ -328,21 +328,21 @@
         <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
         <span class="ident">flush</span>: <span class="ident">FlushCompress</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">CompressError</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">CompressError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">flush</span> <span class="op">=</span> <span class="ident">MZFlush</span>::<span class="ident">new</span>(<span class="ident">flush</span> <span class="kw">as</span> <span class="ident">i32</span>).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">deflate</span>::<span class="ident">stream</span>::<span class="ident">deflate</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">inner</span>, <span class="ident">input</span>, <span class="ident">output</span>, <span class="ident">flush</span>);
-        <span class="self">self</span>.<span class="ident">total_in</span> <span class="op">+=</span> <span class="ident">res</span>.<span class="ident">bytes_consumed</span> <span class="kw">as</span> <span class="ident">u64</span>;
-        <span class="self">self</span>.<span class="ident">total_out</span> <span class="op">+=</span> <span class="ident">res</span>.<span class="ident">bytes_written</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">total_in</span> <span class="op">+</span><span class="op">=</span> <span class="ident">res</span>.<span class="ident">bytes_consumed</span> <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">total_out</span> <span class="op">+</span><span class="op">=</span> <span class="ident">res</span>.<span class="ident">bytes_written</span> <span class="kw">as</span> <span class="ident">u64</span>;
 
         <span class="kw">match</span> <span class="ident">res</span>.<span class="ident">status</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">status</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
-                <span class="ident">MZStatus</span>::<span class="prelude-val">Ok</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
-                <span class="ident">MZStatus</span>::<span class="ident">StreamEnd</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
-                <span class="ident">MZStatus</span>::<span class="ident">NeedDict</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">CompressError</span>(())),
+            <span class="prelude-val">Ok</span>(<span class="ident">status</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
+                <span class="ident">MZStatus</span>::<span class="prelude-val">Ok</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
+                <span class="ident">MZStatus</span>::<span class="ident">StreamEnd</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
+                <span class="ident">MZStatus</span>::<span class="ident">NeedDict</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">CompressError</span>(())),
             },
-            <span class="prelude-val">Err</span>(<span class="ident">status</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
-                <span class="ident">MZError</span>::<span class="ident">Buf</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">BufError</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">CompressError</span>(())),
+            <span class="prelude-val">Err</span>(<span class="ident">status</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">status</span> {
+                <span class="ident">MZError</span>::<span class="ident">Buf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">BufError</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">CompressError</span>(())),
             },
         }
     }
@@ -356,12 +356,12 @@
 
 <span class="kw">impl</span> <span class="ident">Backend</span> <span class="kw">for</span> <span class="ident">Deflate</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">total_in</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">total_out</span>
     }
 }

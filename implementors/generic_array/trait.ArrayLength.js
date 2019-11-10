@@ -6,5 +6,4 @@ implementors["generic_array"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

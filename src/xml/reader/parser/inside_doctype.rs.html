@@ -20,14 +20,14 @@
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="prelude-ty">Result</span>, <span class="ident">PullParser</span>, <span class="ident">State</span>};
 
 <span class="kw">impl</span> <span class="ident">PullParser</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inside_doctype</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inside_doctype</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">t</span> {
-            <span class="ident">Token</span>::<span class="ident">TagEnd</span> <span class="op">=&gt;</span> {
+            <span class="ident">Token</span>::<span class="ident">TagEnd</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">self</span>.<span class="ident">lexer</span>.<span class="ident">enable_errors</span>();
                 <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">OutsideTag</span>)
             }
 
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>
         }
     }
 }

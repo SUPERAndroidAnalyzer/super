@@ -285,7 +285,7 @@
     <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
     <span class="ident">frame_index</span>: <span class="ident">usize</span>,
     <span class="ident">format</span>: <span class="ident">PrintFmt</span>,
-    <span class="ident">print_path</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> (<span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>, <span class="ident">BytesOrWideString</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> <span class="op">+</span> <span class="lifetime">&#39;b</span>),
+    <span class="ident">print_path</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> (<span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>, <span class="ident">BytesOrWideString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> <span class="op">+</span> <span class="lifetime">&#39;b</span>),
 }
 
 <span class="doccomment">/// The styles of printing that we can print</span>
@@ -310,8 +310,8 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
         <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>,
         <span class="ident">format</span>: <span class="ident">PrintFmt</span>,
-        <span class="ident">print_path</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> (<span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>, <span class="ident">BytesOrWideString</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> <span class="op">+</span> <span class="lifetime">&#39;b</span>),
-    ) <span class="op">-&gt;</span> <span class="self">Self</span> {
+        <span class="ident">print_path</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> (<span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>, <span class="ident">BytesOrWideString</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> <span class="op">+</span> <span class="lifetime">&#39;b</span>),
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">BacktraceFmt</span> {
             <span class="ident">fmt</span>,
             <span class="ident">frame_index</span>: <span class="number">0</span>,
@@ -325,7 +325,7 @@
     <span class="doccomment">/// This is required on some platforms for backtraces to be fully</span>
     <span class="doccomment">/// sumbolicated later, and otherwise this should just be the first method</span>
     <span class="doccomment">/// you call after creating a `BacktraceFmt`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_context</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_context</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">write_str</span>(<span class="string">&quot;stack backtrace:\n&quot;</span>)<span class="question-mark">?</span>;
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>)]</span>
         <span class="ident">fuchsia</span>::<span class="ident">print_dso_context</span>(<span class="self">self</span>.<span class="ident">fmt</span>)<span class="question-mark">?</span>;
@@ -337,7 +337,7 @@
     <span class="doccomment">/// This commit returns an RAII instance of a `BacktraceFrameFmt` which can be used</span>
     <span class="doccomment">/// to actually print a frame, and on destruction it will increment the</span>
     <span class="doccomment">/// frame counter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">frame</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">BacktraceFrameFmt</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">frame</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BacktraceFrameFmt</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
         <span class="ident">BacktraceFrameFmt</span> {
             <span class="ident">fmt</span>: <span class="self">self</span>,
             <span class="ident">symbol_index</span>: <span class="number">0</span>,
@@ -348,7 +348,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This is currently a no-op but is added for future compatibility with</span>
     <span class="doccomment">/// backtrace formats.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="comment">// Currently a no-op-- including this hook to allow for future additions.</span>
         <span class="prelude-val">Ok</span>(())
     }
@@ -373,7 +373,7 @@
     <span class="doccomment">/// This function requires the `std` feature of the `backtrace` crate to be</span>
     <span class="doccomment">/// enabled, and the `std` feature is enabled by default.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">backtrace_frame</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">BacktraceFrame</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">backtrace_frame</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">BacktraceFrame</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="kw">let</span> <span class="ident">symbols</span> <span class="op">=</span> <span class="ident">frame</span>.<span class="ident">symbols</span>();
         <span class="kw">for</span> <span class="ident">symbol</span> <span class="kw">in</span> <span class="ident">symbols</span> {
             <span class="self">self</span>.<span class="ident">backtrace_symbol</span>(<span class="ident">frame</span>, <span class="ident">symbol</span>)<span class="question-mark">?</span>;
@@ -395,7 +395,7 @@
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">BacktraceFrame</span>,
         <span class="ident">symbol</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">BacktraceSymbol</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="self">self</span>.<span class="ident">print_raw</span>(
             <span class="ident">frame</span>.<span class="ident">ip</span>(),
             <span class="ident">symbol</span>.<span class="ident">name</span>(),
@@ -412,7 +412,7 @@
 
     <span class="doccomment">/// Prints a raw traced `Frame` and `Symbol`, typically from within the raw</span>
     <span class="doccomment">/// callbacks of this crate.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">symbol</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Frame</span>, <span class="ident">symbol</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Symbol</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">symbol</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Frame</span>, <span class="ident">symbol</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Symbol</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="self">self</span>.<span class="ident">print_raw</span>(
             <span class="ident">frame</span>.<span class="ident">ip</span>(),
             <span class="ident">symbol</span>.<span class="ident">name</span>(),
@@ -433,7 +433,7 @@
         <span class="ident">symbol_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">SymbolName</span><span class="op">&gt;</span>,
         <span class="ident">filename</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesOrWideString</span><span class="op">&gt;</span>,
         <span class="ident">lineno</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="comment">// Fuchsia is unable to symbolize within a process so it has a special</span>
         <span class="comment">// format which can be used to symbolize later. Print that instead of</span>
         <span class="comment">// printing addresses in our own format here.</span>
@@ -442,7 +442,7 @@
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">print_raw_generic</span>(<span class="ident">frame_ip</span>, <span class="ident">symbol_name</span>, <span class="ident">filename</span>, <span class="ident">lineno</span>)<span class="question-mark">?</span>;
         }
-        <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -453,7 +453,7 @@
         <span class="ident">symbol_name</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw">crate</span>::<span class="ident">SymbolName</span><span class="op">&gt;</span>,
         <span class="ident">filename</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesOrWideString</span><span class="op">&gt;</span>,
         <span class="ident">lineno</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="comment">// No need to print &quot;null&quot; frames, it basically just means that the</span>
         <span class="comment">// system backtrace was a bit eager to trace back super far.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">PrintFmt</span>::<span class="ident">Short</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">format</span> {
@@ -474,7 +474,7 @@
         <span class="comment">// Print the index of the frame as well as the optional instruction</span>
         <span class="comment">// pointer of the frame. If we&#39;re beyond the first symbol of this frame</span>
         <span class="comment">// though we just print appropriate whitespace.</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{:4}: &quot;</span>, <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">frame_index</span>)<span class="question-mark">?</span>;
             <span class="kw">if</span> <span class="kw">let</span> <span class="ident">PrintFmt</span>::<span class="ident">Full</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">format</span> {
                 <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{:1$?} - &quot;</span>, <span class="ident">frame_ip</span>, <span class="ident">HEX_WIDTH</span>)<span class="question-mark">?</span>;
@@ -490,9 +490,9 @@
         <span class="comment">// more information if we&#39;re a full backtrace. Here we also handle</span>
         <span class="comment">// symbols which don&#39;t have a name,</span>
         <span class="kw">match</span> (<span class="ident">symbol_name</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">format</span>) {
-            (<span class="prelude-val">Some</span>(<span class="ident">name</span>), <span class="ident">PrintFmt</span>::<span class="ident">Short</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{:#}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>,
-            (<span class="prelude-val">Some</span>(<span class="ident">name</span>), <span class="ident">PrintFmt</span>::<span class="ident">Full</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>,
-            (<span class="prelude-val">None</span>, <span class="kw">_</span>) <span class="op">|</span> (<span class="kw">_</span>, <span class="ident">PrintFmt</span>::<span class="ident">__Nonexhaustive</span>) <span class="op">=&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;&lt;unknown&gt;&quot;</span>)<span class="question-mark">?</span>,
+            (<span class="prelude-val">Some</span>(<span class="ident">name</span>), <span class="ident">PrintFmt</span>::<span class="ident">Short</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{:#}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>,
+            (<span class="prelude-val">Some</span>(<span class="ident">name</span>), <span class="ident">PrintFmt</span>::<span class="ident">Full</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)<span class="question-mark">?</span>,
+            (<span class="prelude-val">None</span>, <span class="kw">_</span>) <span class="op">|</span> (<span class="kw">_</span>, <span class="ident">PrintFmt</span>::<span class="ident">__Nonexhaustive</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;&lt;unknown&gt;&quot;</span>)<span class="question-mark">?</span>,
         }
         <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>.<span class="ident">write_str</span>(<span class="string">&quot;\n&quot;</span>)<span class="question-mark">?</span>;
 
@@ -504,7 +504,7 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">print_fileline</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">file</span>: <span class="ident">BytesOrWideString</span>, <span class="ident">line</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">print_fileline</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">file</span>: <span class="ident">BytesOrWideString</span>, <span class="ident">line</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="comment">// Filename/line are printed on lines under the symbol name, so print</span>
         <span class="comment">// some appropriate whitespace to sort of right-align ourselves.</span>
         <span class="kw">if</span> <span class="kw">let</span> <span class="ident">PrintFmt</span>::<span class="ident">Full</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">format</span> {
@@ -519,9 +519,9 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn</span> <span class="ident">print_raw_fuchsia</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame_ip</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">print_raw_fuchsia</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">frame_ip</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="comment">// We only care about the first symbol of a frame</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">symbol_index</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>.<span class="ident">write_str</span>(<span class="string">&quot;{{{bt:&quot;</span>)<span class="question-mark">?</span>;
             <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>, <span class="string">&quot;{}:{:?}&quot;</span>, <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">frame_index</span>, <span class="ident">frame_ip</span>)<span class="question-mark">?</span>;
             <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">fmt</span>.<span class="ident">write_str</span>(<span class="string">&quot;}}}\n&quot;</span>)<span class="question-mark">?</span>;
@@ -532,7 +532,7 @@
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">BacktraceFrameFmt</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">frame_index</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">frame_index</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
     }
 }
 </pre></div>

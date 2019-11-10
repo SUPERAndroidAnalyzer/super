@@ -163,14 +163,14 @@
 
 <span class="kw">impl</span> <span class="ident">PullParser</span> {
     <span class="comment">// TODO: remove redundancy via macros or extra methods</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inside_declaration</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>, <span class="ident">s</span>: <span class="ident">DeclarationSubstate</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inside_declaration</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">t</span>: <span class="ident">Token</span>, <span class="ident">s</span>: <span class="ident">DeclarationSubstate</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
         <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">unexpected_token</span>(
-            (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">expr</span>; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> (<span class="prelude-val">Some</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">error</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Unexpected token inside XML declaration: {}&quot;</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>))));
-            (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> (<span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="self">self</span>; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>));
+            (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">expr</span>; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="prelude-val">Some</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">error</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Unexpected token inside XML declaration: {}&quot;</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>))));
+            (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="self">self</span>; <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>));
         );
 
         <span class="attribute">#[<span class="ident">inline</span>]</span>
-        <span class="kw">fn</span> <span class="ident">emit_start_document</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">PullParser</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
+        <span class="kw">fn</span> <span class="ident">emit_start_document</span>(<span class="ident">this</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">PullParser</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&gt;</span> {
             <span class="ident">this</span>.<span class="ident">parsed_declaration</span> <span class="op">=</span> <span class="bool-val">true</span>;
             <span class="kw">let</span> <span class="ident">version</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">take_version</span>();
             <span class="kw">let</span> <span class="ident">encoding</span> <span class="op">=</span> <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">take_encoding</span>();
@@ -183,37 +183,37 @@
         }
 
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">BeforeVersion</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// continue</span>
-                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;v&#39;</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersion</span>)),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">BeforeVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// continue</span>
+                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;v&#39;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersion</span>)),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersion</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">name</span>.<span class="ident">local_name</span>[..] {
-                    <span class="string">&quot;ersion&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=&gt;</span>
+                    <span class="string">&quot;ersion&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=</span><span class="op">&gt;</span>
                         <span class="ident">this</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(
-                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">==</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> {
+                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> {
                                 <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersionValue</span>
                             } <span class="kw">else</span> {
                                 <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersion</span>
                             }
                         )),
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
                 }
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersion</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersionValue</span>)),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersionValue</span>)),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersionValue</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideVersionValue</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
                 <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">version</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">value</span>[..] {
-                    <span class="string">&quot;1.0&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">XmlVersion</span>::<span class="ident">Version10</span>),
-                    <span class="string">&quot;1.1&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">XmlVersion</span>::<span class="ident">Version11</span>),
-                    <span class="kw">_</span>     <span class="op">=&gt;</span> <span class="prelude-val">None</span>
+                    <span class="string">&quot;1.0&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">XmlVersion</span>::<span class="ident">Version10</span>),
+                    <span class="string">&quot;1.1&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">XmlVersion</span>::<span class="ident">Version11</span>),
+                    <span class="kw">_</span>     <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>
                 };
                 <span class="kw">if</span> <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">version</span>.<span class="ident">is_some</span>() {
                     <span class="ident">this</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersionValue</span>))
@@ -222,67 +222,67 @@
                 }
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersionValue</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
-                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;e&#39;</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncoding</span>)),
-                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;s&#39;</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span>)),
-                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterVersionValue</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
+                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;e&#39;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncoding</span>)),
+                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;s&#39;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span>)),
+                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncoding</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncoding</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">name</span>.<span class="ident">local_name</span>[..] {
-                    <span class="string">&quot;ncoding&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=&gt;</span>
+                    <span class="string">&quot;ncoding&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=</span><span class="op">&gt;</span>
                         <span class="ident">this</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(
-                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">==</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> { <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span> } <span class="kw">else</span> { <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterEncoding</span> }
+                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> { <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span> } <span class="kw">else</span> { <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterEncoding</span> }
                         )),
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
                 }
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterEncoding</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span>)),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterEncoding</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span>)),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideEncodingValue</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
                 <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">encoding</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>);
                 <span class="ident">this</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">BeforeStandaloneDecl</span>))
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">BeforeStandaloneDecl</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
-                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;s&#39;</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span>)),
-                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">BeforeStandaloneDecl</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
+                <span class="ident">Token</span>::<span class="ident">Character</span>(<span class="string">&#39;s&#39;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span>)),
+                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDecl</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_qualified_name</span>(<span class="ident">t</span>, <span class="ident">QualifiedNameTarget</span>::<span class="ident">AttributeNameTarget</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">token</span>, <span class="ident">name</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">name</span>.<span class="ident">local_name</span>[..] {
-                    <span class="string">&quot;tandalone&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=&gt;</span>
+                    <span class="string">&quot;tandalone&quot;</span> <span class="kw">if</span> <span class="ident">name</span>.<span class="ident">namespace</span>.<span class="ident">is_none</span>() <span class="op">=</span><span class="op">&gt;</span>
                         <span class="ident">this</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(
-                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">==</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> {
+                            <span class="kw">if</span> <span class="ident">token</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Token</span>::<span class="ident">EqualsSign</span> {
                                 <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDeclValue</span>
                             } <span class="kw">else</span> {
                                 <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterStandaloneDecl</span>
                             }
                         )),
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">this</span>; <span class="ident">name</span>)
                 }
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterStandaloneDecl</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDeclValue</span>)),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterStandaloneDecl</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+                <span class="ident">Token</span>::<span class="ident">EqualsSign</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">into_state_continue</span>(<span class="ident">State</span>::<span class="ident">InsideDeclaration</span>(<span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDeclValue</span>)),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             },
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDeclValue</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">InsideStandaloneDeclValue</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">read_attribute_value</span>(<span class="ident">t</span>, <span class="op">|</span><span class="ident">this</span>, <span class="ident">value</span><span class="op">|</span> {
                 <span class="kw">let</span> <span class="ident">standalone</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">value</span>[..] {
-                    <span class="string">&quot;yes&quot;</span> <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
-                    <span class="string">&quot;no&quot;</span>  <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
-                    <span class="kw">_</span>     <span class="op">=&gt;</span> <span class="prelude-val">None</span>
+                    <span class="string">&quot;yes&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+                    <span class="string">&quot;no&quot;</span>  <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                    <span class="kw">_</span>     <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>
                 };
                 <span class="kw">if</span> <span class="ident">standalone</span>.<span class="ident">is_some</span>() {
                     <span class="ident">this</span>.<span class="ident">data</span>.<span class="ident">standalone</span> <span class="op">=</span> <span class="ident">standalone</span>;
@@ -292,10 +292,10 @@
                 }
             }),
 
-            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterStandaloneDeclValue</span> <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
-                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
-                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
+            <span class="ident">DeclarationSubstate</span>::<span class="ident">AfterStandaloneDeclValue</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span> {
+                <span class="ident">Token</span>::<span class="ident">Whitespace</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,  <span class="comment">// skip whitespace</span>
+                <span class="ident">Token</span>::<span class="ident">ProcessingInstructionEnd</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">emit_start_document</span>(<span class="self">self</span>),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unexpected_token</span><span class="macro">!</span>(<span class="ident">t</span>)
             }
         }
     }

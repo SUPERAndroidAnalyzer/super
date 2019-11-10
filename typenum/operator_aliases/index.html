@@ -7,7 +7,7 @@ here. For even more ergonomics, consider using the <code>op!</code> macro instea
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Mul</span>;
 <span class="kw">use</span> <span class="ident">typenum</span>::{<span class="ident">Prod</span>, <span class="ident">P5</span>, <span class="ident">P7</span>};
 
-<span class="kw">type</span> <span class="ident">X</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P7</span> <span class="kw">as</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">P5</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>;
+<span class="kw">type</span> <span class="ident">X</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P7</span> <span class="kw">as</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">P5</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 <span class="kw">type</span> <span class="ident">Y</span> <span class="op">=</span> <span class="ident">Prod</span><span class="op">&lt;</span><span class="ident">P7</span>, <span class="ident">P5</span><span class="op">&gt;</span>;
 
 <span class="macro">assert_type_eq</span><span class="macro">!</span>(<span class="ident">X</span>, <span class="ident">Y</span>);</pre></div>

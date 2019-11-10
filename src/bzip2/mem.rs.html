@@ -340,7 +340,7 @@
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Direction</span><span class="op">&gt;</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span> {}
 
 <span class="kw">trait</span> <span class="ident">Direction</span> {
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-&gt;</span> <span class="ident">c_int</span>;
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span>;
 }
 
 <span class="kw">enum</span> <span class="ident">DirCompress</span> {}
@@ -422,7 +422,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Allowable values range from 0 to 250 inclusive. 0 is a special case,</span>
     <span class="doccomment">/// equivalent to using the default value of 30.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">lvl</span>: <span class="ident">Compression</span>, <span class="ident">work_factor</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Compress</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">lvl</span>: <span class="ident">Compression</span>, <span class="ident">work_factor</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Compress</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">mem</span>::<span class="ident">zeroed</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ffi</span>::<span class="ident">BZ2_bzCompressInit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">raw</span>, <span class="ident">lvl</span> <span class="kw">as</span> <span class="ident">c_int</span>, <span class="number">0</span>,
@@ -438,11 +438,11 @@
     <span class="doccomment">/// If anything other than BZ_OK is seen, `Err` is returned. The action</span>
     <span class="doccomment">/// given must be one of Run, Flush or Finish.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>],
-                    <span class="ident">action</span>: <span class="ident">Action</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+                    <span class="ident">action</span>: <span class="ident">Action</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="comment">// apparently 0-length compression requests which don&#39;t actually make</span>
         <span class="comment">// any progress are returned as BZ_PARAM_ERROR, which we don&#39;t want, to</span>
         <span class="comment">// just translate to a success here.</span>
-        <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">action</span> <span class="op">==</span> <span class="ident">Action</span>::<span class="ident">Run</span> {
+        <span class="kw">if</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">action</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Action</span>::<span class="ident">Run</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">RunOk</span>)
         }
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">next_in</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
@@ -451,12 +451,12 @@
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">avail_out</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">c_uint</span>;
         <span class="kw">unsafe</span> {
             <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">BZ2_bzCompress</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>, <span class="ident">action</span> <span class="kw">as</span> <span class="ident">c_int</span>) {
-                <span class="ident">ffi</span>::<span class="ident">BZ_RUN_OK</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">RunOk</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_FLUSH_OK</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">FlushOk</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_FINISH_OK</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">FinishOk</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_STREAM_END</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_SEQUENCE_ERROR</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Sequence</span>),
-                <span class="ident">c</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown return status: {}&quot;</span>, <span class="ident">c</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_RUN_OK</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">RunOk</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_FLUSH_OK</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">FlushOk</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_FINISH_OK</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">FinishOk</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_STREAM_END</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_SEQUENCE_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Sequence</span>),
+                <span class="ident">c</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unknown return status: {}&quot;</span>, <span class="ident">c</span>),
             }
         }
     }
@@ -469,7 +469,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compress_vec</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
                         <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
                         <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-                        <span class="ident">action</span>: <span class="ident">Action</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+                        <span class="ident">action</span>: <span class="ident">Action</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">cap</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">capacity</span>();
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">len</span>();
 
@@ -486,12 +486,12 @@
     }
 
     <span class="doccomment">/// Total number of bytes processed as input</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">total_in</span>()
     }
 
     <span class="doccomment">/// Total number of bytes processed as output</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">total_out</span>()
     }
 }
@@ -503,7 +503,7 @@
     <span class="doccomment">/// decompression algorithm which uses less memory but at the cost of</span>
     <span class="doccomment">/// decompressing more slowly (roughly speaking, half the speed, but the</span>
     <span class="doccomment">/// maximum memory requirement drops to around 2300k). See</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">small</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">Decompress</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">small</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Decompress</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">mem</span>::<span class="ident">zeroed</span>());
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">ffi</span>::<span class="ident">BZ2_bzDecompressInit</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="ident">raw</span>, <span class="number">0</span>, <span class="ident">small</span> <span class="kw">as</span> <span class="ident">c_int</span>), <span class="number">0</span>);
@@ -515,21 +515,21 @@
 
     <span class="doccomment">/// Decompress a block of input into a block of output.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decompress</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>])
-                      <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+                      <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">next_in</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">avail_in</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">c_uint</span>;
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">next_out</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">as_mut_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>.<span class="ident">avail_out</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">c_uint</span>;
         <span class="kw">unsafe</span> {
             <span class="kw">match</span> <span class="ident">ffi</span>::<span class="ident">BZ2_bzDecompress</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">raw</span>) {
-                <span class="ident">ffi</span>::<span class="ident">BZ_OK</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_MEM_ERROR</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">MemNeeded</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_STREAM_END</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_PARAM_ERROR</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Param</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_DATA_ERROR</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Data</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_DATA_ERROR_MAGIC</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">DataMagic</span>),
-                <span class="ident">ffi</span>::<span class="ident">BZ_SEQUENCE_ERROR</span> <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Sequence</span>),
-                <span class="ident">c</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;wut: {}&quot;</span>, <span class="ident">c</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_OK</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="prelude-val">Ok</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_MEM_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">MemNeeded</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_STREAM_END</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Status</span>::<span class="ident">StreamEnd</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_PARAM_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Param</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_DATA_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Data</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_DATA_ERROR_MAGIC</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">DataMagic</span>),
+                <span class="ident">ffi</span>::<span class="ident">BZ_SEQUENCE_ERROR</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Sequence</span>),
+                <span class="ident">c</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;wut: {}&quot;</span>, <span class="ident">c</span>),
             }
         }
     }
@@ -540,7 +540,7 @@
     <span class="doccomment">/// its current length up to its capacity. The length of the vector will be</span>
     <span class="doccomment">/// adjusted appropriately.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decompress_vec</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>)
-                          <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+                          <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Status</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">cap</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">capacity</span>();
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">output</span>.<span class="ident">len</span>();
 
@@ -557,45 +557,45 @@
     }
 
     <span class="doccomment">/// Total number of bytes processed as input</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">total_in</span>()
     }
 
     <span class="doccomment">/// Total number of bytes processed as output</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">total_out</span>()
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">D</span>: <span class="ident">Direction</span><span class="op">&gt;</span> <span class="ident">Stream</span><span class="op">&lt;</span><span class="ident">D</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_in</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         (<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_in_lo32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">|</span>
-        ((<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_in_hi32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;&lt;</span> <span class="number">32</span>)
+        ((<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_in_hi32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">total_out</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         (<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_out_lo32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">|</span>
-        ((<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_out_hi32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;&lt;</span> <span class="number">32</span>)
+        ((<span class="self">self</span>.<span class="ident">raw</span>.<span class="ident">total_out_hi32</span> <span class="kw">as</span> <span class="ident">u64</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">32</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">for</span> <span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> { <span class="string">&quot;bz2 data error&quot;</span> }
+    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> { <span class="string">&quot;bz2 data error&quot;</span> }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Error</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="ident">error</span>::<span class="ident">Error</span>::<span class="ident">description</span>(<span class="self">self</span>).<span class="ident">fmt</span>(<span class="ident">f</span>)
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Direction</span> <span class="kw">for</span> <span class="ident">DirCompress</span> {
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-&gt;</span> <span class="ident">c_int</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span> {
         <span class="ident">ffi</span>::<span class="ident">BZ2_bzCompressEnd</span>(<span class="ident">stream</span>)
     }
 }
 <span class="kw">impl</span> <span class="ident">Direction</span> <span class="kw">for</span> <span class="ident">DirDecompress</span> {
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-&gt;</span> <span class="ident">c_int</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">destroy</span>(<span class="ident">stream</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ffi</span>::<span class="ident">bz_stream</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span> {
         <span class="ident">ffi</span>::<span class="ident">BZ2_bzDecompressEnd</span>(<span class="ident">stream</span>)
     }
 }

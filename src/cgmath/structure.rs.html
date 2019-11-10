@@ -811,7 +811,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(Vector3::&lt;f32&gt;::len(), 3);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">len</span>() <span class="op">-&gt;</span> <span class="ident">usize</span>;
+    <span class="kw">fn</span> <span class="ident">len</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>;
 
     <span class="doccomment">/// Construct a vector from a single value, replicating it.</span>
     <span class="doccomment">///</span>
@@ -822,17 +822,17 @@
     <span class="doccomment">/// assert_eq!(Vector3::from_value(1),</span>
     <span class="doccomment">///            Vector3::new(1, 1, 1));</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">from_value</span>(<span class="ident">value</span>: <span class="self">Self</span>::<span class="ident">Element</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_value</span>(<span class="ident">value</span>: <span class="self">Self</span>::<span class="ident">Element</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Get the pointer to the first element of the array.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span>::<span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span>::<span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>[<span class="number">0</span>]
     }
 
     <span class="doccomment">/// Get a mutable pointer to the first element of the array.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_mut_ptr</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Element</span> {
+    <span class="kw">fn</span> <span class="ident">as_mut_ptr</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Element</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>[<span class="number">0</span>]
     }
 
@@ -846,12 +846,12 @@
     }
 
     <span class="doccomment">/// The sum of the elements of the array.</span>
-    <span class="kw">fn</span> <span class="ident">sum</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Element</span>
+    <span class="kw">fn</span> <span class="ident">sum</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Element</span>
     <span class="kw">where</span>
         <span class="self">Self</span>::<span class="ident">Element</span>: <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Array</span><span class="op">&gt;</span>::<span class="ident">Element</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// The product of the elements of the array.</span>
-    <span class="kw">fn</span> <span class="ident">product</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Element</span>
+    <span class="kw">fn</span> <span class="ident">product</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Element</span>
     <span class="kw">where</span>
         <span class="self">Self</span>::<span class="ident">Element</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Array</span><span class="op">&gt;</span>::<span class="ident">Element</span><span class="op">&gt;</span>;
 }
@@ -859,11 +859,11 @@
 <span class="doccomment">/// Element-wise arithmetic operations. These are supplied for pragmatic</span>
 <span class="doccomment">/// reasons, but will usually fall outside of traditional algebraic properties.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ElementWise</span><span class="op">&lt;</span><span class="ident">Rhs</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">add_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">sub_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">mul_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">div_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">rem_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">add_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">sub_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">mul_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">div_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">rem_element_wise</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="kw">fn</span> <span class="ident">add_assign_element_wise</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>);
     <span class="kw">fn</span> <span class="ident">sub_assign_element_wise</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>);
@@ -937,9 +937,9 @@
     <span class="self">Self</span>: <span class="ident">iter</span>::<span class="ident">Sum</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>,
 
     <span class="comment">// FIXME: Ugly type signatures - blocked by rust-lang/rust#24092</span>
-    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Rem</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Rem</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// The associated scalar.</span>
     <span class="kw">type</span> <span class="ident">Scalar</span>: <span class="ident">BaseNum</span>;
@@ -957,10 +957,10 @@
     <span class="doccomment">/// This does not perform an expensive square root operation like in</span>
     <span class="doccomment">/// `MetricSpace::distance` method, and so can be used to compare distances</span>
     <span class="doccomment">/// more efficiently.</span>
-    <span class="kw">fn</span> <span class="ident">distance2</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Metric</span>;
+    <span class="kw">fn</span> <span class="ident">distance2</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Metric</span>;
 
     <span class="doccomment">/// The distance between two values.</span>
-    <span class="kw">fn</span> <span class="ident">distance</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Metric</span> {
+    <span class="kw">fn</span> <span class="ident">distance</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Metric</span> {
         <span class="ident">Float</span>::<span class="ident">sqrt</span>(<span class="self">Self</span>::<span class="ident">distance2</span>(<span class="self">self</span>, <span class="ident">other</span>))
     }
 }
@@ -980,11 +980,11 @@
     <span class="self">Self</span>: <span class="ident">ApproxEq</span><span class="op">&lt;</span><span class="ident">Epsilon</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">VectorSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// Vector dot (or inner) product.</span>
-    <span class="kw">fn</span> <span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
+    <span class="kw">fn</span> <span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
 
     <span class="doccomment">/// Returns `true` if the vector is perpendicular (at right angles) to the</span>
     <span class="doccomment">/// other vector.</span>
-    <span class="kw">fn</span> <span class="ident">is_perpendicular</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">is_perpendicular</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="self">Self</span>::<span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">other</span>), <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Scalar</span>::<span class="ident">zero</span>())
     }
 
@@ -994,37 +994,37 @@
     <span class="doccomment">/// `InnerSpace::magnitude` method, and so can be used to compare magnitudes</span>
     <span class="doccomment">/// more efficiently.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">magnitude2</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
+    <span class="kw">fn</span> <span class="ident">magnitude2</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
         <span class="self">Self</span>::<span class="ident">dot</span>(<span class="self">self</span>, <span class="self">self</span>)
     }
 
     <span class="doccomment">/// The distance from the tail to the tip of the vector.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">magnitude</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
+    <span class="kw">fn</span> <span class="ident">magnitude</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
         <span class="ident">Float</span>::<span class="ident">sqrt</span>(<span class="self">self</span>.<span class="ident">magnitude2</span>())
     }
 
     <span class="doccomment">/// Returns the angle between two vectors in radians.</span>
-    <span class="kw">fn</span> <span class="ident">angle</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="ident">Rad</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Scalar</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">angle</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Rad</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Scalar</span><span class="op">&gt;</span> {
         <span class="ident">Rad</span>::<span class="ident">acos</span>(<span class="self">Self</span>::<span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">other</span>) <span class="op">/</span> (<span class="self">self</span>.<span class="ident">magnitude</span>() <span class="op">*</span> <span class="ident">other</span>.<span class="ident">magnitude</span>()))
     }
 
     <span class="doccomment">/// Returns a vector with the same direction, but with a magnitude of `1`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">normalize</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">normalize</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">normalize_to</span>(<span class="self">Self</span>::<span class="ident">Scalar</span>::<span class="ident">one</span>())
     }
 
     <span class="doccomment">/// Returns a vector with the same direction and a given magnitude.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">normalize_to</span>(<span class="self">self</span>, <span class="ident">magnitude</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">normalize_to</span>(<span class="self">self</span>, <span class="ident">magnitude</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span> <span class="op">*</span> (<span class="ident">magnitude</span> <span class="op">/</span> <span class="self">self</span>.<span class="ident">magnitude</span>())
     }
 
     <span class="doccomment">/// Returns the result of linearly interpolating the magnitude of the vector</span>
     <span class="doccomment">/// towards the magnitude of `other` by the specified amount.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>, <span class="ident">amount</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>, <span class="ident">amount</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span> <span class="op">+</span> ((<span class="ident">other</span> <span class="op">-</span> <span class="self">self</span>) <span class="op">*</span> <span class="ident">amount</span>)
     }
 
@@ -1032,7 +1032,7 @@
     <span class="doccomment">/// [vector projection](https://en.wikipedia.org/wiki/Vector_projection)</span>
     <span class="doccomment">/// of the current inner space projected onto the supplied argument.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">project_on</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">project_on</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">other</span> <span class="op">*</span> (<span class="self">self</span>.<span class="ident">dot</span>(<span class="ident">other</span>) <span class="op">/</span> <span class="ident">other</span>.<span class="ident">magnitude2</span>())
     }
 }
@@ -1089,13 +1089,13 @@
     <span class="comment">// FIXME: Ugly type signatures - blocked by rust-lang/rust#24092</span>
     <span class="self">Self</span>: <span class="ident">Array</span><span class="op">&lt;</span><span class="ident">Element</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span><span class="op">&gt;</span>,
 
-    <span class="self">Self</span>: <span class="ident">Add</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Diff</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Sub</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Diff</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Add</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Diff</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Sub</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Diff</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
     <span class="self">Self</span>: <span class="ident">Sub</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Diff</span><span class="op">&gt;</span>,
 
-    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Rem</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Rem</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">EuclideanSpace</span><span class="op">&gt;</span>::<span class="ident">Scalar</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// The associated scalar over which the space is defined.</span>
     <span class="doccomment">///</span>
@@ -1107,19 +1107,19 @@
     <span class="kw">type</span> <span class="ident">Diff</span>: <span class="ident">VectorSpace</span><span class="op">&lt;</span><span class="ident">Scalar</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">Scalar</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// The point at the origin of the Euclidean space.</span>
-    <span class="kw">fn</span> <span class="ident">origin</span>() <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">origin</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Convert a displacement vector to a point.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This can be considered equivalent to the addition of the displacement</span>
     <span class="doccomment">/// vector `v` to to `Self::origin()`.</span>
-    <span class="kw">fn</span> <span class="ident">from_vec</span>(<span class="ident">v</span>: <span class="self">Self</span>::<span class="ident">Diff</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_vec</span>(<span class="ident">v</span>: <span class="self">Self</span>::<span class="ident">Diff</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Convert a point to a displacement vector.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This can be seen as equivalent to the displacement vector from</span>
     <span class="doccomment">/// `Self::origin()` to `self`.</span>
-    <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Diff</span>;
+    <span class="kw">fn</span> <span class="ident">to_vec</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Diff</span>;
 
     <span class="doccomment">/// Returns the middle point between two other points.</span>
     <span class="doccomment">///</span>
@@ -1133,7 +1133,7 @@
     <span class="doccomment">/// );</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">midpoint</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">midpoint</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">self</span> <span class="op">+</span> (<span class="ident">other</span> <span class="op">-</span> <span class="self">self</span>) <span class="op">/</span> <span class="ident">cast</span>(<span class="number">2</span>).<span class="ident">unwrap</span>()
     }
 
@@ -1152,7 +1152,7 @@
     <span class="doccomment">/// let centroid = Point2::centroid(&amp;triangle);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">centroid</span>(<span class="ident">points</span>: <span class="kw-2">&amp;</span>[<span class="self">Self</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">centroid</span>(<span class="ident">points</span>: <span class="kw-2">&amp;</span>[<span class="self">Self</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">total_displacement</span> <span class="op">=</span> <span class="ident">points</span>
             .<span class="ident">iter</span>()
             .<span class="ident">fold</span>(<span class="self">Self</span>::<span class="ident">Diff</span>::<span class="ident">zero</span>(), <span class="op">|</span><span class="ident">acc</span>, <span class="ident">p</span><span class="op">|</span> <span class="ident">acc</span> <span class="op">+</span> <span class="ident">p</span>.<span class="ident">to_vec</span>());
@@ -1161,7 +1161,7 @@
     }
 
     <span class="doccomment">/// This is a weird one, but its useful for plane calculations.</span>
-    <span class="kw">fn</span> <span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>::<span class="ident">Diff</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
+    <span class="kw">fn</span> <span class="ident">dot</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>::<span class="ident">Diff</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
 }
 
 <span class="doccomment">/// A column-major matrix of arbitrary dimensions.</span>
@@ -1205,26 +1205,26 @@
 
     <span class="doccomment">/// Get the pointer to the first element of the array.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
+    <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>[<span class="number">0</span>][<span class="number">0</span>]
     }
 
     <span class="doccomment">/// Get a mutable pointer to the first element of the array.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_mut_ptr</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
+    <span class="kw">fn</span> <span class="ident">as_mut_ptr</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>[<span class="number">0</span>][<span class="number">0</span>]
     }
 
     <span class="doccomment">/// Replace a column in the array.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">replace_col</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">c</span>: <span class="ident">usize</span>, <span class="ident">src</span>: <span class="self">Self</span>::<span class="ident">Column</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Column</span> {
+    <span class="kw">fn</span> <span class="ident">replace_col</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">c</span>: <span class="ident">usize</span>, <span class="ident">src</span>: <span class="self">Self</span>::<span class="ident">Column</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Column</span> {
         <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
 
         <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>[<span class="ident">c</span>], <span class="ident">src</span>)
     }
 
     <span class="doccomment">/// Get a row from this matrix by-value.</span>
-    <span class="kw">fn</span> <span class="ident">row</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">r</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Row</span>;
+    <span class="kw">fn</span> <span class="ident">row</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">r</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Row</span>;
 
     <span class="doccomment">/// Swap two rows of this array.</span>
     <span class="kw">fn</span> <span class="ident">swap_rows</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">a</span>: <span class="ident">usize</span>, <span class="ident">b</span>: <span class="ident">usize</span>);
@@ -1234,7 +1234,7 @@
     <span class="kw">fn</span> <span class="ident">swap_elements</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">a</span>: (<span class="ident">usize</span>, <span class="ident">usize</span>), <span class="ident">b</span>: (<span class="ident">usize</span>, <span class="ident">usize</span>));
 
     <span class="doccomment">/// Transpose this matrix, returning a new matrix.</span>
-    <span class="kw">fn</span> <span class="ident">transpose</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Transpose</span>;
+    <span class="kw">fn</span> <span class="ident">transpose</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Transpose</span>;
 }
 
 <span class="doccomment">/// A column-major major matrix where the rows and column vectors are of the same dimensions.</span>
@@ -1251,7 +1251,7 @@
         <span class="ident">Row</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">SquareMatrix</span><span class="op">&gt;</span>::<span class="ident">ColumnRow</span>,
         <span class="ident">Transpose</span> <span class="op">=</span> <span class="self">Self</span>,
     <span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">SquareMatrix</span><span class="op">&gt;</span>::<span class="ident">ColumnRow</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">SquareMatrix</span><span class="op">&gt;</span>::<span class="ident">ColumnRow</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">SquareMatrix</span><span class="op">&gt;</span>::<span class="ident">ColumnRow</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">SquareMatrix</span><span class="op">&gt;</span>::<span class="ident">ColumnRow</span><span class="op">&gt;</span>,
     <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
 {
     <span class="comment">// FIXME: Will not be needed once equality constraints in where clauses are implemented</span>
@@ -1263,9 +1263,9 @@
     <span class="kw">type</span> <span class="ident">ColumnRow</span>: <span class="ident">VectorSpace</span><span class="op">&lt;</span><span class="ident">Scalar</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">Scalar</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Array</span><span class="op">&lt;</span><span class="ident">Element</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">Scalar</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Create a new diagonal matrix using the supplied value.</span>
-    <span class="kw">fn</span> <span class="ident">from_value</span>(<span class="ident">value</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_value</span>(<span class="ident">value</span>: <span class="self">Self</span>::<span class="ident">Scalar</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
     <span class="doccomment">/// Create a matrix from a non-uniform scale</span>
-    <span class="kw">fn</span> <span class="ident">from_diagonal</span>(<span class="ident">diagonal</span>: <span class="self">Self</span>::<span class="ident">ColumnRow</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_diagonal</span>(<span class="ident">diagonal</span>: <span class="self">Self</span>::<span class="ident">ColumnRow</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// The [identity matrix]. Multiplying this matrix with another should have</span>
     <span class="doccomment">/// no effect.</span>
@@ -1276,49 +1276,49 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// [identity matrix]: https://en.wikipedia.org/wiki/Identity_matrix</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">identity</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">identity</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">one</span>()
     }
 
     <span class="doccomment">/// Transpose this matrix in-place.</span>
     <span class="kw">fn</span> <span class="ident">transpose_self</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>);
     <span class="doccomment">/// Take the determinant of this matrix.</span>
-    <span class="kw">fn</span> <span class="ident">determinant</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
+    <span class="kw">fn</span> <span class="ident">determinant</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span>;
 
     <span class="doccomment">/// Return a vector containing the diagonal of this matrix.</span>
-    <span class="kw">fn</span> <span class="ident">diagonal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">ColumnRow</span>;
+    <span class="kw">fn</span> <span class="ident">diagonal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">ColumnRow</span>;
 
     <span class="doccomment">/// Return the trace of this matrix. That is, the sum of the diagonal.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">trace</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
+    <span class="kw">fn</span> <span class="ident">trace</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Scalar</span> {
         <span class="self">self</span>.<span class="ident">diagonal</span>().<span class="ident">sum</span>()
     }
 
     <span class="doccomment">/// Invert this matrix, returning a new matrix. `m.mul_m(m.invert())` is</span>
     <span class="doccomment">/// the identity matrix. Returns `None` if this matrix is not invertible</span>
     <span class="doccomment">/// (has a determinant of zero).</span>
-    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Test if this matrix is invertible.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">is_invertible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">is_invertible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="macro">ulps_ne</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">determinant</span>(), <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">Scalar</span>::<span class="ident">zero</span>())
     }
 
     <span class="doccomment">/// Test if this matrix is the identity matrix. That is, it is diagonal</span>
     <span class="doccomment">/// and every element in the diagonal is one.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">is_identity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">is_identity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="self">self</span>, <span class="kw-2">&amp;</span><span class="self">Self</span>::<span class="ident">identity</span>())
     }
 
     <span class="doccomment">/// Test if this is a diagonal matrix. That is, every element outside of</span>
     <span class="doccomment">/// the diagonal is 0.</span>
-    <span class="kw">fn</span> <span class="ident">is_diagonal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>;
+    <span class="kw">fn</span> <span class="ident">is_diagonal</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>;
 
     <span class="doccomment">/// Test if this matrix is symmetric. That is, it is equal to its</span>
     <span class="doccomment">/// transpose.</span>
-    <span class="kw">fn</span> <span class="ident">is_symmetric</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>;
+    <span class="kw">fn</span> <span class="ident">is_symmetric</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>;
 }
 
 <span class="doccomment">/// Angles and their associated trigonometric functions.</span>
@@ -1340,9 +1340,9 @@
     <span class="self">Self</span>: <span class="ident">Add</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
     <span class="self">Self</span>: <span class="ident">Sub</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
     <span class="self">Self</span>: <span class="ident">Rem</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Mul</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
     <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span><span class="op">&gt;</span>,
-    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
+    <span class="self">Self</span>: <span class="ident">Div</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span>, <span class="ident">Output</span> <span class="op">=</span> <span class="self">Self</span><span class="op">&gt;</span>,
 
     <span class="self">Self</span>: <span class="ident">iter</span>::<span class="ident">Sum</span>,
 {
@@ -1350,7 +1350,7 @@
 
     <span class="doccomment">/// Return the angle, normalized to the range `[0, full_turn)`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">normalize</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">normalize</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">rem</span> <span class="op">=</span> <span class="self">self</span> <span class="op">%</span> <span class="self">Self</span>::<span class="ident">full_turn</span>();
         <span class="kw">if</span> <span class="ident">rem</span> <span class="op">&lt;</span> <span class="self">Self</span>::<span class="ident">zero</span>() {
             <span class="ident">rem</span> <span class="op">+</span> <span class="self">Self</span>::<span class="ident">full_turn</span>()
@@ -1361,44 +1361,44 @@
 
     <span class="doccomment">/// Return the angle rotated by half a turn.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">opposite</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">opposite</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">normalize</span>(<span class="self">self</span> <span class="op">+</span> <span class="self">Self</span>::<span class="ident">turn_div_2</span>())
     }
 
     <span class="doccomment">/// Returns the interior bisector of the two angles.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">bisect</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">bisect</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">half</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">0.5f64</span>).<span class="ident">unwrap</span>();
         <span class="self">Self</span>::<span class="ident">normalize</span>((<span class="self">self</span> <span class="op">-</span> <span class="ident">other</span>) <span class="op">*</span> <span class="ident">half</span> <span class="op">+</span> <span class="self">self</span>)
     }
 
     <span class="doccomment">/// A full rotation.</span>
-    <span class="kw">fn</span> <span class="ident">full_turn</span>() <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">full_turn</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Half of a full rotation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">turn_div_2</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">turn_div_2</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">factor</span>: <span class="self">Self</span>::<span class="ident">Unitless</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">2</span>).<span class="ident">unwrap</span>();
         <span class="self">Self</span>::<span class="ident">full_turn</span>() <span class="op">/</span> <span class="ident">factor</span>
     }
 
     <span class="doccomment">/// A third of a full rotation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">turn_div_3</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">turn_div_3</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">factor</span>: <span class="self">Self</span>::<span class="ident">Unitless</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">3</span>).<span class="ident">unwrap</span>();
         <span class="self">Self</span>::<span class="ident">full_turn</span>() <span class="op">/</span> <span class="ident">factor</span>
     }
 
     <span class="doccomment">/// A quarter of a full rotation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">turn_div_4</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">turn_div_4</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">factor</span>: <span class="self">Self</span>::<span class="ident">Unitless</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">4</span>).<span class="ident">unwrap</span>();
         <span class="self">Self</span>::<span class="ident">full_turn</span>() <span class="op">/</span> <span class="ident">factor</span>
     }
 
     <span class="doccomment">/// A sixth of a full rotation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">turn_div_6</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">turn_div_6</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">let</span> <span class="ident">factor</span>: <span class="self">Self</span>::<span class="ident">Unitless</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">6</span>).<span class="ident">unwrap</span>();
         <span class="self">Self</span>::<span class="ident">full_turn</span>() <span class="op">/</span> <span class="ident">factor</span>
     }
@@ -1412,7 +1412,7 @@
     <span class="doccomment">/// let angle = Rad(35.0);</span>
     <span class="doccomment">/// let ratio: f32 = Rad::sin(angle);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">sin</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
+    <span class="kw">fn</span> <span class="ident">sin</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
 
     <span class="doccomment">/// Compute the cosine of the angle, returning a unitless ratio.</span>
     <span class="doccomment">///</span>
@@ -1423,7 +1423,7 @@
     <span class="doccomment">/// let angle = Rad(35.0);</span>
     <span class="doccomment">/// let ratio: f32 = Rad::cos(angle);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">cos</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
+    <span class="kw">fn</span> <span class="ident">cos</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
 
     <span class="doccomment">/// Compute the tangent of the angle, returning a unitless ratio.</span>
     <span class="doccomment">///</span>
@@ -1434,7 +1434,7 @@
     <span class="doccomment">/// let angle = Rad(35.0);</span>
     <span class="doccomment">/// let ratio: f32 = Rad::tan(angle);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">tan</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
+    <span class="kw">fn</span> <span class="ident">tan</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span>;
 
     <span class="doccomment">/// Compute the sine and cosine of the angle, returning the result as a</span>
     <span class="doccomment">/// pair.</span>
@@ -1449,7 +1449,7 @@
     <span class="doccomment">/// let angle = Rad(35.0);</span>
     <span class="doccomment">/// let (s, c) = Rad::sin_cos(angle);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">sin_cos</span>(<span class="self">self</span>) <span class="op">-&gt;</span> (<span class="self">Self</span>::<span class="ident">Unitless</span>, <span class="self">Self</span>::<span class="ident">Unitless</span>);
+    <span class="kw">fn</span> <span class="ident">sin_cos</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="self">Self</span>::<span class="ident">Unitless</span>, <span class="self">Self</span>::<span class="ident">Unitless</span>);
 
     <span class="doccomment">/// Compute the cosecant of the angle.</span>
     <span class="doccomment">///</span>
@@ -1463,7 +1463,7 @@
     <span class="doccomment">/// let ratio: f32 = Rad::csc(angle);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">csc</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
+    <span class="kw">fn</span> <span class="ident">csc</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
         <span class="self">Self</span>::<span class="ident">sin</span>(<span class="self">self</span>).<span class="ident">recip</span>()
     }
 
@@ -1479,7 +1479,7 @@
     <span class="doccomment">/// let ratio: f32 = Rad::cot(angle);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">cot</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
+    <span class="kw">fn</span> <span class="ident">cot</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
         <span class="self">Self</span>::<span class="ident">tan</span>(<span class="self">self</span>).<span class="ident">recip</span>()
     }
 
@@ -1495,7 +1495,7 @@
     <span class="doccomment">/// let ratio: f32 = Rad::sec(angle);</span>
     <span class="doccomment">/// ```</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">sec</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
+    <span class="kw">fn</span> <span class="ident">sec</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unitless</span> {
         <span class="self">Self</span>::<span class="ident">cos</span>(<span class="self">self</span>).<span class="ident">recip</span>()
     }
 
@@ -1507,7 +1507,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// let angle: Rad&lt;f32&gt; = Rad::asin(0.5);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">asin</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">asin</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Compute the arccosine of the ratio, returning the resulting angle.</span>
     <span class="doccomment">///</span>
@@ -1517,7 +1517,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// let angle: Rad&lt;f32&gt; = Rad::acos(0.5);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">acos</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">acos</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Compute the arctangent of the ratio, returning the resulting angle.</span>
     <span class="doccomment">///</span>
@@ -1527,9 +1527,9 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// let angle: Rad&lt;f32&gt; = Rad::atan(0.5);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">atan</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">atan</span>(<span class="ident">ratio</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
-    <span class="kw">fn</span> <span class="ident">atan2</span>(<span class="ident">a</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>, <span class="ident">b</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">atan2</span>(<span class="ident">a</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>, <span class="ident">b</span>: <span class="self">Self</span>::<span class="ident">Unitless</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "cgmath";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

@@ -305,12 +305,12 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is the equivalent to the [gluPerspective]</span>
 <span class="doccomment">/// (http://www.opengl.org/sdk/docs/man2/xhtml/gluPerspective.xml) function.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">perspective</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">perspective</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span>, <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(
     <span class="ident">fovy</span>: <span class="ident">A</span>,
     <span class="ident">aspect</span>: <span class="ident">S</span>,
     <span class="ident">near</span>: <span class="ident">S</span>,
     <span class="ident">far</span>: <span class="ident">S</span>,
-) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="ident">PerspectiveFov</span> {
         <span class="ident">fovy</span>: <span class="ident">fovy</span>.<span class="ident">into</span>(),
         <span class="ident">aspect</span>: <span class="ident">aspect</span>,
@@ -323,7 +323,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is the equivalent of the now deprecated [glFrustum]</span>
 <span class="doccomment">/// (http://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml) function.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">frustum</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>(<span class="ident">left</span>: <span class="ident">S</span>, <span class="ident">right</span>: <span class="ident">S</span>, <span class="ident">bottom</span>: <span class="ident">S</span>, <span class="ident">top</span>: <span class="ident">S</span>, <span class="ident">near</span>: <span class="ident">S</span>, <span class="ident">far</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">frustum</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>(<span class="ident">left</span>: <span class="ident">S</span>, <span class="ident">right</span>: <span class="ident">S</span>, <span class="ident">bottom</span>: <span class="ident">S</span>, <span class="ident">top</span>: <span class="ident">S</span>, <span class="ident">near</span>: <span class="ident">S</span>, <span class="ident">far</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="ident">Perspective</span> {
         <span class="ident">left</span>: <span class="ident">left</span>,
         <span class="ident">right</span>: <span class="ident">right</span>,
@@ -338,7 +338,7 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// This is the equivalent of the now deprecated [glOrtho]</span>
 <span class="doccomment">/// (http://www.opengl.org/sdk/docs/man2/xhtml/glOrtho.xml) function.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ortho</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>(<span class="ident">left</span>: <span class="ident">S</span>, <span class="ident">right</span>: <span class="ident">S</span>, <span class="ident">bottom</span>: <span class="ident">S</span>, <span class="ident">top</span>: <span class="ident">S</span>, <span class="ident">near</span>: <span class="ident">S</span>, <span class="ident">far</span>: <span class="ident">S</span>) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ortho</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>(<span class="ident">left</span>: <span class="ident">S</span>, <span class="ident">right</span>: <span class="ident">S</span>, <span class="ident">bottom</span>: <span class="ident">S</span>, <span class="ident">top</span>: <span class="ident">S</span>, <span class="ident">near</span>: <span class="ident">S</span>, <span class="ident">far</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="ident">Ortho</span> {
         <span class="ident">left</span>: <span class="ident">left</span>,
         <span class="ident">right</span>: <span class="ident">right</span>,
@@ -361,7 +361,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">PerspectiveFov</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_perspective</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_perspective</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">two</span>: <span class="ident">S</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">2</span>).<span class="ident">unwrap</span>();
         <span class="kw">let</span> <span class="ident">angle</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">fovy</span> <span class="op">/</span> <span class="ident">two</span>;
         <span class="kw">let</span> <span class="ident">ymax</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">near</span> <span class="op">*</span> <span class="ident">Rad</span>::<span class="ident">tan</span>(<span class="ident">angle</span>);
@@ -378,8 +378,8 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">PerspectiveFov</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">persp</span>: <span class="ident">PerspectiveFov</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">PerspectiveFov</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">persp</span>: <span class="ident">PerspectiveFov</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
             <span class="ident">persp</span>.<span class="ident">fovy</span> <span class="op">&gt;</span> <span class="ident">Rad</span>::<span class="ident">zero</span>(),
             <span class="string">&quot;The vertical field of view cannot be below zero, found: {:?}&quot;</span>,
@@ -457,22 +457,22 @@
     <span class="kw">pub</span> <span class="ident">far</span>: <span class="ident">S</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">persp</span>: <span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">persp</span>: <span class="ident">Perspective</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">persp</span>.<span class="ident">left</span> <span class="op">&lt;=</span> <span class="ident">persp</span>.<span class="ident">right</span>,
+            <span class="ident">persp</span>.<span class="ident">left</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">persp</span>.<span class="ident">right</span>,
             <span class="string">&quot;`left` cannot be greater than `right`, found: left: {:?} right: {:?}&quot;</span>,
             <span class="ident">persp</span>.<span class="ident">left</span>,
             <span class="ident">persp</span>.<span class="ident">right</span>
         );
         <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">persp</span>.<span class="ident">bottom</span> <span class="op">&lt;=</span> <span class="ident">persp</span>.<span class="ident">top</span>,
+            <span class="ident">persp</span>.<span class="ident">bottom</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">persp</span>.<span class="ident">top</span>,
             <span class="string">&quot;`bottom` cannot be greater than `top`, found: bottom: {:?} top: {:?}&quot;</span>,
             <span class="ident">persp</span>.<span class="ident">bottom</span>,
             <span class="ident">persp</span>.<span class="ident">top</span>
         );
         <span class="macro">assert</span><span class="macro">!</span>(
-            <span class="ident">persp</span>.<span class="ident">near</span> <span class="op">&lt;=</span> <span class="ident">persp</span>.<span class="ident">far</span>,
+            <span class="ident">persp</span>.<span class="ident">near</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">persp</span>.<span class="ident">far</span>,
             <span class="string">&quot;`near` cannot be greater than `far`, found: near: {:?} far: {:?}&quot;</span>,
             <span class="ident">persp</span>.<span class="ident">near</span>,
             <span class="ident">persp</span>.<span class="ident">far</span>
@@ -522,8 +522,8 @@
     <span class="kw">pub</span> <span class="ident">far</span>: <span class="ident">S</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Ortho</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">ortho</span>: <span class="ident">Ortho</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Ortho</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">ortho</span>: <span class="ident">Ortho</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix4</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">two</span>: <span class="ident">S</span> <span class="op">=</span> <span class="ident">cast</span>(<span class="number">2</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">c0r0</span> <span class="op">=</span> <span class="ident">two</span> <span class="op">/</span> (<span class="ident">ortho</span>.<span class="ident">right</span> <span class="op">-</span> <span class="ident">ortho</span>.<span class="ident">left</span>);

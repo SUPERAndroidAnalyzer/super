@@ -21,7 +21,7 @@ the addition happens.</p>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::<span class="ident">Add</span>;
 <span class="kw">use</span> <span class="ident">typenum</span>::{<span class="ident">Integer</span>, <span class="ident">P3</span>, <span class="ident">P4</span>};
 
-<span class="kw">type</span> <span class="ident">X</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P3</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">P4</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>;
+<span class="kw">type</span> <span class="ident">X</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P3</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">P4</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">X</span> <span class="kw">as</span> <span class="ident">Integer</span><span class="op">&gt;</span>::<span class="ident">to_i32</span>(), <span class="number">7</span>);</pre></div>
 <p>In addition, helper aliases are defined for type operators. For example, the above snippet
 could be replaced with</p>

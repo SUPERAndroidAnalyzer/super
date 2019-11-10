@@ -8,5 +8,4 @@ implementors["rgb"] = [{text:"impl&lt;T&gt; <a class=\"trait\" href=\"https://do
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -6,5 +6,4 @@ implementors["xml"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

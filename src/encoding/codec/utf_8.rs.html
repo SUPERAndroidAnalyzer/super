@@ -876,10 +876,10 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UTF8Encoding</span>;
 
 <span class="kw">impl</span> <span class="ident">Encoding</span> <span class="kw">for</span> <span class="ident">UTF8Encoding</span> {
-    <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> { <span class="string">&quot;utf-8&quot;</span> }
-    <span class="kw">fn</span> <span class="ident">whatwg_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> { <span class="prelude-val">Some</span>(<span class="string">&quot;utf-8&quot;</span>) }
-    <span class="kw">fn</span> <span class="ident">raw_encoder</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Encoder</span>::<span class="ident">new</span>() }
-    <span class="kw">fn</span> <span class="ident">raw_decoder</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Decoder</span>::<span class="ident">new</span>() }
+    <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> { <span class="string">&quot;utf-8&quot;</span> }
+    <span class="kw">fn</span> <span class="ident">whatwg_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> { <span class="prelude-val">Some</span>(<span class="string">&quot;utf-8&quot;</span>) }
+    <span class="kw">fn</span> <span class="ident">raw_encoder</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Encoder</span>::<span class="ident">new</span>() }
+    <span class="kw">fn</span> <span class="ident">raw_decoder</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Decoder</span>::<span class="ident">new</span>() }
 }
 
 <span class="doccomment">/// An encoder for UTF-8.</span>
@@ -887,21 +887,21 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">UTF8Encoder</span>;
 
 <span class="kw">impl</span> <span class="ident">UTF8Encoder</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">UTF8Encoder</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">UTF8Encoder</span>) }
 }
 
 <span class="kw">impl</span> <span class="ident">RawEncoder</span> <span class="kw">for</span> <span class="ident">UTF8Encoder</span> {
-    <span class="kw">fn</span> <span class="ident">from_self</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Encoder</span>::<span class="ident">new</span>() }
-    <span class="kw">fn</span> <span class="ident">is_ascii_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
+    <span class="kw">fn</span> <span class="ident">from_self</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawEncoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Encoder</span>::<span class="ident">new</span>() }
+    <span class="kw">fn</span> <span class="ident">is_ascii_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
 
-    <span class="kw">fn</span> <span class="ident">raw_feed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ByteWriter</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">raw_feed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ByteWriter</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span>) {
         <span class="kw">let</span> <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] <span class="op">=</span> <span class="ident">input</span>.<span class="ident">as_bytes</span>();
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">input</span>).<span class="ident">is_ok</span>());
         <span class="ident">output</span>.<span class="ident">write_bytes</span>(<span class="ident">input</span>);
         (<span class="ident">input</span>.<span class="ident">len</span>(), <span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">raw_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ByteWriter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">raw_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ByteWriter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span> {
         <span class="prelude-val">None</span>
     }
 }
@@ -915,7 +915,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">UTF8Decoder</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> {
         <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">UTF8Decoder</span> { <span class="ident">queuelen</span>: <span class="number">0</span>, <span class="ident">queue</span>: [<span class="number">0</span>; <span class="number">4</span>], <span class="ident">state</span>: <span class="ident">INITIAL_STATE</span> })
     }
 }
@@ -962,16 +962,16 @@
 <span class="kw">static</span> <span class="ident">REJECT_STATE</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">98</span>;
 <span class="kw">static</span> <span class="ident">REJECT_STATE_WITH_BACKUP</span>: <span class="ident">u8</span> <span class="op">=</span> <span class="number">86</span>;
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">is_reject_state</span>((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span> <span class="op">&gt;=</span> <span class="ident">REJECT_STATE_WITH_BACKUP</span>));
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">next_state</span>((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ch</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> (
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">is_reject_state</span>((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">REJECT_STATE_WITH_BACKUP</span>));
+<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">next_state</span>((<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">ch</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> (
     <span class="ident">STATE_TRANSITIONS</span>[(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">state</span> <span class="op">+</span> <span class="ident">CHAR_CATEGORY</span>[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">ch</span> <span class="kw">as</span> <span class="ident">usize</span>]) <span class="kw">as</span> <span class="ident">usize</span>]
 ));
 
 <span class="kw">impl</span> <span class="ident">RawDecoder</span> <span class="kw">for</span> <span class="ident">UTF8Decoder</span> {
-    <span class="kw">fn</span> <span class="ident">from_self</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Decoder</span>::<span class="ident">new</span>() }
-    <span class="kw">fn</span> <span class="ident">is_ascii_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
+    <span class="kw">fn</span> <span class="ident">from_self</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">RawDecoder</span><span class="op">&gt;</span> { <span class="ident">UTF8Decoder</span>::<span class="ident">new</span>() }
+    <span class="kw">fn</span> <span class="ident">is_ascii_compatible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> { <span class="bool-val">true</span> }
 
-    <span class="kw">fn</span> <span class="ident">raw_feed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">StringWriter</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">raw_feed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">StringWriter</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span>) {
         <span class="ident">output</span>.<span class="ident">writer_hint</span>(<span class="ident">input</span>.<span class="ident">len</span>());
 
         <span class="kw">fn</span> <span class="ident">write_bytes</span>(<span class="ident">output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">StringWriter</span>, <span class="ident">bytes</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) {
@@ -983,20 +983,20 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">offset</span> <span class="op">=</span> <span class="number">0</span>;
 
         <span class="comment">// optimization: if we are in the initial state, quickly skip to the first non-MSB-set byte.</span>
-        <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">INITIAL_STATE</span> {
-            <span class="kw">let</span> <span class="ident">first_msb</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">&gt;=</span> <span class="number">0x80</span>).<span class="ident">unwrap_or</span>(<span class="ident">input</span>.<span class="ident">len</span>());
-            <span class="ident">offset</span> <span class="op">+=</span> <span class="ident">first_msb</span>;
-            <span class="ident">processed</span> <span class="op">+=</span> <span class="ident">first_msb</span>;
+        <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">INITIAL_STATE</span> {
+            <span class="kw">let</span> <span class="ident">first_msb</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">iter</span>().<span class="ident">position</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">ch</span><span class="op">|</span> <span class="ident">ch</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0x80</span>).<span class="ident">unwrap_or</span>(<span class="ident">input</span>.<span class="ident">len</span>());
+            <span class="ident">offset</span> <span class="op">+</span><span class="op">=</span> <span class="ident">first_msb</span>;
+            <span class="ident">processed</span> <span class="op">+</span><span class="op">=</span> <span class="ident">first_msb</span>;
         }
 
         <span class="kw">for</span> (<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">ch</span>) <span class="kw">in</span> <span class="ident">input</span>[<span class="ident">offset</span>..].<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
             <span class="ident">state</span> <span class="op">=</span> <span class="macro">next_state</span><span class="macro">!</span>(<span class="ident">state</span>, <span class="ident">ch</span>);
-            <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">ACCEPT_STATE</span> {
+            <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ACCEPT_STATE</span> {
                 <span class="ident">processed</span> <span class="op">=</span> <span class="ident">i</span> <span class="op">+</span> <span class="ident">offset</span> <span class="op">+</span> <span class="number">1</span>;
             } <span class="kw">else</span> <span class="kw">if</span> <span class="macro">is_reject_state</span><span class="macro">!</span>(<span class="ident">state</span>) {
-                <span class="kw">let</span> <span class="ident">upto</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">REJECT_STATE</span> {<span class="ident">i</span> <span class="op">+</span> <span class="ident">offset</span> <span class="op">+</span> <span class="number">1</span>} <span class="kw">else</span> {<span class="ident">i</span> <span class="op">+</span> <span class="ident">offset</span>};
+                <span class="kw">let</span> <span class="ident">upto</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">REJECT_STATE</span> {<span class="ident">i</span> <span class="op">+</span> <span class="ident">offset</span> <span class="op">+</span> <span class="number">1</span>} <span class="kw">else</span> {<span class="ident">i</span> <span class="op">+</span> <span class="ident">offset</span>};
                 <span class="self">self</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">INITIAL_STATE</span>;
-                <span class="kw">if</span> <span class="ident">processed</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">&gt;</span> <span class="number">0</span> { <span class="comment">// flush `queue` outside the problem</span>
+                <span class="kw">if</span> <span class="ident">processed</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">&gt;</span> <span class="number">0</span> { <span class="comment">// flush `queue` outside the problem</span>
                     <span class="ident">write_bytes</span>(<span class="ident">output</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">queue</span>[<span class="number">0</span>..<span class="self">self</span>.<span class="ident">queuelen</span>]);
                 }
                 <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">=</span> <span class="number">0</span>;
@@ -1008,7 +1008,7 @@
         }
 
         <span class="self">self</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">state</span>;
-        <span class="kw">if</span> <span class="ident">processed</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">&gt;</span> <span class="number">0</span> { <span class="comment">// flush `queue`</span>
+        <span class="kw">if</span> <span class="ident">processed</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">&gt;</span> <span class="number">0</span> { <span class="comment">// flush `queue`</span>
             <span class="ident">write_bytes</span>(<span class="ident">output</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">queue</span>[<span class="number">0</span>..<span class="self">self</span>.<span class="ident">queuelen</span>]);
             <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">=</span> <span class="number">0</span>;
         }
@@ -1018,20 +1018,20 @@
             <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">morequeuelen</span> {
                 <span class="self">self</span>.<span class="ident">queue</span>[<span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">+</span> <span class="ident">i</span>] <span class="op">=</span> <span class="ident">input</span>[<span class="ident">processed</span> <span class="op">+</span> <span class="ident">i</span>];
             }
-            <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">+=</span> <span class="ident">morequeuelen</span>;
+            <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">+</span><span class="op">=</span> <span class="ident">morequeuelen</span>;
         }
         (<span class="ident">processed</span>, <span class="prelude-val">None</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">raw_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">StringWriter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">raw_finish</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">_output</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">StringWriter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">CodecError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>;
         <span class="kw">let</span> <span class="ident">queuelen</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">queuelen</span>;
         <span class="self">self</span>.<span class="ident">state</span> <span class="op">=</span> <span class="ident">INITIAL_STATE</span>;
         <span class="self">self</span>.<span class="ident">queuelen</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">if</span> <span class="ident">state</span> <span class="op">!=</span> <span class="ident">ACCEPT_STATE</span> {
+        <span class="kw">if</span> <span class="ident">state</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ACCEPT_STATE</span> {
             <span class="prelude-val">Some</span>(<span class="ident">CodecError</span> { <span class="ident">upto</span>: <span class="number">0</span>, <span class="ident">cause</span>: <span class="string">&quot;incomplete sequence&quot;</span>.<span class="ident">into</span>() })
         } <span class="kw">else</span> {
-            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">queuelen</span> <span class="op">==</span> <span class="number">0</span>);
+            <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">queuelen</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>);
             <span class="prelude-val">None</span>
         }
     }
@@ -1040,21 +1040,21 @@
 <span class="doccomment">/// Almost equivalent to `std::str::from_utf8`.</span>
 <span class="doccomment">/// This function is provided for the fair benchmark against the stdlib&#39;s UTF-8 conversion</span>
 <span class="doccomment">/// functions, as rust-encoding always allocates a new string.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_utf8</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_utf8</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">input</span>.<span class="ident">iter</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span>;
 
-    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">return_as_whole</span>(() <span class="op">=&gt;</span> (<span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> {<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">input</span>)})));
+    <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">return_as_whole</span>(() <span class="op">=</span><span class="op">&gt;</span> (<span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="kw">unsafe</span> {<span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">input</span>)})));
 
     <span class="comment">// optimization: if we are in the initial state, quickly skip to the first non-MSB-set byte.</span>
     <span class="kw">loop</span> {
         <span class="kw">match</span> <span class="ident">iter</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ch</span>) <span class="kw">if</span> <span class="ident">ch</span> <span class="op">&lt;</span> <span class="number">0x80</span> <span class="op">=&gt;</span> {}
-            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ch</span>) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ch</span>) <span class="kw">if</span> <span class="ident">ch</span> <span class="op">&lt;</span> <span class="number">0x80</span> <span class="op">=</span><span class="op">&gt;</span> {}
+            <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">ch</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">state</span> <span class="op">=</span> <span class="macro">next_state</span><span class="macro">!</span>(<span class="ident">INITIAL_STATE</span>, <span class="ident">ch</span>);
                 <span class="kw">break</span>;
             }
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> { <span class="macro">return_as_whole</span><span class="macro">!</span>(); }
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> { <span class="macro">return_as_whole</span><span class="macro">!</span>(); }
         }
     }
 
@@ -1062,7 +1062,7 @@
         <span class="ident">state</span> <span class="op">=</span> <span class="macro">next_state</span><span class="macro">!</span>(<span class="ident">state</span>, <span class="ident">ch</span>);
         <span class="kw">if</span> <span class="macro">is_reject_state</span><span class="macro">!</span>(<span class="ident">state</span>) { <span class="kw">return</span> <span class="prelude-val">None</span>; }
     }
-    <span class="kw">if</span> <span class="ident">state</span> <span class="op">!=</span> <span class="ident">ACCEPT_STATE</span> { <span class="kw">return</span> <span class="prelude-val">None</span>; }
+    <span class="kw">if</span> <span class="ident">state</span> <span class="op">!</span><span class="op">=</span> <span class="ident">ACCEPT_STATE</span> { <span class="kw">return</span> <span class="prelude-val">None</span>; }
     <span class="macro">return_as_whole</span><span class="macro">!</span>();
 }
 
@@ -1282,7 +1282,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_invalid_incomplete_three_byte_seq_followed_by_space</span>() {
         <span class="kw">for</span> <span class="ident">b</span> <span class="kw">in</span> <span class="number">0xe0</span>..<span class="number">0xf5</span> {
-            <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">==</span> <span class="number">0xe0</span> <span class="op">||</span> <span class="ident">b</span> <span class="op">==</span> <span class="number">0xf0</span> {<span class="number">0xa0</span>} <span class="kw">else</span> {<span class="number">0x80</span>};
+            <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">b</span> <span class="op">=</span><span class="op">=</span> <span class="number">0xe0</span> <span class="op">|</span><span class="op">|</span> <span class="ident">b</span> <span class="op">=</span><span class="op">=</span> <span class="number">0xf0</span> {<span class="number">0xa0</span>} <span class="kw">else</span> {<span class="number">0x80</span>};
 
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">UTF8Encoding</span>.<span class="ident">raw_decoder</span>();
             <span class="macro">assert_feed_err</span><span class="macro">!</span>(<span class="ident">d</span>, [], [<span class="ident">b</span>, <span class="ident">c</span>], [<span class="number">0x20</span>], <span class="string">&quot;&quot;</span>);
@@ -1309,7 +1309,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_invalid_incomplete_four_byte_seq_followed_by_space</span>() {
         <span class="kw">for</span> <span class="ident">a</span> <span class="kw">in</span> <span class="number">0xf0</span>..<span class="number">0xf5</span> {
-            <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">a</span> <span class="op">==</span> <span class="number">0xf0</span> {<span class="number">0xa0</span>} <span class="kw">else</span> {<span class="number">0x80</span>};
+            <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">a</span> <span class="op">=</span><span class="op">=</span> <span class="number">0xf0</span> {<span class="number">0xa0</span>} <span class="kw">else</span> {<span class="number">0x80</span>};
             <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="number">0x80</span>;
 
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">d</span> <span class="op">=</span> <span class="ident">UTF8Encoding</span>.<span class="ident">raw_decoder</span>();
@@ -1468,7 +1468,7 @@
         <span class="kw">fn</span> <span class="ident">bench_encode</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">ASCII_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">encode</span>(<span class="ident">s</span>, <span class="ident">EncoderTrap</span>::<span class="ident">Strict</span>)
             }))
         }
@@ -1477,7 +1477,7 @@
         <span class="kw">fn</span> <span class="ident">bench_decode</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">ASCII_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">decode</span>(<span class="ident">s</span>, <span class="ident">DecoderTrap</span>::<span class="ident">Strict</span>)
             }))
         }
@@ -1486,7 +1486,7 @@
         <span class="kw">fn</span> <span class="ident">bench_from_utf8</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">ASCII_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1495,7 +1495,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">ASCII_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1504,7 +1504,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_lossy</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">ASCII_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">s</span>)
             }))
         }
@@ -1523,7 +1523,7 @@
         <span class="kw">fn</span> <span class="ident">bench_encode</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">KOREAN_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">encode</span>(<span class="ident">s</span>, <span class="ident">EncoderTrap</span>::<span class="ident">Strict</span>)
             }))
         }
@@ -1532,7 +1532,7 @@
         <span class="kw">fn</span> <span class="ident">bench_decode</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">KOREAN_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">decode</span>(<span class="ident">s</span>, <span class="ident">DecoderTrap</span>::<span class="ident">Strict</span>)
             }))
         }
@@ -1541,7 +1541,7 @@
         <span class="kw">fn</span> <span class="ident">bench_from_utf8</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">KOREAN_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1550,7 +1550,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">KOREAN_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1559,7 +1559,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_lossy</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">KOREAN_TEXT</span>.<span class="ident">as_bytes</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">s</span>)
             }))
         }
@@ -1577,7 +1577,7 @@
         <span class="kw">fn</span> <span class="ident">bench_decode_replace</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">INVALID_UTF8_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">decode</span>(<span class="ident">s</span>, <span class="ident">DecodeReplace</span>)
             }))
         }
@@ -1586,7 +1586,7 @@
         <span class="kw">fn</span> <span class="ident">bench_from_utf8_failing</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">INVALID_UTF8_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1595,7 +1595,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_failing</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">INVALID_UTF8_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="ident">s</span>)
             }))
         }
@@ -1604,7 +1604,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_lossy</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">INVALID_UTF8_TEXT</span>;
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="ident">s</span>)
             }))
         }
@@ -1622,7 +1622,7 @@
         <span class="kw">fn</span> <span class="ident">bench_decode_replace</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">get_external_bench_data</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">UTF8Encoding</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>, <span class="ident">DecodeReplace</span>)
             }))
         }
@@ -1631,7 +1631,7 @@
         <span class="kw">fn</span> <span class="ident">bench_from_utf8_failing</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">get_external_bench_data</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>)
             }))
         }
@@ -1640,7 +1640,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_failing</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">get_external_bench_data</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">str</span>::<span class="ident">from_utf8</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>)
             }))
         }
@@ -1649,7 +1649,7 @@
         <span class="kw">fn</span> <span class="ident">bench_stdlib_from_utf8_lossy</span>(<span class="ident">bencher</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">test</span>::<span class="ident">Bencher</span>) {
             <span class="kw">let</span> <span class="ident">s</span> <span class="op">=</span> <span class="ident">testutils</span>::<span class="ident">get_external_bench_data</span>();
             <span class="ident">bencher</span>.<span class="ident">bytes</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
-            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">||</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
+            <span class="ident">bencher</span>.<span class="ident">iter</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">test</span>::<span class="ident">black_box</span>({
                 <span class="ident">String</span>::<span class="ident">from_utf8_lossy</span>(<span class="kw-2">&amp;</span><span class="ident">s</span>)
             }))
         }

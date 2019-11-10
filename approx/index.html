@@ -48,25 +48,25 @@ implements <code>ApproxEq</code>. This means that we can make comparisons for ei
 {
     <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">T</span>::<span class="ident">Epsilon</span>;
 
-    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
         <span class="ident">T</span>::<span class="ident">default_epsilon</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>::<span class="ident">Epsilon</span> {
         <span class="ident">T</span>::<span class="ident">default_max_relative</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="ident">T</span>::<span class="ident">default_max_ulps</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">T</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>) <span class="op">&amp;&amp;</span>
+    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">T</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span>
         <span class="ident">T</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">i</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="ident">T</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>) <span class="op">&amp;&amp;</span>
+    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">T</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="ident">T</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">x</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">x</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span>
         <span class="ident">T</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">i</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">i</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>)
     }
 }</pre></div>

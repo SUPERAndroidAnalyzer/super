@@ -6,5 +6,4 @@ implementors["block_padding"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

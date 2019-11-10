@@ -220,13 +220,13 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">StringTableBuf</span> {
-    <span class="ident">strings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>,
-    <span class="ident">styles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">strings</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">styles</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">encoding</span>: <span class="ident">Encoding</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">StringTableBuf</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">strings</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
             <span class="ident">styles</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(),
@@ -240,7 +240,7 @@
         <span class="self">self</span>.<span class="ident">encoding</span> <span class="op">=</span> <span class="ident">encoding</span>;
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_encoding</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Encoding</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_encoding</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Encoding</span> {
         <span class="self">self</span>.<span class="ident">encoding</span>
     }
 
@@ -250,14 +250,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">OwnedBuf</span> <span class="kw">for</span> <span class="ident">StringTableBuf</span> {
-    <span class="kw">fn</span> <span class="ident">get_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">fn</span> <span class="ident">get_token</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
         <span class="ident">TOKEN_STRING_TABLE</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">get_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
-        <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">encoding</span> <span class="op">==</span> <span class="ident">Encoding</span>::<span class="ident">Utf8</span> {
+        <span class="kw">let</span> <span class="ident">flags</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">encoding</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Encoding</span>::<span class="ident">Utf8</span> {
             <span class="number">0x00000100</span>
         } <span class="kw">else</span> {
             <span class="number">0</span>
@@ -278,7 +278,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">out</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">get_body_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_body_data</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">out</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string_offsets</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
@@ -287,7 +287,7 @@
         <span class="kw">let</span> <span class="ident">style_buffer</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">current_offset</span> <span class="op">=</span> <span class="number">0</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">encoding</span> <span class="op">==</span> <span class="ident">Encoding</span>::<span class="ident">Utf8</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">encoder</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">encoding</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Encoding</span>::<span class="ident">Utf8</span> {
             <span class="ident">utf_8</span>::<span class="ident">UTF8Encoder</span>::<span class="ident">new</span>()
         } <span class="kw">else</span> {
             <span class="ident">utf_16</span>::<span class="ident">UTF_16LE_ENCODING</span>.<span class="ident">raw_encoder</span>()
@@ -303,7 +303,7 @@
 
             <span class="comment">// Write size</span>
             <span class="kw">let</span> <span class="ident">low</span> <span class="op">=</span> (<span class="ident">size</span> <span class="op">&amp;</span> <span class="number">0xFF</span>) <span class="kw">as</span> <span class="ident">u8</span>;
-            <span class="kw">let</span> <span class="ident">high</span> <span class="op">=</span> ((<span class="ident">size</span> <span class="op">&amp;</span> <span class="number">0xFF00</span>) <span class="op">&gt;&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>;
+            <span class="kw">let</span> <span class="ident">high</span> <span class="op">=</span> ((<span class="ident">size</span> <span class="op">&amp;</span> <span class="number">0xFF00</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">u8</span>;
             <span class="ident">string_buffer</span>.<span class="ident">push</span>(<span class="ident">low</span>);
             <span class="ident">string_buffer</span>.<span class="ident">push</span>(<span class="ident">high</span>);
             <span class="ident">string_buffer</span>.<span class="ident">extend</span>(<span class="kw-2">&amp;</span><span class="ident">encoded_string</span>);
@@ -336,15 +336,15 @@
 }
 
 <span class="kw">impl</span> <span class="ident">StringTable</span> <span class="kw">for</span> <span class="ident">StringTableBuf</span> {
-    <span class="kw">fn</span> <span class="ident">get_strings_len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">get_strings_len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">strings</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">get_styles_len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">get_styles_len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">styles</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">get_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">strings</span>.<span class="ident">get</span>(<span class="ident">idx</span> <span class="kw">as</span> <span class="ident">usize</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">s</span>.<span class="ident">clone</span>())
         } <span class="kw">else</span> {

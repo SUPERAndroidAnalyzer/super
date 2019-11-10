@@ -6,5 +6,4 @@ implementors["env_logger"] = [{text:"impl&lt;'a, T:&nbsp;<a class=\"trait\" href
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -470,59 +470,59 @@
     <span class="self">Self</span>: <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// Create a rotation to a given direction with an &#39;up&#39; vector.</span>
-    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">P</span>::<span class="ident">Diff</span>, <span class="ident">up</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">P</span>::<span class="ident">Diff</span>, <span class="ident">up</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Create a shortest rotation to transform vector &#39;a&#39; into &#39;b&#39;.</span>
     <span class="doccomment">/// Both given vectors are assumed to have unit length.</span>
-    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">P</span>::<span class="ident">Diff</span>, <span class="ident">b</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">P</span>::<span class="ident">Diff</span>, <span class="ident">b</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Rotate a vector using this rotation.</span>
-    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-&gt;</span> <span class="ident">P</span>::<span class="ident">Diff</span>;
+    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">P</span>::<span class="ident">Diff</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">P</span>::<span class="ident">Diff</span>;
 
     <span class="doccomment">/// Rotate a point using this rotation, by converting it to its</span>
     <span class="doccomment">/// representation as a vector.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">rotate_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">point</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="ident">P</span> {
+    <span class="kw">fn</span> <span class="ident">rotate_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">point</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">P</span> {
         <span class="ident">P</span>::<span class="ident">from_vec</span>(<span class="self">self</span>.<span class="ident">rotate_vector</span>(<span class="ident">point</span>.<span class="ident">to_vec</span>()))
     }
 
     <span class="doccomment">/// Create a new rotation which &quot;un-does&quot; this rotation. That is,</span>
     <span class="doccomment">/// `r * r.invert()` is the identity.</span>
-    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 
 <span class="doccomment">/// A two-dimensional rotation.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Rotation2</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>
-    : <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> {
+    : <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a rotation by a given angle. Thus is a redundant case of both</span>
     <span class="doccomment">/// from_axis_angle() and from_euler() for 2D space.</span>
-    <span class="kw">fn</span> <span class="ident">from_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 
 <span class="doccomment">/// A three-dimensional rotation.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Rotation3</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span>
-    : <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="op">+</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>
+    : <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>
     {
     <span class="doccomment">/// Create a rotation using an angle around a given axis.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The specified axis **must be normalized**, or it represents an invalid rotation.</span>
-    <span class="kw">fn</span> <span class="ident">from_axis_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">axis</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">angle</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">from_axis_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">axis</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">angle</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Create a rotation from an angle around the `x` axis (pitch).</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from_angle_x</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_x</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Rotation3</span>::<span class="ident">from_axis_angle</span>(<span class="ident">Vector3</span>::<span class="ident">unit_x</span>(), <span class="ident">theta</span>)
     }
 
     <span class="doccomment">/// Create a rotation from an angle around the `y` axis (yaw).</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from_angle_y</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_y</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Rotation3</span>::<span class="ident">from_axis_angle</span>(<span class="ident">Vector3</span>::<span class="ident">unit_y</span>(), <span class="ident">theta</span>)
     }
 
     <span class="doccomment">/// Create a rotation from an angle around the `z` axis (roll).</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from_angle_z</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_z</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Rotation3</span>::<span class="ident">from_axis_angle</span>(<span class="ident">Vector3</span>::<span class="ident">unit_z</span>(), <span class="ident">theta</span>)
     }
 }
@@ -576,56 +576,56 @@
     <span class="ident">mat</span>: <span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">b</span>.<span class="ident">mat</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">iter</span>.<span class="ident">fold</span>(<span class="ident">Basis2</span>::<span class="ident">one</span>(), <span class="ident">Mul</span>::<span class="ident">mul</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">S</span>: <span class="lifetime">&#39;a</span> <span class="op">+</span> <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">S</span>: <span class="lifetime">&#39;a</span> <span class="op">+</span> <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">iter</span>.<span class="ident">fold</span>(<span class="ident">Basis2</span>::<span class="ident">one</span>(), <span class="ident">Mul</span>::<span class="ident">mul</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">up</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">up</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis2</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix2</span>::<span class="ident">look_at</span>(<span class="ident">dir</span>, <span class="ident">up</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">b</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">b</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Rotation2</span>::<span class="ident">from_angle</span>(<span class="ident">Rad</span>::<span class="ident">acos</span>(<span class="ident">a</span>.<span class="ident">dot</span>(<span class="ident">b</span>)))
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">vec</span>
     }
 
     <span class="comment">// TODO: we know the matrix is orthogonal, so this could be re-written</span>
     <span class="comment">// to be faster</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis2</span> {
             <span class="ident">mat</span>: <span class="self">self</span>.<span class="ident">mat</span>.<span class="ident">invert</span>().<span class="ident">unwrap</span>(),
         }
@@ -634,7 +634,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">One</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis2</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix2</span>::<span class="ident">one</span>(),
         }
@@ -642,40 +642,40 @@
 }
 
 <span class="macro">impl_operator</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> { <span class="ident">Basis2</span> { <span class="ident">mat</span>: <span class="ident">lhs</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">rhs</span>.<span class="ident">mat</span>  } }
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> { <span class="ident">Basis2</span> { <span class="ident">mat</span>: <span class="ident">lhs</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">rhs</span>.<span class="ident">mat</span>  } }
 });
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">ApproxEq</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Epsilon</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
         <span class="ident">S</span>::<span class="ident">default_epsilon</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
         <span class="ident">S</span>::<span class="ident">default_max_relative</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="ident">S</span>::<span class="ident">default_max_ulps</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">Matrix2</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">mat</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">Matrix2</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">mat</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis2</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix2</span>::<span class="ident">from_angle</span>(<span class="ident">theta</span>),
         }
@@ -683,7 +683,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Basis2</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Basis2 &quot;</span>));
         <span class="op">&lt;</span>[[<span class="ident">S</span>; <span class="number">2</span>]; <span class="number">2</span>] <span class="kw">as</span> <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span>::<span class="ident">fmt</span>(<span class="self">self</span>.<span class="ident">mat</span>.<span class="ident">as_ref</span>(), <span class="ident">f</span>)
     }
@@ -704,71 +704,71 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new rotation matrix from a quaternion.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_quaternion</span>(<span class="ident">quaternion</span>: <span class="kw-2">&amp;</span><span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_quaternion</span>(<span class="ident">quaternion</span>: <span class="kw-2">&amp;</span><span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">quaternion</span>.<span class="ident">clone</span>().<span class="ident">into</span>(),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">b</span>.<span class="ident">mat</span>
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">b</span>: <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">b</span>.<span class="ident">mat</span>.<span class="ident">into</span>()
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">iter</span>.<span class="ident">fold</span>(<span class="ident">Basis3</span>::<span class="ident">one</span>(), <span class="ident">Mul</span>::<span class="ident">mul</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">S</span>: <span class="lifetime">&#39;a</span> <span class="op">+</span> <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">S</span>: <span class="lifetime">&#39;a</span> <span class="op">+</span> <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">iter</span>::<span class="ident">Product</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">product</span><span class="op">&lt;</span><span class="ident">I</span>: <span class="ident">Iterator</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">iter</span>: <span class="ident">I</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">iter</span>.<span class="ident">fold</span>(<span class="ident">Basis3</span>::<span class="ident">one</span>(), <span class="ident">Mul</span>::<span class="ident">mul</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation</span><span class="op">&lt;</span><span class="ident">Point3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">up</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">look_at</span>(<span class="ident">dir</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">up</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">look_at</span>(<span class="ident">dir</span>, <span class="ident">up</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">b</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">between_vectors</span>(<span class="ident">a</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">b</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">q</span>: <span class="ident">Quaternion</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Rotation</span>::<span class="ident">between_vectors</span>(<span class="ident">a</span>, <span class="ident">b</span>);
         <span class="ident">q</span>.<span class="ident">into</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">rotate_vector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">vec</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">vec</span>
     }
 
     <span class="comment">// TODO: we know the matrix is orthogonal, so this could be re-written</span>
     <span class="comment">// to be faster</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">invert</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="self">self</span>.<span class="ident">mat</span>.<span class="ident">invert</span>().<span class="ident">unwrap</span>(),
         }
@@ -777,7 +777,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">One</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">one</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">one</span>(),
         }
@@ -785,70 +785,70 @@
 }
 
 <span class="macro">impl_operator</span><span class="macro">!</span>(<span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Mul</span><span class="op">&lt;</span><span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> { <span class="ident">Basis3</span> { <span class="ident">mat</span>: <span class="ident">lhs</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">rhs</span>.<span class="ident">mat</span>  } }
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> { <span class="ident">Basis3</span> { <span class="ident">mat</span>: <span class="ident">lhs</span>.<span class="ident">mat</span> <span class="op">*</span> <span class="ident">rhs</span>.<span class="ident">mat</span>  } }
 });
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">ApproxEq</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Epsilon</span> <span class="op">=</span> <span class="ident">S</span>::<span class="ident">Epsilon</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_epsilon</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
         <span class="ident">S</span>::<span class="ident">default_epsilon</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_relative</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">S</span>::<span class="ident">Epsilon</span> {
         <span class="ident">S</span>::<span class="ident">default_max_relative</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-&gt;</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">default_max_ulps</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="ident">S</span>::<span class="ident">default_max_ulps</span>()
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_relative</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">Matrix3</span>::<span class="ident">relative_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">mat</span>, <span class="ident">epsilon</span>, <span class="ident">max_relative</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>, <span class="ident">epsilon</span>: <span class="ident">S</span>::<span class="ident">Epsilon</span>, <span class="ident">max_ulps</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">Matrix3</span>::<span class="ident">ulps_eq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">mat</span>, <span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">mat</span>, <span class="ident">epsilon</span>, <span class="ident">max_ulps</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">BaseFloat</span><span class="op">&gt;</span> <span class="ident">Rotation3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">from_axis_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">axis</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">angle</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_axis_angle</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">axis</span>: <span class="ident">Vector3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span>, <span class="ident">angle</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">from_axis_angle</span>(<span class="ident">axis</span>, <span class="ident">angle</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">from_angle_x</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_x</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">from_angle_x</span>(<span class="ident">theta</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">from_angle_y</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_y</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">from_angle_y</span>(<span class="ident">theta</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">from_angle_z</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_angle_z</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">theta</span>: <span class="ident">A</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">from_angle_z</span>(<span class="ident">theta</span>),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Angle</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">A</span>::<span class="ident">Unitless</span><span class="op">&gt;</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>: <span class="ident">Angle</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">A</span>::<span class="ident">Unitless</span><span class="op">&gt;</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Rad</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Angle</span><span class="op">&gt;</span>::<span class="ident">Unitless</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
     <span class="doccomment">/// Create a three-dimensional rotation matrix from a set of euler angles.</span>
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">A</span>::<span class="ident">Unitless</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">Euler</span><span class="op">&lt;</span><span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">A</span>::<span class="ident">Unitless</span><span class="op">&gt;</span> {
         <span class="ident">Basis3</span> {
             <span class="ident">mat</span>: <span class="ident">Matrix3</span>::<span class="ident">from</span>(<span class="ident">src</span>),
         }
@@ -856,7 +856,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Basis3</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;Basis3 &quot;</span>));
         <span class="op">&lt;</span>[[<span class="ident">S</span>; <span class="number">3</span>]; <span class="number">3</span>] <span class="kw">as</span> <span class="ident">fmt</span>::<span class="ident">Debug</span><span class="op">&gt;</span>::<span class="ident">fmt</span>(<span class="self">self</span>.<span class="ident">mat</span>.<span class="ident">as_ref</span>(), <span class="ident">f</span>)
     }

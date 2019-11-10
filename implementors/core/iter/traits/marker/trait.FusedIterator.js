@@ -6,5 +6,4 @@ implementors["hashbrown"] = [{text:"impl&lt;'_, K, V&gt; <a class=\"trait\" href
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -46,22 +46,22 @@ from being printed.
 <span class="kw">mod</span> <span class="ident">imp</span> {
     <span class="kw">use</span> <span class="ident">atty</span>;
 
-    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stdout</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stdout</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">atty</span>::<span class="ident">is</span>(<span class="ident">atty</span>::<span class="ident">Stream</span>::<span class="ident">Stdout</span>)
     }
 
-    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stderr</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stderr</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="ident">atty</span>::<span class="ident">is</span>(<span class="ident">atty</span>::<span class="ident">Stream</span>::<span class="ident">Stderr</span>)
     }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;atty&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">imp</span> {
-    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stdout</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stdout</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="bool-val">false</span>
     }
 
-    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stderr</span>() <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span>(<span class="kw">in</span> <span class="kw">crate</span>::<span class="ident">fmt</span>) <span class="kw">fn</span> <span class="ident">is_stderr</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="bool-val">false</span>
     }
 }

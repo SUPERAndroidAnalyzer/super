@@ -13,7 +13,7 @@ behave accordingly, e.g. by letting the user know what you tried to open, and fa
 
 <div class="example-wrap"><pre class="rust rust-example-rendered">
 <span class="kw">match</span> <span class="ident">open</span>::<span class="ident">that</span>(<span class="string">&quot;http://rust-lang.org&quot;</span>) {
-    <span class="prelude-val">Ok</span>(<span class="ident">exit_status</span>) <span class="op">=&gt;</span> {
+    <span class="prelude-val">Ok</span>(<span class="ident">exit_status</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">exit_status</span>.<span class="ident">success</span>() {
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Look at your browser!&quot;</span>);
         } <span class="kw">else</span> {
@@ -24,7 +24,7 @@ behave accordingly, e.g. by letting the user know what you tried to open, and fa
             }
         }
     }
-    <span class="prelude-val">Err</span>(<span class="ident">why</span>) <span class="op">=&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Failure to execute command: {}&quot;</span>, <span class="ident">why</span>),
+    <span class="prelude-val">Err</span>(<span class="ident">why</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;Failure to execute command: {}&quot;</span>, <span class="ident">why</span>),
 }</pre></div>
 </div><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
 <table><tr class='module-item'><td><a class="fn" href="fn.that.html" title='open::that fn'>that</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="fn" href="fn.that_in_background.html" title='open::that_in_background fn'>that_in_background</a></td><td class='docblock-short'><p>Convenience function for opening the passed path in a new thread.

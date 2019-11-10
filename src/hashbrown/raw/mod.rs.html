@@ -1424,23 +1424,23 @@
 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">intrinsics</span>::{<span class="ident">likely</span>, <span class="ident">unlikely</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">likely</span>(<span class="ident">b</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">fn</span> <span class="ident">likely</span>(<span class="ident">b</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="ident">b</span>
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">unlikely</span>(<span class="ident">b</span>: <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">fn</span> <span class="ident">unlikely</span>(<span class="ident">b</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="ident">b</span>
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">offset_from</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">to</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">from</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">offset_from</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">to</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">from</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="ident">to</span>.<span class="ident">offset_from</span>(<span class="ident">from</span>) <span class="kw">as</span> <span class="ident">usize</span>
 }
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>))]</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">offset_from</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">to</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">from</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">offset_from</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">to</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">from</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     (<span class="ident">to</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">-</span> <span class="ident">from</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">/</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
 }
 
@@ -1454,19 +1454,19 @@
 <span class="kw">impl</span> <span class="ident">Fallibility</span> {
     <span class="doccomment">/// Error to return on capacity overflow.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">capacity_overflow</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">CollectionAllocErr</span> {
+    <span class="kw">fn</span> <span class="ident">capacity_overflow</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CollectionAllocErr</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Fallibility</span>::<span class="ident">Fallible</span> <span class="op">=&gt;</span> <span class="ident">CollectionAllocErr</span>::<span class="ident">CapacityOverflow</span>,
-            <span class="ident">Fallibility</span>::<span class="ident">Infallible</span> <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Hash table capacity overflow&quot;</span>),
+            <span class="ident">Fallibility</span>::<span class="ident">Fallible</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">CollectionAllocErr</span>::<span class="ident">CapacityOverflow</span>,
+            <span class="ident">Fallibility</span>::<span class="ident">Infallible</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;Hash table capacity overflow&quot;</span>),
         }
     }
 
     <span class="doccomment">/// Error to return on allocation error.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">alloc_err</span>(<span class="self">self</span>, <span class="ident">layout</span>: <span class="ident">Layout</span>) <span class="op">-&gt;</span> <span class="ident">CollectionAllocErr</span> {
+    <span class="kw">fn</span> <span class="ident">alloc_err</span>(<span class="self">self</span>, <span class="ident">layout</span>: <span class="ident">Layout</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CollectionAllocErr</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="ident">Fallibility</span>::<span class="ident">Fallible</span> <span class="op">=&gt;</span> <span class="ident">CollectionAllocErr</span>::<span class="ident">AllocErr</span> { <span class="ident">layout</span> },
-            <span class="ident">Fallibility</span>::<span class="ident">Infallible</span> <span class="op">=&gt;</span> <span class="ident">handle_alloc_error</span>(<span class="ident">layout</span>),
+            <span class="ident">Fallibility</span>::<span class="ident">Fallible</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">CollectionAllocErr</span>::<span class="ident">AllocErr</span> { <span class="ident">layout</span> },
+            <span class="ident">Fallibility</span>::<span class="ident">Infallible</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">handle_alloc_error</span>(<span class="ident">layout</span>),
         }
     }
 }
@@ -1479,27 +1479,27 @@
 
 <span class="doccomment">/// Checks whether a control byte represents a full bucket (top bit is clear).</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">is_full</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x80</span> <span class="op">==</span> <span class="number">0</span>
+<span class="kw">fn</span> <span class="ident">is_full</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x80</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
 }
 
 <span class="doccomment">/// Checks whether a control byte represents a special value (top bit is set).</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">is_special</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x80</span> <span class="op">!=</span> <span class="number">0</span>
+<span class="kw">fn</span> <span class="ident">is_special</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x80</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
 }
 
 <span class="doccomment">/// Checks whether a special control value is EMPTY (just check 1 bit).</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">special_is_empty</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+<span class="kw">fn</span> <span class="ident">special_is_empty</span>(<span class="ident">ctrl</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">is_special</span>(<span class="ident">ctrl</span>));
-    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x01</span> <span class="op">!=</span> <span class="number">0</span>
+    <span class="ident">ctrl</span> <span class="op">&amp;</span> <span class="number">0x01</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span>
 }
 
 <span class="doccomment">/// Primary hash function, used to select the initial bucket to probe from.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">cast_possible_truncation</span>)]</span>
-<span class="kw">fn</span> <span class="ident">h1</span>(<span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">h1</span>(<span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="comment">// On 32-bit platforms we simply ignore the higher hash bits.</span>
     <span class="ident">hash</span> <span class="kw">as</span> <span class="ident">usize</span>
 }
@@ -1507,12 +1507,12 @@
 <span class="doccomment">/// Secondary hash function, saved in the low 7 bits of the control byte.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">cast_possible_truncation</span>)]</span>
-<span class="kw">fn</span> <span class="ident">h2</span>(<span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+<span class="kw">fn</span> <span class="ident">h2</span>(<span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
     <span class="comment">// Grab the top 7 bits of the hash. While the hash is normally a full 64-bit</span>
     <span class="comment">// value, some hash functions (such as FxHash) produce a usize result</span>
     <span class="comment">// instead, which means that the top 32 bits are 0 on 32-bit platforms.</span>
     <span class="kw">let</span> <span class="ident">hash_len</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">min</span>(<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>(), <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">u64</span><span class="op">&gt;</span>());
-    <span class="kw">let</span> <span class="ident">top7</span> <span class="op">=</span> <span class="ident">hash</span> <span class="op">&gt;&gt;</span> (<span class="ident">hash_len</span> <span class="op">*</span> <span class="number">8</span> <span class="op">-</span> <span class="number">7</span>);
+    <span class="kw">let</span> <span class="ident">top7</span> <span class="op">=</span> <span class="ident">hash</span> <span class="op">&gt;</span><span class="op">&gt;</span> (<span class="ident">hash_len</span> <span class="op">*</span> <span class="number">8</span> <span class="op">-</span> <span class="number">7</span>);
     (<span class="ident">top7</span> <span class="op">&amp;</span> <span class="number">0x7f</span>) <span class="kw">as</span> <span class="ident">u8</span> <span class="comment">// truncation</span>
 }
 
@@ -1535,17 +1535,17 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">usize</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="comment">// We should have found an empty bucket by now and ended the probe.</span>
         <span class="macro">debug_assert</span><span class="macro">!</span>(
-            <span class="self">self</span>.<span class="ident">stride</span> <span class="op">&lt;=</span> <span class="self">self</span>.<span class="ident">bucket_mask</span>,
+            <span class="self">self</span>.<span class="ident">stride</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">bucket_mask</span>,
             <span class="string">&quot;Went past end of probe sequence&quot;</span>
         );
 
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>;
-        <span class="self">self</span>.<span class="ident">stride</span> <span class="op">+=</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span>;
-        <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+=</span> <span class="self">self</span>.<span class="ident">stride</span>;
-        <span class="self">self</span>.<span class="ident">pos</span> <span class="op">&amp;=</span> <span class="self">self</span>.<span class="ident">bucket_mask</span>;
+        <span class="self">self</span>.<span class="ident">stride</span> <span class="op">+</span><span class="op">=</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span>;
+        <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">stride</span>;
+        <span class="self">self</span>.<span class="ident">pos</span> <span class="kw-2">&amp;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">bucket_mask</span>;
         <span class="prelude-val">Some</span>(<span class="ident">result</span>)
     }
 }
@@ -1557,7 +1557,7 @@
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="comment">// Workaround for emscripten bug emscripten-core/emscripten-fastcomp#258</span>
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;emscripten&quot;</span>, <span class="ident">inline</span>(<span class="ident">never</span>))]</span>
-<span class="kw">fn</span> <span class="ident">capacity_to_buckets</span>(<span class="ident">cap</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">capacity_to_buckets</span>(<span class="ident">cap</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">adjusted_cap</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">cap</span> <span class="op">&lt;</span> <span class="number">8</span> {
         <span class="comment">// Need at least 1 free bucket on small tables</span>
         <span class="ident">cap</span> <span class="op">+</span> <span class="number">1</span>
@@ -1578,7 +1578,7 @@
 <span class="doccomment">/// Returns the maximum effective capacity for the given bucket mask, taking</span>
 <span class="doccomment">/// the maximum load factor into account.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
-<span class="kw">fn</span> <span class="ident">bucket_mask_to_capacity</span>(<span class="ident">bucket_mask</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+<span class="kw">fn</span> <span class="ident">bucket_mask_to_capacity</span>(<span class="ident">bucket_mask</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
     <span class="kw">if</span> <span class="ident">bucket_mask</span> <span class="op">&lt;</span> <span class="number">8</span> {
         <span class="comment">// For tables with 1/2/4/8 buckets, we always reserve one empty slot.</span>
         <span class="comment">// Keep in mind that the bucket mask is one less than the bucket count.</span>
@@ -1595,7 +1595,7 @@
 <span class="doccomment">/// Returns `None` if an overflow occurs.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>)]</span>
-<span class="kw">fn</span> <span class="ident">calculate_layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Layout</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">calculate_layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Layout</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
     <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">buckets</span>.<span class="ident">is_power_of_two</span>());
 
     <span class="comment">// Array of buckets</span>
@@ -1618,7 +1618,7 @@
 <span class="comment">// and the offset of the buckets in the allocation.</span>
 <span class="attribute">#[<span class="ident">inline</span>]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;nightly&quot;</span>))]</span>
-<span class="kw">fn</span> <span class="ident">calculate_layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Layout</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">calculate_layout</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">Layout</span>, <span class="ident">usize</span>)<span class="op">&gt;</span> {
     <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">buckets</span>.<span class="ident">is_power_of_two</span>());
 
     <span class="comment">// Manual layout calculation since Layout methods are not yet stable.</span>
@@ -1648,15 +1648,15 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">ptr</span>: <span class="self">self</span>.<span class="ident">ptr</span> }
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_base_index</span>(<span class="ident">base</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">from_base_index</span>(<span class="ident">base</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">index</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>
         } <span class="kw">else</span> {
             <span class="ident">base</span>.<span class="ident">add</span>(<span class="ident">index</span>)
@@ -1664,8 +1664,8 @@
         <span class="self">Self</span> { <span class="ident">ptr</span> }
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span> {
-        <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_ptr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span> {
+        <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="comment">// Just return an arbitrary ZST pointer which is properly aligned</span>
             <span class="ident">mem</span>::<span class="ident">align_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span>
         } <span class="kw">else</span> {
@@ -1673,8 +1673,8 @@
         }
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">add</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
-        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">add</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">offset</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
+        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             (<span class="self">self</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">+</span> <span class="ident">offset</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">T</span>
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">ptr</span>.<span class="ident">add</span>(<span class="ident">offset</span>)
@@ -1686,7 +1686,7 @@
         <span class="self">self</span>.<span class="ident">as_ptr</span>().<span class="ident">drop_in_place</span>();
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">T</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="self">self</span>.<span class="ident">as_ptr</span>().<span class="ident">read</span>()
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -1694,11 +1694,11 @@
         <span class="self">self</span>.<span class="ident">as_ptr</span>().<span class="ident">write</span>(<span class="ident">val</span>);
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_ref</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_ref</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">T</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_ptr</span>()
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">as_mut</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">as_ptr</span>()
     }
     <span class="attribute">#[<span class="ident">inline</span>]</span>
@@ -1736,7 +1736,7 @@
     <span class="doccomment">/// leave the data pointer dangling since that bucket is never written to</span>
     <span class="doccomment">/// due to our load factor forcing us to always have at least 1 free bucket.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">data</span>: <span class="ident">NonNull</span>::<span class="ident">dangling</span>(),
             <span class="comment">// Be careful to cast the entire slice to a raw pointer.</span>
@@ -1755,10 +1755,10 @@
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">new_uninitialized</span>(
         <span class="ident">buckets</span>: <span class="ident">usize</span>,
         <span class="ident">fallability</span>: <span class="ident">Fallibility</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
         <span class="kw">let</span> (<span class="ident">layout</span>, <span class="ident">data_offset</span>) <span class="op">=</span>
-            <span class="ident">calculate_layout</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>).<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">ctrl</span> <span class="op">=</span> <span class="ident">NonNull</span>::<span class="ident">new</span>(<span class="ident">alloc</span>(<span class="ident">layout</span>)).<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">fallability</span>.<span class="ident">alloc_err</span>(<span class="ident">layout</span>))<span class="question-mark">?</span>;
+            <span class="ident">calculate_layout</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">buckets</span>).<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">ctrl</span> <span class="op">=</span> <span class="ident">NonNull</span>::<span class="ident">new</span>(<span class="ident">alloc</span>(<span class="ident">layout</span>)).<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">fallability</span>.<span class="ident">alloc_err</span>(<span class="ident">layout</span>))<span class="question-mark">?</span>;
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">NonNull</span>::<span class="ident">new_unchecked</span>(<span class="ident">ctrl</span>.<span class="ident">as_ptr</span>().<span class="ident">add</span>(<span class="ident">data_offset</span>) <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">T</span>);
         <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
             <span class="ident">data</span>,
@@ -1775,13 +1775,13 @@
     <span class="kw">fn</span> <span class="ident">try_with_capacity</span>(
         <span class="ident">capacity</span>: <span class="ident">usize</span>,
         <span class="ident">fallability</span>: <span class="ident">Fallibility</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">capacity</span> <span class="op">==</span> <span class="number">0</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="ident">capacity</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="prelude-val">Ok</span>(<span class="self">Self</span>::<span class="ident">new</span>())
         } <span class="kw">else</span> {
             <span class="kw">unsafe</span> {
                 <span class="kw">let</span> <span class="ident">buckets</span> <span class="op">=</span>
-                    <span class="ident">capacity_to_buckets</span>(<span class="ident">capacity</span>).<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
+                    <span class="ident">capacity_to_buckets</span>(<span class="ident">capacity</span>).<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new_uninitialized</span>(<span class="ident">buckets</span>, <span class="ident">fallability</span>)<span class="question-mark">?</span>;
                 <span class="ident">result</span>.<span class="ident">ctrl</span>(<span class="number">0</span>).<span class="ident">write_bytes</span>(<span class="ident">EMPTY</span>, <span class="ident">result</span>.<span class="ident">num_ctrl_bytes</span>());
 
@@ -1792,7 +1792,7 @@
 
     <span class="doccomment">/// Allocates a new hash table with at least enough capacity for inserting</span>
     <span class="doccomment">/// the given number of elements without reallocating.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_capacity</span>(<span class="ident">capacity</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_capacity</span>(<span class="ident">capacity</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span>::<span class="ident">try_with_capacity</span>(<span class="ident">capacity</span>, <span class="ident">Fallibility</span>::<span class="ident">Infallible</span>)
             .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>() })
     }
@@ -1801,14 +1801,14 @@
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">free_buckets</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> (<span class="ident">layout</span>, <span class="kw">_</span>) <span class="op">=</span>
-            <span class="ident">calculate_layout</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">buckets</span>()).<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>());
+            <span class="ident">calculate_layout</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">buckets</span>()).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>());
         <span class="ident">dealloc</span>(<span class="self">self</span>.<span class="ident">ctrl</span>.<span class="ident">as_ptr</span>(), <span class="ident">layout</span>);
     }
 
     <span class="doccomment">/// Returns the index of a bucket from a `Bucket`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">bucket_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bucket</span>: <span class="kw-2">&amp;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
-        <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">==</span> <span class="number">0</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">bucket_index</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">bucket</span>: <span class="kw-2">&amp;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+        <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="ident">bucket</span>.<span class="ident">ptr</span> <span class="kw">as</span> <span class="ident">usize</span>
         } <span class="kw">else</span> {
             <span class="ident">offset_from</span>(<span class="ident">bucket</span>.<span class="ident">ptr</span>, <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ptr</span>())
@@ -1817,14 +1817,14 @@
 
     <span class="doccomment">/// Returns a pointer to a control byte.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">ctrl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">ctrl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">u8</span> {
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">index</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">num_ctrl_bytes</span>());
         <span class="self">self</span>.<span class="ident">ctrl</span>.<span class="ident">as_ptr</span>().<span class="ident">add</span>(<span class="ident">index</span>)
     }
 
     <span class="doccomment">/// Returns a pointer to an element in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">bucket</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">bucket</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="macro">debug_assert_ne</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">bucket_mask</span>, <span class="number">0</span>);
         <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">index</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">buckets</span>());
         <span class="ident">Bucket</span>::<span class="ident">from_base_index</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ptr</span>(), <span class="ident">index</span>)
@@ -1846,14 +1846,14 @@
         <span class="comment">// Note that in this context `leading_zeros` refers to the bytes at the</span>
         <span class="comment">// end of a group, while `trailing_zeros` refers to the bytes at the</span>
         <span class="comment">// begining of a group.</span>
-        <span class="kw">let</span> <span class="ident">ctrl</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">empty_before</span>.<span class="ident">leading_zeros</span>() <span class="op">+</span> <span class="ident">empty_after</span>.<span class="ident">trailing_zeros</span>() <span class="op">&gt;=</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span> {
+        <span class="kw">let</span> <span class="ident">ctrl</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">empty_before</span>.<span class="ident">leading_zeros</span>() <span class="op">+</span> <span class="ident">empty_after</span>.<span class="ident">trailing_zeros</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span> {
             <span class="ident">DELETED</span>
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">growth_left</span> <span class="op">+=</span> <span class="number">1</span>;
+            <span class="self">self</span>.<span class="ident">growth_left</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             <span class="ident">EMPTY</span>
         };
         <span class="self">self</span>.<span class="ident">set_ctrl</span>(<span class="ident">index</span>, <span class="ident">ctrl</span>);
-        <span class="self">self</span>.<span class="ident">items</span> <span class="op">-=</span> <span class="number">1</span>;
+        <span class="self">self</span>.<span class="ident">items</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
     }
 
     <span class="doccomment">/// Returns an iterator for a probe sequence on the table.</span>
@@ -1862,7 +1862,7 @@
     <span class="doccomment">/// group exactly once. The loop using `probe_seq` must terminate upon</span>
     <span class="doccomment">/// reaching a group containing an empty bucket.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">probe_seq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">ProbeSeq</span> {
+    <span class="kw">fn</span> <span class="ident">probe_seq</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ProbeSeq</span> {
         <span class="ident">ProbeSeq</span> {
             <span class="ident">bucket_mask</span>: <span class="self">self</span>.<span class="ident">bucket_mask</span>,
             <span class="ident">pos</span>: <span class="ident">h1</span>(<span class="ident">hash</span>) <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">bucket_mask</span>,
@@ -1903,7 +1903,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// There must be at least 1 empty bucket in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">find_insert_slot</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">find_insert_slot</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="kw">for</span> <span class="ident">pos</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">probe_seq</span>(<span class="ident">hash</span>) {
             <span class="kw">unsafe</span> {
                 <span class="kw">let</span> <span class="ident">group</span> <span class="op">=</span> <span class="ident">Group</span>::<span class="ident">load</span>(<span class="self">self</span>.<span class="ident">ctrl</span>(<span class="ident">pos</span>));
@@ -1965,11 +1965,11 @@
 
     <span class="doccomment">/// Shrinks the table to fit `max(self.len(), min_size)` elements.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shrink_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">min_size</span>: <span class="ident">usize</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">shrink_to</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">min_size</span>: <span class="ident">usize</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>) {
         <span class="comment">// Calculate the minimal number of elements that we need to reserve</span>
         <span class="comment">// space for.</span>
         <span class="kw">let</span> <span class="ident">min_size</span> <span class="op">=</span> <span class="ident">usize</span>::<span class="ident">max</span>(<span class="self">self</span>.<span class="ident">items</span>, <span class="ident">min_size</span>);
-        <span class="kw">if</span> <span class="ident">min_size</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="ident">min_size</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
             <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">new</span>();
             <span class="kw">return</span>;
         }
@@ -1979,14 +1979,14 @@
         <span class="comment">// count must be larger than what we have right and nothing needs to be</span>
         <span class="comment">// done.</span>
         <span class="kw">let</span> <span class="ident">min_buckets</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">capacity_to_buckets</span>(<span class="ident">min_size</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">buckets</span>) <span class="op">=&gt;</span> <span class="ident">buckets</span>,
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">buckets</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">buckets</span>,
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span>,
         };
 
         <span class="comment">// If we have more buckets than we need, shrink the table.</span>
         <span class="kw">if</span> <span class="ident">min_buckets</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">buckets</span>() {
             <span class="comment">// Fast path if the table is empty</span>
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">items</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">items</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                 <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">with_capacity</span>(<span class="ident">min_size</span>)
             } <span class="kw">else</span> {
                 <span class="self">self</span>.<span class="ident">resize</span>(<span class="ident">min_size</span>, <span class="ident">hasher</span>, <span class="ident">Fallibility</span>::<span class="ident">Infallible</span>)
@@ -1998,7 +1998,7 @@
     <span class="doccomment">/// Ensures that at least `additional` items can be inserted into the table</span>
     <span class="doccomment">/// without reallocation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reserve</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">additional</span>: <span class="ident">usize</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reserve</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">additional</span>: <span class="ident">usize</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>) {
         <span class="kw">if</span> <span class="ident">additional</span> <span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">growth_left</span> {
             <span class="self">self</span>.<span class="ident">reserve_rehash</span>(<span class="ident">additional</span>, <span class="ident">hasher</span>, <span class="ident">Fallibility</span>::<span class="ident">Infallible</span>)
                 .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>() });
@@ -2011,8 +2011,8 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_reserve</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">additional</span>: <span class="ident">usize</span>,
-        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
+        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>,
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">additional</span> <span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">growth_left</span> {
             <span class="self">self</span>.<span class="ident">reserve_rehash</span>(<span class="ident">additional</span>, <span class="ident">hasher</span>, <span class="ident">Fallibility</span>::<span class="ident">Fallible</span>)
         } <span class="kw">else</span> {
@@ -2026,16 +2026,16 @@
     <span class="kw">fn</span> <span class="ident">reserve_rehash</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">additional</span>: <span class="ident">usize</span>,
-        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>,
+        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>,
         <span class="ident">fallability</span>: <span class="ident">Fallibility</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">new_items</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">items</span>
             .<span class="ident">checked_add</span>(<span class="ident">additional</span>)
-            .<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
+            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">fallability</span>.<span class="ident">capacity_overflow</span>())<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">full_capacity</span> <span class="op">=</span> <span class="ident">bucket_mask_to_capacity</span>(<span class="self">self</span>.<span class="ident">bucket_mask</span>);
-        <span class="kw">if</span> <span class="ident">new_items</span> <span class="op">&lt;=</span> <span class="ident">full_capacity</span> <span class="op">/</span> <span class="number">2</span> {
+        <span class="kw">if</span> <span class="ident">new_items</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">full_capacity</span> <span class="op">/</span> <span class="number">2</span> {
             <span class="comment">// Rehash in-place without re-allocating if we have plenty of spare</span>
             <span class="comment">// capacity that is locked up due to DELETED entries.</span>
             <span class="self">self</span>.<span class="ident">rehash_in_place</span>(<span class="ident">hasher</span>);
@@ -2055,7 +2055,7 @@
     <span class="doccomment">/// allocation).</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// If `hasher` panics then some the table&#39;s contents may be lost.</span>
-    <span class="kw">fn</span> <span class="ident">rehash_in_place</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>) {
+    <span class="kw">fn</span> <span class="ident">rehash_in_place</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>) {
         <span class="kw">unsafe</span> {
             <span class="comment">// Bulk convert all full control bytes to DELETED, and all DELETED</span>
             <span class="comment">// control bytes to EMPTY. This effectively frees up all buckets</span>
@@ -2083,10 +2083,10 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">guard</span> <span class="op">=</span> <span class="ident">guard</span>(<span class="self">self</span>, <span class="op">|</span><span class="ident">self_</span><span class="op">|</span> {
                 <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">needs_drop</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() {
                     <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">self_</span>.<span class="ident">buckets</span>() {
-                        <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">self_</span>.<span class="ident">ctrl</span>(<span class="ident">i</span>) <span class="op">==</span> <span class="ident">DELETED</span> {
+                        <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">self_</span>.<span class="ident">ctrl</span>(<span class="ident">i</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">DELETED</span> {
                             <span class="ident">self_</span>.<span class="ident">set_ctrl</span>(<span class="ident">i</span>, <span class="ident">EMPTY</span>);
                             <span class="ident">self_</span>.<span class="ident">bucket</span>(<span class="ident">i</span>).<span class="ident">drop</span>();
-                            <span class="ident">self_</span>.<span class="ident">items</span> <span class="op">-=</span> <span class="number">1</span>;
+                            <span class="ident">self_</span>.<span class="ident">items</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
                         }
                     }
                 }
@@ -2097,7 +2097,7 @@
             <span class="comment">// rehashed yet. Find them and re-insert them at their ideal</span>
             <span class="comment">// position.</span>
             <span class="lifetime">&#39;outer</span>: <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">guard</span>.<span class="ident">buckets</span>() {
-                <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">guard</span>.<span class="ident">ctrl</span>(<span class="ident">i</span>) <span class="op">!=</span> <span class="ident">DELETED</span> {
+                <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">guard</span>.<span class="ident">ctrl</span>(<span class="ident">i</span>) <span class="op">!</span><span class="op">=</span> <span class="ident">DELETED</span> {
                     <span class="kw">continue</span>;
                 }
                 <span class="lifetime">&#39;inner</span>: <span class="kw">loop</span> {
@@ -2117,7 +2117,7 @@
                         (<span class="ident">pos</span>.<span class="ident">wrapping_sub</span>(<span class="ident">guard</span>.<span class="ident">probe_seq</span>(<span class="ident">hash</span>).<span class="ident">pos</span>) <span class="op">&amp;</span> <span class="ident">guard</span>.<span class="ident">bucket_mask</span>)
                             <span class="op">/</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span>
                     };
-                    <span class="kw">if</span> <span class="ident">likely</span>(<span class="ident">probe_index</span>(<span class="ident">i</span>) <span class="op">==</span> <span class="ident">probe_index</span>(<span class="ident">new_i</span>)) {
+                    <span class="kw">if</span> <span class="ident">likely</span>(<span class="ident">probe_index</span>(<span class="ident">i</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">probe_index</span>(<span class="ident">new_i</span>)) {
                         <span class="ident">guard</span>.<span class="ident">set_ctrl</span>(<span class="ident">i</span>, <span class="ident">h2</span>(<span class="ident">hash</span>));
                         <span class="kw">continue</span> <span class="lifetime">&#39;outer</span>;
                     }
@@ -2127,7 +2127,7 @@
                     <span class="kw">let</span> <span class="ident">prev_ctrl</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">guard</span>.<span class="ident">ctrl</span>(<span class="ident">new_i</span>);
                     <span class="ident">guard</span>.<span class="ident">set_ctrl</span>(<span class="ident">new_i</span>, <span class="ident">h2</span>(<span class="ident">hash</span>));
 
-                    <span class="kw">if</span> <span class="ident">prev_ctrl</span> <span class="op">==</span> <span class="ident">EMPTY</span> {
+                    <span class="kw">if</span> <span class="ident">prev_ctrl</span> <span class="op">=</span><span class="op">=</span> <span class="ident">EMPTY</span> {
                         <span class="comment">// If the target slot is empty, simply move the current</span>
                         <span class="comment">// element into the new slot and clear the old control</span>
                         <span class="comment">// byte.</span>
@@ -2155,15 +2155,15 @@
     <span class="kw">fn</span> <span class="ident">resize</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
         <span class="ident">capacity</span>: <span class="ident">usize</span>,
-        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>,
+        <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>,
         <span class="ident">fallability</span>: <span class="ident">Fallibility</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">CollectionAllocErr</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">items</span> <span class="op">&lt;=</span> <span class="ident">capacity</span>);
+            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">items</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">capacity</span>);
 
             <span class="comment">// Allocate and initialize the new table.</span>
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new_table</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">try_with_capacity</span>(<span class="ident">capacity</span>, <span class="ident">fallability</span>)<span class="question-mark">?</span>;
-            <span class="ident">new_table</span>.<span class="ident">growth_left</span> <span class="op">-=</span> <span class="self">self</span>.<span class="ident">items</span>;
+            <span class="ident">new_table</span>.<span class="ident">growth_left</span> <span class="op">-</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">items</span>;
             <span class="ident">new_table</span>.<span class="ident">items</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">items</span>;
 
             <span class="comment">// The hash function may panic, in which case we simply free the new</span>
@@ -2206,7 +2206,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This does not check if the given element already exists in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="ident">value</span>: <span class="ident">T</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">u64</span>) <span class="op">-&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="ident">value</span>: <span class="ident">T</span>, <span class="ident">hasher</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">reserve</span>(<span class="number">1</span>, <span class="ident">hasher</span>);
         <span class="self">self</span>.<span class="ident">insert_no_grow</span>(<span class="ident">hash</span>, <span class="ident">value</span>)
     }
@@ -2217,7 +2217,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This does not check if the given element already exists in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_no_grow</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">insert_no_grow</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">index</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">find_insert_slot</span>(<span class="ident">hash</span>);
             <span class="kw">let</span> <span class="ident">bucket</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">bucket</span>(<span class="ident">index</span>);
@@ -2225,18 +2225,18 @@
             <span class="comment">// If we are replacing a DELETED entry then we don&#39;t need to update</span>
             <span class="comment">// the load counter.</span>
             <span class="kw">let</span> <span class="ident">old_ctrl</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">ctrl</span>(<span class="ident">index</span>);
-            <span class="self">self</span>.<span class="ident">growth_left</span> <span class="op">-=</span> <span class="ident">special_is_empty</span>(<span class="ident">old_ctrl</span>) <span class="kw">as</span> <span class="ident">usize</span>;
+            <span class="self">self</span>.<span class="ident">growth_left</span> <span class="op">-</span><span class="op">=</span> <span class="ident">special_is_empty</span>(<span class="ident">old_ctrl</span>) <span class="kw">as</span> <span class="ident">usize</span>;
 
             <span class="self">self</span>.<span class="ident">set_ctrl</span>(<span class="ident">index</span>, <span class="ident">h2</span>(<span class="ident">hash</span>));
             <span class="ident">bucket</span>.<span class="ident">write</span>(<span class="ident">value</span>);
-            <span class="self">self</span>.<span class="ident">items</span> <span class="op">+=</span> <span class="number">1</span>;
+            <span class="self">self</span>.<span class="ident">items</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             <span class="ident">bucket</span>
         }
     }
 
     <span class="doccomment">/// Searches for an element in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="kw-2">mut</span> <span class="ident">eq</span>: <span class="kw">impl</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">find</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">hash</span>: <span class="ident">u64</span>, <span class="kw-2">mut</span> <span class="ident">eq</span>: <span class="kw">impl</span> <span class="ident">FnMut</span>(<span class="kw-2">&amp;</span><span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">for</span> <span class="ident">pos</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">probe_seq</span>(<span class="ident">hash</span>) {
                 <span class="kw">let</span> <span class="ident">group</span> <span class="op">=</span> <span class="ident">Group</span>::<span class="ident">load</span>(<span class="self">self</span>.<span class="ident">ctrl</span>(<span class="ident">pos</span>));
@@ -2262,33 +2262,33 @@
     <span class="doccomment">/// This number is a lower bound; the table might be able to hold</span>
     <span class="doccomment">/// more, but is guaranteed to be able to hold at least this many.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">capacity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">capacity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">items</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">growth_left</span>
     }
 
     <span class="doccomment">/// Returns the number of elements in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">items</span>
     }
 
     <span class="doccomment">/// Returns the number of buckets in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">buckets</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">buckets</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">bucket_mask</span> <span class="op">+</span> <span class="number">1</span>
     }
 
     <span class="doccomment">/// Returns the number of control bytes in the table.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">num_ctrl_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">num_ctrl_bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">bucket_mask</span> <span class="op">+</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span>
     }
 
     <span class="doccomment">/// Returns whether this table points to the empty singleton with a capacity</span>
     <span class="doccomment">/// of 0.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">is_empty_singleton</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">bucket_mask</span> <span class="op">==</span> <span class="number">0</span>
+    <span class="kw">fn</span> <span class="ident">is_empty_singleton</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">bucket_mask</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
     }
 
     <span class="doccomment">/// Returns an iterator over every element in the table. It is up to</span>
@@ -2296,7 +2296,7 @@
     <span class="doccomment">/// Because we cannot make the `next` method unsafe on the `RawIter`</span>
     <span class="doccomment">/// struct, we have to make the `iter` method unsafe.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">Bucket</span>::<span class="ident">from_base_index</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">as_ptr</span>(), <span class="number">0</span>);
         <span class="ident">RawIter</span> {
             <span class="ident">iter</span>: <span class="ident">RawIterRange</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">ctrl</span>.<span class="ident">as_ptr</span>(), <span class="ident">data</span>, <span class="self">self</span>.<span class="ident">buckets</span>()),
@@ -2309,7 +2309,7 @@
     <span class="doccomment">/// outlives the `RawDrain`. Because we cannot make the `next` method unsafe</span>
     <span class="doccomment">/// on the `RawDrain`, we have to make the `drain` method unsafe.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">drain</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawDrain</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">drain</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawDrain</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">RawDrain</span> {
             <span class="ident">iter</span>: <span class="self">self</span>.<span class="ident">iter</span>(),
             <span class="ident">table</span>: <span class="ident">ManuallyDrop</span>::<span class="ident">new</span>(<span class="ident">mem</span>::<span class="ident">replace</span>(<span class="self">self</span>, <span class="self">Self</span>::<span class="ident">new</span>())),
@@ -2321,12 +2321,12 @@
     <span class="doccomment">/// Converts the table into a raw allocation. The contents of the table</span>
     <span class="doccomment">/// should be dropped using a `RawIter` before freeing the allocation.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_alloc</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">NonNull</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Layout</span>)<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_alloc</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">NonNull</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Layout</span>)<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_empty_singleton</span>() {
             <span class="prelude-val">None</span>
         } <span class="kw">else</span> {
             <span class="kw">let</span> (<span class="ident">layout</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">calculate_layout</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>.<span class="ident">buckets</span>())
-                .<span class="ident">unwrap_or_else</span>(<span class="op">||</span> <span class="kw">unsafe</span> { <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>() });
+                .<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="kw">unsafe</span> { <span class="ident">hint</span>::<span class="ident">unreachable_unchecked</span>() });
             <span class="prelude-val">Some</span>((<span class="self">self</span>.<span class="ident">ctrl</span>.<span class="ident">cast</span>(), <span class="ident">layout</span>))
         };
         <span class="ident">mem</span>::<span class="ident">forget</span>(<span class="self">self</span>);
@@ -2338,7 +2338,7 @@
 <span class="kw">unsafe</span> <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Sync</span> <span class="kw">for</span> <span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Sync</span> {}
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Clone</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_empty_singleton</span>() {
             <span class="self">Self</span>::<span class="ident">new</span>()
         } <span class="kw">else</span> {
@@ -2358,7 +2358,7 @@
                     <span class="comment">// cloned so far.</span>
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">guard</span> <span class="op">=</span> <span class="ident">guard</span>((<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">new_table</span>), <span class="op">|</span>(<span class="ident">index</span>, <span class="ident">new_table</span>)<span class="op">|</span> {
                         <span class="kw">if</span> <span class="ident">mem</span>::<span class="ident">needs_drop</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() {
-                            <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..=<span class="kw-2">*</span><span class="ident">index</span> {
+                            <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="op">=</span><span class="kw-2">*</span><span class="ident">index</span> {
                                 <span class="kw">if</span> <span class="ident">is_full</span>(<span class="kw-2">*</span><span class="ident">new_table</span>.<span class="ident">ctrl</span>(<span class="ident">i</span>)) {
                                     <span class="ident">new_table</span>.<span class="ident">bucket</span>(<span class="ident">i</span>).<span class="ident">drop</span>();
                                 }
@@ -2427,7 +2427,7 @@
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">RawIntoIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawIntoIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawIntoIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">iter</span>();
             <span class="kw">let</span> <span class="ident">alloc</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">into_alloc</span>();
@@ -2463,7 +2463,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// The control byte address must be aligned to the group size.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ctrl</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">len</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">ctrl</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">len</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="macro">debug_assert_ne</span><span class="macro">!</span>(<span class="ident">len</span>, <span class="number">0</span>);
         <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">ctrl</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">%</span> <span class="ident">Group</span>::<span class="ident">WIDTH</span>, <span class="number">0</span>);
         <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">ctrl</span>.<span class="ident">add</span>(<span class="ident">len</span>);
@@ -2486,9 +2486,9 @@
     <span class="doccomment">/// group width.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;rayon&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> (<span class="self">Self</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RawIterRange</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">split</span>(<span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="self">Self</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RawIterRange</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>) {
         <span class="kw">unsafe</span> {
-            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">end</span> <span class="op">&lt;=</span> <span class="self">self</span>.<span class="ident">next_ctrl</span> {
+            <span class="kw">if</span> <span class="self">self</span>.<span class="ident">end</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">next_ctrl</span> {
                 <span class="comment">// Nothing to split if the group that we are current processing</span>
                 <span class="comment">// is the last one.</span>
                 (<span class="self">self</span>, <span class="prelude-val">None</span>)
@@ -2529,7 +2529,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">RawIterRange</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">data</span>: <span class="self">self</span>.<span class="ident">data</span>.<span class="ident">clone</span>(),
             <span class="ident">next_ctrl</span>: <span class="self">self</span>.<span class="ident">next_ctrl</span>,
@@ -2543,7 +2543,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">loop</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">current_group</span>.<span class="ident">lowest_set_bit</span>() {
@@ -2551,7 +2551,7 @@
                     <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">data</span>.<span class="ident">add</span>(<span class="ident">index</span>));
                 }
 
-                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">next_ctrl</span> <span class="op">&gt;=</span> <span class="self">self</span>.<span class="ident">end</span> {
+                <span class="kw">if</span> <span class="self">self</span>.<span class="ident">next_ctrl</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">end</span> {
                     <span class="kw">return</span> <span class="prelude-val">None</span>;
                 }
 
@@ -2568,7 +2568,7 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
         <span class="comment">// We don&#39;t have an item count, so just guess based on the range size.</span>
         (
             <span class="number">0</span>,
@@ -2587,7 +2587,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">iter</span>: <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">clone</span>(),
             <span class="ident">items</span>: <span class="self">self</span>.<span class="ident">items</span>,
@@ -2599,9 +2599,9 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bucket</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">next</span>() {
-            <span class="self">self</span>.<span class="ident">items</span> <span class="op">-=</span> <span class="number">1</span>;
+            <span class="self">self</span>.<span class="ident">items</span> <span class="op">-</span><span class="op">=</span> <span class="number">1</span>;
             <span class="prelude-val">Some</span>(<span class="ident">b</span>)
         } <span class="kw">else</span> {
             <span class="comment">// We don&#39;t check against items == 0 here to allow the</span>
@@ -2613,7 +2613,7 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
         (<span class="self">self</span>.<span class="ident">items</span>, <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">items</span>))
     }
 }
@@ -2630,7 +2630,7 @@
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">RawIntoIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">clone</span>()
     }
 }
@@ -2681,12 +2681,12 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> { <span class="prelude-val">Some</span>(<span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">next</span>()<span class="question-mark">?</span>.<span class="ident">read</span>()) }
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">size_hint</span>()
     }
 }
@@ -2701,17 +2701,17 @@
     <span class="comment">// The table is moved into the iterator for the duration of the drain. This</span>
     <span class="comment">// ensures that an empty table is left if the drain iterator is leaked</span>
     <span class="comment">// without dropping.</span>
-    <span class="ident">table</span>: <span class="ident">ManuallyDrop</span><span class="op">&lt;</span><span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
-    <span class="ident">orig_table</span>: <span class="ident">NonNull</span><span class="op">&lt;</span><span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">table</span>: <span class="ident">ManuallyDrop</span><span class="op">&lt;</span><span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">orig_table</span>: <span class="ident">NonNull</span><span class="op">&lt;</span><span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 
     <span class="comment">// We don&#39;t use a &amp;&#39;a mut RawTable&lt;T&gt; because we want RawDrain to be</span>
     <span class="comment">// covariant over T.</span>
-    <span class="ident">marker</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">marker</span>: <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">RawTable</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">RawDrain</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">T</span><span class="op">&gt;</span> {
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawIter</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">clone</span>()
     }
 }
@@ -2746,7 +2746,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">next</span>()<span class="question-mark">?</span>;
             <span class="prelude-val">Some</span>(<span class="ident">item</span>.<span class="ident">read</span>())
@@ -2754,7 +2754,7 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
+    <span class="kw">fn</span> <span class="ident">size_hint</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">usize</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>) {
         <span class="self">self</span>.<span class="ident">iter</span>.<span class="ident">size_hint</span>()
     }
 }

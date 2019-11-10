@@ -6,5 +6,4 @@ implementors["colored"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -163,13 +163,13 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Creates a new reader, consuming the given stream.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">source</span>: <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">source</span>: <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
         <span class="ident">EventReader</span>::<span class="ident">new_with_config</span>(<span class="ident">source</span>, <span class="ident">ParserConfig</span>::<span class="ident">new</span>())
     }
 
     <span class="doccomment">/// Creates a new reader with the provded configuration, consuming the given stream.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_config</span>(<span class="ident">source</span>: <span class="ident">R</span>, <span class="ident">config</span>: <span class="ident">ParserConfig</span>) <span class="op">-&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_with_config</span>(<span class="ident">source</span>: <span class="ident">R</span>, <span class="ident">config</span>: <span class="ident">ParserConfig</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
         <span class="ident">EventReader</span> { <span class="ident">source</span>: <span class="ident">source</span>, <span class="ident">parser</span>: <span class="ident">PullParser</span>::<span class="ident">new</span>(<span class="ident">config</span>) }
     }
 
@@ -178,19 +178,19 @@
     <span class="doccomment">/// If returned event is `XmlEvent::Error` or `XmlEvent::EndDocument`, then</span>
     <span class="doccomment">/// further calls to this method will return this event again.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">parser</span>.<span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">source</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">source</span> }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">source</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">source</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">source</span> }
 
     <span class="doccomment">/// Unwraps this `EventReader`, returning the underlying reader.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Note that this operation is destructive; unwrapping the reader and wrapping it</span>
     <span class="doccomment">/// again with `EventReader::new()` will create a fresh reader which will attempt</span>
     <span class="doccomment">/// to parse an XML document from the beginning.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">R</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span> {
         <span class="self">self</span>.<span class="ident">source</span>
     }
 }
@@ -198,7 +198,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">B</span>: <span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Position</span> <span class="kw">for</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Returns the position of the last event produced by the reader.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">TextPosition</span> {
+    <span class="kw">fn</span> <span class="ident">position</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">TextPosition</span> {
         <span class="self">self</span>.<span class="ident">parser</span>.<span class="ident">position</span>()
     }
 }
@@ -207,7 +207,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Events</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Events</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Events</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
         <span class="ident">Events</span> { <span class="ident">reader</span>: <span class="self">self</span>, <span class="ident">finished</span>: <span class="bool-val">false</span> }
     }
 }
@@ -224,12 +224,12 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Read</span><span class="op">&gt;</span> <span class="ident">Events</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Unwraps the iterator, returning the internal `EventReader`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">into_inner</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">reader</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">source</span> }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">source</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">source</span> }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">source_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span> { <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">source</span> }
 
 }
 
@@ -237,13 +237,13 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;&gt;</span> {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">finished</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">parser</span>.<span class="ident">is_ignoring_end_of_stream</span>() { <span class="prelude-val">None</span> }
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">XmlEvent</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">finished</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">parser</span>.<span class="ident">is_ignoring_end_of_stream</span>() { <span class="prelude-val">None</span> }
         <span class="kw">else</span> {
             <span class="kw">let</span> <span class="ident">ev</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">next</span>();
             <span class="kw">match</span> <span class="ident">ev</span> {
-                <span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">EndDocument</span>) <span class="op">|</span> <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">finished</span> <span class="op">=</span> <span class="bool-val">true</span>,
-                <span class="kw">_</span> <span class="op">=&gt;</span> {}
+                <span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">EndDocument</span>) <span class="op">|</span> <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">finished</span> <span class="op">=</span> <span class="bool-val">true</span>,
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
             }
             <span class="prelude-val">Some</span>(<span class="ident">ev</span>)
         }
@@ -253,7 +253,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;r</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
     <span class="doccomment">/// A convenience method to create an `XmlReader` from a string slice.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">source</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> <span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">EventReader</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;r</span> [<span class="ident">u8</span>]<span class="op">&gt;</span> {
         <span class="ident">EventReader</span>::<span class="ident">new</span>(<span class="ident">source</span>.<span class="ident">as_bytes</span>())
     }
 }

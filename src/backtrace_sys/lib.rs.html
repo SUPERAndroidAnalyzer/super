@@ -81,7 +81,7 @@
         <span class="ident">filename</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
         <span class="ident">lineno</span>: <span class="ident">c_int</span>,
         <span class="ident">function</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">c_int</span>;
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span>;
     <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">backtrace_error_callback</span> <span class="op">=</span>
         <span class="kw">extern</span> <span class="string">&quot;C&quot;</span> <span class="kw">fn</span>(<span class="ident">data</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>, <span class="ident">msg</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span>, <span class="ident">errnum</span>: <span class="ident">c_int</span>);
     <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">backtrace_state</span> {}
@@ -94,7 +94,7 @@
             <span class="ident">threaded</span>: <span class="ident">c_int</span>,
             <span class="ident">error</span>: <span class="ident">backtrace_error_callback</span>,
             <span class="ident">data</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>,
-        ) <span class="op">-&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">backtrace_state</span>;
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">backtrace_state</span>;
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">rdos</span>, <span class="ident">link_name</span> <span class="op">=</span> <span class="string">&quot;__rdos_backtrace_syminfo&quot;</span>)]</span>
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">rbt</span>, <span class="ident">link_name</span> <span class="op">=</span> <span class="string">&quot;__rbt_backtrace_syminfo&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">backtrace_syminfo</span>(
@@ -103,7 +103,7 @@
             <span class="ident">cb</span>: <span class="ident">backtrace_syminfo_callback</span>,
             <span class="ident">error</span>: <span class="ident">backtrace_error_callback</span>,
             <span class="ident">data</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>,
-        ) <span class="op">-&gt;</span> <span class="ident">c_int</span>;
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span>;
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">rdos</span>, <span class="ident">link_name</span> <span class="op">=</span> <span class="string">&quot;__rdos_backtrace_pcinfo&quot;</span>)]</span>
         <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">rbt</span>, <span class="ident">link_name</span> <span class="op">=</span> <span class="string">&quot;__rbt_backtrace_pcinfo&quot;</span>)]</span>
         <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">backtrace_pcinfo</span>(
@@ -112,7 +112,7 @@
             <span class="ident">cb</span>: <span class="ident">backtrace_full_callback</span>,
             <span class="ident">error</span>: <span class="ident">backtrace_error_callback</span>,
             <span class="ident">data</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">c_void</span>,
-        ) <span class="op">-&gt;</span> <span class="ident">c_int</span>;
+        ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">c_int</span>;
     }
 }
 </pre></div>

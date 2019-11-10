@@ -265,10 +265,10 @@
         <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;rc</span> <span class="ident">Context</span>,
         <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span><span class="op">&gt;</span>,
         <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span>,
-    ) <span class="op">-&gt;</span> <span class="ident">HelperResult</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HelperResult</span> {
         <span class="kw">let</span> <span class="ident">param</span> <span class="op">=</span> <span class="ident">h</span>
             .<span class="ident">param</span>(<span class="number">0</span>)
-            .<span class="ident">ok_or_else</span>(<span class="op">||</span> <span class="ident">RenderError</span>::<span class="ident">new</span>(<span class="string">&quot;Param not found for helper \&quot;with\&quot;&quot;</span>))<span class="question-mark">?</span>;
+            .<span class="ident">ok_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">RenderError</span>::<span class="ident">new</span>(<span class="string">&quot;Param not found for helper \&quot;with\&quot;&quot;</span>))<span class="question-mark">?</span>;
 
         <span class="ident">rc</span>.<span class="ident">promote_local_vars</span>();
 
@@ -307,8 +307,8 @@
             }
 
             <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">template</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="ident">t</span>.<span class="ident">render</span>(<span class="ident">r</span>, <span class="ident">ctx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">local_rc</span>, <span class="ident">out</span>),
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">Ok</span>(()),
+                <span class="prelude-val">Some</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">t</span>.<span class="ident">render</span>(<span class="ident">r</span>, <span class="ident">ctx</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">local_rc</span>, <span class="ident">out</span>),
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(()),
             };
 
             <span class="kw">if</span> <span class="ident">h</span>.<span class="ident">block_param</span>().<span class="ident">is_some</span>() {
@@ -483,10 +483,10 @@
             .<span class="ident">register_template_string</span>(<span class="string">&quot;t0&quot;</span>, <span class="string">&quot;{{#with a}}{{#with b}}{{../../d}}{{/with}}{{/with}}&quot;</span>)
             .<span class="ident">is_ok</span>());
         <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="macro">btreemap</span><span class="macro">!</span> {
-            <span class="string">&quot;a&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="ident">to_json</span>(<span class="kw-2">&amp;</span><span class="macro">btreemap</span><span class="macro">!</span> {
-                <span class="string">&quot;b&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="macro">btreemap</span><span class="macro">!</span>{<span class="string">&quot;c&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>]}]
+            <span class="string">&quot;a&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="ident">to_json</span>(<span class="kw-2">&amp;</span><span class="macro">btreemap</span><span class="macro">!</span> {
+                <span class="string">&quot;b&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="macro">btreemap</span><span class="macro">!</span>{<span class="string">&quot;c&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="number">1</span>]}]
             }),
-            <span class="string">&quot;d&quot;</span>.<span class="ident">to_string</span>() <span class="op">=&gt;</span> <span class="ident">to_json</span>(<span class="number">1</span>)
+            <span class="string">&quot;d&quot;</span>.<span class="ident">to_string</span>() <span class="op">=</span><span class="op">&gt;</span> <span class="ident">to_json</span>(<span class="number">1</span>)
         };
 
         <span class="kw">let</span> <span class="ident">r0</span> <span class="op">=</span> <span class="ident">handlebars</span>.<span class="ident">render</span>(<span class="string">&quot;t0&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">data</span>);

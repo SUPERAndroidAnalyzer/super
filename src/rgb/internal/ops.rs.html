@@ -366,10 +366,10 @@
 
 <span class="doccomment">/// `px + px`</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Add</span><span class="op">&gt;</span> <span class="ident">Add</span> <span class="kw">for</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="ident">RGB</span> {
             <span class="ident">r</span>: <span class="self">self</span>.<span class="ident">r</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">r</span>,
             <span class="ident">g</span>: <span class="self">self</span>.<span class="ident">g</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">g</span>,
@@ -393,10 +393,10 @@
 
 <span class="doccomment">/// `px - px`</span>
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sub</span><span class="op">&gt;</span> <span class="ident">Sub</span> <span class="kw">for</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="ident">RGB</span> {
             <span class="ident">r</span>: <span class="self">self</span>.<span class="ident">r</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">r</span>,
             <span class="ident">g</span>: <span class="self">self</span>.<span class="ident">g</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">g</span>,
@@ -423,10 +423,10 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span> 
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">l</span><span class="op">-</span><span class="ident">r</span>)
     }
 }
@@ -448,7 +448,7 @@
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span><span class="ident">l</span><span class="op">+</span><span class="ident">r</span>)
     }
 }
@@ -464,11 +464,11 @@
 }
 
 <span class="doccomment">/// `px + px`</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Add</span>, <span class="ident">A</span>: <span class="ident">Add</span><span class="op">&gt;</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Add</span>, <span class="ident">A</span>: <span class="ident">Add</span><span class="op">&gt;</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Add</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="ident">RGBA</span> {
             <span class="ident">r</span>: <span class="self">self</span>.<span class="ident">r</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">r</span>,
             <span class="ident">g</span>: <span class="self">self</span>.<span class="ident">g</span> <span class="op">+</span> <span class="ident">other</span>.<span class="ident">g</span>,
@@ -478,7 +478,7 @@
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">AddAssign</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">AddAssign</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">A</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A</span><span class="op">&gt;</span>
 {
@@ -493,11 +493,11 @@
 }
 
 <span class="doccomment">/// `px - px`</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sub</span>, <span class="ident">A</span>: <span class="ident">Sub</span><span class="op">&gt;</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sub</span>, <span class="ident">A</span>: <span class="ident">Sub</span><span class="op">&gt;</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="ident">RGBA</span> {
             <span class="ident">r</span>: <span class="self">self</span>.<span class="ident">r</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">r</span>,
             <span class="ident">g</span>: <span class="self">self</span>.<span class="ident">g</span> <span class="op">-</span> <span class="ident">other</span>.<span class="ident">g</span>,
@@ -508,7 +508,7 @@
 }
 
 <span class="doccomment">/// `px - px`</span>
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">SubAssign</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="ident">SubAssign</span><span class="op">&lt;</span><span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">A</span><span class="op">&gt;</span> <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">T</span><span class="op">&gt;</span>,
     <span class="ident">A</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">A</span><span class="op">&gt;</span>
 {
@@ -528,10 +528,10 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="kw">where</span>
     <span class="ident">T</span>: <span class="ident">Copy</span> <span class="op">+</span> <span class="ident">Sub</span>
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span>, <span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">Sub</span><span class="op">&gt;</span>::<span class="ident">Output</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">l</span> <span class="op">-</span> <span class="ident">r</span>)
     }
 }
@@ -554,7 +554,7 @@
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">add</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">l</span><span class="op">+</span><span class="ident">r</span>)
     }
 }
@@ -576,7 +576,7 @@
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGB</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span><span class="ident">l</span><span class="kw-2">*</span><span class="ident">r</span>)
     }
 }
@@ -598,7 +598,7 @@
     <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="ident">RGBA</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">inline</span>(<span class="ident">always</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">mul</span>(<span class="self">self</span>, <span class="ident">r</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="self">self</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span><span class="ident">l</span><span class="kw-2">*</span><span class="ident">r</span>)
     }
 }
@@ -663,38 +663,38 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_add_assign</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgb</span> <span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>);
-        <span class="ident">green_rgb</span> <span class="op">+=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">0</span>, <span class="number">255</span>);
+        <span class="ident">green_rgb</span> <span class="op">+</span><span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">0</span>, <span class="number">255</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">WHITE_RGB</span>, <span class="ident">green_rgb</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">black_rgb</span> <span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
-        <span class="ident">black_rgb</span> <span class="op">+=</span> <span class="number">255</span>;
+        <span class="ident">black_rgb</span> <span class="op">+</span><span class="op">=</span> <span class="number">255</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">WHITE_RGB</span>, <span class="ident">black_rgb</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgba</span> <span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
-        <span class="ident">green_rgba</span> <span class="op">+=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>);
+        <span class="ident">green_rgba</span> <span class="op">+</span><span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">0</span>, <span class="number">255</span>, <span class="number">255</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">WHITE_RGBA</span>, <span class="ident">green_rgba</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">black_rgba</span> <span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
-        <span class="ident">black_rgba</span> <span class="op">+=</span> <span class="number">255</span>;
+        <span class="ident">black_rgba</span> <span class="op">+</span><span class="op">=</span> <span class="number">255</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">WHITE_RGBA</span>, <span class="ident">black_rgba</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_sub_assign</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgb</span> <span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>);
-        <span class="ident">green_rgb</span> <span class="op">-=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>);
+        <span class="ident">green_rgb</span> <span class="op">-</span><span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">BLACK_RGB</span>, <span class="ident">green_rgb</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">white_rgb</span> <span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>);
-        <span class="ident">white_rgb</span> <span class="op">-=</span> <span class="number">255</span>;
+        <span class="ident">white_rgb</span> <span class="op">-</span><span class="op">=</span> <span class="number">255</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">BLACK_RGB</span>, <span class="ident">white_rgb</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgba</span> <span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
-        <span class="ident">green_rgba</span> <span class="op">-=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
+        <span class="ident">green_rgba</span> <span class="op">-</span><span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">BLACK_RGBA</span>, <span class="ident">green_rgba</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">white_rgba</span> <span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">255</span>);
-        <span class="ident">white_rgba</span> <span class="op">-=</span> <span class="number">255</span>;
+        <span class="ident">white_rgba</span> <span class="op">-</span><span class="op">=</span> <span class="number">255</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">BLACK_RGBA</span>, <span class="ident">white_rgba</span>);
     }
 
@@ -707,15 +707,15 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_mult_assign</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgb</span> <span class="op">=</span> <span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0u16</span>, <span class="number">255</span>, <span class="number">0</span>);
-        <span class="ident">green_rgb</span> <span class="op">*=</span> <span class="number">1</span>;
+        <span class="ident">green_rgb</span> <span class="kw-2">*</span><span class="op">=</span> <span class="number">1</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="ident">green_rgb</span>);
-        <span class="ident">green_rgb</span> <span class="op">*=</span> <span class="number">2</span>;
+        <span class="ident">green_rgb</span> <span class="kw-2">*</span><span class="op">=</span> <span class="number">2</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">RGB</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span><span class="kw-2">*</span><span class="number">2</span>, <span class="number">0</span>), <span class="ident">green_rgb</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">green_rgba</span> <span class="op">=</span> <span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0u16</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>);
-        <span class="ident">green_rgba</span> <span class="op">*=</span> <span class="number">1</span>;
+        <span class="ident">green_rgba</span> <span class="kw-2">*</span><span class="op">=</span> <span class="number">1</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="ident">green_rgba</span>);
-        <span class="ident">green_rgba</span> <span class="op">*=</span> <span class="number">2</span>;
+        <span class="ident">green_rgba</span> <span class="kw-2">*</span><span class="op">=</span> <span class="number">2</span>;
         <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">RGBA</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">255</span><span class="kw-2">*</span><span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="ident">green_rgba</span>);
     }
 }

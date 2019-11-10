@@ -869,7 +869,7 @@
 <span class="kw">use</span> <span class="ident">UNICODE_PROPERTY_NAMES</span>;
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">needless_pass_by_value</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(<span class="ident">pairs</span>: <span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;i</span> <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(<span class="ident">pairs</span>: <span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;i</span> <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rust_keywords</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="ident">new</span>();
     <span class="ident">rust_keywords</span>.<span class="ident">insert</span>(<span class="string">&quot;abstract&quot;</span>);
     <span class="ident">rust_keywords</span>.<span class="ident">insert</span>(<span class="string">&quot;alignof&quot;</span>);
@@ -960,17 +960,17 @@
 
     <span class="kw">let</span> <span class="ident">definitions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">pairs</span>
         .<span class="ident">clone</span>()
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">==</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">into_inner</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">into_span</span>())
         .<span class="ident">collect</span>();
     <span class="kw">let</span> <span class="ident">called_rules</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">pairs</span>
         .<span class="ident">clone</span>()
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">==</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
         .<span class="ident">flat_map</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> {
             <span class="ident">pair</span>.<span class="ident">into_inner</span>()
                 .<span class="ident">flatten</span>()
                 .<span class="ident">skip</span>(<span class="number">1</span>)
-                .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">==</span> <span class="ident">Rule</span>::<span class="ident">identifier</span>)
+                .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">identifier</span>)
                 .<span class="ident">map</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">into_span</span>())
         })
         .<span class="ident">collect</span>();
@@ -996,9 +996,9 @@
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">implicit_hasher</span>, <span class="ident">clippy</span>::<span class="ident">ptr_arg</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_rust_keywords</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
-    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">rust_keywords</span>: <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">errors</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
 
     <span class="kw">for</span> <span class="ident">definition</span> <span class="kw">in</span> <span class="ident">definitions</span> {
@@ -1019,9 +1019,9 @@
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">implicit_hasher</span>, <span class="ident">clippy</span>::<span class="ident">ptr_arg</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_pest_keywords</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
-    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">pest_keywords</span>: <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">errors</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
 
     <span class="kw">for</span> <span class="ident">definition</span> <span class="kw">in</span> <span class="ident">definitions</span> {
@@ -1041,7 +1041,7 @@
 }
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">ptr_arg</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_already_defined</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(<span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_already_defined</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(<span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">errors</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">defined</span> <span class="op">=</span> <span class="ident">HashSet</span>::<span class="ident">new</span>();
 
@@ -1065,17 +1065,17 @@
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">implicit_hasher</span>, <span class="ident">clippy</span>::<span class="ident">ptr_arg</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_undefined</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
-    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
-    <span class="ident">called_rules</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">definitions</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">called_rules</span>: <span class="kw-2">&amp;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Span</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">builtins</span>: <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">errors</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">let</span> <span class="ident">definitions</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">definitions</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">span</span><span class="op">|</span> <span class="ident">span</span>.<span class="ident">as_str</span>()).<span class="ident">collect</span>();
 
     <span class="kw">for</span> <span class="ident">rule</span> <span class="kw">in</span> <span class="ident">called_rules</span> {
         <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">rule</span>.<span class="ident">as_str</span>();
 
-        <span class="kw">if</span> <span class="op">!</span><span class="ident">definitions</span>.<span class="ident">contains</span>(<span class="ident">name</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">builtins</span>.<span class="ident">contains</span>(<span class="ident">name</span>) {
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">definitions</span>.<span class="ident">contains</span>(<span class="ident">name</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="ident">builtins</span>.<span class="ident">contains</span>(<span class="ident">name</span>) {
             <span class="ident">errors</span>.<span class="ident">push</span>(<span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                 <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
                     <span class="ident">message</span>: <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;rule {} is undefined&quot;</span>, <span class="ident">name</span>),
@@ -1089,7 +1089,7 @@
 }
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">ptr_arg</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_ast</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_ast</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">errors</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
 
     <span class="ident">errors</span>.<span class="ident">extend</span>(<span class="ident">validate_repetition</span>(<span class="ident">rules</span>));
@@ -1098,8 +1098,8 @@
     <span class="ident">errors</span>.<span class="ident">extend</span>(<span class="ident">validate_left_recursion</span>(<span class="ident">rules</span>));
 
     <span class="ident">errors</span>.<span class="ident">sort_by_key</span>(<span class="op">|</span><span class="ident">error</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">error</span>.<span class="ident">location</span> {
-        <span class="ident">InputLocation</span>::<span class="ident">Span</span>(<span class="ident">span</span>) <span class="op">=&gt;</span> <span class="ident">span</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="ident">InputLocation</span>::<span class="ident">Span</span>(<span class="ident">span</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">span</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
     });
 
     <span class="ident">errors</span>
@@ -1107,13 +1107,13 @@
 
 <span class="kw">fn</span> <span class="ident">is_non_progressing</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
     <span class="ident">expr</span>: <span class="kw-2">&amp;</span><span class="ident">ParserExpr</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>,
-    <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">trace</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">expr</span> {
-        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="kw-2">ref</span> <span class="ident">string</span>) <span class="op">=&gt;</span> <span class="ident">string</span> <span class="op">==</span> <span class="string">&quot;&quot;</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="kw-2">ref</span> <span class="ident">ident</span>) <span class="op">=&gt;</span> {
-            <span class="kw">if</span> <span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;soi&quot;</span> <span class="op">||</span> <span class="ident">ident</span> <span class="op">==</span> <span class="string">&quot;eoi&quot;</span> {
+        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="kw-2">ref</span> <span class="ident">string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">string</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;&quot;</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="kw-2">ref</span> <span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">if</span> <span class="ident">ident</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;soi&quot;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">ident</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;eoi&quot;</span> {
                 <span class="kw">return</span> <span class="bool-val">true</span>;
             }
 
@@ -1129,28 +1129,28 @@
 
             <span class="bool-val">false</span>
         }
-        <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
+        <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
-                <span class="op">&amp;&amp;</span> <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
+                <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
         }
-        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
+        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
-                <span class="op">||</span> <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
+                <span class="op">|</span><span class="op">|</span> <span class="ident">is_non_progressing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
         }
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
     }
 }
 
 <span class="kw">fn</span> <span class="ident">is_non_failing</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
     <span class="ident">expr</span>: <span class="kw-2">&amp;</span><span class="ident">ParserExpr</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>,
-    <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">trace</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
     <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">expr</span> {
-        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="kw-2">ref</span> <span class="ident">string</span>) <span class="op">=&gt;</span> <span class="ident">string</span> <span class="op">==</span> <span class="string">&quot;&quot;</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="kw-2">ref</span> <span class="ident">ident</span>) <span class="op">=&gt;</span> {
+        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="kw-2">ref</span> <span class="ident">string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">string</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;&quot;</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="kw-2">ref</span> <span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">if</span> <span class="op">!</span><span class="ident">trace</span>.<span class="ident">contains</span>(<span class="ident">ident</span>) {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">node</span>) <span class="op">=</span> <span class="ident">rules</span>.<span class="ident">get</span>(<span class="ident">ident</span>) {
                     <span class="ident">trace</span>.<span class="ident">push</span>(<span class="ident">ident</span>.<span class="ident">clone</span>());
@@ -1163,19 +1163,19 @@
 
             <span class="bool-val">false</span>
         }
-        <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
-            <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>) <span class="op">&amp;&amp;</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
+        <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
         }
-        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
-            <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>) <span class="op">||</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
+        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>) <span class="op">|</span><span class="op">|</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
         }
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
     }
 }
 
-<span class="kw">fn</span> <span class="ident">validate_repetition</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_repetition</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">to_hash_map</span>(<span class="ident">rules</span>);
 
@@ -1185,7 +1185,7 @@
             .<span class="ident">filter_map_top_down</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">node</span>.<span class="ident">expr</span> {
                 <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="kw-2">ref</span> <span class="ident">other</span>)
                 <span class="op">|</span> <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="kw-2">ref</span> <span class="ident">other</span>)
-                <span class="op">|</span> <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="kw-2">ref</span> <span class="ident">other</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="op">|</span> <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="kw-2">ref</span> <span class="ident">other</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">if</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">expr</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="macro">vec</span><span class="macro">!</span>[]) {
                         <span class="prelude-val">Some</span>(<span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                             <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
@@ -1210,7 +1210,7 @@
                         <span class="prelude-val">None</span>
                     }
                 }
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>
             });
 
         <span class="ident">result</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">errors</span>);
@@ -1219,7 +1219,7 @@
     <span class="ident">result</span>
 }
 
-<span class="kw">fn</span> <span class="ident">validate_choices</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_choices</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="macro">vec</span><span class="macro">!</span>[];
     <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">to_hash_map</span>(<span class="ident">rules</span>);
 
@@ -1228,10 +1228,10 @@
             .<span class="ident">node</span>
             .<span class="ident">clone</span>()
             .<span class="ident">filter_map_top_down</span>(<span class="op">|</span><span class="ident">node</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">node</span>.<span class="ident">expr</span> {
-                <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">lhs</span>.<span class="ident">expr</span> {
-                        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw">_</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> <span class="ident">rhs</span>,
-                        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">lhs</span>,
+                        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw">_</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">rhs</span>,
+                        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">lhs</span>,
                     };
 
                     <span class="kw">if</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>.<span class="ident">expr</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="macro">vec</span><span class="macro">!</span>[]) {
@@ -1247,7 +1247,7 @@
                         <span class="prelude-val">None</span>
                     }
                 }
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
             });
 
         <span class="ident">result</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">errors</span>);
@@ -1256,13 +1256,13 @@
     <span class="ident">result</span>
 }
 
-<span class="kw">fn</span> <span class="ident">validate_whitespace_comment</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_whitespace_comment</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">map</span> <span class="op">=</span> <span class="ident">to_hash_map</span>(<span class="ident">rules</span>);
 
     <span class="ident">rules</span>
         .<span class="ident">iter</span>()
         .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">rule</span><span class="op">|</span> {
-            <span class="kw">if</span> <span class="ident">rule</span>.<span class="ident">name</span> <span class="op">==</span> <span class="string">&quot;WHITESPACE&quot;</span> <span class="op">||</span> <span class="ident">rule</span>.<span class="ident">name</span> <span class="op">==</span> <span class="string">&quot;COMMENT&quot;</span> {
+            <span class="kw">if</span> <span class="ident">rule</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;WHITESPACE&quot;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">rule</span>.<span class="ident">name</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;COMMENT&quot;</span> {
                 <span class="kw">if</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">node</span>.<span class="ident">expr</span>, <span class="kw-2">&amp;</span><span class="ident">map</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="macro">vec</span><span class="macro">!</span>[]) {
                     <span class="prelude-val">Some</span>(<span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                         <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
@@ -1293,29 +1293,29 @@
         .<span class="ident">collect</span>()
 }
 
-<span class="kw">fn</span> <span class="ident">validate_left_recursion</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">validate_left_recursion</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">left_recursion</span>(<span class="ident">to_hash_map</span>(<span class="ident">rules</span>))
 }
 
-<span class="kw">fn</span> <span class="ident">to_hash_map</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-&gt;</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">to_hash_map</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">rules</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">r</span><span class="op">|</span> (<span class="ident">r</span>.<span class="ident">name</span>.<span class="ident">clone</span>(), <span class="kw-2">&amp;</span><span class="ident">r</span>.<span class="ident">node</span>)).<span class="ident">collect</span>()
 }
 
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">needless_pass_by_value</span>)]</span>
-<span class="kw">fn</span> <span class="ident">left_recursion</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">fn</span> <span class="ident">left_recursion</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="ident">rules</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">check_expr</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;i</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
         <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>,
-        <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>,
+        <span class="ident">rules</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>,
         <span class="ident">trace</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">node</span>.<span class="ident">expr</span>.<span class="ident">clone</span>() {
-            <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="ident">other</span>) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">trace</span>[<span class="number">0</span>] <span class="op">==</span> <span class="ident">other</span> {
+            <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="ident">other</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="kw">if</span> <span class="ident">trace</span>[<span class="number">0</span>] <span class="op">=</span><span class="op">=</span> <span class="ident">other</span> {
                     <span class="ident">trace</span>.<span class="ident">push</span>(<span class="ident">other</span>);
                     <span class="kw">let</span> <span class="ident">chain</span> <span class="op">=</span> <span class="ident">trace</span>
                         .<span class="ident">iter</span>()
                         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">ident</span><span class="op">|</span> <span class="ident">ident</span>.<span class="ident">as_ref</span>())
-                        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>()
+                        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
                         .<span class="ident">join</span>(<span class="string">&quot; -&gt; &quot;</span>);
 
                     <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">Error</span>::<span class="ident">new_from_span</span>(
@@ -1343,23 +1343,23 @@
 
                 <span class="prelude-val">None</span>
             }
-            <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
+            <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="ident">is_non_failing</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>.<span class="ident">expr</span>, <span class="ident">rules</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="macro">vec</span><span class="macro">!</span>[<span class="ident">trace</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>().<span class="ident">clone</span>()]) {
                     <span class="ident">check_expr</span>(<span class="ident">rhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
                 } <span class="kw">else</span> {
                     <span class="ident">check_expr</span>(<span class="ident">lhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>)
                 }
             }
-            <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
-                <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>).<span class="ident">or_else</span>(<span class="op">||</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>))
+            <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="kw-2">ref</span> <span class="ident">lhs</span>, <span class="kw-2">ref</span> <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>).<span class="ident">or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">rhs</span>, <span class="ident">rules</span>, <span class="ident">trace</span>))
             }
-            <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="kw-2">ref</span> <span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">check_expr</span>(<span class="kw-2">&amp;</span><span class="ident">node</span>, <span class="ident">rules</span>, <span class="ident">trace</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 

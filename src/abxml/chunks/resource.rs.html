@@ -90,11 +90,11 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">ResourceWrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">raw_data</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">raw_data</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> { <span class="ident">raw_data</span> }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_resources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_resources</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">cursor</span> <span class="op">=</span> <span class="ident">Cursor</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">raw_data</span>);
         <span class="ident">cursor</span>.<span class="ident">set_position</span>(<span class="number">4</span>);
 
@@ -102,7 +102,7 @@
         <span class="kw">let</span> <span class="ident">amount_of_resources</span> <span class="op">=</span> (<span class="ident">count</span> <span class="op">/</span> <span class="number">4</span>) <span class="op">-</span> <span class="number">2</span>;
 
         <span class="macro">ensure</span><span class="macro">!</span>(
-            <span class="ident">count</span> <span class="op">&lt;=</span> <span class="self">self</span>.<span class="ident">raw_data</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
+            <span class="ident">count</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">raw_data</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>,
             <span class="string">&quot;there is not enough data on the buffer ({}) to read the reported resources count ({})&quot;</span>,
             <span class="self">self</span>.<span class="ident">raw_data</span>.<span class="ident">len</span>(),
             <span class="ident">count</span>
@@ -117,7 +117,7 @@
         <span class="prelude-val">Ok</span>(<span class="ident">resources</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ResourcesBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_buffer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ResourcesBuf</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">owned</span> <span class="op">=</span> <span class="ident">ResourcesBuf</span>::<span class="ident">default</span>();
 
         <span class="kw">for</span> <span class="ident">r</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">get_resources</span>()<span class="question-mark">?</span> {

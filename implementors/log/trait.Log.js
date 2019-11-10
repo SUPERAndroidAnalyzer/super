@@ -6,5 +6,4 @@ implementors["env_logger"] = [{text:"impl <a class=\"trait\" href=\"log/trait.Lo
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

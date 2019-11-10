@@ -6,5 +6,4 @@ implementors["serde_json"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

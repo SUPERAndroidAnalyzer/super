@@ -6,5 +6,4 @@ implementors["encoding"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

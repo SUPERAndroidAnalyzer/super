@@ -260,7 +260,7 @@
     <span class="kw">pub</span> <span class="ident">reseeder</span>: <span class="ident">Rsdr</span>,
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span>, <span class="ident">Rsdr</span>: <span class="ident">Reseeder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span>, <span class="ident">Rsdr</span>: <span class="ident">Reseeder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
     <span class="doccomment">/// Create a new `ReseedingRng` with the given parameters.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Arguments</span>
@@ -268,7 +268,7 @@
     <span class="doccomment">/// * `rng`: the random number generator to use.</span>
     <span class="doccomment">/// * `generation_threshold`: the number of bytes of entropy at which to reseed the RNG.</span>
     <span class="doccomment">/// * `reseeder`: the reseeding object to use.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rng</span>: <span class="ident">R</span>, <span class="ident">generation_threshold</span>: <span class="ident">u64</span>, <span class="ident">reseeder</span>: <span class="ident">Rsdr</span>) <span class="op">-&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>,<span class="ident">Rsdr</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">rng</span>: <span class="ident">R</span>, <span class="ident">generation_threshold</span>: <span class="ident">u64</span>, <span class="ident">reseeder</span>: <span class="ident">Rsdr</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>,<span class="ident">Rsdr</span><span class="op">&gt;</span> {
         <span class="ident">ReseedingRng</span> {
             <span class="ident">rng</span>: <span class="ident">rng</span>,
             <span class="ident">generation_threshold</span>: <span class="ident">generation_threshold</span>,
@@ -280,7 +280,7 @@
     <span class="doccomment">/// Reseed the internal RNG if the number of bytes that have been</span>
     <span class="doccomment">/// generated exceed the threshold.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reseed_if_necessary</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">&gt;=</span> <span class="self">self</span>.<span class="ident">generation_threshold</span> {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">generation_threshold</span> {
             <span class="self">self</span>.<span class="ident">reseeder</span>.<span class="ident">reseed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">rng</span>);
             <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">=</span> <span class="number">0</span>;
         }
@@ -288,22 +288,22 @@
 }
 
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span>, <span class="ident">Rsdr</span>: <span class="ident">Reseeder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;&gt;</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span>, <span class="ident">Rsdr</span>: <span class="ident">Reseeder</span><span class="op">&lt;</span><span class="ident">R</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">reseed_if_necessary</span>();
-        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+=</span> <span class="number">4</span>;
+        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+</span><span class="op">=</span> <span class="number">4</span>;
         <span class="self">self</span>.<span class="ident">rng</span>.<span class="ident">next_u32</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u64</span> {
+    <span class="kw">fn</span> <span class="ident">next_u64</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">reseed_if_necessary</span>();
-        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+=</span> <span class="number">8</span>;
+        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+</span><span class="op">=</span> <span class="number">8</span>;
         <span class="self">self</span>.<span class="ident">rng</span>.<span class="ident">next_u64</span>()
     }
 
     <span class="kw">fn</span> <span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">dest</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
         <span class="self">self</span>.<span class="ident">reseed_if_necessary</span>();
-        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+=</span> <span class="ident">dest</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="self">self</span>.<span class="ident">bytes_generated</span> <span class="op">+</span><span class="op">=</span> <span class="ident">dest</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
         <span class="self">self</span>.<span class="ident">rng</span>.<span class="ident">fill_bytes</span>(<span class="ident">dest</span>)
     }
 }
@@ -318,7 +318,7 @@
 
     <span class="doccomment">/// Create a new `ReseedingRng` from the given reseeder and</span>
     <span class="doccomment">/// seed. This uses a default value for `generation_threshold`.</span>
-    <span class="kw">fn</span> <span class="ident">from_seed</span>((<span class="ident">rsdr</span>, <span class="ident">seed</span>): (<span class="ident">Rsdr</span>, <span class="ident">S</span>)) <span class="op">-&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_seed</span>((<span class="ident">rsdr</span>, <span class="ident">seed</span>): (<span class="ident">Rsdr</span>, <span class="ident">S</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReseedingRng</span><span class="op">&lt;</span><span class="ident">R</span>, <span class="ident">Rsdr</span><span class="op">&gt;</span> {
         <span class="ident">ReseedingRng</span> {
             <span class="ident">rng</span>: <span class="ident">SeedableRng</span>::<span class="ident">from_seed</span>(<span class="ident">seed</span>),
             <span class="ident">generation_threshold</span>: <span class="ident">DEFAULT_GENERATION_THRESHOLD</span>,
@@ -372,7 +372,7 @@
     }
 }
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ReseedWithDefault</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">ReseedWithDefault</span> { <span class="ident">ReseedWithDefault</span> }
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReseedWithDefault</span> { <span class="ident">ReseedWithDefault</span> }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -387,14 +387,14 @@
     }
 
     <span class="kw">impl</span> <span class="ident">Rng</span> <span class="kw">for</span> <span class="ident">Counter</span> {
-        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
-            <span class="self">self</span>.<span class="ident">i</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="kw">fn</span> <span class="ident">next_u32</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
+            <span class="self">self</span>.<span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
             <span class="comment">// very random</span>
             <span class="self">self</span>.<span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>
         }
     }
     <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Counter</span> {
-        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">Counter</span> {
+        <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Counter</span> {
             <span class="ident">Counter</span> { <span class="ident">i</span>: <span class="number">0</span> }
         }
     }
@@ -402,7 +402,7 @@
         <span class="kw">fn</span> <span class="ident">reseed</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">seed</span>: <span class="ident">u32</span>) {
             <span class="self">self</span>.<span class="ident">i</span> <span class="op">=</span> <span class="ident">seed</span>;
         }
-        <span class="kw">fn</span> <span class="ident">from_seed</span>(<span class="ident">seed</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">Counter</span> {
+        <span class="kw">fn</span> <span class="ident">from_seed</span>(<span class="ident">seed</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Counter</span> {
             <span class="ident">Counter</span> { <span class="ident">i</span>: <span class="ident">seed</span> }
         }
     }
@@ -415,7 +415,7 @@
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">i</span> <span class="op">=</span> <span class="number">0</span>;
         <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">1000</span> {
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">rs</span>.<span class="ident">next_u32</span>(), <span class="ident">i</span> <span class="op">%</span> <span class="number">100</span>);
-            <span class="ident">i</span> <span class="op">+=</span> <span class="number">1</span>;
+            <span class="ident">i</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
     }
 
@@ -441,7 +441,7 @@
     <span class="kw">const</span> <span class="ident">FILL_BYTES_V_LEN</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">13579</span>;
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_rng_fill_bytes</span>() {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">repeat</span>(<span class="number">0u8</span>).<span class="ident">take</span>(<span class="ident">FILL_BYTES_V_LEN</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">repeat</span>(<span class="number">0u8</span>).<span class="ident">take</span>(<span class="ident">FILL_BYTES_V_LEN</span>).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>();
         ::<span class="ident">test</span>::<span class="ident">rng</span>().<span class="ident">fill_bytes</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">v</span>);
 
         <span class="comment">// Sanity test: if we&#39;ve gotten here, `fill_bytes` has not infinitely</span>
@@ -452,9 +452,9 @@
         <span class="comment">// average of `v` is not 0.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">sum</span> <span class="op">=</span> <span class="number">0.0</span>;
         <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="ident">x</span> <span class="kw">in</span> <span class="ident">v</span>.<span class="ident">iter</span>() {
-            <span class="ident">sum</span> <span class="op">+=</span> <span class="ident">x</span> <span class="kw">as</span> <span class="ident">f64</span>;
+            <span class="ident">sum</span> <span class="op">+</span><span class="op">=</span> <span class="ident">x</span> <span class="kw">as</span> <span class="ident">f64</span>;
         }
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sum</span> <span class="op">/</span> <span class="ident">v</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">!=</span> <span class="number">0.0</span>);
+        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">sum</span> <span class="op">/</span> <span class="ident">v</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">f64</span> <span class="op">!</span><span class="op">=</span> <span class="number">0.0</span>);
     }
 }
 </pre></div>

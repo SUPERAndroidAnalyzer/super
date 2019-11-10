@@ -59,7 +59,7 @@
 <span class="doccomment">/// Runs the analysis for manifest, certificate and code files.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// * Benchmarking support.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">static_analysis</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">config</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>, <span class="ident">package</span>: <span class="ident">S</span>, <span class="ident">results</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Results</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">static_analysis</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">config</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>, <span class="ident">package</span>: <span class="ident">S</span>, <span class="ident">results</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Results</span>) {
     <span class="kw">if</span> <span class="ident">config</span>.<span class="ident">is_verbose</span>() {
         <span class="macro">println</span><span class="macro">!</span>(
             <span class="string">&quot;It&#39;s time to analyze the application. First, a static analysis will be performed, \

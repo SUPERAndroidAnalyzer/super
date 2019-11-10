@@ -388,14 +388,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">System</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_u8</span>(<span class="ident">system</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="ident">System</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_u8</span>(<span class="ident">system</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">System</span>
     {
         <span class="kw">use</span> <span class="self">self</span>::<span class="ident">System</span>::<span class="kw-2">*</span>;
 
         <span class="kw">match</span> <span class="ident">system</span> {
-            <span class="number">0</span> <span class="op">=&gt;</span> <span class="ident">Dos</span>,
-            <span class="number">3</span> <span class="op">=&gt;</span> <span class="ident">Unix</span>,
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="ident">Unknown</span>,
+            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Dos</span>,
+            <span class="number">3</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Unix</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Unknown</span>,
         }
     }
 }
@@ -419,7 +419,7 @@
 
 <span class="kw">impl</span> ::<span class="ident">std</span>::<span class="ident">default</span>::<span class="ident">Default</span> <span class="kw">for</span> <span class="ident">DateTime</span> {
     <span class="doccomment">/// Constructs an &#39;default&#39; datetime of 1980-01-01 00:00:00</span>
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">DateTime</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DateTime</span> {
         <span class="ident">DateTime</span> {
             <span class="ident">year</span>: <span class="number">1980</span>,
             <span class="ident">month</span>: <span class="number">1</span>,
@@ -433,13 +433,13 @@
 
 <span class="kw">impl</span> <span class="ident">DateTime</span> {
     <span class="doccomment">/// Converts an msdos (u16, u16) pair to a DateTime object</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_msdos</span>(<span class="ident">datepart</span>: <span class="ident">u16</span>, <span class="ident">timepart</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="ident">DateTime</span> {
-        <span class="kw">let</span> <span class="ident">seconds</span> <span class="op">=</span> (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b0000000000011111</span>) <span class="op">&lt;&lt;</span> <span class="number">1</span>;
-        <span class="kw">let</span> <span class="ident">minutes</span> <span class="op">=</span> (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b0000011111100000</span>) <span class="op">&gt;&gt;</span> <span class="number">5</span>;
-        <span class="kw">let</span> <span class="ident">hours</span> <span class="op">=</span>   (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b1111100000000000</span>) <span class="op">&gt;&gt;</span> <span class="number">11</span>;
-        <span class="kw">let</span> <span class="ident">days</span> <span class="op">=</span>    (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b0000000000011111</span>) <span class="op">&gt;&gt;</span> <span class="number">0</span>;
-        <span class="kw">let</span> <span class="ident">months</span> <span class="op">=</span>  (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b0000000111100000</span>) <span class="op">&gt;&gt;</span> <span class="number">5</span>;
-        <span class="kw">let</span> <span class="ident">years</span> <span class="op">=</span>   (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b1111111000000000</span>) <span class="op">&gt;&gt;</span> <span class="number">9</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_msdos</span>(<span class="ident">datepart</span>: <span class="ident">u16</span>, <span class="ident">timepart</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">DateTime</span> {
+        <span class="kw">let</span> <span class="ident">seconds</span> <span class="op">=</span> (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b0000000000011111</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">1</span>;
+        <span class="kw">let</span> <span class="ident">minutes</span> <span class="op">=</span> (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b0000011111100000</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">5</span>;
+        <span class="kw">let</span> <span class="ident">hours</span> <span class="op">=</span>   (<span class="ident">timepart</span> <span class="op">&amp;</span> <span class="number">0b1111100000000000</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">11</span>;
+        <span class="kw">let</span> <span class="ident">days</span> <span class="op">=</span>    (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b0000000000011111</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">0</span>;
+        <span class="kw">let</span> <span class="ident">months</span> <span class="op">=</span>  (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b0000000111100000</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">5</span>;
+        <span class="kw">let</span> <span class="ident">years</span> <span class="op">=</span>   (<span class="ident">datepart</span> <span class="op">&amp;</span> <span class="number">0b1111111000000000</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">9</span>;
 
         <span class="ident">DateTime</span> {
             <span class="ident">year</span>: (<span class="ident">years</span> <span class="op">+</span> <span class="number">1980</span>) <span class="kw">as</span> <span class="ident">u16</span>,
@@ -460,13 +460,13 @@
     <span class="doccomment">/// * hour: [0, 23]</span>
     <span class="doccomment">/// * minute: [0, 59]</span>
     <span class="doccomment">/// * second: [0, 60]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_date_and_time</span>(<span class="ident">year</span>: <span class="ident">u16</span>, <span class="ident">month</span>: <span class="ident">u8</span>, <span class="ident">day</span>: <span class="ident">u8</span>, <span class="ident">hour</span>: <span class="ident">u8</span>, <span class="ident">minute</span>: <span class="ident">u8</span>, <span class="ident">second</span>: <span class="ident">u8</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DateTime</span>, ()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">year</span> <span class="op">&gt;=</span> <span class="number">1980</span> <span class="op">&amp;&amp;</span> <span class="ident">year</span> <span class="op">&lt;=</span> <span class="number">2107</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">month</span> <span class="op">&gt;=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">month</span> <span class="op">&lt;=</span> <span class="number">12</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">day</span> <span class="op">&gt;=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">day</span> <span class="op">&lt;=</span> <span class="number">31</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">hour</span> <span class="op">&lt;=</span> <span class="number">23</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">minute</span> <span class="op">&lt;=</span> <span class="number">59</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">second</span> <span class="op">&lt;=</span> <span class="number">60</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_date_and_time</span>(<span class="ident">year</span>: <span class="ident">u16</span>, <span class="ident">month</span>: <span class="ident">u8</span>, <span class="ident">day</span>: <span class="ident">u8</span>, <span class="ident">hour</span>: <span class="ident">u8</span>, <span class="ident">minute</span>: <span class="ident">u8</span>, <span class="ident">second</span>: <span class="ident">u8</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DateTime</span>, ()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="ident">year</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1980</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">year</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">2107</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">month</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">month</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">12</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">day</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">day</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">31</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">hour</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">23</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">minute</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">59</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">second</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">60</span>
         {
             <span class="prelude-val">Ok</span>(<span class="ident">DateTime</span> {
                 <span class="ident">year</span>: <span class="ident">year</span>,
@@ -486,13 +486,13 @@
     <span class="doccomment">/// Converts a ::time::Tm object to a DateTime</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `Err` when this object is out of bounds</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_time</span>(<span class="ident">tm</span>: ::<span class="ident">time</span>::<span class="ident">Tm</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DateTime</span>, ()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="op">&gt;=</span> <span class="number">80</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="op">&lt;=</span> <span class="number">207</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mon</span> <span class="op">&gt;=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mon</span> <span class="op">&lt;=</span> <span class="number">31</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mday</span> <span class="op">&gt;=</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mday</span> <span class="op">&lt;=</span> <span class="number">31</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_hour</span> <span class="op">&gt;=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_hour</span> <span class="op">&lt;=</span> <span class="number">23</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_min</span> <span class="op">&gt;=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_min</span> <span class="op">&lt;=</span> <span class="number">59</span>
-            <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_sec</span> <span class="op">&gt;=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_sec</span> <span class="op">&lt;=</span> <span class="number">60</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_time</span>(<span class="ident">tm</span>: ::<span class="ident">time</span>::<span class="ident">Tm</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">DateTime</span>, ()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">80</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">207</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mon</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mon</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">31</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mday</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_mday</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">31</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_hour</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_hour</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">23</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_min</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_min</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">59</span>
+            <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_sec</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">0</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">tm</span>.<span class="ident">tm_sec</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">60</span>
         {
             <span class="prelude-val">Ok</span>(<span class="ident">DateTime</span> {
                 <span class="ident">year</span>: (<span class="ident">tm</span>.<span class="ident">tm_year</span> <span class="op">+</span> <span class="number">1900</span>) <span class="kw">as</span> <span class="ident">u16</span>,
@@ -509,20 +509,20 @@
     }
 
     <span class="doccomment">/// Gets the time portion of this datetime in the msdos representation</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timepart</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
-        ((<span class="self">self</span>.<span class="ident">second</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&gt;&gt;</span> <span class="number">1</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">minute</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;&lt;</span> <span class="number">5</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">hour</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;&lt;</span> <span class="number">11</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">timepart</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
+        ((<span class="self">self</span>.<span class="ident">second</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">1</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">minute</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">hour</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">11</span>)
     }
 
     <span class="doccomment">/// Gets the date portion of this datetime in the msdos representation</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">datepart</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
-        (<span class="self">self</span>.<span class="ident">day</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">month</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;&lt;</span> <span class="number">5</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">year</span> <span class="op">-</span> <span class="number">1980</span>) <span class="op">&lt;&lt;</span> <span class="number">9</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">datepart</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
+        (<span class="self">self</span>.<span class="ident">day</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">month</span> <span class="kw">as</span> <span class="ident">u16</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span>) <span class="op">|</span> ((<span class="self">self</span>.<span class="ident">year</span> <span class="op">-</span> <span class="number">1980</span>) <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">9</span>)
     }
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;time&quot;</span>)]</span>
     <span class="doccomment">/// Converts the datetime to a Tm structure</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The fields `tm_wday`, `tm_yday`, `tm_utcoff` and `tm_nsec` are set to their defaults.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_time</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="ident">time</span>::<span class="ident">Tm</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">to_time</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">time</span>::<span class="ident">Tm</span> {
         ::<span class="ident">time</span>::<span class="ident">Tm</span> {
             <span class="ident">tm_sec</span>: <span class="self">self</span>.<span class="ident">second</span> <span class="kw">as</span> <span class="ident">i32</span>,
             <span class="ident">tm_min</span>: <span class="self">self</span>.<span class="ident">minute</span> <span class="kw">as</span> <span class="ident">i32</span>,
@@ -536,32 +536,32 @@
     }
 
     <span class="doccomment">/// Get the year. There is no epoch, i.e. 2018 will be returned as 2018.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">year</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">year</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
         <span class="self">self</span>.<span class="ident">year</span>
     }
 
     <span class="doccomment">/// Get the month, where 1 = january and 12 = december</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">month</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">month</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">month</span>
     }
 
     <span class="doccomment">/// Get the day</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">day</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">day</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">day</span>
     }
 
     <span class="doccomment">/// Get the hour</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hour</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">hour</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">hour</span>
     }
 
     <span class="doccomment">/// Get the minute</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">minute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">minute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">minute</span>
     }
 
     <span class="doccomment">/// Get the second</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">second</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u8</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">second</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
         <span class="self">self</span>.<span class="ident">second</span>
     }
 }
@@ -603,10 +603,10 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ZipFileData</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file_name_sanitized</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">file_name_sanitized</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span> {
         <span class="kw">let</span> <span class="ident">no_null_filename</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">file_name</span>.<span class="ident">find</span>(<span class="string">&#39;\0&#39;</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">file_name</span>[<span class="number">0</span>..<span class="ident">index</span>],
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">file_name</span>,
+            <span class="prelude-val">Some</span>(<span class="ident">index</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">file_name</span>[<span class="number">0</span>..<span class="ident">index</span>],
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">file_name</span>,
         }.<span class="ident">to_string</span>();
 
         <span class="comment">// zip files can contain both / and \ as separators regardless of the OS</span>
@@ -614,8 +614,8 @@
         <span class="comment">// OS separator let&#39;s convert incompatible separators to compatible ones</span>
         <span class="kw">let</span> <span class="ident">separator</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">MAIN_SEPARATOR</span>;
         <span class="kw">let</span> <span class="ident">opposite_separator</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">separator</span> {
-            <span class="string">&#39;/&#39;</span> <span class="op">=&gt;</span> <span class="string">&#39;\\&#39;</span>,
-            <span class="string">&#39;\\&#39;</span> <span class="op">|</span> <span class="kw">_</span> <span class="op">=&gt;</span> <span class="string">&#39;/&#39;</span>,
+            <span class="string">&#39;/&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;\\&#39;</span>,
+            <span class="string">&#39;\\&#39;</span> <span class="op">|</span> <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&#39;/&#39;</span>,
         };
         <span class="kw">let</span> <span class="ident">filename</span> <span class="op">=</span>
             <span class="ident">no_null_filename</span>.<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="ident">opposite_separator</span>.<span class="ident">to_string</span>(), <span class="kw-2">&amp;</span><span class="ident">separator</span>.<span class="ident">to_string</span>());
@@ -623,8 +623,8 @@
         ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Path</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="ident">filename</span>)
             .<span class="ident">components</span>()
             .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">component</span><span class="op">|</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">component</span> {
-                ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Component</span>::<span class="ident">Normal</span>(..) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+                ::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">Component</span>::<span class="ident">Normal</span>(..) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
             })
             .<span class="ident">fold</span>(::<span class="ident">std</span>::<span class="ident">path</span>::<span class="ident">PathBuf</span>::<span class="ident">new</span>(), <span class="op">|</span><span class="kw-2">mut</span> <span class="ident">path</span>, <span class="kw-2">ref</span> <span class="ident">cur</span><span class="op">|</span> {
                 <span class="ident">path</span>.<span class="ident">push</span>(<span class="ident">cur</span>.<span class="ident">as_os_str</span>());
@@ -632,11 +632,11 @@
             })
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">version_needed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">u16</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">version_needed</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">compression_method</span> {
             <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;bzip2&quot;</span>)]</span>
-            ::<span class="ident">compression</span>::<span class="ident">CompressionMethod</span>::<span class="ident">Bzip2</span> <span class="op">=&gt;</span> <span class="number">46</span>,
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="number">20</span>,
+            ::<span class="ident">compression</span>::<span class="ident">CompressionMethod</span>::<span class="ident">Bzip2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">46</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">20</span>,
         }
     }
 }

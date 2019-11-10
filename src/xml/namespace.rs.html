@@ -557,25 +557,25 @@
 <span class="kw">impl</span> <span class="ident">Namespace</span> {
     <span class="doccomment">/// Returns an empty namespace.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">empty</span>() <span class="op">-&gt;</span> <span class="ident">Namespace</span> { <span class="ident">Namespace</span>(<span class="ident">BTreeMap</span>::<span class="ident">new</span>()) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">empty</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Namespace</span> { <span class="ident">Namespace</span>(<span class="ident">BTreeMap</span>::<span class="ident">new</span>()) }
 
     <span class="doccomment">/// Checks whether this namespace is empty.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">is_empty</span>()
     }
 
     <span class="doccomment">/// Checks whether this namespace is essentially empty, that is, it does not contain</span>
     <span class="doccomment">/// anything but default mappings.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_essentially_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_essentially_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="comment">// a shortcut for a namespace which is definitely not empty</span>
         <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">3</span> { <span class="kw">return</span> <span class="bool-val">false</span>; }
 
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">all</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> <span class="kw">match</span> (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">k</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">v</span>) {
-            (<span class="ident">NS_NO_PREFIX</span>,    <span class="ident">NS_EMPTY_URI</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-            (<span class="ident">NS_XMLNS_PREFIX</span>, <span class="ident">NS_XMLNS_URI</span>) <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-            (<span class="ident">NS_XML_PREFIX</span>,   <span class="ident">NS_XML_URI</span>)   <span class="op">=&gt;</span> <span class="bool-val">true</span>,
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>
+            (<span class="ident">NS_NO_PREFIX</span>,    <span class="ident">NS_EMPTY_URI</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+            (<span class="ident">NS_XMLNS_PREFIX</span>, <span class="ident">NS_XMLNS_URI</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+            (<span class="ident">NS_XML_PREFIX</span>,   <span class="ident">NS_XML_URI</span>)   <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>
         })
     }
 
@@ -587,7 +587,7 @@
     <span class="doccomment">/// # Return value</span>
     <span class="doccomment">/// `true` if this namespace contains the given prefix, `false` otherwise.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">contains</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">contains_key</span>(<span class="ident">prefix</span>.<span class="ident">as_ref</span>())
     }
 
@@ -605,12 +605,12 @@
     <span class="doccomment">/// # Return value</span>
     <span class="doccomment">/// `true` if `prefix` has been inserted successfully; `false` if the `prefix`</span>
     <span class="doccomment">/// was already present in the namespace.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>
         <span class="kw">where</span> <span class="ident">P</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
     {
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">entry</span>(<span class="ident">prefix</span>.<span class="ident">into</span>()) {
-            <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="bool-val">false</span>,
-            <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">ve</span>) <span class="op">=&gt;</span> {
+            <span class="ident">Entry</span>::<span class="ident">Occupied</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="ident">Entry</span>::<span class="ident">Vacant</span>(<span class="ident">ve</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="ident">ve</span>.<span class="ident">insert</span>(<span class="ident">uri</span>.<span class="ident">into</span>());
                 <span class="bool-val">true</span>
             }
@@ -630,7 +630,7 @@
     <span class="doccomment">/// # Return value</span>
     <span class="doccomment">/// `Some(uri)` with `uri` being a previous URI assigned to the `prefix`, or</span>
     <span class="doccomment">/// `None` if such prefix was not present in the namespace before.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force_put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force_put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">P</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
     {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">insert</span>(<span class="ident">prefix</span>.<span class="ident">into</span>(), <span class="ident">uri</span>.<span class="ident">into</span>())
@@ -643,7 +643,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// # Return value</span>
     <span class="doccomment">/// Namespace URI corresponding to the given prefix, if it is present.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">get</span>(<span class="ident">prefix</span>.<span class="ident">as_ref</span>()).<span class="ident">map</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">*</span><span class="ident">s</span>)
     }
 }
@@ -651,15 +651,15 @@
 <span class="doccomment">/// An alias for iterator type for namespace mappings contained in a namespace.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">NamespaceMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Map</span><span class="op">&lt;</span>
     <span class="ident">Entries</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">String</span>, <span class="ident">String</span><span class="op">&gt;</span>,
-    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="kw">fn</span>((<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">String</span>)) <span class="op">-&gt;</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>
+    <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="kw">fn</span>((<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">String</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>
 <span class="op">&gt;</span>;
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">IntoIterator</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">Namespace</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">NamespaceMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
-        <span class="kw">fn</span> <span class="ident">mapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>((<span class="ident">prefix</span>, <span class="ident">uri</span>): (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>)) <span class="op">-&gt;</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
+        <span class="kw">fn</span> <span class="ident">mapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>((<span class="ident">prefix</span>, <span class="ident">uri</span>): (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">String</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
             (<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">prefix</span>, <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">uri</span>)
         }
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="ident">mapper</span>)
@@ -676,7 +676,7 @@
 <span class="kw">impl</span> <span class="ident">NamespaceStack</span> {
     <span class="doccomment">/// Returns an empty namespace stack.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">empty</span>() <span class="op">-&gt;</span> <span class="ident">NamespaceStack</span> { <span class="ident">NamespaceStack</span>(<span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">2</span>)) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">empty</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">NamespaceStack</span> { <span class="ident">NamespaceStack</span>(<span class="ident">Vec</span>::<span class="ident">with_capacity</span>(<span class="number">2</span>)) }
 
     <span class="doccomment">/// Returns a namespace stack with default items in it.</span>
     <span class="doccomment">///</span>
@@ -685,7 +685,7 @@
     <span class="doccomment">/// * `xml` → `http://www.w3.org/XML/1998/namespace`;</span>
     <span class="doccomment">/// * `xmlns` → `http://www.w3.org/2000/xmlns/`.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="ident">NamespaceStack</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">NamespaceStack</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">nst</span> <span class="op">=</span> <span class="ident">NamespaceStack</span>::<span class="ident">empty</span>();
         <span class="ident">nst</span>.<span class="ident">push_empty</span>();
         <span class="comment">// xml namespace</span>
@@ -699,7 +699,7 @@
 
     <span class="doccomment">/// Adds an empty namespace to the top of this stack.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_empty</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">NamespaceStack</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_empty</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">NamespaceStack</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">push</span>(<span class="ident">Namespace</span>::<span class="ident">empty</span>());
         <span class="self">self</span>
     }
@@ -708,7 +708,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if the stack is empty.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Namespace</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Namespace</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>()
     }
 
@@ -716,7 +716,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Returns `Some(namespace)` if this stack is not empty and `None` otherwise.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_pop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Namespace</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_pop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Namespace</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">pop</span>()
     }
 
@@ -724,7 +724,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if the stack is empty.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">peek_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Namespace</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">peek_mut</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Namespace</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_mut</span>().<span class="ident">unwrap</span>()
     }
 
@@ -732,7 +732,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if the stack is empty.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">peek</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Namespace</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">peek</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">Namespace</span> {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>()
     }
 
@@ -749,11 +749,11 @@
     <span class="doccomment">/// # Return value</span>
     <span class="doccomment">/// `true` if `prefix` has been inserted successfully; `false` if the `prefix`</span>
     <span class="doccomment">/// was already present in the namespace stack.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put_checked</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put_checked</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>
         <span class="kw">where</span> <span class="ident">P</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>,
               <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>
     {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">ns</span><span class="op">|</span> <span class="ident">ns</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">prefix</span>) <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="ident">uri</span>.<span class="ident">as_ref</span>())) {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">ns</span><span class="op">|</span> <span class="ident">ns</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">prefix</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">uri</span>.<span class="ident">as_ref</span>())) {
             <span class="bool-val">false</span>
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">put</span>(<span class="ident">prefix</span>, <span class="ident">uri</span>);
@@ -777,7 +777,7 @@
     <span class="doccomment">/// `true` if `prefix` has been inserted successfully; `false` if the `prefix`</span>
     <span class="doccomment">/// was already present in the namespace.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="ident">bool</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">put</span><span class="op">&lt;</span><span class="ident">P</span>, <span class="ident">U</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="ident">P</span>, <span class="ident">uri</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>
         <span class="kw">where</span> <span class="ident">P</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">U</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>
     {
         <span class="self">self</span>.<span class="number">0</span>.<span class="ident">last_mut</span>().<span class="ident">unwrap</span>().<span class="ident">put</span>(<span class="ident">prefix</span>, <span class="ident">uri</span>)
@@ -792,12 +792,12 @@
     <span class="doccomment">/// # Parameters</span>
     <span class="doccomment">/// * `prefix` --- namespace prefix.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">P</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">+</span><span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">prefix</span>: <span class="kw-2">&amp;</span><span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">prefix</span> <span class="op">=</span> <span class="ident">prefix</span>.<span class="ident">as_ref</span>();
         <span class="kw">for</span> <span class="ident">ns</span> <span class="kw">in</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">rev</span>() {
             <span class="kw">match</span> <span class="ident">ns</span>.<span class="ident">get</span>(<span class="ident">prefix</span>) {
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> {},
-                <span class="ident">r</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">r</span>,
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {},
+                <span class="ident">r</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="ident">r</span>,
             }
         }
         <span class="prelude-val">None</span>
@@ -807,7 +807,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Namespaces are combined in left-to-right order, that is, rightmost namespace</span>
     <span class="doccomment">/// elements take priority over leftmost ones.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">squash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Namespace</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">squash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Namespace</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">BTreeMap</span>::<span class="ident">new</span>();
         <span class="kw">for</span> <span class="ident">ns</span> <span class="kw">in</span> <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>() {
             <span class="ident">result</span>.<span class="ident">extend</span>(<span class="ident">ns</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">k</span>, <span class="ident">v</span>)<span class="op">|</span> (<span class="ident">k</span>.<span class="ident">clone</span>(), <span class="ident">v</span>.<span class="ident">clone</span>())));
@@ -819,13 +819,13 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// See `CheckedTarget` for more information.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">checked_target</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">CheckedTarget</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">checked_target</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CheckedTarget</span> {
         <span class="ident">CheckedTarget</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns an iterator over all mappings in this namespace stack.</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">NamespaceStackMappings</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">NamespaceStackMappings</span> {
         <span class="self">self</span>.<span class="ident">into_iter</span>()
     }
 }
@@ -845,13 +845,13 @@
 <span class="doccomment">/// assert_eq!(vec![(&quot;c&quot;, &quot;urn:C&quot;), (&quot;a&quot;, &quot;urn:A&quot;), (&quot;b&quot;, &quot;urn:B&quot;)], nst.iter().collect::&lt;Vec&lt;_&gt;&gt;());</span>
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NamespaceStackMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="ident">namespaces</span>: <span class="ident">Rev</span><span class="op">&lt;</span><span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Namespace</span><span class="op">&gt;&gt;</span>,
-    <span class="ident">current_namespace</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NamespaceMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">namespaces</span>: <span class="ident">Rev</span><span class="op">&lt;</span><span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">Namespace</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">current_namespace</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">NamespaceMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">used_keys</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span>
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">NamespaceStackMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">go_to_next_namespace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">go_to_next_namespace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">current_namespace</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">namespaces</span>.<span class="ident">next</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">ns</span><span class="op">|</span> <span class="ident">ns</span>.<span class="ident">into_iter</span>());
         <span class="self">self</span>.<span class="ident">current_namespace</span>.<span class="ident">is_some</span>()
     }
@@ -860,16 +860,16 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">NamespaceStackMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="comment">// If there is no current namespace and no next namespace, we&#39;re finished</span>
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">current_namespace</span>.<span class="ident">is_none</span>() <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">go_to_next_namespace</span>() {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">current_namespace</span>.<span class="ident">is_none</span>() <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">go_to_next_namespace</span>() {
             <span class="kw">return</span> <span class="prelude-val">None</span>;
         }
         <span class="kw">let</span> <span class="ident">next_item</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">current_namespace</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">next</span>();
 
         <span class="kw">match</span> <span class="ident">next_item</span> {
             <span class="comment">// There is an element in the current namespace</span>
-            <span class="prelude-val">Some</span>((<span class="ident">k</span>, <span class="ident">v</span>)) <span class="op">=&gt;</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">used_keys</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>) {
+            <span class="prelude-val">Some</span>((<span class="ident">k</span>, <span class="ident">v</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">used_keys</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">k</span>) {
                 <span class="comment">// If the current key is used, go to the next one</span>
                 <span class="self">self</span>.<span class="ident">next</span>()
             } <span class="kw">else</span> {
@@ -879,7 +879,7 @@
                 <span class="prelude-val">Some</span>((<span class="ident">k</span>, <span class="ident">v</span>))
             },
             <span class="comment">// Current namespace is exhausted</span>
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">go_to_next_namespace</span>() {
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">go_to_next_namespace</span>() {
                 <span class="comment">// If there is next namespace, continue from it</span>
                 <span class="self">self</span>.<span class="ident">next</span>()
             } <span class="kw">else</span> {
@@ -894,7 +894,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">NamespaceStackMappings</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
         <span class="ident">NamespaceStackMappings</span> {
             <span class="ident">namespaces</span>: <span class="self">self</span>.<span class="number">0</span>.<span class="ident">iter</span>().<span class="ident">rev</span>(),
             <span class="ident">current_namespace</span>: <span class="prelude-val">None</span>,
@@ -906,16 +906,16 @@
 <span class="doccomment">/// A type alias for a pair of `(prefix, uri)` values returned by namespace iterators.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="op">=</span> (<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>);
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">Namespace</span> {
-    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Namespace</span> {
+    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">for</span> (<span class="ident">prefix</span>, <span class="ident">uri</span>) <span class="kw">in</span> <span class="ident">iterable</span> {
             <span class="self">self</span>.<span class="ident">put</span>(<span class="ident">prefix</span>, <span class="ident">uri</span>);
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">NamespaceStack</span> {
-    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">NamespaceStack</span> {
+    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">for</span> (<span class="ident">prefix</span>, <span class="ident">uri</span>) <span class="kw">in</span> <span class="ident">iterable</span> {
             <span class="self">self</span>.<span class="ident">put</span>(<span class="ident">prefix</span>, <span class="ident">uri</span>);
         }
@@ -962,8 +962,8 @@
 <span class="doccomment">/// ```</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CheckedTarget</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">NamespaceStack</span>);
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="ident">CheckedTarget</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Extend</span><span class="op">&lt;</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CheckedTarget</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">extend</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">iterable</span>: <span class="ident">T</span>) <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">IntoIterator</span><span class="op">&lt;</span><span class="ident">Item</span><span class="op">=</span><span class="ident">UriMapping</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">for</span> (<span class="ident">prefix</span>, <span class="ident">uri</span>) <span class="kw">in</span> <span class="ident">iterable</span> {
             <span class="self">self</span>.<span class="number">0</span>.<span class="ident">put_checked</span>(<span class="ident">prefix</span>, <span class="ident">uri</span>);
         }

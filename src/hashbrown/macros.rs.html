@@ -60,7 +60,7 @@
         <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">meta</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>)]</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="op">*</span> }
     ) <span class="kw">else</span> <span class="op">*</span> <span class="kw">else</span> {
         $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it2</span>:<span class="ident">item</span>)<span class="op">*</span>
-    }) <span class="op">=&gt;</span> {
+    }) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">cfg_if</span><span class="macro">!</span> {
             @<span class="ident">__items</span>
             () ;
@@ -75,7 +75,7 @@
         $(
             <span class="kw">else</span> <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e_met</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>)]</span> { $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e_it</span>:<span class="ident">item</span>)<span class="op">*</span> }
         )<span class="op">*</span>
-    ) <span class="op">=&gt;</span> {
+    ) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">cfg_if</span><span class="macro">!</span> {
             @<span class="ident">__items</span>
             () ;
@@ -89,8 +89,8 @@
     <span class="comment">//</span>
     <span class="comment">// Collects all the negated cfgs in a list at the beginning and after the</span>
     <span class="comment">// semicolon is all the remaining items</span>
-    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ) <span class="op">=&gt;</span> {};
-    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ( ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>) ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) ), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ) <span class="op">=</span><span class="op">&gt;</span> {};
+    (@<span class="ident">__items</span> ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">not</span>:<span class="ident">meta</span>,)<span class="kw-2">*</span>) ; ( ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>),<span class="kw-2">*</span>) ($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) ), $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rest</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="comment">// Emit all items within one block, applying an approprate #[cfg]. The</span>
         <span class="comment">// #[cfg] will require all `$m` matchers specified and must also negate</span>
         <span class="comment">// all previous matchers.</span>
@@ -103,7 +103,7 @@
     };
 
     <span class="comment">// Internal macro to Apply a cfg attribute to a list of items</span>
-    (@<span class="ident">__apply</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {
+    (@<span class="ident">__apply</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>:<span class="ident">meta</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>:<span class="ident">item</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {
         $(<span class="attribute">#[<span class="macro-nonterminal">$</span><span class="macro-nonterminal">m</span>]</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">it</span>)<span class="op">*</span>
     };
 }

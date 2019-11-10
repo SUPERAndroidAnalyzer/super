@@ -424,20 +424,20 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ToString</span> <span class="kw">for</span> <span class="ident">Value</span> {
-    <span class="kw">fn</span> <span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">to_string</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">match</span> <span class="self">self</span> {
-            <span class="self">Self</span>::<span class="ident">StringReference</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@string/{}&quot;</span>, <span class="ident">i</span>),
+            <span class="self">Self</span>::<span class="ident">StringReference</span>(<span class="ident">i</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@string/{}&quot;</span>, <span class="ident">i</span>),
             <span class="self">Self</span>::<span class="ident">Dimension</span>(<span class="ident">s</span>)
             <span class="op">|</span> <span class="self">Self</span>::<span class="ident">Fraction</span>(<span class="ident">s</span>)
             <span class="op">|</span> <span class="self">Self</span>::<span class="ident">ColorARGB8</span>(<span class="ident">s</span>)
             <span class="op">|</span> <span class="self">Self</span>::<span class="ident">ColorRGB8</span>(<span class="ident">s</span>)
             <span class="op">|</span> <span class="self">Self</span>::<span class="ident">ColorARGB4</span>(<span class="ident">s</span>)
-            <span class="op">|</span> <span class="self">Self</span>::<span class="ident">ColorRGB4</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="ident">s</span>.<span class="ident">clone</span>(),
-            <span class="self">Self</span>::<span class="ident">Float</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*}&quot;</span>, <span class="number">1</span>, <span class="ident">f</span>),
-            <span class="self">Self</span>::<span class="ident">Integer</span>(<span class="ident">i</span>) <span class="op">|</span> <span class="self">Self</span>::<span class="ident">Flags</span>(<span class="ident">i</span>) <span class="op">=&gt;</span> <span class="ident">i</span>.<span class="ident">to_string</span>(),
-            <span class="self">Self</span>::<span class="ident">Boolean</span>(<span class="ident">b</span>) <span class="op">=&gt;</span> <span class="ident">b</span>.<span class="ident">to_string</span>(),
-            <span class="self">Self</span>::<span class="ident">ReferenceId</span>(<span class="ident">s</span>) <span class="op">|</span> <span class="self">Self</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">s</span>) <span class="op">=&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@id/0x{:x}&quot;</span>, <span class="ident">s</span>),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="string">&quot;Unknown&quot;</span>.<span class="ident">to_string</span>(),
+            <span class="op">|</span> <span class="self">Self</span>::<span class="ident">ColorRGB4</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">s</span>.<span class="ident">clone</span>(),
+            <span class="self">Self</span>::<span class="ident">Float</span>(<span class="ident">f</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{:.*}&quot;</span>, <span class="number">1</span>, <span class="ident">f</span>),
+            <span class="self">Self</span>::<span class="ident">Integer</span>(<span class="ident">i</span>) <span class="op">|</span> <span class="self">Self</span>::<span class="ident">Flags</span>(<span class="ident">i</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">i</span>.<span class="ident">to_string</span>(),
+            <span class="self">Self</span>::<span class="ident">Boolean</span>(<span class="ident">b</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">b</span>.<span class="ident">to_string</span>(),
+            <span class="self">Self</span>::<span class="ident">ReferenceId</span>(<span class="ident">s</span>) <span class="op">|</span> <span class="self">Self</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;@id/0x{:x}&quot;</span>, <span class="ident">s</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="string">&quot;Unknown&quot;</span>.<span class="ident">to_string</span>(),
         }
     }
 }
@@ -445,14 +445,14 @@
 <span class="kw">impl</span> <span class="ident">Value</span> {
     <span class="doccomment">/// Creates a new `Value`. If the payload can not be interpreted by the given `value_type`, it</span>
     <span class="doccomment">/// will return an error. If the type is not know, it will return `Value::Unknown`</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="ident">value_type</span>: <span class="ident">u8</span>, <span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">value_type</span> {
-            <span class="ident">TOKEN_TYPE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">ReferenceId</span>(<span class="ident">data</span>),
-            <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_REFERENCE</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">ReferenceId</span>(<span class="ident">data</span>),
+            <span class="ident">TOKEN_TYPE_ATTRIBUTE_REFERENCE_ID</span> <span class="op">|</span> <span class="ident">TOKEN_TYPE_DYN_ATTRIBUTE</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="self">Self</span>::<span class="ident">AttributeReferenceId</span>(<span class="ident">data</span>)
             }
-            <span class="ident">TOKEN_TYPE_STRING</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">StringReference</span>(<span class="ident">data</span>),
-            <span class="ident">TOKEN_TYPE_DIMENSION</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_STRING</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">StringReference</span>(<span class="ident">data</span>),
+            <span class="ident">TOKEN_TYPE_DIMENSION</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">units</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">6</span>] <span class="op">=</span> [<span class="string">&quot;px&quot;</span>, <span class="string">&quot;dip&quot;</span>, <span class="string">&quot;sp&quot;</span>, <span class="string">&quot;pt&quot;</span>, <span class="string">&quot;in&quot;</span>, <span class="string">&quot;mm&quot;</span>];
                 <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">complex</span>(<span class="ident">data</span>);
                 <span class="kw">let</span> <span class="ident">unit_idx</span> <span class="op">=</span> <span class="ident">data</span> <span class="op">&amp;</span> <span class="number">0xF</span>;
@@ -467,7 +467,7 @@
                     ));
                 }
             }
-            <span class="ident">TOKEN_TYPE_FRACTION</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_FRACTION</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">units</span>: [<span class="kw-2">&amp;</span><span class="ident">str</span>; <span class="number">2</span>] <span class="op">=</span> [<span class="string">&quot;%&quot;</span>, <span class="string">&quot;%p&quot;</span>];
                 <span class="kw">let</span> <span class="ident">unit_idx</span> <span class="op">=</span> (<span class="ident">data</span> <span class="op">&amp;</span> <span class="number">0xF</span>) <span class="kw">as</span> <span class="ident">usize</span>;
                 <span class="kw">let</span> <span class="ident">final_value</span> <span class="op">=</span> <span class="self">Self</span>::<span class="ident">complex</span>(<span class="ident">data</span>) <span class="op">*</span> <span class="number">100.0</span>;
@@ -489,30 +489,30 @@
                     ));
                 }
             }
-            <span class="ident">TOKEN_TYPE_INTEGER</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_INTEGER</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// TODO: Should we transmute to signed integer?</span>
                 <span class="self">Self</span>::<span class="ident">Integer</span>(<span class="ident">data</span>)
             }
-            <span class="ident">TOKEN_TYPE_FLAGS</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">Flags</span>(<span class="ident">data</span>),
-            <span class="ident">TOKEN_TYPE_FLOAT</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">Float</span>(<span class="ident">f32</span>::<span class="ident">from_bits</span>(<span class="ident">data</span>)),
-            <span class="ident">TOKEN_TYPE_BOOLEAN</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">Boolean</span>(<span class="ident">data</span> <span class="op">&gt;</span> <span class="number">0</span>),
-            <span class="ident">TOKEN_TYPE_ARGB8</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_FLAGS</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Flags</span>(<span class="ident">data</span>),
+            <span class="ident">TOKEN_TYPE_FLOAT</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Float</span>(<span class="ident">f32</span>::<span class="ident">from_bits</span>(<span class="ident">data</span>)),
+            <span class="ident">TOKEN_TYPE_BOOLEAN</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Boolean</span>(<span class="ident">data</span> <span class="op">&gt;</span> <span class="number">0</span>),
+            <span class="ident">TOKEN_TYPE_ARGB8</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="self">Self</span>::<span class="ident">ColorARGB8</span>(<span class="ident">formatted_color</span>)
             }
-            <span class="ident">TOKEN_TYPE_RGB8</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_RGB8</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="self">Self</span>::<span class="ident">ColorRGB8</span>(<span class="ident">formatted_color</span>)
             }
-            <span class="ident">TOKEN_TYPE_ARGB4</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_ARGB4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="self">Self</span>::<span class="ident">ColorARGB4</span>(<span class="ident">formatted_color</span>)
             }
-            <span class="ident">TOKEN_TYPE_RGB4</span> <span class="op">=&gt;</span> {
+            <span class="ident">TOKEN_TYPE_RGB4</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">formatted_color</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;#{:08x}&quot;</span>, <span class="ident">data</span>);
                 <span class="self">Self</span>::<span class="ident">ColorRGB4</span>(<span class="ident">formatted_color</span>)
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="self">Self</span>::<span class="ident">Unknown</span>(<span class="ident">value_type</span>, <span class="ident">data</span>),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Unknown</span>(<span class="ident">value_type</span>, <span class="ident">data</span>),
         };
 
         <span class="prelude-val">Ok</span>(<span class="ident">value</span>)
@@ -520,22 +520,22 @@
 
     <span class="comment">// TODO: maybe remove the unsafe code.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unsafe_code</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">complex</span>(<span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">f32</span> {
+    <span class="kw">fn</span> <span class="ident">complex</span>(<span class="ident">data</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f32</span> {
         <span class="comment">// TODO: Clean this mess</span>
-        <span class="kw">let</span> <span class="ident">mantissa</span> <span class="op">=</span> <span class="number">0xffffff</span> <span class="op">&lt;&lt;</span> <span class="number">8</span>;
+        <span class="kw">let</span> <span class="ident">mantissa</span> <span class="op">=</span> <span class="number">0xffffff</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>;
         <span class="kw">let</span> <span class="ident">u_value</span> <span class="op">=</span> <span class="ident">data</span> <span class="op">&amp;</span> <span class="ident">mantissa</span>;
         <span class="kw">let</span> <span class="ident">i_value</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">u_value</span>) };
         <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">i_value</span> <span class="kw">as</span> <span class="ident">f32</span>;
-        <span class="kw">let</span> <span class="ident">mm</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">f32</span>);
+        <span class="kw">let</span> <span class="ident">mm</span> <span class="op">=</span> <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">8</span>) <span class="kw">as</span> <span class="ident">f32</span>);
 
         <span class="kw">let</span> <span class="ident">radix</span> <span class="op">=</span> [
             <span class="number">1.0</span> <span class="op">*</span> <span class="ident">mm</span>,
-            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">7</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
-            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">15</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
-            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">23</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">7</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">15</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
+            <span class="number">1.0</span> <span class="op">/</span> ((<span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">23</span>) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">*</span> <span class="ident">mm</span>,
         ];
 
-        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> (<span class="ident">data</span> <span class="op">&gt;&gt;</span> <span class="number">4</span>) <span class="op">&amp;</span> <span class="number">0x3</span>;
+        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> (<span class="ident">data</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="number">4</span>) <span class="op">&amp;</span> <span class="number">0x3</span>;
 
         <span class="ident">m</span> <span class="op">*</span> <span class="ident">radix</span>[<span class="ident">idx</span> <span class="kw">as</span> <span class="ident">usize</span>]
     }
@@ -578,7 +578,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_positive_dimension</span>() {
-        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">30</span>; <span class="comment">// Positive value 2-complement</span>
+        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">30</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x5</span>;
 
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
@@ -589,7 +589,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_negative_dimension</span>() {
-        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span>; <span class="comment">// Negative value 2-complement</span>
+        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span>; <span class="comment">// Negative value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x0</span>;
 
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_DIMENSION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
@@ -611,7 +611,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_positive_fraction</span>() {
-        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">25</span>; <span class="comment">// Positive value 2-complement</span>
+        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">25</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x1</span>;
 
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
@@ -622,7 +622,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_generate_a_negative_fraction</span>() {
-        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
+        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x0</span>;
 
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);
@@ -633,7 +633,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">it_can_not_generate_a_fraction_if_units_are_out_of_range</span>() {
-        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
+        <span class="kw">let</span> <span class="ident">dim</span> <span class="op">=</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">31</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">5</span> <span class="op">|</span> <span class="number">1</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="number">10</span>; <span class="comment">// Positive value 2-complement</span>
         <span class="kw">let</span> <span class="ident">units</span> <span class="op">=</span> <span class="number">0x2</span>;
 
         <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">Value</span>::<span class="ident">create</span>(<span class="ident">TOKEN_TYPE_FRACTION</span>, <span class="ident">dim</span> <span class="op">|</span> <span class="ident">units</span>);

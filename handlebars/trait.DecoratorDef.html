@@ -12,7 +12,7 @@ definition.</p>
 <span class="kw">use</span> <span class="ident">handlebars</span>::<span class="kw-2">*</span>;
 
 <span class="kw">fn</span> <span class="ident">update_data</span><span class="op">&lt;</span><span class="lifetime">&#39;reg</span>: <span class="lifetime">&#39;rc</span>, <span class="lifetime">&#39;rc</span><span class="op">&gt;</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Decorator</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Handlebars</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>, <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>)
-        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+        <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
     <span class="comment">// modify json object</span>
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">new_ctx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">clone</span>();
     {
@@ -32,9 +32,9 @@ definition.</p>
 <span class="kw">use</span> <span class="ident">handlebars</span>::<span class="kw-2">*</span>;
 
 <span class="kw">fn</span> <span class="ident">override_helper</span>(<span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Decorator</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Handlebars</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>, <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>)
-        <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+        <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">new_helper</span> <span class="op">=</span> <span class="op">|</span><span class="ident">h</span>: <span class="kw-2">&amp;</span><span class="ident">Helper</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Handlebars</span>, <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">Context</span>, <span class="ident">rc</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">RenderContext</span>, <span class="ident">out</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="kw">dyn</span> <span class="ident">Output</span><span class="op">|</span>
-            <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
+            <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">RenderError</span><span class="op">&gt;</span> {
         <span class="comment">// your helper logic</span>
         <span class="prelude-val">Ok</span>(())
     };

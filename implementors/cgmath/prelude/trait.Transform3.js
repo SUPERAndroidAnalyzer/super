@@ -6,5 +6,4 @@ implementors["cgmath"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

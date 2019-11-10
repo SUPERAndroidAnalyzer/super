@@ -343,7 +343,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_rule</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_eq</span><span class="macro">!</span>(
             <span class="ident">HandlebarsParser</span>::<span class="ident">parse</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>)
                 .<span class="macro-nonterminal">unwrap</span>()
@@ -358,23 +358,23 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_not_rule</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(
             <span class="ident">HandlebarsParser</span>::<span class="ident">parse</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>).<span class="macro-nonterminal">is_err</span>()
-                <span class="op">||</span> <span class="ident">HandlebarsParser</span>::<span class="ident">parse</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>)
+                <span class="op">|</span><span class="op">|</span> <span class="ident">HandlebarsParser</span>::<span class="ident">parse</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>)
                     .<span class="macro-nonterminal">unwrap</span>()
                     .<span class="ident">last</span>()
                     .<span class="ident">unwrap</span>()
                     .<span class="ident">as_span</span>()
                     .<span class="ident">end</span>()
-                    <span class="op">!=</span> <span class="macro-nonterminal">$</span><span class="kw">in</span>.<span class="macro-nonterminal">len</span>()
+                    <span class="op">!</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="kw">in</span>.<span class="macro-nonterminal">len</span>()
         );
     };
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_rule_match</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>:<span class="macro-nonterminal">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">HandlebarsParser</span>::<span class="ident">parse</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rule</span>, <span class="macro-nonterminal">$</span><span class="kw">in</span>).<span class="macro-nonterminal">is_ok</span>());
     };
 }

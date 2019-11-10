@@ -8,12 +8,12 @@
 <span class="kw">use</span> <span class="ident">hex</span>::<span class="ident">FromHex</span>;
 
 <span class="kw">match</span> <span class="ident">Vec</span>::<span class="ident">from_hex</span>(<span class="string">&quot;48656c6c6f20776f726c6421&quot;</span>) {
-    <span class="prelude-val">Ok</span>(<span class="ident">vec</span>) <span class="op">=&gt;</span> {
+    <span class="prelude-val">Ok</span>(<span class="ident">vec</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">for</span> <span class="ident">b</span> <span class="kw">in</span> <span class="ident">vec</span> {
             <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">b</span> <span class="kw">as</span> <span class="ident">char</span>);
         }
     }
-    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="comment">// Deal with the error ...</span>
     }
 }</pre></div>

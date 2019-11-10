@@ -242,10 +242,10 @@
 <span class="doccomment">/// Predicate for testing the approximate equality of two values.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">relative_eq</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Relative</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>)$(.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>))<span class="op">+</span>.<span class="ident">eq</span>()
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Relative</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>).<span class="ident">eq</span>()
     }};
 }
@@ -253,17 +253,17 @@
 <span class="doccomment">/// Predicate for testing the approximate inequality of two values.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">relative_ne</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Relative</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>)$(.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>))<span class="op">+</span>.<span class="ident">ne</span>()
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Relative</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>).<span class="ident">ne</span>()
     }};
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_relative_eq</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">relative_eq</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>) {
@@ -279,7 +279,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">relative_eq</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>) {
@@ -296,17 +296,17 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_relative_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>,)<span class="op">+</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>,)<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_relative_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>)
     };
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_relative_ne</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">relative_ne</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>) {
@@ -322,7 +322,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">relative_ne</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>) {
@@ -339,7 +339,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_relative_ne</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>)
     };
 }
@@ -349,10 +349,10 @@
 <span class="doccomment">/// in Last Place).</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">ulps_eq</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Ulps</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>)$(.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>))<span class="op">+</span>.<span class="ident">eq</span>()
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Ulps</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>).<span class="ident">eq</span>()
     }};
 }
@@ -361,17 +361,17 @@
 <span class="doccomment">/// in Last Place).</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">ulps_ne</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Ulps</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>)$(.<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>))<span class="op">+</span>.<span class="ident">ne</span>()
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">Ulps</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">lhs</span>, <span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">rhs</span>).<span class="ident">ne</span>()
     }};
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_ulps_eq</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>) {
@@ -387,7 +387,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">ulps_eq</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>) {
@@ -404,17 +404,17 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_ulps_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>)
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>,)<span class="op">+</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>,)<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_ulps_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>)
     };
 }
 
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">assert_ulps_ne</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">ulps_ne</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>) {
@@ -430,7 +430,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=&gt;</span> {{
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span>:<span class="ident">ident</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>:<span class="ident">expr</span>),<span class="op">+</span>) <span class="op">=</span><span class="op">&gt;</span> {{
         <span class="kw">let</span> (<span class="ident">given</span>, <span class="ident">expected</span>) <span class="op">=</span> (<span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>), <span class="kw-2">&amp;</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>));
 
         <span class="kw">if</span> <span class="op">!</span><span class="macro">ulps_ne</span><span class="macro">!</span>(<span class="ident">given</span>, <span class="ident">expected</span>, $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">opt_val</span>),<span class="op">+</span>) {
@@ -447,7 +447,7 @@
             );
         }
     }};
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>:<span class="ident">expr</span>,) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="macro">assert_ulps_ne</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">given</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">expected</span>)
     };
 }

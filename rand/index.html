@@ -90,8 +90,8 @@ and multiply this fraction by 4.</p>
    <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">total</span> {
        <span class="kw">let</span> <span class="ident">a</span> <span class="op">=</span> <span class="ident">between</span>.<span class="ident">ind_sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
        <span class="kw">let</span> <span class="ident">b</span> <span class="op">=</span> <span class="ident">between</span>.<span class="ident">ind_sample</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
-       <span class="kw">if</span> <span class="ident">a</span><span class="kw-2">*</span><span class="ident">a</span> <span class="op">+</span> <span class="ident">b</span><span class="kw-2">*</span><span class="ident">b</span> <span class="op">&lt;=</span> <span class="number">1.</span> {
-           <span class="ident">in_circle</span> <span class="op">+=</span> <span class="number">1</span>;
+       <span class="kw">if</span> <span class="ident">a</span><span class="kw-2">*</span><span class="ident">a</span> <span class="op">+</span> <span class="ident">b</span><span class="kw-2">*</span><span class="ident">b</span> <span class="op">&lt;</span><span class="op">=</span> <span class="number">1.</span> {
+           <span class="ident">in_circle</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
        }
    }
 
@@ -124,7 +124,7 @@ steps it will indeed confirm that it is better to switch.</p>
 
 <span class="comment">// Run a single simulation of the Monty Hall problem.</span>
 <span class="kw">fn</span> <span class="ident">simulate</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">random_door</span>: <span class="kw-2">&amp;</span><span class="ident">Range</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>)
-                    <span class="op">-&gt;</span> <span class="ident">SimulationResult</span> {
+                    <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SimulationResult</span> {
     <span class="kw">let</span> <span class="ident">car</span> <span class="op">=</span> <span class="ident">random_door</span>.<span class="ident">ind_sample</span>(<span class="ident">rng</span>);
 
     <span class="comment">// This is our initial choice</span>
@@ -139,23 +139,23 @@ steps it will indeed confirm that it is better to switch.</p>
         <span class="ident">choice</span> <span class="op">=</span> <span class="ident">switch_door</span>(<span class="ident">choice</span>, <span class="ident">open</span>);
     }
 
-    <span class="ident">SimulationResult</span> { <span class="ident">win</span>: <span class="ident">choice</span> <span class="op">==</span> <span class="ident">car</span>, <span class="ident">switch</span>: <span class="ident">switch</span> }
+    <span class="ident">SimulationResult</span> { <span class="ident">win</span>: <span class="ident">choice</span> <span class="op">=</span><span class="op">=</span> <span class="ident">car</span>, <span class="ident">switch</span>: <span class="ident">switch</span> }
 }
 
 <span class="comment">// Returns the door the game host opens given our choice and knowledge of</span>
 <span class="comment">// where the car is. The game host will never open the door with the car.</span>
-<span class="kw">fn</span> <span class="ident">game_host_open</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">car</span>: <span class="ident">u32</span>, <span class="ident">choice</span>: <span class="ident">u32</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+<span class="kw">fn</span> <span class="ident">game_host_open</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">Rng</span><span class="op">&gt;</span>(<span class="ident">car</span>: <span class="ident">u32</span>, <span class="ident">choice</span>: <span class="ident">u32</span>, <span class="ident">rng</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="kw">let</span> <span class="ident">choices</span> <span class="op">=</span> <span class="ident">free_doors</span>(<span class="kw-2">&amp;</span>[<span class="ident">car</span>, <span class="ident">choice</span>]);
     <span class="ident">rand</span>::<span class="ident">seq</span>::<span class="ident">sample_slice</span>(<span class="ident">rng</span>, <span class="kw-2">&amp;</span><span class="ident">choices</span>, <span class="number">1</span>)[<span class="number">0</span>]
 }
 
 <span class="comment">// Returns the door we switch to, given our current choice and</span>
 <span class="comment">// the open door. There will only be one valid door.</span>
-<span class="kw">fn</span> <span class="ident">switch_door</span>(<span class="ident">choice</span>: <span class="ident">u32</span>, <span class="ident">open</span>: <span class="ident">u32</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+<span class="kw">fn</span> <span class="ident">switch_door</span>(<span class="ident">choice</span>: <span class="ident">u32</span>, <span class="ident">open</span>: <span class="ident">u32</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="ident">free_doors</span>(<span class="kw-2">&amp;</span>[<span class="ident">choice</span>, <span class="ident">open</span>])[<span class="number">0</span>]
 }
 
-<span class="kw">fn</span> <span class="ident">free_doors</span>(<span class="ident">blocked</span>: <span class="kw-2">&amp;</span>[<span class="ident">u32</span>]) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">free_doors</span>(<span class="ident">blocked</span>: <span class="kw-2">&amp;</span>[<span class="ident">u32</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span> {
     (<span class="number">0</span>..<span class="number">3</span>).<span class="ident">filter</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="op">!</span><span class="ident">blocked</span>.<span class="ident">contains</span>(<span class="ident">x</span>)).<span class="ident">collect</span>()
 }
 
@@ -174,10 +174,10 @@ steps it will indeed confirm that it is better to switch.</p>
         <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">simulate</span>(<span class="kw-2">&amp;</span><span class="ident">random_door</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rng</span>);
 
         <span class="kw">match</span> (<span class="ident">result</span>.<span class="ident">win</span>, <span class="ident">result</span>.<span class="ident">switch</span>) {
-            (<span class="bool-val">true</span>, <span class="bool-val">true</span>) <span class="op">=&gt;</span> <span class="ident">switch_wins</span> <span class="op">+=</span> <span class="number">1</span>,
-            (<span class="bool-val">true</span>, <span class="bool-val">false</span>) <span class="op">=&gt;</span> <span class="ident">keep_wins</span> <span class="op">+=</span> <span class="number">1</span>,
-            (<span class="bool-val">false</span>, <span class="bool-val">true</span>) <span class="op">=&gt;</span> <span class="ident">switch_losses</span> <span class="op">+=</span> <span class="number">1</span>,
-            (<span class="bool-val">false</span>, <span class="bool-val">false</span>) <span class="op">=&gt;</span> <span class="ident">keep_losses</span> <span class="op">+=</span> <span class="number">1</span>,
+            (<span class="bool-val">true</span>, <span class="bool-val">true</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">switch_wins</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            (<span class="bool-val">true</span>, <span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">keep_wins</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            (<span class="bool-val">false</span>, <span class="bool-val">true</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">switch_losses</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            (<span class="bool-val">false</span>, <span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">keep_losses</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
         }
     }
 

@@ -558,7 +558,7 @@
 
 <span class="doccomment">/// The default timestamp precision is seconds.</span>
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">TimestampPrecision</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">TimestampPrecision</span>::<span class="ident">Seconds</span>
     }
 }
@@ -585,23 +585,23 @@
 <span class="doccomment">/// [`writeln`]: https://doc.rust-lang.org/stable/std/macro.writeln.html</span>
 <span class="doccomment">/// [`style`]: #method.style</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Formatter</span> {
-    <span class="ident">buf</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Buffer</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">buf</span>: <span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">RefCell</span><span class="op">&lt;</span><span class="ident">Buffer</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">write_style</span>: <span class="ident">WriteStyle</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Formatter</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="ident">Writer</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="ident">Writer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Formatter</span> {
             <span class="ident">buf</span>: <span class="ident">Rc</span>::<span class="ident">new</span>(<span class="ident">RefCell</span>::<span class="ident">new</span>(<span class="ident">writer</span>.<span class="ident">buffer</span>())),
             <span class="ident">write_style</span>: <span class="ident">writer</span>.<span class="ident">write_style</span>(),
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_style</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">WriteStyle</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">write_style</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WriteStyle</span> {
         <span class="self">self</span>.<span class="ident">write_style</span>
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">print</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="ident">Writer</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">print</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">writer</span>: <span class="kw-2">&amp;</span><span class="ident">Writer</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="ident">writer</span>.<span class="ident">print</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">borrow</span>())
     }
 
@@ -611,17 +611,17 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Write</span> <span class="kw">for</span> <span class="ident">Formatter</span> {
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">borrow_mut</span>().<span class="ident">write</span>(<span class="ident">buf</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">borrow_mut</span>().<span class="ident">flush</span>()
     }
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Formatter</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Formatter&quot;</span>).<span class="ident">finish</span>()
     }
 }
@@ -632,12 +632,12 @@
     <span class="kw">pub</span> <span class="ident">format_level</span>: <span class="ident">bool</span>,
     <span class="kw">pub</span> <span class="ident">format_indent</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unknown_lints</span>, <span class="ident">bare_trait_objects</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">custom_format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span>, <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">custom_format</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span>, <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">built</span>: <span class="ident">bool</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Builder</span> {
-    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="ident">Builder</span> {
             <span class="ident">format_timestamp</span>: <span class="prelude-val">Some</span>(<span class="ident">Default</span>::<span class="ident">default</span>()),
             <span class="ident">format_module_path</span>: <span class="bool-val">true</span>,
@@ -656,7 +656,7 @@
     <span class="doccomment">/// If the `custom_format` is `None`, then a default format is returned.</span>
     <span class="doccomment">/// Any `default_format` switches set to `false` won&#39;t be written by the format.</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unknown_lints</span>, <span class="ident">bare_trait_objects</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span>, <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">build</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Fn</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Formatter</span>, <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="ident">Send</span><span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">built</span>, <span class="string">&quot;attempt to re-use consumed builder&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">built</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(
@@ -704,7 +704,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">DefaultFormat</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">write_timestamp</span>()<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">write_level</span>(<span class="ident">record</span>)<span class="question-mark">?</span>;
         <span class="self">self</span>.<span class="ident">write_module_path</span>(<span class="ident">record</span>)<span class="question-mark">?</span>;
@@ -713,7 +713,7 @@
         <span class="self">self</span>.<span class="ident">write_args</span>(<span class="ident">record</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">subtle_style</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">SubtleStyle</span> {
+    <span class="kw">fn</span> <span class="ident">subtle_style</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">text</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SubtleStyle</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;termcolor&quot;</span>)]</span>
         {
             <span class="self">self</span>.<span class="ident">buf</span>
@@ -728,7 +728,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">write_header_value</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">write_header_value</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">value</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
     <span class="kw">where</span>
         <span class="ident">T</span>: <span class="ident">Display</span>,
     {
@@ -742,7 +742,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">write_level</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_level</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">level</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
         }
@@ -761,16 +761,16 @@
         <span class="self">self</span>.<span class="ident">write_header_value</span>(<span class="macro">format_args</span><span class="macro">!</span>(<span class="string">&quot;{:&lt;5}&quot;</span>, <span class="ident">level</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">write_timestamp</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_timestamp</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;humantime&quot;</span>)]</span>
         {
             <span class="kw">use</span> <span class="self">self</span>::<span class="ident">TimestampPrecision</span>::<span class="kw-2">*</span>;
             <span class="kw">let</span> <span class="ident">ts</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">timestamp</span> {
-                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(()),
-                <span class="prelude-val">Some</span>(<span class="ident">Seconds</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_seconds</span>(),
-                <span class="prelude-val">Some</span>(<span class="ident">Millis</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_millis</span>(),
-                <span class="prelude-val">Some</span>(<span class="ident">Micros</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_micros</span>(),
-                <span class="prelude-val">Some</span>(<span class="ident">Nanos</span>) <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_nanos</span>(),
+                <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(()),
+                <span class="prelude-val">Some</span>(<span class="ident">Seconds</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_seconds</span>(),
+                <span class="prelude-val">Some</span>(<span class="ident">Millis</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_millis</span>(),
+                <span class="prelude-val">Some</span>(<span class="ident">Micros</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_micros</span>(),
+                <span class="prelude-val">Some</span>(<span class="ident">Nanos</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="self">self</span>.<span class="ident">buf</span>.<span class="ident">timestamp_nanos</span>(),
             };
 
             <span class="self">self</span>.<span class="ident">write_header_value</span>(<span class="ident">ts</span>)
@@ -784,7 +784,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">write_module_path</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_module_path</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">module_path</span> {
             <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
         }
@@ -796,7 +796,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">finish_header</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">finish_header</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">written_header_value</span> {
             <span class="kw">let</span> <span class="ident">close_brace</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">subtle_style</span>(<span class="string">&quot;]&quot;</span>);
             <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">buf</span>, <span class="string">&quot;{} &quot;</span>, <span class="ident">close_brace</span>)
@@ -805,12 +805,12 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">write_args</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_args</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">record</span>: <span class="kw-2">&amp;</span><span class="ident">Record</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">indent</span> {
             <span class="comment">// Fast path for no indentation</span>
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">buf</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">record</span>.<span class="ident">args</span>()),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">writeln</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">buf</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">record</span>.<span class="ident">args</span>()),
 
-            <span class="prelude-val">Some</span>(<span class="ident">indent_count</span>) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="ident">indent_count</span>) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// Create a wrapper around the buffer only if we have to actually indent the message</span>
 
                 <span class="kw">struct</span> <span class="ident">IndentWrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>: <span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
@@ -819,9 +819,9 @@
                 }
 
                 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> <span class="ident">Write</span> <span class="kw">for</span> <span class="ident">IndentWrapper</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span><span class="op">&gt;</span> {
-                    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+                    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">buf</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">first</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                        <span class="kw">for</span> <span class="ident">chunk</span> <span class="kw">in</span> <span class="ident">buf</span>.<span class="ident">split</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="string">b&#39;\n&#39;</span>) {
+                        <span class="kw">for</span> <span class="ident">chunk</span> <span class="kw">in</span> <span class="ident">buf</span>.<span class="ident">split</span>(<span class="op">|</span><span class="kw-2">&amp;</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;\n&#39;</span>) {
                             <span class="kw">if</span> <span class="op">!</span><span class="ident">first</span> {
                                 <span class="macro">write</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">buf</span>, <span class="string">&quot;\n{:width$}&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="ident">width</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">indent_count</span>)<span class="question-mark">?</span>;
                             }
@@ -832,7 +832,7 @@
                         <span class="prelude-val">Ok</span>(<span class="ident">buf</span>.<span class="ident">len</span>())
                     }
 
-                    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+                    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
                         <span class="self">self</span>.<span class="ident">fmt</span>.<span class="ident">buf</span>.<span class="ident">flush</span>()
                     }
                 }
@@ -860,7 +860,7 @@
 
     <span class="kw">use</span> <span class="ident">log</span>::{<span class="ident">Level</span>, <span class="ident">Record</span>};
 
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="ident">fmt</span>: <span class="ident">DefaultFormat</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="ident">fmt</span>: <span class="ident">DefaultFormat</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
         <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">fmt</span>.<span class="ident">buf</span>.<span class="ident">buf</span>.<span class="ident">clone</span>();
 
         <span class="kw">let</span> <span class="ident">record</span> <span class="op">=</span> <span class="ident">Record</span>::<span class="ident">builder</span>()

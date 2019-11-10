@@ -33,23 +33,23 @@
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Saturating</span> {
     <span class="doccomment">/// Saturating addition operator.</span>
     <span class="doccomment">/// Returns a+b, saturating at the numeric bounds instead of overflowing.</span>
-    <span class="kw">fn</span> <span class="ident">saturating_add</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">saturating_add</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Saturating subtraction operator.</span>
     <span class="doccomment">/// Returns a-b, saturating at the numeric bounds instead of overflowing.</span>
-    <span class="kw">fn</span> <span class="ident">saturating_sub</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">saturating_sub</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">saturating_impl</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_name</span>:<span class="ident">ident</span> <span class="kw">for</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> {$(
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_name</span>:<span class="ident">ident</span> <span class="kw">for</span> $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> {$(
         <span class="kw">impl</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">trait_name</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">saturating_add</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+            <span class="kw">fn</span> <span class="ident">saturating_add</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
                 <span class="self">Self</span>::<span class="ident">saturating_add</span>(<span class="self">self</span>, <span class="ident">v</span>)
             }
 
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">saturating_sub</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+            <span class="kw">fn</span> <span class="ident">saturating_sub</span>(<span class="self">self</span>, <span class="ident">v</span>: <span class="self">Self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
                 <span class="self">Self</span>::<span class="ident">saturating_sub</span>(<span class="self">self</span>, <span class="ident">v</span>)
             }
         }

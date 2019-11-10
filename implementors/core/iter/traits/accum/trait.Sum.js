@@ -6,5 +6,4 @@ implementors["cgmath"] = [{text:"impl&lt;S:&nbsp;<a class=\"trait\" href=\"cgmat
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

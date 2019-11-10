@@ -6,5 +6,4 @@ implementors["pest"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

@@ -7,5 +7,4 @@ implementors["super_analyzer_core"] = [{text:"impl&lt;'de&gt; <a class=\"trait\"
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

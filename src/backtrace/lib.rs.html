@@ -276,7 +276,7 @@
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">Cell</span>;
     <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Mutex</span>, <span class="ident">MutexGuard</span>, <span class="ident">Once</span>};
 
-    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LockGuard</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, ()<span class="op">&gt;&gt;</span>);
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">LockGuard</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">MutexGuard</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, ()<span class="op">&gt;</span><span class="op">&gt;</span>);
 
     <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">LOCK</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">Mutex</span><span class="op">&lt;</span>()<span class="op">&gt;</span> <span class="op">=</span> <span class="number">0</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
     <span class="kw">static</span> <span class="ident">INIT</span>: <span class="ident">Once</span> <span class="op">=</span> <span class="ident">Once</span>::<span class="ident">new</span>();
@@ -293,13 +293,13 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lock</span>() <span class="op">-&gt;</span> <span class="ident">LockGuard</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">lock</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LockGuard</span> {
         <span class="kw">if</span> <span class="ident">LOCK_HELD</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">l</span><span class="op">|</span> <span class="ident">l</span>.<span class="ident">get</span>()) {
             <span class="kw">return</span> <span class="ident">LockGuard</span>(<span class="prelude-val">None</span>);
         }
         <span class="ident">LOCK_HELD</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">s</span><span class="op">|</span> <span class="ident">s</span>.<span class="ident">set</span>(<span class="bool-val">true</span>));
         <span class="kw">unsafe</span> {
-            <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">||</span> {
+            <span class="ident">INIT</span>.<span class="ident">call_once</span>(<span class="op">|</span><span class="op">|</span> {
                 <span class="ident">LOCK</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Mutex</span>::<span class="ident">new</span>(())));
             });
             <span class="ident">LockGuard</span>(<span class="prelude-val">Some</span>((<span class="kw-2">*</span><span class="ident">LOCK</span>).<span class="ident">lock</span>().<span class="ident">unwrap</span>()))

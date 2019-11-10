@@ -202,7 +202,7 @@
     <span class="doccomment">/// assert_eq!(dt.round_subsecs(2).nanosecond(), 150_000_000);</span>
     <span class="doccomment">/// assert_eq!(dt.round_subsecs(1).nanosecond(), 200_000_000);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">round_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">round_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 
     <span class="doccomment">/// Return a copy truncated to the specified number of subsecond</span>
     <span class="doccomment">/// digits. With 9 or more digits, self is returned unmodified.</span>
@@ -214,18 +214,18 @@
     <span class="doccomment">/// assert_eq!(dt.trunc_subsecs(2).nanosecond(), 150_000_000);</span>
     <span class="doccomment">/// assert_eq!(dt.trunc_subsecs(1).nanosecond(), 100_000_000);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">trunc_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">trunc_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>;
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="ident">SubsecRound</span> <span class="kw">for</span> <span class="ident">T</span>
 <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Timelike</span> <span class="op">+</span> <span class="ident">Add</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Sub</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">Output</span><span class="op">=</span><span class="ident">T</span><span class="op">&gt;</span>
 {
-    <span class="kw">fn</span> <span class="ident">round_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="ident">T</span> {
+    <span class="kw">fn</span> <span class="ident">round_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">span_for_digits</span>(<span class="ident">digits</span>);
         <span class="kw">let</span> <span class="ident">delta_down</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="ident">span</span>;
         <span class="kw">if</span> <span class="ident">delta_down</span> <span class="op">&gt;</span> <span class="number">0</span> {
             <span class="kw">let</span> <span class="ident">delta_up</span> <span class="op">=</span> <span class="ident">span</span> <span class="op">-</span> <span class="ident">delta_down</span>;
-            <span class="kw">if</span> <span class="ident">delta_up</span> <span class="op">&lt;=</span> <span class="ident">delta_down</span> {
+            <span class="kw">if</span> <span class="ident">delta_up</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">delta_down</span> {
                 <span class="self">self</span> <span class="op">+</span> <span class="ident">Duration</span>::<span class="ident">nanoseconds</span>(<span class="ident">delta_up</span>.<span class="ident">into</span>())
             } <span class="kw">else</span> {
                 <span class="self">self</span> <span class="op">-</span> <span class="ident">Duration</span>::<span class="ident">nanoseconds</span>(<span class="ident">delta_down</span>.<span class="ident">into</span>())
@@ -235,7 +235,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">trunc_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="ident">T</span> {
+    <span class="kw">fn</span> <span class="ident">trunc_subsecs</span>(<span class="self">self</span>, <span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span> {
         <span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">span_for_digits</span>(<span class="ident">digits</span>);
         <span class="kw">let</span> <span class="ident">delta_down</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">nanosecond</span>() <span class="op">%</span> <span class="ident">span</span>;
         <span class="kw">if</span> <span class="ident">delta_down</span> <span class="op">&gt;</span> <span class="number">0</span> {
@@ -247,19 +247,19 @@
 }
 
 <span class="comment">// Return the maximum span in nanoseconds for the target number of digits.</span>
-<span class="kw">fn</span> <span class="ident">span_for_digits</span>(<span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-&gt;</span> <span class="ident">u32</span> {
+<span class="kw">fn</span> <span class="ident">span_for_digits</span>(<span class="ident">digits</span>: <span class="ident">u16</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
     <span class="comment">// fast lookup form of: 10^(9-min(9,digits))</span>
     <span class="kw">match</span> <span class="ident">digits</span> {
-        <span class="number">0</span> <span class="op">=&gt;</span> <span class="number">1_000_000_000</span>,
-        <span class="number">1</span> <span class="op">=&gt;</span>   <span class="number">100_000_000</span>,
-        <span class="number">2</span> <span class="op">=&gt;</span>    <span class="number">10_000_000</span>,
-        <span class="number">3</span> <span class="op">=&gt;</span>     <span class="number">1_000_000</span>,
-        <span class="number">4</span> <span class="op">=&gt;</span>       <span class="number">100_000</span>,
-        <span class="number">5</span> <span class="op">=&gt;</span>        <span class="number">10_000</span>,
-        <span class="number">6</span> <span class="op">=&gt;</span>         <span class="number">1_000</span>,
-        <span class="number">7</span> <span class="op">=&gt;</span>           <span class="number">100</span>,
-        <span class="number">8</span> <span class="op">=&gt;</span>            <span class="number">10</span>,
-        <span class="kw">_</span> <span class="op">=&gt;</span>             <span class="number">1</span>
+        <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1_000_000_000</span>,
+        <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span>   <span class="number">100_000_000</span>,
+        <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span>    <span class="number">10_000_000</span>,
+        <span class="number">3</span> <span class="op">=</span><span class="op">&gt;</span>     <span class="number">1_000_000</span>,
+        <span class="number">4</span> <span class="op">=</span><span class="op">&gt;</span>       <span class="number">100_000</span>,
+        <span class="number">5</span> <span class="op">=</span><span class="op">&gt;</span>        <span class="number">10_000</span>,
+        <span class="number">6</span> <span class="op">=</span><span class="op">&gt;</span>         <span class="number">1_000</span>,
+        <span class="number">7</span> <span class="op">=</span><span class="op">&gt;</span>           <span class="number">100</span>,
+        <span class="number">8</span> <span class="op">=</span><span class="op">&gt;</span>            <span class="number">10</span>,
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span>             <span class="number">1</span>
     }
 }
 

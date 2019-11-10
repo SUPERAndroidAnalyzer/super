@@ -1509,7 +1509,7 @@
 
 <span class="macro">include</span><span class="macro">!</span>(<span class="string">&quot;grammar.rs&quot;</span>);
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">rule</span>: <span class="ident">Rule</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">rule</span>: <span class="ident">Rule</span>, <span class="ident">data</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="ident">PestParser</span>::<span class="ident">parse</span>(<span class="ident">rule</span>, <span class="ident">data</span>)
 }
 
@@ -1528,13 +1528,13 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span> <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter_map_top_down</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter_map_top_down</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="kw-2">mut</span> <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>
     <span class="kw">where</span>
-        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+        <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
     {
         <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">filter_internal</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">F</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">node</span>: <span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">F</span>, <span class="ident">result</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>)
         <span class="kw">where</span>
-            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
+            <span class="ident">F</span>: <span class="ident">FnMut</span>(<span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
         {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">f</span>(<span class="ident">node</span>.<span class="ident">clone</span>()) {
                 <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">value</span>);
@@ -1542,45 +1542,45 @@
 
             <span class="kw">match</span> <span class="ident">node</span>.<span class="ident">expr</span> {
                 <span class="comment">// TODO: Use box syntax when it gets stabilized.</span>
-                <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">lhs</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="ident">lhs</span>, <span class="ident">rhs</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">lhs</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">rhs</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">RepExact</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">RepExact</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">RepMax</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">RepMax</span>(<span class="ident">node</span>, <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">RepMinMax</span>(<span class="ident">node</span>, ..) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">RepMinMax</span>(<span class="ident">node</span>, ..) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> {
+                <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="ident">filter_internal</span>(<span class="kw-2">*</span><span class="ident">node</span>, <span class="ident">f</span>, <span class="ident">result</span>);
                 }
-                <span class="kw">_</span> <span class="op">=&gt;</span> (),
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> (),
             }
         }
 
@@ -1599,23 +1599,23 @@
     <span class="ident">Range</span>(<span class="ident">String</span>, <span class="ident">String</span>),
     <span class="ident">Ident</span>(<span class="ident">String</span>),
     <span class="ident">PeekSlice</span>(<span class="ident">i32</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span>),
-    <span class="ident">PosPred</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">NegPred</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">Seq</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">Choice</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">Opt</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">Rep</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">RepOnce</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
-    <span class="ident">RepExact</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">u32</span>),
-    <span class="ident">RepMin</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">u32</span>),
-    <span class="ident">RepMax</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">u32</span>),
-    <span class="ident">RepMinMax</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">u32</span>, <span class="ident">u32</span>),
-    <span class="ident">Push</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>),
+    <span class="ident">PosPred</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">NegPred</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">Seq</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">Choice</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">Opt</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">Rep</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">RepOnce</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
+    <span class="ident">RepExact</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">u32</span>),
+    <span class="ident">RepMin</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">u32</span>),
+    <span class="ident">RepMax</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">u32</span>),
+    <span class="ident">RepMinMax</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">u32</span>, <span class="ident">u32</span>),
+    <span class="ident">Push</span>(<span class="ident">Box</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>),
 }
 
-<span class="kw">fn</span> <span class="ident">convert_rule</span>(<span class="ident">rule</span>: <span class="ident">ParserRule</span>) <span class="op">-&gt;</span> <span class="ident">AstRule</span> {
+<span class="kw">fn</span> <span class="ident">convert_rule</span>(<span class="ident">rule</span>: <span class="ident">ParserRule</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AstRule</span> {
     <span class="kw">match</span> <span class="ident">rule</span> {
-        <span class="ident">ParserRule</span> { <span class="ident">name</span>, <span class="ident">ty</span>, <span class="ident">node</span>, .. } <span class="op">=&gt;</span> {
+        <span class="ident">ParserRule</span> { <span class="ident">name</span>, <span class="ident">ty</span>, <span class="ident">node</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="ident">convert_node</span>(<span class="ident">node</span>);
 
             <span class="ident">AstRule</span> { <span class="ident">name</span>, <span class="ident">ty</span>, <span class="ident">expr</span> }
@@ -1623,37 +1623,37 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">convert_node</span>(<span class="ident">node</span>: <span class="ident">ParserNode</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span> {
+<span class="kw">fn</span> <span class="ident">convert_node</span>(<span class="ident">node</span>: <span class="ident">ParserNode</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Expr</span> {
     <span class="kw">match</span> <span class="ident">node</span>.<span class="ident">expr</span> {
-        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="ident">string</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="ident">string</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">Insens</span>(<span class="ident">string</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Insens</span>(<span class="ident">string</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">Range</span>(<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Range</span>(<span class="ident">start</span>, <span class="ident">end</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">PeekSlice</span>(<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">PeekSlice</span>(<span class="ident">start</span>, <span class="ident">end</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">PosPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
-        <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">NegPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
-        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="ident">node1</span>, <span class="ident">node2</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Seq</span>(
+        <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="ident">string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Str</span>(<span class="ident">string</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">Insens</span>(<span class="ident">string</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Insens</span>(<span class="ident">string</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">Range</span>(<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Range</span>(<span class="ident">start</span>, <span class="ident">end</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">PeekSlice</span>(<span class="ident">start</span>, <span class="ident">end</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">PeekSlice</span>(<span class="ident">start</span>, <span class="ident">end</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">PosPred</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">PosPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">NegPred</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">NegPred</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">Seq</span>(<span class="ident">node1</span>, <span class="ident">node2</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Seq</span>(
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node1</span>)),
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node2</span>)),
         ),
-        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="ident">node1</span>, <span class="ident">node2</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Choice</span>(
+        <span class="ident">ParserExpr</span>::<span class="ident">Choice</span>(<span class="ident">node1</span>, <span class="ident">node2</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Choice</span>(
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node1</span>)),
             <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node2</span>)),
         ),
-        <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Opt</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
-        <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Rep</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
-        <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepOnce</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
-        <span class="ident">ParserExpr</span>::<span class="ident">RepExact</span>(<span class="ident">node</span>, <span class="ident">num</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepExact</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">num</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="ident">node</span>, <span class="ident">max</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepMin</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">max</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">RepMax</span>(<span class="ident">node</span>, <span class="ident">max</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepMax</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">max</span>),
-        <span class="ident">ParserExpr</span>::<span class="ident">RepMinMax</span>(<span class="ident">node</span>, <span class="ident">min</span>, <span class="ident">max</span>) <span class="op">=&gt;</span> {
+        <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Opt</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Rep</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepOnce</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">RepExact</span>(<span class="ident">node</span>, <span class="ident">num</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepExact</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">num</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">RepMin</span>(<span class="ident">node</span>, <span class="ident">max</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepMin</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">max</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">RepMax</span>(<span class="ident">node</span>, <span class="ident">max</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">RepMax</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">max</span>),
+        <span class="ident">ParserExpr</span>::<span class="ident">RepMinMax</span>(<span class="ident">node</span>, <span class="ident">min</span>, <span class="ident">max</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="ident">Expr</span>::<span class="ident">RepMinMax</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>)), <span class="ident">min</span>, <span class="ident">max</span>)
         }
-        <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="ident">node</span>) <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Push</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
+        <span class="ident">ParserExpr</span>::<span class="ident">Push</span>(<span class="ident">node</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">Expr</span>::<span class="ident">Push</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">convert_node</span>(<span class="kw-2">*</span><span class="ident">node</span>))),
     }
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">consume_rules</span>(<span class="ident">pairs</span>: <span class="ident">Pairs</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">AstRule</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">consume_rules</span>(<span class="ident">pairs</span>: <span class="ident">Pairs</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">AstRule</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">rules</span> <span class="op">=</span> <span class="ident">consume_rules_with_spans</span>(<span class="ident">pairs</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">errors</span> <span class="op">=</span> <span class="ident">validator</span>::<span class="ident">validate_ast</span>(<span class="kw-2">&amp;</span><span class="ident">rules</span>);
     <span class="kw">if</span> <span class="ident">errors</span>.<span class="ident">is_empty</span>() {
@@ -1665,14 +1665,14 @@
 
 <span class="kw">fn</span> <span class="ident">consume_rules_with_spans</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
     <span class="ident">pairs</span>: <span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">ParserRule</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">climber</span> <span class="op">=</span> <span class="ident">PrecClimber</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[
         <span class="ident">Operator</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">choice_operator</span>, <span class="ident">Assoc</span>::<span class="ident">Left</span>),
         <span class="ident">Operator</span>::<span class="ident">new</span>(<span class="ident">Rule</span>::<span class="ident">sequence_operator</span>, <span class="ident">Assoc</span>::<span class="ident">Left</span>),
     ]);
 
     <span class="ident">pairs</span>
-        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">==</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
+        .<span class="ident">filter</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">grammar_rule</span>)
         .<span class="ident">map</span>(<span class="op">|</span><span class="ident">pair</span><span class="op">|</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pairs</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">into_inner</span>().<span class="ident">peekable</span>();
 
@@ -1681,13 +1681,13 @@
 
             <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// assignment_operator</span>
 
-            <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">pairs</span>.<span class="ident">peek</span>().<span class="ident">unwrap</span>().<span class="ident">as_rule</span>() <span class="op">!=</span> <span class="ident">Rule</span>::<span class="ident">opening_brace</span> {
+            <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">pairs</span>.<span class="ident">peek</span>().<span class="ident">unwrap</span>().<span class="ident">as_rule</span>() <span class="op">!</span><span class="op">=</span> <span class="ident">Rule</span>::<span class="ident">opening_brace</span> {
                 <span class="kw">match</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>().<span class="ident">as_rule</span>() {
-                    <span class="ident">Rule</span>::<span class="ident">silent_modifier</span> <span class="op">=&gt;</span> <span class="ident">RuleType</span>::<span class="ident">Silent</span>,
-                    <span class="ident">Rule</span>::<span class="ident">atomic_modifier</span> <span class="op">=&gt;</span> <span class="ident">RuleType</span>::<span class="ident">Atomic</span>,
-                    <span class="ident">Rule</span>::<span class="ident">compound_atomic_modifier</span> <span class="op">=&gt;</span> <span class="ident">RuleType</span>::<span class="ident">CompoundAtomic</span>,
-                    <span class="ident">Rule</span>::<span class="ident">non_atomic_modifier</span> <span class="op">=&gt;</span> <span class="ident">RuleType</span>::<span class="ident">NonAtomic</span>,
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="ident">Rule</span>::<span class="ident">silent_modifier</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RuleType</span>::<span class="ident">Silent</span>,
+                    <span class="ident">Rule</span>::<span class="ident">atomic_modifier</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RuleType</span>::<span class="ident">Atomic</span>,
+                    <span class="ident">Rule</span>::<span class="ident">compound_atomic_modifier</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RuleType</span>::<span class="ident">CompoundAtomic</span>,
+                    <span class="ident">Rule</span>::<span class="ident">non_atomic_modifier</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">RuleType</span>::<span class="ident">NonAtomic</span>,
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                 }
             } <span class="kw">else</span> {
                 <span class="ident">RuleType</span>::<span class="ident">Normal</span>
@@ -1708,17 +1708,17 @@
 }
 
 <span class="kw">fn</span> <span class="ident">consume_expr</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
-    <span class="ident">pairs</span>: <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">pairs</span>: <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">climber</span>: <span class="kw-2">&amp;</span><span class="ident">PrecClimber</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">fn</span> <span class="ident">unaries</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>(
-        <span class="kw-2">mut</span> <span class="ident">pairs</span>: <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;&gt;</span>,
+        <span class="kw-2">mut</span> <span class="ident">pairs</span>: <span class="ident">Peekable</span><span class="op">&lt;</span><span class="ident">Pairs</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span>,
         <span class="ident">climber</span>: <span class="kw-2">&amp;</span><span class="ident">PrecClimber</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span> {
+    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">pair</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() {
-            <span class="ident">Rule</span>::<span class="ident">opening_paren</span> <span class="op">=&gt;</span> {
+            <span class="ident">Rule</span>::<span class="ident">opening_paren</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">unaries</span>(<span class="ident">pairs</span>, <span class="ident">climber</span>)<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">end_pos</span>();
 
@@ -1727,7 +1727,7 @@
                     <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">start_pos</span>().<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
                 }
             }
-            <span class="ident">Rule</span>::<span class="ident">positive_predicate_operator</span> <span class="op">=&gt;</span> {
+            <span class="ident">Rule</span>::<span class="ident">positive_predicate_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">unaries</span>(<span class="ident">pairs</span>, <span class="ident">climber</span>)<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">end_pos</span>();
 
@@ -1736,7 +1736,7 @@
                     <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">start_pos</span>().<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
                 }
             }
-            <span class="ident">Rule</span>::<span class="ident">negative_predicate_operator</span> <span class="op">=&gt;</span> {
+            <span class="ident">Rule</span>::<span class="ident">negative_predicate_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">unaries</span>(<span class="ident">pairs</span>, <span class="ident">climber</span>)<span class="question-mark">?</span>;
                 <span class="kw">let</span> <span class="ident">end</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">end_pos</span>();
 
@@ -1745,10 +1745,10 @@
                     <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">start_pos</span>().<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
                 }
             }
-            <span class="ident">other_rule</span> <span class="op">=&gt;</span> {
+            <span class="ident">other_rule</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">other_rule</span> {
-                    <span class="ident">Rule</span>::<span class="ident">expression</span> <span class="op">=&gt;</span> <span class="ident">consume_expr</span>(<span class="ident">pair</span>.<span class="ident">into_inner</span>().<span class="ident">peekable</span>(), <span class="ident">climber</span>)<span class="question-mark">?</span>,
-                    <span class="ident">Rule</span>::<span class="ident">_push</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Rule</span>::<span class="ident">expression</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">consume_expr</span>(<span class="ident">pair</span>.<span class="ident">into_inner</span>().<span class="ident">peekable</span>(), <span class="ident">climber</span>)<span class="question-mark">?</span>,
+                    <span class="ident">Rule</span>::<span class="ident">_push</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>().<span class="ident">start_pos</span>();
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pairs</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">into_inner</span>();
                         <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_paren</span>
@@ -1762,51 +1762,51 @@
                             <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
                         }
                     }
-                    <span class="ident">Rule</span>::<span class="ident">peek_slice</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Rule</span>::<span class="ident">peek_slice</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pairs</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_inner</span>();
                         <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_brack</span>
                         <span class="kw">let</span> <span class="ident">pair_start</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// .. or integer</span>
                         <span class="kw">let</span> <span class="ident">start</span>: <span class="ident">i32</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">pair_start</span>.<span class="ident">as_rule</span>() {
-                            <span class="ident">Rule</span>::<span class="ident">range_operator</span> <span class="op">=&gt;</span> <span class="number">0</span>,
-                            <span class="ident">Rule</span>::<span class="ident">integer</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">range_operator</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
+                            <span class="ident">Rule</span>::<span class="ident">integer</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// ..</span>
                                 <span class="ident">pair_start</span>.<span class="ident">as_str</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>()
                             }
-                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                         };
                         <span class="kw">let</span> <span class="ident">pair_end</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// integer or }</span>
                         <span class="kw">let</span> <span class="ident">end</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">pair_end</span>.<span class="ident">as_rule</span>() {
-                            <span class="ident">Rule</span>::<span class="ident">closing_brack</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
-                            <span class="ident">Rule</span>::<span class="ident">integer</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">closing_brack</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+                            <span class="ident">Rule</span>::<span class="ident">integer</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// }</span>
                                 <span class="prelude-val">Some</span>(<span class="ident">pair_end</span>.<span class="ident">as_str</span>().<span class="ident">parse</span>().<span class="ident">unwrap</span>())
                             }
-                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                         };
                         <span class="ident">ParserNode</span> {
                             <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">PeekSlice</span>(<span class="ident">start</span>, <span class="ident">end</span>),
                             <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">into_span</span>(),
                         }
                     }
-                    <span class="ident">Rule</span>::<span class="ident">identifier</span> <span class="op">=&gt;</span> <span class="ident">ParserNode</span> {
+                    <span class="ident">Rule</span>::<span class="ident">identifier</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ParserNode</span> {
                         <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">Ident</span>(<span class="ident">pair</span>.<span class="ident">as_str</span>().<span class="ident">to_owned</span>()),
                         <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>(),
                     },
-                    <span class="ident">Rule</span>::<span class="ident">string</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Rule</span>::<span class="ident">string</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">string</span> <span class="op">=</span> <span class="ident">unescape</span>(<span class="ident">pair</span>.<span class="ident">as_str</span>()).<span class="ident">expect</span>(<span class="string">&quot;incorrect string literal&quot;</span>);
                         <span class="ident">ParserNode</span> {
                             <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">Str</span>(<span class="ident">string</span>[<span class="number">1</span>..<span class="ident">string</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>].<span class="ident">to_owned</span>()),
                             <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>(),
                         }
                     }
-                    <span class="ident">Rule</span>::<span class="ident">insensitive_string</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Rule</span>::<span class="ident">insensitive_string</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">string</span> <span class="op">=</span> <span class="ident">unescape</span>(<span class="ident">pair</span>.<span class="ident">as_str</span>()).<span class="ident">expect</span>(<span class="string">&quot;incorrect string literal&quot;</span>);
                         <span class="ident">ParserNode</span> {
                             <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">Insens</span>(<span class="ident">string</span>[<span class="number">2</span>..<span class="ident">string</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>].<span class="ident">to_owned</span>()),
                             <span class="ident">span</span>: <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_span</span>(),
                         }
                     }
-                    <span class="ident">Rule</span>::<span class="ident">range</span> <span class="op">=&gt;</span> {
+                    <span class="ident">Rule</span>::<span class="ident">range</span> <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pairs</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">into_inner</span>();
                         <span class="kw">let</span> <span class="ident">pair</span> <span class="op">=</span> <span class="ident">pairs</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>();
                         <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">unescape</span>(<span class="ident">pair</span>.<span class="ident">as_str</span>()).<span class="ident">expect</span>(<span class="string">&quot;incorrect char literal&quot;</span>);
@@ -1824,37 +1824,37 @@
                             <span class="ident">span</span>: <span class="ident">start_pos</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end_pos</span>),
                         }
                     }
-                    <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                 };
 
                 <span class="ident">pairs</span>.<span class="ident">fold</span>(
                     <span class="prelude-val">Ok</span>(<span class="ident">node</span>),
-                    <span class="op">|</span><span class="ident">node</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>, <span class="ident">pair</span><span class="op">|</span> {
+                    <span class="op">|</span><span class="ident">node</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>, <span class="ident">pair</span><span class="op">|</span> {
                         <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">node</span><span class="question-mark">?</span>;
 
                         <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">pair</span>.<span class="ident">as_rule</span>() {
-                            <span class="ident">Rule</span>::<span class="ident">optional_operator</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">optional_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">start_pos</span>();
                                 <span class="ident">ParserNode</span> {
                                     <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">Opt</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">node</span>)),
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_operator</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">start_pos</span>();
                                 <span class="ident">ParserNode</span> {
                                     <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">Rep</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">node</span>)),
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_once_operator</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_once_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">start_pos</span>();
                                 <span class="ident">ParserNode</span> {
                                     <span class="ident">expr</span>: <span class="ident">ParserExpr</span>::<span class="ident">RepOnce</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">node</span>)),
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_exact</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_exact</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_inner</span>();
 
                                 <span class="ident">inner</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_brace</span>
@@ -1871,7 +1871,7 @@
                                     )]);
                                 };
 
-                                <span class="kw">if</span> <span class="ident">num</span> <span class="op">==</span> <span class="number">0</span> {
+                                <span class="kw">if</span> <span class="ident">num</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                                     <span class="kw">let</span> <span class="ident">error</span>: <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                                         <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
                                             <span class="ident">message</span>: <span class="string">&quot;cannot repeat 0 times&quot;</span>.<span class="ident">to_owned</span>(),
@@ -1888,7 +1888,7 @@
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_min</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_min</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_inner</span>();
 
                                 <span class="ident">inner</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_brace</span>
@@ -1911,7 +1911,7 @@
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_max</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_max</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_inner</span>();
 
                                 <span class="ident">inner</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_brace</span>
@@ -1929,7 +1929,7 @@
                                     )]);
                                 };
 
-                                <span class="kw">if</span> <span class="ident">max</span> <span class="op">==</span> <span class="number">0</span> {
+                                <span class="kw">if</span> <span class="ident">max</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                                     <span class="kw">let</span> <span class="ident">error</span>: <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                                         <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
                                             <span class="ident">message</span>: <span class="string">&quot;cannot repeat 0 times&quot;</span>.<span class="ident">to_owned</span>(),
@@ -1946,7 +1946,7 @@
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">repeat_min_max</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">repeat_min_max</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">pair</span>.<span class="ident">clone</span>().<span class="ident">into_inner</span>();
 
                                 <span class="ident">inner</span>.<span class="ident">next</span>().<span class="ident">unwrap</span>(); <span class="comment">// opening_brace</span>
@@ -1977,7 +1977,7 @@
                                     )]);
                                 };
 
-                                <span class="kw">if</span> <span class="ident">max</span> <span class="op">==</span> <span class="number">0</span> {
+                                <span class="kw">if</span> <span class="ident">max</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                                     <span class="kw">let</span> <span class="ident">error</span>: <span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Error</span>::<span class="ident">new_from_span</span>(
                                         <span class="ident">ErrorVariant</span>::<span class="ident">CustomError</span> {
                                             <span class="ident">message</span>: <span class="string">&quot;cannot repeat 0 times&quot;</span>.<span class="ident">to_owned</span>(),
@@ -1994,7 +1994,7 @@
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="ident">Rule</span>::<span class="ident">closing_paren</span> <span class="op">=&gt;</span> {
+                            <span class="ident">Rule</span>::<span class="ident">closing_paren</span> <span class="op">=</span><span class="op">&gt;</span> {
                                 <span class="kw">let</span> <span class="ident">start</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">span</span>.<span class="ident">start_pos</span>();
 
                                 <span class="ident">ParserNode</span> {
@@ -2002,7 +2002,7 @@
                                     <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">pair</span>.<span class="ident">into_span</span>().<span class="ident">end_pos</span>()),
                                 }
                             }
-                            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
                         };
 
                         <span class="prelude-val">Ok</span>(<span class="ident">node</span>)
@@ -2015,10 +2015,10 @@
     }
 
     <span class="kw">let</span> <span class="ident">term</span> <span class="op">=</span> <span class="op">|</span><span class="ident">pair</span>: <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span><span class="op">|</span> <span class="ident">unaries</span>(<span class="ident">pair</span>.<span class="ident">into_inner</span>().<span class="ident">peekable</span>(), <span class="ident">climber</span>);
-    <span class="kw">let</span> <span class="ident">infix</span> <span class="op">=</span> <span class="op">|</span><span class="ident">lhs</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>,
+    <span class="kw">let</span> <span class="ident">infix</span> <span class="op">=</span> <span class="op">|</span><span class="ident">lhs</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
                  <span class="ident">op</span>: <span class="ident">Pair</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span>, <span class="ident">Rule</span><span class="op">&gt;</span>,
-                 <span class="ident">rhs</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">op</span>.<span class="ident">as_rule</span>() {
-        <span class="ident">Rule</span>::<span class="ident">sequence_operator</span> <span class="op">=&gt;</span> {
+                 <span class="ident">rhs</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ParserNode</span><span class="op">&lt;</span><span class="lifetime">&#39;i</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">Rule</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">op</span>.<span class="ident">as_rule</span>() {
+        <span class="ident">Rule</span>::<span class="ident">sequence_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">lhs</span> <span class="op">=</span> <span class="ident">lhs</span><span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span><span class="question-mark">?</span>;
 
@@ -2030,7 +2030,7 @@
                 <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
             })
         }
-        <span class="ident">Rule</span>::<span class="ident">choice_operator</span> <span class="op">=&gt;</span> {
+        <span class="ident">Rule</span>::<span class="ident">choice_operator</span> <span class="op">=</span><span class="op">&gt;</span> {
             <span class="kw">let</span> <span class="ident">lhs</span> <span class="op">=</span> <span class="ident">lhs</span><span class="question-mark">?</span>;
             <span class="kw">let</span> <span class="ident">rhs</span> <span class="op">=</span> <span class="ident">rhs</span><span class="question-mark">?</span>;
 
@@ -2042,30 +2042,30 @@
                 <span class="ident">span</span>: <span class="ident">start</span>.<span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="ident">end</span>),
             })
         }
-        <span class="kw">_</span> <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
     };
 
     <span class="ident">climber</span>.<span class="ident">climb</span>(<span class="ident">pairs</span>, <span class="ident">term</span>, <span class="ident">infix</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">unescape</span>(<span class="ident">string</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">unescape</span>(<span class="ident">string</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chars</span> <span class="op">=</span> <span class="ident">string</span>.<span class="ident">chars</span>();
 
     <span class="kw">loop</span> {
         <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>() {
-            <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>()<span class="question-mark">?</span> {
-                <span class="string">&#39;&quot;&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;&quot;&#39;</span>),
-                <span class="string">&#39;\\&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\\&#39;</span>),
-                <span class="string">&#39;r&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\r&#39;</span>),
-                <span class="string">&#39;n&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>),
-                <span class="string">&#39;t&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\t&#39;</span>),
-                <span class="string">&#39;0&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\0&#39;</span>),
-                <span class="string">&#39;\&#39;&#39;</span> <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\&#39;&#39;</span>),
-                <span class="string">&#39;x&#39;</span> <span class="op">=&gt;</span> {
+            <span class="prelude-val">Some</span>(<span class="string">&#39;\\&#39;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">chars</span>.<span class="ident">next</span>()<span class="question-mark">?</span> {
+                <span class="string">&#39;&quot;&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;&quot;&#39;</span>),
+                <span class="string">&#39;\\&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\\&#39;</span>),
+                <span class="string">&#39;r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\r&#39;</span>),
+                <span class="string">&#39;n&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\n&#39;</span>),
+                <span class="string">&#39;t&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\t&#39;</span>),
+                <span class="string">&#39;0&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\0&#39;</span>),
+                <span class="string">&#39;\&#39;&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="string">&#39;\&#39;&#39;</span>),
+                <span class="string">&#39;x&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
                     <span class="kw">let</span> <span class="ident">string</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">clone</span>().<span class="ident">take</span>(<span class="number">2</span>).<span class="ident">collect</span>();
 
-                    <span class="kw">if</span> <span class="ident">string</span>.<span class="ident">len</span>() <span class="op">!=</span> <span class="number">2</span> {
+                    <span class="kw">if</span> <span class="ident">string</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">2</span> {
                         <span class="kw">return</span> <span class="prelude-val">None</span>;
                     }
 
@@ -2077,14 +2077,14 @@
 
                     <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">char</span>::<span class="ident">from</span>(<span class="ident">value</span>));
                 }
-                <span class="string">&#39;u&#39;</span> <span class="op">=&gt;</span> {
-                    <span class="kw">if</span> <span class="ident">chars</span>.<span class="ident">next</span>()<span class="question-mark">?</span> <span class="op">!=</span> <span class="string">&#39;{&#39;</span> {
+                <span class="string">&#39;u&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="kw">if</span> <span class="ident">chars</span>.<span class="ident">next</span>()<span class="question-mark">?</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;{&#39;</span> {
                         <span class="kw">return</span> <span class="prelude-val">None</span>;
                     }
 
-                    <span class="kw">let</span> <span class="ident">string</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">clone</span>().<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">c</span> <span class="op">!=</span> <span class="string">&#39;}&#39;</span>).<span class="ident">collect</span>();
+                    <span class="kw">let</span> <span class="ident">string</span>: <span class="ident">String</span> <span class="op">=</span> <span class="ident">chars</span>.<span class="ident">clone</span>().<span class="ident">take_while</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="kw-2">*</span><span class="ident">c</span> <span class="op">!</span><span class="op">=</span> <span class="string">&#39;}&#39;</span>).<span class="ident">collect</span>();
 
-                    <span class="kw">if</span> <span class="ident">string</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">2</span> <span class="op">||</span> <span class="number">6</span> <span class="op">&lt;</span> <span class="ident">string</span>.<span class="ident">len</span>() {
+                    <span class="kw">if</span> <span class="ident">string</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">2</span> <span class="op">|</span><span class="op">|</span> <span class="number">6</span> <span class="op">&lt;</span> <span class="ident">string</span>.<span class="ident">len</span>() {
                         <span class="kw">return</span> <span class="prelude-val">None</span>;
                     }
 
@@ -2096,10 +2096,10 @@
 
                     <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">char</span>::<span class="ident">from_u32</span>(<span class="ident">value</span>)<span class="question-mark">?</span>);
                 }
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
             },
-            <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">c</span>),
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>),
+            <span class="prelude-val">Some</span>(<span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">result</span>.<span class="ident">push</span>(<span class="ident">c</span>),
+            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">result</span>),
         };
     }
 }

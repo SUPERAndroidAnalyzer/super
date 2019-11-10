@@ -220,7 +220,7 @@
 <span class="doccomment">/// This trait should not be implemented for anything outside this crate.</span>
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Ord</span> {
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_ordering</span>() <span class="op">-&gt;</span> ::<span class="ident">core</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
+    <span class="kw">fn</span> <span class="ident">to_ordering</span>() <span class="op">-</span><span class="op">&gt;</span> ::<span class="ident">core</span>::<span class="ident">cmp</span>::<span class="ident">Ordering</span>;
 }
 
 <span class="doccomment">/// The **marker trait** for compile time bits.</span>
@@ -233,9 +233,9 @@
     <span class="kw">const</span> <span class="ident">BOOL</span>: <span class="ident">bool</span>;
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u8</span>() <span class="op">-&gt;</span> <span class="ident">u8</span>;
+    <span class="kw">fn</span> <span class="ident">to_u8</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_bool</span>() <span class="op">-&gt;</span> <span class="ident">bool</span>;
+    <span class="kw">fn</span> <span class="ident">to_bool</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span>;
 }
 
 <span class="doccomment">/// The **marker trait** for compile time unsigned integers.</span>
@@ -279,32 +279,32 @@
     <span class="kw">const</span> <span class="ident">ISIZE</span>: <span class="ident">isize</span>;
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u8</span>() <span class="op">-&gt;</span> <span class="ident">u8</span>;
+    <span class="kw">fn</span> <span class="ident">to_u8</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u16</span>() <span class="op">-&gt;</span> <span class="ident">u16</span>;
+    <span class="kw">fn</span> <span class="ident">to_u16</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u32</span>() <span class="op">-&gt;</span> <span class="ident">u32</span>;
+    <span class="kw">fn</span> <span class="ident">to_u32</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u64</span>() <span class="op">-&gt;</span> <span class="ident">u64</span>;
+    <span class="kw">fn</span> <span class="ident">to_u64</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_u128</span>() <span class="op">-&gt;</span> <span class="ident">u128</span>;
+    <span class="kw">fn</span> <span class="ident">to_u128</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u128</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_usize</span>() <span class="op">-&gt;</span> <span class="ident">usize</span>;
+    <span class="kw">fn</span> <span class="ident">to_usize</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>;
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i8</span>() <span class="op">-&gt;</span> <span class="ident">i8</span>;
+    <span class="kw">fn</span> <span class="ident">to_i8</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i8</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i16</span>() <span class="op">-&gt;</span> <span class="ident">i16</span>;
+    <span class="kw">fn</span> <span class="ident">to_i16</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i32</span>() <span class="op">-&gt;</span> <span class="ident">i32</span>;
+    <span class="kw">fn</span> <span class="ident">to_i32</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i64</span>() <span class="op">-&gt;</span> <span class="ident">i64</span>;
+    <span class="kw">fn</span> <span class="ident">to_i64</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i128</span>() <span class="op">-&gt;</span> <span class="ident">i128</span>;
+    <span class="kw">fn</span> <span class="ident">to_i128</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i128</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_isize</span>() <span class="op">-&gt;</span> <span class="ident">isize</span>;
+    <span class="kw">fn</span> <span class="ident">to_isize</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">isize</span>;
 }
 
 <span class="doccomment">/// The **marker trait** for compile time signed integers.</span>
@@ -334,18 +334,18 @@
     <span class="kw">const</span> <span class="ident">ISIZE</span>: <span class="ident">isize</span>;
 
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i8</span>() <span class="op">-&gt;</span> <span class="ident">i8</span>;
+    <span class="kw">fn</span> <span class="ident">to_i8</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i8</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i16</span>() <span class="op">-&gt;</span> <span class="ident">i16</span>;
+    <span class="kw">fn</span> <span class="ident">to_i16</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i32</span>() <span class="op">-&gt;</span> <span class="ident">i32</span>;
+    <span class="kw">fn</span> <span class="ident">to_i32</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i64</span>() <span class="op">-&gt;</span> <span class="ident">i64</span>;
+    <span class="kw">fn</span> <span class="ident">to_i64</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span>;
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_i128</span>() <span class="op">-&gt;</span> <span class="ident">i128</span>;
+    <span class="kw">fn</span> <span class="ident">to_i128</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i128</span>;
     <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">missing_docs</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">to_isize</span>() <span class="op">-&gt;</span> <span class="ident">isize</span>;
+    <span class="kw">fn</span> <span class="ident">to_isize</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">isize</span>;
 }
 
 <span class="doccomment">/// The **marker trait** for type-level arrays of type-level numbers.</span>

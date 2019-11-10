@@ -6,5 +6,4 @@ implementors["synstructure"] = [];
             } else {
                 window.pending_implementors = implementors;
             }
-        
-})()
+        })()

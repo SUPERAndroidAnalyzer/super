@@ -274,7 +274,7 @@
 
 <span class="doccomment">/// Prints a warning to `stderr` in yellow.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">print_stdout</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">print_warning</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">warning</span>: <span class="ident">S</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">print_warning</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">warning</span>: <span class="ident">S</span>) {
     <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">not</span>(<span class="ident">test</span>)) {
         <span class="macro">warn</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">warning</span>.<span class="ident">as_ref</span>());
 
@@ -291,8 +291,8 @@
 
 <span class="doccomment">/// Prints a vulnerability to `stdout` in a color depending on the criticality.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">print_stdout</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">print_vulnerability</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">text</span>: <span class="ident">S</span>, <span class="ident">criticality</span>: <span class="ident">Criticality</span>) {
-    <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">not</span>(<span class="ident">test</span>)) <span class="op">&amp;&amp;</span> <span class="macro">log_enabled</span><span class="macro">!</span>(<span class="ident">Level</span>::<span class="ident">Debug</span>) {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">print_vulnerability</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">text</span>: <span class="ident">S</span>, <span class="ident">criticality</span>: <span class="ident">Criticality</span>) {
+    <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">not</span>(<span class="ident">test</span>)) <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="macro">log_enabled</span><span class="macro">!</span>(<span class="ident">Level</span>::<span class="ident">Debug</span>) {
         <span class="kw">let</span> <span class="ident">message</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(
             <span class="string">&quot;Possible {} criticality vulnerability found!: {}&quot;</span>,
             <span class="ident">criticality</span>,
@@ -300,10 +300,10 @@
         );
 
         <span class="kw">let</span> <span class="ident">formatted_message</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">criticality</span> {
-            <span class="ident">Criticality</span>::<span class="ident">Low</span> <span class="op">=&gt;</span> <span class="ident">message</span>.<span class="ident">cyan</span>(),
-            <span class="ident">Criticality</span>::<span class="ident">Medium</span> <span class="op">=&gt;</span> <span class="ident">message</span>.<span class="ident">yellow</span>(),
-            <span class="ident">Criticality</span>::<span class="ident">High</span> <span class="op">|</span> <span class="ident">Criticality</span>::<span class="ident">Critical</span> <span class="op">=&gt;</span> <span class="ident">message</span>.<span class="ident">red</span>(),
-            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
+            <span class="ident">Criticality</span>::<span class="ident">Low</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">message</span>.<span class="ident">cyan</span>(),
+            <span class="ident">Criticality</span>::<span class="ident">Medium</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">message</span>.<span class="ident">yellow</span>(),
+            <span class="ident">Criticality</span>::<span class="ident">High</span> <span class="op">|</span> <span class="ident">Criticality</span>::<span class="ident">Critical</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">message</span>.<span class="ident">red</span>(),
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span>,
         };
 
         <span class="macro">println</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">formatted_message</span>);
@@ -314,7 +314,7 @@
 <span class="doccomment">/// Gets the name of the package from the path of the *.apk* file.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// Note: it will panic if the path has no `file_stem`.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_package_name</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_package_name</span><span class="op">&lt;</span><span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">path</span>: <span class="ident">P</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
     <span class="ident">path</span>.<span class="ident">as_ref</span>()
         .<span class="ident">file_stem</span>()
         .<span class="ident">expect</span>(<span class="string">&quot;expected package name&quot;</span>)
@@ -326,12 +326,12 @@
 <span class="doccomment">///</span>
 <span class="doccomment">/// It will return 5 lines above and 5 lines below the vulnerability.</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">nonminimal_bool</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_code</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(<span class="ident">code</span>: <span class="ident">S</span>, <span class="ident">s_line</span>: <span class="ident">usize</span>, <span class="ident">e_line</span>: <span class="ident">usize</span>) <span class="op">-&gt;</span> <span class="ident">String</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_code</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">code</span>: <span class="ident">S</span>, <span class="ident">s_line</span>: <span class="ident">usize</span>, <span class="ident">e_line</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
     <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">text</span>) <span class="kw">in</span> <span class="ident">code</span>.<span class="ident">as_ref</span>().<span class="ident">lines</span>().<span class="ident">enumerate</span>() {
-        <span class="kw">if</span> <span class="ident">i</span> <span class="op">&gt;=</span> (<span class="ident">e_line</span> <span class="op">+</span> <span class="number">5</span>) {
+        <span class="kw">if</span> <span class="ident">i</span> <span class="op">&gt;</span><span class="op">=</span> (<span class="ident">e_line</span> <span class="op">+</span> <span class="number">5</span>) {
             <span class="kw">break</span>;
-        } <span class="kw">else</span> <span class="kw">if</span> (<span class="ident">s_line</span> <span class="op">&gt;=</span> <span class="number">5</span> <span class="op">&amp;&amp;</span> <span class="ident">i</span> <span class="op">&gt;</span> <span class="ident">s_line</span> <span class="op">-</span> <span class="number">5</span>) <span class="op">||</span> (<span class="ident">s_line</span> <span class="op">&lt;</span> <span class="number">5</span> <span class="op">&amp;&amp;</span> <span class="ident">i</span> <span class="op">&lt;</span> <span class="ident">s_line</span> <span class="op">+</span> <span class="number">5</span>) {
+        } <span class="kw">else</span> <span class="kw">if</span> (<span class="ident">s_line</span> <span class="op">&gt;</span><span class="op">=</span> <span class="number">5</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">i</span> <span class="op">&gt;</span> <span class="ident">s_line</span> <span class="op">-</span> <span class="number">5</span>) <span class="op">|</span><span class="op">|</span> (<span class="ident">s_line</span> <span class="op">&lt;</span> <span class="number">5</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">i</span> <span class="op">&lt;</span> <span class="ident">s_line</span> <span class="op">+</span> <span class="number">5</span>) {
             <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="ident">text</span>);
             <span class="ident">result</span>.<span class="ident">push_str</span>(<span class="string">&quot;\n&quot;</span>);
         }
@@ -340,11 +340,11 @@
 }
 
 <span class="doccomment">/// Gets a string from the strings XML file.</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_string</span><span class="op">&lt;</span><span class="ident">L</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;&gt;</span>(
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_string</span><span class="op">&lt;</span><span class="ident">L</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">P</span>: <span class="ident">AsRef</span><span class="op">&lt;</span><span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span>(
     <span class="ident">label</span>: <span class="ident">L</span>,
     <span class="ident">config</span>: <span class="kw-2">&amp;</span><span class="ident">Config</span>,
     <span class="ident">package</span>: <span class="ident">P</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">fs</span>::<span class="ident">read_to_string</span>({
         <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">config</span>
             .<span class="ident">dist_folder</span>()
@@ -373,21 +373,21 @@
         <span class="kw">match</span> <span class="ident">e</span> {
             <span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">StartElement</span> {
                 <span class="ident">name</span>, <span class="ident">attributes</span>, ..
-            }) <span class="op">=&gt;</span> {
+            }) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="string">&quot;string&quot;</span> <span class="op">=</span> <span class="ident">name</span>.<span class="ident">local_name</span>.<span class="ident">as_str</span>() {
                     <span class="kw">for</span> <span class="ident">attr</span> <span class="kw">in</span> <span class="ident">attributes</span> {
-                        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">name</span>.<span class="ident">local_name</span> <span class="op">==</span> <span class="string">&quot;name&quot;</span> <span class="op">&amp;&amp;</span> <span class="ident">attr</span>.<span class="ident">value</span> <span class="op">==</span> <span class="ident">label</span>.<span class="ident">as_ref</span>() {
+                        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">name</span>.<span class="ident">local_name</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;name&quot;</span> <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">attr</span>.<span class="ident">value</span> <span class="op">=</span><span class="op">=</span> <span class="ident">label</span>.<span class="ident">as_ref</span>() {
                             <span class="ident">found</span> <span class="op">=</span> <span class="bool-val">true</span>;
                         }
                     }
                 }
             }
-            <span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">Characters</span>(<span class="ident">data</span>)) <span class="op">=&gt;</span> {
+            <span class="prelude-val">Ok</span>(<span class="ident">XmlEvent</span>::<span class="ident">Characters</span>(<span class="ident">data</span>)) <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="ident">found</span> {
                     <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">data</span>);
                 }
             }
-            <span class="kw">_</span> <span class="op">=&gt;</span> {}
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {}
         }
     }
     <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">new</span>())
@@ -404,7 +404,7 @@
 
 <span class="kw">impl</span> <span class="ident">Benchmark</span> {
     <span class="doccomment">/// Creates a new benchmark.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;&gt;</span>(<span class="ident">label</span>: <span class="ident">S</span>, <span class="ident">duration</span>: <span class="ident">Duration</span>) <span class="op">-&gt;</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">label</span>: <span class="ident">S</span>, <span class="ident">duration</span>: <span class="ident">Duration</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
         <span class="self">Self</span> {
             <span class="ident">label</span>: <span class="ident">label</span>.<span class="ident">into</span>(),
             <span class="ident">duration</span>,
@@ -413,7 +413,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Benchmark</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">fmt</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="macro">write</span><span class="macro">!</span>(
             <span class="ident">f</span>,
             <span class="string">&quot;{}: {}.{}s&quot;</span>,

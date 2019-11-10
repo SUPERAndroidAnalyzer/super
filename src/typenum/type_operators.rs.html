@@ -613,46 +613,46 @@
     <span class="doccomment">/// let y = 27.0;</span>
     <span class="doccomment">/// assert_eq!(x, y);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="ident">exp</span>: <span class="ident">Exp</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="ident">exp</span>: <span class="ident">Exp</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_pow_f</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
         <span class="kw">impl</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UTerm</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UTerm</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UTerm</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="number">1.0</span>
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span>, <span class="ident">B</span>: <span class="ident">Bit</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span>, <span class="ident">B</span>: <span class="ident">Bit</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="comment">// powi is unstable in core, so we have to write this function ourselves.</span>
             <span class="comment">// copied from num::pow::pow</span>
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">exp</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">Unsigned</span><span class="op">&gt;</span>::<span class="ident">to_u32</span>();
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">base</span> <span class="op">=</span> <span class="self">self</span>;
 
-                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">==</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="kw">return</span> <span class="number">1.0</span>;
                 }
 
-                <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">0</span> {
-                    <span class="ident">base</span> <span class="op">*=</span> <span class="ident">base</span>;
-                    <span class="ident">exp</span> <span class="op">&gt;&gt;=</span> <span class="number">1</span>;
+                <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                    <span class="ident">base</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>;
+                    <span class="ident">exp</span> <span class="op">&gt;</span><span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>;
                 }
-                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">==</span> <span class="number">1</span> {
+                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
                     <span class="kw">return</span> <span class="ident">base</span>;
                 }
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">acc</span> <span class="op">=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
                 <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&gt;</span> <span class="number">1</span> {
-                    <span class="ident">exp</span> <span class="op">&gt;&gt;=</span> <span class="number">1</span>;
-                    <span class="ident">base</span> <span class="op">*=</span> <span class="ident">base</span>;
-                    <span class="kw">if</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">1</span> {
-                        <span class="ident">acc</span> <span class="op">*=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
+                    <span class="ident">exp</span> <span class="op">&gt;</span><span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">base</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>;
+                    <span class="kw">if</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">acc</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
                     }
                 }
                 <span class="ident">acc</span>
@@ -662,38 +662,38 @@
         <span class="kw">impl</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">Z0</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Z0</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Z0</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="number">1.0</span>
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span> <span class="op">+</span> <span class="ident">NonZero</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span> <span class="op">+</span> <span class="ident">NonZero</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="comment">// powi is unstable in core, so we have to write this function ourselves.</span>
             <span class="comment">// copied from num::pow::pow</span>
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">exp</span> <span class="op">=</span> <span class="ident">U</span>::<span class="ident">to_u32</span>();
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">base</span> <span class="op">=</span> <span class="self">self</span>;
 
-                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">==</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
                     <span class="kw">return</span> <span class="number">1.0</span>;
                 }
 
-                <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">0</span> {
-                    <span class="ident">base</span> <span class="op">*=</span> <span class="ident">base</span>;
-                    <span class="ident">exp</span> <span class="op">&gt;&gt;=</span> <span class="number">1</span>;
+                <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                    <span class="ident">base</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>;
+                    <span class="ident">exp</span> <span class="op">&gt;</span><span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>;
                 }
-                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">==</span> <span class="number">1</span> {
+                <span class="kw">if</span> <span class="ident">exp</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
                     <span class="kw">return</span> <span class="ident">base</span>;
                 }
 
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">acc</span> <span class="op">=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
                 <span class="kw">while</span> <span class="ident">exp</span> <span class="op">&gt;</span> <span class="number">1</span> {
-                    <span class="ident">exp</span> <span class="op">&gt;&gt;=</span> <span class="number">1</span>;
-                    <span class="ident">base</span> <span class="op">*=</span> <span class="ident">base</span>;
-                    <span class="kw">if</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">1</span> {
-                        <span class="ident">acc</span> <span class="op">*=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
+                    <span class="ident">exp</span> <span class="op">&gt;</span><span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">base</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>;
+                    <span class="kw">if</span> <span class="ident">exp</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">acc</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">base</span>.<span class="ident">clone</span>();
                     }
                 }
                 <span class="ident">acc</span>
@@ -706,20 +706,20 @@
 <span class="macro">impl_pow_f</span><span class="macro">!</span>(<span class="ident">f64</span>);
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_pow_i</span> {
-    () <span class="op">=&gt;</span> ();
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>: <span class="ident">ty</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tail</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=&gt;</span> (
+    () <span class="op">=</span><span class="op">&gt;</span> ();
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>: <span class="ident">ty</span> $(, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">tail</span>:<span class="ident">tt</span>)<span class="kw-2">*</span>) <span class="op">=</span><span class="op">&gt;</span> (
         <span class="kw">impl</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UTerm</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UTerm</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UTerm</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="number">1</span>
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span>, <span class="ident">B</span>: <span class="ident">Bit</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span>, <span class="ident">B</span>: <span class="ident">Bit</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="self">self</span>.<span class="ident">pow</span>(<span class="op">&lt;</span><span class="ident">UInt</span><span class="op">&lt;</span><span class="ident">U</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="kw">as</span> <span class="ident">Unsigned</span><span class="op">&gt;</span>::<span class="ident">to_u32</span>())
             }
         }
@@ -727,15 +727,15 @@
         <span class="kw">impl</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">Z0</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Z0</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Z0</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="number">1</span>
             }
         }
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span> <span class="op">+</span> <span class="ident">NonZero</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">U</span>: <span class="ident">Unsigned</span> <span class="op">+</span> <span class="ident">NonZero</span><span class="op">&gt;</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span> {
             <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">t</span>;
             <span class="attribute">#[<span class="ident">inline</span>]</span>
-            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+            <span class="kw">fn</span> <span class="ident">powi</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">PInt</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
                 <span class="self">self</span>.<span class="ident">pow</span>(<span class="ident">U</span>::<span class="ident">to_u32</span>())
             }
         }
@@ -758,19 +758,19 @@
     <span class="kw">let</span> <span class="ident">u3</span> <span class="op">=</span> <span class="ident">U3</span>::<span class="ident">new</span>();
 
     <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">check</span> {
-        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>.<span class="ident">powi</span>(<span class="ident">z0</span>), <span class="number">1</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>.<span class="ident">powi</span>(<span class="ident">u0</span>), <span class="number">1</span>);
 
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>.<span class="ident">powi</span>(<span class="ident">p3</span>), <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>);
             <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>.<span class="ident">powi</span>(<span class="ident">u3</span>), <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>);
         };
-        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>:<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">Z0</span><span class="op">&gt;&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">z0</span>) <span class="op">-</span> <span class="number">1.0</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
-            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">U0</span><span class="op">&gt;&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">u0</span>) <span class="op">-</span> <span class="number">1.0</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
+        (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">Z0</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">z0</span>) <span class="op">-</span> <span class="number">1.0</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
+            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">U0</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">u0</span>) <span class="op">-</span> <span class="number">1.0</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
 
-            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">P3</span><span class="op">&gt;&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">p3</span>) <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
-            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">U3</span><span class="op">&gt;&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">u3</span>) <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
+            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">P3</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">p3</span>) <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
+            <span class="macro">assert</span><span class="macro">!</span>((<span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span> <span class="kw">as</span> <span class="ident">Pow</span><span class="op">&lt;</span><span class="ident">U3</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">powi</span>(<span class="kw-2">*</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>, <span class="ident">u3</span>) <span class="op">-</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span> <span class="op">*</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">x</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> ::<span class="ident">core</span>::<span class="macro-nonterminal">$</span><span class="macro-nonterminal">f</span>::<span class="ident">EPSILON</span>);
         };
     }
 
@@ -817,7 +817,7 @@
     <span class="doccomment">/// The length as a type-level unsigned integer.</span>
     <span class="kw">type</span> <span class="ident">Output</span>: ::<span class="ident">Unsigned</span>;
     <span class="doccomment">/// This function isn&#39;t used in this crate, but may be useful for others.</span>
-    <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="doccomment">/// Division as a partial function. This **type operator** performs division just as `Div`, but is</span>
@@ -826,7 +826,7 @@
     <span class="doccomment">/// The type of the result of the division</span>
     <span class="kw">type</span> <span class="ident">Output</span>;
     <span class="doccomment">/// Method for performing the division</span>
-    <span class="kw">fn</span> <span class="ident">partial_div</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">partial_div</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="doccomment">/// A **type operator** that returns the minimum of `Self` and `Rhs`.</span>
@@ -834,7 +834,7 @@
     <span class="doccomment">/// The type of the minimum of `Self` and `Rhs`</span>
     <span class="kw">type</span> <span class="ident">Output</span>;
     <span class="doccomment">/// Method returning the minimum</span>
-    <span class="kw">fn</span> <span class="ident">min</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">min</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="doccomment">/// A **type operator** that returns the maximum of `Self` and `Rhs`.</span>
@@ -842,7 +842,7 @@
     <span class="doccomment">/// The type of the maximum of `Self` and `Rhs`</span>
     <span class="kw">type</span> <span class="ident">Output</span>;
     <span class="doccomment">/// Method returning the maximum</span>
-    <span class="kw">fn</span> <span class="ident">max</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">max</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">Compare</span>;
@@ -852,17 +852,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_less</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_less</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsLessPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsLess</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsLessPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsLessPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsLessPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsLessPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_less</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_less</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -872,17 +872,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsEqualPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsEqual</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -892,17 +892,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_greater</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_greater</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsGreaterPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsGreater</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsGreaterPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsGreaterPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsGreaterPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsGreaterPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_greater</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_greater</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -912,17 +912,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_less_or_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_less_or_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsLessOrEqualPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsLessOrEqual</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsLessOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsLessOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsLessOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsLessOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_less_or_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_less_or_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -932,17 +932,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_not_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_not_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsNotEqualPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsNotEqual</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsNotEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsNotEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsNotEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsNotEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_not_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_not_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -952,17 +952,17 @@
     <span class="doccomment">/// The type representing either `True` or `False`</span>
     <span class="kw">type</span> <span class="ident">Output</span>: <span class="ident">Bit</span>;
     <span class="doccomment">/// Method returning `True` or `False`.</span>
-    <span class="kw">fn</span> <span class="ident">is_greater_or_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
+    <span class="kw">fn</span> <span class="ident">is_greater_or_equal</span>(<span class="self">self</span>, <span class="ident">rhs</span>: <span class="ident">Rhs</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span>;
 }
 
 <span class="kw">use</span> <span class="ident">private</span>::<span class="ident">IsGreaterOrEqualPrivate</span>;
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span> <span class="ident">IsGreaterOrEqual</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">A</span>
 <span class="kw">where</span>
-    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsGreaterOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span>,
+    <span class="ident">A</span>: <span class="ident">Cmp</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">IsGreaterOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 {
-    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsGreaterOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
+    <span class="kw">type</span> <span class="ident">Output</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">A</span> <span class="kw">as</span> <span class="ident">IsGreaterOrEqualPrivate</span><span class="op">&lt;</span><span class="ident">B</span>, <span class="ident">Compare</span><span class="op">&lt;</span><span class="ident">A</span>, <span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>;
 
-    <span class="kw">fn</span> <span class="ident">is_greater_or_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
+    <span class="kw">fn</span> <span class="ident">is_greater_or_equal</span>(<span class="self">self</span>, <span class="kw">_</span>: <span class="ident">B</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Output</span> {
         <span class="kw">unsafe</span> { ::<span class="ident">core</span>::<span class="ident">mem</span>::<span class="ident">uninitialized</span>() }
     }
 }
@@ -993,46 +993,46 @@ assert_eq!(Result::to_bool(), true);
 <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span> <span class="op">=</span> <span class="string">&quot;1.9.0&quot;</span>, <span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;use the `op!` macro instead&quot;</span>)]</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">cmp</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&lt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLess</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&lt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLess</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&lt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLess</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
-    };
-
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">==</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
-    };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">==</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&lt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLess</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
 
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreater</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">=</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreater</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
-    };
-
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&lt;=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLessOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
-    };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&lt;=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLessOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">=</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
 
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">!=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsNotEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreater</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">!=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsNotEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&gt;</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreater</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
 
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&gt;=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreaterOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&lt;</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLessOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&gt;=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=&gt;</span> {
-        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreaterOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;&gt;</span>::<span class="ident">Output</span>
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&lt;</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsLessOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
+    };
+
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">!</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsNotEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
+    };
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">!</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsNotEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
+    };
+
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ident</span> <span class="op">&gt;</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreaterOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
+    };
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span>:<span class="ident">ty</span>, <span class="op">&gt;</span><span class="op">=</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span>:<span class="ident">ty</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">a</span> <span class="kw">as</span> <span class="macro-nonterminal">$</span><span class="kw">crate</span>::<span class="macro-nonterminal">IsGreaterOrEqual</span><span class="op">&lt;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">b</span><span class="op">&gt;</span><span class="op">&gt;</span>::<span class="ident">Output</span>
     };
 }
 
