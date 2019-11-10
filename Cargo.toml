@@ -33,9 +33,9 @@ assets = [
     ["target/release/super-analyzer", "usr/bin/", "755"],
 
     # Completion scripts
-    #["target/release/super.bash", "usr/share/bash-completion/completions/", "755"],
-    #["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],
-    #["target/release/_super", "usr/share/zsh/vendor-completions/", "755"],
+    ["target/release/super.bash", "usr/share/bash-completion/completions/", "755"],
+    ["target/release/super.fish", "usr/share/fish/vendor_completions.d/", "755"],
+    ["target/release/_super", "usr/share/zsh/vendor-completions/", "755"],
 
     # JD-CMD
     ["vendor/jd-cmd.jar", "usr/share/super-analyzer/vendor/", "755"],
@@ -96,7 +96,7 @@ env_logger = "0.7.1"
 md5 = "0.7.0"
 sha1 = "0.6.0"
 sha2 = "0.8.0"
-abxml = "0.8.1"
+abxml = "0.8.2"
 handlebars = "2.0.2"
 semver = "0.9.0"
 hex = "0.4.0"
