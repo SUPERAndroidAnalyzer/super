@@ -101,7 +101,7 @@ handlebars = "2.0.2"
 semver = "0.9.0"
 hex = "0.4.0"
 num_cpus = "1.11.0"
-colored = "1.8.0"
+colored = "1.9.0"
 
 [build-dependencies]
 clap = "2.33.0"

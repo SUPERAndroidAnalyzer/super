@@ -1,12 +1,15 @@
 # Changelog
 
-## SUPER 0.5.2
+## SUPER 0.6.0
 
 This release fixes a bug in the rule checking for insecure `sleep()` usage, where some variables
 were not being checked properly. Also, improves the speed of the report generation and upgrades
 the libraries in charge of the visual representation of the reports. One of this improvements
 brings support for Android SDK 27, 28 and 29, which are the SDKs for Android 8.1.0, Android 9 and
 Android 10. There have also been some internal improvements and dependency upgrades.
+
+For Ubuntu / Debian users, we now provide automatic completions for Bash, Zsh and Fish consoles.
+This was already the case for Fedora and CentOS.
 
 ### Internal Changes
 
@@ -16,7 +19,7 @@ Android 10. There have also been some internal improvements and dependency upgra
   - `jQuery`: 3.3 => **3.4**
   - `num_cpus`: 1.8 => **1.11**
   - `bytecount`: 0.4 => **0.6**, with SIMD
-  - `colored`: 1.6 => **1.8**
+  - `colored`: 1.6 => **1.9**
   - `open`: 1.2 => **1.3**
   - `handlebars`: 1.1 => **2.0**
   - `clap`: 2.32 => **2.33**
