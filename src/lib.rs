@@ -18,8 +18,10 @@
     missing_docs,
     unused_extern_crates,
     missing_debug_implementations,
-    missing_copy_implementations
+    missing_copy_implementations,
+    rust_2018_idioms
 )]
+#![allow(clippy::must_use_candidate)]
 
 pub mod cli;
 mod config;
@@ -296,7 +298,7 @@ pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
     use std::io::Write;
 
     // Define the style of the formatting.
-    let format = |buf: &mut Formatter, record: &Record| {
+    let format = |buf: &mut Formatter, record: &Record<'_>| {
         let mut level_style = buf.style();
         match record.level() {
             Level::Warn => {
@@ -453,7 +455,7 @@ mod tests {
 
         // TODO: use an application that we control.
         // Download the .apk fie
-        let _ = reqwest::get(
+        let _ = reqwest::blocking::get(
             "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
         )

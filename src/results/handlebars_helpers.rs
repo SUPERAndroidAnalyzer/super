@@ -12,10 +12,10 @@ use super::utils::{html_escape, split_indent};
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn line_numbers(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
@@ -67,10 +67,10 @@ pub fn line_numbers(
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn all_lines(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
@@ -106,10 +106,10 @@ pub fn all_lines(
 /// An optional line separator can be added that will be used at the end of each line. By default,
 /// this separator will be `<br>`.
 pub fn all_code(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let code = h
@@ -157,10 +157,10 @@ pub fn all_code(
 ///
 /// This enables easy styling of the code in templates.
 pub fn html_code(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
@@ -233,10 +233,10 @@ pub fn html_code(
 /// for the critical vulnerability number 12 it would produce `C012`.
 #[allow(clippy::cast_precision_loss)]
 pub fn report_index(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let vulnerability = h
@@ -280,10 +280,10 @@ pub fn report_index(
 /// It will generate an unordered HTML list (`<ul>…</ul>`) where all files and folders of the given
 /// menu object.
 pub fn generate_menu(
-    h: &Helper,
+    h: &Helper<'_, '_>,
     _: &Registry,
     _: &Context,
-    _: &mut RenderContext,
+    _: &mut RenderContext<'_>,
     out: &mut dyn Output,
 ) -> Result<(), RenderError> {
     let menu = h

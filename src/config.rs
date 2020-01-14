@@ -328,7 +328,7 @@ impl Config {
     }
 
     /// Returns the currently loaded config files.
-    pub fn loaded_config_files(&self) -> VecIter<PathBuf> {
+    pub fn loaded_config_files(&self) -> VecIter<'_, PathBuf> {
         self.loaded_files.iter()
     }
 
@@ -469,7 +469,7 @@ impl Config {
     }
 
     /// Returns the loaded `permissions`.
-    pub fn permissions(&self) -> Iter<Permission> {
+    pub fn permissions(&self) -> Iter<'_, Permission> {
         self.permissions.iter()
     }
 

@@ -30,6 +30,7 @@ This was already the case for Fedora and CentOS.
   - `env_logger`: 0.6 => **0.7**
   - `md5`: 0.6 => **0.7**
   - `abxml`: 0.7 => **0.8**, with Android SDK 29 support
+  - `reqwest`: 0.9 => **0.10** (used for testing)
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of

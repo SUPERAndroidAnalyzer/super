@@ -113,6 +113,7 @@ impl SdkNumber {
     }
 
     /// Gets the Android version number.
+    #[allow(clippy::too_many_lines)]
     pub fn version(self) -> Option<Version> {
         match self {
             Self::Api1 => Some(Version {
@@ -512,6 +513,7 @@ mod tests {
 
     /// Checks that the Android version number is correct for each API.
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn it_get_version() {
         assert_eq!(
             SdkNumber::Api1.version().unwrap(),
@@ -689,6 +691,7 @@ mod tests {
 
     /// Checks that Android versions are properly printed.
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn it_prettify_android_version() {
         assert_eq!(
             prettify_android_version(&SdkNumber::Api1.version().unwrap()),

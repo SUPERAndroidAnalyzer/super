@@ -16,7 +16,7 @@ pub struct Json;
 impl Json {
     /// Creates a new JSON report generator.
     pub fn new() -> Self {
-        Json
+        Self
     }
 }
 

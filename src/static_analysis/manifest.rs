@@ -1019,6 +1019,7 @@ pub struct PermissionChecklist {
 }
 
 impl PermissionChecklist {
+    #[allow(clippy::too_many_lines)]
     pub fn needs_permission(&self, p: Permission) -> bool {
         match p {
             Permission::AndroidPermissionAccessAllExternalStorage => {
@@ -1644,6 +1645,7 @@ impl PermissionChecklist {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn set_needs_permission(&mut self, p: Permission) {
         match p {
             Permission::AndroidPermissionAccessAllExternalStorage => {
@@ -2899,6 +2901,7 @@ impl<'de> Deserialize<'de> for Permission {
 
 impl Permission {
     /// Gets the string representation of the permission.
+    #[allow(clippy::too_many_lines)]
     pub fn as_str(&self) -> &str {
         match self {
             Self::AndroidPermissionAccessAllExternalStorage => {
@@ -3417,6 +3420,8 @@ impl Permission {
 
 impl FromStr for Permission {
     type Err = ErrorKind;
+
+    #[allow(clippy::too_many_lines)]
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "android.permission.ACCESS_ALL_EXTERNAL_STORAGE" => {

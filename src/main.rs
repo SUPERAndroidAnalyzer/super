@@ -14,9 +14,11 @@
     unsafe_code,
     trivial_numeric_casts,
     trivial_casts,
-    missing_debug_implementations,
     missing_docs,
-    missing_copy_implementations
+    unused_extern_crates,
+    missing_debug_implementations,
+    missing_copy_implementations,
+    rust_2018_idioms
 )]
 
 use std::{

@@ -348,7 +348,7 @@ impl Rule {
     }
 
     /// Gets the permissions required for this rule to be checked.
-    pub fn permissions(&self) -> Iter<Permission> {
+    pub fn permissions(&self) -> Iter<'_, Permission> {
         self.permissions.iter()
     }
 
@@ -378,7 +378,7 @@ impl Rule {
     }
 
     /// Gets the whitelist regex list.
-    pub fn whitelist(&self) -> Iter<Regex> {
+    pub fn whitelist(&self) -> Iter<'_, Regex> {
         self.whitelist.iter()
     }
 
@@ -408,7 +408,7 @@ struct RegexVisitor;
 impl<'de> Visitor<'de> for RegexVisitor {
     type Value = Regex;
 
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter.write_str("a valid regular expression")
     }
 
@@ -453,7 +453,7 @@ where
     impl<'de> Visitor<'de> for RegexSeqVisitor {
         type Value = Box<[Regex]>;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             formatter.write_str("a list of valid regular expressions")
         }
 
@@ -488,7 +488,7 @@ where
     impl<'de> Visitor<'de> for RegexOptionVisitor {
         type Value = Option<Regex>;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             formatter.write_str("a valid regular expression")
         }
 
