@@ -37,7 +37,7 @@ This was already the case for Fedora and CentOS.
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
 - Many syntax improvements, that should bring some minor performance enhancements.
-- SUPER now requires Rust 1.37 to be build. This also brings smaller binary sizes.
+- SUPER now requires Rust 1.39 to be build. This also brings smaller binary sizes.
 
 ## SUPER 0.5.1
 
