@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.40/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/backtrace-0.3.41/src/symbolize/libbacktrace.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libbacktrace.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../backtrace/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -469,6 +469,24 @@
 <span id="469">469</span>
 <span id="470">470</span>
 <span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Copyright 2014-2015 The Rust Project Developers. See the COPYRIGHT</span>
 <span class="comment">// file at the top-level directory of this distribution and at</span>
@@ -510,8 +528,8 @@
 <span class="kw">use</span> <span class="ident">core</span>::{<span class="ident">ptr</span>, <span class="ident">slice</span>};
 <span class="kw">use</span> <span class="ident">libc</span>::{<span class="self">self</span>, <span class="ident">c_char</span>, <span class="ident">c_int</span>, <span class="ident">c_void</span>, <span class="ident">uintptr_t</span>};
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbolize</span>::{<span class="ident">ResolveWhat</span>, <span class="ident">SymbolName</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbolize</span>::<span class="ident">dladdr</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">symbolize</span>::{<span class="ident">ResolveWhat</span>, <span class="ident">SymbolName</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">types</span>::<span class="ident">BytesOrWideString</span>;
 
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
@@ -531,22 +549,22 @@
 
 <span class="kw">impl</span> <span class="ident">Symbol</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SymbolName</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="op">|</span><span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span><span class="op">|</span> {
-            <span class="kw">unsafe</span> {
-                <span class="kw">if</span> <span class="ident">ptr</span>.<span class="ident">is_null</span>() {
-                    <span class="prelude-val">None</span>
-                } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">strlen</span>(<span class="ident">ptr</span>);
-                    <span class="prelude-val">Some</span>(<span class="ident">SymbolName</span>::<span class="ident">new</span>(<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(
-                        <span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>,
-                        <span class="ident">len</span>,
-                    )))
-                }
+        <span class="kw">let</span> <span class="ident">symbol</span> <span class="op">=</span> <span class="op">|</span><span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">c_char</span><span class="op">|</span> <span class="kw">unsafe</span> {
+            <span class="kw">if</span> <span class="ident">ptr</span>.<span class="ident">is_null</span>() {
+                <span class="prelude-val">None</span>
+            } <span class="kw">else</span> {
+                <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">strlen</span>(<span class="ident">ptr</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">SymbolName</span>::<span class="ident">new</span>(<span class="ident">slice</span>::<span class="ident">from_raw_parts</span>(
+                    <span class="ident">ptr</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">u8</span>,
+                    <span class="ident">len</span>,
+                )))
             }
         };
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
             <span class="ident">Symbol</span>::<span class="ident">Syminfo</span> { <span class="ident">symname</span>, .. } <span class="op">=</span><span class="op">&gt;</span> <span class="ident">symbol</span>(<span class="ident">symname</span>),
-            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> { <span class="ident">function</span>, <span class="ident">symname</span>, .. } <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Symbol</span>::<span class="ident">Pcinfo</span> {
+                <span class="ident">function</span>, <span class="ident">symname</span>, ..
+            } <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="comment">// If possible prefer the `function` name which comes from</span>
                 <span class="comment">// debuginfo and can typically be more accurate for inline</span>
                 <span class="comment">// frames for example. If that&#39;s not present though fall back to</span>
@@ -557,7 +575,7 @@
                 <span class="comment">// isntead of `std::panicking::try::do_call`. It&#39;s not really</span>
                 <span class="comment">// clear why, but overall the `function` name seems more accurate.</span>
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">sym</span>) <span class="op">=</span> <span class="ident">symbol</span>(<span class="ident">function</span>) {
-                    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">sym</span>)
+                    <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">sym</span>);
                 }
                 <span class="ident">symbol</span>(<span class="ident">symname</span>)
             }
@@ -854,9 +872,27 @@
             }
 
             <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">query_full_name</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">i8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">i8</span>], ()<span class="op">&gt;</span> {
+                <span class="kw">let</span> <span class="ident">dll</span> <span class="op">=</span> <span class="ident">GetModuleHandleA</span>(<span class="string">b&quot;kernel32.dll\0&quot;</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">i8</span>);
+                <span class="kw">if</span> <span class="ident">dll</span>.<span class="ident">is_null</span>() {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(())
+                }
+                <span class="kw">let</span> <span class="ident">ptrQueryFullProcessImageNameA</span> <span class="op">=</span>
+                    <span class="ident">GetProcAddress</span>(<span class="ident">dll</span>, <span class="string">b&quot;QueryFullProcessImageNameA\0&quot;</span>.<span class="ident">as_ptr</span>() <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span>) <span class="kw">as</span> <span class="ident">usize</span>;
+                <span class="kw">if</span> <span class="ident">ptrQueryFullProcessImageNameA</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>
+                {
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(());
+                }
+                <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">mem</span>;
                 <span class="kw">let</span> <span class="ident">p1</span> <span class="op">=</span> <span class="ident">OpenProcess</span>(<span class="ident">PROCESS_QUERY_INFORMATION</span>, <span class="ident">FALSE</span>, <span class="ident">GetCurrentProcessId</span>());
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">len</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
-                <span class="kw">let</span> <span class="ident">rc</span> <span class="op">=</span> <span class="ident">QueryFullProcessImageNameA</span>(<span class="ident">p1</span>, <span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">as_mut_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">len</span>);
+                <span class="kw">let</span> <span class="ident">pfnQueryFullProcessImageNameA</span> : <span class="kw">extern</span> <span class="string">&quot;system&quot;</span> <span class="kw">fn</span>(
+                    <span class="ident">hProcess</span>: <span class="ident">HANDLE</span>,
+                    <span class="ident">dwFlags</span>: <span class="ident">DWORD</span>,
+                    <span class="ident">lpExeName</span>: <span class="ident">LPSTR</span>,
+                    <span class="ident">lpdwSize</span>: <span class="ident">PDWORD</span>,
+                ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">BOOL</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">ptrQueryFullProcessImageNameA</span>);
+
+                <span class="kw">let</span> <span class="ident">rc</span> <span class="op">=</span> <span class="ident">pfnQueryFullProcessImageNameA</span>(<span class="ident">p1</span>, <span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">as_mut_ptr</span>(), <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">len</span>);
                 <span class="ident">CloseHandle</span>(<span class="ident">p1</span>);
 
                 <span class="comment">// We want to return a slice that is nul-terminated, so if</span>
@@ -876,10 +912,10 @@
             <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">load_filename</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">libc</span>::<span class="ident">c_char</span> {
                 <span class="kw">use</span> <span class="ident">libc</span>;
                 <span class="kw">use</span> <span class="ident">core</span>::<span class="ident">mem</span>;
-                
+
                 <span class="kw">const</span> <span class="ident">N</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="ident">libc</span>::<span class="ident">VX_RTP_NAME_LENGTH</span> <span class="kw">as</span> <span class="ident">usize</span> <span class="op">+</span> <span class="number">1</span>;
                 <span class="kw">static</span> <span class="kw-2">mut</span> <span class="ident">BUF</span>: [<span class="ident">libc</span>::<span class="ident">c_char</span>; <span class="ident">N</span>] <span class="op">=</span> [<span class="number">0</span>; <span class="ident">N</span>];
-                
+
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rtp_desc</span> : <span class="ident">libc</span>::<span class="ident">RTP_DESC</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">zeroed</span>();
                 <span class="kw">if</span> (<span class="ident">libc</span>::<span class="ident">rtpInfoGet</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">rtp_desc</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">libc</span>::<span class="ident">RTP_DESC</span>) <span class="op">=</span><span class="op">=</span> <span class="number">0</span>) {
                     <span class="ident">BUF</span>.<span class="ident">copy_from_slice</span>(<span class="kw-2">&amp;</span><span class="ident">rtp_desc</span>.<span class="ident">pathName</span>);
@@ -942,4 +978,4 @@
     });
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../../";window.currentCrate = "backtrace";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "backtrace";</script><script src="../../../aliases.js"></script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

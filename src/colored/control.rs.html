@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.8.0/src/control.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>control.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../colored/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-1ecc6299db9ec823/colored-1.9.2/src/control.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>control.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../colored/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -382,17 +382,47 @@
 <span id="382">382</span>
 <span id="383">383</span>
 <span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! A couple of functions to enable and disable coloring.</span>
 
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">default</span>::<span class="ident">Default</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">env</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">Ordering</span>};
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
-<span class="kw">use</span> <span class="ident">winconsole</span>::{<span class="ident">console</span>, <span class="ident">errors</span>::<span class="ident">WinResult</span>};
 
 <span class="doccomment">/// Sets a flag to the console to use a virtual terminal environment.</span>
-<span class="doccomment">/// This is primarily used for Windows 10 environments which will not correctly colorize the outputs based on ansi escape codes.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This is primarily used for Windows 10 environments which will not correctly colorize</span>
+<span class="doccomment">/// the outputs based on ANSI escape codes.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The returned `Result` is _always_ `Ok(())`, the return type was kept to ensure backwards</span>
+<span class="doccomment">/// compatibility.</span>
 <span class="doccomment">///</span>
 <span class="doccomment">/// # Notes</span>
 <span class="doccomment">/// &gt; Only available to `Windows` build targets.</span>
@@ -400,22 +430,51 @@
 <span class="doccomment">/// # Example</span>
 <span class="doccomment">/// ```rust</span>
 <span class="doccomment">/// use colored::*;</span>
-<span class="doccomment">/// control::set_virtual_terminal(false);</span>
+<span class="doccomment">/// control::set_virtual_terminal(false).unwrap();</span>
 <span class="doccomment">/// println!(&quot;{}&quot;, &quot;bright cyan&quot;.bright_cyan());	// will print &#39;[96mbright cyan[0m&#39; on windows 10</span>
 <span class="doccomment">///</span>
-<span class="doccomment">/// control::set_virtual_terminal(true);</span>
+<span class="doccomment">/// control::set_virtual_terminal(true).unwrap();</span>
 <span class="doccomment">/// println!(&quot;{}&quot;, &quot;bright cyan&quot;.bright_cyan());	// will print correctly</span>
 <span class="doccomment">/// ```</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">windows</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_virtual_terminal</span>(<span class="ident">use_virtual</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WinResult</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-	<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mode</span> <span class="op">=</span> <span class="ident">console</span>::<span class="ident">get_output_mode</span>()<span class="question-mark">?</span>;
-	<span class="ident">mode</span>.<span class="ident">VirtualTerminalProcessing</span> <span class="op">=</span> <span class="ident">use_virtual</span>;
-	<span class="ident">console</span>::<span class="ident">set_output_mode</span>(<span class="ident">mode</span>)<span class="question-mark">?</span>;
-	<span class="prelude-val">Ok</span>(())
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_virtual_terminal</span>(<span class="ident">use_virtual</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+    <span class="kw">use</span> <span class="ident">winapi</span>::{
+        <span class="ident">shared</span>::<span class="ident">minwindef</span>::<span class="ident">DWORD</span>,
+        <span class="ident">um</span>::{
+            <span class="ident">consoleapi</span>::{<span class="ident">GetConsoleMode</span>, <span class="ident">SetConsoleMode</span>},
+            <span class="ident">processenv</span>::<span class="ident">GetStdHandle</span>,
+            <span class="ident">winbase</span>::<span class="ident">STD_OUTPUT_HANDLE</span>,
+            <span class="ident">wincon</span>::<span class="ident">ENABLE_VIRTUAL_TERMINAL_PROCESSING</span>,
+        },
+    };
+
+    <span class="kw">unsafe</span> {
+        <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">GetStdHandle</span>(<span class="ident">STD_OUTPUT_HANDLE</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">original_mode</span>: <span class="ident">DWORD</span> <span class="op">=</span> <span class="number">0</span>;
+        <span class="ident">GetConsoleMode</span>(<span class="ident">handle</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">original_mode</span>);
+
+        <span class="kw">let</span> <span class="ident">enabled</span> <span class="op">=</span> <span class="ident">original_mode</span> <span class="op">&amp;</span> <span class="ident">ENABLE_VIRTUAL_TERMINAL_PROCESSING</span>
+            <span class="op">=</span><span class="op">=</span> <span class="ident">ENABLE_VIRTUAL_TERMINAL_PROCESSING</span>;
+
+        <span class="kw">match</span> (<span class="ident">use_virtual</span>, <span class="ident">enabled</span>) {
+            <span class="comment">// not enabled, should be enabled</span>
+            (<span class="bool-val">true</span>, <span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">SetConsoleMode</span>(<span class="ident">handle</span>, <span class="ident">ENABLE_VIRTUAL_TERMINAL_PROCESSING</span> <span class="op">|</span> <span class="ident">original_mode</span>)
+            }
+            <span class="comment">// already enabled, should be disabled</span>
+            (<span class="bool-val">false</span>, <span class="bool-val">true</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">SetConsoleMode</span>(<span class="ident">handle</span>, <span class="ident">ENABLE_VIRTUAL_TERMINAL_PROCESSING</span> <span class="op">^</span> <span class="ident">original_mode</span>)
+            }
+            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
+        };
+    }
+
+    <span class="prelude-val">Ok</span>(())
 }
 
+<span class="doccomment">/// A flag to to if coloring should occur.</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ShouldColorize</span> {
-    <span class="ident">clicolor</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
+    <span class="ident">clicolor</span>: <span class="ident">bool</span>,
     <span class="ident">clicolor_force</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span>,
     <span class="comment">// XXX we can&#39;t use Option&lt;Atomic&gt; because we can&#39;t use &amp;mut references to ShouldColorize</span>
     <span class="ident">has_manual_override</span>: <span class="ident">AtomicBool</span>,
@@ -435,13 +494,14 @@
 }
 
 <span class="macro">lazy_static</span><span class="macro">!</span> {
+<span class="doccomment">/// The persistent [`ShouldColorize`].</span>
     <span class="kw">pub</span> <span class="kw">static</span> <span class="kw-2">ref</span> <span class="ident">SHOULD_COLORIZE</span>: <span class="ident">ShouldColorize</span> <span class="op">=</span> <span class="ident">ShouldColorize</span>::<span class="ident">from_env</span>();
 }
 
 <span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">ShouldColorize</span> {
     <span class="kw">fn</span> <span class="ident">default</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ShouldColorize</span> {
         <span class="ident">ShouldColorize</span> {
-            <span class="ident">clicolor</span>: <span class="prelude-val">None</span>,
+            <span class="ident">clicolor</span>: <span class="bool-val">true</span>,
             <span class="ident">clicolor_force</span>: <span class="prelude-val">None</span>,
             <span class="ident">has_manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
             <span class="ident">manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
@@ -450,25 +510,14 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ShouldColorize</span> {
-    <span class="doccomment">/// Reads environment variables to determine whether colorization should</span>
-    <span class="doccomment">/// be used or not. `CLICOLOR_FORCE` takes highest priority, followed by</span>
-    <span class="doccomment">/// `NO_COLOR`, followed by `CLICOLOR`. In the absence of manual overrides,</span>
-    <span class="doccomment">/// which take precedence over all environment variables, the priority</span>
-    <span class="doccomment">/// of these variables can be expressed as follows.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// `NO_COLOR`  | `CLICOLOR`          | `CLICOLOR_FORCE`   | colorize?</span>
-    <span class="doccomment">/// :---------  | :---------          | :---------------   | :--------</span>
-    <span class="doccomment">/// unset       | unset               | unset              | true (default)</span>
-    <span class="doccomment">/// unset       | `!= 0`              | unset              | true</span>
-    <span class="doccomment">/// unset       | `== 0`              | unset              | false</span>
-    <span class="doccomment">/// set         | unset/`== 0`/`!= 0` | unset              | false</span>
-    <span class="doccomment">/// set/unset   | unset/`== 0`/`!= 0` | `== 0`             | false</span>
-    <span class="doccomment">/// set/unset   | unset/`== 0`/`!= 0` | `!= 0`             | true</span>
+    <span class="doccomment">/// Reads environment variables and checks if output is a tty to determine</span>
+    <span class="doccomment">/// whether colorization should be used or not.</span>
+    <span class="doccomment">/// `CLICOLOR_FORCE` takes highest priority, followed by `NO_COLOR`,</span>
+    <span class="doccomment">/// followed by `CLICOLOR` combined with tty check.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">from_env</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span> {
-        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-
         <span class="ident">ShouldColorize</span> {
-            <span class="ident">clicolor</span>: <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CLICOLOR&quot;</span>)),
+            <span class="ident">clicolor</span>: <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CLICOLOR&quot;</span>)).<span class="ident">unwrap_or_else</span>(<span class="op">|</span><span class="op">|</span> <span class="bool-val">true</span>)
+                <span class="kw-2">&amp;</span><span class="op">&amp;</span> <span class="ident">atty</span>::<span class="ident">is</span>(<span class="ident">atty</span>::<span class="ident">Stream</span>::<span class="ident">Stdout</span>),
             <span class="ident">clicolor_force</span>: <span class="ident">ShouldColorize</span>::<span class="ident">resolve_clicolor_force</span>(
                 <span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;NO_COLOR&quot;</span>),
                 <span class="ident">env</span>::<span class="ident">var</span>(<span class="string">&quot;CLICOLOR_FORCE&quot;</span>),
@@ -477,6 +526,7 @@
         }
     }
 
+    <span class="doccomment">/// Returns if the current coloring is expected.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">should_colorize</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">has_manual_override</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">Relaxed</span>) {
             <span class="kw">return</span> <span class="self">self</span>.<span class="ident">manual_override</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
@@ -486,19 +536,17 @@
             <span class="kw">return</span> <span class="ident">forced_value</span>;
         }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">clicolor</span> {
-            <span class="kw">return</span> <span class="ident">value</span>;
-        }
-
-        <span class="bool-val">true</span>
+        <span class="self">self</span>.<span class="ident">clicolor</span>
     }
 
+    <span class="doccomment">/// Use this to force colored to ignore the environment and always/never colorize</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_override</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">override_colorize</span>: <span class="ident">bool</span>) {
         <span class="self">self</span>.<span class="ident">has_manual_override</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
         <span class="self">self</span>.<span class="ident">manual_override</span>
             .<span class="ident">store</span>(<span class="ident">override_colorize</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
     }
 
+    <span class="doccomment">/// Remove the manual override and let the environment decide if it&#39;s ok to colorize</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">unset_override</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">has_manual_override</span>.<span class="ident">store</span>(<span class="bool-val">false</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
     }
@@ -516,13 +564,12 @@
         <span class="ident">no_color</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">env</span>::<span class="ident">VarError</span><span class="op">&gt;</span>,
         <span class="ident">clicolor_force</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">env</span>::<span class="ident">VarError</span><span class="op">&gt;</span>,
     ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">bool</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> (
-            <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">no_color</span>),
-            <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">clicolor_force</span>),
-        ) {
-            (<span class="kw">_</span>, <span class="prelude-val">Some</span>(<span class="ident">b</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">b</span>),
-            (<span class="prelude-val">Some</span>(<span class="kw">_</span>), <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
-            (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">None</span>,
+        <span class="kw">if</span> <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">clicolor_force</span>) <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="bool-val">true</span>) {
+            <span class="prelude-val">Some</span>(<span class="bool-val">true</span>)
+        } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">ShouldColorize</span>::<span class="ident">normalize_env</span>(<span class="ident">no_color</span>).<span class="ident">is_some</span>() {
+            <span class="prelude-val">Some</span>(<span class="bool-val">false</span>)
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
         }
     }
 }
@@ -564,7 +611,7 @@
 
             <span class="ident">ctx</span>.<span class="ident">describe</span>(<span class="string">&quot;::resolve_clicolor_force&quot;</span>, <span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
                 <span class="ident">ctx</span>.<span class="ident">it</span>(
-                    <span class="string">&quot;should return None if neither NO_COLOR nor CLICOLOR_FORCE are set&quot;</span>,
+                    <span class="string">&quot;should return None if NO_COLOR is not set and CLICOLOR_FORCE is not set or set to 0&quot;</span>,
                     <span class="op">|</span><span class="op">|</span> {
                         <span class="macro">assert_eq</span><span class="macro">!</span>(
                             <span class="prelude-val">None</span>,
@@ -573,11 +620,18 @@
                                 <span class="prelude-val">Err</span>(<span class="ident">env</span>::<span class="ident">VarError</span>::<span class="ident">NotPresent</span>)
                             )
                         );
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(
+                            <span class="prelude-val">None</span>,
+                            <span class="ident">ShouldColorize</span>::<span class="ident">resolve_clicolor_force</span>(
+                                <span class="prelude-val">Err</span>(<span class="ident">env</span>::<span class="ident">VarError</span>::<span class="ident">NotPresent</span>),
+                                <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;0&quot;</span>)),
+                            )
+                        );
                     },
                 );
 
                 <span class="ident">ctx</span>.<span class="ident">it</span>(
-                    <span class="string">&quot;should return Some(false) if NO_COLOR is set and CLICOLOR_FORCE is unset&quot;</span>,
+                    <span class="string">&quot;should return Some(false) if NO_COLOR is set and CLICOLOR_FORCE is not enabled&quot;</span>,
                     <span class="op">|</span><span class="op">|</span> {
                         <span class="macro">assert_eq</span><span class="macro">!</span>(
                             <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
@@ -593,11 +647,18 @@
                                 <span class="prelude-val">Err</span>(<span class="ident">env</span>::<span class="ident">VarError</span>::<span class="ident">NotPresent</span>)
                             )
                         );
+                        <span class="macro">assert_eq</span><span class="macro">!</span>(
+                            <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                            <span class="ident">ShouldColorize</span>::<span class="ident">resolve_clicolor_force</span>(
+                                <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1&quot;</span>)),
+                                <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;0&quot;</span>)),
+                            )
+                        );
                     },
                 );
 
                 <span class="ident">ctx</span>.<span class="ident">it</span>(
-                    <span class="string">&quot;should ignore NO_COLOR and return Some(forced_value) if CLICOLOR_FORCE is set to forced_value&quot;</span>,
+                    <span class="string">&quot;should prioritize CLICOLOR_FORCE over NO_COLOR if CLICOLOR_FORCE is set to non-zero value&quot;</span>,
                     <span class="op">|</span><span class="op">|</span> {
                         <span class="macro">assert_eq</span><span class="macro">!</span>(
                             <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
@@ -610,13 +671,6 @@
                             <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
                             <span class="ident">ShouldColorize</span>::<span class="ident">resolve_clicolor_force</span>(
                                 <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;1&quot;</span>)),
-                                <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;0&quot;</span>)),
-                            )
-                        );
-                        <span class="macro">assert_eq</span><span class="macro">!</span>(
-                            <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
-                            <span class="ident">ShouldColorize</span>::<span class="ident">resolve_clicolor_force</span>(
-                                <span class="prelude-val">Err</span>(<span class="ident">env</span>::<span class="ident">VarError</span>::<span class="ident">NotPresent</span>),
                                 <span class="prelude-val">Ok</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="string">&quot;0&quot;</span>)),
                             )
                         );
@@ -644,7 +698,7 @@
             <span class="ident">ctx</span>.<span class="ident">describe</span>(<span class="string">&quot;when only changing clicolors&quot;</span>, <span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
                 <span class="ident">ctx</span>.<span class="ident">it</span>(<span class="string">&quot;clicolor == false means no colors&quot;</span>, <span class="op">|</span><span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                        <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                        <span class="ident">clicolor</span>: <span class="bool-val">false</span>,
                         ..<span class="ident">ShouldColorize</span>::<span class="ident">default</span>()
                     };
                     <span class="bool-val">false</span> <span class="op">=</span><span class="op">=</span> <span class="ident">colorize_control</span>.<span class="ident">should_colorize</span>()
@@ -652,7 +706,7 @@
 
                 <span class="ident">ctx</span>.<span class="ident">it</span>(<span class="string">&quot;clicolor == true means colors !&quot;</span>, <span class="op">|</span><span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                        <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+                        <span class="ident">clicolor</span>: <span class="bool-val">true</span>,
                         ..<span class="ident">ShouldColorize</span>::<span class="ident">default</span>()
                     };
                     <span class="bool-val">true</span> <span class="op">=</span><span class="op">=</span> <span class="ident">colorize_control</span>.<span class="ident">should_colorize</span>()
@@ -668,7 +722,7 @@
                     <span class="string">&quot;clicolor_force should force to true no matter clicolor&quot;</span>,
                     <span class="op">|</span><span class="op">|</span> {
                         <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                            <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                            <span class="ident">clicolor</span>: <span class="bool-val">false</span>,
                             <span class="ident">clicolor_force</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
                             ..<span class="ident">ShouldColorize</span>::<span class="ident">default</span>()
                         };
@@ -681,7 +735,7 @@
                     <span class="string">&quot;clicolor_force should force to false no matter clicolor&quot;</span>,
                     <span class="op">|</span><span class="op">|</span> {
                         <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                            <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+                            <span class="ident">clicolor</span>: <span class="bool-val">true</span>,
                             <span class="ident">clicolor_force</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
                             ..<span class="ident">ShouldColorize</span>::<span class="ident">default</span>()
                         };
@@ -694,7 +748,7 @@
             <span class="ident">ctx</span>.<span class="ident">describe</span>(<span class="string">&quot;using a manual override&quot;</span>, <span class="op">|</span><span class="ident">ctx</span><span class="op">|</span> {
                 <span class="ident">ctx</span>.<span class="ident">it</span>(<span class="string">&quot;shoud colorize if manual_override is true, but clicolor is false and clicolor_force also false&quot;</span>, <span class="op">|</span><span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                        <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">false</span>),
+                        <span class="ident">clicolor</span>: <span class="bool-val">false</span>,
                         <span class="ident">clicolor_force</span>: <span class="prelude-val">None</span>,
                         <span class="ident">has_manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">true</span>),
                         <span class="ident">manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">true</span>),
@@ -706,7 +760,7 @@
 
                 <span class="ident">ctx</span>.<span class="ident">it</span>(<span class="string">&quot;should not colorize if manual_override is false, but clicolor is true or clicolor_force is true&quot;</span>, <span class="op">|</span><span class="op">|</span> {
                     <span class="kw">let</span> <span class="ident">colorize_control</span> <span class="op">=</span> <span class="ident">ShouldColorize</span> {
-                        <span class="ident">clicolor</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
+                        <span class="ident">clicolor</span>: <span class="bool-val">true</span>,
                         <span class="ident">clicolor_force</span>: <span class="prelude-val">Some</span>(<span class="bool-val">true</span>),
                         <span class="ident">has_manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">true</span>),
                         <span class="ident">manual_override</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
@@ -768,4 +822,4 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "colored";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "colored";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
