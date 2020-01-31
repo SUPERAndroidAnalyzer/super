@@ -1,12 +1,5 @@
 //! Results generation module.
 
-use std::{collections::BTreeSet, fs, path::Path};
-
-use chrono::Local;
-use clap::crate_version;
-use failure::{Error, ResultExt};
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-
 mod handlebars_helpers;
 mod report;
 mod sdk_number;
@@ -23,6 +16,11 @@ use crate::{
     results::report::{Generator, HandlebarsReport, Json},
     Config,
 };
+use anyhow::{Context, Result};
+use chrono::Local;
+use clap::crate_version;
+use serde::ser::{Serialize, SerializeStruct, Serializer};
+use std::{collections::BTreeSet, fs, path::Path};
 
 /// Results representation structure.
 pub struct Results {
@@ -60,7 +58,7 @@ pub struct Results {
 impl Results {
     /// Initializes the results structure.
     #[allow(clippy::print_stdout)]
-    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self, Error> {
+    pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self> {
         let fingerprint = FingerPrint::from_package(package).map_err(|e| {
             print_warning(format!(
                 "An error occurred when trying to fingerprint the \
@@ -211,7 +209,7 @@ impl Results {
 
     /// Generates the report.
     #[allow(clippy::print_stdout)]
-    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<(), Error> {
+    pub fn generate_report<S: AsRef<str>>(&self, config: &Config, package: S) -> Result<()> {
         let path = config.results_folder().join(&self.app_package);
         if config.is_verbose() {
             println!("Starting report generation.");

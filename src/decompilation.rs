@@ -2,16 +2,14 @@
 //!
 //! Handles the extraction, decompression and  decompilation of `_.apks_`
 
+use crate::{get_package_name, print_warning, Config};
+use abxml::apk::Apk;
+use anyhow::{bail, Context, Result};
+use colored::Colorize;
 use std::{fs, path::Path, process::Command};
 
-use abxml::apk::Apk;
-use colored::Colorize;
-use failure::{bail, format_err, Error, ResultExt};
-
-use crate::{get_package_name, print_warning, Config};
-
 /// Decompresses the application using `_Apktool_`.
-pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
+pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let path = config
         .dist_folder()
         .join(package.as_ref().file_stem().unwrap());
@@ -36,10 +34,12 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
         }
 
         let mut apk = Apk::from_path(package.as_ref()).context("error loading apk file")?;
-        apk.export(&path, true).context(format_err!(
-            "could not decompress the apk file. Tried to decompile at: {}",
-            path.display()
-        ))?;
+        apk.export(&path, true).with_context(|| {
+            format!(
+                "could not decompress the apk file. Tried to decompile at: {}",
+                path.display()
+            )
+        })?;
 
         if config.is_verbose() {
             println!(
@@ -66,7 +66,7 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
 }
 
 /// Converts `_.dex_` files to `_.jar_` using `_Dex2jar_`.
-pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
+pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let classes = config.dist_folder().join(&package_name).join("classes.jar");
     if config.is_force() || !classes.exists() {
@@ -86,11 +86,13 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
         .arg("-o")
         .arg(&classes)
         .output()
-        .context(format_err!(
-            "there was an error when executing the {} to {} conversion command",
-            ".dex".italic(),
-            ".jar".italic()
-        ))?;
+        .with_context(|| {
+            format!(
+                "there was an error when executing the {} to {} conversion command",
+                ".dex".italic(),
+                ".jar".italic()
+            )
+        })?;
 
         let stderr = String::from_utf8_lossy(&output.stderr);
         // Here a small hack: seems that dex2jar outputs in stderr even if everything went well,
@@ -142,7 +144,7 @@ pub fn dex_to_jar<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(),
 }
 
 /// Decompiles the application using `_jd\_cmd_`.
-pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<(), Error> {
+pub fn decompile<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()> {
     let package_name = get_package_name(package.as_ref());
     let out_path = config.dist_folder().join(&package_name).join("classes");
     if config.is_force() || !out_path.exists() {

@@ -15,27 +15,30 @@ This was already the case for Fedora and CentOS.
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
-  - `highlight.js`: 9.13 => **9.15**
+  - `highlight.js`: 9.13 => **9.18**
   - `jQuery`: 3.3 => **3.4**
-  - `num_cpus`: 1.8 => **1.11**
+  - `num_cpus`: 1.8 => **1.12**
   - `bytecount`: 0.4 => **0.6**, with SIMD
   - `colored`: 1.6 => **1.9**
   - `open`: 1.2 => **1.3**
-  - `handlebars`: 1.1 => **2.0**
+  - `handlebars`: 1.1 => **3.0**
   - `clap`: 2.32 => **2.33**
-  - `lazy_static`: 1.2 => **1.4**
   - `toml`: 0.4 => **0.5**
   - `regex`: 1.1 => **1.3**
   - `hex`: 0.3 => **0.4**
   - `env_logger`: 0.6 => **0.7**
   - `md5`: 0.6 => **0.7**
   - `abxml`: 0.7 => **0.8**, with Android SDK 29 support
-  - `reqwest`: 0.9 => **0.10** (used for testing)
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
+- Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` *(1.3)* and
+  `anyhow` *(1.0)*, respectively.
+- Dropped the `xml-rs` dependencyy in favor of `quick-xml` *(0.17)*. This should improve
+  performance.
+- Dropped the `reqwest` testing dependency in favour of the `ureq` *(0.11)* dependency.
 - Many syntax improvements, that should bring some minor performance enhancements.
 - SUPER now requires Rust 1.39 to be build. This also brings smaller binary sizes.
 

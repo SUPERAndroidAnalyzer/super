@@ -31,18 +31,6 @@ mod results;
 mod static_analysis;
 mod utils;
 
-use std::{
-    collections::BTreeMap,
-    env, fs,
-    path::Path,
-    thread::sleep,
-    time::{Duration, Instant},
-};
-
-use clap::ArgMatches;
-use colored::Colorize;
-use failure::{bail, format_err, Error, Fail, ResultExt};
-
 pub use crate::{
     config::Config,
     utils::{
@@ -55,32 +43,42 @@ use crate::{
     results::Results,
     static_analysis::static_analysis,
 };
+use anyhow::{bail, Context, Result};
+use clap::ArgMatches;
+use colored::Colorize;
+use std::{
+    collections::BTreeMap,
+    env, fs,
+    path::Path,
+    thread::sleep,
+    time::{Duration, Instant},
+};
 
 /// Logo ASCII art, used in verbose mode.
 pub static BANNER: &str = include_str!("banner.txt");
 
-/// Enumeration of the different error kinds.
-#[derive(Debug, Fail)]
-pub enum ErrorKind {
-    /// Configuration error.
-    #[fail(display = "there was an error in the configuration: {}", message)]
-    Config {
-        /// Error message.
-        message: String,
-    },
-    /// Parsing error.
-    #[fail(display = "there was an error in the parsing process")]
-    Parse,
-    /// Template name error.
-    #[fail(display = "invalid template name: {}", message)]
-    TemplateName {
-        /// Error message.
-        message: String,
-    },
-    /// Code not found.
-    #[fail(display = "no code was found in the file")]
-    CodeNotFound,
-}
+// /// Enumeration of the different error kinds.
+// #[derive(Debug, Fail)]
+// pub enum ErrorKind {
+//     /// Configuration error.
+//     #[fail(display = "there was an error in the configuration: {}", message)]
+//     Config {
+//         /// Error message.
+//         message: String,
+//     },
+//     /// Parsing error.
+//     #[fail(display = "there was an error in the parsing process")]
+//     Parse,
+//     /// Template name error.
+//     #[fail(display = "invalid template name: {}", message)]
+//     TemplateName {
+//         /// Error message.
+//         message: String,
+//     },
+//     /// Code not found.
+//     #[fail(display = "no code was found in the file")]
+//     CodeNotFound,
+// }
 
 /// Initialize the config with the config files and command line options.
 ///
@@ -91,7 +89,7 @@ pub enum ErrorKind {
 /// analysis.
 ///
 /// It will then add the configuration selected with the command line interface options.
-pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config, Error> {
+pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config> {
     let config_path = Path::new("config.toml");
     let global_config_path = Path::new("/etc/super-analyzer/config.toml");
 
@@ -121,7 +119,7 @@ pub fn analyze_package<P: AsRef<Path>>(
     package: P,
     config: &mut Config,
     benchmarks: &mut BTreeMap<String, Vec<Benchmark>>,
-) -> Result<(), Error> {
+) -> Result<()> {
     let package_name = get_package_name(&package);
     if config.is_bench() {
         let _ = benchmarks.insert(package_name.clone(), Vec::with_capacity(4));
@@ -203,10 +201,12 @@ pub fn analyze_package<P: AsRef<Path>>(
     let report_start = Instant::now();
     results
         .generate_report(config, &package_name)
-        .context(format_err!(
-            "there was an error generating the results report at: {}",
-            config.results_folder().join(&package_name).display()
-        ))?;
+        .with_context(|| {
+            format!(
+                "there was an error generating the results report at: {}",
+                config.results_folder().join(&package_name).display()
+            )
+        })?;
 
     if config.is_verbose() {
         println!("Everything went smoothly, you can now check all the results.");
@@ -262,7 +262,7 @@ pub fn analyze_package<P: AsRef<Path>>(
 /// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
 /// files in the destination folder exist with the same name as in the origin folder, they will be
 /// overwritten.
-pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<(), Error> {
+pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     if !to.as_ref().exists() {
         fs::create_dir(to.as_ref())?;
     }
@@ -455,7 +455,7 @@ mod tests {
 
         // TODO: use an application that we control.
         // Download the .apk fie
-        let _ = reqwest::blocking::get(
+        let _ = ureq::get(
             "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
         )

@@ -2,6 +2,12 @@
 //!
 //! Handles and configures the initial settings and variables needed to run the program.
 
+use crate::{criticality::Criticality, print_warning, static_analysis::manifest};
+use anyhow::{Context, Error};
+use clap::ArgMatches;
+use colored::Colorize;
+use num_cpus;
+use serde::{de, Deserialize, Deserializer};
 use std::{
     cmp::{Ordering, PartialOrd},
     collections::{btree_set::Iter, BTreeSet},
@@ -12,15 +18,7 @@ use std::{
     str::FromStr,
     usize,
 };
-
-use clap::ArgMatches;
-use colored::Colorize;
-use failure::{format_err, Error, ResultExt};
-use num_cpus;
-use serde::{de, Deserialize, Deserializer};
 use toml::{self, value::Value};
-
-use crate::{criticality::Criticality, print_warning, static_analysis::manifest};
 
 /// Config structure.
 ///
@@ -128,12 +126,13 @@ impl Config {
     pub fn from_file<P: AsRef<Path>>(config_path: P) -> Result<Self, Error> {
         let cfg_result: Result<Self, Error> = fs::read_to_string(config_path.as_ref())
             .context("could not open configuration file")
-            .map_err(Error::from)
             .and_then(|file_content| {
-                Ok(toml::from_str(&file_content).context(format_err!(
-                    "could not decode config file: {}, using default",
-                    config_path.as_ref().to_string_lossy()
-                ))?)
+                Ok(toml::from_str(&file_content).with_context(|| {
+                    format!(
+                        "could not decode config file: {}, using default",
+                        config_path.as_ref().to_string_lossy()
+                    )
+                })?)
             })
             .and_then(|mut new_config: Self| {
                 new_config

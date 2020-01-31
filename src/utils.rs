@@ -1,28 +1,25 @@
 //! General utilities module.
 
-use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
-
+use crate::{config::Config, criticality::Criticality};
+use anyhow::Result;
 use colored::Colorize;
-use failure::Error;
-use lazy_static::lazy_static;
 use log::{log_enabled, warn, Level};
+use once_cell::unsync::Lazy;
+use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
 use xml::{
     reader::{EventReader, XmlEvent},
     ParserConfig,
 };
 
-use crate::{config::Config, criticality::Criticality};
-
-lazy_static! {
-    /// XML parser configuration.
-    #[allow(missing_debug_implementations)]
-    pub static ref PARSER_CONFIG: ParserConfig = ParserConfig::new()
-    .trim_whitespace(true)
-    .whitespace_to_characters(true)
-    .cdata_to_characters(false)
-    .ignore_comments(true)
-    .coalesce_characters(true);
-}
+/// XML parser configuration.
+pub static PARSER_CONFIG: Lazy<ParserConfig> = Lazy::new(|| {
+    ParserConfig::new()
+        .trim_whitespace(true)
+        .whitespace_to_characters(true)
+        .cdata_to_characters(false)
+        .ignore_comments(true)
+        .coalesce_characters(true)
+});
 
 /// Prints a warning to `stderr` in yellow.
 #[allow(clippy::print_stdout)]
@@ -96,7 +93,7 @@ pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
     label: L,
     config: &Config,
     package: P,
-) -> Result<String, Error> {
+) -> Result<String> {
     let code = fs::read_to_string({
         let path = config
             .dist_folder()

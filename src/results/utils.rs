@@ -3,6 +3,12 @@
 //! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
 //! information for results.
 
+use crate::criticality::Criticality;
+use anyhow::Error;
+use hex::ToHex;
+use once_cell::unsync::Lazy;
+use regex::Regex;
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::{
     borrow::Cow,
     cmp::Ordering,
@@ -10,15 +16,6 @@ use std::{
     io::{BufReader, Read},
     path::{Path, PathBuf},
 };
-
-use failure::Error;
-use hex::ToHex;
-use lazy_static::lazy_static;
-use regex::Regex;
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-use {md5, sha1, sha2};
-
-use crate::criticality::Criticality;
 
 /// Structure to store information about a vulnerability.
 #[derive(Debug, Clone, PartialEq, Eq, Ord)]
@@ -199,9 +196,9 @@ pub fn split_indent(line: &str) -> (&str, &str) {
 ///  - `>` => `&gt;`
 ///  - `&` => `&amp;`
 pub fn html_escape<'a, S: Into<Cow<'a, str>>>(input: S) -> Cow<'a, str> {
-    lazy_static! {
-        static ref REGEX: Regex = Regex::new("[<>&]").unwrap();
-    }
+    static REGEX: Lazy<Regex> =
+        Lazy::new(|| Regex::new("[<>&]").expect("could not compile regular expression"));
+
     let input = input.into();
     let mut last_match = 0;
 
