@@ -1,17 +1,15 @@
 //! This module performs the static analysis of the certificate of the application.
 
-use std::{fs, process::Command};
-
-use chrono::{Datelike, Local};
-use colored::Colorize;
-use failure::{bail, Error, ResultExt};
-
 use crate::{
     criticality::Criticality,
     print_vulnerability, print_warning,
     results::{Results, Vulnerability},
     Config,
 };
+use anyhow::{bail, Context, Error};
+use chrono::{Datelike, Local};
+use colored::Colorize;
+use std::{fs, process::Command};
 
 /// Parses the given month string.
 ///

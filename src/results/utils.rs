@@ -6,7 +6,7 @@
 use crate::criticality::Criticality;
 use anyhow::Error;
 use hex::ToHex;
-use once_cell::unsync::Lazy;
+use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use std::{

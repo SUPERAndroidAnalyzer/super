@@ -33,13 +33,18 @@ pub fn decompress<P: AsRef<Path>>(config: &mut Config, package: P) -> Result<()>
             println!("Decompressing the application.");
         }
 
-        let mut apk = Apk::from_path(package.as_ref()).context("error loading apk file")?;
-        apk.export(&path, true).with_context(|| {
-            format!(
+        // TODO: wait for `abxml` upgrade to `anyhow`, use `context()`
+        let mut apk = match Apk::from_path(package.as_ref()) {
+            Ok(apk) => apk,
+            Err(_) => bail!("error loading apk file"),
+        };
+        // TODO: wait for `abxml` upgrade to `anyhow`, use `with_context()`
+        if apk.export(&path, true).is_err() {
+            bail!(
                 "could not decompress the apk file. Tried to decompile at: {}",
                 path.display()
             )
-        })?;
+        }
 
         if config.is_verbose() {
             println!(

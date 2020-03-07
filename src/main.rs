@@ -21,19 +21,17 @@
     rust_2018_idioms
 )]
 
+use anyhow::{bail, Context, Result};
+use colored::Colorize;
+use log::{error, log_enabled, Level};
 use std::{
     collections::BTreeMap,
     io::{self, Write},
     thread::sleep,
     time::{Duration, Instant},
 };
-
-use colored::Colorize;
-use failure::{Error, ResultExt};
-use log::{error, log_enabled, Level};
-
 use super_analyzer_core::{
-    analyze_package, cli, initialize_config, initialize_logger, Benchmark, ErrorKind, BANNER,
+    analyze_package, cli, initialize_config, initialize_logger, Benchmark, BANNER,
 };
 
 /// Program entry point.
@@ -46,14 +44,16 @@ fn main() {
         error!("{}", e);
 
         // After printing the error, print the causes, in order.
-        for e in e.iter_causes() {
-            println!("\t{}{}", "Caused by: ".bold(), e);
+        let mut source = e.source();
+        while let Some(e) = source {
+            eprintln!("  {} {}\n", "Caused by:".bold(), e);
+            source = e.source();
         }
 
         // If the verbose mode is not enabled, we add a message so that the user knows that can
         // get further information with the `-v` flag in the CLI.
         if !log_enabled!(Level::Debug) {
-            println!(
+            eprintln!(
                 "If you need more information, try to run the program again with the {} flag.",
                 "-v".bold()
             );
@@ -69,7 +69,7 @@ fn main() {
 /// This runs the actual analysis. It checks the CLI, creates the logger, loads the configuration
 /// and if everything goes well, it starts the analysis. It also runs benchmarks and shows the
 /// results.
-fn run() -> Result<(), Error> {
+fn run() -> Result<()> {
     // Check the CLI arguments.
     let cli = cli::generate().get_matches();
     let verbose = cli.is_present("verbose");
@@ -94,10 +94,7 @@ fn run() -> Result<(), Error> {
             error_string.push_str(&format!("\t- {}\n", file.display()));
         }
 
-        return Err(ErrorKind::Config {
-            message: error_string,
-        }
-        .into());
+        bail!("{}", error_string);
     }
 
     // Print the banner if we are in verbose mode.

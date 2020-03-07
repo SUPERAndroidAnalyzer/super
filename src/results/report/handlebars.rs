@@ -1,5 +1,14 @@
 //! Handlebars report generation module.
 
+use crate::{
+    config::Config,
+    copy_folder,
+    results::{handlebars_helpers::*, report::Generator, utils::html_escape, Results},
+};
+use anyhow::{anyhow, bail, Context, Result};
+use colored::Colorize;
+use handlebars::Handlebars;
+use serde_json::{value::Value, Map};
 use std::{
     collections::BTreeMap,
     fs::{self, File},
@@ -7,39 +16,20 @@ use std::{
     path::Path,
 };
 
-use colored::Colorize;
-use failure::{Error, ResultExt};
-use handlebars::Handlebars;
-use serde_json::{value::Value, Map};
-
-use crate::{
-    config::Config,
-    copy_folder,
-    results::{
-        handlebars_helpers::{
-            all_code, all_lines, generate_menu, html_code, line_numbers, report_index,
-        },
-        report::Generator,
-        utils::html_escape,
-        Results,
-    },
-    ErrorKind,
-};
-
 /// Handlebars report generator.
-pub struct Report {
+pub struct Report<'r> {
     /// Handlebars template structure.
-    handler: Handlebars,
+    handler: Handlebars<'r>,
     /// Package name.
     package: String,
 }
 
-impl Report {
+impl<'r> Report<'r> {
     /// Creates a new handlebars report generator.
     pub fn from_path<P: AsRef<Path>, S: Into<String>>(
         template_path: P,
         package: S,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self> {
         let handlebars_handler =
             Self::load_templates(template_path).context("Could not load handlebars templates")?;
 
@@ -50,15 +40,15 @@ impl Report {
     }
 
     /// Loads templates from the given path.
-    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars, Error> {
+    fn load_templates<P: AsRef<Path>>(template_path: P) -> Result<Handlebars<'r>> {
         let mut handlebars = Handlebars::new();
         handlebars.register_escape_fn(|s| html_escape(s).into_owned());
-        let _ = handlebars.register_helper("line_numbers", Box::new(line_numbers));
-        let _ = handlebars.register_helper("html_code", Box::new(html_code));
-        let _ = handlebars.register_helper("report_index", Box::new(report_index));
-        let _ = handlebars.register_helper("all_code", Box::new(all_code));
-        let _ = handlebars.register_helper("all_lines", Box::new(all_lines));
-        let _ = handlebars.register_helper("generate_menu", Box::new(generate_menu));
+        let _ = handlebars.register_helper("line_numbers", Box::new(LineNumbers));
+        let _ = handlebars.register_helper("html_code", Box::new(HtmlCode));
+        let _ = handlebars.register_helper("report_index", Box::new(ReportIndex));
+        let _ = handlebars.register_helper("all_code", Box::new(AllCode));
+        let _ = handlebars.register_helper("all_lines", Box::new(AllLines));
+        let _ = handlebars.register_helper("generate_menu", Box::new(GenerateMenu));
         for dir_entry in fs::read_dir(template_path)? {
             let dir_entry = dir_entry?;
             if let Some(ext) = dir_entry.path().extension() {
@@ -66,13 +56,10 @@ impl Report {
                     let path = dir_entry.path();
                     let template_file = path
                         .file_stem()
-                        .ok_or_else(|| ErrorKind::TemplateName {
-                            message: "template files must have a file name".to_owned(),
-                        })
+                        .ok_or_else(|| anyhow!("template files must have a file name"))
                         .and_then(|stem| {
-                            stem.to_str().ok_or_else(|| ErrorKind::TemplateName {
-                                message: "template names must be unicode".to_string(),
-                            })
+                            stem.to_str()
+                                .ok_or_else(|| anyhow!("template names must be unicode"))
                         })?;
 
                     handlebars
@@ -86,21 +73,19 @@ impl Report {
             || handlebars.get_template("src").is_none()
             || handlebars.get_template("code").is_none()
         {
-            let message = format!(
+            bail!(
                 "templates must include {}, {} and {} templates",
                 "report".italic(),
                 "src".italic(),
                 "code".italic()
             );
-
-            Err(ErrorKind::TemplateName { message }.into())
-        } else {
-            Ok(handlebars)
         }
+
+        Ok(handlebars)
     }
 
     /// Generates the HTML files for the code.
-    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<(), Error> {
+    fn generate_code_html_files(&self, config: &Config, results: &Results) -> Result<()> {
         let menu = Value::Array(self.generate_code_html_folder("", config, results)?);
 
         let mut f = File::create(
@@ -124,7 +109,7 @@ impl Report {
         path: P,
         config: &Config,
         results: &Results,
-    ) -> Result<Vec<Value>, Error> {
+    ) -> Result<Vec<Value>> {
         if path.as_ref() == Path::new("classes/android")
             || path.as_ref() == Path::new("classes/com/google/android/gms")
             || path.as_ref() == Path::new("smali")
@@ -204,7 +189,7 @@ impl Report {
         config: &Config,
         results: &Results,
         cli_package_name: S,
-    ) -> Result<(), Error> {
+    ) -> Result<()> {
         let code = fs::read_to_string(
             config
                 .dist_folder()
@@ -240,9 +225,9 @@ impl Report {
     }
 }
 
-impl Generator for Report {
+impl<'r> Generator for Report<'r> {
     #[allow(clippy::print_stdout)]
-    fn generate(&mut self, config: &Config, results: &Results) -> Result<(), Error> {
+    fn generate(&mut self, config: &Config, results: &Results) -> Result<()> {
         if config.is_verbose() {
             println!("Starting HTML report generation. First we create the file.")
         }

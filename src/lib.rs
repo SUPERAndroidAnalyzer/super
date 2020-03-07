@@ -21,7 +21,14 @@
     missing_copy_implementations,
     rust_2018_idioms
 )]
-#![allow(clippy::must_use_candidate)]
+#![allow(
+    clippy::must_use_candidate,
+    // TODO: add section to documentation
+    clippy::missing_errors_doc,
+    clippy::cast_sign_loss,
+    clippy::cast_possible_truncation,
+    clippy::cast_precision_loss
+)]
 
 pub mod cli;
 mod config;
@@ -35,7 +42,6 @@ pub use crate::{
     config::Config,
     utils::{
         get_code, get_package_name, get_string, print_vulnerability, print_warning, Benchmark,
-        PARSER_CONFIG,
     },
 };
 use crate::{
@@ -56,29 +62,6 @@ use std::{
 
 /// Logo ASCII art, used in verbose mode.
 pub static BANNER: &str = include_str!("banner.txt");
-
-// /// Enumeration of the different error kinds.
-// #[derive(Debug, Fail)]
-// pub enum ErrorKind {
-//     /// Configuration error.
-//     #[fail(display = "there was an error in the configuration: {}", message)]
-//     Config {
-//         /// Error message.
-//         message: String,
-//     },
-//     /// Parsing error.
-//     #[fail(display = "there was an error in the parsing process")]
-//     Parse,
-//     /// Template name error.
-//     #[fail(display = "invalid template name: {}", message)]
-//     TemplateName {
-//         /// Error message.
-//         message: String,
-//     },
-//     /// Code not found.
-//     #[fail(display = "no code was found in the file")]
-//     CodeNotFound,
-// }
 
 /// Initialize the config with the config files and command line options.
 ///
@@ -347,10 +330,15 @@ pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
 /// integration tests.
 #[cfg(test)]
 mod tests {
-    use std::{collections::BTreeMap, fs, path::Path, str::FromStr};
-
     use super::analyze_package;
     use crate::{config::Config, criticality::Criticality};
+    use std::{
+        collections::BTreeMap,
+        fs,
+        io::{self, BufReader, BufWriter},
+        path::Path,
+        str::FromStr,
+    };
 
     /// This tests checks that the `Criticality` enumeration works as expected.
     ///
@@ -451,17 +439,23 @@ mod tests {
             fs::create_dir("downloads").unwrap();
         }
         // Create the destination file.
-        let mut apk_file = fs::File::create("downloads/test_app.apk").unwrap();
+        let mut apk_file = BufWriter::new(
+            fs::File::create("downloads/test_app.apk")
+                .expect("could not create APK file for download"),
+        );
 
         // TODO: use an application that we control.
         // Download the .apk fie
-        let _ = ureq::get(
-            "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
+        let mut response = BufReader::new(
+            ureq::get(
+                "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
              com.javiersantos.mlmanager_1.0.4.1.apk",
-        )
-        .unwrap()
-        .copy_to(&mut apk_file)
-        .unwrap();
+            )
+            .call()
+            .into_reader(),
+        );
+        let _ = io::copy(&mut response, &mut apk_file)
+            .expect("could not write downloaded APK file to disk");
 
         // Initialize minimum configuration.
         let mut benchmarks = BTreeMap::new();

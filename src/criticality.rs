@@ -1,13 +1,11 @@
 //! Criticality module.
 
+use anyhow::{bail, Error};
+use serde::{Deserialize, Serialize};
 use std::{
     fmt::{self, Display},
     str::FromStr,
 };
-
-use serde::{Deserialize, Serialize};
-
-use crate::ErrorKind;
 
 /// Vulnerability criticality
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Serialize, Deserialize)]
@@ -33,7 +31,7 @@ impl Display for Criticality {
 }
 
 impl FromStr for Criticality {
-    type Err = ErrorKind;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "critical" => Ok(Self::Critical),
@@ -41,7 +39,7 @@ impl FromStr for Criticality {
             "medium" => Ok(Self::Medium),
             "low" => Ok(Self::Low),
             "warning" => Ok(Self::Warning),
-            _ => Err(ErrorKind::Parse),
+            _ => bail!("could not parse {} as a Criticality", s),
         }
     }
 }

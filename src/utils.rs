@@ -1,25 +1,11 @@
 //! General utilities module.
 
 use crate::{config::Config, criticality::Criticality};
-use anyhow::Result;
+use anyhow::{Context, Result};
 use colored::Colorize;
 use log::{log_enabled, warn, Level};
-use once_cell::unsync::Lazy;
-use std::{fmt, fs, path::Path, thread::sleep, time::Duration};
-use xml::{
-    reader::{EventReader, XmlEvent},
-    ParserConfig,
-};
-
-/// XML parser configuration.
-pub static PARSER_CONFIG: Lazy<ParserConfig> = Lazy::new(|| {
-    ParserConfig::new()
-        .trim_whitespace(true)
-        .whitespace_to_characters(true)
-        .cdata_to_characters(false)
-        .ignore_comments(true)
-        .coalesce_characters(true)
-});
+use quick_xml::{events::Event, Reader};
+use std::{fmt, fs::File, io::BufReader, path::Path, thread::sleep, time::Duration};
 
 /// Prints a warning to `stderr` in yellow.
 #[allow(clippy::print_stdout)]
@@ -89,57 +75,60 @@ pub fn get_code<S: AsRef<str>>(code: S, s_line: usize, e_line: usize) -> String 
 }
 
 /// Gets a string from the strings XML file.
-pub fn get_string<L: AsRef<str>, P: AsRef<str>>(
-    label: L,
-    config: &Config,
-    package: P,
-) -> Result<String> {
-    let code = fs::read_to_string({
-        let path = config
+pub fn get_string<L, P>(label: L, config: &Config, package: P) -> Result<Option<String>>
+where
+    L: AsRef<[u8]>,
+    P: AsRef<str>,
+{
+    // TODO: Lazy static HashMap.
+    let mut path = config
+        .dist_folder()
+        .join(package.as_ref())
+        .join("res")
+        .join("values-en")
+        .join("strings.xml");
+
+    if !path.exists() {
+        path = config
             .dist_folder()
             .join(package.as_ref())
             .join("res")
-            .join("values-en")
+            .join("values")
             .join("strings.xml");
+    }
 
-        if path.exists() {
-            path
-        } else {
-            config
-                .dist_folder()
-                .join(package.as_ref())
-                .join("res")
-                .join("values")
-                .join("strings.xml")
-        }
-    })?;
+    let file = File::open(&path).with_context(|| format!("could not open `{}`", path.display()))?;
 
-    let bytes = code.into_bytes();
-    let parser = EventReader::new_with_config(bytes.as_slice(), PARSER_CONFIG.clone());
+    let buffer = BufReader::new(file);
+
+    let mut reader = Reader::from_reader(buffer);
+    let _ = reader.trim_text(true);
 
     let mut found = false;
-    for e in parser {
-        match e {
-            Ok(XmlEvent::StartElement {
-                name, attributes, ..
-            }) => {
-                if let "string" = name.local_name.as_str() {
-                    for attr in attributes {
-                        if attr.name.local_name == "name" && attr.value == label.as_ref() {
+    let mut buf = Vec::new();
+    loop {
+        match reader.read_event(&mut buf) {
+            Ok(Event::Start(e)) => {
+                if e.local_name() == b"string" {
+                    for attr in e.attributes() {
+                        let attr = attr?;
+
+                        if attr.key == b"name" && attr.value == label.as_ref() {
                             found = true;
                         }
                     }
                 }
             }
-            Ok(XmlEvent::Characters(data)) => {
+            Ok(Event::CData(data)) | Ok(Event::Text(data)) => {
                 if found {
-                    return Ok(data);
+                    let result = String::from_utf8(data.unescaped()?.into())?;
+                    return Ok(Some(result));
                 }
             }
+            Ok(Event::Eof) => return Ok(None),
             _ => {}
         }
     }
-    Ok(String::new())
 }
 
 /// Structure to store a benchmark information.

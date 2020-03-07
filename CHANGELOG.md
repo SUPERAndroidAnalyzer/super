@@ -15,6 +15,7 @@ This was already the case for Fedora and CentOS.
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
+  - `jd-cmd`: moved to **1.0**
   - `highlight.js`: 9.13 => **9.18**
   - `jQuery`: 3.3 => **3.4**
   - `num_cpus`: 1.8 => **1.12**
