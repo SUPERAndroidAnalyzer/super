@@ -275,7 +275,7 @@ impl<'de> Deserialize<'de> for Permission {
     {
         use serde::de::Error;
 
-        let result_str: &str = serde::Deserialize::deserialize(de)?;
+        let result_str: String = serde::Deserialize::deserialize(de)?;
 
         Self::try_from(result_str.as_bytes()).map_err(D::Error::custom)
     }
