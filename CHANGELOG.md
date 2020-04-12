@@ -17,11 +17,11 @@ This was already the case for Fedora and CentOS.
 - Upgraded dependencies:
   - `jd-cmd`: moved to **1.0**
   - `highlight.js`: 9.13 => **9.18**
-  - `jQuery`: 3.3 => **3.4**
+  - `jQuery`: 3.3 => **3.5**
   - `num_cpus`: 1.8 => **1.12**
   - `bytecount`: 0.4 => **0.6**, with SIMD
   - `colored`: 1.6 => **1.9**
-  - `open`: 1.2 => **1.3**
+  - `open`: 1.2 => **1.4**
   - `handlebars`: 1.1 => **3.0**
   - `clap`: 2.32 => **2.33**
   - `toml`: 0.4 => **0.5**
@@ -37,9 +37,9 @@ This was already the case for Fedora and CentOS.
   readability of code.
 - Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` *(1.3)* and
   `anyhow` *(1.0)*, respectively.
-- Dropped the `xml-rs` dependencyy in favor of `quick-xml` *(0.17)*. This should improve
+- Dropped the `xml-rs` dependencyy in favor of `quick-xml` *(0.18)*. This should improve
   performance.
-- Dropped the `reqwest` testing dependency in favour of the `ureq` *(0.11)* dependency.
+- Dropped the `reqwest` testing dependency in favour of the `ureq` *(0.12)* dependency.
 - Many syntax improvements, that should bring some minor performance enhancements.
 - SUPER now requires Rust 1.39 to be build. This also brings smaller binary sizes.
 
