@@ -6,11 +6,10 @@ use crate::{criticality::Criticality, print_warning, static_analysis::manifest};
 use anyhow::{Context, Error};
 use clap::ArgMatches;
 use colored::Colorize;
-use num_cpus;
 use serde::{de, Deserialize, Deserializer};
 use std::{
     cmp::{Ordering, PartialOrd},
-    collections::{btree_set::Iter, BTreeSet},
+    collections::BTreeSet,
     convert::From,
     fs,
     path::{Path, PathBuf},
@@ -127,19 +126,19 @@ impl Config {
         let cfg_result: Result<Self, Error> = fs::read_to_string(config_path.as_ref())
             .context("could not open configuration file")
             .and_then(|file_content| {
-                Ok(toml::from_str(&file_content).with_context(|| {
+                toml::from_str(&file_content).with_context(|| {
                     format!(
                         "could not decode config file: {}, using default",
                         config_path.as_ref().to_string_lossy()
                     )
-                })?)
+                })
             })
-            .and_then(|mut new_config: Self| {
+            .map(|mut new_config: Self| {
                 new_config
                     .loaded_files
                     .push(config_path.as_ref().to_path_buf());
 
-                Ok(new_config)
+                new_config
             });
 
         cfg_result
@@ -468,7 +467,7 @@ impl Config {
     }
 
     /// Returns the loaded `permissions`.
-    pub fn permissions(&self) -> Iter<'_, Permission> {
+    pub fn permissions(&self) -> impl Iterator<Item = &Permission> {
         self.permissions.iter()
     }
 

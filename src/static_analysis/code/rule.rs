@@ -10,8 +10,7 @@ use serde::{
     de::{self, SeqAccess, Visitor},
     Deserialize, Deserializer,
 };
-use serde_json;
-use std::{fmt, fs::File, slice::Iter};
+use std::{fmt, fs::File};
 
 /// Vulnerability searching rule.
 #[derive(Debug, Deserialize)]
@@ -43,7 +42,7 @@ impl Rule {
     }
 
     /// Gets the permissions required for this rule to be checked.
-    pub fn permissions(&self) -> Iter<'_, Permission> {
+    pub fn permissions(&self) -> impl Iterator<Item = &Permission> {
         self.permissions.iter()
     }
 
@@ -73,7 +72,7 @@ impl Rule {
     }
 
     /// Gets the whitelist regex list.
-    pub fn whitelist(&self) -> Iter<'_, Regex> {
+    pub fn whitelist(&self) -> impl Iterator<Item = &Regex> {
         self.whitelist.iter()
     }
 
@@ -191,9 +190,7 @@ where
         where
             D: Deserializer<'de>,
         {
-            deserializer
-                .deserialize_str(RegexVisitor)
-                .and_then(|regex| Ok(Some(regex)))
+            deserializer.deserialize_str(RegexVisitor).map(Some)
         }
 
         fn visit_none<E>(self) -> Result<Self::Value, E>

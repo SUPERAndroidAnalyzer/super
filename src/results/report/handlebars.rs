@@ -3,7 +3,12 @@
 use crate::{
     config::Config,
     copy_folder,
-    results::{handlebars_helpers::*, report::Generator, utils::html_escape, Results},
+    results::{
+        handlebars_helpers::{AllCode, AllLines, GenerateMenu, HtmlCode, LineNumbers, ReportIndex},
+        report::Generator,
+        utils::html_escape,
+        Results,
+    },
 };
 use anyhow::{anyhow, bail, Context, Result};
 use colored::Colorize;
@@ -258,7 +263,7 @@ impl<'r> Generator for Report<'r> {
                 match entry_path.as_path().extension() {
                     Some(e) if e == "hbs" => {}
                     None => {}
-                    _ => {
+                    Some(_) => {
                         let _ = fs::copy(
                             &entry_path,
                             &config.results_folder().join(&results.app_package()),

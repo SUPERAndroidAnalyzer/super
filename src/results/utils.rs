@@ -9,6 +9,8 @@ use hex::ToHex;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
+use sha1::Sha1;
+use sha2::Sha256;
 use std::{
     borrow::Cow,
     cmp::Ordering,
@@ -151,13 +153,12 @@ impl FingerPrint {
         let mut buffer = Vec::with_capacity(file.metadata()?.len() as usize);
         let _ = BufReader::new(file).read_to_end(&mut buffer)?;
 
-        let sha1 = sha1::Sha1::from(&buffer);
+        let sha1 = Sha1::from(&buffer);
 
-        let mut sha256 = sha2::Sha256::default();
-        sha256.input(&buffer);
+        let sha256 = Sha256::digest(&buffer);
 
         let mut sha256_res = [0_u8; 32];
-        sha256_res.clone_from_slice(&sha256.result()[..]);
+        sha256_res.clone_from_slice(&sha256[..]);
         Ok(Self {
             md5: md5::compute(&buffer),
             sha1: sha1.digest(),
