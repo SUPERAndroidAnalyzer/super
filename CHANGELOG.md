@@ -16,32 +16,34 @@ This was already the case for Fedora and CentOS.
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
   - `jd-cmd`: moved to **1.0**
-  - `highlight.js`: 9.13 => **9.18**
+  - `highlight.js`: 9.13 => **10.1**
   - `jQuery`: 3.3 => **3.5**
-  - `num_cpus`: 1.8 => **1.12**
+  - `num_cpus`: 1.8 => **1.13**
   - `bytecount`: 0.4 => **0.6**, with SIMD
-  - `colored`: 1.6 => **1.9**
+  - `colored`: 1.6 => **2.0**
   - `open`: 1.2 => **1.4**
-  - `handlebars`: 1.1 => **3.0**
+  - `handlebars`: 1.1 => **3.3**
   - `clap`: 2.32 => **2.33**
   - `toml`: 0.4 => **0.5**
   - `regex`: 1.1 => **1.3**
   - `hex`: 0.3 => **0.4**
   - `env_logger`: 0.6 => **0.7**
   - `md5`: 0.6 => **0.7**
+  - `sha2`: 0.8 => **0.9**
   - `abxml`: 0.7 => **0.8**, with Android SDK 29 support
+  - `semver`: 0.9 => **0.10**
   - Some other minor upgrades.
 
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
-- Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` *(1.3)* and
+- Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` *(1.4)* and
   `anyhow` *(1.0)*, respectively.
 - Dropped the `xml-rs` dependencyy in favor of `quick-xml` *(0.18)*. This should improve
   performance.
-- Dropped the `reqwest` testing dependency in favour of the `ureq` *(0.12)* dependency.
+- Dropped the `reqwest` testing dependency in favour of the `ureq` *(1.3)* dependency.
 - Many syntax improvements, that should bring some minor performance enhancements.
-- SUPER now requires Rust 1.39 to be build. This also brings smaller binary sizes.
+- SUPER now requires Rust 1.40 to be build. This also brings smaller binary sizes.
 
 ## SUPER 0.5.1
 
