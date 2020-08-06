@@ -63,6 +63,8 @@ pub enum SdkNumber {
     Api28,
     /// API version 29.
     Api29,
+    /// API version 30.
+    Api30,
 
     /// Development API version.
     Development,
@@ -106,6 +108,7 @@ impl SdkNumber {
             Self::Api27 => 27,
             Self::Api28 => 28,
             Self::Api29 => 29,
+            Self::Api30 => 30,
 
             Self::Development => 10_000,
             Self::Unknown(v) => v,
@@ -319,6 +322,13 @@ impl SdkNumber {
                 pre: vec![],
                 build: vec![],
             }),
+            Self::Api30 => Some(Version {
+                major: 11,
+                minor: 0,
+                patch: 0,
+                pre: vec![],
+                build: vec![],
+            }),
 
             Self::Development | Self::Unknown(_) => None,
         }
@@ -353,6 +363,7 @@ impl SdkNumber {
             Self::Api26 | Self::Api27 => "Oreo",
             Self::Api28 => "Pie",
             Self::Api29 => "Android 10",
+            Self::Api30 => "Android 11",
 
             Self::Development => "Development",
             Self::Unknown(_) => "Unknown",
@@ -392,6 +403,7 @@ impl From<u32> for SdkNumber {
             27 => Self::Api27,
             28 => Self::Api28,
             29 => Self::Api29,
+            30 => Self::Api30,
 
             10_000 => Self::Development,
             t => Self::Unknown(t),
@@ -459,9 +471,10 @@ mod tests {
         assert_eq!(SdkNumber::from(27), SdkNumber::Api27);
         assert_eq!(SdkNumber::from(28), SdkNumber::Api28);
         assert_eq!(SdkNumber::from(29), SdkNumber::Api29);
+        assert_eq!(SdkNumber::from(30), SdkNumber::Api30);
 
         // Unknown APIs.
-        assert_eq!(SdkNumber::from(30), SdkNumber::Unknown(30));
+        assert_eq!(SdkNumber::from(31), SdkNumber::Unknown(31));
         assert_eq!(SdkNumber::from(77), SdkNumber::Unknown(77));
         assert_eq!(SdkNumber::from(2345), SdkNumber::Unknown(2345));
 
@@ -501,6 +514,7 @@ mod tests {
         assert_eq!(SdkNumber::Api27.number(), 27);
         assert_eq!(SdkNumber::Api28.number(), 28);
         assert_eq!(SdkNumber::Api29.number(), 29);
+        assert_eq!(SdkNumber::Api30.number(), 30);
 
         // Unknown APIs.
         assert_eq!(SdkNumber::Unknown(30).number(), 30);
@@ -637,6 +651,10 @@ mod tests {
             SdkNumber::Api29.version().unwrap(),
             Version::parse("10.0.0").unwrap()
         );
+        assert_eq!(
+            SdkNumber::Api30.version().unwrap(),
+            Version::parse("11.0.0").unwrap()
+        );
 
         // Unknown APIs.
         assert!(SdkNumber::Unknown(30).version().is_none());
@@ -679,6 +697,7 @@ mod tests {
         assert_eq!(SdkNumber::Api27.name(), "Oreo");
         assert_eq!(SdkNumber::Api28.name(), "Pie");
         assert_eq!(SdkNumber::Api29.name(), "Android 10");
+        assert_eq!(SdkNumber::Api30.name(), "Android 11");
 
         // Unknown APIs.
         assert_eq!(SdkNumber::Unknown(30).name(), "Unknown");
@@ -808,6 +827,10 @@ mod tests {
         assert_eq!(
             prettify_android_version(&SdkNumber::Api29.version().unwrap()),
             "10"
+        );
+        assert_eq!(
+            prettify_android_version(&SdkNumber::Api30.version().unwrap()),
+            "11"
         );
     }
 }
