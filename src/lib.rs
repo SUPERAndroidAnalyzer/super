@@ -438,24 +438,28 @@ mod tests {
         if need_to_create {
             fs::create_dir("downloads").unwrap();
         }
-        // Create the destination file.
-        let mut apk_file = BufWriter::new(
-            fs::File::create("downloads/test_app.apk")
-                .expect("could not create APK file for download"),
-        );
 
-        // TODO: use an application that we control.
-        // Download the .apk fie
-        let mut response = BufReader::new(
-            ureq::get(
-                "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
-             com.javiersantos.mlmanager_1.0.4.1.apk",
-            )
-            .call()
-            .into_reader(),
-        );
-        let _ = io::copy(&mut response, &mut apk_file)
-            .expect("could not write downloaded APK file to disk");
+        // Explicit scope to make sure the contents of the download get written to disk
+        {
+            // Create the destination file.
+            let mut apk_file = BufWriter::new(
+                fs::File::create("downloads/test_app.apk")
+                    .expect("could not create APK file for download"),
+            );
+
+            // TODO: use an application that we control.
+            // Download the .apk fie
+            let mut response = BufReader::new(
+                ureq::get(
+                    "https://github.com/javiersantos/MLManager/releases/download/v1.0.4.1/\
+                 com.javiersantos.mlmanager_1.0.4.1.apk",
+                )
+                .call()
+                .into_reader(),
+            );
+            let _ = io::copy(&mut response, &mut apk_file)
+                .expect("could not write downloaded APK file to disk");
+        }
 
         // Initialize minimum configuration.
         let mut benchmarks = BTreeMap::new();
