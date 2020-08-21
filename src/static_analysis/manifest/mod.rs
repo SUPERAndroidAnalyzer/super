@@ -79,8 +79,8 @@ pub fn analysis<S: AsRef<str>>(
         if config.is_verbose() {
             println!(
                 "This does not mean that something went wrong, but it's supposed to have the \
-                 application in the format {{package}}.apk in the {} folder and use the package as \
-                 the application ID for this auditor.",
+                 application in the format {{package}}.apk in the {} folder and use the package \
+                 as the application ID for this auditor.",
                 "downloads".italic()
             );
         }
@@ -270,8 +270,8 @@ impl Manifest {
                         _ => continue,
                     } {
                         print_warning(format!(
-                            "An error occurred when parsing the `AndroidManifest.xml` file: {}.\n\
-                             The process will continue, though.",
+                            "An error occurred when parsing the `AndroidManifest.xml` file: \
+                             {}.\nThe process will continue, though.",
                             e
                         ));
                     };
@@ -305,8 +305,8 @@ impl Manifest {
                         .parse::<u32>()
                         .map_err(|e| {
                             print_warning(format!(
-                                "An error occurred when parsing the version in the manifest: {}.\
-                                 \nThe process will continue, though.",
+                                "An error occurred when parsing the version in the manifest: \
+                                 {}.\nThe process will continue, though.",
                                 e
                             ));
                             e
@@ -319,8 +319,8 @@ impl Manifest {
                 Some(b"installLocation") => {
                     let location = InstallLocation::try_from(attr.value.as_ref()).map_err(|e| {
                         print_warning(format!(
-                            "An error occurred when parsing the `installLocation` attribute \
-                                 in the manifest: {}.\nThe process will continue, though.",
+                            "An error occurred when parsing the `installLocation` attribute in \
+                             the manifest: {}.\nThe process will continue, though.",
                             e
                         ));
                         e
@@ -391,8 +391,8 @@ impl Manifest {
                         .parse::<bool>()
                         .map_err(|e| {
                             print_warning(format!(
-                                "An error occurred when parsing the `debuggable` attribute in \
-                                 the manifest: {}.\nThe process will continue, though.",
+                                "An error occurred when parsing the `debuggable` attribute in the \
+                                 manifest: {}.\nThe process will continue, though.",
                                 e
                             ));
                         })
@@ -450,24 +450,27 @@ impl Manifest {
                 }
                 Some(b"label") => {
                     if attr.value.starts_with(b"@string/") {
-                        if let Ok(Some(label)) = get_string(&attr.value[8..], config, package.as_ref()).map_err(|e|{
+                        if let Ok(Some(label)) =
+                            get_string(&attr.value[8..], config, package.as_ref()).map_err(|e| {
                                 print_warning(format!(
                                     "An error occurred when trying to get the string for the app \
-                                     label in the manifest: {}.\nThe process will continue, though.",
+                                     label in the manifest: {}.\nThe process will continue, \
+                                     though.",
                                     e
                                 ));
-                            }) {
-                                self.set_label(label)
-                            }
-                    } else if let Ok(label) = str::from_utf8(&attr.value).map_err(|e|{
-                                print_warning(format!(
-                                    "An error occurred when trying to get the string for the app \
-                                     label in the manifest: {}.\nThe process will continue, though.",
-                                    e
-                                ));
-                            }) {
-                                self.set_label(label);
-                            }
+                            })
+                        {
+                            self.set_label(label)
+                        }
+                    } else if let Ok(label) = str::from_utf8(&attr.value).map_err(|e| {
+                        print_warning(format!(
+                            "An error occurred when trying to get the string for the app label in \
+                             the manifest: {}.\nThe process will continue, though.",
+                            e
+                        ));
+                    }) {
+                        self.set_label(label);
+                    }
                 }
                 _ => {}
             }
@@ -489,8 +492,8 @@ impl Manifest {
                     p
                 } else if let Ok(value) = str::from_utf8(&attr.value).map_err(|e| {
                     print_warning(format!(
-                        "An error occurred when trying to get the string for the permission \
-                            name in the manifest: {}.\nThe process will continue, though.",
+                        "An error occurred when trying to get the string for the permission name \
+                         in the manifest: {}.\nThe process will continue, though.",
                         e
                     ));
                 }) {
@@ -543,8 +546,8 @@ impl Manifest {
                             .map_err(|e| {
                                 print_warning(format!(
                                     "An error occurred when trying to get the string for the \
-                                        `exported` in the manifest: {}.\nThe process will \
-                                        continue, though.",
+                                     `exported` in the manifest: {}.\nThe process will continue, \
+                                     though.",
                                     e
                                 ));
                             })
@@ -552,8 +555,8 @@ impl Manifest {
                                 s.parse::<bool>().map_err(|e| {
                                     print_warning(format!(
                                         "An error occurred when trying to get the string for the \
-                                        `exported` in the manifest: {}.\nThe process will \
-                                        continue, though.",
+                                         `exported` in the manifest: {}.\nThe process will \
+                                         continue, though.",
                                         e
                                     ));
                                 })
@@ -567,8 +570,8 @@ impl Manifest {
                             .map_err(|e| {
                                 print_warning(format!(
                                     "An error occurred when trying to get the string for the \
-                                        `exported` in the manifest: {}.\nThe process will \
-                                        continue, though.",
+                                     `exported` in the manifest: {}.\nThe process will continue, \
+                                     though.",
                                     e
                                 ));
                             })

@@ -208,26 +208,27 @@ pub fn load_rules(config: &Config) -> Result<Vec<Rule>> {
     let f = File::open(config.rules_json())?;
     let format_error = || {
         format!(
-        "rules must be objects with the following structure:\n{}\nAn optional {} attribute can be \
-         added: an array of regular expressions that if matched, the found match will be \
-         discarded. You can also include an optional {} attribute: an array of the permissions \
-         needed for this rule to be checked. And finally, an optional {} attribute can be added \
-         where you can specify a second regular expression to check if the one in the {} attribute \
-         matches. You can add one or two capture groups with name from the match to this check, \
-         with names {} and {}. To use them you have to include {} or {} in the forward check.",
-        "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for this \
-         rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
-         \"regex_to_find_vulnerability\"\n}"
-            .italic(),
-        "whitelist".italic(),
-        "permissions".italic(),
-        "forward_check".italic(),
-        "regex".italic(),
-        "fc1".italic(),
-        "fc2".italic(),
-        "{fc1}".italic(),
-        "{fc2}".italic()
-    )
+            "rules must be objects with the following structure:\n{}\nAn optional {} attribute \
+             can be added: an array of regular expressions that if matched, the found match will \
+             be discarded. You can also include an optional {} attribute: an array of the \
+             permissions needed for this rule to be checked. And finally, an optional {} \
+             attribute can be added where you can specify a second regular expression to check if \
+             the one in the {} attribute matches. You can add one or two capture groups with name \
+             from the match to this check, with names {} and {}. To use them you have to include \
+             {} or {} in the forward check.",
+            "{\n\t\"label\": \"Label for the rule\",\n\t\"description\": \"Long description for \
+             this rule\"\n\t\"criticality\": \"warning|low|medium|high|critical\"\n\t\"regex\": \
+             \"regex_to_find_vulnerability\"\n}"
+                .italic(),
+            "whitelist".italic(),
+            "permissions".italic(),
+            "forward_check".italic(),
+            "regex".italic(),
+            "fc1".italic(),
+            "fc2".italic(),
+            "{fc1}".italic(),
+            "{fc2}".italic()
+        )
     };
 
     let rules: Vec<Rule> = serde_json::from_reader(f).with_context(format_error)?;
@@ -245,13 +246,11 @@ pub fn load_rules(config: &Config) -> Result<Vec<Rule>> {
 
                     if fc1_in_regex && !fc1_in_fc {
                         Some(Err(anyhow!(
-                            "fc1 capture group used but no placeholder found in the forward \
-                                 check",
+                            "fc1 capture group used but no placeholder found in the forward check",
                         )))
                     } else if fc2_in_regex && !fc2_in_fc {
                         Some(Err(anyhow!(
-                            "fc2 capture group used but no placeholder found in the forward \
-                                 check",
+                            "fc2 capture group used but no placeholder found in the forward check",
                         )))
                     } else {
                         if fc2_in_regex && !fc1_in_regex {

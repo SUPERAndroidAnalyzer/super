@@ -1,8 +1,9 @@
 //! SUPER Android Analyzer core library.
 //!
-//! This library contains the code for analyzing Android applications. It's called by the
-//! launcher and contains the main logic of the analysis, with the configuration management,
-//! the logger initialization and some utility functions.
+//! This library contains the code for analyzing Android applications. It's
+//! called by the launcher and contains the main logic of the analysis, with the
+//! configuration management, the logger initialization and some utility
+//! functions.
 
 #![forbid(anonymous_parameters)]
 #![warn(clippy::pedantic)]
@@ -65,13 +66,14 @@ pub static BANNER: &str = include_str!("banner.txt");
 
 /// Initialize the config with the config files and command line options.
 ///
-/// On UNIX, if local file, `config.toml`, does not exist, but the global one does
-/// `/etc/super-analyzer/config.toml`, the latter is used. Otherwise, the local file
-/// is used. Finally, if non of the files could be loaded, the default configuration
-/// is used. This default configuration contains the minimal setup for running the
-/// analysis.
+/// On UNIX, if local file, `config.toml`, does not exist, but the global one
+/// does `/etc/super-analyzer/config.toml`, the latter is used. Otherwise, the
+/// local file is used. Finally, if non of the files could be loaded, the
+/// default configuration is used. This default configuration contains the
+/// minimal setup for running the analysis.
 ///
-/// It will then add the configuration selected with the command line interface options.
+/// It will then add the configuration selected with the command line interface
+/// options.
 pub fn initialize_config(cli: &ArgMatches<'static>) -> Result<Config> {
     let config_path = Path::new("config.toml");
     let global_config_path = Path::new("/etc/super-analyzer/config.toml");
@@ -242,9 +244,9 @@ pub fn analyze_package<P: AsRef<Path>>(
 
 /// Copies the contents of `from` to `to`
 ///
-/// If the destination folder doesn't exist is created. Note that the parent folder must exist. If
-/// files in the destination folder exist with the same name as in the origin folder, they will be
-/// overwritten.
+/// If the destination folder doesn't exist is created. Note that the parent
+/// folder must exist. If files in the destination folder exist with the same
+/// name as in the origin folder, they will be overwritten.
 pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
     if !to.as_ref().exists() {
         fs::create_dir(to.as_ref())?;
@@ -271,12 +273,14 @@ pub fn copy_folder<P: AsRef<Path>>(from: P, to: P) -> Result<()> {
 
 /// Initializes the logger.
 ///
-/// This will initialize the environment logger structure so that it generates the
-/// proper messages using the right colors. It's called from the launcher.
+/// This will initialize the environment logger structure so that it generates
+/// the proper messages using the right colors. It's called from the launcher.
 #[allow(clippy::print_stdout)]
 pub fn initialize_logger(is_verbose: bool) -> Result<(), log::SetLoggerError> {
-    use env_logger::fmt::{Color, Formatter};
-    use env_logger::Builder;
+    use env_logger::{
+        fmt::{Color, Formatter},
+        Builder,
+    };
     use log::{Level, LevelFilter, Record};
     use std::io::Write;
 
@@ -342,8 +346,8 @@ mod tests {
 
     /// This tests checks that the `Criticality` enumeration works as expected.
     ///
-    /// It checks the conversion both from and to strings, the comparisons between
-    /// criticality levels and the debug format.
+    /// It checks the conversion both from and to strings, the comparisons
+    /// between criticality levels and the debug format.
     #[allow(clippy::cognitive_complexity)]
     #[test]
     fn it_criticality() {

@@ -15,6 +15,7 @@ This was already the case for Fedora and CentOS.
 
 - Report generation should be a bit faster thanks to SIMD intrinsics.
 - Upgraded dependencies:
+
   - `jd-cmd`: moved to **1.0**
   - `highlight.js`: 9.13 => **10.1**
   - `jQuery`: 3.3 => **3.5**
@@ -37,11 +38,11 @@ This was already the case for Fedora and CentOS.
 - Dropped `serde_derive` and `failure_derive` dependencies, in favor of the `derive` feature of
   the `serde` dependency and none in the case of the `failure` dependency. This improves the
   readability of code.
-- Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` *(1.4)* and
-  `anyhow` *(1.0)*, respectively.
-- Dropped the `xml-rs` dependencyy in favor of `quick-xml` *(0.18)*. This should improve
+- Dropped the `lazy_static` and `failure` dependencies in favor of `once_cell` _(1.4)_ and
+  `anyhow` _(1.0)_, respectively.
+- Dropped the `xml-rs` dependencyy in favor of `quick-xml` _(0.18)_. This should improve
   performance.
-- Dropped the `reqwest` testing dependency in favour of the `ureq` *(1.3)* dependency.
+- Dropped the `reqwest` testing dependency in favour of the `ureq` _(1.4)_ dependency.
 - Many syntax improvements, that should bring some minor performance enhancements.
 - SUPER now requires Rust 1.40 to be build. This also brings smaller binary sizes.
 
@@ -56,6 +57,7 @@ dependencies.
 
 - SUPER now requires Rust 1.31.0 (Rust 2018 edition) to be built.
 - Upgraded dependencies:
+
   - `lazy_static`: 1.1 => **1.2**
   - `md5`: 0.5 => **0.6**
   - `regex`: 1.0 => **1.1**
@@ -166,10 +168,10 @@ deployed in each release. Here you can find the rest of the changes for this ver
 
 - You can now specify the minimum criticality of a vulnerability for being reported. Using the
   `--min-criticality` CLI option, you can specify if the minimum reported criticality should be
-  *warning*, *low*, *medium*, *high* or *critical*.
+  _warning_, _low_, _medium_, _high_ or _critical_.
 - Optional JSON and HTML reports: By default, SUPER will generate an HTML report, but no JSON
   report. This behaviour can be changed either by changing two configuration options in the
-  *config.toml* file (`html_report` and `json_report`) or by invoking the script with `--json` or
+  _config.toml_ file (`html_report` and `json_report`) or by invoking the script with `--json` or
   `--html` parameters. By default, if `--json` is used, the HTML report won't get generated, but if
   you want both, you can specify so by using both options: `--json --html`.
 - Tab completions: If you now install SUPER using one of the provided packages for UNIX, you will
@@ -190,8 +192,8 @@ deployed in each release. Here you can find the rest of the changes for this ver
   - `handlebars`: 0.22 => **0.25**
   - `chrono`: 0.2 => **0.3**
   - `regex`: 0.1 => **0.2**
-  And some other minor upgrades. Both the `regex` and the `serde` dependencies have been the major
-  upgrades and should improve our future releases.
+    And some other minor upgrades. Both the `regex` and the `serde` dependencies have been the major
+    upgrades and should improve our future releases.
 
 ### Changes in Rules
 
@@ -199,8 +201,8 @@ deployed in each release. Here you can find the rest of the changes for this ver
 - The files to be searched with a given rule can now be filtered by two new fields:
   - `include_file_regex`: A regex that all tested files will match.
   - `exclude_file_regex`: A regex that will whitelist files matched by the previous regex.
-  This enables much better file searching: If you need to search for `R` class variables, no need
-  to search other files than `R.java`.
+    This enables much better file searching: If you need to search for `R` class variables, no need
+    to search other files than `R.java`.
 
 ### Bug Fixes
 
@@ -210,6 +212,7 @@ deployed in each release. Here you can find the rest of the changes for this ver
 ### Contributions
 
 Apart from the core team, the following people has contributed to this release:
+
 - **[@gnieto](https://github.com/gnieto)**
 
 ## SUPER 0.2.0
@@ -225,7 +228,7 @@ Apart from the core team, the following people has contributed to this release:
 - SUPER now supports analysis of applications placed anywhere instead of having to place them
   in a folder.
 - Added the `--open` option to automatically open reports.
-- Added the `--test-all` option to the CLI, that will test all *.apk* files in the *downloads*
+- Added the `--test-all` option to the CLI, that will test all _.apk_ files in the _downloads_
   folder.
 - Added options to the CLI to modify the properties in the config file. We now have
   `--downloads`, `--threads`, `--dist`, `--results`, `--apktool`, `--dex2jar`, `--jd-cmd`,
@@ -234,7 +237,7 @@ Apart from the core team, the following people has contributed to this release:
 ### Changes in Rules
 
 - SUPER now detects `exported` attributes in `<provider>`, `<receiver>`, `<activity>`,
-  `<activity-alias>` and `<service>` tags in the *AndroidManifest.xml*, and reports potential
+  `<activity-alias>` and `<service>` tags in the _AndroidManifest.xml_, and reports potential
   vulnerabilities. This still needs work since we still don't have all the required information to
   show real vulnerabilities.
 
@@ -248,6 +251,7 @@ Apart from the core team, the following people has contributed to this release:
 ### Contributions
 
 Apart from the core team, the following people has contributed to this release:
+
 - **[@pocket7878](https://github.com/pocket7878)**
 - **[@VoltBit](https://github.com/VoltBit)**
 - **[@b52](https://github.com/b52)**
@@ -260,7 +264,7 @@ Apart from the core team, the following people has contributed to this release:
 
 - Release of 64-bit packages for Linux (Debian 8.6, Ubuntu 16.04, CentOS 7, Fedora 24) and Windows
   (8.1+).
-- *AndroidManifest.xml* analysis (Dangerous permission checks).
+- _AndroidManifest.xml_ analysis (Dangerous permission checks).
 - Certificate analysis (Certificate validity checks).
 - Code analysis (37 rules for checking the source code):
   - SQLi

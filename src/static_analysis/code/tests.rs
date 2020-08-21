@@ -309,14 +309,13 @@ fn it_log() {
     let rule = &rules[6];
 
     let should_match = &[
-        "Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \
-             \" + messageToShow);",
-        " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-             database: \" + messageToShow + msg1 +  msg2 + msg3);",
-        " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-             database: \" + messageToShow + msg1 +  msg2 + msg3);",
-        " Log.d(\"Diva-sqli\", \"Error occurred while searching in \
-             database: \" + messageToShow + msg1 +  msg2 + msg3);",
+        "Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + messageToShow);",
+        " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + messageToShow + \
+         msg1 +  msg2 + msg3);",
+        " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + messageToShow + \
+         msg1 +  msg2 + msg3);",
+        " Log.d(\"Diva-sqli\", \"Error occurred while searching in database: \" + messageToShow + \
+         msg1 +  msg2 + msg3);",
     ];
 
     let should_not_match = &[
@@ -604,8 +603,8 @@ fn it_web_view_ssl_errors() {
     let rule = &rules[15];
 
     let should_match = &[
-        "onReceivedSslError(WebView view, SslErrorHandler handler, SslError \
-             error)             .proceed();",
+        "onReceivedSslError(WebView view, SslErrorHandler handler, SslError error)             \
+         .proceed();",
     ];
 
     let should_not_match = &["", "", "", ""];
@@ -632,12 +631,12 @@ fn it_sql_injection() {
     let rule = &rules[16];
 
     let should_match = &[
-        "android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES \
-             ('\" + paramView.getText().toString() + \"', '\" + \
-             localEditText.getText().toString() + \"');\");",
-        "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES \
-             ('\" + paramView.getText().toString() + \"', '\" + \
-             localEditText.getText().toString() + \"');\");",
+        "android.database.sqlite   .execSQL(\"INSERT INTO myuser VALUES ('\" + \
+         paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \
+         \"');\");",
+        "android.database.sqlite   .rawQuery(\"INSERT INTO myuser VALUES ('\" + \
+         paramView.getText().toString() + \"', '\" + localEditText.getText().toString() + \
+         \"');\");",
     ];
 
     let should_not_match = &[
@@ -706,25 +705,21 @@ fn it_sms_mms_sending() {
     let rule = &rules[18];
 
     let should_match = &[
-        "telephony.SmsManager  sendMultipartTextMessage(String \
-             destinationAddress, String scAddress, ArrayList<String> parts, \
-             ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> \
-             deliveryIntents)",
-        "telephony.SmsManager  sendTextMessage(String destinationAddress, \
-             String scAddress, String text, PendingIntent sentIntent, \
-             PendingIntent deliveryIntent)",
+        "telephony.SmsManager  sendMultipartTextMessage(String destinationAddress, String \
+         scAddress, ArrayList<String> parts, ArrayList<PendingIntent> sentIntents, \
+         ArrayList<PendingIntent> deliveryIntents)",
+        "telephony.SmsManager  sendTextMessage(String destinationAddress, String scAddress, \
+         String text, PendingIntent sentIntent, PendingIntent deliveryIntent)",
         "telephony.SmsManager  vnd.android-dir/mms-sms",
         "telephony.SmsManager  vnd.android-dir/mms-sms",
     ];
 
     let should_not_match = &[
         "vnd.android-dir/mms-sms",
-        "sendTextMessage(String destinationAddress, String scAddress, \
-             String text, PendingIntent sentIntent, PendingIntent \
-             deliveryIntent)",
-        " sendMultipartTextMessage(String destinationAddress, String \
-             scAddress, ArrayList<String> parts, ArrayList<PendingIntent> \
-             sentIntents, ArrayList<PendingIntent> deliveryIntents)",
+        "sendTextMessage(String destinationAddress, String scAddress, String text, PendingIntent \
+         sentIntent, PendingIntent deliveryIntent)",
+        " sendMultipartTextMessage(String destinationAddress, String scAddress, ArrayList<String> \
+         parts, ArrayList<PendingIntent> sentIntents, ArrayList<PendingIntent> deliveryIntents)",
         "telephony.SmsManager ",
     ];
 
@@ -1037,8 +1032,7 @@ fn it_hardcoded_certificate() {
         "\"cert.cert\"",
         "\"    key.pub    ",
         "\"    cert.pub   ",
-        "     throw new IllegalArgumentException(\"translateAPI.key is not \
-             specified\");",
+        "     throw new IllegalArgumentException(\"translateAPI.key is not specified\");",
     ];
 
     let should_not_match = &[
@@ -1189,8 +1183,8 @@ fn it_ssl_get_insecure_method() {
     };
     let rule = &rules[34];
 
-    let should_match = &[" javax.net.ssl.SSLSocketFactory                 \
-                              SSLSocketFactory.getInsecure()"];
+    let should_match =
+        &[" javax.net.ssl.SSLSocketFactory                 SSLSocketFactory.getInsecure()"];
 
     let should_not_match = &[
         "getInsecure()",

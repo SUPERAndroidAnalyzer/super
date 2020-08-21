@@ -108,7 +108,8 @@ impl<'r> Report<'r> {
         Ok(())
     }
 
-    /// Generates a folder with HTML files with the source code of the application.
+    /// Generates a folder with HTML files with the source code of the
+    /// application.
     fn generate_code_html_folder<P: AsRef<Path>>(
         &self,
         path: P,

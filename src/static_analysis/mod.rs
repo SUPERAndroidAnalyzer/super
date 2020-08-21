@@ -1,7 +1,8 @@
 //! Static analysis for manifest, certificate and code files.
 //!
-//! The static analysis of the application's source files is used to search for vulnerable
-//! code, settings and any other form of implementation that might be used as an exploit.
+//! The static analysis of the application's source files is used to search for
+//! vulnerable code, settings and any other form of implementation that might be
+//! used as an exploit.
 
 #[cfg(feature = "certificate")]
 pub mod certificate;

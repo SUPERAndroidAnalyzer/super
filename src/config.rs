@@ -1,6 +1,7 @@
 //! Configuration module.
 //!
-//! Handles and configures the initial settings and variables needed to run the program.
+//! Handles and configures the initial settings and variables needed to run the
+//! program.
 
 use crate::{criticality::Criticality, print_warning, static_analysis::manifest};
 use anyhow::{Context, Error};
@@ -21,8 +22,9 @@ use toml::{self, value::Value};
 
 /// Config structure.
 ///
-/// Contains configuration related fields. It is used for storing the configuration parameters and
-/// checking their values. Implements the `Default` trait.
+/// Contains configuration related fields. It is used for storing the
+/// configuration parameters and checking their values. Implements the `Default`
+/// trait.
 #[derive(Debug, Deserialize)]
 #[serde(default)]
 pub struct Config {
@@ -73,7 +75,8 @@ pub struct Config {
     loaded_files: Vec<PathBuf>,
 }
 
-/// Helper struct that handles some specific field deserialization for `Config` struct
+/// Helper struct that handles some specific field deserialization for `Config`
+/// struct
 struct ConfigDeserializer;
 
 /// `Criticality` and `String` tuple, used to shorten some return types.
@@ -223,7 +226,8 @@ impl Config {
         }
     }
 
-    /// Reads all the apk files in the downloads folder and adds them to the configuration.
+    /// Reads all the apk files in the downloads folder and adds them to the
+    /// configuration.
     fn read_apks(&mut self) -> Result<(), Error> {
         let iter = fs::read_dir(&self.downloads_folder)?;
 
@@ -361,37 +365,44 @@ impl Config {
         self.app_packages.push(package_path);
     }
 
-    /// Returns true if the application is running in `--verbose` mode, false otherwise.
+    /// Returns true if the application is running in `--verbose` mode, false
+    /// otherwise.
     pub fn is_verbose(&self) -> bool {
         self.verbose
     }
 
-    /// Returns true if the application is running in `--quiet` mode, false otherwise.
+    /// Returns true if the application is running in `--quiet` mode, false
+    /// otherwise.
     pub fn is_quiet(&self) -> bool {
         self.quiet
     }
 
-    /// Returns true if the application is running in `--force` mode, false otherwise.
+    /// Returns true if the application is running in `--force` mode, false
+    /// otherwise.
     pub fn is_force(&self) -> bool {
         self.force
     }
 
-    /// Sets the application to force recreate the analysis files and results temporarily.
+    /// Sets the application to force recreate the analysis files and results
+    /// temporarily.
     pub fn set_force(&mut self) {
         self.force = true;
     }
 
-    /// Resets the `--force` option, so that it gets reset to the configured force option.
+    /// Resets the `--force` option, so that it gets reset to the configured
+    /// force option.
     pub fn reset_force(&mut self) {
         self.force = self.overall_force
     }
 
-    /// Returns true if the application is running in `--bench` mode, false otherwise.
+    /// Returns true if the application is running in `--bench` mode, false
+    /// otherwise.
     pub fn is_bench(&self) -> bool {
         self.bench
     }
 
-    /// Returns true if the application is running in `--open` mode, false otherwise.
+    /// Returns true if the application is running in `--open` mode, false
+    /// otherwise.
     pub fn is_open(&self) -> bool {
         self.open
     }
@@ -496,9 +507,8 @@ impl Config {
             unknown_permission: (
                 Criticality::Low,
                 String::from(
-                    "Even if the application can create its own \
-                     permissions, it's discouraged, since it can \
-                     lead to misunderstanding between developers.",
+                    "Even if the application can create its own permissions, it's discouraged, \
+                     since it can lead to misunderstanding between developers.",
                 ),
             ),
             permissions: BTreeSet::new(),
@@ -538,8 +548,8 @@ impl Default for Config {
 
 /// Vulnerable permission configuration information.
 ///
-/// Represents a Permission with all its fields. Implements the `PartialEq` and `PartialOrd`
-/// traits.
+/// Represents a Permission with all its fields. Implements the `PartialEq` and
+/// `PartialOrd` traits.
 #[derive(Debug, Ord, Eq, Deserialize)]
 pub struct Permission {
     /// Permission name.
@@ -654,8 +664,8 @@ mod tests {
         assert_eq!(config.unknown_permission_criticality(), Criticality::Low);
         assert_eq!(
             config.unknown_permission_description(),
-            "Even if the application can create its own permissions, it's discouraged, \
-             since it can lead to misunderstanding between developers."
+            "Even if the application can create its own permissions, it's discouraged, since it \
+             can lead to misunderstanding between developers."
         );
         assert_eq!(config.permissions().next(), None);
 
@@ -743,8 +753,8 @@ mod tests {
         assert_eq!(config.unknown_permission_criticality(), Criticality::Low);
         assert_eq!(
             config.unknown_permission_description(),
-            "Even if the application can create its own permissions, it's discouraged, \
-             since it can lead to misunderstanding between developers."
+            "Even if the application can create its own permissions, it's discouraged, since it \
+             can lead to misunderstanding between developers."
         );
 
         let permission = config.permissions().next().unwrap();
@@ -756,10 +766,10 @@ mod tests {
         assert_eq!(permission.label(), "Internet permission");
         assert_eq!(
             permission.description(),
-            "Allows the app to create network sockets and use custom network protocols. \
-             The browser and other applications provide means to send data to the \
-             internet, so this permission is not required to send data to the internet. \
-             Check if the permission is actually needed."
+            "Allows the app to create network sockets and use custom network protocols. The \
+             browser and other applications provide means to send data to the internet, so this \
+             permission is not required to send data to the internet. Check if the permission is \
+             actually needed."
         );
     }
 

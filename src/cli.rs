@@ -1,8 +1,8 @@
 //! Command line interface module.
 //!
-//! This module contains the `generate()` function, that generates the complete command line
-//! for the SUPER launcher. It's also used to generate command line completion scripts in the
-//! `build.rs` file.
+//! This module contains the `generate()` function, that generates the complete
+//! command line for the SUPER launcher. It's also used to generate command line
+//! completion scripts in the `build.rs` file.
 
 use clap::{crate_version, App, Arg};
 

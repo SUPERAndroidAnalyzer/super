@@ -9,8 +9,8 @@ use serde_json::Value;
 
 /// Generates a list of line numbers for the given vulnerability.
 ///
-/// An optional line separator can be added that will be used at the end of each line. By default,
-/// this separator will be `<br>`.
+/// An optional line separator can be added that will be used at the end of each
+/// line. By default, this separator will be `<br>`.
 pub struct LineNumbers;
 
 impl HelperDef for LineNumbers {
@@ -28,7 +28,7 @@ impl HelperDef for LineNumbers {
             .ok_or_else(|| {
                 RenderError::new(
                     "to generate the vulnerability index, the first parameter must be a \
-                 vulnerability",
+                     vulnerability",
                 )
             })?;
         let line_separator = if let Some(s) = h.param(1) {
@@ -36,8 +36,7 @@ impl HelperDef for LineNumbers {
                 s
             } else {
                 return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                 not a string",
+                    "the provided line separator for the code lines was not a string",
                 ));
             }
         } else {
@@ -69,8 +68,8 @@ impl HelperDef for LineNumbers {
 
 /// Generates a list of line numbers for all the given code.
 ///
-/// An optional line separator can be added that will be used at the end of each line. By default,
-/// this separator will be `<br>`.
+/// An optional line separator can be added that will be used at the end of each
+/// line. By default, this separator will be `<br>`.
 pub struct AllLines;
 
 impl HelperDef for AllLines {
@@ -91,8 +90,7 @@ impl HelperDef for AllLines {
                 s
             } else {
                 return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                 not a string",
+                    "the provided line separator for the code lines was not a string",
                 ));
             }
         } else {
@@ -113,8 +111,8 @@ impl HelperDef for AllLines {
 
 /// Generates all the HTML for the given code.
 ///
-/// An optional line separator can be added that will be used at the end of each line. By default,
-/// this separator will be `<br>`.
+/// An optional line separator can be added that will be used at the end of each
+/// line. By default, this separator will be `<br>`.
 pub struct AllCode;
 
 impl HelperDef for AllCode {
@@ -135,8 +133,7 @@ impl HelperDef for AllCode {
                 s
             } else {
                 return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                 not a string",
+                    "the provided line separator for the code lines was not a string",
                 ));
             }
         } else {
@@ -146,8 +143,7 @@ impl HelperDef for AllCode {
         for (i, line) in code.lines().enumerate() {
             let (indent, line) = split_indent(line);
             let line = format!(
-                "<code id=\"code-line-{}\">{}<span \
-             class=\"line_body\">{}</span></code>{}",
+                "<code id=\"code-line-{}\">{}<span class=\"line_body\">{}</span></code>{}",
                 i + 1,
                 indent,
                 html_escape(line),
@@ -162,8 +158,9 @@ impl HelperDef for AllCode {
 
 /// Generates HTML code for affected code in a vulnerability.
 ///
-/// For lines without vulnerable code, only the line plus the optional separator (by default `<br>`)
-/// will be rendered. For vulnerable lines, the following code will be generated:
+/// For lines without vulnerable code, only the line plus the optional separator
+/// (by default `<br>`) will be rendered. For vulnerable lines, the following
+/// code will be generated:
 ///
 /// ```html
 /// <code class="vulnerable_line {{ criticality }}">{{ indent }}
@@ -188,7 +185,7 @@ impl HelperDef for HtmlCode {
             .ok_or_else(|| {
                 RenderError::new(
                     "to generate the vulnerability index, the first parameter must be a \
-                 vulnerability",
+                     vulnerability",
                 )
             })?;
 
@@ -197,8 +194,7 @@ impl HelperDef for HtmlCode {
                 s
             } else {
                 return Err(RenderError::new(
-                    "the provided line separator for the code lines was \
-                 not a string",
+                    "the provided line separator for the code lines was not a string",
                 ));
             }
         } else {
@@ -231,7 +227,7 @@ impl HelperDef for HtmlCode {
                 let (indent, code) = split_indent(line);
                 format!(
                     "<code class=\"vulnerable_line {}\">{}<span \
-                 class=\"line_body\">{}</span></code>{}",
+                     class=\"line_body\">{}</span></code>{}",
                     vulnerability.get("criticality").unwrap().as_str().unwrap(),
                     indent,
                     html_escape(code),
@@ -250,8 +246,9 @@ impl HelperDef for HtmlCode {
 
 /// Generates the report index for the given vulnerability.
 ///
-/// E.g.: for a critical vulnerability in an application with between 100 and 200 vulnerability,
-/// for the critical vulnerability number 12 it would produce `C012`.
+/// E.g.: for a critical vulnerability in an application with between 100 and
+/// 200 vulnerability, for the critical vulnerability number 12 it would produce
+/// `C012`.
 pub struct ReportIndex;
 
 impl HelperDef for ReportIndex {
@@ -268,8 +265,9 @@ impl HelperDef for ReportIndex {
             .and_then(|v| v.value().as_object())
             .ok_or_else(|| {
                 RenderError::new(
-                "to generate the vulnerability index, the first parameter must be a vulnerability",
-            )
+                    "to generate the vulnerability index, the first parameter must be a \
+                     vulnerability",
+                )
             })?;
         let index = h.param(1).and_then(|v| v.value().as_u64()).ok_or_else(|| {
             RenderError::new(
@@ -302,8 +300,8 @@ impl HelperDef for ReportIndex {
 
 /// Generates the menu for the source tree.
 ///
-/// It will generate an unordered HTML list (`<ul>…</ul>`) where all files and folders of the given
-/// menu object.
+/// It will generate an unordered HTML list (`<ul>…</ul>`) where all files and
+/// folders of the given menu object.
 pub struct GenerateMenu;
 
 impl HelperDef for GenerateMenu {
@@ -360,9 +358,11 @@ fn render_menu(menu: &[Value], renderer: &mut dyn Output) -> Result<(), RenderEr
                     .ok_or_else(|| RenderError::new("invalid menu object type"))?;
                 renderer.write(
                     format!(
-                        "<a href=\"{1}.html\" title=\"{0}\" target=\"code\"><img src=\"../img/{2}.svg\">{0}</a>",
+                        "<a href=\"{1}.html\" title=\"{0}\" target=\"code\"><img \
+                         src=\"../img/{2}.svg\">{0}</a>",
                         name, path, file_type
-                    ).as_str()
+                    )
+                    .as_str(),
                 )?;
             }
             renderer.write("</li>")?;

@@ -2,8 +2,10 @@
 
 use anyhow::{bail, Error};
 use serde::{self, Deserialize, Deserializer};
-use std::convert::TryFrom;
-use std::str::{self, FromStr};
+use std::{
+    convert::TryFrom,
+    str::{self, FromStr},
+};
 
 /// Enumeration describing all the known permissions.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy)]

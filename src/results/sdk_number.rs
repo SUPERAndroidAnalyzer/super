@@ -411,7 +411,8 @@ impl From<u32> for SdkNumber {
     }
 }
 
-/// Prettifies the android version number so that it's shown as the official version.
+/// Prettifies the android version number so that it's shown as the official
+/// version.
 pub fn prettify_android_version(version: &Version) -> String {
     format!(
         "{}{}{}{}",

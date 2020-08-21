@@ -1,7 +1,7 @@
 //! Utilities for results generation.
 //!
-//! In this module you can find structures like `Vulnerability` and `Fingerprint` that contain the
-//! information for results.
+//! In this module you can find structures like `Vulnerability` and
+//! `Fingerprint` that contain the information for results.
 
 use crate::criticality::Criticality;
 use anyhow::Error;
@@ -144,7 +144,8 @@ pub struct FingerPrint {
 impl FingerPrint {
     /// Creates a new fingerprint.
     ///
-    /// This function will read the complete file and generate its MD5, SHA-1 and SHA-256 hashes.
+    /// This function will read the complete file and generate its MD5, SHA-1
+    /// and SHA-256 hashes.
     #[allow(clippy::cast_possible_truncation)]
     pub fn from_package<P: AsRef<Path>>(package: P) -> Result<Self, Error> {
         use sha2::Digest;

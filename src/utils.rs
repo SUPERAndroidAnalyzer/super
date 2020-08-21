@@ -184,50 +184,44 @@ mod test {
 
         assert_eq!(
             get_code(code, 1, 1),
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\n\
-             Curabitur tortor. Pellentesque nibh. Aenean quam.\n\
-             Sed lacinia, urna non tincidunt mattis, tortor neque\n\
-             Praesent blandit dolor. Sed non quam. In vel mi\n\
-             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n"
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.\nCurabitur tortor. \
+             Pellentesque nibh. Aenean quam.\nSed lacinia, urna non tincidunt mattis, tortor \
+             neque\nPraesent blandit dolor. Sed non quam. In vel mi\nSed aliquet risus a tortor. \
+             Integer id quam. Morbi mi.\nNullam mauris orci, aliquet et, iaculis et, viverra \
+             vitae, ligula.\n"
         );
 
         assert_eq!(
             get_code(code, 13, 13),
-            "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
-             Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-             Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n\
-             Vestibulum ante ipsum primis in faucibus orci luctus et ultrices\n"
+            "Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\nAenean laoreet. \
+             Vestibulum nisi lectus, commodo ac, facilisis\nInteger nec odio. Praesent libero. \
+             Sed cursus ante dapibus diam.\nPellentesque nibh. Aenean quam. In scelerisque sem at \
+             dolor.\nSed lacinia, urna non tincidunt mattis, tortor neque adipiscing\nVestibulum \
+             ante ipsum primis in faucibus orci luctus et ultrices\n"
         );
 
         assert_eq!(
             get_code(code, 7, 7),
-            "Praesent blandit dolor. Sed non quam. In vel mi\n\
-             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
-             Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
-             Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
-             Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
-             Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n"
+            "Praesent blandit dolor. Sed non quam. In vel mi\nSed aliquet risus a tortor. Integer \
+             id quam. Morbi mi.\nNullam mauris orci, aliquet et, iaculis et, viverra vitae, \
+             ligula.\nPraesent mauris. Fusce nec tellus sed ugue semper porta. Mauris \
+             massa.\nProin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\nVestibulum \
+             sapien. Proin quam. Etiam ultrices. Suspendisse in\nVestibulum tincidunt malesuada \
+             tellus. Ut ultrices ultrices enim.\nAenean laoreet. Vestibulum nisi lectus, commodo \
+             ac, facilisis\nInteger nec odio. Praesent libero. Sed cursus ante dapibus diam.\n"
         );
 
         assert_eq!(
             get_code(code, 7, 9),
-            "Praesent blandit dolor. Sed non quam. In vel mi\n\
-             Sed aliquet risus a tortor. Integer id quam. Morbi mi.\n\
-             Nullam mauris orci, aliquet et, iaculis et, viverra vitae, ligula.\n\
-             Praesent mauris. Fusce nec tellus sed ugue semper porta. Mauris massa.\n\
-             Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\n\
-             Vestibulum sapien. Proin quam. Etiam ultrices. Suspendisse in\n\
-             Vestibulum tincidunt malesuada tellus. Ut ultrices ultrices enim.\n\
-             Aenean laoreet. Vestibulum nisi lectus, commodo ac, facilisis\n\
-             Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.\n\
-             Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.\n\
-             Sed lacinia, urna non tincidunt mattis, tortor neque adipiscing\n"
+            "Praesent blandit dolor. Sed non quam. In vel mi\nSed aliquet risus a tortor. Integer \
+             id quam. Morbi mi.\nNullam mauris orci, aliquet et, iaculis et, viverra vitae, \
+             ligula.\nPraesent mauris. Fusce nec tellus sed ugue semper porta. Mauris \
+             massa.\nProin ut ligula vel nunc egestas porttitor. Morbi lectus risus,\nVestibulum \
+             sapien. Proin quam. Etiam ultrices. Suspendisse in\nVestibulum tincidunt malesuada \
+             tellus. Ut ultrices ultrices enim.\nAenean laoreet. Vestibulum nisi lectus, commodo \
+             ac, facilisis\nInteger nec odio. Praesent libero. Sed cursus ante dapibus \
+             diam.\nPellentesque nibh. Aenean quam. In scelerisque sem at dolor.\nSed lacinia, \
+             urna non tincidunt mattis, tortor neque adipiscing\n"
         );
     }
 }

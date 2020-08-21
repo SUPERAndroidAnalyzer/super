@@ -45,11 +45,14 @@ pub struct Results {
     certificate: String,
     /// List of warnings found in the application.
     warnings: BTreeSet<Vulnerability>,
-    /// List of the potential low criticality vulnerabilities in the application.
+    /// List of the potential low criticality vulnerabilities in the
+    /// application.
     low: BTreeSet<Vulnerability>,
-    /// List of the potential medium criticality vulnerabilities in the application.
+    /// List of the potential medium criticality vulnerabilities in the
+    /// application.
     medium: BTreeSet<Vulnerability>,
-    /// List of the potential high criticality vulnerabilities in the application.
+    /// List of the potential high criticality vulnerabilities in the
+    /// application.
     high: BTreeSet<Vulnerability>,
     /// List of the potential critical vulnerabilities in the application.
     critical: BTreeSet<Vulnerability>,
@@ -61,17 +64,15 @@ impl Results {
     pub fn init<P: AsRef<Path>>(config: &Config, package: P) -> Result<Self> {
         let fingerprint = FingerPrint::from_package(package).map_err(|e| {
             print_warning(format!(
-                "An error occurred when trying to fingerprint the \
-                 application: {}",
+                "An error occurred when trying to fingerprint the application: {}",
                 e
             ));
             e
         })?;
         if config.is_verbose() {
             println!(
-                "The results struct has been created. All the vulnerabilities will now \
-                 be recorded and when the analysis ends, they will be written to result \
-                 files."
+                "The results struct has been created. All the vulnerabilities will now be \
+                 recorded and when the analysis ends, they will be written to result files."
             );
         } else if !config.is_quiet() {
             println!("Results structure created.");
@@ -170,31 +171,32 @@ impl Results {
             Criticality::Warning => {
                 let _new = self.warnings.insert(vulnerability);
                 // FIXME should we maintain it?
-                //debug_assert!(new, "trying to insert the same warning twice");
+                // debug_assert!(new, "trying to insert the same warning
+                // twice");
             }
             Criticality::Low => {
                 let _new = self.low.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
-                //     "trying to insert the same low criticality vulnerability twice"
-                // );
+                //     "trying to insert the same low criticality vulnerability
+                // twice" );
             }
             Criticality::Medium => {
                 let _new = self.medium.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
-                //     "trying to insert the same medium criticality vulnerability twice"
-                // );
+                //     "trying to insert the same medium criticality
+                // vulnerability twice" );
             }
             Criticality::High => {
                 let _new = self.high.insert(vulnerability);
                 // FIXME should we maintain it?
                 // debug_assert!(
                 //     new,
-                //     "trying to insert the same high criticality vulnerability twice"
-                // );
+                //     "trying to insert the same high criticality vulnerability
+                // twice" );
             }
             Criticality::Critical => {
                 let _new = self.critical.insert(vulnerability);
@@ -250,8 +252,8 @@ impl Results {
                 }
             } else if config.is_verbose() {
                 println!(
-                    "Seems that the JSON report has already been generated. There is no \
-                     need to do it again."
+                    "Seems that the JSON report has already been generated. There is no need to \
+                     do it again."
                 );
             } else {
                 println!("Skipping JSON report generation.");

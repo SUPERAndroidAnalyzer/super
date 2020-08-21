@@ -1,7 +1,7 @@
 //! SUPER Android Analyzer launcher.
 //!
-//! This code controls the CLI of the application and launches the analysis of the application
-//! using the core library.
+//! This code controls the CLI of the application and launches the analysis of
+//! the application using the core library.
 
 #![forbid(anonymous_parameters)]
 #![warn(clippy::pedantic)]
@@ -36,8 +36,9 @@ use super_analyzer_core::{
 
 /// Program entry point.
 ///
-/// This function will just call the `run()` function and report any fatal error that comes out
-/// of it. It will also exit with a non-zero exit code if things go wrong.
+/// This function will just call the `run()` function and report any fatal error
+/// that comes out of it. It will also exit with a non-zero exit code if things
+/// go wrong.
 fn main() {
     // Call the `run()` function and check for errors.
     if let Err(e) = run() {
@@ -50,8 +51,8 @@ fn main() {
             source = e.source();
         }
 
-        // If the verbose mode is not enabled, we add a message so that the user knows that can
-        // get further information with the `-v` flag in the CLI.
+        // If the verbose mode is not enabled, we add a message so that the user knows
+        // that can get further information with the `-v` flag in the CLI.
         if !log_enabled!(Level::Debug) {
             eprintln!(
                 "If you need more information, try to run the program again with the {} flag.",
@@ -66,9 +67,9 @@ fn main() {
 
 /// Execute the analysis.
 ///
-/// This runs the actual analysis. It checks the CLI, creates the logger, loads the configuration
-/// and if everything goes well, it starts the analysis. It also runs benchmarks and shows the
-/// results.
+/// This runs the actual analysis. It checks the CLI, creates the logger, loads
+/// the configuration and if everything goes well, it starts the analysis. It
+/// also runs benchmarks and shows the results.
 fn run() -> Result<()> {
     // Check the CLI arguments.
     let cli = cli::generate().get_matches();
@@ -87,8 +88,8 @@ fn run() -> Result<()> {
             error_string.push('\n');
         }
         error_string.push_str(
-            "the configuration was loaded, in order, from the following files: \
-             \n\t- Default built-in configuration\n",
+            "the configuration was loaded, in order, from the following files: \n\t- Default \
+             built-in configuration\n",
         );
         for file in config.loaded_config_files() {
             error_string.push_str(&format!("\t- {}\n", file.display()));
@@ -105,7 +106,8 @@ fn run() -> Result<()> {
             sleep(Duration::from_millis(3));
         }
         println!(
-            "Welcome to the SUPER Android Analyzer. We will now try to audit the given application."
+            "Welcome to the SUPER Android Analyzer. We will now try to audit the given \
+             application."
         );
         println!(
             "You activated the verbose mode. {}",

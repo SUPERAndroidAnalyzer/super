@@ -1,4 +1,5 @@
-//! This module performs the static analysis of the certificate of the application.
+//! This module performs the static analysis of the certificate of the
+//! application.
 
 use crate::{
     criticality::Criticality,
@@ -57,8 +58,8 @@ pub fn analysis<S: AsRef<str>>(
             Ok(f) => f,
             Err(e) => {
                 print_warning(format!(
-                    "An error occurred when reading the {} dir searching certificates. Certificate \
-                     analysis will be skipped. More info: {}",
+                    "An error occurred when reading the {} dir searching certificates. \
+                     Certificate analysis will be skipped. More info: {}",
                     path.display(),
                     e
                 ));
@@ -91,7 +92,10 @@ pub fn analysis<S: AsRef<str>>(
                 .arg("-print_certs")
                 .arg("-text")
                 .output()
-                .context("there was an error when executing the openssl command to check the certificate")?;
+                .context(
+                    "there was an error when executing the openssl command to check the \
+                     certificate",
+                )?;
 
             if !output.status.success() {
                 bail!(
@@ -164,7 +168,7 @@ pub fn analysis<S: AsRef<str>>(
             let cert_year = after[16..20].parse::<i32>().unwrap();
             let cert_month = parse_month(&after[0..3]);
             let cert_day = match after[4..6].parse::<u32>() {
-                //if day<10 parse 1 number
+                // if day<10 parse 1 number
                 Ok(n) => n,
                 Err(_) => after[5..6].parse::<u32>().unwrap(),
             };

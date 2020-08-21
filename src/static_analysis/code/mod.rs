@@ -83,8 +83,7 @@ pub fn analysis<S: AsRef<str>>(
                         &thread_vulnerabilities,
                     ) {
                         print_warning(format!(
-                            "could not analyze `{}`. The analysis will continue, though. \
-                             Error: {}",
+                            "could not analyze `{}`. The analysis will continue, though. Error: {}",
                             f.path().display(),
                             e
                         ))
@@ -201,8 +200,8 @@ fn analyze_file<P: AsRef<Path>, T: AsRef<Path>>(
                     Ok(r) => r,
                     Err(e) => {
                         print_warning(format!(
-                            "there was an error creating the forward_check '{}'. The rule will \
-                             be skipped. {}",
+                            "there was an error creating the forward_check '{}'. The rule will be \
+                             skipped. {}",
                             r, e
                         ));
                         break 'rule;
