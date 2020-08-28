@@ -599,15 +599,12 @@ impl Permission {
 /// Test module for the configuration.
 #[cfg(test)]
 mod tests {
+    use super::Config;
+    use crate::{criticality::Criticality, static_analysis::manifest};
     use std::{
         fs,
         path::{Path, PathBuf},
     };
-
-    use num_cpus;
-
-    use super::Config;
-    use crate::{criticality::Criticality, static_analysis::manifest};
 
     /// Test for the default configuration function.
     #[allow(clippy::cognitive_complexity)]
