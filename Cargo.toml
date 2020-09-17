@@ -19,8 +19,8 @@ keywords = ["Android", "security", "audit", "super", "analyzer"]
 categories = ["command-line-utilities", "development-tools"]
 
 [package.metadata.deb]
-maintainer = "SUPER Team <contact@superanalyzer.rocks>"
-copyright = "2016 - 2019, SUPER Team <contact@superanalyzer.rocks>"
+maintainer = "SUPER Team <superanalyzer@pm.me>"
+copyright = "2016 - 2020, SUPER Team <superanalyzer@pm.me>"
 license-file = ["LICENSE", "0"]
 extended-description = """\
 Secure, Unified, Powerful and Extensible Rust Android Analyzer. Core software\
