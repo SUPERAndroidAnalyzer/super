@@ -11,7 +11,7 @@ use clap::{crate_version, App, Arg};
 pub fn generate() -> App<'static, 'static> {
     App::new("SUPER Android Analyzer")
         .version(crate_version!())
-        .author("SUPER Team <contact@superanalyzer.rocks>")
+        .author("SUPER Team <superanalyzer@pm.me>")
         .about("Audits Android apps (.apk files) for vulnerabilities")
         .arg(
             Arg::with_name("package")
